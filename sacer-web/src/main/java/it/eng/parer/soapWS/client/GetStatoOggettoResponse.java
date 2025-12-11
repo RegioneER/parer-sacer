@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getStatoOggettoResponseTipo", propOrder = {
-	"_return" })
+        "_return" })
 public class GetStatoOggettoResponse {
 
     @XmlElement(name = "return")
@@ -54,7 +54,7 @@ public class GetStatoOggettoResponse {
      *
      */
     public RecuperoStatoOggettoRisposta getReturn() {
-	return _return;
+        return _return;
     }
 
     /**
@@ -64,7 +64,7 @@ public class GetStatoOggettoResponse {
      *
      */
     public void setReturn(RecuperoStatoOggettoRisposta value) {
-	this._return = value;
+        this._return = value;
     }
 
 }

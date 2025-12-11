@@ -87,42 +87,42 @@ public class Constants {
     // Enum per tipo sessione
     public enum TipoSessione {
 
-	VERSAMENTO, AGGIUNGI_DOCUMENTO
+        VERSAMENTO, AGGIUNGI_DOCUMENTO
     }
 
     // Enum per tipo entità sacer
     public enum TipoEntitaSacer {
 
-	UNI_DOC, DOC, UPD, COMP, FASC, SER
+        UNI_DOC, DOC, UPD, COMP, FASC, SER
     }
     // Enum per tipo sistema migrazione
 
     public enum TipoSisMigr {
 
-	ASC
+        ASC
     }
 
     // Enum per esito su calcoli nel monitoraggio
     public enum EsitoCalcolo {
 
-	OK, OKNOUPDATE
+        OK, OKNOUPDATE
     }
 
     // Enum per tipo dato
     public enum TipoDato {
 
-	REGISTRO, TIPO_UNITA_DOC, TIPO_DOC, TIPO_DOC_PRINC, SUB_STRUTTURA, TIPO_FASCICOLO,
-	TIPO_OBJECT
+        REGISTRO, TIPO_UNITA_DOC, TIPO_DOC, TIPO_DOC_PRINC, SUB_STRUTTURA, TIPO_FASCICOLO,
+        TIPO_OBJECT
     }
 
     public enum TiOperReplic {
 
-	INS, MOD, CANC
+        INS, MOD, CANC
     }
 
     public enum TiStatoReplic {
 
-	DA_REPLICARE, REPLICA_OK, REPLICA_NON_POSSIBILE, REPLICA_IN_ERRORE, REPLICA_IN_TIMEOUT
+        DA_REPLICARE, REPLICA_OK, REPLICA_NON_POSSIBILE, REPLICA_IN_ERRORE, REPLICA_IN_TIMEOUT
     }
 
     /*
@@ -131,19 +131,19 @@ public class Constants {
      */
     public enum TiDoc {
 
-	PRINCIPALE, ALLEGATO, ANNESSO, ANNOTAZIONE
+        PRINCIPALE, ALLEGATO, ANNESSO, ANNOTAZIONE
     }
 
     // Enum per tipo entità sacer su object storage
     public enum TiEntitaSacerObjectStorage {
 
-	COMP_DOC, REPORTVF, XML_VERS, INDICE_AIP, INDICE_AIP_FASC, ELENCO_INDICI_AIP,
-	ELENCO_INDICI_AIP_FASC, INDICE_AIP_SERIE
+        COMP_DOC, REPORTVF, XML_VERS, INDICE_AIP, INDICE_AIP_FASC, ELENCO_INDICI_AIP,
+        ELENCO_INDICI_AIP_FASC, INDICE_AIP_SERIE
     }
 
     // MEV26587
     public enum ComboValueParamentersType {
-	STRINGA, PASSWORD;
+        STRINGA, PASSWORD;
     }
 
     public static final String OBFUSCATED_STRING = "********";
@@ -151,19 +151,19 @@ public class Constants {
     // MEV#27891
     // Enum per tipo sessione jms
     public enum TipoSessioneJMS {
-	XA_TRANSACTED, SESSION_TRANSACTED, UNTRANSACTED, DISABLED
+        XA_TRANSACTED, SESSION_TRANSACTED, UNTRANSACTED, DISABLED
     }
 
     // Enum per modalità di delivery messaggio jms
     public enum DeliveryModeJMS {
-	PERSISTENT, NON_PERSISTENT
+        PERSISTENT, NON_PERSISTENT
     }
     // end MEV#27891
 
     // MAC#28020
     // Enum per modalità di validazione criteri
     public enum ValidationMode {
-	JOB, MDB
+        JOB, MDB
     }
     // end MAC#28020
 }

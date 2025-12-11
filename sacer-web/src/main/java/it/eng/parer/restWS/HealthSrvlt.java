@@ -36,36 +36,36 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.eng.parer.web.dto.HealthActuatorBean;
 
 @WebServlet(urlPatterns = {
-	"/actuator/health" }, asyncSupported = true)
+        "/actuator/health" }, asyncSupported = true)
 public class HealthSrvlt extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(HealthSrvlt.class);
 
     public HealthSrvlt() {
-	super();
+        super();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse response)
-	    throws ServletException, IOException {
-	response.reset();
-	response.setStatus(HttpServletResponse.SC_OK);
-	response.setContentType("application/json; charset=\"utf-8\"");
-	try (ServletOutputStream out = response.getOutputStream();
-		OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out,
-			StandardCharsets.UTF_8);) {
+            throws ServletException, IOException {
+        response.reset();
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json; charset=\"utf-8\"");
+        try (ServletOutputStream out = response.getOutputStream();
+                OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out,
+                        StandardCharsets.UTF_8);) {
 
-	    ObjectMapper mapper = new ObjectMapper();
-	    mapper.writeValue(tmpStreamWriter, HealthActuatorBean.statusUp());
-	} catch (Exception e) {
-	    log.error("Eccezione nella servlet actuator", e);
-	}
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(tmpStreamWriter, HealthActuatorBean.statusUp());
+        } catch (Exception e) {
+            log.error("Eccezione nella servlet actuator", e);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-	    throws ServletException, IOException {
-	response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            throws ServletException, IOException {
+        response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
     }
 }

@@ -71,158 +71,158 @@ public class MonVLisDocNonVersIam implements Serializable {
 
     @Column(name = "CD_ERR_LAST")
     public String getCdErrLast() {
-	return this.cdErrLast;
+        return this.cdErrLast;
     }
 
     public void setCdErrLast(String cdErrLast) {
-	this.cdErrLast = cdErrLast;
+        this.cdErrLast = cdErrLast;
     }
 
     @Column(name = "CL_ERR_LAST")
     public String getClErrLast() {
-	return this.clErrLast;
+        return this.clErrLast;
     }
 
     public void setClErrLast(String clErrLast) {
-	this.clErrLast = clErrLast;
+        this.clErrLast = clErrLast;
     }
 
     @Column(name = "DS_ERR_LAST")
     public String getDsErrLast() {
-	return this.dsErrLast;
+        return this.dsErrLast;
     }
 
     public void setDsErrLast(String dsErrLast) {
-	this.dsErrLast = dsErrLast;
+        this.dsErrLast = dsErrLast;
     }
 
     @Column(name = "DS_KEY_ORD")
     public String getDsKeyOrd() {
-	return this.dsKeyOrd;
+        return this.dsKeyOrd;
     }
 
     public void setDsKeyOrd(String dsKeyOrd) {
-	this.dsKeyOrd = dsKeyOrd;
+        this.dsKeyOrd = dsKeyOrd;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_FIRST_SES_ERR")
     public Date getDtFirstSesErr() {
-	return this.dtFirstSesErr;
+        return this.dtFirstSesErr;
     }
 
     public void setDtFirstSesErr(Date dtFirstSesErr) {
-	this.dtFirstSesErr = dtFirstSesErr;
+        this.dtFirstSesErr = dtFirstSesErr;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_LAST_SES_ERR")
     public Date getDtLastSesErr() {
-	return this.dtLastSesErr;
+        return this.dtLastSesErr;
     }
 
     public void setDtLastSesErr(Date dtLastSesErr) {
-	this.dtLastSesErr = dtLastSesErr;
+        this.dtLastSesErr = dtLastSesErr;
     }
 
     @Column(name = "FL_DIVERSI_ERR", columnDefinition = "char(1)")
     public String getFlDiversiErr() {
-	return this.flDiversiErr;
+        return this.flDiversiErr;
     }
 
     public void setFlDiversiErr(String flDiversiErr) {
-	this.flDiversiErr = flDiversiErr;
+        this.flDiversiErr = flDiversiErr;
     }
 
     @Column(name = "FL_NON_RISOLUB", columnDefinition = "char(1)")
     public String getFlNonRisolub() {
-	return this.flNonRisolub;
+        return this.flNonRisolub;
     }
 
     public void setFlNonRisolub(String flNonRisolub) {
-	this.flNonRisolub = flNonRisolub;
+        this.flNonRisolub = flNonRisolub;
     }
 
     @Column(name = "FL_VERIF", columnDefinition = "char(1)")
     public String getFlVerif() {
-	return this.flVerif;
+        return this.flVerif;
     }
 
     public void setFlVerif(String flVerif) {
-	this.flVerif = flVerif;
+        this.flVerif = flVerif;
     }
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-	return this.idAmbiente;
+        return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	this.idAmbiente = idAmbiente;
+        this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_DOC_NON_VERS")
     public BigDecimal getIdDocNonVers() {
-	return this.idDocNonVers;
+        return this.idDocNonVers;
     }
 
     public void setIdDocNonVers(BigDecimal idDocNonVers) {
-	this.idDocNonVers = idDocNonVers;
+        this.idDocNonVers = idDocNonVers;
     }
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-	return this.idEnte;
+        return this.idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	this.idEnte = idEnte;
+        this.idEnte = idEnte;
     }
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return this.idUserIam;
+        return this.idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-	return this.nmAmbiente;
+        return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	this.nmAmbiente = nmAmbiente;
+        this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-	return this.nmEnte;
+        return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-	return this.nmStrut;
+        return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
     private MonVLisDocNonVersIamId monVLisDocNonVersIamId;
 
     @EmbeddedId()
     public MonVLisDocNonVersIamId getMonVLisDocNonVersIamId() {
-	return monVLisDocNonVersIamId;
+        return monVLisDocNonVersIamId;
     }
 
     public void setMonVLisDocNonVersIamId(MonVLisDocNonVersIamId monVLisDocNonVersIamId) {
-	this.monVLisDocNonVersIamId = monVLisDocNonVersIamId;
+        this.monVLisDocNonVersIamId = monVLisDocNonVersIamId;
     }
 }

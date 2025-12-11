@@ -27,51 +27,51 @@ public class MonVChkFascKoByStrutId implements Serializable {
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return idStrut;
+        return idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     private BigDecimal idUserIam;
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return idUserIam;
+        return idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 79 * hash + Objects.hashCode(this.idStrut);
-	hash = 79 * hash + Objects.hashCode(this.idUserIam);
-	return hash;
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.idStrut);
+        hash = 79 * hash + Objects.hashCode(this.idUserIam);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final MonVChkFascKoByStrutId other = (MonVChkFascKoByStrutId) obj;
-	if (!Objects.equals(this.idStrut, other.idStrut)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idUserIam, other.idUserIam)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MonVChkFascKoByStrutId other = (MonVChkFascKoByStrutId) obj;
+        if (!Objects.equals(this.idStrut, other.idStrut)) {
+            return false;
+        }
+        if (!Objects.equals(this.idUserIam, other.idUserIam)) {
+            return false;
+        }
+        return true;
     }
 
 }

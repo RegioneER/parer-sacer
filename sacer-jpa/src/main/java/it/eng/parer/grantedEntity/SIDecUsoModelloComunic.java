@@ -43,66 +43,66 @@ public class SIDecUsoModelloComunic implements Serializable {
     }
 
     public SIDecUsoModelloComunic(Long idUsoModelloComunic) {
-	this.idUsoModelloComunic = idUsoModelloComunic;
+        this.idUsoModelloComunic = idUsoModelloComunic;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "ID_MODELLO_COMUNIC", nullable = false)
     public SIDecModelloComunic getSiDecModelloComunic() {
-	return siDecModelloComunic;
+        return siDecModelloComunic;
     }
 
     public void setSiDecModelloComunic(SIDecModelloComunic siDecModelloComunic) {
-	this.siDecModelloComunic = siDecModelloComunic;
+        this.siDecModelloComunic = siDecModelloComunic;
     }
 
     @Id
     @Column(name = "ID_USO_MODELLO_COMUNIC")
     public Long getIdUsoModelloComunic() {
-	return idUsoModelloComunic;
+        return idUsoModelloComunic;
     }
 
     public void setIdUsoModelloComunic(Long idUsoModelloComunic) {
-	this.idUsoModelloComunic = idUsoModelloComunic;
+        this.idUsoModelloComunic = idUsoModelloComunic;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "ID_AMBIENTE_ENTE_CONVENZ")
     public SIOrgAmbienteEnteConvenz getSiOrgAmbienteEnteConvenz() {
-	return siOrgAmbienteEnteConvenz;
+        return siOrgAmbienteEnteConvenz;
     }
 
     public void setSiOrgAmbienteEnteConvenz(SIOrgAmbienteEnteConvenz siOrgAmbienteEnteConvenz) {
-	this.siOrgAmbienteEnteConvenz = siOrgAmbienteEnteConvenz;
+        this.siOrgAmbienteEnteConvenz = siOrgAmbienteEnteConvenz;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "ID_ENTE_CONVENZ")
     public SIOrgEnteSiam getSiOrgEnteConvenz() {
-	return siOrgEnteConvenz;
+        return siOrgEnteConvenz;
     }
 
     public void setSiOrgEnteConvenz(SIOrgEnteSiam siOrgEnteConvenz) {
-	this.siOrgEnteConvenz = siOrgEnteConvenz;
+        this.siOrgEnteConvenz = siOrgEnteConvenz;
     }
 
     @Basic
     @Column(name = "PG_USO", columnDefinition = "number")
     public double getPgUso() {
-	return pgUso;
+        return pgUso;
     }
 
     public void setPgUso(double pgUso) {
-	this.pgUso = pgUso;
+        this.pgUso = pgUso;
     }
 
     @Basic
     @Column(name = "TIPO_USO", nullable = false, length = 30)
     public String getTipoUso() {
-	return tipoUso;
+        return tipoUso;
     }
 
     public void setTipoUso(String tipoUso) {
-	this.tipoUso = tipoUso;
+        this.tipoUso = tipoUso;
     }
 }

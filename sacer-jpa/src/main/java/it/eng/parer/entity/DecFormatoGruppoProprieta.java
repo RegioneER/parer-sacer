@@ -49,29 +49,29 @@ public class DecFormatoGruppoProprieta implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DEC_FORMATO_GRUPPO_PROPRIETA_GENERATOR")
     @Column(name = "ID_FORMATO_GRUPPO_PROPRIETA")
     public Long getIdFormatoGruppoProprieta() {
-	return idFormatoGruppoProprieta;
+        return idFormatoGruppoProprieta;
     }
 
     public void setIdFormatoGruppoProprieta(Long idFormatoGruppoProprieta) {
-	this.idFormatoGruppoProprieta = idFormatoGruppoProprieta;
+        this.idFormatoGruppoProprieta = idFormatoGruppoProprieta;
     }
 
     @Column(name = "NM_FORMATO_GRUPPO_PROPRIETA")
     public String getNmFormatoGruppoProprieta() {
-	return nmFormatoGruppoProprieta;
+        return nmFormatoGruppoProprieta;
     }
 
     public void setNmFormatoGruppoProprieta(String nmFormatoGruppoProprieta) {
-	this.nmFormatoGruppoProprieta = nmFormatoGruppoProprieta;
+        this.nmFormatoGruppoProprieta = nmFormatoGruppoProprieta;
     }
 
     @OneToMany(mappedBy = "decFormatoGruppoProprieta")
     public List<DecFormatoProprieta> getDecFormatoProprietas() {
-	return decFormatoProprietas;
+        return decFormatoProprietas;
     }
 
     public void setDecFormatoProprietas(List<DecFormatoProprieta> decFormatoProprietas) {
-	this.decFormatoProprietas = decFormatoProprietas;
+        this.decFormatoProprietas = decFormatoProprietas;
     }
 
 }

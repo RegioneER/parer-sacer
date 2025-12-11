@@ -47,29 +47,29 @@ public class VrsErrSessioneVersTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_ERR_SESSIONE_VERS,
-		new ColumnDescriptor(COL_ID_ERR_SESSIONE_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_ID_DATI_SESSIONE_VERS,
-		new ColumnDescriptor(COL_ID_DATI_SESSIONE_VERS, Types.DECIMAL, 22, false));
-	map.put(COL_PG_ERR_SESSIONE_VERS,
-		new ColumnDescriptor(COL_PG_ERR_SESSIONE_VERS, Types.DECIMAL, 22, false));
-	map.put(COL_TI_ERR, new ColumnDescriptor(COL_TI_ERR, Types.VARCHAR, 20, false));
-	map.put(COL_DS_ERR, new ColumnDescriptor(COL_DS_ERR, Types.VARCHAR, 1024, false));
-	map.put(COL_CD_ERR, new ColumnDescriptor(COL_CD_ERR, Types.VARCHAR, 20, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_FL_ERR_PRINC, new ColumnDescriptor(COL_FL_ERR_PRINC, Types.VARCHAR, 1, false));
+        map.put(COL_ID_ERR_SESSIONE_VERS,
+                new ColumnDescriptor(COL_ID_ERR_SESSIONE_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_ID_DATI_SESSIONE_VERS,
+                new ColumnDescriptor(COL_ID_DATI_SESSIONE_VERS, Types.DECIMAL, 22, false));
+        map.put(COL_PG_ERR_SESSIONE_VERS,
+                new ColumnDescriptor(COL_PG_ERR_SESSIONE_VERS, Types.DECIMAL, 22, false));
+        map.put(COL_TI_ERR, new ColumnDescriptor(COL_TI_ERR, Types.VARCHAR, 20, false));
+        map.put(COL_DS_ERR, new ColumnDescriptor(COL_DS_ERR, Types.VARCHAR, 1024, false));
+        map.put(COL_CD_ERR, new ColumnDescriptor(COL_CD_ERR, Types.VARCHAR, 20, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_FL_ERR_PRINC, new ColumnDescriptor(COL_FL_ERR_PRINC, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -29,92 +29,92 @@ import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.HelperTest;
 
 public class ElenchiIndiciAipFascSignatureHelperTest
-	extends HelperTest<ElenchiIndiciAipFascSignatureHelper> {
+        extends HelperTest<ElenchiIndiciAipFascSignatureHelper> {
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		ElenchiIndiciAipFascSignatureHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			ElenchiIndiciAipFascSignatureHelperTest.class,
-			ElenchiIndiciAipFascSignatureHelper.class, SigningHelper.class,
-			ConfigurationHelper.class));
+        return HelperTest.createEnterpriseArchive(
+                ElenchiIndiciAipFascSignatureHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        ElenchiIndiciAipFascSignatureHelperTest.class,
+                        ElenchiIndiciAipFascSignatureHelper.class, SigningHelper.class,
+                        ConfigurationHelper.class));
     }
 
     @Test
     void createSessioneFirma_queryIsOk() {
-	Long userId = 5000L;// admin_generale
-	helper.createSessioneFirma(userId);
-	assertTrue(true);
+        Long userId = 5000L;// admin_generale
+        helper.createSessioneFirma(userId);
+        assertTrue(true);
     }
 
     private HsmSessioneFirma aHsmSessioneFirma() {
-	HsmSessioneFirma session = new HsmSessioneFirma();
-	session.setIdSessioneFirma(aLong());
-	return session;
+        HsmSessioneFirma session = new HsmSessioneFirma();
+        session.setIdSessioneFirma(aLong());
+        return session;
     }
 
     @Test
     void getActiveSessionsByUser_IamUser_queryIsOk() {
-	IamUser user = myIamUser();
-	helper.getActiveSessionsByUser(user);
-	assertTrue(true);
+        IamUser user = myIamUser();
+        helper.getActiveSessionsByUser(user);
+        assertTrue(true);
     }
 
     private IamUser myIamUser() {
-	IamUser user = new IamUser();
-	user.setIdUserIam(aLong());
-	return user;
+        IamUser user = new IamUser();
+        user.setIdUserIam(aLong());
+        return user;
     }
 
     @Test
     void getActiveSessionsByUser_long_queryIsOk() {
-	long userId = aLong();
-	helper.getActiveSessionsByUser(userId);
-	assertTrue(true);
+        long userId = aLong();
+        helper.getActiveSessionsByUser(userId);
+        assertTrue(true);
     }
 
     @Test
     void getBlockedSessionsByUser_IamUser_queryIsOk() {
-	IamUser user = myIamUser();
-	helper.getBlockedSessionsByUser(user);
-	assertTrue(true);
+        IamUser user = myIamUser();
+        helper.getBlockedSessionsByUser(user);
+        assertTrue(true);
     }
 
     @Test
     void getBlockedSessionsByUser_long_queryIsOk() {
-	long userId = aLong();
-	helper.getBlockedSessionsByUser(userId);
-	assertTrue(true);
+        long userId = aLong();
+        helper.getBlockedSessionsByUser(userId);
+        assertTrue(true);
     }
 
     @Test
     void isAllFileSigned_HsmSessioneFirma_queryIsOk() {
-	HsmSessioneFirma session = aHsmSessioneFirma();
-	helper.isAllFileSigned(session);
-	assertTrue(true);
+        HsmSessioneFirma session = aHsmSessioneFirma();
+        helper.isAllFileSigned(session);
+        assertTrue(true);
     }
 
     @Test
     void isAllFileSigned_long_queryIsOk() {
-	long sessionId = aLong();
-	helper.isAllFileSigned(sessionId);
-	assertTrue(true);
+        long sessionId = aLong();
+        helper.isAllFileSigned(sessionId);
+        assertTrue(true);
     }
 
     @Test
     void findElencoFascSes_HsmSessioneFirma_long_queryIsOk() {
-	HsmSessioneFirma session = aHsmSessioneFirma();
-	long idElenco = aLong();
-	helper.findElencoFascSes(session, idElenco);
-	assertTrue(true);
+        HsmSessioneFirma session = aHsmSessioneFirma();
+        long idElenco = aLong();
+        helper.findElencoFascSes(session, idElenco);
+        assertTrue(true);
     }
 
     @Test
     void findElencoFascSes_long_long_queryIsOk() {
-	long sessionId = aLong();
-	long idElenco = aLong();
-	helper.findElencoFascSes(sessionId, idElenco);
-	assertTrue(true);
+        long sessionId = aLong();
+        long idElenco = aLong();
+        helper.findElencoFascSes(sessionId, idElenco);
+        assertTrue(true);
     }
 }

@@ -27,6 +27,6 @@ public final class HsmVerSerieSessioneFirma {
      * ti_esito_firma_ver_serie IN ('DA_FARE', 'IN_ERRORE', 'OK')
      */
     public enum TiEsitoFirmaVerSerie {
-	DA_FARE, IN_ERRORE, OK
+        DA_FARE, IN_ERRORE, OK
     }
 }

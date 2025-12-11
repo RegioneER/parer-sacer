@@ -36,111 +36,111 @@ public class AroContenutoCompRowBean extends BaseRow implements JEEBaseRowInterf
     public static AroContenutoCompTableDescriptor TABLE_DESCRIPTOR = new AroContenutoCompTableDescriptor();
 
     public AroContenutoCompRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdContenComp() {
-	return getBigDecimal("id_conten_comp");
+        return getBigDecimal("id_conten_comp");
     }
 
     public void setIdContenComp(BigDecimal idContenComp) {
-	setObject("id_conten_comp", idContenComp);
+        setObject("id_conten_comp", idContenComp);
     }
 
     public BigDecimal getIdCompStrutDoc() {
-	return getBigDecimal("id_comp_strut_doc");
+        return getBigDecimal("id_comp_strut_doc");
     }
 
     public void setIdCompStrutDoc(BigDecimal idCompStrutDoc) {
-	setObject("id_comp_strut_doc", idCompStrutDoc);
+        setObject("id_comp_strut_doc", idCompStrutDoc);
     }
 
     // FIXME: in pratica gestisce i Blob come stringhe, per i blob veri e' da implementare
     public String getBlContenComp() {
-	return getString("bl_conten_comp");
+        return getString("bl_conten_comp");
     }
 
     public void setBlContenComp(String blContenComp) {
-	setObject("bl_conten_comp", blContenComp);
+        setObject("bl_conten_comp", blContenComp);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return getBigDecimal("aa_key_unita_doc");
+        return getBigDecimal("aa_key_unita_doc");
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	setObject("aa_key_unita_doc", aaKeyUnitaDoc);
+        setObject("aa_key_unita_doc", aaKeyUnitaDoc);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroContenutoComp entity = (AroContenutoComp) obj;
-	this.setIdContenComp(entity.getIdContenComp() == null ? null
-		: BigDecimal.valueOf(entity.getIdContenComp()));
+        AroContenutoComp entity = (AroContenutoComp) obj;
+        this.setIdContenComp(entity.getIdContenComp() == null ? null
+                : BigDecimal.valueOf(entity.getIdContenComp()));
 
-	if (entity.getAroCompDoc() != null) {
-	    this.setIdCompStrutDoc(new BigDecimal(entity.getAroCompDoc().getIdCompDoc()));
-	}
+        if (entity.getAroCompDoc() != null) {
+            this.setIdCompStrutDoc(new BigDecimal(entity.getAroCompDoc().getIdCompDoc()));
+        }
 
-	this.setBlContenComp(new String(entity.getBlContenComp()));
-	this.setIdStrut(entity.getIdStrut());
-	this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
+        this.setBlContenComp(new String(entity.getBlContenComp()));
+        this.setIdStrut(entity.getIdStrut());
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
     }
 
     @Override
     public AroContenutoComp rowBeanToEntity() {
-	AroContenutoComp entity = new AroContenutoComp();
-	if (this.getIdContenComp() != null) {
-	    entity.setIdContenComp(this.getIdContenComp().longValue());
-	}
-	if (this.getIdCompStrutDoc() != null) {
-	    if (entity.getAroCompDoc() == null) {
-		entity.setAroCompDoc(new AroCompDoc());
-	    }
-	    entity.getAroCompDoc().setIdCompDoc(this.getIdCompStrutDoc().longValue());
-	}
-	entity.setBlContenComp(this.getBlContenComp().getBytes());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
-	return entity;
+        AroContenutoComp entity = new AroContenutoComp();
+        if (this.getIdContenComp() != null) {
+            entity.setIdContenComp(this.getIdContenComp().longValue());
+        }
+        if (this.getIdCompStrutDoc() != null) {
+            if (entity.getAroCompDoc() == null) {
+                entity.setAroCompDoc(new AroCompDoc());
+            }
+            entity.getAroCompDoc().setIdCompDoc(this.getIdCompStrutDoc().longValue());
+        }
+        entity.setBlContenComp(this.getBlContenComp().getBytes());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

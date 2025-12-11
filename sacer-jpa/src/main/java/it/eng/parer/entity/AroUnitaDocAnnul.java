@@ -65,62 +65,62 @@ public class AroUnitaDocAnnul implements Serializable {
     @Id
     @Column(name = "ID_UNITA_DOC_ANNUL")
     @GenericGenerator(name = "SARO_UNITA_DOC_ANNUL_ID_UNITA_DOC_ANNUL_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_UNITA_DOC_ANNUL"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_UNITA_DOC_ANNUL"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_UNITA_DOC_ANNUL_ID_UNITA_DOC_ANNUL_GENERATOR")
     public Long getIdUnitaDocAnnul() {
-	return this.idUnitaDocAnnul;
+        return this.idUnitaDocAnnul;
     }
 
     public void setIdUnitaDocAnnul(Long idUnitaDocAnnul) {
-	this.idUnitaDocAnnul = idUnitaDocAnnul;
+        this.idUnitaDocAnnul = idUnitaDocAnnul;
     }
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC")
     public String getCdKeyUnitaDoc() {
-	return this.cdKeyUnitaDoc;
+        return this.cdKeyUnitaDoc;
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     @Column(name = "CD_REGISTRO_KEY_UNITA_DOC")
     public String getCdRegistroKeyUnitaDoc() {
-	return this.cdRegistroKeyUnitaDoc;
+        return this.cdRegistroKeyUnitaDoc;
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ANNUL")
     public Date getDtAnnul() {
-	return this.dtAnnul;
+        return this.dtAnnul;
     }
 
     public void setDtAnnul(Date dtAnnul) {
-	this.dtAnnul = dtAnnul;
+        this.dtAnnul = dtAnnul;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     public OrgStrut getOrgStrut() {
-	return this.orgStrut;
+        return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-	this.orgStrut = orgStrut;
+        this.orgStrut = orgStrut;
     }
 
 }

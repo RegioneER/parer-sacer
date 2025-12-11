@@ -37,11 +37,11 @@ public class SerVSelUdNovers implements Serializable {
 
     @EmbeddedId
     public SerVSelUdNoversId getSerVSelUdNoversId() {
-	return serVSelUdNovers;
+        return serVSelUdNovers;
     }
 
     public void setSerVSelUdNoversId(SerVSelUdNoversId serVSelUdNovers) {
-	this.serVSelUdNovers = serVSelUdNovers;
+        this.serVSelUdNovers = serVSelUdNovers;
     }
 
     public SerVSelUdNovers() {/* Hibernate */
@@ -49,20 +49,20 @@ public class SerVSelUdNovers implements Serializable {
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "ID_SERIE")
     public BigDecimal getIdSerie() {
-	return this.idSerie;
+        return this.idSerie;
     }
 
     public void setIdSerie(BigDecimal idSerie) {
-	this.idSerie = idSerie;
+        this.idSerie = idSerie;
     }
 
 }

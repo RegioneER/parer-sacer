@@ -31,107 +31,107 @@ public class AroVChkStatoCorRichSoftDeleteRowBean extends BaseRow implements JEE
     public static AroVChkStatoCorRichSoftDeleteTableDescriptor TABLE_DESCRIPTOR = new AroVChkStatoCorRichSoftDeleteTableDescriptor();
 
     public AroVChkStatoCorRichSoftDeleteRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdRichiestaSacer() {
-	return getBigDecimal("id_richiesta_sacer");
+        return getBigDecimal("id_richiesta_sacer");
     }
 
     public void setIdRichiestaSacer(BigDecimal idRichiestaSacer) {
-	setObject("id_richiesta_sacer", idRichiestaSacer);
+        setObject("id_richiesta_sacer", idRichiestaSacer);
     }
 
     public String getTiItemRichSoftDelete() {
-	return getString("ti_item_rich_soft_delete");
+        return getString("ti_item_rich_soft_delete");
     }
 
     public void setTiItemRichSoftDelete(String tiItemRichSoftDelete) {
-	setObject("ti_item_rich_soft_delete", tiItemRichSoftDelete);
+        setObject("ti_item_rich_soft_delete", tiItemRichSoftDelete);
     }
 
     public String getFlRichAcquisizioneKo() {
-	return getString("fl_rich_acquisizione_ko");
+        return getString("fl_rich_acquisizione_ko");
     }
 
     public void setFlRichAcquisizioneKo(String flRichAcquisizioneKo) {
-	setObject("fl_rich_acquisizione_ko", flRichAcquisizioneKo);
+        setObject("fl_rich_acquisizione_ko", flRichAcquisizioneKo);
     }
 
     public String getFlRichErrore() {
-	return getString("fl_rich_errore");
+        return getString("fl_rich_errore");
     }
 
     public void setFlRichErrore(String flRichErrore) {
-	setObject("fl_rich_errore", flRichErrore);
+        setObject("fl_rich_errore", flRichErrore);
     }
 
     public String getFlRichEvasaOk() {
-	return getString("fl_rich_evasa_ok");
+        return getString("fl_rich_evasa_ok");
     }
 
     public void setFlRichEvasaOk(String flRichEvasaOk) {
-	setObject("fl_rich_evasa_ok", flRichEvasaOk);
+        setObject("fl_rich_evasa_ok", flRichEvasaOk);
     }
 
     public String getFlRichInElaborazione() {
-	return getString("fl_rich_in_elaborazione");
+        return getString("fl_rich_in_elaborazione");
     }
 
     public void setFlRichInElaborazione(String flRichInElaborazione) {
-	setObject("fl_rich_in_elaborazione", flRichInElaborazione);
+        setObject("fl_rich_in_elaborazione", flRichInElaborazione);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVChkStatoCorRichSoftDelete entity = (AroVChkStatoCorRichSoftDelete) obj;
-	this.setIdRichiestaSacer(entity.getIdRichiestaSacer());
-	this.setFlRichAcquisizioneKo(entity.getFlRichAcquisizioneKo());
-	this.setFlRichErrore(entity.getFlRichErrore());
-	this.setFlRichEvasaOk(entity.getFlRichEvasaOk());
-	this.setFlRichInElaborazione(entity.getFlRichInElaborazione());
-	this.setTiItemRichSoftDelete(entity.getTiItemRichSoftDelete());
+        AroVChkStatoCorRichSoftDelete entity = (AroVChkStatoCorRichSoftDelete) obj;
+        this.setIdRichiestaSacer(entity.getIdRichiestaSacer());
+        this.setFlRichAcquisizioneKo(entity.getFlRichAcquisizioneKo());
+        this.setFlRichErrore(entity.getFlRichErrore());
+        this.setFlRichEvasaOk(entity.getFlRichEvasaOk());
+        this.setFlRichInElaborazione(entity.getFlRichInElaborazione());
+        this.setTiItemRichSoftDelete(entity.getTiItemRichSoftDelete());
     }
 
     @Override
     public AroVChkStatoCorRichSoftDelete rowBeanToEntity() {
-	AroVChkStatoCorRichSoftDelete entity = new AroVChkStatoCorRichSoftDelete();
-	entity.setIdRichiestaSacer(this.getIdRichiestaSacer());
-	entity.setFlRichAcquisizioneKo(this.getFlRichAcquisizioneKo());
-	entity.setFlRichErrore(this.getFlRichErrore());
-	entity.setFlRichEvasaOk(this.getFlRichEvasaOk());
-	entity.setFlRichInElaborazione(this.getFlRichInElaborazione());
-	entity.setTiItemRichSoftDelete(this.getTiItemRichSoftDelete());
-	return entity;
+        AroVChkStatoCorRichSoftDelete entity = new AroVChkStatoCorRichSoftDelete();
+        entity.setIdRichiestaSacer(this.getIdRichiestaSacer());
+        entity.setFlRichAcquisizioneKo(this.getFlRichAcquisizioneKo());
+        entity.setFlRichErrore(this.getFlRichErrore());
+        entity.setFlRichEvasaOk(this.getFlRichEvasaOk());
+        entity.setFlRichInElaborazione(this.getFlRichInElaborazione());
+        entity.setTiItemRichSoftDelete(this.getTiItemRichSoftDelete());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

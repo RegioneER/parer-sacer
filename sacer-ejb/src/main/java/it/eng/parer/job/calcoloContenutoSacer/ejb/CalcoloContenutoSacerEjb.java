@@ -40,7 +40,7 @@ import it.eng.parer.web.util.Constants;
 @Stateless(mappedName = "CalcoloContenutoSacerEjb")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class CalcoloContenutoSacerEjb {
 
     Logger log = LoggerFactory.getLogger(CalcoloContenutoSacerEjb.class);
@@ -52,44 +52,44 @@ public class CalcoloContenutoSacerEjb {
     private SacerLogEjb sacerLogEjb;
 
     public void calcolaContenutoSacer() throws ParerInternalError {
-	/* Ricavo l'intervallo di giorni da elaborare */
-	Calendar start = ccsHelper.getDataInizioCalcolo();
-	Calendar end = Calendar.getInstance();
-	end.add(Calendar.DATE, -1);
-	SimpleDateFormat formattaData = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
-	log.info("Calcolo Contenuto Sacer - Intervallo di date da elaborare: "
-		+ formattaData.format(start.getTime()) + " e "
-		+ formattaData.format(end.getTime()));
+        /* Ricavo l'intervallo di giorni da elaborare */
+        Calendar start = ccsHelper.getDataInizioCalcolo();
+        Calendar end = Calendar.getInstance();
+        end.add(Calendar.DATE, -1);
+        SimpleDateFormat formattaData = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
+        log.info("Calcolo Contenuto Sacer - Intervallo di date da elaborare: "
+                + formattaData.format(start.getTime()) + " e "
+                + formattaData.format(end.getTime()));
 
-	/* Ciclo sui giorni eseguendo il calcolo per ogni giorno */
-	while (!start.after(end)) {
-	    Date targetDay = start.getTime();
-	    log.info("Calcolo Contenuto Sacer - Inserimento totali del giorno "
-		    + formattaData.format(targetDay));
-	    try {
-		// Inserisco i totali
-		ccsHelper.insertTotaliPerGiorno(targetDay);
-	    } catch (Exception ex) {
-		String errore = "Calcolo Contenuto Sacer - Errore durante il calcolo per il giorno: "
-			+ formattaData.format(targetDay);
-		// log.fatal(errore, ex);
-		log.error(errore, ex);
-		throw new ParerInternalError(ParerErrorSeverity.ERROR, errore, ex);
-	    }
-	    start.add(Calendar.DATE, 1);
-	}
+        /* Ciclo sui giorni eseguendo il calcolo per ogni giorno */
+        while (!start.after(end)) {
+            Date targetDay = start.getTime();
+            log.info("Calcolo Contenuto Sacer - Inserimento totali del giorno "
+                    + formattaData.format(targetDay));
+            try {
+                // Inserisco i totali
+                ccsHelper.insertTotaliPerGiorno(targetDay);
+            } catch (Exception ex) {
+                String errore = "Calcolo Contenuto Sacer - Errore durante il calcolo per il giorno: "
+                        + formattaData.format(targetDay);
+                // log.fatal(errore, ex);
+                log.error(errore, ex);
+                throw new ParerInternalError(ParerErrorSeverity.ERROR, errore, ex);
+            }
+            start.add(Calendar.DATE, 1);
+        }
 
-	/*
-	 * Codice aggiuntivo per il logging su un oggetto di IAM...
-	 */
-	LogParam param = new LogParam("SACER_IAM", "Job Calcolo contenuto Sacer",
-		"CALCOLO_CONTENUTO_SACER", "Set data erogazione servizi");
-	param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
-	ccsHelper.setDtErog(param);
+        /*
+         * Codice aggiuntivo per il logging su un oggetto di IAM...
+         */
+        LogParam param = new LogParam("SACER_IAM", "Job Calcolo contenuto Sacer",
+                "CALCOLO_CONTENUTO_SACER", "Set data erogazione servizi");
+        param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+        ccsHelper.setDtErog(param);
 
-	/* Scrivo in LogJob la fine corretta dell'esecuzione del job di Calcolo Contenuto Sacer */
-	jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CALCOLO_CONTENUTO_SACER.name(),
-		JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
-	log.info("Calcolo Contenuto Sacer - Esecuzione job terminata con successo!");
+        /* Scrivo in LogJob la fine corretta dell'esecuzione del job di Calcolo Contenuto Sacer */
+        jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CALCOLO_CONTENUTO_SACER.name(),
+                JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
+        log.info("Calcolo Contenuto Sacer - Esecuzione job terminata con successo!");
     }
 }

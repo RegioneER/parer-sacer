@@ -36,101 +36,101 @@ public class DecOutSelUdRowBean extends BaseRow implements JEEBaseRowInterface {
     public static DecOutSelUdTableDescriptor TABLE_DESCRIPTOR = new DecOutSelUdTableDescriptor();
 
     public DecOutSelUdRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdOutSelUd() {
-	return getBigDecimal("id_out_sel_ud");
+        return getBigDecimal("id_out_sel_ud");
     }
 
     public void setIdOutSelUd(BigDecimal idOutSelUd) {
-	setObject("id_out_sel_ud", idOutSelUd);
+        setObject("id_out_sel_ud", idOutSelUd);
     }
 
     public BigDecimal getIdTipoSerieUd() {
-	return getBigDecimal("id_tipo_serie_ud");
+        return getBigDecimal("id_tipo_serie_ud");
     }
 
     public void setIdTipoSerieUd(BigDecimal idTipoSerieUd) {
-	setObject("id_tipo_serie_ud", idTipoSerieUd);
+        setObject("id_tipo_serie_ud", idTipoSerieUd);
     }
 
     public String getTiOut() {
-	return getString("ti_out");
+        return getString("ti_out");
     }
 
     public void setTiOut(String tiOut) {
-	setObject("ti_out", tiOut);
+        setObject("ti_out", tiOut);
     }
 
     public String getDlFormatoOut() {
-	return getString("dl_formato_out");
+        return getString("dl_formato_out");
     }
 
     public void setDlFormatoOut(String dlFormatoOut) {
-	setObject("dl_formato_out", dlFormatoOut);
+        setObject("dl_formato_out", dlFormatoOut);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecOutSelUd entity = (DecOutSelUd) obj;
+        DecOutSelUd entity = (DecOutSelUd) obj;
 
-	this.setIdOutSelUd(
-		entity.getIdOutSelUd() == null ? null : BigDecimal.valueOf(entity.getIdOutSelUd()));
+        this.setIdOutSelUd(
+                entity.getIdOutSelUd() == null ? null : BigDecimal.valueOf(entity.getIdOutSelUd()));
 
-	if (entity.getDecTipoSerieUd() != null) {
-	    this.setIdTipoSerieUd(new BigDecimal(entity.getDecTipoSerieUd().getIdTipoSerieUd()));
-	}
+        if (entity.getDecTipoSerieUd() != null) {
+            this.setIdTipoSerieUd(new BigDecimal(entity.getDecTipoSerieUd().getIdTipoSerieUd()));
+        }
 
-	this.setTiOut(entity.getTiOut());
-	this.setDlFormatoOut(entity.getDlFormatoOut());
+        this.setTiOut(entity.getTiOut());
+        this.setDlFormatoOut(entity.getDlFormatoOut());
     }
 
     @Override
     public DecOutSelUd rowBeanToEntity() {
-	DecOutSelUd entity = new DecOutSelUd();
-	if (this.getIdOutSelUd() != null) {
-	    entity.setIdOutSelUd(this.getIdOutSelUd().longValue());
-	}
-	if (this.getIdTipoSerieUd() != null) {
-	    if (entity.getDecTipoSerieUd() == null) {
-		entity.setDecTipoSerieUd(new DecTipoSerieUd());
-	    }
-	    entity.getDecTipoSerieUd().setIdTipoSerieUd(this.getIdTipoSerieUd().longValue());
-	}
-	entity.setTiOut(this.getTiOut());
-	entity.setDlFormatoOut(this.getDlFormatoOut());
-	return entity;
+        DecOutSelUd entity = new DecOutSelUd();
+        if (this.getIdOutSelUd() != null) {
+            entity.setIdOutSelUd(this.getIdOutSelUd().longValue());
+        }
+        if (this.getIdTipoSerieUd() != null) {
+            if (entity.getDecTipoSerieUd() == null) {
+                entity.setDecTipoSerieUd(new DecTipoSerieUd());
+            }
+            entity.getDecTipoSerieUd().setIdTipoSerieUd(this.getIdTipoSerieUd().longValue());
+        }
+        entity.setTiOut(this.getTiOut());
+        entity.setDlFormatoOut(this.getDlFormatoOut());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

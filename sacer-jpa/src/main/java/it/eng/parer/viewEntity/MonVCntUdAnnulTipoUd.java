@@ -40,20 +40,20 @@ public class MonVCntUdAnnulTipoUd implements Serializable {
 
     @Column(name = "NI_ANNUL")
     public BigDecimal getNiAnnul() {
-	return this.niAnnul;
+        return this.niAnnul;
     }
 
     public void setNiAnnul(BigDecimal niAnnul) {
-	this.niAnnul = niAnnul;
+        this.niAnnul = niAnnul;
     }
 
     @EmbeddedId
     public MonVCntUdAnnulTipoUdId getMonVCntUdAnnulTipoUdId() {
-	return monVCntUdAnnulTipoUdId;
+        return monVCntUdAnnulTipoUdId;
     }
 
     public void setMonVCntUdAnnulTipoUdId(MonVCntUdAnnulTipoUdId monVCntUdAnnulTipoUdId) {
-	this.monVCntUdAnnulTipoUdId = monVCntUdAnnulTipoUdId;
+        this.monVCntUdAnnulTipoUdId = monVCntUdAnnulTipoUdId;
     }
 
 }

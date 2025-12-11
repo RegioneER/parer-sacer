@@ -42,39 +42,39 @@ public class DecVTreeCategTipoUd implements Serializable {
 
     @Column(name = "CD_CATEG_TIPO_UNITA_DOC")
     public String getCdCategTipoUnitaDoc() {
-	return this.cdCategTipoUnitaDoc;
+        return this.cdCategTipoUnitaDoc;
     }
 
     public void setCdCategTipoUnitaDoc(String cdCategTipoUnitaDoc) {
-	this.cdCategTipoUnitaDoc = cdCategTipoUnitaDoc;
+        this.cdCategTipoUnitaDoc = cdCategTipoUnitaDoc;
     }
 
     @Column(name = "DL_ID_CATEG_TIPO_UNITA_DOC")
     public String getDlIdCategTipoUnitaDoc() {
-	return this.dlIdCategTipoUnitaDoc;
+        return this.dlIdCategTipoUnitaDoc;
     }
 
     public void setDlIdCategTipoUnitaDoc(String dlIdCategTipoUnitaDoc) {
-	this.dlIdCategTipoUnitaDoc = dlIdCategTipoUnitaDoc;
+        this.dlIdCategTipoUnitaDoc = dlIdCategTipoUnitaDoc;
     }
 
     @Column(name = "DL_PATH_CATEG_TIPO_UNITA_DOC")
     public String getDlPathCategTipoUnitaDoc() {
-	return this.dlPathCategTipoUnitaDoc;
+        return this.dlPathCategTipoUnitaDoc;
     }
 
     public void setDlPathCategTipoUnitaDoc(String dlPathCategTipoUnitaDoc) {
-	this.dlPathCategTipoUnitaDoc = dlPathCategTipoUnitaDoc;
+        this.dlPathCategTipoUnitaDoc = dlPathCategTipoUnitaDoc;
     }
 
     @Id
     @Column(name = "ID_CATEG_TIPO_UNITA_DOC")
     public BigDecimal getIdCategTipoUnitaDoc() {
-	return this.idCategTipoUnitaDoc;
+        return this.idCategTipoUnitaDoc;
     }
 
     public void setIdCategTipoUnitaDoc(BigDecimal idCategTipoUnitaDoc) {
-	this.idCategTipoUnitaDoc = idCategTipoUnitaDoc;
+        this.idCategTipoUnitaDoc = idCategTipoUnitaDoc;
     }
 
 }

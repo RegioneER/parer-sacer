@@ -40,21 +40,21 @@ public class ElvVCountUdModif implements Serializable {
 
     @Column(name = "NI_UNITA_DOC_MOD_ELENCO")
     public BigDecimal getNiUnitaDocModElenco() {
-	return this.niUnitaDocModElenco;
+        return this.niUnitaDocModElenco;
     }
 
     public void setNiUnitaDocModElenco(BigDecimal niUnitaDocModElenco) {
-	this.niUnitaDocModElenco = niUnitaDocModElenco;
+        this.niUnitaDocModElenco = niUnitaDocModElenco;
     }
 
     @Id
     @Column(name = "ID_ELENCO_VERS")
     public BigDecimal getIdElencoVers() {
-	return this.idElencoVers;
+        return this.idElencoVers;
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-	this.idElencoVers = idElencoVers;
+        this.idElencoVers = idElencoVers;
     }
 
 }

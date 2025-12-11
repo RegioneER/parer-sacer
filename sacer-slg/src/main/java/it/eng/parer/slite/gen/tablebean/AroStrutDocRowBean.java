@@ -37,129 +37,129 @@ public class AroStrutDocRowBean extends BaseRow implements JEEBaseRowInterface {
     public static AroStrutDocTableDescriptor TABLE_DESCRIPTOR = new AroStrutDocTableDescriptor();
 
     public AroStrutDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdStrutDoc() {
-	return getBigDecimal("id_strut_doc");
+        return getBigDecimal("id_strut_doc");
     }
 
     public void setIdStrutDoc(BigDecimal idStrutDoc) {
-	setObject("id_strut_doc", idStrutDoc);
+        setObject("id_strut_doc", idStrutDoc);
     }
 
     public BigDecimal getIdDoc() {
-	return getBigDecimal("id_doc");
+        return getBigDecimal("id_doc");
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	setObject("id_doc", idDoc);
+        setObject("id_doc", idDoc);
     }
 
     public BigDecimal getNiOrdStrutDoc() {
-	return getBigDecimal("ni_ord_strut_doc");
+        return getBigDecimal("ni_ord_strut_doc");
     }
 
     public void setNiOrdStrutDoc(BigDecimal niOrdStrutDoc) {
-	setObject("ni_ord_strut_doc", niOrdStrutDoc);
+        setObject("ni_ord_strut_doc", niOrdStrutDoc);
     }
 
     public BigDecimal getIdTipoStrutDoc() {
-	return getBigDecimal("id_tipo_strut_doc");
+        return getBigDecimal("id_tipo_strut_doc");
     }
 
     public void setIdTipoStrutDoc(BigDecimal idTipoStrutDoc) {
-	setObject("id_tipo_strut_doc", idTipoStrutDoc);
+        setObject("id_tipo_strut_doc", idTipoStrutDoc);
     }
 
     public String getFlStrutOrig() {
-	return getString("fl_strut_orig");
+        return getString("fl_strut_orig");
     }
 
     public void setFlStrutOrig(String flStrutOrig) {
-	setObject("fl_strut_orig", flStrutOrig);
+        setObject("fl_strut_orig", flStrutOrig);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroStrutDoc entity = (AroStrutDoc) obj;
-	this.setIdStrutDoc(
-		entity.getIdStrutDoc() == null ? null : BigDecimal.valueOf(entity.getIdStrutDoc()));
+        AroStrutDoc entity = (AroStrutDoc) obj;
+        this.setIdStrutDoc(
+                entity.getIdStrutDoc() == null ? null : BigDecimal.valueOf(entity.getIdStrutDoc()));
 
-	if (entity.getAroDoc() != null) {
-	    this.setIdDoc(new BigDecimal(entity.getAroDoc().getIdDoc()));
-	}
+        if (entity.getAroDoc() != null) {
+            this.setIdDoc(new BigDecimal(entity.getAroDoc().getIdDoc()));
+        }
 
-	this.setNiOrdStrutDoc(entity.getNiOrdStrutDoc());
+        this.setNiOrdStrutDoc(entity.getNiOrdStrutDoc());
 
-	if (entity.getDecTipoStrutDoc() != null) {
-	    this.setIdTipoStrutDoc(new BigDecimal(entity.getDecTipoStrutDoc().getIdTipoStrutDoc()));
-	}
+        if (entity.getDecTipoStrutDoc() != null) {
+            this.setIdTipoStrutDoc(new BigDecimal(entity.getDecTipoStrutDoc().getIdTipoStrutDoc()));
+        }
 
-	this.setFlStrutOrig(entity.getFlStrutOrig());
-	this.setIdStrut(entity.getIdStrut());
+        this.setFlStrutOrig(entity.getFlStrutOrig());
+        this.setIdStrut(entity.getIdStrut());
     }
 
     @Override
     public AroStrutDoc rowBeanToEntity() {
-	AroStrutDoc entity = new AroStrutDoc();
-	if (this.getIdStrutDoc() != null) {
-	    entity.setIdStrutDoc(this.getIdStrutDoc().longValue());
-	}
-	if (this.getIdDoc() != null) {
-	    if (entity.getAroDoc() == null) {
-		entity.setAroDoc(new AroDoc());
-	    }
-	    entity.getAroDoc().setIdDoc(this.getIdDoc().longValue());
-	}
-	entity.setNiOrdStrutDoc(this.getNiOrdStrutDoc());
-	if (this.getIdTipoStrutDoc() != null) {
-	    if (entity.getDecTipoStrutDoc() == null) {
-		entity.setDecTipoStrutDoc(new DecTipoStrutDoc());
-	    }
-	    entity.getDecTipoStrutDoc().setIdTipoStrutDoc(this.getIdTipoStrutDoc().longValue());
-	}
-	entity.setFlStrutOrig(this.getFlStrutOrig());
-	entity.setIdStrut(this.getIdStrut());
-	return entity;
+        AroStrutDoc entity = new AroStrutDoc();
+        if (this.getIdStrutDoc() != null) {
+            entity.setIdStrutDoc(this.getIdStrutDoc().longValue());
+        }
+        if (this.getIdDoc() != null) {
+            if (entity.getAroDoc() == null) {
+                entity.setAroDoc(new AroDoc());
+            }
+            entity.getAroDoc().setIdDoc(this.getIdDoc().longValue());
+        }
+        entity.setNiOrdStrutDoc(this.getNiOrdStrutDoc());
+        if (this.getIdTipoStrutDoc() != null) {
+            if (entity.getDecTipoStrutDoc() == null) {
+                entity.setDecTipoStrutDoc(new DecTipoStrutDoc());
+            }
+            entity.getDecTipoStrutDoc().setIdTipoStrutDoc(this.getIdTipoStrutDoc().longValue());
+        }
+        entity.setFlStrutOrig(this.getFlStrutOrig());
+        entity.setIdStrut(this.getIdStrut());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

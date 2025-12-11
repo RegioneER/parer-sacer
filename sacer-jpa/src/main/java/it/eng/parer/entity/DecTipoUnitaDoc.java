@@ -127,7 +127,7 @@ public class DecTipoUnitaDoc implements Serializable {
     private String flConservIllimitata;
 
     public DecTipoUnitaDoc() {
-	// hibernate
+        // hibernate
     }
 
     @Id
@@ -135,421 +135,421 @@ public class DecTipoUnitaDoc implements Serializable {
     @Column(name = "ID_TIPO_UNITA_DOC")
     @XmlID
     @GenericGenerator(name = "SDEC_TIPO_UNITA_DOC_ID_TIPO_UNITA_DOC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_UNITA_DOC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_UNITA_DOC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_UNITA_DOC_ID_TIPO_UNITA_DOC_GENERATOR")
     public Long getIdTipoUnitaDoc() {
-	return this.idTipoUnitaDoc;
+        return this.idTipoUnitaDoc;
     }
 
     public void setIdTipoUnitaDoc(Long idTipoUnitaDoc) {
-	this.idTipoUnitaDoc = idTipoUnitaDoc;
+        this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
     @Column(name = "CD_SERIE")
     public String getCdSerie() {
-	return this.cdSerie;
+        return this.cdSerie;
     }
 
     public void setCdSerie(String cdSerie) {
-	this.cdSerie = cdSerie;
+        this.cdSerie = cdSerie;
     }
 
     @Column(name = "CD_SERIE_DA_CREARE")
     public String getCdSerieDaCreare() {
-	return this.cdSerieDaCreare;
+        return this.cdSerieDaCreare;
     }
 
     public void setCdSerieDaCreare(String cdSerieDaCreare) {
-	this.cdSerieDaCreare = cdSerieDaCreare;
+        this.cdSerieDaCreare = cdSerieDaCreare;
     }
 
     @Column(name = "DL_NOTE_TIPO_UD")
     public String getDlNoteTipoUd() {
-	return this.dlNoteTipoUd;
+        return this.dlNoteTipoUd;
     }
 
     public void setDlNoteTipoUd(String dlNoteTipoUd) {
-	this.dlNoteTipoUd = dlNoteTipoUd;
+        this.dlNoteTipoUd = dlNoteTipoUd;
     }
 
     @Column(name = "DS_SERIE_DA_CREARE")
     public String getDsSerieDaCreare() {
-	return this.dsSerieDaCreare;
+        return this.dsSerieDaCreare;
     }
 
     public void setDsSerieDaCreare(String dsSerieDaCreare) {
-	this.dsSerieDaCreare = dsSerieDaCreare;
+        this.dsSerieDaCreare = dsSerieDaCreare;
     }
 
     @Column(name = "DS_TIPO_SERIE_DA_CREARE")
     public String getDsTipoSerieDaCreare() {
-	return this.dsTipoSerieDaCreare;
+        return this.dsTipoSerieDaCreare;
     }
 
     public void setDsTipoSerieDaCreare(String dsTipoSerieDaCreare) {
-	this.dsTipoSerieDaCreare = dsTipoSerieDaCreare;
+        this.dsTipoSerieDaCreare = dsTipoSerieDaCreare;
     }
 
     @Column(name = "DS_TIPO_UNITA_DOC")
     public String getDsTipoUnitaDoc() {
-	return this.dsTipoUnitaDoc;
+        return this.dsTipoUnitaDoc;
     }
 
     public void setDsTipoUnitaDoc(String dsTipoUnitaDoc) {
-	this.dsTipoUnitaDoc = dsTipoUnitaDoc;
+        this.dsTipoUnitaDoc = dsTipoUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ISTITUZ")
     public Date getDtIstituz() {
-	return this.dtIstituz;
+        return this.dtIstituz;
     }
 
     public void setDtIstituz(Date dtIstituz) {
-	this.dtIstituz = dtIstituz;
+        this.dtIstituz = dtIstituz;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SOPPRES")
     public Date getDtSoppres() {
-	return this.dtSoppres;
+        return this.dtSoppres;
     }
 
     public void setDtSoppres(Date dtSoppres) {
-	this.dtSoppres = dtSoppres;
+        this.dtSoppres = dtSoppres;
     }
 
     @Column(name = "FL_CREA_TIPO_SERIE_STANDARD")
     public String getFlCreaTipoSerieStandard() {
-	return this.flCreaTipoSerieStandard;
+        return this.flCreaTipoSerieStandard;
     }
 
     public void setFlCreaTipoSerieStandard(String flCreaTipoSerieStandard) {
-	this.flCreaTipoSerieStandard = flCreaTipoSerieStandard;
+        this.flCreaTipoSerieStandard = flCreaTipoSerieStandard;
     }
 
     @Column(name = "FL_VERS_MANUALE", columnDefinition = "char(1)")
     public String getFlVersManuale() {
-	return this.flVersManuale;
+        return this.flVersManuale;
     }
 
     public void setFlVersManuale(String flVersManuale) {
-	this.flVersManuale = flVersManuale;
+        this.flVersManuale = flVersManuale;
     }
 
     @Column(name = "NM_TIPO_SERIE_DA_CREARE")
     public String getNmTipoSerieDaCreare() {
-	return this.nmTipoSerieDaCreare;
+        return this.nmTipoSerieDaCreare;
     }
 
     public void setNmTipoSerieDaCreare(String nmTipoSerieDaCreare) {
-	this.nmTipoSerieDaCreare = nmTipoSerieDaCreare;
+        this.nmTipoSerieDaCreare = nmTipoSerieDaCreare;
     }
 
     @Column(name = "NM_TIPO_UNITA_DOC")
     public String getNmTipoUnitaDoc() {
-	return this.nmTipoUnitaDoc;
+        return this.nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     @Column(name = "TI_SAVE_FILE")
     public String getTiSaveFile() {
-	return this.tiSaveFile;
+        return this.tiSaveFile;
     }
 
     public void setTiSaveFile(String tiSaveFile) {
-	this.tiSaveFile = tiSaveFile;
+        this.tiSaveFile = tiSaveFile;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc")
     @XmlTransient
     public List<AroUnitaDoc> getAroUnitaDocs() {
-	return this.aroUnitaDocs;
+        return this.aroUnitaDocs;
     }
 
     public void setAroUnitaDocs(List<AroUnitaDoc> aroUnitaDocs) {
-	this.aroUnitaDocs = aroUnitaDocs;
+        this.aroUnitaDocs = aroUnitaDocs;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     @XmlIDREF
     public List<DecAttribDatiSpec> getDecAttribDatiSpecs() {
-	return this.decAttribDatiSpecs;
+        return this.decAttribDatiSpecs;
     }
 
     public void setDecAttribDatiSpecs(List<DecAttribDatiSpec> decAttribDatiSpecs) {
-	this.decAttribDatiSpecs = decAttribDatiSpecs;
+        this.decAttribDatiSpecs = decAttribDatiSpecs;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc")
     @XmlIDREF
     public List<DecCriterioFiltroMultiplo> getDecCriterioFiltroMultiplos() {
-	return this.decCriterioFiltroMultiplos;
+        return this.decCriterioFiltroMultiplos;
     }
 
     public void setDecCriterioFiltroMultiplos(
-	    List<DecCriterioFiltroMultiplo> decCriterioFiltroMultiplos) {
-	this.decCriterioFiltroMultiplos = decCriterioFiltroMultiplos;
+            List<DecCriterioFiltroMultiplo> decCriterioFiltroMultiplos) {
+        this.decCriterioFiltroMultiplos = decCriterioFiltroMultiplos;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc", cascade = CascadeType.REMOVE)
     @XmlTransient
     public List<DecTipoSerieUd> getDecTipoSerieUds() {
-	return this.decTipoSerieUds;
+        return this.decTipoSerieUds;
     }
 
     public void setDecTipoSerieUds(List<DecTipoSerieUd> decTipoSerieUds) {
-	this.decTipoSerieUds = decTipoSerieUds;
+        this.decTipoSerieUds = decTipoSerieUds;
     }
 
     public DecTipoSerieUd addDecTipoSerieUd(DecTipoSerieUd decTipoSerieUd) {
-	getDecTipoSerieUds().add(decTipoSerieUd);
-	decTipoSerieUd.setDecTipoUnitaDoc(this);
-	return decTipoSerieUd;
+        getDecTipoSerieUds().add(decTipoSerieUd);
+        decTipoSerieUd.setDecTipoUnitaDoc(this);
+        return decTipoSerieUd;
     }
 
     public DecTipoSerieUd removeDecTipoSerieUd(DecTipoSerieUd decTipoSerieUd) {
-	getDecTipoSerieUds().remove(decTipoSerieUd);
-	decTipoSerieUd.setDecTipoUnitaDoc(null);
-	return decTipoSerieUd;
+        getDecTipoSerieUds().remove(decTipoSerieUd);
+        decTipoSerieUd.setDecTipoUnitaDoc(null);
+        return decTipoSerieUd;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     public List<DecTipoStrutUnitaDoc> getDecTipoStrutUnitaDocs() {
-	return this.decTipoStrutUnitaDocs;
+        return this.decTipoStrutUnitaDocs;
     }
 
     public void setDecTipoStrutUnitaDocs(List<DecTipoStrutUnitaDoc> decTipoStrutUnitaDocs) {
-	this.decTipoStrutUnitaDocs = decTipoStrutUnitaDocs;
+        this.decTipoStrutUnitaDocs = decTipoStrutUnitaDocs;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_CATEG_TIPO_UNITA_DOC")
     public DecCategTipoUnitaDoc getDecCategTipoUnitaDoc() {
-	return this.decCategTipoUnitaDoc;
+        return this.decCategTipoUnitaDoc;
     }
 
     public void setDecCategTipoUnitaDoc(DecCategTipoUnitaDoc decCategTipoUnitaDoc) {
-	this.decCategTipoUnitaDoc = decCategTipoUnitaDoc;
+        this.decCategTipoUnitaDoc = decCategTipoUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     @XmlInverseReference(mappedBy = "decTipoUnitaDocs")
     public OrgStrut getOrgStrut() {
-	return this.orgStrut;
+        return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-	this.orgStrut = orgStrut;
+        this.orgStrut = orgStrut;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     @XmlIDREF
     public List<DecTipoUnitaDocAmmesso> getDecTipoUnitaDocAmmessos() {
-	return this.decTipoUnitaDocAmmessos;
+        return this.decTipoUnitaDocAmmessos;
     }
 
     public void setDecTipoUnitaDocAmmessos(List<DecTipoUnitaDocAmmesso> decTipoUnitaDocAmmessos) {
-	this.decTipoUnitaDocAmmessos = decTipoUnitaDocAmmessos;
+        this.decTipoUnitaDocAmmessos = decTipoUnitaDocAmmessos;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     @XmlIDREF
     public List<DecXsdDatiSpec> getDecXsdDatiSpecs() {
-	return this.decXsdDatiSpecs;
+        return this.decXsdDatiSpecs;
     }
 
     public void setDecXsdDatiSpecs(List<DecXsdDatiSpec> decXsdDatiSpecs) {
-	this.decXsdDatiSpecs = decXsdDatiSpecs;
+        this.decXsdDatiSpecs = decXsdDatiSpecs;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc")
     @XmlTransient
     public List<MonContaUdDocComp> getMonContaUdDocComps() {
-	return this.monContaUdDocComps;
+        return this.monContaUdDocComps;
     }
 
     public void setMonContaUdDocComps(List<MonContaUdDocComp> monContaUdDocComps) {
-	this.monContaUdDocComps = monContaUdDocComps;
+        this.monContaUdDocComps = monContaUdDocComps;
     }
 
     public MonContaUdDocComp addMonContaUdDocComp(MonContaUdDocComp monContaUdDocComp) {
-	getMonContaUdDocComps().add(monContaUdDocComp);
-	monContaUdDocComp.setDecTipoUnitaDoc(this);
-	return monContaUdDocComp;
+        getMonContaUdDocComps().add(monContaUdDocComp);
+        monContaUdDocComp.setDecTipoUnitaDoc(this);
+        return monContaUdDocComp;
     }
 
     public MonContaUdDocComp removeMonContaUdDocComp(MonContaUdDocComp monContaUdDocComp) {
-	getMonContaUdDocComps().remove(monContaUdDocComp);
-	monContaUdDocComp.setDecTipoUnitaDoc(null);
-	return monContaUdDocComp;
+        getMonContaUdDocComps().remove(monContaUdDocComp);
+        monContaUdDocComp.setDecTipoUnitaDoc(null);
+        return monContaUdDocComp;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     public List<OrgRegolaValSubStrut> getOrgRegolaValSubStruts() {
-	return this.orgRegolaValSubStruts;
+        return this.orgRegolaValSubStruts;
     }
 
     public void setOrgRegolaValSubStruts(List<OrgRegolaValSubStrut> orgRegolaValSubStruts) {
-	this.orgRegolaValSubStruts = orgRegolaValSubStruts;
+        this.orgRegolaValSubStruts = orgRegolaValSubStruts;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc")
     @XmlTransient
     public List<DecModelloTipoSerie> getDecModelloTipoSeries() {
-	return this.decModelloTipoSeries;
+        return this.decModelloTipoSeries;
     }
 
     public void setDecModelloTipoSeries(List<DecModelloTipoSerie> decModelloTipoSeries) {
-	this.decModelloTipoSeries = decModelloTipoSeries;
+        this.decModelloTipoSeries = decModelloTipoSeries;
     }
 
     public DecModelloTipoSerie addDecModelloTipoSery(DecModelloTipoSerie decModelloTipoSery) {
-	getDecModelloTipoSeries().add(decModelloTipoSery);
-	decModelloTipoSery.setDecTipoUnitaDoc(this);
-	return decModelloTipoSery;
+        getDecModelloTipoSeries().add(decModelloTipoSery);
+        decModelloTipoSery.setDecTipoUnitaDoc(this);
+        return decModelloTipoSery;
     }
 
     public DecModelloTipoSerie removeDecModelloTipoSery(DecModelloTipoSerie decModelloTipoSery) {
-	getDecModelloTipoSeries().remove(decModelloTipoSery);
-	decModelloTipoSery.setDecTipoUnitaDoc(null);
-	return decModelloTipoSery;
+        getDecModelloTipoSeries().remove(decModelloTipoSery);
+        decModelloTipoSery.setDecTipoUnitaDoc(null);
+        return decModelloTipoSery;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MODELLO_TIPO_SERIE")
     public DecModelloTipoSerie getDecModelloTipoSerie() {
-	return this.decModelloTipoSerie;
+        return this.decModelloTipoSerie;
     }
 
     public void setDecModelloTipoSerie(DecModelloTipoSerie decModelloTipoSerie) {
-	this.decModelloTipoSerie = decModelloTipoSerie;
+        this.decModelloTipoSerie = decModelloTipoSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_SERVIZIO")
     public OrgTipoServizio getOrgTipoServizio() {
-	return this.orgTipoServizio;
+        return this.orgTipoServizio;
     }
 
     public void setOrgTipoServizio(OrgTipoServizio orgTipoServizio) {
-	this.orgTipoServizio = orgTipoServizio;
+        this.orgTipoServizio = orgTipoServizio;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_SERVIZIO_ATTIV")
     public OrgTipoServizio getOrgTipoServizioAttiv() {
-	return orgTipoServizioAttiv;
+        return orgTipoServizioAttiv;
     }
 
     public void setOrgTipoServizioAttiv(OrgTipoServizio orgTipoServizioAttiv) {
-	this.orgTipoServizioAttiv = orgTipoServizioAttiv;
+        this.orgTipoServizioAttiv = orgTipoServizioAttiv;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_SERV_ATTIV_TIPO_UD")
     public OrgTipoServizio getOrgTipoServAttivTipoUd() {
-	return this.orgTipoServAttivTipoUd;
+        return this.orgTipoServAttivTipoUd;
     }
 
     public void setOrgTipoServAttivTipoUd(OrgTipoServizio orgTipoServAttivTipoUd) {
-	this.orgTipoServAttivTipoUd = orgTipoServAttivTipoUd;
+        this.orgTipoServAttivTipoUd = orgTipoServAttivTipoUd;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_SERV_CONSERV_TIPO_UD")
     public OrgTipoServizio getOrgTipoServConservTipoUd() {
-	return orgTipoServConservTipoUd;
+        return orgTipoServConservTipoUd;
     }
 
     public void setOrgTipoServConservTipoUd(OrgTipoServizio orgTipoServConservTipoUd) {
-	this.orgTipoServConservTipoUd = orgTipoServConservTipoUd;
+        this.orgTipoServConservTipoUd = orgTipoServConservTipoUd;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc")
     @XmlTransient
     public List<MonTipoUnitaDocUserVers> getMonTipoUnitaDocUserVers() {
-	return this.monTipoUnitaDocUserVers;
+        return this.monTipoUnitaDocUserVers;
     }
 
     public void setMonTipoUnitaDocUserVers(List<MonTipoUnitaDocUserVers> monTipoUnitaDocUserVers) {
-	this.monTipoUnitaDocUserVers = monTipoUnitaDocUserVers;
+        this.monTipoUnitaDocUserVers = monTipoUnitaDocUserVers;
     }
 
     public MonTipoUnitaDocUserVers addMonTipoUnitaDocUserVer(
-	    MonTipoUnitaDocUserVers monTipoUnitaDocUserVers) {
-	getMonTipoUnitaDocUserVers().add(monTipoUnitaDocUserVers);
-	monTipoUnitaDocUserVers.setDecTipoUnitaDoc(this);
-	return monTipoUnitaDocUserVers;
+            MonTipoUnitaDocUserVers monTipoUnitaDocUserVers) {
+        getMonTipoUnitaDocUserVers().add(monTipoUnitaDocUserVers);
+        monTipoUnitaDocUserVers.setDecTipoUnitaDoc(this);
+        return monTipoUnitaDocUserVers;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc")
     public List<AplValoreParamApplic> getAplValoreParamApplics() {
-	return this.aplValoreParamApplics;
+        return this.aplValoreParamApplics;
     }
 
     public void setAplValoreParamApplics(List<AplValoreParamApplic> aplValoreParamApplics) {
-	this.aplValoreParamApplics = aplValoreParamApplics;
+        this.aplValoreParamApplics = aplValoreParamApplics;
     }
 
     public AplValoreParamApplic addAplValoreParamApplic(AplValoreParamApplic aplValoreParamApplic) {
-	getAplValoreParamApplics().add(aplValoreParamApplic);
-	aplValoreParamApplic.setDecTipoUnitaDoc(this);
-	return aplValoreParamApplic;
+        getAplValoreParamApplics().add(aplValoreParamApplic);
+        aplValoreParamApplic.setDecTipoUnitaDoc(this);
+        return aplValoreParamApplic;
     }
 
     public AplValoreParamApplic removeAplValoreParamApplic(
-	    AplValoreParamApplic aplValoreParamApplic) {
-	getAplValoreParamApplics().remove(aplValoreParamApplic);
-	aplValoreParamApplic.setDecTipoUnitaDoc(null);
-	return aplValoreParamApplic;
+            AplValoreParamApplic aplValoreParamApplic) {
+        getAplValoreParamApplics().remove(aplValoreParamApplic);
+        aplValoreParamApplic.setDecTipoUnitaDoc(null);
+        return aplValoreParamApplic;
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc", cascade = CascadeType.PERSIST)
     // @XmlTransient
     public List<DecUsoModelloXsdUniDoc> getDecUsoModelloXsdUniDocs() {
-	return this.decUsoModelloXsdUniDocs;
+        return this.decUsoModelloXsdUniDocs;
     }
 
     public void setDecUsoModelloXsdUniDocs(List<DecUsoModelloXsdUniDoc> decUsoModelloXsdUniDocs) {
-	this.decUsoModelloXsdUniDocs = decUsoModelloXsdUniDocs;
+        this.decUsoModelloXsdUniDocs = decUsoModelloXsdUniDocs;
     }
 
     @Column(name = "NI_AA_CONSERV")
     public BigDecimal getNiAaConserv() {
-	return this.niAaConserv;
+        return this.niAaConserv;
     }
 
     public void setNiAaConserv(BigDecimal niAaConserv) {
-	this.niAaConserv = niAaConserv;
+        this.niAaConserv = niAaConserv;
     }
 
     @Column(name = "FL_CONSERV_UNIFORME", columnDefinition = "char(1)")
     public String getFlConservUniforme() {
-	return this.flConservUniforme;
+        return this.flConservUniforme;
     }
 
     public void setFlConservUniforme(String flConservUniforme) {
-	this.flConservUniforme = flConservUniforme;
+        this.flConservUniforme = flConservUniforme;
     }
 
     @Column(name = "FL_CONSERV_ILLIMITATA", columnDefinition = "char(1)")
     public String getFlConservIllimitata() {
-	return this.flConservIllimitata;
+        return this.flConservIllimitata;
     }
 
     public void setFlConservIllimitata(String flConservIllimitata) {
-	this.flConservIllimitata = flConservIllimitata;
+        this.flConservIllimitata = flConservIllimitata;
     }
 
     /**
@@ -560,8 +560,8 @@ public class DecTipoUnitaDoc implements Serializable {
      */
     @PrePersist
     void preInsert() {
-	if (this.flVersManuale == null) {
-	    this.flVersManuale = "0";
-	}
+        if (this.flVersManuale == null) {
+            this.flVersManuale = "0";
+        }
     }
 }

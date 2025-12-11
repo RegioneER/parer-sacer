@@ -45,125 +45,125 @@ public class InvioRichiestaAnnullamentoVersamentiExt {
 
     // private String versioneCalc;
     private EnumSet<Costanti.ModificatoriWS> modificatoriWS = EnumSet
-	    .noneOf(Costanti.ModificatoriWS.class);
+            .noneOf(Costanti.ModificatoriWS.class);
 
     public IWSDesc getDescrizione() {
-	return descrizione;
+        return descrizione;
     }
 
     public void setDescrizione(IWSDesc descrizione) {
-	this.descrizione = descrizione;
+        this.descrizione = descrizione;
     }
 
     public RichiestaAnnullamentoVersamenti getRichiestaAnnullamentoVersamenti() {
-	return richiestaAnnullamentoVersamenti;
+        return richiestaAnnullamentoVersamenti;
     }
 
     public void setRichiestaAnnullamentoVersamenti(
-	    RichiestaAnnullamentoVersamenti richiestaAnnullamentoVersamenti) {
-	this.richiestaAnnullamentoVersamenti = richiestaAnnullamentoVersamenti;
+            RichiestaAnnullamentoVersamenti richiestaAnnullamentoVersamenti) {
+        this.richiestaAnnullamentoVersamenti = richiestaAnnullamentoVersamenti;
     }
 
     public String getXmlRichiesta() {
-	return xmlRichiesta;
+        return xmlRichiesta;
     }
 
     public void setXmlRichiesta(String xmlRichiesta) {
-	this.xmlRichiesta = xmlRichiesta;
+        this.xmlRichiesta = xmlRichiesta;
     }
 
     public String getVersioneCalc() {
-	return versioneCalc;
+        return versioneCalc;
     }
 
     public String getNmUserid() {
-	return nmUserid;
+        return nmUserid;
     }
 
     public void setNmUserid(String nmUserid) {
-	this.nmUserid = nmUserid;
+        this.nmUserid = nmUserid;
     }
 
     public String getCdPsw() {
-	return cdPsw;
+        return cdPsw;
     }
 
     public void setCdPsw(String cdPsw) {
-	this.cdPsw = cdPsw;
+        this.cdPsw = cdPsw;
     }
 
     public Long getIdStrut() {
-	return idStrut;
+        return idStrut;
     }
 
     public void setIdStrut(Long idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     public User getUser() {
-	return user;
+        return user;
     }
 
     public void setUser(User user) {
-	this.user = user;
+        this.user = user;
     }
 
     public ParametriParser getParametriParser() {
-	return parametriParser;
+        return parametriParser;
     }
 
     public void setParametriParser(ParametriParser parametriParser) {
-	this.parametriParser = parametriParser;
+        this.parametriParser = parametriParser;
     }
 
     public Date getDataElaborazione() {
-	return dataElaborazione;
+        return dataElaborazione;
     }
 
     public void setDataElaborazione(Date dataElaborazione) {
-	this.dataElaborazione = dataElaborazione;
+        this.dataElaborazione = dataElaborazione;
     }
 
     public RispostaControlli checkVersioneRequest(String versione) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(true);
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(true);
 
-	versioneCalc = versione;
-	modificatoriWS = EnumSet.noneOf(Costanti.ModificatoriWS.class);
+        versioneCalc = versione;
+        modificatoriWS = EnumSet.noneOf(Costanti.ModificatoriWS.class);
 
-	this.versioneCalc = versione;
-	if (versione.equals("1.4")) {
-	    this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_TIPO_ANNUL);
-	    this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
-	    this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FASC);
-	} else if (versione.equals("1.3")) {
-	    this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
-	    this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FASC);
-	} else if (!versione.equals("1.0")) {
-	    this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
-	}
+        this.versioneCalc = versione;
+        if (versione.equals("1.4")) {
+            this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_TIPO_ANNUL);
+            this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
+            this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FASC);
+        } else if (versione.equals("1.3")) {
+            this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
+            this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FASC);
+        } else if (!versione.equals("1.0")) {
+            this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
+        }
 
-	// if (versione.equals("1.1")) {
-	// this.versioneCalc = "1.1";
-	// this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
-	// } else {
-	// this.versioneCalc = "1.0";
-	// }
+        // if (versione.equals("1.1")) {
+        // this.versioneCalc = "1.1";
+        // this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
+        // } else {
+        // this.versioneCalc = "1.0";
+        // }
 
-	return rispostaControlli;
+        return rispostaControlli;
     }
 
     public EnumSet<Costanti.ModificatoriWS> getModificatoriWS() {
-	return modificatoriWS;
+        return modificatoriWS;
     }
 
     public HashMap<String, String> getWsVersions() {
-	return wsVersions;
+        return wsVersions;
     }
 
     public void setWsVersions(HashMap<String, String> wsVersions) {
-	this.wsVersions = wsVersions;
+        this.wsVersions = wsVersions;
     }
 
 }

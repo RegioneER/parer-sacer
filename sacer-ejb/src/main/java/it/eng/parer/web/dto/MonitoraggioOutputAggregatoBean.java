@@ -29,28 +29,28 @@ public class MonitoraggioOutputAggregatoBean {
      * @return the tiOper
      */
     public String getTiOper() {
-	return tiOper;
+        return tiOper;
     }
 
     /**
      * @param tiOper the tiOper to set
      */
     public void setTiOper(String tiOper) {
-	this.tiOper = tiOper;
+        this.tiOper = tiOper;
     }
 
     /**
      * @return the numeroOperazioni
      */
     public String getNumeroOperazioni() {
-	return numeroOperazioni;
+        return numeroOperazioni;
     }
 
     /**
      * @param numeroOperazioni the numeroOperazioni to set
      */
     public void setNumeroOperazioni(String numeroOperazioni) {
-	this.numeroOperazioni = numeroOperazioni;
+        this.numeroOperazioni = numeroOperazioni;
     }
 
 }

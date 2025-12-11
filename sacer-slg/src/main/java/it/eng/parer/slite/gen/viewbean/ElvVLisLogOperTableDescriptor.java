@@ -58,43 +58,43 @@ public class ElvVLisLogOperTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
-	map.put(COL_ID_LOG_ELENCO_VERS,
-		new ColumnDescriptor(COL_ID_LOG_ELENCO_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_ID_ELENCO_VERS,
-		new ColumnDescriptor(COL_ID_ELENCO_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_TI_OPER, new ColumnDescriptor(COL_TI_OPER, Types.VARCHAR, 30, true));
-	map.put(COL_TM_OPER, new ColumnDescriptor(COL_TM_OPER, Types.TIMESTAMP, 11, true));
-	map.put(COL_NM_ELENCO, new ColumnDescriptor(COL_NM_ELENCO, Types.VARCHAR, 100, true));
-	map.put(COL_TI_MOD_OPER, new ColumnDescriptor(COL_TI_MOD_OPER, Types.VARCHAR, 10, true));
-	map.put(COL_DT_SCAD_CHIUS,
-		new ColumnDescriptor(COL_DT_SCAD_CHIUS, Types.TIMESTAMP, 7, true));
-	map.put(COL_NI_MAX_COMP, new ColumnDescriptor(COL_NI_MAX_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_CD_DOC, new ColumnDescriptor(COL_CD_DOC, Types.VARCHAR, 304, true));
-	map.put(COL_DL_MOTIVO_CHIUS,
-		new ColumnDescriptor(COL_DL_MOTIVO_CHIUS, Types.VARCHAR, 1024, true));
-	map.put(COL_NM_COGNOME_FIRMATARIO,
-		new ColumnDescriptor(COL_NM_COGNOME_FIRMATARIO, Types.VARCHAR, 100, true));
-	map.put(COL_NM_NOME_FIRMATARIO,
-		new ColumnDescriptor(COL_NM_NOME_FIRMATARIO, Types.VARCHAR, 100, true));
-	map.put(COL_ID_LOG_JOB, new ColumnDescriptor(COL_ID_LOG_JOB, Types.DECIMAL, 22, true));
+        map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
+        map.put(COL_ID_LOG_ELENCO_VERS,
+                new ColumnDescriptor(COL_ID_LOG_ELENCO_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_ID_ELENCO_VERS,
+                new ColumnDescriptor(COL_ID_ELENCO_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_TI_OPER, new ColumnDescriptor(COL_TI_OPER, Types.VARCHAR, 30, true));
+        map.put(COL_TM_OPER, new ColumnDescriptor(COL_TM_OPER, Types.TIMESTAMP, 11, true));
+        map.put(COL_NM_ELENCO, new ColumnDescriptor(COL_NM_ELENCO, Types.VARCHAR, 100, true));
+        map.put(COL_TI_MOD_OPER, new ColumnDescriptor(COL_TI_MOD_OPER, Types.VARCHAR, 10, true));
+        map.put(COL_DT_SCAD_CHIUS,
+                new ColumnDescriptor(COL_DT_SCAD_CHIUS, Types.TIMESTAMP, 7, true));
+        map.put(COL_NI_MAX_COMP, new ColumnDescriptor(COL_NI_MAX_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_CD_DOC, new ColumnDescriptor(COL_CD_DOC, Types.VARCHAR, 304, true));
+        map.put(COL_DL_MOTIVO_CHIUS,
+                new ColumnDescriptor(COL_DL_MOTIVO_CHIUS, Types.VARCHAR, 1024, true));
+        map.put(COL_NM_COGNOME_FIRMATARIO,
+                new ColumnDescriptor(COL_NM_COGNOME_FIRMATARIO, Types.VARCHAR, 100, true));
+        map.put(COL_NM_NOME_FIRMATARIO,
+                new ColumnDescriptor(COL_NM_NOME_FIRMATARIO, Types.VARCHAR, 100, true));
+        map.put(COL_ID_LOG_JOB, new ColumnDescriptor(COL_ID_LOG_JOB, Types.DECIMAL, 22, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

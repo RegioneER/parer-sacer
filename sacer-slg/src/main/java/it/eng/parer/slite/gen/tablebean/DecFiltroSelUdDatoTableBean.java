@@ -33,19 +33,19 @@ public class DecFiltroSelUdDatoTableBean extends AbstractBaseTable<DecFiltroSelU
     public static DecFiltroSelUdDatoTableDescriptor TABLE_DESCRIPTOR = new DecFiltroSelUdDatoTableDescriptor();
 
     public DecFiltroSelUdDatoTableBean() {
-	super();
+        super();
     }
 
     protected DecFiltroSelUdDatoRowBean createRow() {
-	return new DecFiltroSelUdDatoRowBean();
+        return new DecFiltroSelUdDatoRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecFiltroSelUdDatoRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -64,70 +64,70 @@ public class OstMigrazFileErr implements Serializable {
 
     @Column(name = "ID_MIGRAZ_FILE_ERR")
     @GenericGenerator(name = "SOST_MIGRAZ_FILE_ERR_ID_MIGRAZ_FILE_ERR_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SOST_MIGRAZ_FILE_ERR"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SOST_MIGRAZ_FILE_ERR"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SOST_MIGRAZ_FILE_ERR_ID_MIGRAZ_FILE_ERR_GENERATOR")
     public Long getIdMigrazFileErr() {
-	return this.idMigrazFileErr;
+        return this.idMigrazFileErr;
     }
 
     public void setIdMigrazFileErr(Long idMigrazFileErr) {
-	this.idMigrazFileErr = idMigrazFileErr;
+        this.idMigrazFileErr = idMigrazFileErr;
     }
 
     @Column(name = "CD_ERR")
     public String getCdErr() {
-	return this.cdErr;
+        return this.cdErr;
     }
 
     public void setCdErr(String cdErr) {
-	this.cdErr = cdErr;
+        this.cdErr = cdErr;
     }
 
     @Column(name = "DS_ERR")
     public String getDsErr() {
-	return this.dsErr;
+        return this.dsErr;
     }
 
     public void setDsErr(String dsErr) {
-	this.dsErr = dsErr;
+        this.dsErr = dsErr;
     }
 
     @Column(name = "DS_HASH_FILE_CALC_MIGRAZ")
     public String getDsHashFileCalcMigraz() {
-	return this.dsHashFileCalcMigraz;
+        return this.dsHashFileCalcMigraz;
     }
 
     public void setDsHashFileCalcMigraz(String dsHashFileCalcMigraz) {
-	this.dsHashFileCalcMigraz = dsHashFileCalcMigraz;
+        this.dsHashFileCalcMigraz = dsHashFileCalcMigraz;
     }
 
     @Column(name = "TI_ERR")
     public String getTiErr() {
-	return this.tiErr;
+        return this.tiErr;
     }
 
     public void setTiErr(String tiErr) {
-	this.tiErr = tiErr;
+        this.tiErr = tiErr;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_ERR")
     public Date getTsErr() {
-	return this.tsErr;
+        return this.tsErr;
     }
 
     public void setTsErr(Date tsErr) {
-	this.tsErr = tsErr;
+        this.tsErr = tsErr;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MIGRAZ_FILE")
     public OstMigrazFile getOstMigrazFile() {
-	return this.ostMigrazFile;
+        return this.ostMigrazFile;
     }
 
     public void setOstMigrazFile(OstMigrazFile ostMigrazFile) {
-	this.ostMigrazFile = ostMigrazFile;
+        this.ostMigrazFile = ostMigrazFile;
     }
 }

@@ -36,119 +36,119 @@ public class AroVVisCompVolRowBean extends BaseRow implements JEEBaseRowInterfac
     public static AroVVisCompVolTableDescriptor TABLE_DESCRIPTOR = new AroVVisCompVolTableDescriptor();
 
     public AroVVisCompVolRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdCompDoc() {
-	return getBigDecimal("id_comp_doc");
+        return getBigDecimal("id_comp_doc");
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	setObject("id_comp_doc", idCompDoc);
+        setObject("id_comp_doc", idCompDoc);
     }
 
     public BigDecimal getIdVolumeConserv() {
-	return getBigDecimal("id_volume_conserv");
+        return getBigDecimal("id_volume_conserv");
     }
 
     public void setIdVolumeConserv(BigDecimal idVolumeConserv) {
-	setObject("id_volume_conserv", idVolumeConserv);
+        setObject("id_volume_conserv", idVolumeConserv);
     }
 
     public String getNmVolumeConserv() {
-	return getString("nm_volume_conserv");
+        return getString("nm_volume_conserv");
     }
 
     public void setNmVolumeConserv(String nmVolumeConserv) {
-	setObject("nm_volume_conserv", nmVolumeConserv);
+        setObject("nm_volume_conserv", nmVolumeConserv);
     }
 
     public String getTiStatoVolumeConserv() {
-	return getString("ti_stato_volume_conserv");
+        return getString("ti_stato_volume_conserv");
     }
 
     public void setTiStatoVolumeConserv(String tiStatoVolumeConserv) {
-	setObject("ti_stato_volume_conserv", tiStatoVolumeConserv);
+        setObject("ti_stato_volume_conserv", tiStatoVolumeConserv);
     }
 
     public Timestamp getDtChiusVolume() {
-	return getTimestamp("dt_chius_volume");
+        return getTimestamp("dt_chius_volume");
     }
 
     public void setDtChiusVolume(Timestamp dtChiusVolume) {
-	setObject("dt_chius_volume", dtChiusVolume);
+        setObject("dt_chius_volume", dtChiusVolume);
     }
 
     public String getTiEsitoVerifFirmeChius() {
-	return getString("ti_esito_verif_firme_chius");
+        return getString("ti_esito_verif_firme_chius");
     }
 
     public void setTiEsitoVerifFirmeChius(String tiEsitoVerifFirmeChius) {
-	setObject("ti_esito_verif_firme_chius", tiEsitoVerifFirmeChius);
+        setObject("ti_esito_verif_firme_chius", tiEsitoVerifFirmeChius);
     }
 
     public String getDsEsitoVerifFirmeChius() {
-	return getString("ds_esito_verif_firme_chius");
+        return getString("ds_esito_verif_firme_chius");
     }
 
     public void setDsEsitoVerifFirmeChius(String dsEsitoVerifFirmeChius) {
-	setObject("ds_esito_verif_firme_chius", dsEsitoVerifFirmeChius);
+        setObject("ds_esito_verif_firme_chius", dsEsitoVerifFirmeChius);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVVisCompVol entity = (AroVVisCompVol) obj;
-	this.setIdCompDoc(entity.getIdCompDoc());
-	this.setIdVolumeConserv(entity.getIdVolumeConserv());
-	this.setNmVolumeConserv(entity.getNmVolumeConserv());
-	this.setTiStatoVolumeConserv(entity.getTiStatoVolumeConserv());
-	if (entity.getDtChiusVolume() != null) {
-	    this.setDtChiusVolume(new Timestamp(entity.getDtChiusVolume().getTime()));
-	}
-	this.setTiEsitoVerifFirmeChius(entity.getTiEsitoVerifFirmeChius());
-	this.setDsEsitoVerifFirmeChius(entity.getDsEsitoVerifFirmeChius());
+        AroVVisCompVol entity = (AroVVisCompVol) obj;
+        this.setIdCompDoc(entity.getIdCompDoc());
+        this.setIdVolumeConserv(entity.getIdVolumeConserv());
+        this.setNmVolumeConserv(entity.getNmVolumeConserv());
+        this.setTiStatoVolumeConserv(entity.getTiStatoVolumeConserv());
+        if (entity.getDtChiusVolume() != null) {
+            this.setDtChiusVolume(new Timestamp(entity.getDtChiusVolume().getTime()));
+        }
+        this.setTiEsitoVerifFirmeChius(entity.getTiEsitoVerifFirmeChius());
+        this.setDsEsitoVerifFirmeChius(entity.getDsEsitoVerifFirmeChius());
     }
 
     @Override
     public AroVVisCompVol rowBeanToEntity() {
-	AroVVisCompVol entity = new AroVVisCompVol();
-	entity.setIdCompDoc(this.getIdCompDoc());
-	entity.setIdVolumeConserv(this.getIdVolumeConserv());
-	entity.setNmVolumeConserv(this.getNmVolumeConserv());
-	entity.setTiStatoVolumeConserv(this.getTiStatoVolumeConserv());
-	entity.setDtChiusVolume(this.getDtChiusVolume());
-	entity.setTiEsitoVerifFirmeChius(this.getTiEsitoVerifFirmeChius());
-	entity.setDsEsitoVerifFirmeChius(this.getDsEsitoVerifFirmeChius());
-	return entity;
+        AroVVisCompVol entity = new AroVVisCompVol();
+        entity.setIdCompDoc(this.getIdCompDoc());
+        entity.setIdVolumeConserv(this.getIdVolumeConserv());
+        entity.setNmVolumeConserv(this.getNmVolumeConserv());
+        entity.setTiStatoVolumeConserv(this.getTiStatoVolumeConserv());
+        entity.setDtChiusVolume(this.getDtChiusVolume());
+        entity.setTiEsitoVerifFirmeChius(this.getTiEsitoVerifFirmeChius());
+        entity.setDsEsitoVerifFirmeChius(this.getDsEsitoVerifFirmeChius());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

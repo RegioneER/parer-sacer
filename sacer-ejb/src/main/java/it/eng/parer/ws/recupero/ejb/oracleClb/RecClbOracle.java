@@ -60,11 +60,11 @@ public class RecClbOracle {
     private EntityManager entityManager;
 
     private static final String QRY_ARO_FILE_VER_IX_AIP_UD = "SELECT BL_FILE_VER_INDICE_AIP FROM ARO_FILE_VER_INDICE_AIP_UD t "
-	    + "where t.id_ver_indice_aip = ?";
+            + "where t.id_ver_indice_aip = ?";
     private static final int BUFFERSIZE = 10 * 1024 * 1024; // 10 megabyte
 
     public enum TabellaClob {
-	CLOB
+        CLOB
     }
 
     /**
@@ -77,58 +77,58 @@ public class RecClbOracle {
      * @return true se è andato tutto bene, false altrimenti
      */
     public boolean recuperaClobDataSuStream(long idPadre, OutputStream outputStream,
-	    TabellaClob tabellaClobDaLeggere) {
-	boolean rispostaControlli = false;
-	Clob clob = null;
-	ResultSet rs = null;
-	String queryStr = null;
+            TabellaClob tabellaClobDaLeggere) {
+        boolean rispostaControlli = false;
+        Clob clob = null;
+        ResultSet rs = null;
+        String queryStr = null;
 
-	switch (tabellaClobDaLeggere) {
-	case CLOB:
-	    queryStr = QRY_ARO_FILE_VER_IX_AIP_UD;
-	    break;
-	}
-	try {
-	    java.sql.Connection conn = JpaUtils.provideConnectionFrom(entityManager);
-	    try (PreparedStatement pstmt = conn.prepareStatement(queryStr)) {
-		log.info(queryStr);
-		pstmt.setLong(1, idPadre);
-		rs = pstmt.executeQuery();
-		while (rs.next()) {
-		    clob = rs.getClob(1);
-		}
-	    } finally {
-		if (rs != null) {
-		    rs.close();
-		}
-		closeConnection(conn);
-	    }
-	    if (clob != null) {
-		byte[] data = IOUtils.toByteArray(clob.getCharacterStream(),
-			StandardCharsets.UTF_8);
-		IOUtils.write(data, outputStream);
-		log.debug("letto clob e scritto su stream...");
-		rispostaControlli = true;
-	    } else {
-		log.error("Eccezione nella lettura della tabella dei dati: il clob è nullo");
-	    }
-	} catch (SQLException | IOException ex) {
+        switch (tabellaClobDaLeggere) {
+        case CLOB:
+            queryStr = QRY_ARO_FILE_VER_IX_AIP_UD;
+            break;
+        }
+        try {
+            java.sql.Connection conn = JpaUtils.provideConnectionFrom(entityManager);
+            try (PreparedStatement pstmt = conn.prepareStatement(queryStr)) {
+                log.info(queryStr);
+                pstmt.setLong(1, idPadre);
+                rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    clob = rs.getClob(1);
+                }
+            } finally {
+                if (rs != null) {
+                    rs.close();
+                }
+                closeConnection(conn);
+            }
+            if (clob != null) {
+                byte[] data = IOUtils.toByteArray(clob.getCharacterStream(),
+                        StandardCharsets.UTF_8);
+                IOUtils.write(data, outputStream);
+                log.debug("letto clob e scritto su stream...");
+                rispostaControlli = true;
+            } else {
+                log.error("Eccezione nella lettura della tabella dei dati: il clob è nullo");
+            }
+        } catch (SQLException | IOException ex) {
 
-	    log.error("Eccezione RecClbOracle.recuperaClobDataSuStream ", ex);
-	}
+            log.error("Eccezione RecClbOracle.recuperaClobDataSuStream ", ex);
+        }
 
-	return rispostaControlli;
+        return rispostaControlli;
     }
 
     private void closeConnection(Connection conn) {
-	if (conn != null) {
-	    try {
-		conn.close();
-	    } catch (SQLException ex) {
-		throw new ConnectionException(
-			"RecClbOracle: Errore nella chiusura della connessione: "
-				+ ex.getMessage());
-	    }
-	}
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                throw new ConnectionException(
+                        "RecClbOracle: Errore nella chiusura della connessione: "
+                                + ex.getMessage());
+            }
+        }
     }
 }

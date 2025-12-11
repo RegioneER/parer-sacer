@@ -38,142 +38,142 @@ public class OrgCampoValSubStrutRowBean extends BaseRow implements JEEBaseRowInt
     public static OrgCampoValSubStrutTableDescriptor TABLE_DESCRIPTOR = new OrgCampoValSubStrutTableDescriptor();
 
     public OrgCampoValSubStrutRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdCampoValSubStrut() {
-	return getBigDecimal("id_campo_val_sub_strut");
+        return getBigDecimal("id_campo_val_sub_strut");
     }
 
     public void setIdCampoValSubStrut(BigDecimal idCampoValSubStrut) {
-	setObject("id_campo_val_sub_strut", idCampoValSubStrut);
+        setObject("id_campo_val_sub_strut", idCampoValSubStrut);
     }
 
     public BigDecimal getIdRegolaValSubStrut() {
-	return getBigDecimal("id_regola_val_sub_strut");
+        return getBigDecimal("id_regola_val_sub_strut");
     }
 
     public void setIdRegolaValSubStrut(BigDecimal idRegolaValSubStrut) {
-	setObject("id_regola_val_sub_strut", idRegolaValSubStrut);
+        setObject("id_regola_val_sub_strut", idRegolaValSubStrut);
     }
 
     public String getTiCampo() {
-	return getString("ti_campo");
+        return getString("ti_campo");
     }
 
     public void setTiCampo(String tiCampo) {
-	setObject("ti_campo", tiCampo);
+        setObject("ti_campo", tiCampo);
     }
 
     public String getNmCampo() {
-	return getString("nm_campo");
+        return getString("nm_campo");
     }
 
     public void setNmCampo(String nmCampo) {
-	setObject("nm_campo", nmCampo);
+        setObject("nm_campo", nmCampo);
     }
 
     public BigDecimal getIdAttribDatiSpec() {
-	return getBigDecimal("id_attrib_dati_spec");
+        return getBigDecimal("id_attrib_dati_spec");
     }
 
     public void setIdAttribDatiSpec(BigDecimal idAttribDatiSpec) {
-	setObject("id_attrib_dati_spec", idAttribDatiSpec);
+        setObject("id_attrib_dati_spec", idAttribDatiSpec);
     }
 
     public BigDecimal getIdSubStrut() {
-	return getBigDecimal("id_sub_strut");
+        return getBigDecimal("id_sub_strut");
     }
 
     public void setIdSubStrut(BigDecimal idSubStrut) {
-	setObject("id_sub_strut", idSubStrut);
+        setObject("id_sub_strut", idSubStrut);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	OrgCampoValSubStrut entity = (OrgCampoValSubStrut) obj;
+        OrgCampoValSubStrut entity = (OrgCampoValSubStrut) obj;
 
-	this.setIdCampoValSubStrut(entity.getIdCampoValSubStrut() == null ? null
-		: BigDecimal.valueOf(entity.getIdCampoValSubStrut()));
+        this.setIdCampoValSubStrut(entity.getIdCampoValSubStrut() == null ? null
+                : BigDecimal.valueOf(entity.getIdCampoValSubStrut()));
 
-	if (entity.getOrgRegolaValSubStrut() != null) {
-	    this.setIdRegolaValSubStrut(
-		    new BigDecimal(entity.getOrgRegolaValSubStrut().getIdRegolaValSubStrut()));
-	}
+        if (entity.getOrgRegolaValSubStrut() != null) {
+            this.setIdRegolaValSubStrut(
+                    new BigDecimal(entity.getOrgRegolaValSubStrut().getIdRegolaValSubStrut()));
+        }
 
-	this.setTiCampo(entity.getTiCampo());
-	this.setNmCampo(entity.getNmCampo());
+        this.setTiCampo(entity.getTiCampo());
+        this.setNmCampo(entity.getNmCampo());
 
-	if (entity.getDecAttribDatiSpec() != null) {
-	    this.setIdAttribDatiSpec(
-		    new BigDecimal(entity.getDecAttribDatiSpec().getIdAttribDatiSpec()));
-	}
+        if (entity.getDecAttribDatiSpec() != null) {
+            this.setIdAttribDatiSpec(
+                    new BigDecimal(entity.getDecAttribDatiSpec().getIdAttribDatiSpec()));
+        }
 
-	if (entity.getOrgSubStrut() != null) {
-	    this.setIdSubStrut(new BigDecimal(entity.getOrgSubStrut().getIdSubStrut()));
-	}
+        if (entity.getOrgSubStrut() != null) {
+            this.setIdSubStrut(new BigDecimal(entity.getOrgSubStrut().getIdSubStrut()));
+        }
 
     }
 
     @Override
     public OrgCampoValSubStrut rowBeanToEntity() {
-	OrgCampoValSubStrut entity = new OrgCampoValSubStrut();
-	if (this.getIdCampoValSubStrut() != null) {
-	    entity.setIdCampoValSubStrut(this.getIdCampoValSubStrut().longValue());
-	}
-	if (this.getIdRegolaValSubStrut() != null) {
-	    if (entity.getOrgRegolaValSubStrut() == null) {
-		entity.setOrgRegolaValSubStrut(new OrgRegolaValSubStrut());
-	    }
-	    entity.getOrgRegolaValSubStrut()
-		    .setIdRegolaValSubStrut(this.getIdRegolaValSubStrut().longValue());
-	}
-	entity.setTiCampo(this.getTiCampo());
-	entity.setNmCampo(this.getNmCampo());
-	if (this.getIdAttribDatiSpec() != null) {
-	    if (entity.getDecAttribDatiSpec() == null) {
-		entity.setDecAttribDatiSpec(new DecAttribDatiSpec());
-	    }
-	    entity.getDecAttribDatiSpec()
-		    .setIdAttribDatiSpec(this.getIdAttribDatiSpec().longValue());
-	}
-	if (this.getIdSubStrut() != null) {
-	    if (entity.getOrgSubStrut() == null) {
-		entity.setOrgSubStrut(new OrgSubStrut());
-	    }
-	    entity.getOrgSubStrut().setIdSubStrut(this.getIdSubStrut().longValue());
-	}
-	return entity;
+        OrgCampoValSubStrut entity = new OrgCampoValSubStrut();
+        if (this.getIdCampoValSubStrut() != null) {
+            entity.setIdCampoValSubStrut(this.getIdCampoValSubStrut().longValue());
+        }
+        if (this.getIdRegolaValSubStrut() != null) {
+            if (entity.getOrgRegolaValSubStrut() == null) {
+                entity.setOrgRegolaValSubStrut(new OrgRegolaValSubStrut());
+            }
+            entity.getOrgRegolaValSubStrut()
+                    .setIdRegolaValSubStrut(this.getIdRegolaValSubStrut().longValue());
+        }
+        entity.setTiCampo(this.getTiCampo());
+        entity.setNmCampo(this.getNmCampo());
+        if (this.getIdAttribDatiSpec() != null) {
+            if (entity.getDecAttribDatiSpec() == null) {
+                entity.setDecAttribDatiSpec(new DecAttribDatiSpec());
+            }
+            entity.getDecAttribDatiSpec()
+                    .setIdAttribDatiSpec(this.getIdAttribDatiSpec().longValue());
+        }
+        if (this.getIdSubStrut() != null) {
+            if (entity.getOrgSubStrut() == null) {
+                entity.setOrgSubStrut(new OrgSubStrut());
+            }
+            entity.getOrgSubStrut().setIdSubStrut(this.getIdSubStrut().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

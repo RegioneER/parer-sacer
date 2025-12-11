@@ -43,109 +43,109 @@ public class AmministrazioneHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(AmministrazioneHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			AmministrazioneHelperTest.class, AmministrazioneHelper.class));
+        return HelperTest.createEnterpriseArchive(AmministrazioneHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        AmministrazioneHelperTest.class, AmministrazioneHelper.class));
     }
 
     @Test
     void getConfigurationTypes_queryIsOk() {
-	assertNotNull(helper.getConfigurationTypes());
+        assertNotNull(helper.getConfigurationTypes());
     }
 
     @Test
     void getConfigurationViewBean_queryIsOk() {
-	assertNotNull(helper.getConfigurationViewBean(aString()));
+        assertNotNull(helper.getConfigurationViewBean(aString()));
     }
 
     @Test
     void getAplParamApplicList_queryIsOk() {
-	String tiParamApplic = aString();
-	String tiGestioneParam = aString();
-	String flAppartApplic = aString();
-	String flAppartAmbiente = aString();
-	String flAppartStrut = aString();
-	String flAppartTipoUnitaDoc = aString();
-	String flAppartAaTipoFascicolo = aString();
-	assertNotNull(helper.getAplParamApplicList(tiParamApplic, tiGestioneParam, flAppartApplic,
-		flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc, flAppartAaTipoFascicolo));
+        String tiParamApplic = aString();
+        String tiGestioneParam = aString();
+        String flAppartApplic = aString();
+        String flAppartAmbiente = aString();
+        String flAppartStrut = aString();
+        String flAppartTipoUnitaDoc = aString();
+        String flAppartAaTipoFascicolo = aString();
+        assertNotNull(helper.getAplParamApplicList(tiParamApplic, tiGestioneParam, flAppartApplic,
+                flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc, flAppartAaTipoFascicolo));
     }
 
     @Test
     void existsAplParamApplic_queryIsOk() {
-	String nmParamApplic = aString();
-	BigDecimal idParamApplic = aBigDecimal();
-	assertFalse(helper.existsAplParamApplic(nmParamApplic, idParamApplic));
+        String nmParamApplic = aString();
+        BigDecimal idParamApplic = aBigDecimal();
+        assertFalse(helper.existsAplParamApplic(nmParamApplic, idParamApplic));
     }
 
     @Test
     void getAplValoreParamApplic_queryIsOk() {
-	long idParamApplic = aLong();
-	String tiAppart = aString();
-	helper.getAplValoreParamApplic(idParamApplic, tiAppart);
-	assertTrue(true);
+        long idParamApplic = aLong();
+        String tiAppart = aString();
+        helper.getAplValoreParamApplic(idParamApplic, tiAppart);
+        assertTrue(true);
     }
 
     @Test
     void getTiParamApplic_queryIsOk() {
-	List<String> tiParamApplic = helper.getTiParamApplic();
-	assertNotNull(tiParamApplic);
-	assertFalse(tiParamApplic.isEmpty());
+        List<String> tiParamApplic = helper.getTiParamApplic();
+        assertNotNull(tiParamApplic);
+        assertFalse(tiParamApplic.isEmpty());
     }
 
     @Test
     void getAplParamApplicListAmbiente_queryIsOk() {
-	assertNotNull(helper.getAplParamApplicListAmbiente(aListOfString(2)));
+        assertNotNull(helper.getAplParamApplicListAmbiente(aListOfString(2)));
     }
 
     @Test
     void getAplParamApplicListStruttura_queryIsOk() {
-	assertNotNull(helper.getAplParamApplicListStruttura(aListOfString(2)));
+        assertNotNull(helper.getAplParamApplicListStruttura(aListOfString(2)));
     }
 
     @Test
     void getAplParamApplicListTipoUd_queryIsOk() {
-	assertNotNull(helper.getAplParamApplicListTipoUd(aListOfString(2)));
+        assertNotNull(helper.getAplParamApplicListTipoUd(aListOfString(2)));
     }
 
     @Test
     void getAplParamApplicListAaTipoFascicolo_queryIsOk() {
-	assertNotNull(helper.getAplParamApplicListAaTipoFascicolo(aListOfString(2)));
+        assertNotNull(helper.getAplParamApplicListAaTipoFascicolo(aListOfString(2)));
     }
 
     @Test
     void getAplParamApplicMultiListAmbiente_queryIsOk() {
-	assertNotNull(helper.getAplParamApplicMultiListAmbiente());
+        assertNotNull(helper.getAplParamApplicMultiListAmbiente());
     }
 
     @Test
     void getAplValoreParamApplic6args_queryIsOk() {
-	BigDecimal idParamApplic = aBigDecimal();
-	String tiAppart = aString();
-	BigDecimal idAmbiente = aBigDecimal();
-	BigDecimal idStrut = aBigDecimal();
-	BigDecimal idTipoUnitaDoc = aBigDecimal();
-	BigDecimal idAaTipoFascicolo = aBigDecimal();
-	helper.getAplValoreParamApplic(idParamApplic, tiAppart, idAmbiente, idStrut, idTipoUnitaDoc,
-		idAaTipoFascicolo);
-	assertTrue(true);
+        BigDecimal idParamApplic = aBigDecimal();
+        String tiAppart = aString();
+        BigDecimal idAmbiente = aBigDecimal();
+        BigDecimal idStrut = aBigDecimal();
+        BigDecimal idTipoUnitaDoc = aBigDecimal();
+        BigDecimal idAaTipoFascicolo = aBigDecimal();
+        helper.getAplValoreParamApplic(idParamApplic, tiAppart, idAmbiente, idStrut, idTipoUnitaDoc,
+                idAaTipoFascicolo);
+        assertTrue(true);
     }
 
     @Test
     void getAplValParamApplicMultiList_queryIsOk() {
-	BigDecimal idParamApplic = aBigDecimal();
-	BigDecimal idAmbiente = aBigDecimal();
-	assertNotNull(helper.getAplValParamApplicMultiList(idParamApplic, idAmbiente));
+        BigDecimal idParamApplic = aBigDecimal();
+        BigDecimal idAmbiente = aBigDecimal();
+        assertNotNull(helper.getAplValParamApplicMultiList(idParamApplic, idAmbiente));
     }
 
     @Test
     void getAplValParamApplicMulti_queryIsOk() {
-	BigDecimal idParamApplic = aBigDecimal();
-	BigDecimal idAmbiente = aBigDecimal();
-	String token = aString();
-	helper.getAplValParamApplicMulti(idParamApplic, idAmbiente, token);
-	assertTrue(true);
+        BigDecimal idParamApplic = aBigDecimal();
+        BigDecimal idAmbiente = aBigDecimal();
+        String token = aString();
+        helper.getAplValParamApplicMulti(idParamApplic, idAmbiente, token);
+        assertTrue(true);
     }
 
 }

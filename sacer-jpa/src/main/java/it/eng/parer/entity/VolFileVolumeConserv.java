@@ -55,46 +55,46 @@ public class VolFileVolumeConserv implements Serializable {
 
     @Column(name = "ID_FILE_VOLUME_CONSERV")
     @GenericGenerator(name = "SVOL_FILE_VOLUME_CONSERV_ID_FILE_VOLUME_CONSERV_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_FILE_VOLUME_CONSERV"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_FILE_VOLUME_CONSERV"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SVOL_FILE_VOLUME_CONSERV_ID_FILE_VOLUME_CONSERV_GENERATOR")
     public Long getIdFileVolumeConserv() {
-	return this.idFileVolumeConserv;
+        return this.idFileVolumeConserv;
     }
 
     public void setIdFileVolumeConserv(Long idFileVolumeConserv) {
-	this.idFileVolumeConserv = idFileVolumeConserv;
+        this.idFileVolumeConserv = idFileVolumeConserv;
     }
 
     @Lob()
     @Column(name = "BL_FILE_VOLUME_CONSERV")
     public byte[] getBlFileVolumeConserv() {
-	return this.blFileVolumeConserv;
+        return this.blFileVolumeConserv;
     }
 
     public void setBlFileVolumeConserv(byte[] blFileVolumeConserv) {
-	this.blFileVolumeConserv = blFileVolumeConserv;
+        this.blFileVolumeConserv = blFileVolumeConserv;
     }
 
     @Column(name = "TI_FILE_VOLUME_CONSERV")
     public String getTiFileVolumeConserv() {
-	return this.tiFileVolumeConserv;
+        return this.tiFileVolumeConserv;
     }
 
     public void setTiFileVolumeConserv(String tiFileVolumeConserv) {
-	this.tiFileVolumeConserv = tiFileVolumeConserv;
+        this.tiFileVolumeConserv = tiFileVolumeConserv;
     }
 
     @ManyToOne(cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH,
-	    CascadeType.DETACH }, fetch = FetchType.LAZY)
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH,
+            CascadeType.DETACH }, fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VOLUME_CONSERV")
     public VolVolumeConserv getVolVolumeConserv() {
-	return this.volVolumeConserv;
+        return this.volVolumeConserv;
     }
 
     public void setVolVolumeConserv(VolVolumeConserv volVolumeConserv) {
-	this.volVolumeConserv = volVolumeConserv;
+        this.volVolumeConserv = volVolumeConserv;
     }
 
 }

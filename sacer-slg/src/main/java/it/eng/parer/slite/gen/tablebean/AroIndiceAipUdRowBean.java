@@ -36,100 +36,100 @@ public class AroIndiceAipUdRowBean extends BaseRow implements JEEBaseRowInterfac
     public static AroIndiceAipUdTableDescriptor TABLE_DESCRIPTOR = new AroIndiceAipUdTableDescriptor();
 
     public AroIndiceAipUdRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdIndiceAip() {
-	return getBigDecimal("id_indice_aip");
+        return getBigDecimal("id_indice_aip");
     }
 
     public void setIdIndiceAip(BigDecimal idIndiceAip) {
-	setObject("id_indice_aip", idIndiceAip);
+        setObject("id_indice_aip", idIndiceAip);
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public String getTiFormatoIndiceAip() {
-	return getString("ti_formato_indice_aip");
+        return getString("ti_formato_indice_aip");
     }
 
     public void setTiFormatoIndiceAip(String tiFormatoIndiceAip) {
-	setObject("ti_formato_indice_aip", tiFormatoIndiceAip);
+        setObject("ti_formato_indice_aip", tiFormatoIndiceAip);
     }
 
     public BigDecimal getIdVerIndiceAipLast() {
-	return getBigDecimal("id_ver_indice_aip_last");
+        return getBigDecimal("id_ver_indice_aip_last");
     }
 
     public void setIdVerIndiceAipLast(BigDecimal idVerIndiceAipLast) {
-	setObject("id_ver_indice_aip_last", idVerIndiceAipLast);
+        setObject("id_ver_indice_aip_last", idVerIndiceAipLast);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroIndiceAipUd entity = (AroIndiceAipUd) obj;
-	this.setIdIndiceAip(entity.getIdIndiceAip() == null ? null
-		: BigDecimal.valueOf(entity.getIdIndiceAip()));
+        AroIndiceAipUd entity = (AroIndiceAipUd) obj;
+        this.setIdIndiceAip(entity.getIdIndiceAip() == null ? null
+                : BigDecimal.valueOf(entity.getIdIndiceAip()));
 
-	if (entity.getAroUnitaDoc() != null) {
-	    this.setIdUnitaDoc(new BigDecimal(entity.getAroUnitaDoc().getIdUnitaDoc()));
-	}
+        if (entity.getAroUnitaDoc() != null) {
+            this.setIdUnitaDoc(new BigDecimal(entity.getAroUnitaDoc().getIdUnitaDoc()));
+        }
 
-	this.setTiFormatoIndiceAip(entity.getTiFormatoIndiceAip());
-	this.setIdVerIndiceAipLast(entity.getIdVerIndiceAipLast());
+        this.setTiFormatoIndiceAip(entity.getTiFormatoIndiceAip());
+        this.setIdVerIndiceAipLast(entity.getIdVerIndiceAipLast());
     }
 
     @Override
     public AroIndiceAipUd rowBeanToEntity() {
-	AroIndiceAipUd entity = new AroIndiceAipUd();
-	if (this.getIdIndiceAip() != null) {
-	    entity.setIdIndiceAip(this.getIdIndiceAip().longValue());
-	}
-	if (this.getIdUnitaDoc() != null) {
-	    if (entity.getAroUnitaDoc() == null) {
-		entity.setAroUnitaDoc(new AroUnitaDoc());
-	    }
-	    entity.getAroUnitaDoc().setIdUnitaDoc(this.getIdUnitaDoc().longValue());
-	}
-	entity.setTiFormatoIndiceAip(this.getTiFormatoIndiceAip());
-	entity.setIdVerIndiceAipLast(this.getIdVerIndiceAipLast());
-	return entity;
+        AroIndiceAipUd entity = new AroIndiceAipUd();
+        if (this.getIdIndiceAip() != null) {
+            entity.setIdIndiceAip(this.getIdIndiceAip().longValue());
+        }
+        if (this.getIdUnitaDoc() != null) {
+            if (entity.getAroUnitaDoc() == null) {
+                entity.setAroUnitaDoc(new AroUnitaDoc());
+            }
+            entity.getAroUnitaDoc().setIdUnitaDoc(this.getIdUnitaDoc().longValue());
+        }
+        entity.setTiFormatoIndiceAip(this.getTiFormatoIndiceAip());
+        entity.setIdVerIndiceAipLast(this.getIdVerIndiceAipLast());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

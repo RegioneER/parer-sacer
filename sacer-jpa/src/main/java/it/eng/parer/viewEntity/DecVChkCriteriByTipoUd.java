@@ -48,66 +48,66 @@ public class DecVChkCriteriByTipoUd implements Serializable {
 
     @Column(name = "DS_CRITERIO_NON_COERENTE")
     public String getDsCriterioNonCoerente() {
-	return this.dsCriterioNonCoerente;
+        return this.dsCriterioNonCoerente;
     }
 
     public void setDsCriterioNonCoerente(String dsCriterioNonCoerente) {
-	this.dsCriterioNonCoerente = dsCriterioNonCoerente;
+        this.dsCriterioNonCoerente = dsCriterioNonCoerente;
     }
 
     @Column(name = "FL_CRITERIO_COERENTE", columnDefinition = "char(1)")
     public String getFlCriterioCoerente() {
-	return this.flCriterioCoerente;
+        return this.flCriterioCoerente;
     }
 
     public void setFlCriterioCoerente(String flCriterioCoerente) {
-	this.flCriterioCoerente = flCriterioCoerente;
+        this.flCriterioCoerente = flCriterioCoerente;
     }
 
     @Column(name = "FL_CRITERIO_RAGGR_FISC", columnDefinition = "char(1)")
     public String getFlCriterioRaggrFisc() {
-	return this.flCriterioRaggrFisc;
+        return this.flCriterioRaggrFisc;
     }
 
     public void setFlCriterioRaggrFisc(String flCriterioRaggrFisc) {
-	this.flCriterioRaggrFisc = flCriterioRaggrFisc;
+        this.flCriterioRaggrFisc = flCriterioRaggrFisc;
     }
 
     @Column(name = "FL_CRITERIO_RAGGR_STANDARD", columnDefinition = "char(1)")
     public String getFlCriterioRaggrStandard() {
-	return this.flCriterioRaggrStandard;
+        return this.flCriterioRaggrStandard;
     }
 
     public void setFlCriterioRaggrStandard(String flCriterioRaggrStandard) {
-	this.flCriterioRaggrStandard = flCriterioRaggrStandard;
+        this.flCriterioRaggrStandard = flCriterioRaggrStandard;
     }
 
     @Column(name = "NM_CRITERIO_RAGGR")
     public String getNmCriterioRaggr() {
-	return this.nmCriterioRaggr;
+        return this.nmCriterioRaggr;
     }
 
     public void setNmCriterioRaggr(String nmCriterioRaggr) {
-	this.nmCriterioRaggr = nmCriterioRaggr;
+        this.nmCriterioRaggr = nmCriterioRaggr;
     }
 
     @Column(name = "NM_TIPO_UNITA_DOC")
     public String getNmTipoUnitaDoc() {
-	return this.nmTipoUnitaDoc;
+        return this.nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     private DecVChkCriteriByTipoUdId decVChkCriteriByTipoUdId;
 
     @EmbeddedId()
     public DecVChkCriteriByTipoUdId getDecVChkCriteriByTipoUdId() {
-	return decVChkCriteriByTipoUdId;
+        return decVChkCriteriByTipoUdId;
     }
 
     public void setDecVChkCriteriByTipoUdId(DecVChkCriteriByTipoUdId decVChkCriteriByTipoUdId) {
-	this.decVChkCriteriByTipoUdId = decVChkCriteriByTipoUdId;
+        this.decVChkCriteriByTipoUdId = decVChkCriteriByTipoUdId;
     }
 }

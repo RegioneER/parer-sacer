@@ -57,49 +57,49 @@ public class MonVLisFascKoTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
-	map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
-	map.put(COL_ID_FASCICOLO_KO,
-		new ColumnDescriptor(COL_ID_FASCICOLO_KO, Types.DECIMAL, 22, true));
-	map.put(COL_AA_FASCICOLO, new ColumnDescriptor(COL_AA_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_FASCICOLO,
-		new ColumnDescriptor(COL_CD_KEY_FASCICOLO, Types.VARCHAR, 100, true));
-	map.put(COL_TS_INI_FIRST_SES,
-		new ColumnDescriptor(COL_TS_INI_FIRST_SES, Types.TIMESTAMP, 11, true));
-	map.put(COL_TS_INI_LAST_SES,
-		new ColumnDescriptor(COL_TS_INI_LAST_SES, Types.TIMESTAMP, 11, true));
-	map.put(COL_ID_ERR_SACER_PRINC,
-		new ColumnDescriptor(COL_ID_ERR_SACER_PRINC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_ERR_PRINC, new ColumnDescriptor(COL_CD_ERR_PRINC, Types.VARCHAR, 100, true));
-	map.put(COL_DS_ERR_PRINC,
-		new ColumnDescriptor(COL_DS_ERR_PRINC, Types.VARCHAR, 1024, true));
-	map.put(COL_ID_TIPO_FASCICOLO,
-		new ColumnDescriptor(COL_ID_TIPO_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_NM_TIPO_FASCICOLO,
-		new ColumnDescriptor(COL_NM_TIPO_FASCICOLO, Types.VARCHAR, 100, true));
-	map.put(COL_TI_STATO_FASCICOLO_KO,
-		new ColumnDescriptor(COL_TI_STATO_FASCICOLO_KO, Types.VARCHAR, 20, true));
-	map.put(COL_ID_SES_FASCICOLO_KO_FIRST,
-		new ColumnDescriptor(COL_ID_SES_FASCICOLO_KO_FIRST, Types.DECIMAL, 22, true));
-	map.put(COL_ID_SES_FASCICOLO_KO_LAST,
-		new ColumnDescriptor(COL_ID_SES_FASCICOLO_KO_LAST, Types.DECIMAL, 22, true));
+        map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
+        map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
+        map.put(COL_ID_FASCICOLO_KO,
+                new ColumnDescriptor(COL_ID_FASCICOLO_KO, Types.DECIMAL, 22, true));
+        map.put(COL_AA_FASCICOLO, new ColumnDescriptor(COL_AA_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_FASCICOLO,
+                new ColumnDescriptor(COL_CD_KEY_FASCICOLO, Types.VARCHAR, 100, true));
+        map.put(COL_TS_INI_FIRST_SES,
+                new ColumnDescriptor(COL_TS_INI_FIRST_SES, Types.TIMESTAMP, 11, true));
+        map.put(COL_TS_INI_LAST_SES,
+                new ColumnDescriptor(COL_TS_INI_LAST_SES, Types.TIMESTAMP, 11, true));
+        map.put(COL_ID_ERR_SACER_PRINC,
+                new ColumnDescriptor(COL_ID_ERR_SACER_PRINC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_ERR_PRINC, new ColumnDescriptor(COL_CD_ERR_PRINC, Types.VARCHAR, 100, true));
+        map.put(COL_DS_ERR_PRINC,
+                new ColumnDescriptor(COL_DS_ERR_PRINC, Types.VARCHAR, 1024, true));
+        map.put(COL_ID_TIPO_FASCICOLO,
+                new ColumnDescriptor(COL_ID_TIPO_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_NM_TIPO_FASCICOLO,
+                new ColumnDescriptor(COL_NM_TIPO_FASCICOLO, Types.VARCHAR, 100, true));
+        map.put(COL_TI_STATO_FASCICOLO_KO,
+                new ColumnDescriptor(COL_TI_STATO_FASCICOLO_KO, Types.VARCHAR, 20, true));
+        map.put(COL_ID_SES_FASCICOLO_KO_FIRST,
+                new ColumnDescriptor(COL_ID_SES_FASCICOLO_KO_FIRST, Types.DECIMAL, 22, true));
+        map.put(COL_ID_SES_FASCICOLO_KO_LAST,
+                new ColumnDescriptor(COL_ID_SES_FASCICOLO_KO_LAST, Types.DECIMAL, 22, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return null;
+        return null;
     }
 
     public String getStatement() {
-	return null;
+        return null;
     }
 
 }

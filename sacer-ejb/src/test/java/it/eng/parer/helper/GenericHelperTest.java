@@ -39,43 +39,43 @@ public class GenericHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(GenericHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), GenericHelperTest.class,
-			GenericHelper.class));
+        return HelperTest.createEnterpriseArchive(GenericHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), GenericHelperTest.class,
+                        GenericHelper.class));
     }
 
     @Test
     public void getEntityManager() {
-	assertNotNull(helper.getEntityManager());
+        assertNotNull(helper.getEntityManager());
     }
 
     @Test
     public void longListFromBigDecimalList() {
-	Collection<BigDecimal> bigDecimalCollection = Arrays.asList(BigDecimal.ZERO,
-		BigDecimal.TEN);
-	List<Long> longList = Utils.longListFrom(bigDecimalCollection);
-	assertEquals(2, longList.size());
-	assertEquals(0L, longList.get(0).longValue());
-	assertEquals(10L, longList.get(1).longValue());
+        Collection<BigDecimal> bigDecimalCollection = Arrays.asList(BigDecimal.ZERO,
+                BigDecimal.TEN);
+        List<Long> longList = Utils.longListFrom(bigDecimalCollection);
+        assertEquals(2, longList.size());
+        assertEquals(0L, longList.get(0).longValue());
+        assertEquals(10L, longList.get(1).longValue());
     }
 
     @Test
     public void bigDecimalListFromLongList() {
-	GenericHelper localHelper = new GenericHelper();
-	Collection<Long> longList = Arrays.asList(0L, 10L);
-	List<BigDecimal> bigDecimalList = localHelper.bigDecimalListFrom(longList);
-	assertEquals(2, bigDecimalList.size());
-	assertEquals(BigDecimal.ZERO, bigDecimalList.get(0));
-	assertEquals(BigDecimal.TEN, bigDecimalList.get(1));
+        GenericHelper localHelper = new GenericHelper();
+        Collection<Long> longList = Arrays.asList(0L, 10L);
+        List<BigDecimal> bigDecimalList = localHelper.bigDecimalListFrom(longList);
+        assertEquals(2, bigDecimalList.size());
+        assertEquals(BigDecimal.ZERO, bigDecimalList.get(0));
+        assertEquals(BigDecimal.TEN, bigDecimalList.get(1));
     }
 
     @Test
     public void getDataNonAnnullata() {
-	GenericHelper localHelper = new GenericHelper();
-	final String expectedDate = "31/12/2444";
-	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	assertEquals(expectedDate, sdf.format(localHelper.getDataNonAnnullata()));
+        GenericHelper localHelper = new GenericHelper();
+        final String expectedDate = "31/12/2444";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        assertEquals(expectedDate, sdf.format(localHelper.getDataNonAnnullata()));
     }
 
 }

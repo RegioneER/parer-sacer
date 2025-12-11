@@ -47,58 +47,58 @@ public class ElvVLisUdByStato implements Serializable {
 
     @Column(name = "TI_STATO_ELENCO_VERS")
     public String getTiStatoElencoVers() {
-	return this.tiStatoElencoVers;
+        return this.tiStatoElencoVers;
     }
 
     public void setTiStatoElencoVers(String tiStatoElencoVers) {
-	this.tiStatoElencoVers = tiStatoElencoVers;
+        this.tiStatoElencoVers = tiStatoElencoVers;
     }
 
     @Column(name = "ID_ELENCO_VERS")
     public BigDecimal getIdElencoVers() {
-	return this.idElencoVers;
+        return this.idElencoVers;
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-	this.idElencoVers = idElencoVers;
+        this.idElencoVers = idElencoVers;
     }
 
     @Column(name = "TI_MOTIVO")
     public String getTiMotivo() {
-	return this.tiMotivo;
+        return this.tiMotivo;
     }
 
     public void setTiMotivo(String tiMotivo) {
-	this.tiMotivo = tiMotivo;
+        this.tiMotivo = tiMotivo;
     }
 
     @Id
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     @Column(name = "TI_STATO_UD")
     public String getTiStatoUd() {
-	return this.tiStatoUd;
+        return this.tiStatoUd;
     }
 
     public void setTiStatoUd(String tiStatoUd) {
-	this.tiStatoUd = tiStatoUd;
+        this.tiStatoUd = tiStatoUd;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_LAST_RESET_STATO")
     public Date getTsLastResetStato() {
-	return this.tsLastResetStato;
+        return this.tsLastResetStato;
     }
 
     public void setTsLastResetStato(Date tsLastResetStato) {
-	this.tsLastResetStato = tsLastResetStato;
+        this.tsLastResetStato = tsLastResetStato;
     }
 
 }

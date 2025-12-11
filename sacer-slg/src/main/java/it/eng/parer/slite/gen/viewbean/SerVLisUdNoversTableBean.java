@@ -37,19 +37,19 @@ public class SerVLisUdNoversTableBean extends AbstractBaseTable<SerVLisUdNoversR
     public static SerVLisUdNoversTableDescriptor TABLE_DESCRIPTOR = new SerVLisUdNoversTableDescriptor();
 
     public SerVLisUdNoversTableBean() {
-	super();
+        super();
     }
 
     protected SerVLisUdNoversRowBean createRow() {
-	return new SerVLisUdNoversRowBean();
+        return new SerVLisUdNoversRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerVLisUdNoversRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

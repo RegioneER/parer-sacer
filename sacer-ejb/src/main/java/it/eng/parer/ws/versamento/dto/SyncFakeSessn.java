@@ -30,7 +30,7 @@ public class SyncFakeSessn implements java.io.Serializable {
 
     public enum TipiSessioneVersamento {
 
-	AGGIUNGI_DOCUMENTO, VERSAMENTO
+        AGGIUNGI_DOCUMENTO, VERSAMENTO
     }
 
     private boolean salvaSessione = true;
@@ -68,8 +68,8 @@ public class SyncFakeSessn implements java.io.Serializable {
      * Costruttore
      */
     public SyncFakeSessn() {
-	fileBinari = new ArrayList<FileBinario>();
-	xmlOk = false;
+        fileBinari = new ArrayList<FileBinario>();
+        xmlOk = false;
     }
 
     /*
@@ -79,68 +79,68 @@ public class SyncFakeSessn implements java.io.Serializable {
      * @return the salvaSessione
      */
     public boolean isSalvaSessione() {
-	return salvaSessione;
+        return salvaSessione;
     }
 
     /**
      * @param salvaSessione the salvaSessione to set
      */
     public void setSalvaSessione(boolean salvaSessione) {
-	this.salvaSessione = salvaSessione;
+        this.salvaSessione = salvaSessione;
     }
 
     /**
      * @return the tipoSessioneVers
      */
     public TipiSessioneVersamento getTipoSessioneVers() {
-	return tipoSessioneVers;
+        return tipoSessioneVers;
     }
 
     /**
      * @param tipoSessioneVers the tipoSessioneVers to set
      */
     public void setTipoSessioneVers(TipiSessioneVersamento tipoSessioneVers) {
-	this.tipoSessioneVers = tipoSessioneVers;
+        this.tipoSessioneVers = tipoSessioneVers;
     }
 
     /**
      * @return the tipoDatiSessioneVers
      */
     public String getTipoDatiSessioneVers() {
-	return tipoDatiSessioneVers;
+        return tipoDatiSessioneVers;
     }
 
     /**
      * @param tipoDatiSessioneVers the tipoDatiSessioneVers to set
      */
     public void setTipoDatiSessioneVers(String tipoDatiSessioneVers) {
-	this.tipoDatiSessioneVers = tipoDatiSessioneVers;
+        this.tipoDatiSessioneVers = tipoDatiSessioneVers;
     }
 
     public String getIpChiamante() {
-	return ipChiamante;
+        return ipChiamante;
     }
 
     public void setIpChiamante(String ipChiamante) {
-	this.ipChiamante = ipChiamante;
+        this.ipChiamante = ipChiamante;
     }
 
     /**
      * @return the certCommonName
      */
     public String getCertCommonName() {
-	return certCommonName;
+        return certCommonName;
     }
 
     public void setCertCommonName(String certCommonName) {
-	this.certCommonName = certCommonName;
+        this.certCommonName = certCommonName;
     }
 
     /**
      * @return the loginName
      */
     public String getLoginName() {
-	return loginName;
+        return loginName;
     }
 
     /**
@@ -149,14 +149,14 @@ public class SyncFakeSessn implements java.io.Serializable {
      * @param loginName the loginName to set
      */
     public void setLoginName(String loginName) {
-	this.loginName = loginName.replaceAll("[\\u0000-\\u001F]", "");
+        this.loginName = loginName.replaceAll("[\\u0000-\\u001F]", "");
     }
 
     /**
      * @return the password
      */
     public String getPassword() {
-	return password;
+        return password;
     }
 
     /**
@@ -165,28 +165,28 @@ public class SyncFakeSessn implements java.io.Serializable {
      * @param password the password to set
      */
     public void setPassword(String password) {
-	this.password = password.replaceAll("[\\u0000-\\u001F]", "");
+        this.password = password.replaceAll("[\\u0000-\\u001F]", "");
     }
 
     /**
      * @return the idUser
      */
     public long getIdUser() {
-	return idUser;
+        return idUser;
     }
 
     /**
      * @param idUser the idUser to set
      */
     public void setIdUser(long idUser) {
-	this.idUser = idUser;
+        this.idUser = idUser;
     }
 
     /**
      * @return the versioneWS
      */
     public String getVersioneWS() {
-	return versioneWS;
+        return versioneWS;
     }
 
     /**
@@ -195,14 +195,14 @@ public class SyncFakeSessn implements java.io.Serializable {
      * @param versioneWS the versioneWS to set
      */
     public void setVersioneWS(String versioneWS) {
-	this.versioneWS = versioneWS.replaceAll("[\\u0000-\\u001F]", "");
+        this.versioneWS = versioneWS.replaceAll("[\\u0000-\\u001F]", "");
     }
 
     /**
      * @return the datiIndiceSipXml
      */
     public String getDatiIndiceSipXml() {
-	return datiIndiceSipXml;
+        return datiIndiceSipXml;
     }
 
     /**
@@ -211,43 +211,43 @@ public class SyncFakeSessn implements java.io.Serializable {
      * @param datiIndiceSipXml the datiIndiceSipXml to set
      */
     public void setDatiIndiceSipXml(String datiIndiceSipXml) {
-	this.datiIndiceSipXml = datiIndiceSipXml.replaceAll("[\\u0000-\\u001F]", "");
+        this.datiIndiceSipXml = datiIndiceSipXml.replaceAll("[\\u0000-\\u001F]", "");
     }
 
     public String getUrnIndiceSipXml() {
-	return urnIndiceSipXml;
+        return urnIndiceSipXml;
     }
 
     public void setUrnIndiceSipXml(String urnIndiceSipXml) {
-	this.urnIndiceSipXml = urnIndiceSipXml;
+        this.urnIndiceSipXml = urnIndiceSipXml;
     }
 
     public String getHashIndiceSipXml() {
-	return hashIndiceSipXml;
+        return hashIndiceSipXml;
     }
 
     public void setHashIndiceSipXml(String hashIndiceSipXml) {
-	this.hashIndiceSipXml = hashIndiceSipXml;
+        this.hashIndiceSipXml = hashIndiceSipXml;
     }
 
     public String getDatiDaSalvareIndiceSip() {
-	return datiDaSalvareIndiceSip;
+        return datiDaSalvareIndiceSip;
     }
 
     public void setDatiDaSalvareIndiceSip(String datiDaSalvareIndiceSip) {
-	this.datiDaSalvareIndiceSip = datiDaSalvareIndiceSip;
+        this.datiDaSalvareIndiceSip = datiDaSalvareIndiceSip;
     }
 
     public String getDatiC14NIndiceSip() {
-	return datiC14NIndiceSip;
+        return datiC14NIndiceSip;
     }
 
     public void setDatiC14NIndiceSip(String datiC14NIndiceSip) {
-	this.datiC14NIndiceSip = datiC14NIndiceSip;
+        this.datiC14NIndiceSip = datiC14NIndiceSip;
     }
 
     public String getDatiPackInfoSipXml() {
-	return datiPackInfoSipXml;
+        return datiPackInfoSipXml;
     }
 
     /**
@@ -256,104 +256,104 @@ public class SyncFakeSessn implements java.io.Serializable {
      * @param datiPackInfoSipXml the datiIndiceSipXml to set
      */
     public void setDatiPackInfoSipXml(String datiPackInfoSipXml) {
-	this.datiPackInfoSipXml = datiPackInfoSipXml.replaceAll("[\\u0000-\\u001F]", "");
+        this.datiPackInfoSipXml = datiPackInfoSipXml.replaceAll("[\\u0000-\\u001F]", "");
     }
 
     public String getUrnPackInfoSipXml() {
-	return urnPackInfoSipXml;
+        return urnPackInfoSipXml;
     }
 
     public void setUrnPackInfoSipXml(String urnPackInfoSipXml) {
-	this.urnPackInfoSipXml = urnPackInfoSipXml;
+        this.urnPackInfoSipXml = urnPackInfoSipXml;
     }
 
     public String getHashPackInfoSipXml() {
-	return hashPackInfoSipXml;
+        return hashPackInfoSipXml;
     }
 
     public void setHashPackInfoSipXml(String hashPackInfoSipXml) {
-	this.hashPackInfoSipXml = hashPackInfoSipXml;
+        this.hashPackInfoSipXml = hashPackInfoSipXml;
     }
 
     public String getUrnEsitoVersamento() {
-	return urnEsitoVersamento;
+        return urnEsitoVersamento;
     }
 
     public void setUrnEsitoVersamento(String urnEsitoVersamento) {
-	this.urnEsitoVersamento = urnEsitoVersamento;
+        this.urnEsitoVersamento = urnEsitoVersamento;
     }
 
     public String getDatiRapportoVersamento() {
-	return datiRapportoVersamento;
+        return datiRapportoVersamento;
     }
 
     public void setDatiRapportoVersamento(String datiRapportoVersamento) {
-	this.datiRapportoVersamento = datiRapportoVersamento;
+        this.datiRapportoVersamento = datiRapportoVersamento;
     }
 
     public String getUrnRapportoVersamento() {
-	return urnRapportoVersamento;
+        return urnRapportoVersamento;
     }
 
     public void setUrnRapportoVersamento(String urnRapportoVersamento) {
-	this.urnRapportoVersamento = urnRapportoVersamento;
+        this.urnRapportoVersamento = urnRapportoVersamento;
     }
 
     public String getHashRapportoVersamento() {
-	return hashRapportoVersamento;
+        return hashRapportoVersamento;
     }
 
     public void setHashRapportoVersamento(String hashRapportoVersamento) {
-	this.hashRapportoVersamento = hashRapportoVersamento;
+        this.hashRapportoVersamento = hashRapportoVersamento;
     }
 
     /**
      * @return the xmlOk
      */
     public boolean isXmlOk() {
-	return xmlOk;
+        return xmlOk;
     }
 
     /**
      * @param xmlOk the xmlOk to set
      */
     public void setXmlOk(boolean xmlOk) {
-	this.xmlOk = xmlOk;
+        this.xmlOk = xmlOk;
     }
 
     /**
      * @return the tmpApertura
      */
     public Date getTmApertura() {
-	return tmApertura;
+        return tmApertura;
     }
 
     /**
      * @param tmApertura the tmpApertura to set
      */
     public void setTmApertura(Date tmApertura) {
-	this.tmApertura = tmApertura;
+        this.tmApertura = tmApertura;
     }
 
     public Date getTmChiusura() {
-	return tmChiusura;
+        return tmChiusura;
     }
 
     public void setTmChiusura(Date tmChiusura) {
-	this.tmChiusura = tmChiusura;
+        this.tmChiusura = tmChiusura;
     }
 
     /**
      * @return the fileBinari
      */
     public List<FileBinario> getFileBinari() {
-	return fileBinari;
+        return fileBinari;
     }
 
     /**
      * @param fileBinari the fileBinari to set
      */
     public void setFileBinari(List<FileBinario> fileBinari) {
-	this.fileBinari = fileBinari;
+        this.fileBinari = fileBinari;
     }
 }

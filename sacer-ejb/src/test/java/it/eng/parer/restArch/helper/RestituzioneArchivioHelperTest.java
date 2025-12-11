@@ -48,105 +48,105 @@ public class RestituzioneArchivioHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		RestituzioneArchivioHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		createSacerJavaArchive(Arrays.asList(""), RestituzioneArchivioHelperTest.class,
-			RestituzioneArchivioHelper.class, RicercaRichRestArchBean.class,
-			UdSerFascObj.class));
+        return HelperTest.createEnterpriseArchive(
+                RestituzioneArchivioHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                createSacerJavaArchive(Arrays.asList(""), RestituzioneArchivioHelperTest.class,
+                        RestituzioneArchivioHelper.class, RicercaRichRestArchBean.class,
+                        UdSerFascObj.class));
     }
 
     @Test
     void isRichRestArchExisting_queryIsOk() {
-	BigDecimal idEnteConvenz = aBigDecimal();
-	helper.isRichRestArchExisting(idEnteConvenz);
-	assertTrue(true);
+        BigDecimal idEnteConvenz = aBigDecimal();
+        helper.isRichRestArchExisting(idEnteConvenz);
+        assertTrue(true);
     }
 
     @Test
     void retrieveRichRestArchExpiredToProcess_queryIsOk() {
-	BigDecimal idEnteConvenz = aBigDecimal();
-	helper.retrieveRichRestArchExpiredToProcess(idEnteConvenz);
-	assertTrue(true);
+        BigDecimal idEnteConvenz = aBigDecimal();
+        helper.retrieveRichRestArchExpiredToProcess(idEnteConvenz);
+        assertTrue(true);
     }
 
     @Test
     void retrieveUdSerFascToProcess_queryIsOk() {
-	OrgStrut struttura = aOrgStrut();
-	helper.retrieveUdSerFascToProcess(struttura);
-	assertTrue(true);
+        OrgStrut struttura = aOrgStrut();
+        helper.retrieveUdSerFascToProcess(struttura);
+        assertTrue(true);
     }
 
     @Test
     void retrieveAroVRicRichRa_queryIsOk() {
-	RicercaRichRestArchBean filtri = aRicercaRichRestArchBean();
-	List<Long> idEnteConvenzList = aListOfLong(2);
-	helper.retrieveAroVRicRichRa(filtri, idEnteConvenzList);
-	assertTrue(true);
-	idEnteConvenzList = aListOfLong(1);
-	helper.retrieveAroVRicRichRa(filtri, idEnteConvenzList);
-	assertTrue(true);
+        RicercaRichRestArchBean filtri = aRicercaRichRestArchBean();
+        List<Long> idEnteConvenzList = aListOfLong(2);
+        helper.retrieveAroVRicRichRa(filtri, idEnteConvenzList);
+        assertTrue(true);
+        idEnteConvenzList = aListOfLong(1);
+        helper.retrieveAroVRicRichRa(filtri, idEnteConvenzList);
+        assertTrue(true);
 
     }
 
     private RicercaRichRestArchBean aRicercaRichRestArchBean() {
-	RicercaRichRestArchBean filtri = new RicercaRichRestArchBean();
-	filtri.setId_ambiente(aBigDecimal());
-	filtri.setId_ente(aBigDecimal());
-	filtri.setId_strut(aBigDecimal());
-	filtri.setTi_rich_rest_arch(aString());
-	filtri.setTi_stato_rich_rest_arch_cor(aListOfString(2));
-	return filtri;
+        RicercaRichRestArchBean filtri = new RicercaRichRestArchBean();
+        filtri.setId_ambiente(aBigDecimal());
+        filtri.setId_ente(aBigDecimal());
+        filtri.setId_strut(aBigDecimal());
+        filtri.setTi_rich_rest_arch(aString());
+        filtri.setTi_stato_rich_rest_arch_cor(aListOfString(2));
+        return filtri;
     }
 
     @Test
     void retrieveOrgEnteSiamList_queryIsOk() {
-	RicercaRichRestArchBean filtri = aRicercaRichRestArchBean();
-	helper.retrieveOrgEnteSiamList(filtri);
-	assertTrue(true);
+        RicercaRichRestArchBean filtri = aRicercaRichRestArchBean();
+        helper.retrieveOrgEnteSiamList(filtri);
+        assertTrue(true);
     }
 
     @Test
     void getAroVLisItemRa_queryIsOk() {
-	BigDecimal idRichRestArch = aBigDecimal();
-	BigDecimal idStrut = aBigDecimal();
-	helper.getAroVLisItemRa(idRichRestArch, idStrut);
-	assertTrue(true);
+        BigDecimal idRichRestArch = aBigDecimal();
+        BigDecimal idStrut = aBigDecimal();
+        helper.getAroVLisItemRa(idRichRestArch, idStrut);
+        assertTrue(true);
     }
 
     @Test
     void countAroItemRichRestArch_queryIsOk() {
-	BigDecimal idRichRestArch = aBigDecimal();
-	AroAipRestituzioneArchivio.TiStatoAroAipRa[] tiStato = AroAipRestituzioneArchivio.TiStatoAroAipRa
-		.values();
-	helper.countAroItemRichRestArch(idRichRestArch, tiStato);
-	assertTrue(true);
+        BigDecimal idRichRestArch = aBigDecimal();
+        AroAipRestituzioneArchivio.TiStatoAroAipRa[] tiStato = AroAipRestituzioneArchivio.TiStatoAroAipRa
+                .values();
+        helper.countAroItemRichRestArch(idRichRestArch, tiStato);
+        assertTrue(true);
     }
 
     @Test
     void retrieveAroErrItemRestArch_queryIsOk() {
-	long idRichRestArch = aLong();
-	helper.retrieveAroErrItemRestArch(idRichRestArch);
-	assertTrue(true);
+        long idRichRestArch = aLong();
+        helper.retrieveAroErrItemRestArch(idRichRestArch);
+        assertTrue(true);
     }
 
     @Test
     void getIdStrutFirstStateRich_queryIsOk() {
-	BigDecimal idRichRestArch = BigDecimal.valueOf(1002473);
-	try {
-	    helper.getIdStrutFirstStateRich(idRichRestArch);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        BigDecimal idRichRestArch = BigDecimal.valueOf(1002473);
+        try {
+            helper.getIdStrutFirstStateRich(idRichRestArch);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void isRichRestArchByStatoExisting_queryIsOk() {
-	helper.isRichRestArchByStatoExisting(BigDecimal.ZERO,
-		Arrays.asList(AroRichiestaRa.AroRichiestaTiStato.ESTRATTO,
-			AroRichiestaRa.AroRichiestaTiStato.ANNULLATO));
-	assertTrue(true);
+        helper.isRichRestArchByStatoExisting(BigDecimal.ZERO,
+                Arrays.asList(AroRichiestaRa.AroRichiestaTiStato.ESTRATTO,
+                        AroRichiestaRa.AroRichiestaTiStato.ANNULLATO));
+        assertTrue(true);
     }
 
 }

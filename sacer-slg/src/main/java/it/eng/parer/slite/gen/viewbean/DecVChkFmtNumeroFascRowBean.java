@@ -35,87 +35,87 @@ public class DecVChkFmtNumeroFascRowBean extends BaseRow implements JEEBaseRowIn
     public static DecVChkFmtNumeroFascTableDescriptor TABLE_DESCRIPTOR = new DecVChkFmtNumeroFascTableDescriptor();
 
     public DecVChkFmtNumeroFascRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getIdTipoFascicolo() {
-	return getBigDecimal("id_tipo_fascicolo");
+        return getBigDecimal("id_tipo_fascicolo");
     }
 
     public void setIdTipoFascicolo(BigDecimal idTipoFascicolo) {
-	setObject("id_tipo_fascicolo", idTipoFascicolo);
+        setObject("id_tipo_fascicolo", idTipoFascicolo);
     }
 
     public BigDecimal getIdAaTipoFascicolo() {
-	return getBigDecimal("id_aa_tipo_fascicolo");
+        return getBigDecimal("id_aa_tipo_fascicolo");
     }
 
     public void setIdAaTipoFascicolo(BigDecimal idAaTipoFascicolo) {
-	setObject("id_aa_tipo_fascicolo", idAaTipoFascicolo);
+        setObject("id_aa_tipo_fascicolo", idAaTipoFascicolo);
     }
 
     public String getFlFmtNumeroOk() {
-	return getString("fl_fmt_numero_ok");
+        return getString("fl_fmt_numero_ok");
     }
 
     public void setFlFmtNumeroOk(String flFmtNumeroOk) {
-	setObject("fl_fmt_numero_ok", flFmtNumeroOk);
+        setObject("fl_fmt_numero_ok", flFmtNumeroOk);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecVChkFmtNumeroFasc entity = (DecVChkFmtNumeroFasc) obj;
-	this.setIdStrut(entity.getIdStrut());
-	this.setIdTipoFascicolo(entity.getIdTipoFascicolo());
-	this.setIdAaTipoFascicolo(entity.getIdAaTipoFascicolo());
-	this.setFlFmtNumeroOk(entity.getFlFmtNumeroOk());
+        DecVChkFmtNumeroFasc entity = (DecVChkFmtNumeroFasc) obj;
+        this.setIdStrut(entity.getIdStrut());
+        this.setIdTipoFascicolo(entity.getIdTipoFascicolo());
+        this.setIdAaTipoFascicolo(entity.getIdAaTipoFascicolo());
+        this.setFlFmtNumeroOk(entity.getFlFmtNumeroOk());
     }
 
     @Override
     public DecVChkFmtNumeroFasc rowBeanToEntity() {
-	DecVChkFmtNumeroFasc entity = new DecVChkFmtNumeroFasc();
-	entity.setIdStrut(this.getIdStrut());
-	entity.setIdTipoFascicolo(this.getIdTipoFascicolo());
-	entity.setIdAaTipoFascicolo(this.getIdAaTipoFascicolo());
-	entity.setFlFmtNumeroOk(this.getFlFmtNumeroOk());
-	return entity;
+        DecVChkFmtNumeroFasc entity = new DecVChkFmtNumeroFasc();
+        entity.setIdStrut(this.getIdStrut());
+        entity.setIdTipoFascicolo(this.getIdTipoFascicolo());
+        entity.setIdAaTipoFascicolo(this.getIdAaTipoFascicolo());
+        entity.setFlFmtNumeroOk(this.getFlFmtNumeroOk());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

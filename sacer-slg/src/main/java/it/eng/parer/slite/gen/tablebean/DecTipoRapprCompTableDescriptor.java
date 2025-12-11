@@ -50,37 +50,37 @@ public class DecTipoRapprCompTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_TIPO_RAPPR_COMP,
-		new ColumnDescriptor(COL_ID_TIPO_RAPPR_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_NM_TIPO_RAPPR_COMP,
-		new ColumnDescriptor(COL_NM_TIPO_RAPPR_COMP, Types.VARCHAR, 100, false));
-	map.put(COL_DS_TIPO_RAPPR_COMP,
-		new ColumnDescriptor(COL_DS_TIPO_RAPPR_COMP, Types.VARCHAR, 254, false));
-	map.put(COL_DT_ISTITUZ, new ColumnDescriptor(COL_DT_ISTITUZ, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_SOPPRES, new ColumnDescriptor(COL_DT_SOPPRES, Types.TIMESTAMP, 7, false));
-	map.put(COL_ID_FORMATO_CONTENUTO,
-		new ColumnDescriptor(COL_ID_FORMATO_CONTENUTO, Types.DECIMAL, 22, false));
-	map.put(COL_ID_FORMATO_CONVERTIT,
-		new ColumnDescriptor(COL_ID_FORMATO_CONVERTIT, Types.DECIMAL, 22, false));
-	map.put(COL_TI_ALGO_RAPPR,
-		new ColumnDescriptor(COL_TI_ALGO_RAPPR, Types.VARCHAR, 20, false));
-	map.put(COL_ID_FORMATO_OUTPUT_RAPPR,
-		new ColumnDescriptor(COL_ID_FORMATO_OUTPUT_RAPPR, Types.DECIMAL, 22, false));
-	map.put(COL_TI_OUTPUT_RAPPR,
-		new ColumnDescriptor(COL_TI_OUTPUT_RAPPR, Types.VARCHAR, 20, false));
+        map.put(COL_ID_TIPO_RAPPR_COMP,
+                new ColumnDescriptor(COL_ID_TIPO_RAPPR_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_NM_TIPO_RAPPR_COMP,
+                new ColumnDescriptor(COL_NM_TIPO_RAPPR_COMP, Types.VARCHAR, 100, false));
+        map.put(COL_DS_TIPO_RAPPR_COMP,
+                new ColumnDescriptor(COL_DS_TIPO_RAPPR_COMP, Types.VARCHAR, 254, false));
+        map.put(COL_DT_ISTITUZ, new ColumnDescriptor(COL_DT_ISTITUZ, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_SOPPRES, new ColumnDescriptor(COL_DT_SOPPRES, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_FORMATO_CONTENUTO,
+                new ColumnDescriptor(COL_ID_FORMATO_CONTENUTO, Types.DECIMAL, 22, false));
+        map.put(COL_ID_FORMATO_CONVERTIT,
+                new ColumnDescriptor(COL_ID_FORMATO_CONVERTIT, Types.DECIMAL, 22, false));
+        map.put(COL_TI_ALGO_RAPPR,
+                new ColumnDescriptor(COL_TI_ALGO_RAPPR, Types.VARCHAR, 20, false));
+        map.put(COL_ID_FORMATO_OUTPUT_RAPPR,
+                new ColumnDescriptor(COL_ID_FORMATO_OUTPUT_RAPPR, Types.DECIMAL, 22, false));
+        map.put(COL_TI_OUTPUT_RAPPR,
+                new ColumnDescriptor(COL_TI_OUTPUT_RAPPR, Types.VARCHAR, 20, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

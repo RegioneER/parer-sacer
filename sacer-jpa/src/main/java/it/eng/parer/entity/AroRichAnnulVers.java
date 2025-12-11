@@ -88,213 +88,213 @@ public class AroRichAnnulVers implements Serializable {
     @Id
     @Column(name = "ID_RICH_ANNUL_VERS")
     @GenericGenerator(name = "SARO_RICH_ANNUL_VERS_ID_RICH_ANNUL_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_RICH_ANNUL_VERS"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_RICH_ANNUL_VERS"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_RICH_ANNUL_VERS_ID_RICH_ANNUL_VERS_GENERATOR")
     public Long getIdRichAnnulVers() {
-	return this.idRichAnnulVers;
+        return this.idRichAnnulVers;
     }
 
     public void setIdRichAnnulVers(Long idRichAnnulVers) {
-	this.idRichAnnulVers = idRichAnnulVers;
+        this.idRichAnnulVers = idRichAnnulVers;
     }
 
     @Column(name = "CD_RICH_ANNUL_VERS")
     public String getCdRichAnnulVers() {
-	return this.cdRichAnnulVers;
+        return this.cdRichAnnulVers;
     }
 
     public void setCdRichAnnulVers(String cdRichAnnulVers) {
-	this.cdRichAnnulVers = cdRichAnnulVers;
+        this.cdRichAnnulVers = cdRichAnnulVers;
     }
 
     @Column(name = "DS_RICH_ANNUL_VERS")
     public String getDsRichAnnulVers() {
-	return this.dsRichAnnulVers;
+        return this.dsRichAnnulVers;
     }
 
     public void setDsRichAnnulVers(String dsRichAnnulVers) {
-	this.dsRichAnnulVers = dsRichAnnulVers;
+        this.dsRichAnnulVers = dsRichAnnulVers;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE_RICH_ANNUL_VERS")
     public Date getDtCreazioneRichAnnulVers() {
-	return this.dtCreazioneRichAnnulVers;
+        return this.dtCreazioneRichAnnulVers;
     }
 
     public void setDtCreazioneRichAnnulVers(Date dtCreazioneRichAnnulVers) {
-	this.dtCreazioneRichAnnulVers = dtCreazioneRichAnnulVers;
+        this.dtCreazioneRichAnnulVers = dtCreazioneRichAnnulVers;
     }
 
     @Column(name = "FL_FORZA_ANNUL", columnDefinition = "char(1)")
     public String getFlForzaAnnul() {
-	return this.flForzaAnnul;
+        return this.flForzaAnnul;
     }
 
     public void setFlForzaAnnul(String flForzaAnnul) {
-	this.flForzaAnnul = flForzaAnnul;
+        this.flForzaAnnul = flForzaAnnul;
     }
 
     @Column(name = "FL_IMMEDIATA", columnDefinition = "char(1)")
     public String getFlImmediata() {
-	return this.flImmediata;
+        return this.flImmediata;
     }
 
     public void setFlImmediata(String flImmediata) {
-	this.flImmediata = flImmediata;
+        this.flImmediata = flImmediata;
     }
 
     @Column(name = "FL_RICH_PING", columnDefinition = "char(1)")
     public String getFlRichPing() {
-	return this.flRichPing;
+        return this.flRichPing;
     }
 
     public void setFlRichPing(String flRichPing) {
-	this.flRichPing = flRichPing;
+        this.flRichPing = flRichPing;
     }
 
     @Column(name = "ID_STATO_RICH_ANNUL_VERS_COR")
     public BigDecimal getIdStatoRichAnnulVersCor() {
-	return this.idStatoRichAnnulVersCor;
+        return this.idStatoRichAnnulVersCor;
     }
 
     public void setIdStatoRichAnnulVersCor(BigDecimal idStatoRichAnnulVersCor) {
-	this.idStatoRichAnnulVersCor = idStatoRichAnnulVersCor;
+        this.idStatoRichAnnulVersCor = idStatoRichAnnulVersCor;
     }
 
     @Column(name = "NT_RICH_ANNUL_VERS")
     public String getNtRichAnnulVers() {
-	return this.ntRichAnnulVers;
+        return this.ntRichAnnulVers;
     }
 
     public void setNtRichAnnulVers(String ntRichAnnulVers) {
-	this.ntRichAnnulVers = ntRichAnnulVers;
+        this.ntRichAnnulVers = ntRichAnnulVers;
     }
 
     @Column(name = "TI_CREAZIONE_RICH_ANNUL_VERS")
     public String getTiCreazioneRichAnnulVers() {
-	return this.tiCreazioneRichAnnulVers;
+        return this.tiCreazioneRichAnnulVers;
     }
 
     public void setTiCreazioneRichAnnulVers(String tiCreazioneRichAnnulVers) {
-	this.tiCreazioneRichAnnulVers = tiCreazioneRichAnnulVers;
+        this.tiCreazioneRichAnnulVers = tiCreazioneRichAnnulVers;
     }
 
     @Column(name = "TI_RICH_ANNUL_VERS")
     public String getTiRichAnnulVers() {
-	return this.tiRichAnnulVers;
+        return this.tiRichAnnulVers;
     }
 
     public void setTiRichAnnulVers(String tiRichAnnulVers) {
-	this.tiRichAnnulVers = tiRichAnnulVers;
+        this.tiRichAnnulVers = tiRichAnnulVers;
     }
 
     @OneToMany(mappedBy = "aroRichAnnulVers", cascade = CascadeType.PERSIST)
     public List<AroFileRichAnnulVers> getAroFileRichAnnulVers() {
-	return this.aroFileRichAnnulVers;
+        return this.aroFileRichAnnulVers;
     }
 
     public void setAroFileRichAnnulVers(List<AroFileRichAnnulVers> aroFileRichAnnulVers) {
-	this.aroFileRichAnnulVers = aroFileRichAnnulVers;
+        this.aroFileRichAnnulVers = aroFileRichAnnulVers;
     }
 
     public AroFileRichAnnulVers addAroFileRichAnnulVer(AroFileRichAnnulVers aroFileRichAnnulVers) {
-	getAroFileRichAnnulVers().add(aroFileRichAnnulVers);
-	aroFileRichAnnulVers.setAroRichAnnulVers(this);
-	return aroFileRichAnnulVers;
+        getAroFileRichAnnulVers().add(aroFileRichAnnulVers);
+        aroFileRichAnnulVers.setAroRichAnnulVers(this);
+        return aroFileRichAnnulVers;
     }
 
     public AroFileRichAnnulVers removeAroFileRichAnnulVer(
-	    AroFileRichAnnulVers aroFileRichAnnulVers) {
-	getAroFileRichAnnulVers().remove(aroFileRichAnnulVers);
-	aroFileRichAnnulVers.setAroRichAnnulVers(null);
-	return aroFileRichAnnulVers;
+            AroFileRichAnnulVers aroFileRichAnnulVers) {
+        getAroFileRichAnnulVers().remove(aroFileRichAnnulVers);
+        aroFileRichAnnulVers.setAroRichAnnulVers(null);
+        return aroFileRichAnnulVers;
     }
 
     @OneToMany(mappedBy = "aroRichAnnulVers", cascade = CascadeType.PERSIST)
     public List<AroItemRichAnnulVers> getAroItemRichAnnulVers() {
-	return this.aroItemRichAnnulVers;
+        return this.aroItemRichAnnulVers;
     }
 
     public void setAroItemRichAnnulVers(List<AroItemRichAnnulVers> aroItemRichAnnulVers) {
-	this.aroItemRichAnnulVers = aroItemRichAnnulVers;
+        this.aroItemRichAnnulVers = aroItemRichAnnulVers;
     }
 
     public AroItemRichAnnulVers addAroItemRichAnnulVers(AroItemRichAnnulVers aroItemRichAnnulVers) {
-	getAroItemRichAnnulVers().add(aroItemRichAnnulVers);
-	aroItemRichAnnulVers.setAroRichAnnulVers(this);
-	return aroItemRichAnnulVers;
+        getAroItemRichAnnulVers().add(aroItemRichAnnulVers);
+        aroItemRichAnnulVers.setAroRichAnnulVers(this);
+        return aroItemRichAnnulVers;
     }
 
     public AroItemRichAnnulVers removeAroItemRichAnnulVer(
-	    AroItemRichAnnulVers aroItemRichAnnulVers) {
-	getAroItemRichAnnulVers().remove(aroItemRichAnnulVers);
-	aroItemRichAnnulVers.setAroRichAnnulVers(null);
-	return aroItemRichAnnulVers;
+            AroItemRichAnnulVers aroItemRichAnnulVers) {
+        getAroItemRichAnnulVers().remove(aroItemRichAnnulVers);
+        aroItemRichAnnulVers.setAroRichAnnulVers(null);
+        return aroItemRichAnnulVers;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     public OrgStrut getOrgStrut() {
-	return this.orgStrut;
+        return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-	this.orgStrut = orgStrut;
+        this.orgStrut = orgStrut;
     }
 
     @OneToMany(mappedBy = "aroRichAnnulVers", cascade = CascadeType.PERSIST)
     public List<AroStatoRichAnnulVers> getAroStatoRichAnnulVers() {
-	return this.aroStatoRichAnnulVers;
+        return this.aroStatoRichAnnulVers;
     }
 
     public void setAroStatoRichAnnulVers(List<AroStatoRichAnnulVers> aroStatoRichAnnulVers) {
-	this.aroStatoRichAnnulVers = aroStatoRichAnnulVers;
+        this.aroStatoRichAnnulVers = aroStatoRichAnnulVers;
     }
 
     public AroStatoRichAnnulVers addAroStatoRichAnnulVers(
-	    AroStatoRichAnnulVers aroStatoRichAnnulVer) {
-	getAroStatoRichAnnulVers().add(aroStatoRichAnnulVer);
-	aroStatoRichAnnulVer.setAroRichAnnulVers(this);
-	return aroStatoRichAnnulVer;
+            AroStatoRichAnnulVers aroStatoRichAnnulVer) {
+        getAroStatoRichAnnulVers().add(aroStatoRichAnnulVer);
+        aroStatoRichAnnulVer.setAroRichAnnulVers(this);
+        return aroStatoRichAnnulVer;
     }
 
     public AroStatoRichAnnulVers removeAroStatoRichAnnulVers(
-	    AroStatoRichAnnulVers aroStatoRichAnnulVer) {
-	getAroStatoRichAnnulVers().remove(aroStatoRichAnnulVer);
-	aroStatoRichAnnulVer.setAroRichAnnulVers(null);
-	return aroStatoRichAnnulVer;
+            AroStatoRichAnnulVers aroStatoRichAnnulVer) {
+        getAroStatoRichAnnulVers().remove(aroStatoRichAnnulVer);
+        aroStatoRichAnnulVer.setAroRichAnnulVers(null);
+        return aroStatoRichAnnulVer;
     }
 
     @OneToMany(mappedBy = "aroRichAnnulVers", cascade = CascadeType.PERSIST)
     public List<AroXmlRichAnnulVers> getAroXmlRichAnnulVers() {
-	return this.aroXmlRichAnnulVers;
+        return this.aroXmlRichAnnulVers;
     }
 
     public void setAroXmlRichAnnulVers(List<AroXmlRichAnnulVers> aroXmlRichAnnulVers) {
-	this.aroXmlRichAnnulVers = aroXmlRichAnnulVers;
+        this.aroXmlRichAnnulVers = aroXmlRichAnnulVers;
     }
 
     public AroXmlRichAnnulVers addAroXmlRichAnnulVers(AroXmlRichAnnulVers aroXmlRichAnnulVers) {
-	getAroXmlRichAnnulVers().add(aroXmlRichAnnulVers);
-	aroXmlRichAnnulVers.setAroRichAnnulVers(this);
-	return aroXmlRichAnnulVers;
+        getAroXmlRichAnnulVers().add(aroXmlRichAnnulVers);
+        aroXmlRichAnnulVers.setAroRichAnnulVers(this);
+        return aroXmlRichAnnulVers;
     }
 
     public AroXmlRichAnnulVers removeAroXmlRichAnnulVers(AroXmlRichAnnulVers aroXmlRichAnnulVers) {
-	getAroXmlRichAnnulVers().remove(aroXmlRichAnnulVers);
-	aroXmlRichAnnulVers.setAroRichAnnulVers(null);
-	return aroXmlRichAnnulVers;
+        getAroXmlRichAnnulVers().remove(aroXmlRichAnnulVers);
+        aroXmlRichAnnulVers.setAroRichAnnulVers(null);
+        return aroXmlRichAnnulVers;
     }
 
     @Column(name = "TI_ANNULLAMENTO")
     public String getTiAnnullamento() {
-	return this.tiAnnullamento;
+        return this.tiAnnullamento;
     }
 
     public void setTiAnnullamento(String tiAnnullamento) {
-	this.tiAnnullamento = tiAnnullamento;
+        this.tiAnnullamento = tiAnnullamento;
     }
 
 }

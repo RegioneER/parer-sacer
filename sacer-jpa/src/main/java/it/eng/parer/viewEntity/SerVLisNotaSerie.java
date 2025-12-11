@@ -51,103 +51,103 @@ public class SerVLisNotaSerie implements Serializable {
 
     @Column(name = "CD_TIPO_NOTA_SERIE")
     public String getCdTipoNotaSerie() {
-	return this.cdTipoNotaSerie;
+        return this.cdTipoNotaSerie;
     }
 
     public void setCdTipoNotaSerie(String cdTipoNotaSerie) {
-	this.cdTipoNotaSerie = cdTipoNotaSerie;
+        this.cdTipoNotaSerie = cdTipoNotaSerie;
     }
 
     @Column(name = "DS_NOTA_VER_SERIE")
     public String getDsNotaVerSerie() {
-	return this.dsNotaVerSerie;
+        return this.dsNotaVerSerie;
     }
 
     public void setDsNotaVerSerie(String dsNotaVerSerie) {
-	this.dsNotaVerSerie = dsNotaVerSerie;
+        this.dsNotaVerSerie = dsNotaVerSerie;
     }
 
     @Column(name = "DS_TIPO_NOTA_SERIE")
     public String getDsTipoNotaSerie() {
-	return this.dsTipoNotaSerie;
+        return this.dsTipoNotaSerie;
     }
 
     public void setDsTipoNotaSerie(String dsTipoNotaSerie) {
-	this.dsTipoNotaSerie = dsTipoNotaSerie;
+        this.dsTipoNotaSerie = dsTipoNotaSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_NOTA_VER_SERIE")
     public Date getDtNotaVerSerie() {
-	return this.dtNotaVerSerie;
+        return this.dtNotaVerSerie;
     }
 
     public void setDtNotaVerSerie(Date dtNotaVerSerie) {
-	this.dtNotaVerSerie = dtNotaVerSerie;
+        this.dtNotaVerSerie = dtNotaVerSerie;
     }
 
     @Id
     @Column(name = "ID_NOTA_VER_SERIE")
     public BigDecimal getIdNotaVerSerie() {
-	return this.idNotaVerSerie;
+        return this.idNotaVerSerie;
     }
 
     public void setIdNotaVerSerie(BigDecimal idNotaVerSerie) {
-	this.idNotaVerSerie = idNotaVerSerie;
+        this.idNotaVerSerie = idNotaVerSerie;
     }
 
     @Column(name = "ID_TIPO_NOTA_SERIE")
     public BigDecimal getIdTipoNotaSerie() {
-	return this.idTipoNotaSerie;
+        return this.idTipoNotaSerie;
     }
 
     public void setIdTipoNotaSerie(BigDecimal idTipoNotaSerie) {
-	this.idTipoNotaSerie = idTipoNotaSerie;
+        this.idTipoNotaSerie = idTipoNotaSerie;
     }
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return this.idUserIam;
+        return this.idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-	return this.idVerSerie;
+        return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	this.idVerSerie = idVerSerie;
+        this.idVerSerie = idVerSerie;
     }
 
     @Column(name = "NI_ORD")
     public BigDecimal getNiOrd() {
-	return this.niOrd;
+        return this.niOrd;
     }
 
     public void setNiOrd(BigDecimal niOrd) {
-	this.niOrd = niOrd;
+        this.niOrd = niOrd;
     }
 
     @Column(name = "NM_USERID")
     public String getNmUserid() {
-	return this.nmUserid;
+        return this.nmUserid;
     }
 
     public void setNmUserid(String nmUserid) {
-	this.nmUserid = nmUserid;
+        this.nmUserid = nmUserid;
     }
 
     @Column(name = "PG_NOTA_VER_SERIE")
     public BigDecimal getPgNotaVerSerie() {
-	return this.pgNotaVerSerie;
+        return this.pgNotaVerSerie;
     }
 
     public void setPgNotaVerSerie(BigDecimal pgNotaVerSerie) {
-	this.pgNotaVerSerie = pgNotaVerSerie;
+        this.pgNotaVerSerie = pgNotaVerSerie;
     }
 
 }

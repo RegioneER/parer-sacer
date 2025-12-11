@@ -37,99 +37,99 @@ public class DecTipoStrutDocAmmessoRowBean extends BaseRow implements JEEBaseRow
     public static DecTipoStrutDocAmmessoTableDescriptor TABLE_DESCRIPTOR = new DecTipoStrutDocAmmessoTableDescriptor();
 
     public DecTipoStrutDocAmmessoRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdTipoStrutDocAmmesso() {
-	return getBigDecimal("id_tipo_strut_doc_ammesso");
+        return getBigDecimal("id_tipo_strut_doc_ammesso");
     }
 
     public void setIdTipoStrutDocAmmesso(BigDecimal idTipoStrutDocAmmesso) {
-	setObject("id_tipo_strut_doc_ammesso", idTipoStrutDocAmmesso);
+        setObject("id_tipo_strut_doc_ammesso", idTipoStrutDocAmmesso);
     }
 
     public BigDecimal getIdTipoDoc() {
-	return getBigDecimal("id_tipo_doc");
+        return getBigDecimal("id_tipo_doc");
     }
 
     public void setIdTipoDoc(BigDecimal idTipoDoc) {
-	setObject("id_tipo_doc", idTipoDoc);
+        setObject("id_tipo_doc", idTipoDoc);
     }
 
     public BigDecimal getIdTipoStrutDoc() {
-	return getBigDecimal("id_tipo_strut_doc");
+        return getBigDecimal("id_tipo_strut_doc");
     }
 
     public void setIdTipoStrutDoc(BigDecimal idTipoStrutDoc) {
-	setObject("id_tipo_strut_doc", idTipoStrutDoc);
+        setObject("id_tipo_strut_doc", idTipoStrutDoc);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecTipoStrutDocAmmesso entity = (DecTipoStrutDocAmmesso) obj;
+        DecTipoStrutDocAmmesso entity = (DecTipoStrutDocAmmesso) obj;
 
-	this.setIdTipoStrutDocAmmesso(entity.getIdTipoStrutDocAmmesso() == null ? null
-		: BigDecimal.valueOf(entity.getIdTipoStrutDocAmmesso()));
+        this.setIdTipoStrutDocAmmesso(entity.getIdTipoStrutDocAmmesso() == null ? null
+                : BigDecimal.valueOf(entity.getIdTipoStrutDocAmmesso()));
 
-	if (entity.getDecTipoDoc() != null) {
-	    this.setIdTipoDoc(new BigDecimal(entity.getDecTipoDoc().getIdTipoDoc()));
-	}
+        if (entity.getDecTipoDoc() != null) {
+            this.setIdTipoDoc(new BigDecimal(entity.getDecTipoDoc().getIdTipoDoc()));
+        }
 
-	if (entity.getDecTipoStrutDoc() != null) {
-	    this.setIdTipoStrutDoc(new BigDecimal(entity.getDecTipoStrutDoc().getIdTipoStrutDoc()));
-	}
+        if (entity.getDecTipoStrutDoc() != null) {
+            this.setIdTipoStrutDoc(new BigDecimal(entity.getDecTipoStrutDoc().getIdTipoStrutDoc()));
+        }
 
     }
 
     @Override
     public DecTipoStrutDocAmmesso rowBeanToEntity() {
-	DecTipoStrutDocAmmesso entity = new DecTipoStrutDocAmmesso();
-	if (this.getIdTipoStrutDocAmmesso() != null) {
-	    entity.setIdTipoStrutDocAmmesso(this.getIdTipoStrutDocAmmesso().longValue());
-	}
-	if (this.getIdTipoDoc() != null) {
-	    if (entity.getDecTipoDoc() == null) {
-		entity.setDecTipoDoc(new DecTipoDoc());
-	    }
-	    entity.getDecTipoDoc().setIdTipoDoc(this.getIdTipoDoc().longValue());
-	}
-	if (this.getIdTipoStrutDoc() != null) {
-	    if (entity.getDecTipoStrutDoc() == null) {
-		entity.setDecTipoStrutDoc(new DecTipoStrutDoc());
-	    }
-	    entity.getDecTipoStrutDoc().setIdTipoStrutDoc(this.getIdTipoStrutDoc().longValue());
-	}
-	return entity;
+        DecTipoStrutDocAmmesso entity = new DecTipoStrutDocAmmesso();
+        if (this.getIdTipoStrutDocAmmesso() != null) {
+            entity.setIdTipoStrutDocAmmesso(this.getIdTipoStrutDocAmmesso().longValue());
+        }
+        if (this.getIdTipoDoc() != null) {
+            if (entity.getDecTipoDoc() == null) {
+                entity.setDecTipoDoc(new DecTipoDoc());
+            }
+            entity.getDecTipoDoc().setIdTipoDoc(this.getIdTipoDoc().longValue());
+        }
+        if (this.getIdTipoStrutDoc() != null) {
+            if (entity.getDecTipoStrutDoc() == null) {
+                entity.setDecTipoStrutDoc(new DecTipoStrutDoc());
+            }
+            entity.getDecTipoStrutDoc().setIdTipoStrutDoc(this.getIdTipoStrutDoc().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

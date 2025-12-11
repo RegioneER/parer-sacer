@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class DecModelloXsdFascicoloTableBean
-	extends AbstractBaseTable<DecModelloXsdFascicoloRowBean> {
+        extends AbstractBaseTable<DecModelloXsdFascicoloRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class DecModelloXsdFascicoloTableBean
     public static DecModelloXsdFascicoloTableDescriptor TABLE_DESCRIPTOR = new DecModelloXsdFascicoloTableDescriptor();
 
     public DecModelloXsdFascicoloTableBean() {
-	super();
+        super();
     }
 
     protected DecModelloXsdFascicoloRowBean createRow() {
-	return new DecModelloXsdFascicoloRowBean();
+        return new DecModelloXsdFascicoloRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecModelloXsdFascicoloRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

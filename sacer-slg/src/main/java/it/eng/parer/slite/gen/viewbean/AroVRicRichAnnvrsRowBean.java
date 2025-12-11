@@ -37,303 +37,303 @@ public class AroVRicRichAnnvrsRowBean extends BaseRow implements JEEBaseRowInter
     public static AroVRicRichAnnvrsTableDescriptor TABLE_DESCRIPTOR = new AroVRicRichAnnvrsTableDescriptor();
 
     public AroVRicRichAnnvrsRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdUserIam() {
-	return getBigDecimal("id_user_iam");
+        return getBigDecimal("id_user_iam");
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	setObject("id_user_iam", idUserIam);
+        setObject("id_user_iam", idUserIam);
     }
 
     public BigDecimal getIdAmbiente() {
-	return getBigDecimal("id_ambiente");
+        return getBigDecimal("id_ambiente");
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	setObject("id_ambiente", idAmbiente);
+        setObject("id_ambiente", idAmbiente);
     }
 
     public String getNmAmbiente() {
-	return getString("nm_ambiente");
+        return getString("nm_ambiente");
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	setObject("nm_ambiente", nmAmbiente);
+        setObject("nm_ambiente", nmAmbiente);
     }
 
     public BigDecimal getIdEnte() {
-	return getBigDecimal("id_ente");
+        return getBigDecimal("id_ente");
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	setObject("id_ente", idEnte);
+        setObject("id_ente", idEnte);
     }
 
     public String getNmEnte() {
-	return getString("nm_ente");
+        return getString("nm_ente");
     }
 
     public void setNmEnte(String nmEnte) {
-	setObject("nm_ente", nmEnte);
+        setObject("nm_ente", nmEnte);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getNmStrut() {
-	return getString("nm_strut");
+        return getString("nm_strut");
     }
 
     public void setNmStrut(String nmStrut) {
-	setObject("nm_strut", nmStrut);
+        setObject("nm_strut", nmStrut);
     }
 
     public BigDecimal getIdRichAnnulVers() {
-	return getBigDecimal("id_rich_annul_vers");
+        return getBigDecimal("id_rich_annul_vers");
     }
 
     public void setIdRichAnnulVers(BigDecimal idRichAnnulVers) {
-	setObject("id_rich_annul_vers", idRichAnnulVers);
+        setObject("id_rich_annul_vers", idRichAnnulVers);
     }
 
     public String getCdRichAnnulVers() {
-	return getString("cd_rich_annul_vers");
+        return getString("cd_rich_annul_vers");
     }
 
     public void setCdRichAnnulVers(String cdRichAnnulVers) {
-	setObject("cd_rich_annul_vers", cdRichAnnulVers);
+        setObject("cd_rich_annul_vers", cdRichAnnulVers);
     }
 
     public String getDsRichAnnulVers() {
-	return getString("ds_rich_annul_vers");
+        return getString("ds_rich_annul_vers");
     }
 
     public void setDsRichAnnulVers(String dsRichAnnulVers) {
-	setObject("ds_rich_annul_vers", dsRichAnnulVers);
+        setObject("ds_rich_annul_vers", dsRichAnnulVers);
     }
 
     public String getNtRichAnnulVers() {
-	return getString("nt_rich_annul_vers");
+        return getString("nt_rich_annul_vers");
     }
 
     public void setNtRichAnnulVers(String ntRichAnnulVers) {
-	setObject("nt_rich_annul_vers", ntRichAnnulVers);
+        setObject("nt_rich_annul_vers", ntRichAnnulVers);
     }
 
     public Timestamp getDtCreazioneRichAnnulVers() {
-	return getTimestamp("dt_creazione_rich_annul_vers");
+        return getTimestamp("dt_creazione_rich_annul_vers");
     }
 
     public void setDtCreazioneRichAnnulVers(Timestamp dtCreazioneRichAnnulVers) {
-	setObject("dt_creazione_rich_annul_vers", dtCreazioneRichAnnulVers);
+        setObject("dt_creazione_rich_annul_vers", dtCreazioneRichAnnulVers);
     }
 
     public String getTiCreazioneRichAnnulVers() {
-	return getString("ti_creazione_rich_annul_vers");
+        return getString("ti_creazione_rich_annul_vers");
     }
 
     public void setTiCreazioneRichAnnulVers(String tiCreazioneRichAnnulVers) {
-	setObject("ti_creazione_rich_annul_vers", tiCreazioneRichAnnulVers);
+        setObject("ti_creazione_rich_annul_vers", tiCreazioneRichAnnulVers);
     }
 
     public String getFlImmediata() {
-	return getString("fl_immediata");
+        return getString("fl_immediata");
     }
 
     public void setFlImmediata(String flImmediata) {
-	setObject("fl_immediata", flImmediata);
+        setObject("fl_immediata", flImmediata);
     }
 
     public String getTiStatoRichAnnulVersCor() {
-	return getString("ti_stato_rich_annul_vers_cor");
+        return getString("ti_stato_rich_annul_vers_cor");
     }
 
     public void setTiStatoRichAnnulVersCor(String tiStatoRichAnnulVersCor) {
-	setObject("ti_stato_rich_annul_vers_cor", tiStatoRichAnnulVersCor);
+        setObject("ti_stato_rich_annul_vers_cor", tiStatoRichAnnulVersCor);
     }
 
     public BigDecimal getIdItemRichAnnulVers() {
-	return getBigDecimal("id_item_rich_annul_vers");
+        return getBigDecimal("id_item_rich_annul_vers");
     }
 
     public void setIdItemRichAnnulVers(BigDecimal idItemRichAnnulVers) {
-	setObject("id_item_rich_annul_vers", idItemRichAnnulVers);
+        setObject("id_item_rich_annul_vers", idItemRichAnnulVers);
     }
 
     public String getCdRegistroKeyUnitaDoc() {
-	return getString("cd_registro_key_unita_doc");
+        return getString("cd_registro_key_unita_doc");
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
+        setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return getBigDecimal("aa_key_unita_doc");
+        return getBigDecimal("aa_key_unita_doc");
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	setObject("aa_key_unita_doc", aaKeyUnitaDoc);
+        setObject("aa_key_unita_doc", aaKeyUnitaDoc);
     }
 
     public String getCdKeyUnitaDoc() {
-	return getString("cd_key_unita_doc");
+        return getString("cd_key_unita_doc");
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	setObject("cd_key_unita_doc", cdKeyUnitaDoc);
+        setObject("cd_key_unita_doc", cdKeyUnitaDoc);
     }
 
     public String getFlAnnulPing() {
-	return getString("fl_annul_ping");
+        return getString("fl_annul_ping");
     }
 
     public void setFlAnnulPing(String flAnnulPing) {
-	setObject("fl_annul_ping", flAnnulPing);
+        setObject("fl_annul_ping", flAnnulPing);
     }
 
     public String getFlNonAnnul() {
-	return getString("fl_non_annul");
+        return getString("fl_non_annul");
     }
 
     public void setFlNonAnnul(String flNonAnnul) {
-	setObject("fl_non_annul", flNonAnnul);
+        setObject("fl_non_annul", flNonAnnul);
     }
 
     public BigDecimal getNiItem() {
-	return getBigDecimal("ni_item");
+        return getBigDecimal("ni_item");
     }
 
     public void setNiItem(BigDecimal niItem) {
-	setObject("ni_item", niItem);
+        setObject("ni_item", niItem);
     }
 
     public BigDecimal getNiItemPing() {
-	return getBigDecimal("ni_item_ping");
+        return getBigDecimal("ni_item_ping");
     }
 
     public void setNiItemPing(BigDecimal niItemPing) {
-	setObject("ni_item_ping", niItemPing);
+        setObject("ni_item_ping", niItemPing);
     }
 
     public BigDecimal getNiItemNonAnnul() {
-	return getBigDecimal("ni_item_non_annul");
+        return getBigDecimal("ni_item_non_annul");
     }
 
     public void setNiItemNonAnnul(BigDecimal niItemNonAnnul) {
-	setObject("ni_item_non_annul", niItemNonAnnul);
+        setObject("ni_item_non_annul", niItemNonAnnul);
     }
 
     public String getTiAnnullamento() {
-	return getString("ti_annullamento");
+        return getString("ti_annullamento");
     }
 
     public void setTiAnnullamento(String tiAnnullamento) {
-	setObject("ti_annullamento", tiAnnullamento);
+        setObject("ti_annullamento", tiAnnullamento);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVRicRichAnnvrs entity = (AroVRicRichAnnvrs) obj;
-	if (entity.getAroVRicRichAnnvrsId() != null) {
-	    this.setIdUserIam(entity.getAroVRicRichAnnvrsId().getIdUserIam());
-	    this.setIdRichAnnulVers(entity.getAroVRicRichAnnvrsId().getIdRichAnnulVers());
-	}
-	this.setIdAmbiente(entity.getIdAmbiente());
-	this.setNmAmbiente(entity.getNmAmbiente());
-	this.setIdEnte(entity.getIdEnte());
-	this.setNmEnte(entity.getNmEnte());
-	this.setIdStrut(entity.getIdStrut());
-	this.setNmStrut(entity.getNmStrut());
-	this.setCdRichAnnulVers(entity.getCdRichAnnulVers());
-	this.setDsRichAnnulVers(entity.getDsRichAnnulVers());
-	this.setNtRichAnnulVers(entity.getNtRichAnnulVers());
-	if (entity.getDtCreazioneRichAnnulVers() != null) {
-	    this.setDtCreazioneRichAnnulVers(
-		    new Timestamp(entity.getDtCreazioneRichAnnulVers().getTime()));
-	}
-	this.setTiCreazioneRichAnnulVers(entity.getTiCreazioneRichAnnulVers());
-	this.setFlImmediata(entity.getFlImmediata());
-	this.setTiStatoRichAnnulVersCor(entity.getTiStatoRichAnnulVersCor());
-	this.setIdItemRichAnnulVers(entity.getIdItemRichAnnulVers());
-	this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
-	this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
-	this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
-	this.setFlAnnulPing(entity.getFlAnnulPing());
-	this.setFlNonAnnul(entity.getFlNonAnnul());
-	this.setNiItem(entity.getNiItem());
-	this.setNiItemPing(entity.getNiItemPing());
-	this.setNiItemNonAnnul(entity.getNiItemNonAnnul());
-	this.setTiAnnullamento(entity.getTiAnnullamento());
+        AroVRicRichAnnvrs entity = (AroVRicRichAnnvrs) obj;
+        if (entity.getAroVRicRichAnnvrsId() != null) {
+            this.setIdUserIam(entity.getAroVRicRichAnnvrsId().getIdUserIam());
+            this.setIdRichAnnulVers(entity.getAroVRicRichAnnvrsId().getIdRichAnnulVers());
+        }
+        this.setIdAmbiente(entity.getIdAmbiente());
+        this.setNmAmbiente(entity.getNmAmbiente());
+        this.setIdEnte(entity.getIdEnte());
+        this.setNmEnte(entity.getNmEnte());
+        this.setIdStrut(entity.getIdStrut());
+        this.setNmStrut(entity.getNmStrut());
+        this.setCdRichAnnulVers(entity.getCdRichAnnulVers());
+        this.setDsRichAnnulVers(entity.getDsRichAnnulVers());
+        this.setNtRichAnnulVers(entity.getNtRichAnnulVers());
+        if (entity.getDtCreazioneRichAnnulVers() != null) {
+            this.setDtCreazioneRichAnnulVers(
+                    new Timestamp(entity.getDtCreazioneRichAnnulVers().getTime()));
+        }
+        this.setTiCreazioneRichAnnulVers(entity.getTiCreazioneRichAnnulVers());
+        this.setFlImmediata(entity.getFlImmediata());
+        this.setTiStatoRichAnnulVersCor(entity.getTiStatoRichAnnulVersCor());
+        this.setIdItemRichAnnulVers(entity.getIdItemRichAnnulVers());
+        this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
+        this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
+        this.setFlAnnulPing(entity.getFlAnnulPing());
+        this.setFlNonAnnul(entity.getFlNonAnnul());
+        this.setNiItem(entity.getNiItem());
+        this.setNiItemPing(entity.getNiItemPing());
+        this.setNiItemNonAnnul(entity.getNiItemNonAnnul());
+        this.setTiAnnullamento(entity.getTiAnnullamento());
     }
 
     @Override
     public AroVRicRichAnnvrs rowBeanToEntity() {
-	AroVRicRichAnnvrs entity = new AroVRicRichAnnvrs();
-	entity.setAroVRicRichAnnvrsId(new AroVRicRichAnnvrsId());
-	entity.getAroVRicRichAnnvrsId().setIdUserIam(this.getIdUserIam());
-	entity.getAroVRicRichAnnvrsId().setIdRichAnnulVers(this.getIdRichAnnulVers());
-	entity.setIdAmbiente(this.getIdAmbiente());
-	entity.setNmAmbiente(this.getNmAmbiente());
-	entity.setIdEnte(this.getIdEnte());
-	entity.setNmEnte(this.getNmEnte());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setNmStrut(this.getNmStrut());
-	entity.setCdRichAnnulVers(this.getCdRichAnnulVers());
-	entity.setDsRichAnnulVers(this.getDsRichAnnulVers());
-	entity.setNtRichAnnulVers(this.getNtRichAnnulVers());
-	entity.setDtCreazioneRichAnnulVers(this.getDtCreazioneRichAnnulVers());
-	entity.setTiCreazioneRichAnnulVers(this.getTiCreazioneRichAnnulVers());
-	entity.setFlImmediata(this.getFlImmediata());
-	entity.setTiStatoRichAnnulVersCor(this.getTiStatoRichAnnulVersCor());
-	entity.setIdItemRichAnnulVers(this.getIdItemRichAnnulVers());
-	entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
-	entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
-	entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
-	entity.setFlAnnulPing(this.getFlAnnulPing());
-	entity.setFlNonAnnul(this.getFlNonAnnul());
-	entity.setNiItem(this.getNiItem());
-	entity.setNiItemPing(this.getNiItemPing());
-	entity.setNiItemNonAnnul(this.getNiItemNonAnnul());
-	entity.setTiAnnullamento(this.getTiAnnullamento());
-	return entity;
+        AroVRicRichAnnvrs entity = new AroVRicRichAnnvrs();
+        entity.setAroVRicRichAnnvrsId(new AroVRicRichAnnvrsId());
+        entity.getAroVRicRichAnnvrsId().setIdUserIam(this.getIdUserIam());
+        entity.getAroVRicRichAnnvrsId().setIdRichAnnulVers(this.getIdRichAnnulVers());
+        entity.setIdAmbiente(this.getIdAmbiente());
+        entity.setNmAmbiente(this.getNmAmbiente());
+        entity.setIdEnte(this.getIdEnte());
+        entity.setNmEnte(this.getNmEnte());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setNmStrut(this.getNmStrut());
+        entity.setCdRichAnnulVers(this.getCdRichAnnulVers());
+        entity.setDsRichAnnulVers(this.getDsRichAnnulVers());
+        entity.setNtRichAnnulVers(this.getNtRichAnnulVers());
+        entity.setDtCreazioneRichAnnulVers(this.getDtCreazioneRichAnnulVers());
+        entity.setTiCreazioneRichAnnulVers(this.getTiCreazioneRichAnnulVers());
+        entity.setFlImmediata(this.getFlImmediata());
+        entity.setTiStatoRichAnnulVersCor(this.getTiStatoRichAnnulVersCor());
+        entity.setIdItemRichAnnulVers(this.getIdItemRichAnnulVers());
+        entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
+        entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
+        entity.setFlAnnulPing(this.getFlAnnulPing());
+        entity.setFlNonAnnul(this.getFlNonAnnul());
+        entity.setNiItem(this.getNiItem());
+        entity.setNiItemPing(this.getNiItemPing());
+        entity.setNiItemNonAnnul(this.getNiItemNonAnnul());
+        entity.setTiAnnullamento(this.getTiAnnullamento());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

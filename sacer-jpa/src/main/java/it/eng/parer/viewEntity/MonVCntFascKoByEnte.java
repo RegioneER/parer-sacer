@@ -35,21 +35,21 @@ public class MonVCntFascKoByEnte implements Serializable {
 
     @Column(name = "NI_FASC_KO")
     public BigDecimal getNiFascKo() {
-	return this.niFascKo;
+        return this.niFascKo;
     }
 
     public void setNiFascKo(BigDecimal niFascKo) {
-	this.niFascKo = niFascKo;
+        this.niFascKo = niFascKo;
     }
 
     private MonVCntFascKoByEnteId monVCntFascKoByEnteId;
 
     @EmbeddedId()
     public MonVCntFascKoByEnteId getMonVCntFascKoByEnteId() {
-	return monVCntFascKoByEnteId;
+        return monVCntFascKoByEnteId;
     }
 
     public void setMonVCntFascKoByEnteId(MonVCntFascKoByEnteId monVCntFascKoByEnteId) {
-	this.monVCntFascKoByEnteId = monVCntFascKoByEnteId;
+        this.monVCntFascKoByEnteId = monVCntFascKoByEnteId;
     }
 }

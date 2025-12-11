@@ -39,29 +39,29 @@ public class UsrVChkCreaAmbSacer implements Serializable {
 
     @EmbeddedId
     public UsrVChkCreaAmbSacerId getUsrVChkCreaAmbSacerId() {
-	return usrVChkCreaAmbSacerId;
+        return usrVChkCreaAmbSacerId;
     }
 
     public void setUsrVChkCreaAmbSacerId(UsrVChkCreaAmbSacerId usrVChkCreaAmbSacerId) {
-	this.usrVChkCreaAmbSacerId = usrVChkCreaAmbSacerId;
+        this.usrVChkCreaAmbSacerId = usrVChkCreaAmbSacerId;
     }
 
     @Column(name = "FL_CREA_AMBIENTE", columnDefinition = "char(1)")
     public String getFlCreaAmbiente() {
-	return this.flCreaAmbiente;
+        return this.flCreaAmbiente;
     }
 
     public void setFlCreaAmbiente(String flCreaAmbiente) {
-	this.flCreaAmbiente = flCreaAmbiente;
+        this.flCreaAmbiente = flCreaAmbiente;
     }
 
     @Column(name = "NM_APPLIC")
     public String getNmApplic() {
-	return this.nmApplic;
+        return this.nmApplic;
     }
 
     public void setNmApplic(String nmApplic) {
-	this.nmApplic = nmApplic;
+        this.nmApplic = nmApplic;
     }
 
 }

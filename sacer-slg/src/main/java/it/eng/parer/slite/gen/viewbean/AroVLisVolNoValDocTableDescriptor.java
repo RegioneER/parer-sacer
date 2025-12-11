@@ -45,28 +45,28 @@ public class AroVLisVolNoValDocTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_ID_VOLUME_CONSERV, Types.DECIMAL, 22, true));
-	map.put(COL_NM_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_NM_VOLUME_CONSERV, Types.VARCHAR, 100, true));
-	map.put(COL_DS_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_DS_VOLUME_CONSERV, Types.VARCHAR, 254, true));
-	map.put(COL_DT_CREAZIONE, new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_STATO_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_TI_STATO_VOLUME_CONSERV, Types.VARCHAR, 20, true));
+        map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_ID_VOLUME_CONSERV, Types.DECIMAL, 22, true));
+        map.put(COL_NM_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_NM_VOLUME_CONSERV, Types.VARCHAR, 100, true));
+        map.put(COL_DS_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_DS_VOLUME_CONSERV, Types.VARCHAR, 254, true));
+        map.put(COL_DT_CREAZIONE, new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_STATO_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_TI_STATO_VOLUME_CONSERV, Types.VARCHAR, 20, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

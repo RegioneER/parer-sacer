@@ -39,62 +39,62 @@ public class ModelliFascicoliHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(ModelliFascicoliHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			ModelliFascicoliHelperTest.class, ModelliFascicoliHelper.class));
+        return HelperTest.createEnterpriseArchive(ModelliFascicoliHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        ModelliFascicoliHelperTest.class, ModelliFascicoliHelper.class));
     }
 
     @Test
     public void retrieveDecModelloXsdTipoFascicolo_queryIsOk() {
-	ModelliFascicoliHelper.Filtri filtri = new ModelliFascicoliHelper.Filtri();
-	filtri.setCdXsd(aString());
-	filtri.setDsXsd(aString());
-	filtri.setFlAttivo(aFlag());
-	filtri.setFlDefault(aFlag());
-	filtri.setTiModelloXsd(aString());
-	List<BigDecimal> idAmbienteList = aListOfBigDecimal(2);
-	String tiUsoModelloXsd = aString();
-	boolean filterValid = false;
-	helper.retrieveDecModelloXsdTipoFascicolo(idAmbienteList, tiUsoModelloXsd, filterValid,
-		filtri);
-	assertTrue(true);
+        ModelliFascicoliHelper.Filtri filtri = new ModelliFascicoliHelper.Filtri();
+        filtri.setCdXsd(aString());
+        filtri.setDsXsd(aString());
+        filtri.setFlAttivo(aFlag());
+        filtri.setFlDefault(aFlag());
+        filtri.setTiModelloXsd(aString());
+        List<BigDecimal> idAmbienteList = aListOfBigDecimal(2);
+        String tiUsoModelloXsd = aString();
+        boolean filterValid = false;
+        helper.retrieveDecModelloXsdTipoFascicolo(idAmbienteList, tiUsoModelloXsd, filterValid,
+                filtri);
+        assertTrue(true);
     }
 
     @Test
     public void retrieveDecModelloXsdFascicolo_queryIsOk() {
-	BigDecimal idAmbiente = aBigDecimal();
-	String tiModelloXsd = aString();
-	boolean filterValid = false;
+        BigDecimal idAmbiente = aBigDecimal();
+        String tiModelloXsd = aString();
+        boolean filterValid = false;
 
-	helper.retrieveDecModelloXsdFascicolo(idAmbiente, tiModelloXsd, filterValid);
-	assertTrue(true);
+        helper.retrieveDecModelloXsdFascicolo(idAmbiente, tiModelloXsd, filterValid);
+        assertTrue(true);
     }
 
     @Test
     public void getDecModelloXsdFascicolo_queryIsOk() {
-	BigDecimal idAmbiente = aBigDecimal();
-	String tiModelloXsd = aString();
-	String tiUsoModelloXsd = aString();
-	String cdXsd = aString();
+        BigDecimal idAmbiente = aBigDecimal();
+        String tiModelloXsd = aString();
+        String tiUsoModelloXsd = aString();
+        String cdXsd = aString();
 
-	helper.getDecModelloXsdFascicolo(idAmbiente, tiModelloXsd, tiUsoModelloXsd, cdXsd);
-	assertTrue(true);
+        helper.getDecModelloXsdFascicolo(idAmbiente, tiModelloXsd, tiUsoModelloXsd, cdXsd);
+        assertTrue(true);
     }
 
     @Test
     public void retrieveDecUsoModelloXsdFasc_queryIsOk() {
-	BigDecimal idModelloXsdFascicolo = aBigDecimal();
+        BigDecimal idModelloXsdFascicolo = aBigDecimal();
 
-	helper.retrieveDecUsoModelloXsdFasc(idModelloXsdFascicolo);
-	assertTrue(true);
+        helper.retrieveDecUsoModelloXsdFasc(idModelloXsdFascicolo);
+        assertTrue(true);
     }
 
     @Test
     public void existDecUsoModelloXsdFasc_queryIsOk() {
-	BigDecimal idModelloXsdFascicolo = aBigDecimal();
+        BigDecimal idModelloXsdFascicolo = aBigDecimal();
 
-	helper.existDecUsoModelloXsdFasc(idModelloXsdFascicolo);
-	assertTrue(true);
+        helper.existDecUsoModelloXsdFasc(idModelloXsdFascicolo);
+        assertTrue(true);
     }
 }

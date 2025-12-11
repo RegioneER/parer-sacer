@@ -40,21 +40,21 @@ public class DecVChkModificaTipoSerie implements Serializable {
 
     @Column(name = "FL_MODIFICA_TIPO_SERIE", columnDefinition = "char(1)")
     public String getFlModificaTipoSerie() {
-	return this.flModificaTipoSerie;
+        return this.flModificaTipoSerie;
     }
 
     public void setFlModificaTipoSerie(String flModificaTipoSerie) {
-	this.flModificaTipoSerie = flModificaTipoSerie;
+        this.flModificaTipoSerie = flModificaTipoSerie;
     }
 
     @Id
     @Column(name = "ID_TIPO_SERIE")
     public BigDecimal getIdTipoSerie() {
-	return this.idTipoSerie;
+        return this.idTipoSerie;
     }
 
     public void setIdTipoSerie(BigDecimal idTipoSerie) {
-	this.idTipoSerie = idTipoSerie;
+        this.idTipoSerie = idTipoSerie;
     }
 
 }

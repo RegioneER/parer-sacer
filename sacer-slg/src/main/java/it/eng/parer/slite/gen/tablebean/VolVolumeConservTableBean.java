@@ -33,19 +33,19 @@ public class VolVolumeConservTableBean extends AbstractBaseTable<VolVolumeConser
     public static VolVolumeConservTableDescriptor TABLE_DESCRIPTOR = new VolVolumeConservTableDescriptor();
 
     public VolVolumeConservTableBean() {
-	super();
+        super();
     }
 
     protected VolVolumeConservRowBean createRow() {
-	return new VolVolumeConservRowBean();
+        return new VolVolumeConservRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VolVolumeConservRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

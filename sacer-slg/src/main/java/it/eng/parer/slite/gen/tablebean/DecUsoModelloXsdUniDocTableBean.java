@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class DecUsoModelloXsdUniDocTableBean
-	extends AbstractBaseTable<DecUsoModelloXsdUniDocRowBean> {
+        extends AbstractBaseTable<DecUsoModelloXsdUniDocRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class DecUsoModelloXsdUniDocTableBean
     public static DecUsoModelloXsdUniDocTableDescriptor TABLE_DESCRIPTOR = new DecUsoModelloXsdUniDocTableDescriptor();
 
     public DecUsoModelloXsdUniDocTableBean() {
-	super();
+        super();
     }
 
     protected DecUsoModelloXsdUniDocRowBean createRow() {
-	return new DecUsoModelloXsdUniDocRowBean();
+        return new DecUsoModelloXsdUniDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecUsoModelloXsdUniDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

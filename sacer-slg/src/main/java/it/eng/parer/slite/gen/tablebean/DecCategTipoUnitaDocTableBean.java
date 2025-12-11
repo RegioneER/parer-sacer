@@ -33,19 +33,19 @@ public class DecCategTipoUnitaDocTableBean extends AbstractBaseTable<DecCategTip
     public static DecCategTipoUnitaDocTableDescriptor TABLE_DESCRIPTOR = new DecCategTipoUnitaDocTableDescriptor();
 
     public DecCategTipoUnitaDocTableBean() {
-	super();
+        super();
     }
 
     protected DecCategTipoUnitaDocRowBean createRow() {
-	return new DecCategTipoUnitaDocRowBean();
+        return new DecCategTipoUnitaDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecCategTipoUnitaDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

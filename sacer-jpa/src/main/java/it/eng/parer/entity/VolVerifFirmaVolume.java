@@ -61,64 +61,64 @@ public class VolVerifFirmaVolume implements Serializable {
 
     @Column(name = "ID_VERIF_FIRMA_VOLUME")
     @GenericGenerator(name = "SVOL_VERIF_FIRMA_VOLUME_ID_VERIF_FIRMA_VOLUME_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_VERIF_FIRMA_VOLUME"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_VERIF_FIRMA_VOLUME"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SVOL_VERIF_FIRMA_VOLUME_ID_VERIF_FIRMA_VOLUME_GENERATOR")
     public Long getIdVerifFirmaVolume() {
-	return this.idVerifFirmaVolume;
+        return this.idVerifFirmaVolume;
     }
 
     public void setIdVerifFirmaVolume(Long idVerifFirmaVolume) {
-	this.idVerifFirmaVolume = idVerifFirmaVolume;
+        this.idVerifFirmaVolume = idVerifFirmaVolume;
     }
 
     @Column(name = "DS_MSG_ESITO_VERIF_FIRMA")
     public String getDsMsgEsitoVerifFirma() {
-	return this.dsMsgEsitoVerifFirma;
+        return this.dsMsgEsitoVerifFirma;
     }
 
     public void setDsMsgEsitoVerifFirma(String dsMsgEsitoVerifFirma) {
-	this.dsMsgEsitoVerifFirma = dsMsgEsitoVerifFirma;
+        this.dsMsgEsitoVerifFirma = dsMsgEsitoVerifFirma;
     }
 
     @Column(name = "TI_ESITO_VERIF_FIRMA")
     public String getTiEsitoVerifFirma() {
-	return this.tiEsitoVerifFirma;
+        return this.tiEsitoVerifFirma;
     }
 
     public void setTiEsitoVerifFirma(String tiEsitoVerifFirma) {
-	this.tiEsitoVerifFirma = tiEsitoVerifFirma;
+        this.tiEsitoVerifFirma = tiEsitoVerifFirma;
     }
 
     @Column(name = "TI_VERIF")
     public String getTiVerif() {
-	return this.tiVerif;
+        return this.tiVerif;
     }
 
     public void setTiVerif(String tiVerif) {
-	this.tiVerif = tiVerif;
+        this.tiVerif = tiVerif;
     }
 
     @OneToMany(mappedBy = "volVerifFirmaVolume", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     public List<VolContrVerifFirmaVolume> getVolContrVerifFirmaVolumes() {
-	return this.volContrVerifFirmaVolumes;
+        return this.volContrVerifFirmaVolumes;
     }
 
     public void setVolContrVerifFirmaVolumes(
-	    List<VolContrVerifFirmaVolume> volContrVerifFirmaVolumes) {
-	this.volContrVerifFirmaVolumes = volContrVerifFirmaVolumes;
+            List<VolContrVerifFirmaVolume> volContrVerifFirmaVolumes) {
+        this.volContrVerifFirmaVolumes = volContrVerifFirmaVolumes;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {
-	    CascadeType.DETACH })
+            CascadeType.DETACH })
     @JoinColumn(name = "ID_APPART_FIRMA_VOLUME")
     public VolAppartFirmaVolume getVolAppartFirmaVolume() {
-	return this.volAppartFirmaVolume;
+        return this.volAppartFirmaVolume;
     }
 
     public void setVolAppartFirmaVolume(VolAppartFirmaVolume volAppartFirmaVolume) {
-	this.volAppartFirmaVolume = volAppartFirmaVolume;
+        this.volAppartFirmaVolume = volAppartFirmaVolume;
     }
 
 }

@@ -100,235 +100,235 @@ public class DecTipoDoc implements Serializable {
     @Column(name = "ID_TIPO_DOC")
     @XmlID
     @GenericGenerator(name = "SDEC_TIPO_DOC_ID_TIPO_DOC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_DOC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_DOC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_DOC_ID_TIPO_DOC_GENERATOR")
     public Long getIdTipoDoc() {
-	return this.idTipoDoc;
+        return this.idTipoDoc;
     }
 
     public void setIdTipoDoc(Long idTipoDoc) {
-	this.idTipoDoc = idTipoDoc;
+        this.idTipoDoc = idTipoDoc;
     }
 
     @Column(name = "DL_NOTE_TIPO_DOC")
     public String getDlNoteTipoDoc() {
-	return this.dlNoteTipoDoc;
+        return this.dlNoteTipoDoc;
     }
 
     public void setDlNoteTipoDoc(String dlNoteTipoDoc) {
-	this.dlNoteTipoDoc = dlNoteTipoDoc;
+        this.dlNoteTipoDoc = dlNoteTipoDoc;
     }
 
     @Column(name = "DS_PERIODICITA_VERS")
     public String getDsPeriodicitaVers() {
-	return this.dsPeriodicitaVers;
+        return this.dsPeriodicitaVers;
     }
 
     public void setDsPeriodicitaVers(String dsPeriodicitaVers) {
-	this.dsPeriodicitaVers = dsPeriodicitaVers;
+        this.dsPeriodicitaVers = dsPeriodicitaVers;
     }
 
     @Column(name = "DS_TIPO_DOC")
     public String getDsTipoDoc() {
-	return this.dsTipoDoc;
+        return this.dsTipoDoc;
     }
 
     public void setDsTipoDoc(String dsTipoDoc) {
-	this.dsTipoDoc = dsTipoDoc;
+        this.dsTipoDoc = dsTipoDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ISTITUZ")
     public Date getDtIstituz() {
-	return this.dtIstituz;
+        return this.dtIstituz;
     }
 
     public void setDtIstituz(Date dtIstituz) {
-	this.dtIstituz = dtIstituz;
+        this.dtIstituz = dtIstituz;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SOPPRES")
     public Date getDtSoppres() {
-	return this.dtSoppres;
+        return this.dtSoppres;
     }
 
     public void setDtSoppres(Date dtSoppres) {
-	this.dtSoppres = dtSoppres;
+        this.dtSoppres = dtSoppres;
     }
 
     @Column(name = "FL_TIPO_DOC_PRINCIPALE", columnDefinition = "char(1)")
     public String getFlTipoDocPrincipale() {
-	return this.flTipoDocPrincipale;
+        return this.flTipoDocPrincipale;
     }
 
     public void setFlTipoDocPrincipale(String flTipoDocPrincipale) {
-	this.flTipoDocPrincipale = flTipoDocPrincipale;
+        this.flTipoDocPrincipale = flTipoDocPrincipale;
     }
 
     @Column(name = "NM_TIPO_DOC")
     public String getNmTipoDoc() {
-	return this.nmTipoDoc;
+        return this.nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	this.nmTipoDoc = nmTipoDoc;
+        this.nmTipoDoc = nmTipoDoc;
     }
 
     @OneToMany(mappedBy = "decTipoDoc")
     @XmlTransient
     public List<AroDoc> getAroDocs() {
-	return this.aroDocs;
+        return this.aroDocs;
     }
 
     public void setAroDocs(List<AroDoc> aroDocs) {
-	this.aroDocs = aroDocs;
+        this.aroDocs = aroDocs;
     }
 
     @OneToMany(mappedBy = "decTipoDoc", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     @XmlIDREF
     public List<DecAttribDatiSpec> getDecAttribDatiSpecs() {
-	return this.decAttribDatiSpecs;
+        return this.decAttribDatiSpecs;
     }
 
     public void setDecAttribDatiSpecs(List<DecAttribDatiSpec> decAttribDatiSpecs) {
-	this.decAttribDatiSpecs = decAttribDatiSpecs;
+        this.decAttribDatiSpecs = decAttribDatiSpecs;
     }
 
     @OneToMany(mappedBy = "decTipoDoc")
     @XmlIDREF
     public List<DecCriterioFiltroMultiplo> getDecCriterioFiltroMultiplos() {
-	return this.decCriterioFiltroMultiplos;
+        return this.decCriterioFiltroMultiplos;
     }
 
     public void setDecCriterioFiltroMultiplos(
-	    List<DecCriterioFiltroMultiplo> decCriterioFiltroMultiplos) {
-	this.decCriterioFiltroMultiplos = decCriterioFiltroMultiplos;
+            List<DecCriterioFiltroMultiplo> decCriterioFiltroMultiplos) {
+        this.decCriterioFiltroMultiplos = decCriterioFiltroMultiplos;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     @XmlInverseReference(mappedBy = "decTipoDocs")
     public OrgStrut getOrgStrut() {
-	return this.orgStrut;
+        return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-	this.orgStrut = orgStrut;
+        this.orgStrut = orgStrut;
     }
 
     @OneToMany(mappedBy = "decTipoDoc", cascade = CascadeType.PERSIST)
     public List<DecTipoDocAmmesso> getDecTipoDocAmmessos() {
-	return this.decTipoDocAmmessos;
+        return this.decTipoDocAmmessos;
     }
 
     public void setDecTipoDocAmmessos(List<DecTipoDocAmmesso> decTipoDocAmmessos) {
-	this.decTipoDocAmmessos = decTipoDocAmmessos;
+        this.decTipoDocAmmessos = decTipoDocAmmessos;
     }
 
     @OneToMany(mappedBy = "decTipoDoc", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     public List<DecTipoStrutDocAmmesso> getDecTipoStrutDocAmmessos() {
-	return this.decTipoStrutDocAmmessos;
+        return this.decTipoStrutDocAmmessos;
     }
 
     public void setDecTipoStrutDocAmmessos(List<DecTipoStrutDocAmmesso> decTipoStrutDocAmmessos) {
-	this.decTipoStrutDocAmmessos = decTipoStrutDocAmmessos;
+        this.decTipoStrutDocAmmessos = decTipoStrutDocAmmessos;
     }
 
     @OneToMany(mappedBy = "decTipoDoc", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     @XmlIDREF
     public List<DecXsdDatiSpec> getDecXsdDatiSpecs() {
-	return this.decXsdDatiSpecs;
+        return this.decXsdDatiSpecs;
     }
 
     public void setDecXsdDatiSpecs(List<DecXsdDatiSpec> decXsdDatiSpecs) {
-	this.decXsdDatiSpecs = decXsdDatiSpecs;
+        this.decXsdDatiSpecs = decXsdDatiSpecs;
     }
 
     @OneToMany(mappedBy = "decTipoDoc", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     @XmlIDREF
     public List<OrgRegolaValSubStrut> getOrgRegolaValSubStruts() {
-	return this.orgRegolaValSubStruts;
+        return this.orgRegolaValSubStruts;
     }
 
     public void setOrgRegolaValSubStruts(List<OrgRegolaValSubStrut> orgRegolaValSubStruts) {
-	this.orgRegolaValSubStruts = orgRegolaValSubStruts;
+        this.orgRegolaValSubStruts = orgRegolaValSubStruts;
     }
 
     @OneToMany(mappedBy = "decTipoDoc", cascade = CascadeType.REMOVE)
     @XmlTransient
     public List<DecFiltroSelUd> getDecFiltroSelUds() {
-	return this.decFiltroSelUds;
+        return this.decFiltroSelUds;
     }
 
     public void setDecFiltroSelUds(List<DecFiltroSelUd> decFiltroSelUds) {
-	this.decFiltroSelUds = decFiltroSelUds;
+        this.decFiltroSelUds = decFiltroSelUds;
     }
 
     @OneToMany(mappedBy = "decTipoDoc")
     @XmlTransient
     public List<MonContaUdDocComp> getMonContaUdDocComps() {
-	return this.monContaUdDocComps;
+        return this.monContaUdDocComps;
     }
 
     public void setMonContaUdDocComps(List<MonContaUdDocComp> monContaUdDocComps) {
-	this.monContaUdDocComps = monContaUdDocComps;
+        this.monContaUdDocComps = monContaUdDocComps;
     }
 
     @OneToMany(mappedBy = "decTipoDoc")
     @XmlTransient
     public List<DecModelloTipoSerie> getDecModelloTipoSeries() {
-	return this.decModelloTipoSeries;
+        return this.decModelloTipoSeries;
     }
 
     public void setDecModelloTipoSeries(List<DecModelloTipoSerie> decModelloTipoSeries) {
-	this.decModelloTipoSeries = decModelloTipoSeries;
+        this.decModelloTipoSeries = decModelloTipoSeries;
     }
 
     public DecModelloTipoSerie addDecModelloTipoSery(DecModelloTipoSerie decModelloTipoSery) {
-	getDecModelloTipoSeries().add(decModelloTipoSery);
-	decModelloTipoSery.setDecTipoDoc(this);
-	return decModelloTipoSery;
+        getDecModelloTipoSeries().add(decModelloTipoSery);
+        decModelloTipoSery.setDecTipoDoc(this);
+        return decModelloTipoSery;
     }
 
     public DecModelloTipoSerie removeDecModelloTipoSery(DecModelloTipoSerie decModelloTipoSery) {
-	getDecModelloTipoSeries().remove(decModelloTipoSery);
-	decModelloTipoSery.setDecTipoDoc(null);
-	return decModelloTipoSery;
+        getDecModelloTipoSeries().remove(decModelloTipoSery);
+        decModelloTipoSery.setDecTipoDoc(null);
+        return decModelloTipoSery;
     }
 
     @OneToMany(mappedBy = "decTipoDoc", cascade = CascadeType.PERSIST)
     public List<DecUsoModelloXsdDoc> getDecUsoModelloXsdDocs() {
-	return this.decUsoModelloXsdDocs;
+        return this.decUsoModelloXsdDocs;
     }
 
     public void setDecUsoModelloXsdDocs(List<DecUsoModelloXsdDoc> decUsoModelloXsdDocs) {
-	this.decUsoModelloXsdDocs = decUsoModelloXsdDocs;
+        this.decUsoModelloXsdDocs = decUsoModelloXsdDocs;
     }
 
     @OneToMany(mappedBy = "decTipoDocPrinc")
     @XmlTransient
     public List<VrsSesUpdUnitaDocKo> getVrsSesUpdUnitaDocKos() {
-	return this.vrsSesUpdUnitaDocKos;
+        return this.vrsSesUpdUnitaDocKos;
     }
 
     public void setVrsSesUpdUnitaDocKos(List<VrsSesUpdUnitaDocKo> vrsSesUpdUnitaDocKos) {
-	this.vrsSesUpdUnitaDocKos = vrsSesUpdUnitaDocKos;
+        this.vrsSesUpdUnitaDocKos = vrsSesUpdUnitaDocKos;
     }
 
     @OneToMany(mappedBy = "decTipoDocPrincLast")
     @XmlTransient
     public List<VrsUpdUnitaDocKo> getVrsUpdUnitaDocKos() {
-	return this.vrsUpdUnitaDocKos;
+        return this.vrsUpdUnitaDocKos;
     }
 
     public void setVrsUpdUnitaDocKos(List<VrsUpdUnitaDocKo> vrsUpdUnitaDocKos) {
-	this.vrsUpdUnitaDocKos = vrsUpdUnitaDocKos;
+        this.vrsUpdUnitaDocKos = vrsUpdUnitaDocKos;
     }
 
 }

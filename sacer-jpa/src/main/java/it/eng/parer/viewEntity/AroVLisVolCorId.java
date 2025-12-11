@@ -27,50 +27,50 @@ public class AroVLisVolCorId implements Serializable {
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return idUnitaDoc;
+        return idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     private BigDecimal idVolumeConserv;
 
     @Column(name = "ID_VOLUME_CONSERV")
     public BigDecimal getIdVolumeConserv() {
-	return idVolumeConserv;
+        return idVolumeConserv;
     }
 
     public void setIdVolumeConserv(BigDecimal idVolumeConserv) {
-	this.idVolumeConserv = idVolumeConserv;
+        this.idVolumeConserv = idVolumeConserv;
     }
 
     @Override
     public int hashCode() {
-	int hash = 5;
-	hash = 13 * hash + Objects.hashCode(this.idUnitaDoc);
-	hash = 13 * hash + Objects.hashCode(this.idVolumeConserv);
-	return hash;
+        int hash = 5;
+        hash = 13 * hash + Objects.hashCode(this.idUnitaDoc);
+        hash = 13 * hash + Objects.hashCode(this.idVolumeConserv);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final AroVLisVolCorId other = (AroVLisVolCorId) obj;
-	if (!Objects.equals(this.idUnitaDoc, other.idUnitaDoc)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idVolumeConserv, other.idVolumeConserv)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AroVLisVolCorId other = (AroVLisVolCorId) obj;
+        if (!Objects.equals(this.idUnitaDoc, other.idUnitaDoc)) {
+            return false;
+        }
+        if (!Objects.equals(this.idVolumeConserv, other.idVolumeConserv)) {
+            return false;
+        }
+        return true;
     }
 }

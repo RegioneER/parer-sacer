@@ -35,87 +35,87 @@ public class DecVTreeCategTipoUdRowBean extends BaseRow implements JEEBaseRowInt
     public static DecVTreeCategTipoUdTableDescriptor TABLE_DESCRIPTOR = new DecVTreeCategTipoUdTableDescriptor();
 
     public DecVTreeCategTipoUdRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdCategTipoUnitaDoc() {
-	return getBigDecimal("id_categ_tipo_unita_doc");
+        return getBigDecimal("id_categ_tipo_unita_doc");
     }
 
     public void setIdCategTipoUnitaDoc(BigDecimal idCategTipoUnitaDoc) {
-	setObject("id_categ_tipo_unita_doc", idCategTipoUnitaDoc);
+        setObject("id_categ_tipo_unita_doc", idCategTipoUnitaDoc);
     }
 
     public String getCdCategTipoUnitaDoc() {
-	return getString("cd_categ_tipo_unita_doc");
+        return getString("cd_categ_tipo_unita_doc");
     }
 
     public void setCdCategTipoUnitaDoc(String cdCategTipoUnitaDoc) {
-	setObject("cd_categ_tipo_unita_doc", cdCategTipoUnitaDoc);
+        setObject("cd_categ_tipo_unita_doc", cdCategTipoUnitaDoc);
     }
 
     public String getDlPathCategTipoUnitaDoc() {
-	return getString("dl_path_categ_tipo_unita_doc");
+        return getString("dl_path_categ_tipo_unita_doc");
     }
 
     public void setDlPathCategTipoUnitaDoc(String dlPathCategTipoUnitaDoc) {
-	setObject("dl_path_categ_tipo_unita_doc", dlPathCategTipoUnitaDoc);
+        setObject("dl_path_categ_tipo_unita_doc", dlPathCategTipoUnitaDoc);
     }
 
     public String getDlIdCategTipoUnitaDoc() {
-	return getString("dl_id_categ_tipo_unita_doc");
+        return getString("dl_id_categ_tipo_unita_doc");
     }
 
     public void setDlIdCategTipoUnitaDoc(String dlIdCategTipoUnitaDoc) {
-	setObject("dl_id_categ_tipo_unita_doc", dlIdCategTipoUnitaDoc);
+        setObject("dl_id_categ_tipo_unita_doc", dlIdCategTipoUnitaDoc);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecVTreeCategTipoUd entity = (DecVTreeCategTipoUd) obj;
-	this.setIdCategTipoUnitaDoc(entity.getIdCategTipoUnitaDoc());
-	this.setCdCategTipoUnitaDoc(entity.getCdCategTipoUnitaDoc());
-	this.setDlPathCategTipoUnitaDoc(entity.getDlPathCategTipoUnitaDoc());
-	this.setDlIdCategTipoUnitaDoc(entity.getDlIdCategTipoUnitaDoc());
+        DecVTreeCategTipoUd entity = (DecVTreeCategTipoUd) obj;
+        this.setIdCategTipoUnitaDoc(entity.getIdCategTipoUnitaDoc());
+        this.setCdCategTipoUnitaDoc(entity.getCdCategTipoUnitaDoc());
+        this.setDlPathCategTipoUnitaDoc(entity.getDlPathCategTipoUnitaDoc());
+        this.setDlIdCategTipoUnitaDoc(entity.getDlIdCategTipoUnitaDoc());
     }
 
     @Override
     public DecVTreeCategTipoUd rowBeanToEntity() {
-	DecVTreeCategTipoUd entity = new DecVTreeCategTipoUd();
-	entity.setIdCategTipoUnitaDoc(this.getIdCategTipoUnitaDoc());
-	entity.setCdCategTipoUnitaDoc(this.getCdCategTipoUnitaDoc());
-	entity.setDlPathCategTipoUnitaDoc(this.getDlPathCategTipoUnitaDoc());
-	entity.setDlIdCategTipoUnitaDoc(this.getDlIdCategTipoUnitaDoc());
-	return entity;
+        DecVTreeCategTipoUd entity = new DecVTreeCategTipoUd();
+        entity.setIdCategTipoUnitaDoc(this.getIdCategTipoUnitaDoc());
+        entity.setCdCategTipoUnitaDoc(this.getCdCategTipoUnitaDoc());
+        entity.setDlPathCategTipoUnitaDoc(this.getDlPathCategTipoUnitaDoc());
+        entity.setDlIdCategTipoUnitaDoc(this.getDlIdCategTipoUnitaDoc());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

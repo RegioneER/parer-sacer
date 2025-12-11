@@ -56,36 +56,36 @@ public class OrgUsoSistemaMigraz implements Serializable {
 
     @Column(name = "ID_USO_SISTEMA_MIGRAZ")
     @GenericGenerator(name = "SORG_USO_SISTEMA_MIGRAZ_ID_USO_SISTEMA_MIGRAZ_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_USO_SISTEMA_MIGRAZ"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_USO_SISTEMA_MIGRAZ"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SORG_USO_SISTEMA_MIGRAZ_ID_USO_SISTEMA_MIGRAZ_GENERATOR")
     public Long getIdUsoSistemaMigraz() {
-	return this.idUsoSistemaMigraz;
+        return this.idUsoSistemaMigraz;
     }
 
     public void setIdUsoSistemaMigraz(Long idUsoSistemaMigraz) {
-	this.idUsoSistemaMigraz = idUsoSistemaMigraz;
+        this.idUsoSistemaMigraz = idUsoSistemaMigraz;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SISTEMA_MIGRAZ")
     public AplSistemaMigraz getAplSistemaMigraz() {
-	return this.aplSistemaMigraz;
+        return this.aplSistemaMigraz;
     }
 
     public void setAplSistemaMigraz(AplSistemaMigraz aplSistemaMigraz) {
-	this.aplSistemaMigraz = aplSistemaMigraz;
+        this.aplSistemaMigraz = aplSistemaMigraz;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     @XmlInverseReference(mappedBy = "orgUsoSistemaMigrazs")
     public OrgStrut getOrgStrut() {
-	return this.orgStrut;
+        return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-	this.orgStrut = orgStrut;
+        this.orgStrut = orgStrut;
     }
 
 }

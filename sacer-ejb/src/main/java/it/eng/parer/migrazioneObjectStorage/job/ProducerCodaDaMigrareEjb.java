@@ -36,7 +36,7 @@ import it.eng.parer.migrazioneObjectStorage.utils.MsgUtil;
 @Stateless(mappedName = "ProducerCodaDaMigrareEjb")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class ProducerCodaDaMigrareEjb {
 
     Logger log = LoggerFactory.getLogger(ProducerCodaDaMigrareEjb.class);
@@ -48,42 +48,42 @@ public class ProducerCodaDaMigrareEjb {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void eseguiPreparazioneJob(int numeroJob) throws ParerInternalError {
-	elaborazioneCodaDaMigrareEjb.completaSubpartizioniBlob(numeroJob);
-	elaborazioneCodaDaMigrareEjb.aggiungiSubpartizioniBlob(numeroJob);
-	/* Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione indice AIP */
-	jobHelper.writeAtomicLogJob(
-		JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE.name() + "_" + numeroJob,
-		JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name());
-	final String msgDebugName = JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE.name() + "_"
-		+ numeroJob;
-	log.debug("{} - Chiusura transazione di PreparaPartizioneDaMigrareEjb", msgDebugName);
+        elaborazioneCodaDaMigrareEjb.completaSubpartizioniBlob(numeroJob);
+        elaborazioneCodaDaMigrareEjb.aggiungiSubpartizioniBlob(numeroJob);
+        /* Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione indice AIP */
+        jobHelper.writeAtomicLogJob(
+                JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE.name() + "_" + numeroJob,
+                JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name());
+        final String msgDebugName = JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE.name() + "_"
+                + numeroJob;
+        log.debug("{} - Chiusura transazione di PreparaPartizioneDaMigrareEjb", msgDebugName);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void eseguiProducerJob(int numeroJob) throws ParerInternalError {
-	ElaborazioneCodaDaMigrareEjb.ContatoriPerMigrazioni totalizzatore = elaborazioneCodaDaMigrareEjb
-		.aggiungiInCodaDaMigrare(numeroJob);
-	String messaggioJob = null;
-	if (totalizzatore.isIsAddedInQueue()) {
-	    /* Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione indice AIP */
-	    log.debug("{} - Chiusura transazione di ProducerCodaDaMigrareEjb",
-		    JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE);
-	} else {
-	    if (totalizzatore.isIsNotFileToMigrate()) {
-		messaggioJob = MsgUtil.getCompleteMessage("OST-002");
-	    } else {
-		if (totalizzatore.isIsCodaPiena()) {
-		    messaggioJob = MsgUtil.getCompleteMessage("OST-003");
-		}
-	    }
-	}
-	/* Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione indice AIP */
-	jobHelper.writeAtomicLogJob(
-		JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE.name() + "_" + numeroJob,
-		JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), messaggioJob);
-	final String msgDebugName = JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE.name() + "_"
-		+ numeroJob;
-	log.debug("{} - Chiusura transazione di ProducerCodaDaMigrareEjb", msgDebugName);
+        ElaborazioneCodaDaMigrareEjb.ContatoriPerMigrazioni totalizzatore = elaborazioneCodaDaMigrareEjb
+                .aggiungiInCodaDaMigrare(numeroJob);
+        String messaggioJob = null;
+        if (totalizzatore.isIsAddedInQueue()) {
+            /* Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione indice AIP */
+            log.debug("{} - Chiusura transazione di ProducerCodaDaMigrareEjb",
+                    JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE);
+        } else {
+            if (totalizzatore.isIsNotFileToMigrate()) {
+                messaggioJob = MsgUtil.getCompleteMessage("OST-002");
+            } else {
+                if (totalizzatore.isIsCodaPiena()) {
+                    messaggioJob = MsgUtil.getCompleteMessage("OST-003");
+                }
+            }
+        }
+        /* Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione indice AIP */
+        jobHelper.writeAtomicLogJob(
+                JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE.name() + "_" + numeroJob,
+                JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), messaggioJob);
+        final String msgDebugName = JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE.name() + "_"
+                + numeroJob;
+        log.debug("{} - Chiusura transazione di ProducerCodaDaMigrareEjb", msgDebugName);
     }
 
 }

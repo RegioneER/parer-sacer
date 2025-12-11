@@ -25,66 +25,66 @@ public class ParametriFascParser {
 
     public enum TipiGestione {
 
-	Ignorato, // default per Fascicolo
-	Gestito // default per Utente Alternativo (MEV #21799 : non più default)
+        Ignorato, // default per Fascicolo
+        Gestito // default per Utente Alternativo (MEV #21799 : non più default)
     }
 
     public enum TipiPresenzaTag {
 
-	Opzionale, // default
-	Vietato, // per ora non viene considerato
-	Richiesto // TODO: verificare: per il ws di restituzione componenti
-		  // RecDIPComponenteTrasformatoSync
+        Opzionale, // default
+        Vietato, // per ora non viene considerato
+        Richiesto // TODO: verificare: per il ws di restituzione componenti
+        // RecDIPComponenteTrasformatoSync
     }
 
     private TipiPresenzaTag presenzaUtenteAlternativo = TipiPresenzaTag.Opzionale;
     private TipiGestione gestioneUtenteAlternativo = TipiGestione.Ignorato; // MEV #21799 : è il
-									    // nuovo default a meno
-									    // che non si decida su
-									    // singolo endpoint di
-									    // attivarlo
+    // nuovo default a meno
+    // che non si decida su
+    // singolo endpoint di
+    // attivarlo
     private TipiPresenzaTag presenzaTipoFascicolo = TipiPresenzaTag.Opzionale;
     private TipiGestione gestioneTipoFascicolo = TipiGestione.Ignorato;
     private boolean leggiAncheFascAnnullati = false;
 
     public TipiPresenzaTag getPresenzaUtenteAlternativo() {
-	return presenzaUtenteAlternativo;
+        return presenzaUtenteAlternativo;
     }
 
     public void setPresenzaUtenteAlternativo(TipiPresenzaTag presenzaUtenteAlternativo) {
-	this.presenzaUtenteAlternativo = presenzaUtenteAlternativo;
+        this.presenzaUtenteAlternativo = presenzaUtenteAlternativo;
     }
 
     public TipiGestione getGestioneUtenteAlternativo() {
-	return gestioneUtenteAlternativo;
+        return gestioneUtenteAlternativo;
     }
 
     public void setGestioneUtenteAlternativo(TipiGestione gestioneUtenteAlternativo) {
-	this.gestioneUtenteAlternativo = gestioneUtenteAlternativo;
+        this.gestioneUtenteAlternativo = gestioneUtenteAlternativo;
     }
 
     public TipiPresenzaTag getPresenzaTipoFascicolo() {
-	return presenzaTipoFascicolo;
+        return presenzaTipoFascicolo;
     }
 
     public void setPresenzaTipoFascicolo(TipiPresenzaTag presenzaTipoFascicolo) {
-	this.presenzaTipoFascicolo = presenzaTipoFascicolo;
+        this.presenzaTipoFascicolo = presenzaTipoFascicolo;
     }
 
     public TipiGestione getGestioneTipoFascicolo() {
-	return gestioneTipoFascicolo;
+        return gestioneTipoFascicolo;
     }
 
     public void setGestioneTipoFascicolo(TipiGestione gestioneTipoFascicolo) {
-	this.gestioneTipoFascicolo = gestioneTipoFascicolo;
+        this.gestioneTipoFascicolo = gestioneTipoFascicolo;
     }
 
     public boolean isLeggiAncheFascAnnullati() {
-	return leggiAncheFascAnnullati;
+        return leggiAncheFascAnnullati;
     }
 
     public void setLeggiAncheFascAnnullati(boolean leggiAncheFascAnnullati) {
-	this.leggiAncheFascAnnullati = leggiAncheFascAnnullati;
+        this.leggiAncheFascAnnullati = leggiAncheFascAnnullati;
     }
 
 }

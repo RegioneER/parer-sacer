@@ -36,91 +36,91 @@ public class FasUniOrgRespFascicoloRowBean extends BaseRow implements JEEBaseRow
     public static FasUniOrgRespFascicoloTableDescriptor TABLE_DESCRIPTOR = new FasUniOrgRespFascicoloTableDescriptor();
 
     public FasUniOrgRespFascicoloRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdUniOrgRespFascicolo() {
-	return getBigDecimal("id_uni_org_resp_fascicolo");
+        return getBigDecimal("id_uni_org_resp_fascicolo");
     }
 
     public void setIdUniOrgRespFascicolo(BigDecimal idUniOrgRespFascicolo) {
-	setObject("id_uni_org_resp_fascicolo", idUniOrgRespFascicolo);
+        setObject("id_uni_org_resp_fascicolo", idUniOrgRespFascicolo);
     }
 
     public BigDecimal getIdFascicolo() {
-	return getBigDecimal("id_fascicolo");
+        return getBigDecimal("id_fascicolo");
     }
 
     public void setIdFascicolo(BigDecimal idFascicolo) {
-	setObject("id_fascicolo", idFascicolo);
+        setObject("id_fascicolo", idFascicolo);
     }
 
     public String getCdUniOrgResp() {
-	return getString("cd_uni_org_resp");
+        return getString("cd_uni_org_resp");
     }
 
     public void setCdUniOrgResp(String cdUniOrgResp) {
-	setObject("cd_uni_org_resp", cdUniOrgResp);
+        setObject("cd_uni_org_resp", cdUniOrgResp);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	FasUniOrgRespFascicolo entity = (FasUniOrgRespFascicolo) obj;
+        FasUniOrgRespFascicolo entity = (FasUniOrgRespFascicolo) obj;
 
-	this.setIdUniOrgRespFascicolo(entity.getIdUniOrgRespFascicolo() == null ? null
-		: BigDecimal.valueOf(entity.getIdUniOrgRespFascicolo()));
+        this.setIdUniOrgRespFascicolo(entity.getIdUniOrgRespFascicolo() == null ? null
+                : BigDecimal.valueOf(entity.getIdUniOrgRespFascicolo()));
 
-	if (entity.getFasFascicolo() != null) {
-	    this.setIdFascicolo(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
-	}
+        if (entity.getFasFascicolo() != null) {
+            this.setIdFascicolo(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
+        }
 
-	this.setCdUniOrgResp(entity.getCdUniOrgResp());
+        this.setCdUniOrgResp(entity.getCdUniOrgResp());
     }
 
     @Override
     public FasUniOrgRespFascicolo rowBeanToEntity() {
-	FasUniOrgRespFascicolo entity = new FasUniOrgRespFascicolo();
-	if (this.getIdUniOrgRespFascicolo() != null) {
-	    entity.setIdUniOrgRespFascicolo(this.getIdUniOrgRespFascicolo().longValue());
-	}
-	if (this.getIdFascicolo() != null) {
-	    if (entity.getFasFascicolo() == null) {
-		entity.setFasFascicolo(new FasFascicolo());
-	    }
-	    entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
-	}
-	entity.setCdUniOrgResp(this.getCdUniOrgResp());
-	return entity;
+        FasUniOrgRespFascicolo entity = new FasUniOrgRespFascicolo();
+        if (this.getIdUniOrgRespFascicolo() != null) {
+            entity.setIdUniOrgRespFascicolo(this.getIdUniOrgRespFascicolo().longValue());
+        }
+        if (this.getIdFascicolo() != null) {
+            if (entity.getFasFascicolo() == null) {
+                entity.setFasFascicolo(new FasFascicolo());
+            }
+            entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
+        }
+        entity.setCdUniOrgResp(this.getCdUniOrgResp());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

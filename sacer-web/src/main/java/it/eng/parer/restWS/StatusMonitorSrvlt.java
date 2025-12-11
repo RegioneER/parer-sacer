@@ -53,7 +53,7 @@ import it.eng.parer.ws.utils.MessaggiWSBundle;
  * @author fioravanti_f
  */
 @WebServlet(urlPatterns = {
-	"/StatusMonitor" }, asyncSupported = true)
+        "/StatusMonitor" }, asyncSupported = true)
 public class StatusMonitorSrvlt extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -66,102 +66,102 @@ public class StatusMonitorSrvlt extends HttpServlet {
     private JobHelper jobHelper;
 
     public StatusMonitorSrvlt() {
-	super();
+        super();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-	    throws ServletException, IOException {
-	Response405.fancy405(resp, Response405.NomeWebServiceRest.WS_STATUS_MONITOR);
+            throws ServletException, IOException {
+        Response405.fancy405(resp, Response405.NomeWebServiceRest.WS_STATUS_MONITOR);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-	    throws ServletException, IOException {
-	RispostaWSStatusMonitor rispostaWs;
-	StatusMonExt statusMonExt;
-	HostMonitor myEsito;
-	MonFakeSessn sessioneFinta = new MonFakeSessn();
-	SimplReqPrsr myReqPrsr = new SimplReqPrsr();
-	SimplReqPrsr.ReqPrsrConfig tmpPrsrConfig = new SimplReqPrsr().new ReqPrsrConfig();
-	rispostaWs = new RispostaWSStatusMonitor();
-	statusMonExt = new StatusMonExt();
-	statusMonExt.setDescrizione(new WSDescStatusMonitor());
+            throws ServletException, IOException {
+        RispostaWSStatusMonitor rispostaWs;
+        StatusMonExt statusMonExt;
+        HostMonitor myEsito;
+        MonFakeSessn sessioneFinta = new MonFakeSessn();
+        SimplReqPrsr myReqPrsr = new SimplReqPrsr();
+        SimplReqPrsr.ReqPrsrConfig tmpPrsrConfig = new SimplReqPrsr().new ReqPrsrConfig();
+        rispostaWs = new RispostaWSStatusMonitor();
+        statusMonExt = new StatusMonExt();
+        statusMonExt.setDescrizione(new WSDescStatusMonitor());
 
-	statusMonitorSync.initRispostaWs(rispostaWs, statusMonExt);
+        statusMonitorSync.initRispostaWs(rispostaWs, statusMonExt);
 
-	// logga l'inizio della chiamata al ws
-	jobHelper.writeAtomicLogJob(ControlliMonitor.WS_MONITORAGGIO_STATUS,
-		JobConstants.OpTypeEnum.INIZIO_SCHEDULAZIONE.name(), null);
-	//
-	sessioneFinta.setIpChiamante(myReqPrsr.leggiIpVersante(request));
-	// log.info("Request, indirizzo IP di provenienza: " + sessioneFinta.getIpChiamante());
+        // logga l'inizio della chiamata al ws
+        jobHelper.writeAtomicLogJob(ControlliMonitor.WS_MONITORAGGIO_STATUS,
+                JobConstants.OpTypeEnum.INIZIO_SCHEDULAZIONE.name(), null);
+        //
+        sessioneFinta.setIpChiamante(myReqPrsr.leggiIpVersante(request));
+        // log.info("Request, indirizzo IP di provenienza: " + sessioneFinta.getIpChiamante());
 
-	try {
-	    if (request.getContentType() != null
-		    && request.getContentType().toLowerCase().indexOf("multipart/form-data") > -1) {
-		rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-		rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.WS_CHECK,
-			"La chiamata è multipart/formdata, dovrebbe essere application/x-www-form-urlencoded");
-		log.error("Errore nella servlet di monitoraggio: la chiamata è multipart/formdata,"
-			+ " dovrebbe essere application/x-www-form-urlencoded");
-	    } else {
-		tmpPrsrConfig.setSessioneFinta(sessioneFinta);
-		tmpPrsrConfig.setRequest(request);
-		myReqPrsr.parse(rispostaWs, tmpPrsrConfig);
-		//
-		if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.OK) {
-		    rispostaWs.setEsitoWsError(rispostaWs.getErrorCode(),
-			    rispostaWs.getErrorMessage());
-		}
-		/*
-		 * ********************************************************************************
-		 * fine della verifica della struttura/signature del web service. Verifica dei dati
-		 * effettivamente versati
-		 * ********************************************************************************
-		 */
-		// testa le credenziali utente, tramite ejb
-		if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-		    statusMonitorSync.verificaCredenziali(sessioneFinta.getLoginName(),
-			    sessioneFinta.getPassword(), sessioneFinta.getIpChiamante(), rispostaWs,
-			    statusMonExt);
-		}
+        try {
+            if (request.getContentType() != null
+                    && request.getContentType().toLowerCase().indexOf("multipart/form-data") > -1) {
+                rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.WS_CHECK,
+                        "La chiamata è multipart/formdata, dovrebbe essere application/x-www-form-urlencoded");
+                log.error("Errore nella servlet di monitoraggio: la chiamata è multipart/formdata,"
+                        + " dovrebbe essere application/x-www-form-urlencoded");
+            } else {
+                tmpPrsrConfig.setSessioneFinta(sessioneFinta);
+                tmpPrsrConfig.setRequest(request);
+                myReqPrsr.parse(rispostaWs, tmpPrsrConfig);
+                //
+                if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.OK) {
+                    rispostaWs.setEsitoWsError(rispostaWs.getErrorCode(),
+                            rispostaWs.getErrorMessage());
+                }
+                /*
+                 * ********************************************************************************
+                 * fine della verifica della struttura/signature del web service. Verifica dei dati
+                 * effettivamente versati
+                 * ********************************************************************************
+                 */
+                // testa le credenziali utente, tramite ejb
+                if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+                    statusMonitorSync.verificaCredenziali(sessioneFinta.getLoginName(),
+                            sessioneFinta.getPassword(), sessioneFinta.getIpChiamante(), rispostaWs,
+                            statusMonExt);
+                }
 
-		// prepara risposta
-		if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-		    statusMonitorSync.recuperaStatus(rispostaWs, statusMonExt);
-		}
-	    }
-	} catch (Exception e1) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-		    "Eccezione generica nella servlet di monitoraggio " + e1.getMessage());
-	    log.error("Eccezione generica nella servlet di monitoraggio", e1);
-	}
+                // prepara risposta
+                if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+                    statusMonitorSync.recuperaStatus(rispostaWs, statusMonExt);
+                }
+            }
+        } catch (Exception e1) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                    "Eccezione generica nella servlet di monitoraggio " + e1.getMessage());
+            log.error("Eccezione generica nella servlet di monitoraggio", e1);
+        }
 
-	// logga la fine della chiamata al ws, eventualmente con l'errore
-	if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-	    jobHelper.writeAtomicLogJob(ControlliMonitor.WS_MONITORAGGIO_STATUS,
-		    JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
-	} else {
-	    jobHelper.writeAtomicLogJob(ControlliMonitor.WS_MONITORAGGIO_STATUS,
-		    JobConstants.OpTypeEnum.ERRORE.name(),
-		    rispostaWs.getErrorCode() + ": " + rispostaWs.getErrorMessage());
-	}
-	// rispondi
-	myEsito = rispostaWs.getIstanzaEsito();
-	response.reset();
-	response.setStatus(HttpServletResponse.SC_OK);
-	response.setContentType("application/json; charset=\"utf-8\"");
+        // logga la fine della chiamata al ws, eventualmente con l'errore
+        if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+            jobHelper.writeAtomicLogJob(ControlliMonitor.WS_MONITORAGGIO_STATUS,
+                    JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
+        } else {
+            jobHelper.writeAtomicLogJob(ControlliMonitor.WS_MONITORAGGIO_STATUS,
+                    JobConstants.OpTypeEnum.ERRORE.name(),
+                    rispostaWs.getErrorCode() + ": " + rispostaWs.getErrorMessage());
+        }
+        // rispondi
+        myEsito = rispostaWs.getIstanzaEsito();
+        response.reset();
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json; charset=\"utf-8\"");
 
-	try (ServletOutputStream out = response.getOutputStream();
-		OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out,
-			StandardCharsets.UTF_8);) {
+        try (ServletOutputStream out = response.getOutputStream();
+                OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out,
+                        StandardCharsets.UTF_8);) {
 
-	    ObjectMapper mapper = new ObjectMapper();
-	    mapper.writeValue(tmpStreamWriter, myEsito);
-	} catch (Exception e) {
-	    log.error("Eccezione nella servlet di monitoraggio", e);
-	}
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(tmpStreamWriter, myEsito);
+        } catch (Exception e) {
+            log.error("Eccezione nella servlet di monitoraggio", e);
+        }
     }
 }

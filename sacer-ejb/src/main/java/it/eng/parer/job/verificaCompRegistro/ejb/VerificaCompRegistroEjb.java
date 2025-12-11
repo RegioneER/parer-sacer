@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 @Stateless(mappedName = "VerificaCompRegistroEjb")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class VerificaCompRegistroEjb {
 
     Logger log = LoggerFactory.getLogger(VerificaCompRegistroEjb.class);
@@ -50,21 +50,21 @@ public class VerificaCompRegistroEjb {
 
     public void verificaCompRegistro() throws ParerInternalError {
 
-	log.debug("Recupero lista elementi da elaborare");
-	List<DecAaRegistroUnitaDoc> tmpList = verificaCompRegHelper.getAaRegistroUnitaDocDaElab();
-	try {
-	    for (DecAaRegistroUnitaDoc tmpAaRegistroUnitaDoc : tmpList) {
-		verificaPeriodoRegistro
-			.verificaPeriodo(tmpAaRegistroUnitaDoc.getIdAaRegistroUnitaDoc());
-	    }
-	} catch (Exception ex) {
-	    // log.fatal("Creazione Indice AIP - Errore: " + ex);
-	    log.error("Creazione Indice AIP - Errore: " + ex);
-	    throw new ParerInternalError(ex);
-	}
-	/* Scrivo nel LogJob la fine corretta dell'esecuzione del job di verifica */
-	jobHelper.writeAtomicLogJob(JobConstants.JobEnum.VERIFICA_COMPATIBILITA_REGISTRO.name(),
-		JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
-	log.debug("Verifica Compatibilità registro - fine");
+        log.debug("Recupero lista elementi da elaborare");
+        List<DecAaRegistroUnitaDoc> tmpList = verificaCompRegHelper.getAaRegistroUnitaDocDaElab();
+        try {
+            for (DecAaRegistroUnitaDoc tmpAaRegistroUnitaDoc : tmpList) {
+                verificaPeriodoRegistro
+                        .verificaPeriodo(tmpAaRegistroUnitaDoc.getIdAaRegistroUnitaDoc());
+            }
+        } catch (Exception ex) {
+            // log.fatal("Creazione Indice AIP - Errore: " + ex);
+            log.error("Creazione Indice AIP - Errore: " + ex);
+            throw new ParerInternalError(ex);
+        }
+        /* Scrivo nel LogJob la fine corretta dell'esecuzione del job di verifica */
+        jobHelper.writeAtomicLogJob(JobConstants.JobEnum.VERIFICA_COMPATIBILITA_REGISTRO.name(),
+                JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
+        log.debug("Verifica Compatibilità registro - fine");
     }
 }

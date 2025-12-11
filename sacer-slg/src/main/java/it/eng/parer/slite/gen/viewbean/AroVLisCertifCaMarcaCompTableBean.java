@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class AroVLisCertifCaMarcaCompTableBean
-	extends AbstractBaseTable<AroVLisCertifCaMarcaCompRowBean> {
+        extends AbstractBaseTable<AroVLisCertifCaMarcaCompRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class AroVLisCertifCaMarcaCompTableBean
     public static AroVLisCertifCaMarcaCompTableDescriptor TABLE_DESCRIPTOR = new AroVLisCertifCaMarcaCompTableDescriptor();
 
     public AroVLisCertifCaMarcaCompTableBean() {
-	super();
+        super();
     }
 
     protected AroVLisCertifCaMarcaCompRowBean createRow() {
-	return new AroVLisCertifCaMarcaCompRowBean();
+        return new AroVLisCertifCaMarcaCompRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVLisCertifCaMarcaCompRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -57,64 +57,64 @@ public class SIOrgEnteConvenzOrg implements Serializable {
     }
 
     public SIOrgEnteConvenzOrg(Long idEnteConvenzOrg) {
-	this.idEnteConvenzOrg = idEnteConvenzOrg;
+        this.idEnteConvenzOrg = idEnteConvenzOrg;
     }
 
     @Basic
     @Column(name = "DT_FINE_VAL", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     public Date getDtFineVal() {
-	return dtFineVal;
+        return dtFineVal;
     }
 
     public void setDtFineVal(Date dtFineVal) {
-	this.dtFineVal = dtFineVal;
+        this.dtFineVal = dtFineVal;
     }
 
     @Basic
     @Column(name = "DT_INI_VAL", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     public Date getDtIniVal() {
-	return dtIniVal;
+        return dtIniVal;
     }
 
     public void setDtIniVal(Date dtIniVal) {
-	this.dtIniVal = dtIniVal;
+        this.dtIniVal = dtIniVal;
     }
 
     @Id
 
     @Column(name = "ID_ENTE_CONVENZ_ORG")
     @GenericGenerator(name = "SORG_ENTE_CONVENZ_ORG_ID_ENTE_CONVENZ_ORG_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = PersistentIdentifierGenerator.SCHEMA, value = "SACER_IAM"),
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_ENTE_CONVENZ_ORG"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = PersistentIdentifierGenerator.SCHEMA, value = "SACER_IAM"),
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_ENTE_CONVENZ_ORG"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SORG_ENTE_CONVENZ_ORG_ID_ENTE_CONVENZ_ORG_GENERATOR")
     public Long getIdEnteConvenzOrg() {
-	return idEnteConvenzOrg;
+        return idEnteConvenzOrg;
     }
 
     public void setIdEnteConvenzOrg(Long idEnteConvenzOrg) {
-	this.idEnteConvenzOrg = idEnteConvenzOrg;
+        this.idEnteConvenzOrg = idEnteConvenzOrg;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "ID_ENTE_CONVENZ", nullable = false)
     public SIOrgEnteSiam getSiOrgEnteConvenz() {
-	return siOrgEnteConvenz;
+        return siOrgEnteConvenz;
     }
 
     public void setSiOrgEnteConvenz(SIOrgEnteSiam siOrgEnteConvenz) {
-	this.siOrgEnteConvenz = siOrgEnteConvenz;
+        this.siOrgEnteConvenz = siOrgEnteConvenz;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "ID_ORGANIZ_IAM", nullable = false)
     public SIUsrOrganizIam getSiUsrOrganizIam() {
-	return siUsrOrganizIam;
+        return siUsrOrganizIam;
     }
 
     public void setSiUsrOrganizIam(SIUsrOrganizIam siUsrOrganizIam) {
-	this.siUsrOrganizIam = siUsrOrganizIam;
+        this.siUsrOrganizIam = siUsrOrganizIam;
     }
 }

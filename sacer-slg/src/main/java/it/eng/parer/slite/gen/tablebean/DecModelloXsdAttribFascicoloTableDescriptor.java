@@ -43,26 +43,26 @@ public class DecModelloXsdAttribFascicoloTableDescriptor extends TableDescriptor
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_MODELLO_XSD_ATTRIB_FASC,
-		new ColumnDescriptor(COL_ID_MODELLO_XSD_ATTRIB_FASC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_MODELLO_XSD_FASCICOLO,
-		new ColumnDescriptor(COL_ID_MODELLO_XSD_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_ID_ATTRIB_FASCICOLO,
-		new ColumnDescriptor(COL_ID_ATTRIB_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_NI_ORD_ATTRIB,
-		new ColumnDescriptor(COL_NI_ORD_ATTRIB, Types.DECIMAL, 22, false));
+        map.put(COL_ID_MODELLO_XSD_ATTRIB_FASC,
+                new ColumnDescriptor(COL_ID_MODELLO_XSD_ATTRIB_FASC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_MODELLO_XSD_FASCICOLO,
+                new ColumnDescriptor(COL_ID_MODELLO_XSD_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_ID_ATTRIB_FASCICOLO,
+                new ColumnDescriptor(COL_ID_ATTRIB_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_NI_ORD_ATTRIB,
+                new ColumnDescriptor(COL_NI_ORD_ATTRIB, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

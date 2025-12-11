@@ -50,53 +50,53 @@ public class StatusMonitorSync {
     //
 
     public void initRispostaWs(RispostaWSStatusMonitor rispostaWs, StatusMonExt mon) {
-	log.debug("sono nel metodo init");
-	HostMonitor myEsito = new HostMonitor();
+        log.debug("sono nel metodo init");
+        HostMonitor myEsito = new HostMonitor();
 
-	rispostaWs.setSeverity(IRispostaWS.SeverityEnum.OK);
-	rispostaWs.setErrorCode("");
-	rispostaWs.setErrorMessage("");
+        rispostaWs.setSeverity(IRispostaWS.SeverityEnum.OK);
+        rispostaWs.setErrorCode("");
+        rispostaWs.setErrorMessage("");
 
-	rispostaWs.setIstanzaEsito(myEsito);
-	myEsito.setVersione(mon.getDescrizione().getVersione());
+        rispostaWs.setIstanzaEsito(myEsito);
+        myEsito.setVersione(mon.getDescrizione().getVersione());
 
-	// tutto molto più semplice di quanto non accada negli altri ws:
-	// è una risposta JSON quindi molto meno strutturata
+        // tutto molto più semplice di quanto non accada negli altri ws:
+        // è una risposta JSON quindi molto meno strutturata
     }
 
     public void verificaCredenziali(String loginName, String password, String indirizzoIp,
-	    RispostaWSStatusMonitor rispostaWs, StatusMonExt mon) {
-	RispostaControlli tmpRispostaControlli = null;
+            RispostaWSStatusMonitor rispostaWs, StatusMonExt mon) {
+        RispostaControlli tmpRispostaControlli = null;
 
-	tmpRispostaControlli = myControlliWs.checkCredenziali(loginName, password, indirizzoIp,
-		Costanti.TipiWSPerControlli.VERSAMENTO_RECUPERO);
-	if (!tmpRispostaControlli.isrBoolean()) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setEsitoWsError(tmpRispostaControlli.getCodErr(),
-		    tmpRispostaControlli.getDsErr());
-	}
+        tmpRispostaControlli = myControlliWs.checkCredenziali(loginName, password, indirizzoIp,
+                Costanti.TipiWSPerControlli.VERSAMENTO_RECUPERO);
+        if (!tmpRispostaControlli.isrBoolean()) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsError(tmpRispostaControlli.getCodErr(),
+                    tmpRispostaControlli.getDsErr());
+        }
 
-	mon.setLoginName(loginName);
-	mon.setUtente((User) tmpRispostaControlli.getrObject());
+        mon.setLoginName(loginName);
+        mon.setUtente((User) tmpRispostaControlli.getrObject());
     }
 
     public void recuperaStatus(RispostaWSStatusMonitor rispostaWs, StatusMonExt mon) {
 
-	if (mon.getUtente() == null) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-		    "Errore: l'utente non è autenticato.");
-	    return;
-	}
+        if (mon.getUtente() == null) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                    "Errore: l'utente non è autenticato.");
+            return;
+        }
 
-	try {
-	    statusMonitorGen.calcolaStatus(rispostaWs, mon);
-	} catch (Exception e) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-		    "Errore dell'EJB nella fase di generazione dello status " + e.getMessage());
-	    log.error("Errore dell'EJB nella fase di generazione dello status", e);
-	}
+        try {
+            statusMonitorGen.calcolaStatus(rispostaWs, mon);
+        } catch (Exception e) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                    "Errore dell'EJB nella fase di generazione dello status " + e.getMessage());
+            log.error("Errore dell'EJB nella fase di generazione dello status", e);
+        }
 
     }
 

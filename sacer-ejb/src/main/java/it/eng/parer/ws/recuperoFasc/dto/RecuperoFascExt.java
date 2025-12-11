@@ -65,202 +65,202 @@ public class RecuperoFascExt implements IRecuperoFascExt {
 
     @Override
     public String getDatiXml() {
-	return datiXml;
+        return datiXml;
     }
 
     @Override
     public void setDatiXml(String datiXml) {
-	this.datiXml = datiXml;
+        this.datiXml = datiXml;
     }
 
     @Override
     public RecuperoFascicolo getStrutturaRecuperoFasc() {
-	return strutturaRecuperoFasc;
+        return strutturaRecuperoFasc;
     }
 
     @Override
     public void setStrutturaRecuperoFasc(RecuperoFascicolo strutturaRecuperoFasc) {
-	this.strutturaRecuperoFasc = strutturaRecuperoFasc;
+        this.strutturaRecuperoFasc = strutturaRecuperoFasc;
     }
 
     public ParametriRecuperoFasc getParametriRecuperoFasc() {
-	return parametriRecuperoFasc;
+        return parametriRecuperoFasc;
     }
 
     public void setParametriRecuperoFasc(ParametriRecuperoFasc parametriRecuperoFasc) {
-	this.parametriRecuperoFasc = parametriRecuperoFasc;
+        this.parametriRecuperoFasc = parametriRecuperoFasc;
     }
 
     public ParametriFascParser getParametriFascParser() {
-	return parametriFascParser;
+        return parametriFascParser;
     }
 
     public void setParametriFascParser(ParametriFascParser parametriFascParser) {
-	this.parametriFascParser = parametriFascParser;
+        this.parametriFascParser = parametriFascParser;
     }
 
     public DatiSessioneRecupero getDatiSessioneRecupero() {
-	return datiSessioneRecupero;
+        return datiSessioneRecupero;
     }
 
     public void setDatiSessioneRecupero(DatiSessioneRecupero datiSessioneRecupero) {
-	this.datiSessioneRecupero = datiSessioneRecupero;
+        this.datiSessioneRecupero = datiSessioneRecupero;
     }
 
     @Override
     public IWSDesc getDescrizione() {
-	return descrizione;
+        return descrizione;
     }
 
     @Override
     public void setDescrizione(IWSDesc descrizione) {
-	this.descrizione = descrizione;
+        this.descrizione = descrizione;
     }
 
     @Override
     public String getLoginName() {
-	return loginName;
+        return loginName;
     }
 
     @Override
     public void setLoginName(String loginName) {
-	this.loginName = loginName;
+        this.loginName = loginName;
     }
 
     @Override
     public String getVersioneWsChiamata() {
-	return versioneWsChiamata;
+        return versioneWsChiamata;
     }
 
     @Override
     public void setVersioneWsChiamata(String versioneWsChiamata) {
-	this.versioneWsChiamata = versioneWsChiamata;
+        this.versioneWsChiamata = versioneWsChiamata;
     }
 
     public long getIdStruttura() {
-	return idStruttura;
+        return idStruttura;
     }
 
     public void setIdStruttura(long idStruttura) {
-	this.idStruttura = idStruttura;
+        this.idStruttura = idStruttura;
     }
 
     public TipoSalvataggioFile getTipoSalvataggioFile() {
-	return tipoSalvataggioFile;
+        return tipoSalvataggioFile;
     }
 
     public void setTipoSalvataggioFile(TipoSalvataggioFile tipoSalvataggioFile) {
-	this.tipoSalvataggioFile = tipoSalvataggioFile;
+        this.tipoSalvataggioFile = tipoSalvataggioFile;
     }
 
     //
     @Override
     public RispostaControlli checkVersioneRequest(String versione) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(true);
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(true);
 
-	versioneCalc = versione;
-	modificatoriWS = EnumSet.noneOf(Costanti.ModificatoriWS.class);
-	if (versione.equals("1.1")) {
-	    // TODO
-	    this.versioneCalc = "1.0";
-	} else {
-	    this.versioneCalc = "1.0";
-	}
+        versioneCalc = versione;
+        modificatoriWS = EnumSet.noneOf(Costanti.ModificatoriWS.class);
+        if (versione.equals("1.1")) {
+            // TODO
+            this.versioneCalc = "1.0";
+        } else {
+            this.versioneCalc = "1.0";
+        }
 
-	return rispostaControlli;
+        return rispostaControlli;
     }
 
     @Override
     public EnumSet<ModificatoriWS> getModificatoriWSCalc() {
-	return this.modificatoriWS;
+        return this.modificatoriWS;
     }
 
     @Override
     public String getVersioneCalc() {
-	return this.versioneCalc;
+        return this.versioneCalc;
     }
 
     //
     public boolean isTpiAbilitato() {
-	return tpiAbilitato;
+        return tpiAbilitato;
     }
 
     public void setTpiAbilitato(boolean tpiAbilitato) {
-	this.tpiAbilitato = tpiAbilitato;
+        this.tpiAbilitato = tpiAbilitato;
     }
 
     public String getTpiRootTpi() {
-	return tpiRootTpi;
+        return tpiRootTpi;
     }
 
     public void setTpiRootTpi(String tpiRootTpi) {
-	this.tpiRootTpi = tpiRootTpi;
+        this.tpiRootTpi = tpiRootTpi;
     }
 
     public String getTpiRootTpiDaSacer() {
-	return tpiRootTpiDaSacer;
+        return tpiRootTpiDaSacer;
     }
 
     public void setTpiRootTpiDaSacer(String tpiRootTpiDaSacer) {
-	this.tpiRootTpiDaSacer = tpiRootTpiDaSacer;
+        this.tpiRootTpiDaSacer = tpiRootTpiDaSacer;
     }
 
     public String getTpiRootRecup() {
-	return tpiRootRecup;
+        return tpiRootRecup;
     }
 
     public void setTpiRootRecup(String tpiRootRecup) {
-	this.tpiRootRecup = tpiRootRecup;
+        this.tpiRootRecup = tpiRootRecup;
     }
 
     public String getTpiListaFile() {
-	return tpiListaFile;
+        return tpiListaFile;
     }
 
     public void setTpiListaFile(String tpiListaFile) {
-	this.tpiListaFile = tpiListaFile;
+        this.tpiListaFile = tpiListaFile;
     }
 
     public String getSubPathVersatoreArk() {
-	return subPathVersatoreArk;
+        return subPathVersatoreArk;
     }
 
     public void setSubPathVersatoreArk(String subPathVersatoreArk) {
-	this.subPathVersatoreArk = subPathVersatoreArk;
+        this.subPathVersatoreArk = subPathVersatoreArk;
     }
 
     public String getSubPathUnitaDocArk() {
-	return subPathUnitaDocArk;
+        return subPathUnitaDocArk;
     }
 
     public void setSubPathUnitaDocArk(String subPathUnitaDocArk) {
-	this.subPathUnitaDocArk = subPathUnitaDocArk;
+        this.subPathUnitaDocArk = subPathUnitaDocArk;
     }
 
     public String getFileLogRetrieve() {
-	return fileLogRetrieve;
+        return fileLogRetrieve;
     }
 
     public void setFileLogRetrieve(String fileLogRetrieve) {
-	this.fileLogRetrieve = fileLogRetrieve;
+        this.fileLogRetrieve = fileLogRetrieve;
     }
 
     public String getDipRootImg() {
-	return dipRootImg;
+        return dipRootImg;
     }
 
     public void setDipRootImg(String dipRootImg) {
-	this.dipRootImg = dipRootImg;
+        this.dipRootImg = dipRootImg;
     }
 
     public HashMap<String, String> getWsVersions() {
-	return wsVersions;
+        return wsVersions;
     }
 
     public void setWsVersions(HashMap<String, String> wsVersions) {
-	this.wsVersions = wsVersions;
+        this.wsVersions = wsVersions;
     }
 
 }

@@ -35,40 +35,40 @@ public class AroVChkRaUd implements Serializable {
 
     @Column(name = "FL_UD_NON_IN_ELENCO", columnDefinition = "number")
     public String getFlUdNonInElenco() {
-	return this.flUdNonInElenco;
+        return this.flUdNonInElenco;
     }
 
     public void setFlUdNonInElenco(String flUdNonInElenco) {
-	this.flUdNonInElenco = flUdNonInElenco;
+        this.flUdNonInElenco = flUdNonInElenco;
     }
 
     @Column(name = "FL_ELENCO_NON_COMPLETATO", columnDefinition = "number")
     public String getFlElencoNonCompletato() {
-	return this.flElencoNonCompletato;
+        return this.flElencoNonCompletato;
     }
 
     public void setFlElencoNonCompletato(String flElencoNonCompletato) {
-	this.flElencoNonCompletato = flElencoNonCompletato;
+        this.flElencoNonCompletato = flElencoNonCompletato;
     }
 
     @Column(name = "FL_UD_AIP_NON_FIRMATO", columnDefinition = "number")
     public String getFlUdAipNonFirmato() {
-	return flUdAipNonFirmato;
+        return flUdAipNonFirmato;
     }
 
     public void setFlUdAipNonFirmato(String flUdAipNonFirmato) {
-	this.flUdAipNonFirmato = flUdAipNonFirmato;
+        this.flUdAipNonFirmato = flUdAipNonFirmato;
     }
 
     private AroVChkRaUdId aroVChkRaUdId;
 
     @EmbeddedId()
     public AroVChkRaUdId getAroVChkRaUdId() {
-	return aroVChkRaUdId;
+        return aroVChkRaUdId;
     }
 
     public void setAroVChkRaUdId(AroVChkRaUdId aroVChkRaUdId) {
-	this.aroVChkRaUdId = aroVChkRaUdId;
+        this.aroVChkRaUdId = aroVChkRaUdId;
     }
 
 }

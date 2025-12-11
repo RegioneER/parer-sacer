@@ -35,88 +35,88 @@ public class AroVDocTiUdRangeDtId implements Serializable {
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "ID_TIPO_UNITA_DOC")
     public BigDecimal getIdTipoUnitaDoc() {
-	return this.idTipoUnitaDoc;
+        return this.idTipoUnitaDoc;
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	this.idTipoUnitaDoc = idTipoUnitaDoc;
+        this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
     @Column(name = "TI_DOC")
     public String getTiDoc() {
-	return this.tiDoc;
+        return this.tiDoc;
     }
 
     public void setTiDoc(String tiDoc) {
-	this.tiDoc = tiDoc;
+        this.tiDoc = tiDoc;
     }
 
     @Column(name = "TI_DT_CREAZIONE")
     public String getTiDtCreazione() {
-	return this.tiDtCreazione;
+        return this.tiDtCreazione;
     }
 
     public void setTiDtCreazione(String tiDtCreazione) {
-	this.tiDtCreazione = tiDtCreazione;
+        this.tiDtCreazione = tiDtCreazione;
     }
 
     @Column(name = "TI_STATO_DOC")
     public String getTiStatoDoc() {
-	return this.tiStatoDoc;
+        return this.tiStatoDoc;
     }
 
     public void setTiStatoDoc(String tiStatoDoc) {
-	this.tiStatoDoc = tiStatoDoc;
+        this.tiStatoDoc = tiStatoDoc;
     }
 
     @Override
     public int hashCode() {
-	int hash = 5;
-	hash = 67 * hash + Objects.hashCode(this.idStrut);
-	hash = 67 * hash + Objects.hashCode(this.idTipoUnitaDoc);
-	hash = 67 * hash + Objects.hashCode(this.tiDoc);
-	hash = 67 * hash + Objects.hashCode(this.tiDtCreazione);
-	hash = 67 * hash + Objects.hashCode(this.tiStatoDoc);
-	return hash;
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.idStrut);
+        hash = 67 * hash + Objects.hashCode(this.idTipoUnitaDoc);
+        hash = 67 * hash + Objects.hashCode(this.tiDoc);
+        hash = 67 * hash + Objects.hashCode(this.tiDtCreazione);
+        hash = 67 * hash + Objects.hashCode(this.tiStatoDoc);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final AroVDocTiUdRangeDtId other = (AroVDocTiUdRangeDtId) obj;
-	if (!Objects.equals(this.tiDoc, other.tiDoc)) {
-	    return false;
-	}
-	if (!Objects.equals(this.tiDtCreazione, other.tiDtCreazione)) {
-	    return false;
-	}
-	if (!Objects.equals(this.tiStatoDoc, other.tiStatoDoc)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idStrut, other.idStrut)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idTipoUnitaDoc, other.idTipoUnitaDoc)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AroVDocTiUdRangeDtId other = (AroVDocTiUdRangeDtId) obj;
+        if (!Objects.equals(this.tiDoc, other.tiDoc)) {
+            return false;
+        }
+        if (!Objects.equals(this.tiDtCreazione, other.tiDtCreazione)) {
+            return false;
+        }
+        if (!Objects.equals(this.tiStatoDoc, other.tiStatoDoc)) {
+            return false;
+        }
+        if (!Objects.equals(this.idStrut, other.idStrut)) {
+            return false;
+        }
+        if (!Objects.equals(this.idTipoUnitaDoc, other.idTipoUnitaDoc)) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -36,129 +36,129 @@ public class AroVLisMarcaCompRowBean extends BaseRow implements JEEBaseRowInterf
     public static AroVLisMarcaCompTableDescriptor TABLE_DESCRIPTOR = new AroVLisMarcaCompTableDescriptor();
 
     public AroVLisMarcaCompRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdCompDoc() {
-	return getBigDecimal("id_comp_doc");
+        return getBigDecimal("id_comp_doc");
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	setObject("id_comp_doc", idCompDoc);
+        setObject("id_comp_doc", idCompDoc);
     }
 
     public String getIssuerCertifTsa() {
-	return getString("issuer_certif_tsa");
+        return getString("issuer_certif_tsa");
     }
 
     public void setIssuerCertifTsa(String issuerCertifTsa) {
-	setObject("issuer_certif_tsa", issuerCertifTsa);
+        setObject("issuer_certif_tsa", issuerCertifTsa);
     }
 
     public BigDecimal getIdMarcaComp() {
-	return getBigDecimal("id_marca_comp");
+        return getBigDecimal("id_marca_comp");
     }
 
     public void setIdMarcaComp(BigDecimal idMarcaComp) {
-	setObject("id_marca_comp", idMarcaComp);
+        setObject("id_marca_comp", idMarcaComp);
     }
 
     public BigDecimal getPgMarca() {
-	return getBigDecimal("pg_marca");
+        return getBigDecimal("pg_marca");
     }
 
     public void setPgMarca(BigDecimal pgMarca) {
-	setObject("pg_marca", pgMarca);
+        setObject("pg_marca", pgMarca);
     }
 
     public Timestamp getTmMarcaTemp() {
-	return getTimestamp("tm_marca_temp");
+        return getTimestamp("tm_marca_temp");
     }
 
     public void setTmMarcaTemp(Timestamp tmMarcaTemp) {
-	setObject("tm_marca_temp", tmMarcaTemp);
+        setObject("tm_marca_temp", tmMarcaTemp);
     }
 
     public String getTiFormatoMarca() {
-	return getString("ti_formato_marca");
+        return getString("ti_formato_marca");
     }
 
     public void setTiFormatoMarca(String tiFormatoMarca) {
-	setObject("ti_formato_marca", tiFormatoMarca);
+        setObject("ti_formato_marca", tiFormatoMarca);
     }
 
     public String getTiEsitoContrConforme() {
-	return getString("ti_esito_contr_conforme");
+        return getString("ti_esito_contr_conforme");
     }
 
     public void setTiEsitoContrConforme(String tiEsitoContrConforme) {
-	setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
+        setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
     }
 
     public String getTiEsitoVerifMarca() {
-	return getString("ti_esito_verif_marca");
+        return getString("ti_esito_verif_marca");
     }
 
     public void setTiEsitoVerifMarca(String tiEsitoVerifMarca) {
-	setObject("ti_esito_verif_marca", tiEsitoVerifMarca);
+        setObject("ti_esito_verif_marca", tiEsitoVerifMarca);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVLisMarcaComp entity = (AroVLisMarcaComp) obj;
-	this.setIdCompDoc(entity.getIdCompDoc());
-	this.setIssuerCertifTsa(entity.getIssuerCertifTsa());
-	this.setIdMarcaComp(entity.getIdMarcaComp());
-	this.setPgMarca(entity.getPgMarca());
-	if (entity.getTmMarcaTemp() != null) {
-	    this.setTmMarcaTemp(new Timestamp(entity.getTmMarcaTemp().getTime()));
-	}
-	this.setTiFormatoMarca(entity.getTiFormatoMarca());
-	this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
-	this.setTiEsitoVerifMarca(entity.getTiEsitoVerifMarca());
+        AroVLisMarcaComp entity = (AroVLisMarcaComp) obj;
+        this.setIdCompDoc(entity.getIdCompDoc());
+        this.setIssuerCertifTsa(entity.getIssuerCertifTsa());
+        this.setIdMarcaComp(entity.getIdMarcaComp());
+        this.setPgMarca(entity.getPgMarca());
+        if (entity.getTmMarcaTemp() != null) {
+            this.setTmMarcaTemp(new Timestamp(entity.getTmMarcaTemp().getTime()));
+        }
+        this.setTiFormatoMarca(entity.getTiFormatoMarca());
+        this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
+        this.setTiEsitoVerifMarca(entity.getTiEsitoVerifMarca());
     }
 
     @Override
     public AroVLisMarcaComp rowBeanToEntity() {
-	AroVLisMarcaComp entity = new AroVLisMarcaComp();
-	entity.setIdCompDoc(this.getIdCompDoc());
-	entity.setIssuerCertifTsa(this.getIssuerCertifTsa());
-	entity.setIdMarcaComp(this.getIdMarcaComp());
-	entity.setPgMarca(this.getPgMarca());
-	entity.setTmMarcaTemp(this.getTmMarcaTemp());
-	entity.setTiFormatoMarca(this.getTiFormatoMarca());
-	entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
-	entity.setTiEsitoVerifMarca(this.getTiEsitoVerifMarca());
-	return entity;
+        AroVLisMarcaComp entity = new AroVLisMarcaComp();
+        entity.setIdCompDoc(this.getIdCompDoc());
+        entity.setIssuerCertifTsa(this.getIssuerCertifTsa());
+        entity.setIdMarcaComp(this.getIdMarcaComp());
+        entity.setPgMarca(this.getPgMarca());
+        entity.setTmMarcaTemp(this.getTmMarcaTemp());
+        entity.setTiFormatoMarca(this.getTiFormatoMarca());
+        entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
+        entity.setTiEsitoVerifMarca(this.getTiEsitoVerifMarca());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

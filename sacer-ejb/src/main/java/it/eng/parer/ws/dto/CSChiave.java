@@ -28,33 +28,33 @@ public class CSChiave implements java.io.Serializable {
     private String tipoRegistro;
 
     public Long getAnno() {
-	return anno;
+        return anno;
     }
 
     public void setAnno(Long anno) {
-	this.anno = anno;
+        this.anno = anno;
     }
 
     public String getNumero() {
-	return numero;
+        return numero;
     }
 
     public void setNumero(String numero) {
-	this.numero = numero;
+        this.numero = numero;
     }
 
     public String getTipoRegistro() {
-	return tipoRegistro;
+        return tipoRegistro;
     }
 
     public void setTipoRegistro(String tipoRegistro) {
-	this.tipoRegistro = tipoRegistro;
+        this.tipoRegistro = tipoRegistro;
     }
 
     @Override
     public String toString() {
 
-	return tipoRegistro + "-" + anno + "-" + numero;
+        return tipoRegistro + "-" + anno + "-" + numero;
 
     }
 }

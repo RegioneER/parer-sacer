@@ -36,22 +36,22 @@ public class AroVChkStatoCorRichSoftDeleteTableDescriptor extends TableDescripto
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_RICHIESTA_SACER,
-		new ColumnDescriptor(COL_ID_RICHIESTA_SACER, Types.DECIMAL, 22, true));
-	// map.put(COL_FL_FMT_NUMERO_OK, new ColumnDescriptor(COL_FL_FMT_NUMERO_OK, Types.VARCHAR,
-	// 1, true));
+        map.put(COL_ID_RICHIESTA_SACER,
+                new ColumnDescriptor(COL_ID_RICHIESTA_SACER, Types.DECIMAL, 22, true));
+        // map.put(COL_FL_FMT_NUMERO_OK, new ColumnDescriptor(COL_FL_FMT_NUMERO_OK, Types.VARCHAR,
+        // 1, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

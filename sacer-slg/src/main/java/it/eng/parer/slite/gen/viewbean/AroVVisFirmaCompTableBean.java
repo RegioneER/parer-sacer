@@ -37,19 +37,19 @@ public class AroVVisFirmaCompTableBean extends AbstractBaseTable<AroVVisFirmaCom
     public static AroVVisFirmaCompTableDescriptor TABLE_DESCRIPTOR = new AroVVisFirmaCompTableDescriptor();
 
     public AroVVisFirmaCompTableBean() {
-	super();
+        super();
     }
 
     protected AroVVisFirmaCompRowBean createRow() {
-	return new AroVVisFirmaCompRowBean();
+        return new AroVVisFirmaCompRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVVisFirmaCompRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

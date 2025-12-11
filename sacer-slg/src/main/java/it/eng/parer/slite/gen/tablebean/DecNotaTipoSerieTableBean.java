@@ -33,19 +33,19 @@ public class DecNotaTipoSerieTableBean extends AbstractBaseTable<DecNotaTipoSeri
     public static DecNotaTipoSerieTableDescriptor TABLE_DESCRIPTOR = new DecNotaTipoSerieTableDescriptor();
 
     public DecNotaTipoSerieTableBean() {
-	super();
+        super();
     }
 
     protected DecNotaTipoSerieRowBean createRow() {
-	return new DecNotaTipoSerieRowBean();
+        return new DecNotaTipoSerieRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecNotaTipoSerieRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -37,19 +37,19 @@ public class AroVVisCompVolTableBean extends AbstractBaseTable<AroVVisCompVolRow
     public static AroVVisCompVolTableDescriptor TABLE_DESCRIPTOR = new AroVVisCompVolTableDescriptor();
 
     public AroVVisCompVolTableBean() {
-	super();
+        super();
     }
 
     protected AroVVisCompVolRowBean createRow() {
-	return new AroVVisCompVolRowBean();
+        return new AroVVisCompVolRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVVisCompVolRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

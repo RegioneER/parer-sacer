@@ -33,19 +33,19 @@ public class VolAppartDocVolumeTableBean extends AbstractBaseTable<VolAppartDocV
     public static VolAppartDocVolumeTableDescriptor TABLE_DESCRIPTOR = new VolAppartDocVolumeTableDescriptor();
 
     public VolAppartDocVolumeTableBean() {
-	super();
+        super();
     }
 
     protected VolAppartDocVolumeRowBean createRow() {
-	return new VolAppartDocVolumeRowBean();
+        return new VolAppartDocVolumeRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VolAppartDocVolumeRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

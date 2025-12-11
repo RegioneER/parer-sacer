@@ -35,147 +35,147 @@ public class MonVChkFascKoByTiFascRowBean extends BaseRow implements JEEBaseRowI
     public static MonVChkFascKoByTiFascTableDescriptor TABLE_DESCRIPTOR = new MonVChkFascKoByTiFascTableDescriptor();
 
     public MonVChkFascKoByTiFascRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdTipoFascicolo() {
-	return getBigDecimal("id_tipo_fascicolo");
+        return getBigDecimal("id_tipo_fascicolo");
     }
 
     public void setIdTipoFascicolo(BigDecimal idTipoFascicolo) {
-	setObject("id_tipo_fascicolo", idTipoFascicolo);
+        setObject("id_tipo_fascicolo", idTipoFascicolo);
     }
 
     public String getFlFascKoNonRisolubCorr() {
-	return getString("fl_fasc_ko_non_risolub_corr");
+        return getString("fl_fasc_ko_non_risolub_corr");
     }
 
     public void setFlFascKoNonRisolubCorr(String flFascKoNonRisolubCorr) {
-	setObject("fl_fasc_ko_non_risolub_corr", flFascKoNonRisolubCorr);
+        setObject("fl_fasc_ko_non_risolub_corr", flFascKoNonRisolubCorr);
     }
 
     public String getFlFascKoNonRisolub_30gg() {
-	return getString("fl_fasc_ko_non_risolub_30gg");
+        return getString("fl_fasc_ko_non_risolub_30gg");
     }
 
     public void setFlFascKoNonRisolub_30gg(String fl_fasc_ko_non_risolub_30gg) {
-	setObject("fl_fasc_ko_non_risolub_30gg", fl_fasc_ko_non_risolub_30gg);
+        setObject("fl_fasc_ko_non_risolub_30gg", fl_fasc_ko_non_risolub_30gg);
     }
 
     public String getFlFascKoNonRisolubB30gg() {
-	return getString("fl_fasc_ko_non_risolub_b30gg");
+        return getString("fl_fasc_ko_non_risolub_b30gg");
     }
 
     public void setFlFascKoNonRisolubB30gg(String fl_fasc_ko_non_risolub_b30gg) {
-	setObject("fl_fasc_ko_non_risolub_b30gg", fl_fasc_ko_non_risolub_b30gg);
+        setObject("fl_fasc_ko_non_risolub_b30gg", fl_fasc_ko_non_risolub_b30gg);
     }
 
     public String getFlFascKoVerifCorr() {
-	return getString("fl_fasc_ko_verif_corr");
+        return getString("fl_fasc_ko_verif_corr");
     }
 
     public void setFlFascKoVerifCorr(String flFascKoVerifCorr) {
-	setObject("fl_fasc_ko_verif_corr", flFascKoVerifCorr);
+        setObject("fl_fasc_ko_verif_corr", flFascKoVerifCorr);
     }
 
     public String getFlFascKoVerif_30gg() {
-	return getString("fl_fasc_ko_verif_30gg");
+        return getString("fl_fasc_ko_verif_30gg");
     }
 
     public void setFlFascKoVerif_30gg(String fl_fasc_ko_verif_30gg) {
-	setObject("fl_fasc_ko_verif_30gg", fl_fasc_ko_verif_30gg);
+        setObject("fl_fasc_ko_verif_30gg", fl_fasc_ko_verif_30gg);
     }
 
     public String getFlFascKoVerifB30gg() {
-	return getString("fl_fasc_ko_verif_b30gg");
+        return getString("fl_fasc_ko_verif_b30gg");
     }
 
     public void setFlFascKoVerifB30gg(String fl_fasc_ko_verif_b30gg) {
-	setObject("fl_fasc_ko_verif_b30gg", fl_fasc_ko_verif_b30gg);
+        setObject("fl_fasc_ko_verif_b30gg", fl_fasc_ko_verif_b30gg);
     }
 
     public String getFlFascKoNonVerifCorr() {
-	return getString("fl_fasc_ko_non_verif_corr");
+        return getString("fl_fasc_ko_non_verif_corr");
     }
 
     public void setFlFascKoNonVerifCorr(String flFascKoNonVerifCorr) {
-	setObject("fl_fasc_ko_non_verif_corr", flFascKoNonVerifCorr);
+        setObject("fl_fasc_ko_non_verif_corr", flFascKoNonVerifCorr);
     }
 
     public String getFlFascKoNonVerif_30gg() {
-	return getString("fl_fasc_ko_non_verif_30gg");
+        return getString("fl_fasc_ko_non_verif_30gg");
     }
 
     public void setFlFascKoNonVerif_30gg(String fl_fasc_ko_non_verif_30gg) {
-	setObject("fl_fasc_ko_non_verif_30gg", fl_fasc_ko_non_verif_30gg);
+        setObject("fl_fasc_ko_non_verif_30gg", fl_fasc_ko_non_verif_30gg);
     }
 
     public String getFlFascKoNonVerifB30gg() {
-	return getString("fl_fasc_ko_non_verif_b30gg");
+        return getString("fl_fasc_ko_non_verif_b30gg");
     }
 
     public void setFlFascKoNonVerifB30gg(String fl_fasc_ko_non_verif_b30gg) {
-	setObject("fl_fasc_ko_non_verif_b30gg", fl_fasc_ko_non_verif_b30gg);
+        setObject("fl_fasc_ko_non_verif_b30gg", fl_fasc_ko_non_verif_b30gg);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	MonVChkFascKoByTiFasc entity = (MonVChkFascKoByTiFasc) obj;
-	this.setIdTipoFascicolo(entity.getIdTipoFascicolo());
-	this.setFlFascKoNonRisolubCorr(entity.getFlFascKoNonRisolubCorr());
-	this.setFlFascKoNonRisolub_30gg(entity.getFlFascKoNonRisolub30gg());
-	this.setFlFascKoNonRisolubB30gg(entity.getFlFascKoNonRisolubB30gg());
-	this.setFlFascKoVerifCorr(entity.getFlFascKoVerifCorr());
-	this.setFlFascKoVerif_30gg(entity.getFlFascKoVerif30gg());
-	this.setFlFascKoVerifB30gg(entity.getFlFascKoVerifB30gg());
-	this.setFlFascKoNonVerifCorr(entity.getFlFascKoNonVerifCorr());
-	this.setFlFascKoNonVerif_30gg(entity.getFlFascKoNonVerif30gg());
-	this.setFlFascKoNonVerifB30gg(entity.getFlFascKoNonVerifB30gg());
+        MonVChkFascKoByTiFasc entity = (MonVChkFascKoByTiFasc) obj;
+        this.setIdTipoFascicolo(entity.getIdTipoFascicolo());
+        this.setFlFascKoNonRisolubCorr(entity.getFlFascKoNonRisolubCorr());
+        this.setFlFascKoNonRisolub_30gg(entity.getFlFascKoNonRisolub30gg());
+        this.setFlFascKoNonRisolubB30gg(entity.getFlFascKoNonRisolubB30gg());
+        this.setFlFascKoVerifCorr(entity.getFlFascKoVerifCorr());
+        this.setFlFascKoVerif_30gg(entity.getFlFascKoVerif30gg());
+        this.setFlFascKoVerifB30gg(entity.getFlFascKoVerifB30gg());
+        this.setFlFascKoNonVerifCorr(entity.getFlFascKoNonVerifCorr());
+        this.setFlFascKoNonVerif_30gg(entity.getFlFascKoNonVerif30gg());
+        this.setFlFascKoNonVerifB30gg(entity.getFlFascKoNonVerifB30gg());
     }
 
     @Override
     public MonVChkFascKoByTiFasc rowBeanToEntity() {
-	MonVChkFascKoByTiFasc entity = new MonVChkFascKoByTiFasc();
-	entity.setIdTipoFascicolo(this.getIdTipoFascicolo());
-	entity.setFlFascKoNonRisolubCorr(this.getFlFascKoNonRisolubCorr());
-	entity.setFlFascKoNonRisolub30gg(this.getFlFascKoNonRisolub_30gg());
-	entity.setFlFascKoNonRisolubB30gg(this.getFlFascKoNonRisolubB30gg());
-	entity.setFlFascKoVerifCorr(this.getFlFascKoVerifCorr());
-	entity.setFlFascKoVerif30gg(this.getFlFascKoVerif_30gg());
-	entity.setFlFascKoVerifB30gg(this.getFlFascKoVerifB30gg());
-	entity.setFlFascKoNonVerifCorr(this.getFlFascKoNonVerifCorr());
-	entity.setFlFascKoNonVerif30gg(this.getFlFascKoNonVerif_30gg());
-	entity.setFlFascKoNonVerifB30gg(this.getFlFascKoNonVerifB30gg());
-	return entity;
+        MonVChkFascKoByTiFasc entity = new MonVChkFascKoByTiFasc();
+        entity.setIdTipoFascicolo(this.getIdTipoFascicolo());
+        entity.setFlFascKoNonRisolubCorr(this.getFlFascKoNonRisolubCorr());
+        entity.setFlFascKoNonRisolub30gg(this.getFlFascKoNonRisolub_30gg());
+        entity.setFlFascKoNonRisolubB30gg(this.getFlFascKoNonRisolubB30gg());
+        entity.setFlFascKoVerifCorr(this.getFlFascKoVerifCorr());
+        entity.setFlFascKoVerif30gg(this.getFlFascKoVerif_30gg());
+        entity.setFlFascKoVerifB30gg(this.getFlFascKoVerifB30gg());
+        entity.setFlFascKoNonVerifCorr(this.getFlFascKoNonVerifCorr());
+        entity.setFlFascKoNonVerif30gg(this.getFlFascKoNonVerif_30gg());
+        entity.setFlFascKoNonVerifB30gg(this.getFlFascKoNonVerifB30gg());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

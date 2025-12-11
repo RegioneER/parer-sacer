@@ -35,10 +35,10 @@ public class VrsVSessioneAggRisolta implements Serializable {
 
     @EmbeddedId()
     public VrsVSessioneAggRisoltaId getVrsVSessioneAggRisoltaId() {
-	return vrsVSessioneAggRisoltaId;
+        return vrsVSessioneAggRisoltaId;
     }
 
     public void setVrsVSessioneAggRisoltaId(VrsVSessioneAggRisoltaId vrsVSessioneAggRisoltaId) {
-	this.vrsVSessioneAggRisoltaId = vrsVSessioneAggRisoltaId;
+        this.vrsVSessioneAggRisoltaId = vrsVSessioneAggRisoltaId;
     }
 }

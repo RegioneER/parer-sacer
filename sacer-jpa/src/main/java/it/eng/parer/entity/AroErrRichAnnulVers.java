@@ -59,61 +59,61 @@ public class AroErrRichAnnulVers implements Serializable {
     @Id
     @Column(name = "ID_ERR_RICH_ANNUL_VRS")
     @GenericGenerator(name = "SARO_ERR_RICH_ANNUL_VERS_ID_ERR_RICH_ANNUL_VRS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_ERR_RICH_ANNUL_VERS"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_ERR_RICH_ANNUL_VERS"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_ERR_RICH_ANNUL_VERS_ID_ERR_RICH_ANNUL_VRS_GENERATOR")
     public Long getIdErrRichAnnulVrs() {
-	return this.idErrRichAnnulVrs;
+        return this.idErrRichAnnulVrs;
     }
 
     public void setIdErrRichAnnulVrs(Long idErrRichAnnulVrs) {
-	this.idErrRichAnnulVrs = idErrRichAnnulVrs;
+        this.idErrRichAnnulVrs = idErrRichAnnulVrs;
     }
 
     @Column(name = "DS_ERR")
     public String getDsErr() {
-	return this.dsErr;
+        return this.dsErr;
     }
 
     public void setDsErr(String dsErr) {
-	this.dsErr = dsErr;
+        this.dsErr = dsErr;
     }
 
     @Column(name = "PG_ERR")
     public BigDecimal getPgErr() {
-	return this.pgErr;
+        return this.pgErr;
     }
 
     public void setPgErr(BigDecimal pgErr) {
-	this.pgErr = pgErr;
+        this.pgErr = pgErr;
     }
 
     @Column(name = "TI_ERR")
     public String getTiErr() {
-	return this.tiErr;
+        return this.tiErr;
     }
 
     public void setTiErr(String tiErr) {
-	this.tiErr = tiErr;
+        this.tiErr = tiErr;
     }
 
     @Column(name = "TI_GRAVITA")
     public String getTiGravita() {
-	return this.tiGravita;
+        return this.tiGravita;
     }
 
     public void setTiGravita(String tiGravita) {
-	this.tiGravita = tiGravita;
+        this.tiGravita = tiGravita;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ITEM_RICH_ANNUL_VERS")
     public AroItemRichAnnulVers getAroItemRichAnnulVers() {
-	return this.aroItemRichAnnulVers;
+        return this.aroItemRichAnnulVers;
     }
 
     public void setAroItemRichAnnulVers(AroItemRichAnnulVers aroItemRichAnnulVers) {
-	this.aroItemRichAnnulVers = aroItemRichAnnulVers;
+        this.aroItemRichAnnulVers = aroItemRichAnnulVers;
     }
 
 }

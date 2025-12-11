@@ -55,43 +55,43 @@ public class VolVolumeVersUdAnnul implements Serializable {
 
     @Column(name = "ID_VOLUME_VERS_UD_ANNUL")
     @GenericGenerator(name = "SVOL_VOLUME_VERS_UD_ANNUL_ID_VOLUME_VERS_UD_ANNUL_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_VOLUME_VERS_UD_ANNUL"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_VOLUME_VERS_UD_ANNUL"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SVOL_VOLUME_VERS_UD_ANNUL_ID_VOLUME_VERS_UD_ANNUL_GENERATOR")
     public Long getIdVolumeVersUdAnnul() {
-	return this.idVolumeVersUdAnnul;
+        return this.idVolumeVersUdAnnul;
     }
 
     public void setIdVolumeVersUdAnnul(Long idVolumeVersUdAnnul) {
-	this.idVolumeVersUdAnnul = idVolumeVersUdAnnul;
+        this.idVolumeVersUdAnnul = idVolumeVersUdAnnul;
     }
 
     @Column(name = "DS_URN_UNITA_DOC_ANNUL")
     public String getDsUrnUnitaDocAnnul() {
-	return this.dsUrnUnitaDocAnnul;
+        return this.dsUrnUnitaDocAnnul;
     }
 
     public void setDsUrnUnitaDocAnnul(String dsUrnUnitaDocAnnul) {
-	this.dsUrnUnitaDocAnnul = dsUrnUnitaDocAnnul;
+        this.dsUrnUnitaDocAnnul = dsUrnUnitaDocAnnul;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_UNITA_DOC")
     public AroUnitaDoc getAroUnitaDoc() {
-	return this.aroUnitaDoc;
+        return this.aroUnitaDoc;
     }
 
     public void setAroUnitaDoc(AroUnitaDoc aroUnitaDoc) {
-	this.aroUnitaDoc = aroUnitaDoc;
+        this.aroUnitaDoc = aroUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VOLUME_CONSERV")
     public VolVolumeConserv getVolVolumeConserv() {
-	return this.volVolumeConserv;
+        return this.volVolumeConserv;
     }
 
     public void setVolVolumeConserv(VolVolumeConserv volVolumeConserv) {
-	this.volVolumeConserv = volVolumeConserv;
+        this.volVolumeConserv = volVolumeConserv;
     }
 }

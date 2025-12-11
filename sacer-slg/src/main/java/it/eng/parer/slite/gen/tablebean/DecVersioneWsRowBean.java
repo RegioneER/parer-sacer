@@ -42,79 +42,79 @@ public class DecVersioneWsRowBean extends BaseRow implements BaseRowInterface, J
     public static DecVersioneWsTableDescriptor TABLE_DESCRIPTOR = new DecVersioneWsTableDescriptor();
 
     public DecVersioneWsRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdVersioneWs() {
-	return getBigDecimal("id_versione_ws");
+        return getBigDecimal("id_versione_ws");
     }
 
     public void setIdVersioneWs(BigDecimal id_versione_ws) {
-	setObject("id_versione_ws", id_versione_ws);
+        setObject("id_versione_ws", id_versione_ws);
     }
 
     public String getTiWs() {
-	return getString("ti_ws");
+        return getString("ti_ws");
     }
 
     public void setTiWs(String ti_ws) {
-	setObject("ti_ws", ti_ws);
+        setObject("ti_ws", ti_ws);
     }
 
     public String getCdVersioneWs() {
-	return getString("cd_versione_ws");
+        return getString("cd_versione_ws");
     }
 
     public void setCdVersioneWs(String cd_versione_ws) {
-	setObject("cd_versione_ws", cd_versione_ws);
+        setObject("cd_versione_ws", cd_versione_ws);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecVersioneWs entity = (DecVersioneWs) obj;
-	AbstractRecord ar;
-	this.setIdVersioneWs(entity.getIdVersioneWs());
-	this.setTiWs(entity.getTiWs());
-	this.setCdVersioneWs(entity.getCdVersioneWs());
+        DecVersioneWs entity = (DecVersioneWs) obj;
+        AbstractRecord ar;
+        this.setIdVersioneWs(entity.getIdVersioneWs());
+        this.setTiWs(entity.getTiWs());
+        this.setCdVersioneWs(entity.getCdVersioneWs());
     }
 
     @Override
     public DecVersioneWs rowBeanToEntity() {
-	DecVersioneWs entity = new DecVersioneWs();
-	entity.setIdVersioneWs(this.getIdVersioneWs());
-	entity.setTiWs(this.getTiWs());
-	entity.setCdVersioneWs(this.getCdVersioneWs());
-	return entity;
+        DecVersioneWs entity = new DecVersioneWs();
+        entity.setIdVersioneWs(this.getIdVersioneWs());
+        entity.setTiWs(this.getTiWs());
+        entity.setCdVersioneWs(this.getCdVersioneWs());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

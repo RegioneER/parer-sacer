@@ -35,157 +35,157 @@ public class MonVRiepStrutIamRowBean extends BaseRow implements JEEBaseRowInterf
     public static MonVRiepStrutIamTableDescriptor TABLE_DESCRIPTOR = new MonVRiepStrutIamTableDescriptor();
 
     public MonVRiepStrutIamRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdUserIam() {
-	return getBigDecimal("id_user_iam");
+        return getBigDecimal("id_user_iam");
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	setObject("id_user_iam", idUserIam);
+        setObject("id_user_iam", idUserIam);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getIdAmbiente() {
-	return getBigDecimal("id_ambiente");
+        return getBigDecimal("id_ambiente");
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	setObject("id_ambiente", idAmbiente);
+        setObject("id_ambiente", idAmbiente);
     }
 
     public String getNmAmbiente() {
-	return getString("nm_ambiente");
+        return getString("nm_ambiente");
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	setObject("nm_ambiente", nmAmbiente);
+        setObject("nm_ambiente", nmAmbiente);
     }
 
     public String getNmEnte() {
-	return getString("nm_ente");
+        return getString("nm_ente");
     }
 
     public void setNmEnte(String nmEnte) {
-	setObject("nm_ente", nmEnte);
+        setObject("nm_ente", nmEnte);
     }
 
     public String getNmStrut() {
-	return getString("nm_strut");
+        return getString("nm_strut");
     }
 
     public void setNmStrut(String nmStrut) {
-	setObject("nm_strut", nmStrut);
+        setObject("nm_strut", nmStrut);
     }
 
     public String getFlSessioniFalliteNoRis() {
-	return getString("fl_sessioni_fallite_no_ris");
+        return getString("fl_sessioni_fallite_no_ris");
     }
 
     public void setFlSessioniFalliteNoRis(String flSessioniFalliteNoRis) {
-	setObject("fl_sessioni_fallite_no_ris", flSessioniFalliteNoRis);
+        setObject("fl_sessioni_fallite_no_ris", flSessioniFalliteNoRis);
     }
 
     public String getFlDocSenzaElenco() {
-	return getString("fl_doc_senza_elenco");
+        return getString("fl_doc_senza_elenco");
     }
 
     public void setFlDocSenzaElenco(String flDocSenzaElenco) {
-	setObject("fl_doc_senza_elenco", flDocSenzaElenco);
+        setObject("fl_doc_senza_elenco", flDocSenzaElenco);
     }
 
     public String getFlElencoChiuso() {
-	return getString("fl_elenco_chiuso");
+        return getString("fl_elenco_chiuso");
     }
 
     public void setFlElencoChiuso(String flElencoChiuso) {
-	setObject("fl_elenco_chiuso", flElencoChiuso);
+        setObject("fl_elenco_chiuso", flElencoChiuso);
     }
 
     public String getFlErrFmtNumero() {
-	return getString("fl_err_fmt_numero");
+        return getString("fl_err_fmt_numero");
     }
 
     public void setFlErrFmtNumero(String flErrFmtNumero) {
-	setObject("fl_err_fmt_numero", flErrFmtNumero);
+        setObject("fl_err_fmt_numero", flErrFmtNumero);
     }
 
     public String getFlRichAnnulVersAperta() {
-	return getString("fl_rich_annul_vers_aperta");
+        return getString("fl_rich_annul_vers_aperta");
     }
 
     public void setFlRichAnnulVersAperta(String flRichAnnulVersAperta) {
-	setObject("fl_rich_annul_vers_aperta", flRichAnnulVersAperta);
+        setObject("fl_rich_annul_vers_aperta", flRichAnnulVersAperta);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	MonVRiepStrutIam entity = (MonVRiepStrutIam) obj;
-	this.setIdUserIam(entity.getIdUserIam());
-	this.setIdStrut(entity.getIdStrut());
-	this.setIdAmbiente(entity.getIdAmbiente());
-	this.setNmAmbiente(entity.getNmAmbiente());
-	this.setNmEnte(entity.getNmEnte());
-	this.setNmStrut(entity.getNmStrut());
-	this.setFlSessioniFalliteNoRis(entity.getFlSessioniFalliteNoRis());
-	this.setFlDocSenzaElenco(entity.getFlDocSenzaElenco());
-	this.setFlElencoChiuso(entity.getFlElencoChiuso());
-	this.setFlErrFmtNumero(entity.getFlErrFmtNumero());
-	this.setFlRichAnnulVersAperta(entity.getFlRichAnnulVersAperta());
+        MonVRiepStrutIam entity = (MonVRiepStrutIam) obj;
+        this.setIdUserIam(entity.getIdUserIam());
+        this.setIdStrut(entity.getIdStrut());
+        this.setIdAmbiente(entity.getIdAmbiente());
+        this.setNmAmbiente(entity.getNmAmbiente());
+        this.setNmEnte(entity.getNmEnte());
+        this.setNmStrut(entity.getNmStrut());
+        this.setFlSessioniFalliteNoRis(entity.getFlSessioniFalliteNoRis());
+        this.setFlDocSenzaElenco(entity.getFlDocSenzaElenco());
+        this.setFlElencoChiuso(entity.getFlElencoChiuso());
+        this.setFlErrFmtNumero(entity.getFlErrFmtNumero());
+        this.setFlRichAnnulVersAperta(entity.getFlRichAnnulVersAperta());
     }
 
     @Override
     public MonVRiepStrutIam rowBeanToEntity() {
-	MonVRiepStrutIam entity = new MonVRiepStrutIam();
-	entity.setIdUserIam(this.getIdUserIam());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setIdAmbiente(this.getIdAmbiente());
-	entity.setNmAmbiente(this.getNmAmbiente());
-	entity.setNmEnte(this.getNmEnte());
-	entity.setNmStrut(this.getNmStrut());
-	entity.setFlSessioniFalliteNoRis(this.getFlSessioniFalliteNoRis());
-	entity.setFlDocSenzaElenco(this.getFlDocSenzaElenco());
-	entity.setFlElencoChiuso(this.getFlElencoChiuso());
-	entity.setFlErrFmtNumero(this.getFlErrFmtNumero());
-	entity.setFlRichAnnulVersAperta(this.getFlRichAnnulVersAperta());
-	return entity;
+        MonVRiepStrutIam entity = new MonVRiepStrutIam();
+        entity.setIdUserIam(this.getIdUserIam());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setIdAmbiente(this.getIdAmbiente());
+        entity.setNmAmbiente(this.getNmAmbiente());
+        entity.setNmEnte(this.getNmEnte());
+        entity.setNmStrut(this.getNmStrut());
+        entity.setFlSessioniFalliteNoRis(this.getFlSessioniFalliteNoRis());
+        entity.setFlDocSenzaElenco(this.getFlDocSenzaElenco());
+        entity.setFlElencoChiuso(this.getFlElencoChiuso());
+        entity.setFlErrFmtNumero(this.getFlErrFmtNumero());
+        entity.setFlRichAnnulVersAperta(this.getFlRichAnnulVersAperta());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

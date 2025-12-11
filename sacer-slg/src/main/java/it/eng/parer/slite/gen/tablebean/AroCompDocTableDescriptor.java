@@ -72,81 +72,81 @@ public class AroCompDocTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT_DOC, new ColumnDescriptor(COL_ID_STRUT_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_NI_ORD_COMP_DOC,
-		new ColumnDescriptor(COL_NI_ORD_COMP_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_TI_SUPPORTO_COMP,
-		new ColumnDescriptor(COL_TI_SUPPORTO_COMP, Types.VARCHAR, 20, false));
-	map.put(COL_ID_TIPO_COMP_DOC,
-		new ColumnDescriptor(COL_ID_TIPO_COMP_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_DS_NOME_COMP_VERS,
-		new ColumnDescriptor(COL_DS_NOME_COMP_VERS, Types.VARCHAR, 254, false));
-	map.put(COL_ID_FORMATO_FILE_VERS,
-		new ColumnDescriptor(COL_ID_FORMATO_FILE_VERS, Types.DECIMAL, 22, false));
-	map.put(COL_ID_TIPO_RAPPR_COMP,
-		new ColumnDescriptor(COL_ID_TIPO_RAPPR_COMP, Types.DECIMAL, 22, false));
-	map.put(COL_DS_HASH_FILE_VERS,
-		new ColumnDescriptor(COL_DS_HASH_FILE_VERS, Types.VARCHAR, 254, false));
-	map.put(COL_DL_URN_COMP_VERS,
-		new ColumnDescriptor(COL_DL_URN_COMP_VERS, Types.VARCHAR, 1024, false));
-	map.put(COL_DS_ID_COMP_VERS,
-		new ColumnDescriptor(COL_DS_ID_COMP_VERS, Types.VARCHAR, 254, false));
-	map.put(COL_TM_RIF_TEMP_VERS,
-		new ColumnDescriptor(COL_TM_RIF_TEMP_VERS, Types.TIMESTAMP, 7, false));
-	map.put(COL_DS_RIF_TEMP_VERS,
-		new ColumnDescriptor(COL_DS_RIF_TEMP_VERS, Types.VARCHAR, 254, false));
-	map.put(COL_FL_RIF_TEMP_DATA_FIRMA_VERS,
-		new ColumnDescriptor(COL_FL_RIF_TEMP_DATA_FIRMA_VERS, Types.VARCHAR, 1, false));
-	map.put(COL_DS_URN_COMP_CALC,
-		new ColumnDescriptor(COL_DS_URN_COMP_CALC, Types.VARCHAR, 254, false));
-	map.put(COL_ID_FORMATO_FILE_CALC,
-		new ColumnDescriptor(COL_ID_FORMATO_FILE_CALC, Types.DECIMAL, 22, false));
-	map.put(COL_DS_HASH_FILE_CALC,
-		new ColumnDescriptor(COL_DS_HASH_FILE_CALC, Types.VARCHAR, 254, false));
-	map.put(COL_DS_ALGO_HASH_FILE_CALC,
-		new ColumnDescriptor(COL_DS_ALGO_HASH_FILE_CALC, Types.VARCHAR, 254, false));
-	map.put(COL_CD_ENCODING_HASH_FILE_CALC,
-		new ColumnDescriptor(COL_CD_ENCODING_HASH_FILE_CALC, Types.VARCHAR, 20, false));
-	map.put(COL_TI_ESITO_CONTR_FORMATO_FILE,
-		new ColumnDescriptor(COL_TI_ESITO_CONTR_FORMATO_FILE, Types.VARCHAR, 20, false));
-	map.put(COL_FL_COMP_FIRMATO,
-		new ColumnDescriptor(COL_FL_COMP_FIRMATO, Types.VARCHAR, 1, false));
-	map.put(COL_TI_ESITO_VERIF_FIRME,
-		new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 20, false));
-	map.put(COL_DS_MSG_ESITO_VERIF_FIRME,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRME, Types.VARCHAR, 254, false));
-	map.put(COL_NI_SIZE_FILE_CALC,
-		new ColumnDescriptor(COL_NI_SIZE_FILE_CALC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_COMP_DOC_PADRE,
-		new ColumnDescriptor(COL_ID_COMP_DOC_PADRE, Types.DECIMAL, 22, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_DS_MSG_ESITO_CONTR_FORMATO,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_CONTR_FORMATO, Types.VARCHAR, 1024, false));
-	map.put(COL_DS_FORMATO_RAPPR_CALC,
-		new ColumnDescriptor(COL_DS_FORMATO_RAPPR_CALC, Types.VARCHAR, 254, false));
-	map.put(COL_ID_UNITA_DOC_RIF,
-		new ColumnDescriptor(COL_ID_UNITA_DOC_RIF, Types.DECIMAL, 22, false));
-	map.put(COL_DS_FORMATO_RAPPR_ESTESO_CALC,
-		new ColumnDescriptor(COL_DS_FORMATO_RAPPR_ESTESO_CALC, Types.VARCHAR, 254, false));
-	map.put(COL_FL_NO_CALC_FMT_VERIF_FIRME,
-		new ColumnDescriptor(COL_FL_NO_CALC_FMT_VERIF_FIRME, Types.VARCHAR, 1, false));
-	map.put(COL_FL_NO_CALC_HASH_FILE,
-		new ColumnDescriptor(COL_FL_NO_CALC_HASH_FILE, Types.VARCHAR, 1, false));
-	map.put(COL_DS_NOME_FILE_ARK,
-		new ColumnDescriptor(COL_DS_NOME_FILE_ARK, Types.VARCHAR, 254, false));
+        map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT_DOC, new ColumnDescriptor(COL_ID_STRUT_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_NI_ORD_COMP_DOC,
+                new ColumnDescriptor(COL_NI_ORD_COMP_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_TI_SUPPORTO_COMP,
+                new ColumnDescriptor(COL_TI_SUPPORTO_COMP, Types.VARCHAR, 20, false));
+        map.put(COL_ID_TIPO_COMP_DOC,
+                new ColumnDescriptor(COL_ID_TIPO_COMP_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_DS_NOME_COMP_VERS,
+                new ColumnDescriptor(COL_DS_NOME_COMP_VERS, Types.VARCHAR, 254, false));
+        map.put(COL_ID_FORMATO_FILE_VERS,
+                new ColumnDescriptor(COL_ID_FORMATO_FILE_VERS, Types.DECIMAL, 22, false));
+        map.put(COL_ID_TIPO_RAPPR_COMP,
+                new ColumnDescriptor(COL_ID_TIPO_RAPPR_COMP, Types.DECIMAL, 22, false));
+        map.put(COL_DS_HASH_FILE_VERS,
+                new ColumnDescriptor(COL_DS_HASH_FILE_VERS, Types.VARCHAR, 254, false));
+        map.put(COL_DL_URN_COMP_VERS,
+                new ColumnDescriptor(COL_DL_URN_COMP_VERS, Types.VARCHAR, 1024, false));
+        map.put(COL_DS_ID_COMP_VERS,
+                new ColumnDescriptor(COL_DS_ID_COMP_VERS, Types.VARCHAR, 254, false));
+        map.put(COL_TM_RIF_TEMP_VERS,
+                new ColumnDescriptor(COL_TM_RIF_TEMP_VERS, Types.TIMESTAMP, 7, false));
+        map.put(COL_DS_RIF_TEMP_VERS,
+                new ColumnDescriptor(COL_DS_RIF_TEMP_VERS, Types.VARCHAR, 254, false));
+        map.put(COL_FL_RIF_TEMP_DATA_FIRMA_VERS,
+                new ColumnDescriptor(COL_FL_RIF_TEMP_DATA_FIRMA_VERS, Types.VARCHAR, 1, false));
+        map.put(COL_DS_URN_COMP_CALC,
+                new ColumnDescriptor(COL_DS_URN_COMP_CALC, Types.VARCHAR, 254, false));
+        map.put(COL_ID_FORMATO_FILE_CALC,
+                new ColumnDescriptor(COL_ID_FORMATO_FILE_CALC, Types.DECIMAL, 22, false));
+        map.put(COL_DS_HASH_FILE_CALC,
+                new ColumnDescriptor(COL_DS_HASH_FILE_CALC, Types.VARCHAR, 254, false));
+        map.put(COL_DS_ALGO_HASH_FILE_CALC,
+                new ColumnDescriptor(COL_DS_ALGO_HASH_FILE_CALC, Types.VARCHAR, 254, false));
+        map.put(COL_CD_ENCODING_HASH_FILE_CALC,
+                new ColumnDescriptor(COL_CD_ENCODING_HASH_FILE_CALC, Types.VARCHAR, 20, false));
+        map.put(COL_TI_ESITO_CONTR_FORMATO_FILE,
+                new ColumnDescriptor(COL_TI_ESITO_CONTR_FORMATO_FILE, Types.VARCHAR, 20, false));
+        map.put(COL_FL_COMP_FIRMATO,
+                new ColumnDescriptor(COL_FL_COMP_FIRMATO, Types.VARCHAR, 1, false));
+        map.put(COL_TI_ESITO_VERIF_FIRME,
+                new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 20, false));
+        map.put(COL_DS_MSG_ESITO_VERIF_FIRME,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRME, Types.VARCHAR, 254, false));
+        map.put(COL_NI_SIZE_FILE_CALC,
+                new ColumnDescriptor(COL_NI_SIZE_FILE_CALC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_COMP_DOC_PADRE,
+                new ColumnDescriptor(COL_ID_COMP_DOC_PADRE, Types.DECIMAL, 22, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_DS_MSG_ESITO_CONTR_FORMATO,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_CONTR_FORMATO, Types.VARCHAR, 1024, false));
+        map.put(COL_DS_FORMATO_RAPPR_CALC,
+                new ColumnDescriptor(COL_DS_FORMATO_RAPPR_CALC, Types.VARCHAR, 254, false));
+        map.put(COL_ID_UNITA_DOC_RIF,
+                new ColumnDescriptor(COL_ID_UNITA_DOC_RIF, Types.DECIMAL, 22, false));
+        map.put(COL_DS_FORMATO_RAPPR_ESTESO_CALC,
+                new ColumnDescriptor(COL_DS_FORMATO_RAPPR_ESTESO_CALC, Types.VARCHAR, 254, false));
+        map.put(COL_FL_NO_CALC_FMT_VERIF_FIRME,
+                new ColumnDescriptor(COL_FL_NO_CALC_FMT_VERIF_FIRME, Types.VARCHAR, 1, false));
+        map.put(COL_FL_NO_CALC_HASH_FILE,
+                new ColumnDescriptor(COL_FL_NO_CALC_HASH_FILE, Types.VARCHAR, 1, false));
+        map.put(COL_DS_NOME_FILE_ARK,
+                new ColumnDescriptor(COL_DS_NOME_FILE_ARK, Types.VARCHAR, 254, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

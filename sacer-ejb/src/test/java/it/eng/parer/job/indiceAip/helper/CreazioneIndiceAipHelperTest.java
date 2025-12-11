@@ -63,183 +63,183 @@ public class CreazioneIndiceAipHelperTest {
 
     @Test
     public void getIndexAplIndiceAipUdDaElabQueryIsOk() {
-	helper.getIndexAplIndiceAipUdDaElab();
-	assertTrue(true);
+        helper.getIndexAplIndiceAipUdDaElab();
+        assertTrue(true);
     }
 
     @Test
     public void existsIndexAplIndiceAipInCodaPrgMinoreQueryIsOk() {
-	AroUnitaDoc ud = mockAroUnitaDoc();
-	long progressivoIndiceAip = aLong();
-	helper.existsIndexAplIndiceAipInCodaPrgMinore(ud, progressivoIndiceAip);
-	assertTrue(true);
+        AroUnitaDoc ud = mockAroUnitaDoc();
+        long progressivoIndiceAip = aLong();
+        helper.existsIndexAplIndiceAipInCodaPrgMinore(ud, progressivoIndiceAip);
+        assertTrue(true);
     }
 
     private AroUnitaDoc mockAroUnitaDoc() {
-	AroUnitaDoc ud = new AroUnitaDoc();
-	ud.setIdUnitaDoc(aLong());
-	ud.setOrgStrut(new OrgStrut());
-	ud.getOrgStrut().setIdStrut(aLong());
-	ud.getOrgStrut().setOrgEnte(new OrgEnte());
-	ud.getOrgStrut().getOrgEnte().setOrgAmbiente(new OrgAmbiente());
-	ud.getOrgStrut().getOrgEnte().getOrgAmbiente().setIdEnteConserv(aBigDecimal());
-	return ud;
+        AroUnitaDoc ud = new AroUnitaDoc();
+        ud.setIdUnitaDoc(aLong());
+        ud.setOrgStrut(new OrgStrut());
+        ud.getOrgStrut().setIdStrut(aLong());
+        ud.getOrgStrut().setOrgEnte(new OrgEnte());
+        ud.getOrgStrut().getOrgEnte().setOrgAmbiente(new OrgAmbiente());
+        ud.getOrgStrut().getOrgEnte().getOrgAmbiente().setIdEnteConserv(aBigDecimal());
+        return ud;
     }
 
     @Test
     public void getProgressivoVersioneQueryIsOk() {
-	Long idUnitaDoc = aLong();
-	helper.getProgressivoVersione(idUnitaDoc);
-	assertTrue(true);
+        Long idUnitaDoc = aLong();
+        helper.getProgressivoVersione(idUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     public void getVersioneAIPQueryIsOk() throws ParerInternalError {
-	Long idUnitaDoc = aLong();
-	String tiCreazione = aString();
-	helper.getVersioneAIP(idUnitaDoc, tiCreazione);
-	assertTrue(true);
+        Long idUnitaDoc = aLong();
+        String tiCreazione = aString();
+        helper.getVersioneAIP(idUnitaDoc, tiCreazione);
+        assertTrue(true);
     }
 
     @Test
     public void getVersioneXSDIndiceAIPQueryIsOk() throws ParerInternalError {
-	Long idUnitaDoc = aLong();
-	helper.getVersioneXSDIndiceAIP(idUnitaDoc);
-	assertTrue(true);
+        Long idUnitaDoc = aLong();
+        helper.getVersioneXSDIndiceAIP(idUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     public void getAroIndiceAipUdQueryIsOk() {
-	Long idUnitaDoc = aLong();
-	helper.getAroIndiceAipUd(idUnitaDoc);
-	assertTrue(true);
+        Long idUnitaDoc = aLong();
+        helper.getAroIndiceAipUd(idUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     public void creaAIP_7args_1QueryIsOk() {
-	AroIndiceAipUdDaElab udDaElab = mockAroIndiceAipUdDaElab();
-	String annoMese = "2020";
-	int progressivoVersione = aInt();
-	String codiceVersione = aString();
-	String hash = aString();
-	String xml = aString();
-	CSVersatore versatore = new CSVersatore();
-	versatore.setAmbiente(aString());
-	versatore.setEnte(aString());
-	versatore.setSistemaConservazione(aString());
-	versatore.setStruttura(aString());
-	CSChiave chiave = new CSChiave();
-	chiave.setAnno(aLong());
-	chiave.setNumero(aString());
-	chiave.setTipoRegistro(aString());
-	try {
-	    helper.creaAIP(udDaElab, annoMese, progressivoVersione, codiceVersione, hash, xml,
-		    versatore, chiave);
-	} catch (Exception e) {
-	    // errore dovuto al fatto che udDaElab non è persistita
-	    assertExceptionMessage(e, "Transaction rolled back");
-	}
+        AroIndiceAipUdDaElab udDaElab = mockAroIndiceAipUdDaElab();
+        String annoMese = "2020";
+        int progressivoVersione = aInt();
+        String codiceVersione = aString();
+        String hash = aString();
+        String xml = aString();
+        CSVersatore versatore = new CSVersatore();
+        versatore.setAmbiente(aString());
+        versatore.setEnte(aString());
+        versatore.setSistemaConservazione(aString());
+        versatore.setStruttura(aString());
+        CSChiave chiave = new CSChiave();
+        chiave.setAnno(aLong());
+        chiave.setNumero(aString());
+        chiave.setTipoRegistro(aString());
+        try {
+            helper.creaAIP(udDaElab, annoMese, progressivoVersione, codiceVersione, hash, xml,
+                    versatore, chiave);
+        } catch (Exception e) {
+            // errore dovuto al fatto che udDaElab non è persistita
+            assertExceptionMessage(e, "Transaction rolled back");
+        }
     }
 
     private AroIndiceAipUdDaElab mockAroIndiceAipUdDaElab() {
-	AroIndiceAipUdDaElab udDaElab = new AroIndiceAipUdDaElab();
-	udDaElab.setAroUnitaDoc(mockAroUnitaDoc());
+        AroIndiceAipUdDaElab udDaElab = new AroIndiceAipUdDaElab();
+        udDaElab.setAroUnitaDoc(mockAroUnitaDoc());
 
-	return udDaElab;
+        return udDaElab;
     }
 
     @Test
     public void creaAIP_7args_2QueryIsOk() {
-	AroUnitaDoc ud = mockAroUnitaDoc();
-	String annoMese = aString();
-	int progressivoVersione = aInt();
-	String codiceVersione = aString();
-	String hash = aString();
-	String urnIndiceAIP = aString();
-	String xml = aString();
-	CSVersatore versatore = new CSVersatore();
-	versatore.setAmbiente(aString());
-	versatore.setEnte(aString());
-	versatore.setSistemaConservazione(aString());
-	versatore.setStruttura(aString());
-	CSChiave chiave = new CSChiave();
-	chiave.setAnno(aLong());
-	chiave.setNumero(aString());
-	chiave.setTipoRegistro(aString());
-	try {
-	    helper.creaAIP(ud, annoMese, progressivoVersione, codiceVersione, hash, urnIndiceAIP,
-		    versatore, chiave);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        AroUnitaDoc ud = mockAroUnitaDoc();
+        String annoMese = aString();
+        int progressivoVersione = aInt();
+        String codiceVersione = aString();
+        String hash = aString();
+        String urnIndiceAIP = aString();
+        String xml = aString();
+        CSVersatore versatore = new CSVersatore();
+        versatore.setAmbiente(aString());
+        versatore.setEnte(aString());
+        versatore.setSistemaConservazione(aString());
+        versatore.setStruttura(aString());
+        CSChiave chiave = new CSChiave();
+        chiave.setAnno(aLong());
+        chiave.setNumero(aString());
+        chiave.setTipoRegistro(aString());
+        try {
+            helper.creaAIP(ud, annoMese, progressivoVersione, codiceVersione, hash, urnIndiceAIP,
+                    versatore, chiave);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     public void findAroIndiceAipUdDaElabQueryIsOk() {
-	long idAroIndiceAipUdDaElab = aLong();
-	helper.findAroIndiceAipUdDaElab(idAroIndiceAipUdDaElab);
-	assertTrue(true);
+        long idAroIndiceAipUdDaElab = aLong();
+        helper.findAroIndiceAipUdDaElab(idAroIndiceAipUdDaElab);
+        assertTrue(true);
     }
 
     @Test
     public void checkComponentiPresentiCountQueryIsOk() {
-	long idUnitaDoc = aLong();
-	long idVerIndiceAip = aLong();
-	helper.checkComponentiPresentiCount(idUnitaDoc, idVerIndiceAip);
-	assertTrue(true);
+        long idUnitaDoc = aLong();
+        long idVerIndiceAip = aLong();
+        helper.checkComponentiPresentiCount(idUnitaDoc, idVerIndiceAip);
+        assertTrue(true);
     }
 
     @Test
     public void retrieveAroVerIndiceAipUdOrderedQueryIsOk() {
-	long idElencoVers = aLong();
-	helper.retrieveAroVerIndiceAipUdOrdered(idElencoVers);
-	assertTrue(true);
+        long idElencoVers = aLong();
+        helper.retrieveAroVerIndiceAipUdOrdered(idElencoVers);
+        assertTrue(true);
     }
 
     @Test
     public void getVersioniSerieCorrentiContenEffettivoByUdAndStatoQueryIsOk() {
-	long idUnitaDoc = aLong();
-	String[] statiSerie = aStringArray(2);
-	helper.getVersioniSerieCorrentiContenEffettivoByUdAndStato(idUnitaDoc, statiSerie);
-	assertTrue(true);
+        long idUnitaDoc = aLong();
+        String[] statiSerie = aStringArray(2);
+        helper.getVersioniSerieCorrentiContenEffettivoByUdAndStato(idUnitaDoc, statiSerie);
+        assertTrue(true);
     }
 
     @Test
     public void getFascicoliByUdAndStatoQueryIsOk() {
-	long idUnitaDoc = aLong();
-	FasFascicolo.TiStatoFascElencoVers[] statiFascicolo = {
-		FasFascicolo.TiStatoFascElencoVers.IN_ATTESA_SCHED,
-		FasFascicolo.TiStatoFascElencoVers.NON_SELEZ_SCHED };
-	helper.getFascicoliByUdAndStato(idUnitaDoc, statiFascicolo);
-	assertTrue(true);
+        long idUnitaDoc = aLong();
+        FasFascicolo.TiStatoFascElencoVers[] statiFascicolo = {
+                FasFascicolo.TiStatoFascElencoVers.IN_ATTESA_SCHED,
+                FasFascicolo.TiStatoFascElencoVers.NON_SELEZ_SCHED };
+        helper.getFascicoliByUdAndStato(idUnitaDoc, statiFascicolo);
+        assertTrue(true);
     }
 
     @Test
     public void getVersioneIndiceAIPV2QueryIsOk() throws ParerInternalError {
-	String tiCreazione = "ANTICIPATO";
-	Long idUnitaDoc = -9L;
-	helper.getVersioneIndiceAIPV2(idUnitaDoc, tiCreazione);
-	assertTrue(true);
+        String tiCreazione = "ANTICIPATO";
+        Long idUnitaDoc = -9L;
+        helper.getVersioneIndiceAIPV2(idUnitaDoc, tiCreazione);
+        assertTrue(true);
     }
 
     @Test
     public void getUltimaVersioneIndiceAipQueryIsOk() {
-	Long idUnitaDoc = -9L;
-	helper.getUltimaVersioneIndiceAip(idUnitaDoc);
-	assertTrue(true);
+        Long idUnitaDoc = -9L;
+        helper.getUltimaVersioneIndiceAip(idUnitaDoc);
+        assertTrue(true);
     }
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return createEnterpriseArchive(CreazioneIndiceAipHelperTest.class.getSimpleName(),
-		createSacerLogJar(), createPaginatorJavaArchive(),
-		createSacerJavaArchive(Arrays.asList("it.eng.parer.elencoVersamento.utils"),
-			CreazioneIndiceAipHelper.class, ComponentiHelper.class, VolumeHelper.class,
-			ConfigurationHelper.class, ReturnParams.class, DefinitoDaBean.class,
-			ElencoVersamentoHelper.class, UnitaDocumentarieHelper.class,
-			Constants.class, CSVersatore.class, CSChiave.class, ElencoEnums.class,
-			CreazioneIndiceAipHelperTest.class, SessioneVersamentoExt.class,
-			MessaggiWSFormat.class));
+        return createEnterpriseArchive(CreazioneIndiceAipHelperTest.class.getSimpleName(),
+                createSacerLogJar(), createPaginatorJavaArchive(),
+                createSacerJavaArchive(Arrays.asList("it.eng.parer.elencoVersamento.utils"),
+                        CreazioneIndiceAipHelper.class, ComponentiHelper.class, VolumeHelper.class,
+                        ConfigurationHelper.class, ReturnParams.class, DefinitoDaBean.class,
+                        ElencoVersamentoHelper.class, UnitaDocumentarieHelper.class,
+                        Constants.class, CSVersatore.class, CSChiave.class, ElencoEnums.class,
+                        CreazioneIndiceAipHelperTest.class, SessioneVersamentoExt.class,
+                        MessaggiWSFormat.class));
     }
 }

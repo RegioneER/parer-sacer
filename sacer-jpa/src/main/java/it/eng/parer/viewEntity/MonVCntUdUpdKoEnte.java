@@ -37,21 +37,21 @@ public class MonVCntUdUpdKoEnte implements Serializable {
 
     @Column(name = "NI_UPD_UD_KO")
     public BigDecimal getNiUpdUdKo() {
-	return this.niUpdUdKo;
+        return this.niUpdUdKo;
     }
 
     public void setNiUpdUdKo(BigDecimal niUpdUdKo) {
-	this.niUpdUdKo = niUpdUdKo;
+        this.niUpdUdKo = niUpdUdKo;
     }
 
     private MonVCntUdUpdKoEnteId monVCntUdUpdKoEnteId;
 
     @EmbeddedId()
     public MonVCntUdUpdKoEnteId getMonVCntUdUpdKoEnteId() {
-	return monVCntUdUpdKoEnteId;
+        return monVCntUdUpdKoEnteId;
     }
 
     public void setMonVCntUdUpdKoEnteId(MonVCntUdUpdKoEnteId monVCntUdUpdKoEnteId) {
-	this.monVCntUdUpdKoEnteId = monVCntUdUpdKoEnteId;
+        this.monVCntUdUpdKoEnteId = monVCntUdUpdKoEnteId;
     }
 }

@@ -36,29 +36,29 @@ import it.eng.parer.helper.GenericHelper;
 
 @ArquillianTest
 @ContextConfiguration(classes = {
-	AmministrazioneHelper.class, AmministrazioneHelperUnitTest.class, GenericHelper.class })
+        AmministrazioneHelper.class, AmministrazioneHelperUnitTest.class, GenericHelper.class })
 public class AmministrazioneHelperUnitTest {
     @Autowired
     private AmministrazioneHelper amministrazioneHelper;
 
     @Test
     public void itWorks() {
-	assertNotNull(amministrazioneHelper);
+        assertNotNull(amministrazioneHelper);
     }
 
     @Test
     public void seNonCiSonoParametriRitornaListaVuota() {
-	Mockito.when(query.getResultList()).thenReturn(new ArrayList());
-	final List<AplParamApplic> aplParamApplicList = amministrazioneHelper
-		.getAplParamApplicList("", "", "", "", "", "", "");
-	assertEquals(0, aplParamApplicList.size());
+        Mockito.when(query.getResultList()).thenReturn(new ArrayList());
+        final List<AplParamApplic> aplParamApplicList = amministrazioneHelper
+                .getAplParamApplicList("", "", "", "", "", "", "");
+        assertEquals(0, aplParamApplicList.size());
     }
 
     @BeforeAll
     public void mockEntityManager() {
-	EntityManager entityManager = Mockito.mock(EntityManager.class);
-	Mockito.when(entityManager.createQuery(anyString())).thenReturn(query);
-	amministrazioneHelper.setEntityManager(entityManager);
+        EntityManager entityManager = Mockito.mock(EntityManager.class);
+        Mockito.when(entityManager.createQuery(anyString())).thenReturn(query);
+        amministrazioneHelper.setEntityManager(entityManager);
     }
 
     // Questa query mock viene ritornata dall'entity manager, anch'esso mock. Prima di ogni test si

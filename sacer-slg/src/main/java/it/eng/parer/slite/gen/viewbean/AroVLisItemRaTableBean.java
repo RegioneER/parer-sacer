@@ -37,19 +37,19 @@ public class AroVLisItemRaTableBean extends AbstractBaseTable<AroVLisItemRaRowBe
     public static AroVLisItemRaTableDescriptor TABLE_DESCRIPTOR = new AroVLisItemRaTableDescriptor();
 
     public AroVLisItemRaTableBean() {
-	super();
+        super();
     }
 
     protected AroVLisItemRaRowBean createRow() {
-	return new AroVLisItemRaRowBean();
+        return new AroVLisItemRaRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVLisItemRaRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

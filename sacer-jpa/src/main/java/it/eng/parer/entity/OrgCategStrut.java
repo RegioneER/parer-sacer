@@ -54,42 +54,42 @@ public class OrgCategStrut implements Serializable {
 
     @Column(name = "ID_CATEG_STRUT")
     @GenericGenerator(name = "SORG_CATEG_STRUT_ID_CATEG_STRUT_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_CATEG_STRUT"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_CATEG_STRUT"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SORG_CATEG_STRUT_ID_CATEG_STRUT_GENERATOR")
     public Long getIdCategStrut() {
-	return this.idCategStrut;
+        return this.idCategStrut;
     }
 
     public void setIdCategStrut(Long idCategStrut) {
-	this.idCategStrut = idCategStrut;
+        this.idCategStrut = idCategStrut;
     }
 
     @Column(name = "CD_CATEG_STRUT")
     public String getCdCategStrut() {
-	return this.cdCategStrut;
+        return this.cdCategStrut;
     }
 
     public void setCdCategStrut(String cdCategStrut) {
-	this.cdCategStrut = cdCategStrut;
+        this.cdCategStrut = cdCategStrut;
     }
 
     @Column(name = "DS_CATEG_STRUT")
     public String getDsCategStrut() {
-	return this.dsCategStrut;
+        return this.dsCategStrut;
     }
 
     public void setDsCategStrut(String dsCategStrut) {
-	this.dsCategStrut = dsCategStrut;
+        this.dsCategStrut = dsCategStrut;
     }
 
     @OneToMany(mappedBy = "orgCategStrut")
     @XmlTransient
     public List<OrgStrut> getOrgStruts() {
-	return this.orgStruts;
+        return this.orgStruts;
     }
 
     public void setOrgStruts(List<OrgStrut> orgStruts) {
-	this.orgStruts = orgStruts;
+        this.orgStruts = orgStruts;
     }
 }

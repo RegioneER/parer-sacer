@@ -39,29 +39,29 @@ public class ElvVChkAddDocAggNoEleCor implements Serializable {
     @Id
     @Column(name = "ID_DOC")
     public BigDecimal getIdDoc() {
-	return this.idDoc;
+        return this.idDoc;
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	this.idDoc = idDoc;
+        this.idDoc = idDoc;
     }
 
     @Column(name = "FL_ADD_DOC_UD_OK", columnDefinition = "char(1)")
     public String getFlAddDocUdOk() {
-	return this.flAddDocUdOk;
+        return this.flAddDocUdOk;
     }
 
     public void setFlAddDocUdOk(String flAddDocUdOk) {
-	this.flAddDocUdOk = flAddDocUdOk;
+        this.flAddDocUdOk = flAddDocUdOk;
     }
 
     @Column(name = "FL_ALL_ADD_DOC_PREC_OK", columnDefinition = "char(1)")
     public String getFlAllAddDocPrecOk() {
-	return this.flAllAddDocPrecOk;
+        return this.flAllAddDocPrecOk;
     }
 
     public void setFlAllAddDocPrecOk(String flAllAddDocPrecOk) {
-	this.flAllAddDocPrecOk = flAllAddDocPrecOk;
+        this.flAllAddDocPrecOk = flAllAddDocPrecOk;
     }
 
 }

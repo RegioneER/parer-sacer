@@ -61,103 +61,103 @@ public class MonVVisUdNonVers implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIRST_SES_ERR")
     public Date getDtFirstSesErr() {
-	return this.dtFirstSesErr;
+        return this.dtFirstSesErr;
     }
 
     public void setDtFirstSesErr(Date dtFirstSesErr) {
-	this.dtFirstSesErr = dtFirstSesErr;
+        this.dtFirstSesErr = dtFirstSesErr;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_LAST_SES_ERR")
     public Date getDtLastSesErr() {
-	return this.dtLastSesErr;
+        return this.dtLastSesErr;
     }
 
     public void setDtLastSesErr(Date dtLastSesErr) {
-	this.dtLastSesErr = dtLastSesErr;
+        this.dtLastSesErr = dtLastSesErr;
     }
 
     @Column(name = "FL_NON_RISOLUB", columnDefinition = "char(1)")
     public String getFlNonRisolub() {
-	return this.flNonRisolub;
+        return this.flNonRisolub;
     }
 
     public void setFlNonRisolub(String flNonRisolub) {
-	this.flNonRisolub = flNonRisolub;
+        this.flNonRisolub = flNonRisolub;
     }
 
     @Column(name = "FL_VERIF", columnDefinition = "char(1)")
     public String getFlVerif() {
-	return this.flVerif;
+        return this.flVerif;
     }
 
     public void setFlVerif(String flVerif) {
-	this.flVerif = flVerif;
+        this.flVerif = flVerif;
     }
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-	return this.idAmbiente;
+        return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	this.idAmbiente = idAmbiente;
+        this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-	return this.idEnte;
+        return this.idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	this.idEnte = idEnte;
+        this.idEnte = idEnte;
     }
 
     @Column(name = "ID_UNITA_DOC_NON_VERS")
     public BigDecimal getIdUnitaDocNonVers() {
-	return this.idUnitaDocNonVers;
+        return this.idUnitaDocNonVers;
     }
 
     public void setIdUnitaDocNonVers(BigDecimal idUnitaDocNonVers) {
-	this.idUnitaDocNonVers = idUnitaDocNonVers;
+        this.idUnitaDocNonVers = idUnitaDocNonVers;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-	return this.nmAmbiente;
+        return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	this.nmAmbiente = nmAmbiente;
+        this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-	return this.nmEnte;
+        return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-	return this.nmStrut;
+        return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
     private MonVVisUdNonVersId monVVisUdNonVersId;
 
     @EmbeddedId()
     public MonVVisUdNonVersId getMonVVisUdNonVersId() {
-	return monVVisUdNonVersId;
+        return monVVisUdNonVersId;
     }
 
     public void setMonVVisUdNonVersId(MonVVisUdNonVersId monVVisUdNonVersId) {
-	this.monVVisUdNonVersId = monVVisUdNonVersId;
+        this.monVVisUdNonVersId = monVVisUdNonVersId;
     }
 }

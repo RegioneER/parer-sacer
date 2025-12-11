@@ -27,35 +27,35 @@ public class SelfDescriptionQuery_1_Bean {
     private String dsHashFilePrec;
 
     public Long getIdVerSerieCor() {
-	return idVerSerieCor;
+        return idVerSerieCor;
     }
 
     public void setIdVerSerieCor(Long idVerSerieCor) {
-	this.idVerSerieCor = idVerSerieCor;
+        this.idVerSerieCor = idVerSerieCor;
     }
 
     public BigDecimal getPgVerSeriePrec() {
-	return pgVerSeriePrec;
+        return pgVerSeriePrec;
     }
 
     public void setPgVerSeriePrec(BigDecimal pgVerSeriePrec) {
-	this.pgVerSeriePrec = pgVerSeriePrec;
+        this.pgVerSeriePrec = pgVerSeriePrec;
     }
 
     public String getDsUrnFilePrec() {
-	return dsUrnFilePrec;
+        return dsUrnFilePrec;
     }
 
     public void setDsUrnFilePrec(String dsUrnFilePrec) {
-	this.dsUrnFilePrec = dsUrnFilePrec;
+        this.dsUrnFilePrec = dsUrnFilePrec;
     }
 
     public String getDsHashFilePrec() {
-	return dsHashFilePrec;
+        return dsHashFilePrec;
     }
 
     public void setDsHashFilePrec(String dsHashFilePrec) {
-	this.dsHashFilePrec = dsHashFilePrec;
+        this.dsHashFilePrec = dsHashFilePrec;
     }
 
 }

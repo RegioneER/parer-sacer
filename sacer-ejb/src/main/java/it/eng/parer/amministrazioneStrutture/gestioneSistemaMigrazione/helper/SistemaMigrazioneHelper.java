@@ -47,10 +47,10 @@ public class SistemaMigrazioneHelper extends GenericHelper {
      * @return restituisce lista di elementi di tipo AplSistemaMigraz
      */
     public List<AplSistemaMigraz> retrieveAplSistemaMigraz(BigDecimal idStrut) {
-	Query query = getEntityManager().createQuery(
-		"SELECT apl FROM AplSistemaMigraz apl WHERE NOT EXISTS (SELECT orgUso FROM OrgUsoSistemaMigraz orgUso WHERE orgUso.orgStrut.idStrut = :idStrut AND orgUso.aplSistemaMigraz = apl)");
-	query.setParameter("idStrut", longFromBigDecimal(idStrut));
-	return query.getResultList();
+        Query query = getEntityManager().createQuery(
+                "SELECT apl FROM AplSistemaMigraz apl WHERE NOT EXISTS (SELECT orgUso FROM OrgUsoSistemaMigraz orgUso WHERE orgUso.orgStrut.idStrut = :idStrut AND orgUso.aplSistemaMigraz = apl)");
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        return query.getResultList();
     }
 
     /**
@@ -61,62 +61,62 @@ public class SistemaMigrazioneHelper extends GenericHelper {
      * @return restituisce lista di elementi di tipo OrgUsoSistemaMigraz
      */
     public List<OrgUsoSistemaMigraz> retrieveOrgUsoSistemaMigraz(BigDecimal idStrut) {
-	Query query = getEntityManager().createQuery(
-		"SELECT orgUso FROM OrgUsoSistemaMigraz orgUso WHERE orgUso.orgStrut.idStrut = :idStrut");
-	query.setParameter("idStrut", longFromBigDecimal(idStrut));
-	return query.getResultList();
+        Query query = getEntityManager().createQuery(
+                "SELECT orgUso FROM OrgUsoSistemaMigraz orgUso WHERE orgUso.orgStrut.idStrut = :idStrut");
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        return query.getResultList();
     }
 
     public List<String> retrieveNmSistemaMigraz(BigDecimal idStrut) {
-	Query query = getEntityManager().createQuery(
-		"SELECT DISTINCT v.nmSistemaMigraz FROM OrgUsoSistemaMigraz u JOIN u.aplSistemaMigraz v WHERE u.orgStrut.idStrut = :idStrutturain AND v.nmSistemaMigraz IS NOT NULL ORDER BY v.nmSistemaMigraz");
-	query.setParameter("idStrutturain", longFromBigDecimal(idStrut));
+        Query query = getEntityManager().createQuery(
+                "SELECT DISTINCT v.nmSistemaMigraz FROM OrgUsoSistemaMigraz u JOIN u.aplSistemaMigraz v WHERE u.orgStrut.idStrut = :idStrutturain AND v.nmSistemaMigraz IS NOT NULL ORDER BY v.nmSistemaMigraz");
+        query.setParameter("idStrutturain", longFromBigDecimal(idStrut));
 
-	return query.getResultList();
+        return query.getResultList();
     }
 
     public List<AplSistemaMigraz> retrieveAplSistemaMigraz(String nmSistemaMigraz,
-	    String dsSistemaMigraz) {
-	StringBuilder queryStr = new StringBuilder(
-		"SELECT sistemaMigraz FROM AplSistemaMigraz sistemaMigraz ");
-	String whereWord = " WHERE ";
+            String dsSistemaMigraz) {
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT sistemaMigraz FROM AplSistemaMigraz sistemaMigraz ");
+        String whereWord = " WHERE ";
 
-	if (nmSistemaMigraz != null) {
-	    queryStr.append(whereWord)
-		    .append("UPPER(sistemaMigraz.nmSistemaMigraz) LIKE :nmSistemaMigraz ");
-	    whereWord = "AND ";
-	}
-	if (dsSistemaMigraz != null) {
-	    queryStr.append(whereWord)
-		    .append("UPPER(sistemaMigraz.dsSistemaMigraz) LIKE :dsSistemaMigraz ");
-	}
+        if (nmSistemaMigraz != null) {
+            queryStr.append(whereWord)
+                    .append("UPPER(sistemaMigraz.nmSistemaMigraz) LIKE :nmSistemaMigraz ");
+            whereWord = "AND ";
+        }
+        if (dsSistemaMigraz != null) {
+            queryStr.append(whereWord)
+                    .append("UPPER(sistemaMigraz.dsSistemaMigraz) LIKE :dsSistemaMigraz ");
+        }
 
-	queryStr.append("ORDER BY sistemaMigraz.nmSistemaMigraz");
+        queryStr.append("ORDER BY sistemaMigraz.nmSistemaMigraz");
 
-	Query query = getEntityManager().createQuery(queryStr.toString());
+        Query query = getEntityManager().createQuery(queryStr.toString());
 
-	if (nmSistemaMigraz != null) {
-	    query.setParameter("nmSistemaMigraz", "%" + nmSistemaMigraz.toUpperCase() + "%");
-	}
-	if (dsSistemaMigraz != null) {
-	    query.setParameter("dsSistemaMigraz", "%" + dsSistemaMigraz.toUpperCase() + "%");
-	}
+        if (nmSistemaMigraz != null) {
+            query.setParameter("nmSistemaMigraz", "%" + nmSistemaMigraz.toUpperCase() + "%");
+        }
+        if (dsSistemaMigraz != null) {
+            query.setParameter("dsSistemaMigraz", "%" + dsSistemaMigraz.toUpperCase() + "%");
+        }
 
-	return query.getResultList();
+        return query.getResultList();
     }
 
     public AplSistemaMigraz getAplSistemaMigrazByName(String nmSistemaMigraz) {
-	String queryStr = "SELECT sistemaMigraz FROM AplSistemaMigraz sistemaMigraz "
-		+ "WHERE sistemaMigraz.nmSistemaMigraz = :nmSistemaMigraz ";
+        String queryStr = "SELECT sistemaMigraz FROM AplSistemaMigraz sistemaMigraz "
+                + "WHERE sistemaMigraz.nmSistemaMigraz = :nmSistemaMigraz ";
 
-	Query query = getEntityManager().createQuery(queryStr);
-	query.setParameter("nmSistemaMigraz", nmSistemaMigraz);
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("nmSistemaMigraz", nmSistemaMigraz);
 
-	List<AplSistemaMigraz> lista = query.getResultList();
-	if (lista != null && !lista.isEmpty()) {
-	    return lista.get(0);
-	}
-	return null;
+        List<AplSistemaMigraz> lista = query.getResultList();
+        if (lista != null && !lista.isEmpty()) {
+            return lista.get(0);
+        }
+        return null;
     }
 
     /**
@@ -127,19 +127,19 @@ public class SistemaMigrazioneHelper extends GenericHelper {
      * @return l'entity richiesta se esiste, oppure <code>null</code>
      */
     public AplSistemaMigraz getAplSistemaMigraz(String nmSistemaMigraz) {
-	AplSistemaMigraz sistemaMigraz = null;
-	if (StringUtils.isNotBlank(nmSistemaMigraz)) {
-	    Query query = getEntityManager().createQuery(
-		    "SELECT sistemaMigraz FROM AplSistemaMigraz sistemaMigraz WHERE sistemaMigraz.nmSistemaMigraz = :nmSistemaMigraz");
-	    query.setParameter("nmSistemaMigraz", nmSistemaMigraz);
-	    List<AplSistemaMigraz> list = query.getResultList();
-	    if (!list.isEmpty()) {
-		sistemaMigraz = list.get(0);
-	    }
-	} else {
-	    throw new IllegalArgumentException("Parametro nmSistemaMigraz nullo");
-	}
-	return sistemaMigraz;
+        AplSistemaMigraz sistemaMigraz = null;
+        if (StringUtils.isNotBlank(nmSistemaMigraz)) {
+            Query query = getEntityManager().createQuery(
+                    "SELECT sistemaMigraz FROM AplSistemaMigraz sistemaMigraz WHERE sistemaMigraz.nmSistemaMigraz = :nmSistemaMigraz");
+            query.setParameter("nmSistemaMigraz", nmSistemaMigraz);
+            List<AplSistemaMigraz> list = query.getResultList();
+            if (!list.isEmpty()) {
+                sistemaMigraz = list.get(0);
+            }
+        } else {
+            throw new IllegalArgumentException("Parametro nmSistemaMigraz nullo");
+        }
+        return sistemaMigraz;
     }
 
     /**
@@ -151,9 +151,9 @@ public class SistemaMigrazioneHelper extends GenericHelper {
      * @return true/false
      */
     public boolean existsOrgUsoSistemaMigraz(BigDecimal idSistemaMigraz) {
-	Query query = getEntityManager().createQuery(
-		"SELECT COUNT(orgUso) FROM OrgUsoSistemaMigraz orgUso WHERE orgUso.aplSistemaMigraz.idSistemaMigraz = :idSistemaMigraz");
-	query.setParameter("idSistemaMigraz", longFromBigDecimal(idSistemaMigraz));
-	return (Long) query.getSingleResult() > 0;
+        Query query = getEntityManager().createQuery(
+                "SELECT COUNT(orgUso) FROM OrgUsoSistemaMigraz orgUso WHERE orgUso.aplSistemaMigraz.idSistemaMigraz = :idSistemaMigraz");
+        query.setParameter("idSistemaMigraz", longFromBigDecimal(idSistemaMigraz));
+        return (Long) query.getSingleResult() > 0;
     }
 }

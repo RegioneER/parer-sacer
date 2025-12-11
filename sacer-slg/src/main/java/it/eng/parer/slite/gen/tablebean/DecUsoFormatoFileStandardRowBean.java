@@ -37,114 +37,114 @@ public class DecUsoFormatoFileStandardRowBean extends BaseRow implements JEEBase
     public static DecUsoFormatoFileStandardTableDescriptor TABLE_DESCRIPTOR = new DecUsoFormatoFileStandardTableDescriptor();
 
     public DecUsoFormatoFileStandardRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdUsoFormatoFileAmmesso() {
-	return getBigDecimal("id_uso_formato_file_ammesso");
+        return getBigDecimal("id_uso_formato_file_ammesso");
     }
 
     public void setIdUsoFormatoFileAmmesso(BigDecimal idUsoFormatoFileAmmesso) {
-	setObject("id_uso_formato_file_ammesso", idUsoFormatoFileAmmesso);
+        setObject("id_uso_formato_file_ammesso", idUsoFormatoFileAmmesso);
     }
 
     public BigDecimal getIdFormatoFileDoc() {
-	return getBigDecimal("id_formato_file_doc");
+        return getBigDecimal("id_formato_file_doc");
     }
 
     public void setIdFormatoFileDoc(BigDecimal idFormatoFileDoc) {
-	setObject("id_formato_file_doc", idFormatoFileDoc);
+        setObject("id_formato_file_doc", idFormatoFileDoc);
     }
 
     public BigDecimal getNiOrdUso() {
-	return getBigDecimal("ni_ord_uso");
+        return getBigDecimal("ni_ord_uso");
     }
 
     public void setNiOrdUso(BigDecimal niOrdUso) {
-	setObject("ni_ord_uso", niOrdUso);
+        setObject("ni_ord_uso", niOrdUso);
     }
 
     public BigDecimal getIdFormatoFileStandard() {
-	return getBigDecimal("id_formato_file_standard");
+        return getBigDecimal("id_formato_file_standard");
     }
 
     public void setIdFormatoFileStandard(BigDecimal idFormatoFileStandard) {
-	setObject("id_formato_file_standard", idFormatoFileStandard);
+        setObject("id_formato_file_standard", idFormatoFileStandard);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecUsoFormatoFileStandard entity = (DecUsoFormatoFileStandard) obj;
+        DecUsoFormatoFileStandard entity = (DecUsoFormatoFileStandard) obj;
 
-	this.setIdUsoFormatoFileAmmesso(entity.getIdUsoFormatoFileAmmesso() == null ? null
-		: BigDecimal.valueOf(entity.getIdUsoFormatoFileAmmesso()));
+        this.setIdUsoFormatoFileAmmesso(entity.getIdUsoFormatoFileAmmesso() == null ? null
+                : BigDecimal.valueOf(entity.getIdUsoFormatoFileAmmesso()));
 
-	if (entity.getDecFormatoFileDoc() != null) {
-	    this.setIdFormatoFileDoc(
-		    new BigDecimal(entity.getDecFormatoFileDoc().getIdFormatoFileDoc()));
-	}
+        if (entity.getDecFormatoFileDoc() != null) {
+            this.setIdFormatoFileDoc(
+                    new BigDecimal(entity.getDecFormatoFileDoc().getIdFormatoFileDoc()));
+        }
 
-	this.setNiOrdUso(entity.getNiOrdUso());
+        this.setNiOrdUso(entity.getNiOrdUso());
 
-	if (entity.getDecFormatoFileStandard() != null) {
-	    this.setIdFormatoFileStandard(
-		    new BigDecimal(entity.getDecFormatoFileStandard().getIdFormatoFileStandard()));
-	}
+        if (entity.getDecFormatoFileStandard() != null) {
+            this.setIdFormatoFileStandard(
+                    new BigDecimal(entity.getDecFormatoFileStandard().getIdFormatoFileStandard()));
+        }
 
     }
 
     @Override
     public DecUsoFormatoFileStandard rowBeanToEntity() {
-	DecUsoFormatoFileStandard entity = new DecUsoFormatoFileStandard();
-	if (this.getIdUsoFormatoFileAmmesso() != null) {
-	    entity.setIdUsoFormatoFileAmmesso(this.getIdUsoFormatoFileAmmesso().longValue());
-	}
-	if (this.getIdFormatoFileDoc() != null) {
-	    if (entity.getDecFormatoFileDoc() == null) {
-		entity.setDecFormatoFileDoc(new DecFormatoFileDoc());
-	    }
-	    entity.getDecFormatoFileDoc()
-		    .setIdFormatoFileDoc(this.getIdFormatoFileDoc().longValue());
-	}
-	entity.setNiOrdUso(this.getNiOrdUso());
-	if (this.getIdFormatoFileStandard() != null) {
-	    if (entity.getDecFormatoFileStandard() == null) {
-		entity.setDecFormatoFileStandard(new DecFormatoFileStandard());
-	    }
-	    entity.getDecFormatoFileStandard()
-		    .setIdFormatoFileStandard(this.getIdFormatoFileStandard().longValue());
-	}
-	return entity;
+        DecUsoFormatoFileStandard entity = new DecUsoFormatoFileStandard();
+        if (this.getIdUsoFormatoFileAmmesso() != null) {
+            entity.setIdUsoFormatoFileAmmesso(this.getIdUsoFormatoFileAmmesso().longValue());
+        }
+        if (this.getIdFormatoFileDoc() != null) {
+            if (entity.getDecFormatoFileDoc() == null) {
+                entity.setDecFormatoFileDoc(new DecFormatoFileDoc());
+            }
+            entity.getDecFormatoFileDoc()
+                    .setIdFormatoFileDoc(this.getIdFormatoFileDoc().longValue());
+        }
+        entity.setNiOrdUso(this.getNiOrdUso());
+        if (this.getIdFormatoFileStandard() != null) {
+            if (entity.getDecFormatoFileStandard() == null) {
+                entity.setDecFormatoFileStandard(new DecFormatoFileStandard());
+            }
+            entity.getDecFormatoFileStandard()
+                    .setIdFormatoFileStandard(this.getIdFormatoFileStandard().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

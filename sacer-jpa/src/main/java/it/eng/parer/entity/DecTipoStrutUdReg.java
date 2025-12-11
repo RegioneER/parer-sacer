@@ -56,37 +56,37 @@ public class DecTipoStrutUdReg implements Serializable {
     @Column(name = "ID_TIPO_STRUT_UD_REG")
     @XmlID
     @GenericGenerator(name = "SDEC_TIPO_STRUT_UD_REG_ID_TIPO_STRUT_UD_REG_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_STRUT_UD_REG"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_STRUT_UD_REG"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_STRUT_UD_REG_ID_TIPO_STRUT_UD_REG_GENERATOR")
     public Long getIdTipoStrutUdReg() {
-	return this.idTipoStrutUdReg;
+        return this.idTipoStrutUdReg;
     }
 
     public void setIdTipoStrutUdReg(Long idTipoStrutUdReg) {
-	this.idTipoStrutUdReg = idTipoStrutUdReg;
+        this.idTipoStrutUdReg = idTipoStrutUdReg;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_REGISTRO_UNITA_DOC")
     public // @XmlInverseReference(mappedBy = "decTipoStrutUdRegs")
     DecRegistroUnitaDoc getDecRegistroUnitaDoc() {
-	return this.decRegistroUnitaDoc;
+        return this.decRegistroUnitaDoc;
     }
 
     public void setDecRegistroUnitaDoc(DecRegistroUnitaDoc decRegistroUnitaDoc) {
-	this.decRegistroUnitaDoc = decRegistroUnitaDoc;
+        this.decRegistroUnitaDoc = decRegistroUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_STRUT_UNITA_DOC")
     @XmlInverseReference(mappedBy = "decTipoStrutUdRegs")
     public DecTipoStrutUnitaDoc getDecTipoStrutUnitaDoc() {
-	return this.decTipoStrutUnitaDoc;
+        return this.decTipoStrutUnitaDoc;
     }
 
     public void setDecTipoStrutUnitaDoc(DecTipoStrutUnitaDoc decTipoStrutUnitaDoc) {
-	this.decTipoStrutUnitaDoc = decTipoStrutUnitaDoc;
+        this.decTipoStrutUnitaDoc = decTipoStrutUnitaDoc;
     }
 
 }

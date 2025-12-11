@@ -50,34 +50,34 @@ public class AroCompVerIndiceAipUd implements Serializable {
     @Id
     @Column(name = "ID_COMP_VER_INDICE_AIP_UD")
     @GenericGenerator(name = "SARO_COMP_VER_INDICE_AIP_UD_ID_COMP_VER_INDICE_AIP_UD_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_COMP_VER_INDICE_AIP_UD"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_COMP_VER_INDICE_AIP_UD"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_COMP_VER_INDICE_AIP_UD_ID_COMP_VER_INDICE_AIP_UD_GENERATOR")
     public Long getIdCompVerIndiceAipUd() {
-	return this.idCompVerIndiceAipUd;
+        return this.idCompVerIndiceAipUd;
     }
 
     public void setIdCompVerIndiceAipUd(Long idCompVerIndiceAipUd) {
-	this.idCompVerIndiceAipUd = idCompVerIndiceAipUd;
+        this.idCompVerIndiceAipUd = idCompVerIndiceAipUd;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_COMP_DOC")
     public AroCompDoc getAroCompDoc() {
-	return this.aroCompDoc;
+        return this.aroCompDoc;
     }
 
     public void setAroCompDoc(AroCompDoc aroCompDoc) {
-	this.aroCompDoc = aroCompDoc;
+        this.aroCompDoc = aroCompDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VER_INDICE_AIP")
     public AroVerIndiceAipUd getAroVerIndiceAipUd() {
-	return this.aroVerIndiceAipUd;
+        return this.aroVerIndiceAipUd;
     }
 
     public void setAroVerIndiceAipUd(AroVerIndiceAipUd aroVerIndiceAipUd) {
-	this.aroVerIndiceAipUd = aroVerIndiceAipUd;
+        this.aroVerIndiceAipUd = aroVerIndiceAipUd;
     }
 }

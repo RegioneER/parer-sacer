@@ -58,43 +58,43 @@ public class OstStatoMigrazSubPart implements Serializable {
 
     @Column(name = "ID_STATO_MIGRAZ_SUB_PART")
     @GenericGenerator(name = "SOST_STATO_MIGRAZ_SUB_PART_ID_STATO_MIGRAZ_SUB_PART_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SOST_STATO_MIGRAZ_SUB_PART"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SOST_STATO_MIGRAZ_SUB_PART"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SOST_STATO_MIGRAZ_SUB_PART_ID_STATO_MIGRAZ_SUB_PART_GENERATOR")
     public Long getIdStatoMigrazSubPart() {
-	return this.idStatoMigrazSubPart;
+        return this.idStatoMigrazSubPart;
     }
 
     public void setIdStatoMigrazSubPart(Long idStatoMigrazSubPart) {
-	this.idStatoMigrazSubPart = idStatoMigrazSubPart;
+        this.idStatoMigrazSubPart = idStatoMigrazSubPart;
     }
 
     @Column(name = "TI_STATO")
     public String getTiStato() {
-	return this.tiStato;
+        return this.tiStato;
     }
 
     public void setTiStato(String tiStato) {
-	this.tiStato = tiStato;
+        this.tiStato = tiStato;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_REG_STATO")
     public Date getTsRegStato() {
-	return this.tsRegStato;
+        return this.tsRegStato;
     }
 
     public void setTsRegStato(Date tsRegStato) {
-	this.tsRegStato = tsRegStato;
+        this.tsRegStato = tsRegStato;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MIGRAZ_SUB_PART")
     public OstMigrazSubPart getOstMigrazSubPart() {
-	return this.ostMigrazSubPart;
+        return this.ostMigrazSubPart;
     }
 
     public void setOstMigrazSubPart(OstMigrazSubPart ostMigrazSubPart) {
-	this.ostMigrazSubPart = ostMigrazSubPart;
+        this.ostMigrazSubPart = ostMigrazSubPart;
     }
 }

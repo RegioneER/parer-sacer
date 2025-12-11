@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class MonVLisVersDocNonVersTableBean
-	extends AbstractBaseTable<MonVLisVersDocNonVersRowBean> {
+        extends AbstractBaseTable<MonVLisVersDocNonVersRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class MonVLisVersDocNonVersTableBean
     public static MonVLisVersDocNonVersTableDescriptor TABLE_DESCRIPTOR = new MonVLisVersDocNonVersTableDescriptor();
 
     public MonVLisVersDocNonVersTableBean() {
-	super();
+        super();
     }
 
     protected MonVLisVersDocNonVersRowBean createRow() {
-	return new MonVLisVersDocNonVersRowBean();
+        return new MonVLisVersDocNonVersRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVLisVersDocNonVersRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

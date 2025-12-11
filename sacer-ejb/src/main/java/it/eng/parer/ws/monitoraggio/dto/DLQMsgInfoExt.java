@@ -28,34 +28,34 @@ public class DLQMsgInfoExt extends DLQMsgInfo {
     private int countMsg = 1; // default
 
     public int getCountMsg() {
-	return countMsg;
+        return countMsg;
     }
 
     public void incCountMsg() {
-	this.countMsg = this.countMsg + 1;
+        this.countMsg = this.countMsg + 1;
     }
 
     @Override
     public int hashCode() {
-	final int prime = 31;
-	int result = super.hashCode();
-	result = prime * result + Objects.hash(countMsg);
-	return result;
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + Objects.hash(countMsg);
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (!super.equals(obj)) {
-	    return false;
-	}
-	if (!(obj instanceof DLQMsgInfoExt)) {
-	    return false;
-	}
-	DLQMsgInfoExt other = (DLQMsgInfoExt) obj;
-	return countMsg == other.countMsg;
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!(obj instanceof DLQMsgInfoExt)) {
+            return false;
+        }
+        DLQMsgInfoExt other = (DLQMsgInfoExt) obj;
+        return countMsg == other.countMsg;
     }
 
 }

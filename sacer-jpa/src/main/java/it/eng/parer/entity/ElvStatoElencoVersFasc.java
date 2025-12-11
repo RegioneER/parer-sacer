@@ -46,61 +46,61 @@ public class ElvStatoElencoVersFasc implements Serializable {
     private ElvElencoVersFasc elvElencoVersFasc;
 
     public ElvStatoElencoVersFasc() {
-	// Hibernate
+        // Hibernate
     }
 
     @Id
 
     @Column(name = "ID_STATO_ELENCO_VERS_FASC")
     @GenericGenerator(name = "SELV_STATO_ELENCO_VERS_FASC_ID_STATO_ELENCO_VERS_FASC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_STATO_ELENCO_VERS_FASC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_STATO_ELENCO_VERS_FASC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SELV_STATO_ELENCO_VERS_FASC_ID_STATO_ELENCO_VERS_FASC_GENERATOR")
     public Long getIdStatoElencoVersFasc() {
-	return this.idStatoElencoVersFasc;
+        return this.idStatoElencoVersFasc;
     }
 
     public void setIdStatoElencoVersFasc(Long idStatoElencoVersFasc) {
-	this.idStatoElencoVersFasc = idStatoElencoVersFasc;
+        this.idStatoElencoVersFasc = idStatoElencoVersFasc;
     }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TI_STATO")
     public TiStatoElencoFasc getTiStato() {
-	return this.tiStato;
+        return this.tiStato;
     }
 
     public void setTiStato(TiStatoElencoFasc tiStato) {
-	this.tiStato = tiStato;
+        this.tiStato = tiStato;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USER_IAM")
     public IamUser getIamUser() {
-	return this.iamUser;
+        return this.iamUser;
     }
 
     public void setIamUser(IamUser iamUser) {
-	this.iamUser = iamUser;
+        this.iamUser = iamUser;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_STATO")
     public Date getTsStato() {
-	return this.tsStato;
+        return this.tsStato;
     }
 
     public void setTsStato(Date tsStato) {
-	this.tsStato = tsStato;
+        this.tsStato = tsStato;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ELENCO_VERS_FASC", nullable = false)
     public ElvElencoVersFasc getElvElencoVersFasc() {
-	return this.elvElencoVersFasc;
+        return this.elvElencoVersFasc;
     }
 
     public void setElvElencoVersFasc(ElvElencoVersFasc elvElencoVersFasc) {
-	this.elvElencoVersFasc = elvElencoVersFasc;
+        this.elvElencoVersFasc = elvElencoVersFasc;
     }
 }

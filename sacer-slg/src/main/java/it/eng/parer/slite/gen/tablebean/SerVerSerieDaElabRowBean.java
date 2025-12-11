@@ -37,113 +37,113 @@ public class SerVerSerieDaElabRowBean extends BaseRow implements JEEBaseRowInter
     public static SerVerSerieDaElabTableDescriptor TABLE_DESCRIPTOR = new SerVerSerieDaElabTableDescriptor();
 
     public SerVerSerieDaElabRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdVerSerieDaElab() {
-	return getBigDecimal("id_ver_serie_da_elab");
+        return getBigDecimal("id_ver_serie_da_elab");
     }
 
     public void setIdVerSerieDaElab(BigDecimal idVerSerieDaElab) {
-	setObject("id_ver_serie_da_elab", idVerSerieDaElab);
+        setObject("id_ver_serie_da_elab", idVerSerieDaElab);
     }
 
     public BigDecimal getIdVerSerie() {
-	return getBigDecimal("id_ver_serie");
+        return getBigDecimal("id_ver_serie");
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	setObject("id_ver_serie", idVerSerie);
+        setObject("id_ver_serie", idVerSerie);
     }
 
     public String getTiStatoVerSerie() {
-	return getString("ti_stato_ver_serie");
+        return getString("ti_stato_ver_serie");
     }
 
     public void setTiStatoVerSerie(String tiStatoVerSerie) {
-	setObject("ti_stato_ver_serie", tiStatoVerSerie);
+        setObject("ti_stato_ver_serie", tiStatoVerSerie);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public Timestamp getDtRegStatoVerSerie() {
-	return getTimestamp("dt_reg_stato_ver_serie");
+        return getTimestamp("dt_reg_stato_ver_serie");
     }
 
     public void setDtRegStatoVerSerie(Timestamp dtRegStatoVerSerie) {
-	setObject("dt_reg_stato_ver_serie", dtRegStatoVerSerie);
+        setObject("dt_reg_stato_ver_serie", dtRegStatoVerSerie);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SerVerSerieDaElab entity = (SerVerSerieDaElab) obj;
+        SerVerSerieDaElab entity = (SerVerSerieDaElab) obj;
 
-	this.setIdVerSerieDaElab(entity.getIdVerSerieDaElab() == null ? null
-		: BigDecimal.valueOf(entity.getIdVerSerieDaElab()));
+        this.setIdVerSerieDaElab(entity.getIdVerSerieDaElab() == null ? null
+                : BigDecimal.valueOf(entity.getIdVerSerieDaElab()));
 
-	if (entity.getSerVerSerie() != null) {
-	    this.setIdVerSerie(new BigDecimal(entity.getSerVerSerie().getIdVerSerie()));
-	}
+        if (entity.getSerVerSerie() != null) {
+            this.setIdVerSerie(new BigDecimal(entity.getSerVerSerie().getIdVerSerie()));
+        }
 
-	this.setTiStatoVerSerie(entity.getTiStatoVerSerie());
-	this.setIdStrut(entity.getIdStrut());
-	if (entity.getDtRegStatoVerSerie() != null) {
-	    this.setDtRegStatoVerSerie(new Timestamp(entity.getDtRegStatoVerSerie().getTime()));
-	}
+        this.setTiStatoVerSerie(entity.getTiStatoVerSerie());
+        this.setIdStrut(entity.getIdStrut());
+        if (entity.getDtRegStatoVerSerie() != null) {
+            this.setDtRegStatoVerSerie(new Timestamp(entity.getDtRegStatoVerSerie().getTime()));
+        }
     }
 
     @Override
     public SerVerSerieDaElab rowBeanToEntity() {
-	SerVerSerieDaElab entity = new SerVerSerieDaElab();
-	if (this.getIdVerSerieDaElab() != null) {
-	    entity.setIdVerSerieDaElab(this.getIdVerSerieDaElab().longValue());
-	}
-	if (this.getIdVerSerie() != null) {
-	    if (entity.getSerVerSerie() == null) {
-		entity.setSerVerSerie(new SerVerSerie());
-	    }
-	    entity.getSerVerSerie().setIdVerSerie(this.getIdVerSerie().longValue());
-	}
-	entity.setTiStatoVerSerie(this.getTiStatoVerSerie());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setDtRegStatoVerSerie(this.getDtRegStatoVerSerie());
-	return entity;
+        SerVerSerieDaElab entity = new SerVerSerieDaElab();
+        if (this.getIdVerSerieDaElab() != null) {
+            entity.setIdVerSerieDaElab(this.getIdVerSerieDaElab().longValue());
+        }
+        if (this.getIdVerSerie() != null) {
+            if (entity.getSerVerSerie() == null) {
+                entity.setSerVerSerie(new SerVerSerie());
+            }
+            entity.getSerVerSerie().setIdVerSerie(this.getIdVerSerie().longValue());
+        }
+        entity.setTiStatoVerSerie(this.getTiStatoVerSerie());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setDtRegStatoVerSerie(this.getDtRegStatoVerSerie());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

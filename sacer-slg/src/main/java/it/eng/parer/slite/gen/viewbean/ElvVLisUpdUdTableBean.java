@@ -37,19 +37,19 @@ public class ElvVLisUpdUdTableBean extends AbstractBaseTable<ElvVLisUpdUdRowBean
     public static ElvVLisUpdUdTableDescriptor TABLE_DESCRIPTOR = new ElvVLisUpdUdTableDescriptor();
 
     public ElvVLisUpdUdTableBean() {
-	super();
+        super();
     }
 
     protected ElvVLisUpdUdRowBean createRow() {
-	return new ElvVLisUpdUdRowBean();
+        return new ElvVLisUpdUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<ElvVLisUpdUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

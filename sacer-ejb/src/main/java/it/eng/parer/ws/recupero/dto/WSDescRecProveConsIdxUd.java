@@ -29,20 +29,20 @@ public class WSDescRecProveConsIdxUd implements IWSDesc {
 
     @Override
     public String getVersione() {
-	return Costanti.WS_REC_PROVE_CON_IDX_UD_VRSN;
+        return Costanti.WS_REC_PROVE_CON_IDX_UD_VRSN;
     }
 
     @Override
     public String getNomeWs() {
-	return Costanti.WS_REC_PROVE_CON_IDX_UD_NOME;
+        return Costanti.WS_REC_PROVE_CON_IDX_UD_NOME;
     }
 
     public String[] getCompatibilitaWS() {
-	return Costanti.WS_REC_PROVE_CON_IDX_UD_COMP;
+        return Costanti.WS_REC_PROVE_CON_IDX_UD_COMP;
     }
 
     @Override
     public String getVersione(HashMap<String, String> mapWsVersion) {
-	throw new UnsupportedOperationException(getNomeWs() + ": supporta la versione su DB !");
+        throw new UnsupportedOperationException(getNomeWs() + ": supporta la versione su DB !");
     }
 }

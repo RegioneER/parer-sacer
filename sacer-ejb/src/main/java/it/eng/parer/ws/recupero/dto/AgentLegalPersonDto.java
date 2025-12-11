@@ -28,39 +28,39 @@ public class AgentLegalPersonDto implements Serializable {
     private String documentoRilevante;
 
     public AgentLegalPersonDto() {
-	super();
+        super();
     }
 
     public String getNome() {
-	return nome;
+        return nome;
     }
 
     public void setNome(String nome) {
-	this.nome = nome;
+        this.nome = nome;
     }
 
     public String getRuolo() {
-	return ruolo;
+        return ruolo;
     }
 
     public void setRuolo(String ruolo) {
-	this.ruolo = ruolo;
+        this.ruolo = ruolo;
     }
 
     public String getId() {
-	return id;
+        return id;
     }
 
     public void setId(String id) {
-	this.id = id;
+        this.id = id;
     }
 
     public String getDocumentoRilevante() {
-	return documentoRilevante;
+        return documentoRilevante;
     }
 
     public void setDocumentoRilevante(String documentoRilevante) {
-	this.documentoRilevante = documentoRilevante;
+        this.documentoRilevante = documentoRilevante;
     }
 
 }

@@ -37,10 +37,10 @@ public class FasVLisFascByRichannUd implements Serializable {
 
     @EmbeddedId()
     public FasVLisFascByRichannUdId getFasVLisFascByRichannUdId() {
-	return fasVLisFascByRichannUdId;
+        return fasVLisFascByRichannUdId;
     }
 
     public void setFasVLisFascByRichannUdId(FasVLisFascByRichannUdId fasVLisFascByRichannUdId) {
-	this.fasVLisFascByRichannUdId = fasVLisFascByRichannUdId;
+        this.fasVLisFascByRichannUdId = fasVLisFascByRichannUdId;
     }
 }

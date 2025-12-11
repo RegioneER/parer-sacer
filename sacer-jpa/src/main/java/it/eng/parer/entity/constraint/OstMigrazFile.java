@@ -23,7 +23,7 @@ public final class OstMigrazFile {
     }
 
     public enum TiStatoCor {
-	DA_MIGRARE, ERRORE_NORMALIZ, MIGRATO, MIGRAZ_IN_CORSO, MIGRAZ_IN_ERRORE
+        DA_MIGRARE, ERRORE_NORMALIZ, MIGRATO, MIGRAZ_IN_CORSO, MIGRAZ_IN_ERRORE
     }
 
 }

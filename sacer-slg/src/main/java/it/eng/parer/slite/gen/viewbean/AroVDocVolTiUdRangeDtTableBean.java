@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class AroVDocVolTiUdRangeDtTableBean
-	extends AbstractBaseTable<AroVDocVolTiUdRangeDtRowBean> {
+        extends AbstractBaseTable<AroVDocVolTiUdRangeDtRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class AroVDocVolTiUdRangeDtTableBean
     public static AroVDocVolTiUdRangeDtTableDescriptor TABLE_DESCRIPTOR = new AroVDocVolTiUdRangeDtTableDescriptor();
 
     public AroVDocVolTiUdRangeDtTableBean() {
-	super();
+        super();
     }
 
     protected AroVDocVolTiUdRangeDtRowBean createRow() {
-	return new AroVDocVolTiUdRangeDtRowBean();
+        return new AroVDocVolTiUdRangeDtRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVDocVolTiUdRangeDtRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

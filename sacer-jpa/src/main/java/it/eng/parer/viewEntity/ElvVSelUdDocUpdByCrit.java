@@ -48,49 +48,49 @@ public class ElvVSelUdDocUpdByCrit implements Serializable {
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE")
     public Date getDtCreazione() {
-	return this.dtCreazione;
+        return this.dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-	this.dtCreazione = dtCreazione;
+        this.dtCreazione = dtCreazione;
     }
 
     @Column(name = "TI_ELE")
     public String getTiEle() {
-	return this.tiEle;
+        return this.tiEle;
     }
 
     public void setTiEle(String tiEle) {
-	this.tiEle = tiEle;
+        this.tiEle = tiEle;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     private ElvVSelUdDocUpdByCritId elvVSelUdDocUpdByCritId;
 
     @EmbeddedId()
     public ElvVSelUdDocUpdByCritId getElvVSelUdDocUpdByCritId() {
-	return elvVSelUdDocUpdByCritId;
+        return elvVSelUdDocUpdByCritId;
     }
 
     public void setElvVSelUdDocUpdByCritId(ElvVSelUdDocUpdByCritId elvVSelUdDocUpdByCritId) {
-	this.elvVSelUdDocUpdByCritId = elvVSelUdDocUpdByCritId;
+        this.elvVSelUdDocUpdByCritId = elvVSelUdDocUpdByCritId;
     }
 }

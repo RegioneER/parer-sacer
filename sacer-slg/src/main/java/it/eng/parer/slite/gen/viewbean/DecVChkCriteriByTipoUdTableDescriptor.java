@@ -47,34 +47,34 @@ public class DecVChkCriteriByTipoUdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_TIPO_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_TIPO_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NM_TIPO_UNITA_DOC,
-		new ColumnDescriptor(COL_NM_TIPO_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_ID_CRITERIO_RAGGR,
-		new ColumnDescriptor(COL_ID_CRITERIO_RAGGR, Types.DECIMAL, 22, true));
-	map.put(COL_NM_CRITERIO_RAGGR,
-		new ColumnDescriptor(COL_NM_CRITERIO_RAGGR, Types.VARCHAR, 100, true));
-	map.put(COL_FL_CRITERIO_RAGGR_STANDARD,
-		new ColumnDescriptor(COL_FL_CRITERIO_RAGGR_STANDARD, Types.VARCHAR, 1, true));
-	map.put(COL_FL_CRITERIO_RAGGR_FISC,
-		new ColumnDescriptor(COL_FL_CRITERIO_RAGGR_FISC, Types.VARCHAR, 1, true));
-	map.put(COL_FL_CRITERIO_COERENTE,
-		new ColumnDescriptor(COL_FL_CRITERIO_COERENTE, Types.VARCHAR, 1, true));
-	map.put(COL_DS_CRITERIO_NON_COERENTE,
-		new ColumnDescriptor(COL_DS_CRITERIO_NON_COERENTE, Types.VARCHAR, 129, true));
+        map.put(COL_ID_TIPO_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_TIPO_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NM_TIPO_UNITA_DOC,
+                new ColumnDescriptor(COL_NM_TIPO_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_ID_CRITERIO_RAGGR,
+                new ColumnDescriptor(COL_ID_CRITERIO_RAGGR, Types.DECIMAL, 22, true));
+        map.put(COL_NM_CRITERIO_RAGGR,
+                new ColumnDescriptor(COL_NM_CRITERIO_RAGGR, Types.VARCHAR, 100, true));
+        map.put(COL_FL_CRITERIO_RAGGR_STANDARD,
+                new ColumnDescriptor(COL_FL_CRITERIO_RAGGR_STANDARD, Types.VARCHAR, 1, true));
+        map.put(COL_FL_CRITERIO_RAGGR_FISC,
+                new ColumnDescriptor(COL_FL_CRITERIO_RAGGR_FISC, Types.VARCHAR, 1, true));
+        map.put(COL_FL_CRITERIO_COERENTE,
+                new ColumnDescriptor(COL_FL_CRITERIO_COERENTE, Types.VARCHAR, 1, true));
+        map.put(COL_DS_CRITERIO_NON_COERENTE,
+                new ColumnDescriptor(COL_DS_CRITERIO_NON_COERENTE, Types.VARCHAR, 129, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -32,19 +32,19 @@ public class DecVersioneWsTableBean extends AbstractBaseTable<DecVersioneWsRowBe
     public static DecVersioneWsTableDescriptor TABLE_DESCRIPTOR = new DecVersioneWsTableDescriptor();
 
     public DecVersioneWsTableBean() {
-	super();
+        super();
     }
 
     protected DecVersioneWsRowBean createRow() {
-	return new DecVersioneWsRowBean();
+        return new DecVersioneWsRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecVersioneWsRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

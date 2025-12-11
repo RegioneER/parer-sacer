@@ -60,67 +60,67 @@ public class OrgServizioErog implements Serializable {
     @Id
     @Column(name = "ID_SERVIZIO_EROGATO")
     public Long getIdServizioErogato() {
-	return this.idServizioErogato;
+        return this.idServizioErogato;
     }
 
     public void setIdServizioErogato(Long idServizioErogato) {
-	this.idServizioErogato = idServizioErogato;
+        this.idServizioErogato = idServizioErogato;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_EROG")
     public Date getDtErog() {
-	return this.dtErog;
+        return this.dtErog;
     }
 
     public void setDtErog(Date dtErog) {
-	this.dtErog = dtErog;
+        this.dtErog = dtErog;
     }
 
     @Column(name = "FL_PAGAMENTO", columnDefinition = "char(1)")
     public String getFlPagamento() {
-	return this.flPagamento;
+        return this.flPagamento;
     }
 
     public void setFlPagamento(String flPagamento) {
-	this.flPagamento = flPagamento;
+        this.flPagamento = flPagamento;
     }
 
     @Column(name = "IM_VALORE_TARIFFA")
     public BigDecimal getImValoreTariffa() {
-	return this.imValoreTariffa;
+        return this.imValoreTariffa;
     }
 
     public void setImValoreTariffa(BigDecimal imValoreTariffa) {
-	this.imValoreTariffa = imValoreTariffa;
+        this.imValoreTariffa = imValoreTariffa;
     }
 
     @Column(name = "NM_SERVIZIO_EROGATO")
     public String getNmServizioErogato() {
-	return this.nmServizioErogato;
+        return this.nmServizioErogato;
     }
 
     public void setNmServizioErogato(String nmServizioErogato) {
-	this.nmServizioErogato = nmServizioErogato;
+        this.nmServizioErogato = nmServizioErogato;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_SERVIZIO")
     public OrgTipoServizio getOrgTipoServizio() {
-	return this.orgTipoServizio;
+        return this.orgTipoServizio;
     }
 
     public void setOrgTipoServizio(OrgTipoServizio orgTipoServizio) {
-	this.orgTipoServizio = orgTipoServizio;
+        this.orgTipoServizio = orgTipoServizio;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ACCORDO_ENTE")
     public SIOrgAccordoEnte getOrgAccordoEnte() {
-	return this.orgAccordoEnte;
+        return this.orgAccordoEnte;
     }
 
     public void setOrgAccordoEnte(SIOrgAccordoEnte orgAccordoEnte) {
-	this.orgAccordoEnte = orgAccordoEnte;
+        this.orgAccordoEnte = orgAccordoEnte;
     }
 }

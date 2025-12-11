@@ -62,78 +62,78 @@ public class DownloadSip {
     private RecuperoZipGen tmpGen;
 
     public void recuperaSip(RispostaWSRecupero rispostaWs, RecuperoExt rec, String path) {
-	StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
-	AvanzamentoWs tmpAvanzamentoWs = rispostaWs.getAvanzamento();
+        StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
+        AvanzamentoWs tmpAvanzamentoWs = rispostaWs.getAvanzamento();
 
-	if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR) {
-	    try {
-		tmpGen.generaZipSip(path, rec, rispostaWs);
-		tmpAvanzamentoWs.resetFase();
-	    } catch (Exception e) {
-		rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-		rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-			"Errore nella fase di generazione dello zip del EJB " + e.getMessage());
-		logger.error("Errore nella fase di generazione dello zip del EJB ", e);
-	    }
-	}
+        if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR) {
+            try {
+                tmpGen.generaZipSip(path, rec, rispostaWs);
+                tmpAvanzamentoWs.resetFase();
+            } catch (Exception e) {
+                rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                        "Errore nella fase di generazione dello zip del EJB " + e.getMessage());
+                logger.error("Errore nella fase di generazione dello zip del EJB ", e);
+            }
+        }
 
-	if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.ERROR) {
-	    myEsito.setXMLRichiesta(rec.getDatiXml());
-	}
+        if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.ERROR) {
+            myEsito.setXMLRichiesta(rec.getDatiXml());
+        }
     }
 
     public void initRispostaWs(RispostaWSRecupero rispostaWs, AvanzamentoWs avanzamento,
-	    RecuperoExt rec) {
+            RecuperoExt rec) {
 
-	logger.debug("sono nel metodo init");
-	StatoConservazione myEsito = new StatoConservazione();
+        logger.debug("sono nel metodo init");
+        StatoConservazione myEsito = new StatoConservazione();
 
-	RispostaControlli rs = this.loadWsVersions(rec);
+        RispostaControlli rs = this.loadWsVersions(rec);
 
-	rispostaWs.setSeverity(IRispostaWS.SeverityEnum.OK);
-	rispostaWs.setErrorCode("");
-	rispostaWs.setErrorMessage("");
+        rispostaWs.setSeverity(IRispostaWS.SeverityEnum.OK);
+        rispostaWs.setErrorCode("");
+        rispostaWs.setErrorMessage("");
 
-	// prepara la classe esito e la aggancia alla rispostaWS
-	myEsito.setEsitoGenerale(new EsitoGenericoType());
-	rispostaWs.setIstanzaEsito(myEsito);
+        // prepara la classe esito e la aggancia alla rispostaWS
+        myEsito.setEsitoGenerale(new EsitoGenericoType());
+        rispostaWs.setIstanzaEsito(myEsito);
 
-	// aggiunge l'istanza della classe parametri di recupero
-	rec.setParametriRecupero(new ParametriRecupero());
-	rec.getParametriRecupero().setTipoRichiedente(JobConstants.TipoSessioniRecupEnum.DOWNLOAD);
+        // aggiunge l'istanza della classe parametri di recupero
+        rec.setParametriRecupero(new ParametriRecupero());
+        rec.getParametriRecupero().setTipoRichiedente(JobConstants.TipoSessioniRecupEnum.DOWNLOAD);
 
-	// aggiunge l'istanza della classe parametri del parser
-	rec.setParametriParser(new ParametriParser());
+        // aggiunge l'istanza della classe parametri del parser
+        rec.setParametriParser(new ParametriParser());
 
-	// aggancia alla rispostaWS
-	rispostaWs.setAvanzamento(avanzamento);
+        // aggancia alla rispostaWS
+        rispostaWs.setAvanzamento(avanzamento);
 
-	XMLGregorianCalendar d = XmlDateUtility.dateToXMLGregorianCalendar(new Date());
-	myEsito.setDataRichiestaStato(d);
+        XMLGregorianCalendar d = XmlDateUtility.dateToXMLGregorianCalendar(new Date());
+        myEsito.setDataRichiestaStato(d);
 
-	if (!rs.isrBoolean()) {
-	    rispostaWs.setSeverity(SeverityEnum.ERROR);
-	    rispostaWs.setEsitoWsError(rs.getCodErr(), rs.getDsErr());
-	} else {
-	    myEsito.getEsitoGenerale().setCodiceEsito(ECEsitoExtType.POSITIVO);
-	    myEsito.getEsitoGenerale().setCodiceErrore("");
-	    myEsito.getEsitoGenerale().setMessaggioErrore("");
+        if (!rs.isrBoolean()) {
+            rispostaWs.setSeverity(SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsError(rs.getCodErr(), rs.getDsErr());
+        } else {
+            myEsito.getEsitoGenerale().setCodiceEsito(ECEsitoExtType.POSITIVO);
+            myEsito.getEsitoGenerale().setCodiceErrore("");
+            myEsito.getEsitoGenerale().setMessaggioErrore("");
 
-	    myEsito.setVersione(rec.getDescrizione().getVersione(rec.getWsVersions()));
+            myEsito.setVersione(rec.getDescrizione().getVersione(rec.getWsVersions()));
 
-	    myEsito.setEsitoChiamataWS(new EsitoChiamataWSType());
-	    myEsito.getEsitoChiamataWS().setCredenzialiOperatore(ECEsitoPosNegType.POSITIVO);
-	    myEsito.getEsitoChiamataWS().setVersioneWSCorretta(ECEsitoPosNegType.POSITIVO);
-	}
+            myEsito.setEsitoChiamataWS(new EsitoChiamataWSType());
+            myEsito.getEsitoChiamataWS().setCredenzialiOperatore(ECEsitoPosNegType.POSITIVO);
+            myEsito.getEsitoChiamataWS().setVersioneWSCorretta(ECEsitoPosNegType.POSITIVO);
+        }
     }
 
     @SuppressWarnings("unchecked")
     protected RispostaControlli loadWsVersions(RecuperoExt ext) {
-	RispostaControlli rs = controlliWS.loadWsVersions(ext.getDescrizione());
-	// if positive ...
-	if (rs.isrBoolean()) {
-	    ext.setWsVersions((HashMap<String, String>) rs.getrObject());
-	}
-	return rs;
+        RispostaControlli rs = controlliWS.loadWsVersions(ext.getDescrizione());
+        // if positive ...
+        if (rs.isrBoolean()) {
+            ext.setWsVersions((HashMap<String, String>) rs.getrObject());
+        }
+        return rs;
     }
 }

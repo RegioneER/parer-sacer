@@ -51,43 +51,43 @@ public class AroVLisControfirmaFirma implements Serializable {
     }
 
     public String getCdFirmatario() {
-	return this.cdFirmatario;
+        return this.cdFirmatario;
     }
 
     public void setCdFirmatario(String cdFirmatario) {
-	this.cdFirmatario = cdFirmatario;
+        this.cdFirmatario = cdFirmatario;
     }
 
     public BigDecimal getIdControfirmaFirma() {
-	return this.idControfirmaFirma;
+        return this.idControfirmaFirma;
     }
 
     public void setIdControfirmaFirma(BigDecimal idControfirmaFirma) {
-	this.idControfirmaFirma = idControfirmaFirma;
+        this.idControfirmaFirma = idControfirmaFirma;
     }
 
     public BigDecimal getIdFirmaComp() {
-	return this.idFirmaComp;
+        return this.idFirmaComp;
     }
 
     public void setIdFirmaComp(BigDecimal idFirmaComp) {
-	this.idFirmaComp = idFirmaComp;
+        this.idFirmaComp = idFirmaComp;
     }
 
     public String getNmCognomeFirmatario() {
-	return this.nmCognomeFirmatario;
+        return this.nmCognomeFirmatario;
     }
 
     public void setNmCognomeFirmatario(String nmCognomeFirmatario) {
-	this.nmCognomeFirmatario = nmCognomeFirmatario;
+        this.nmCognomeFirmatario = nmCognomeFirmatario;
     }
 
     public String getNmFirmatario() {
-	return this.nmFirmatario;
+        return this.nmFirmatario;
     }
 
     public void setNmFirmatario(String nmFirmatario) {
-	this.nmFirmatario = nmFirmatario;
+        this.nmFirmatario = nmFirmatario;
     }
 
 }

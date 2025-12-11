@@ -21,17 +21,17 @@ public class PayLoadComparatorAnnoDtCreazione extends PayLoadComparatorDtCreazio
 
     @Override
     public int compare(PayLoad p1, PayLoad p2) {
-	if (p1.getTipoEntitaSacer().equals(p2.getTipoEntitaSacer())) {
-	    if (p1.getAaKeyUnitaDoc() > p2.getAaKeyUnitaDoc()) {
-		return 1;
-	    } else if (p1.getAaKeyUnitaDoc() == p2.getAaKeyUnitaDoc()) { // A PARITA' DI ANNO,
-									 // ORDINO PER DATA
-									 // CREAZIONE
-		return super.compare(p1, p2);
-	    } else {
-		return -1;
-	    }
-	} else
-	    return 0;
+        if (p1.getTipoEntitaSacer().equals(p2.getTipoEntitaSacer())) {
+            if (p1.getAaKeyUnitaDoc() > p2.getAaKeyUnitaDoc()) {
+                return 1;
+            } else if (p1.getAaKeyUnitaDoc() == p2.getAaKeyUnitaDoc()) { // A PARITA' DI ANNO,
+                // ORDINO PER DATA
+                // CREAZIONE
+                return super.compare(p1, p2);
+            } else {
+                return -1;
+            }
+        } else
+            return 0;
     }
 }

@@ -32,19 +32,19 @@ public class AroLogStatoConservUdTableBean extends AbstractBaseTable<AroLogStato
     public static AroLogStatoConservUdTableDescriptor TABLE_DESCRIPTOR = new AroLogStatoConservUdTableDescriptor();
 
     public AroLogStatoConservUdTableBean() {
-	super();
+        super();
     }
 
     protected AroLogStatoConservUdRowBean createRow() {
-	return new AroLogStatoConservUdRowBean();
+        return new AroLogStatoConservUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroLogStatoConservUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -45,27 +45,27 @@ public class AroStrutDocTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_STRUT_DOC, new ColumnDescriptor(COL_ID_STRUT_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_NI_ORD_STRUT_DOC,
-		new ColumnDescriptor(COL_NI_ORD_STRUT_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_TIPO_STRUT_DOC,
-		new ColumnDescriptor(COL_ID_TIPO_STRUT_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_FL_STRUT_ORIG,
-		new ColumnDescriptor(COL_FL_STRUT_ORIG, Types.VARCHAR, 1, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_ID_STRUT_DOC, new ColumnDescriptor(COL_ID_STRUT_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_NI_ORD_STRUT_DOC,
+                new ColumnDescriptor(COL_NI_ORD_STRUT_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_TIPO_STRUT_DOC,
+                new ColumnDescriptor(COL_ID_TIPO_STRUT_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_FL_STRUT_ORIG,
+                new ColumnDescriptor(COL_FL_STRUT_ORIG, Types.VARCHAR, 1, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

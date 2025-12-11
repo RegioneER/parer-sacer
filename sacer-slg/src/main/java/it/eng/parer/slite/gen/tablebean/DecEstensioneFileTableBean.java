@@ -33,19 +33,19 @@ public class DecEstensioneFileTableBean extends AbstractBaseTable<DecEstensioneF
     public static DecEstensioneFileTableDescriptor TABLE_DESCRIPTOR = new DecEstensioneFileTableDescriptor();
 
     public DecEstensioneFileTableBean() {
-	super();
+        super();
     }
 
     protected DecEstensioneFileRowBean createRow() {
-	return new DecEstensioneFileRowBean();
+        return new DecEstensioneFileRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecEstensioneFileRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

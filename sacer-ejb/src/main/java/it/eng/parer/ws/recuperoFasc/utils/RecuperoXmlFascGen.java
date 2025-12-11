@@ -54,100 +54,100 @@ public class RecuperoXmlFascGen {
     ControlliRecuperoFasc controlliRecuperoFasc = null;
 
     public RispostaWSRecuperoFasc getRispostaWsFasc() {
-	return rispostaWsFasc;
+        return rispostaWsFasc;
     }
 
     public RecuperoXmlFascGen(RispostaWSRecuperoFasc risp) throws NamingException {
-	rispostaWsFasc = risp;
-	rispostaControlli = new RispostaControlli();
+        rispostaWsFasc = risp;
+        rispostaControlli = new RispostaControlli();
 
-	// recupera l'ejb per la lettura di informazioni, se possibile
-	controlliRecuperoFasc = (ControlliRecuperoFasc) new InitialContext()
-		.lookup("java:module/ControlliRecuperoFasc");
+        // recupera l'ejb per la lettura di informazioni, se possibile
+        controlliRecuperoFasc = (ControlliRecuperoFasc) new InitialContext()
+                .lookup("java:module/ControlliRecuperoFasc");
     }
 
     public void generaStatoConservazioneFasc(RecuperoFascExt recuperoFasc) {
-	StatoConservazioneFasc myEsito = rispostaWsFasc.getIstanzaEsito();
-	AvanzamentoWs myAvanzamentoWs = rispostaWsFasc.getAvanzamento();
-	parsedFasc = recuperoFasc.getStrutturaRecuperoFasc();
+        StatoConservazioneFasc myEsito = rispostaWsFasc.getIstanzaEsito();
+        AvanzamentoWs myAvanzamentoWs = rispostaWsFasc.getAvanzamento();
+        parsedFasc = recuperoFasc.getStrutturaRecuperoFasc();
 
-	CSVersatore tmpCsVersatore = null;
-	CSChiaveFasc tmpCsChiaveFasc = null;
+        CSVersatore tmpCsVersatore = null;
+        CSChiaveFasc tmpCsChiaveFasc = null;
 
-	// genero i nomi delle cartelle relative alla struttura ed al fascicolo per il recupero
-	if (rispostaWsFasc.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-	    rispostaControlli = controlliRecuperoFasc
-		    .leggiChiaveFascicolo(recuperoFasc.getParametriRecuperoFasc().getIdFascicolo());
-	    if (rispostaControlli.isrBoolean()) {
-		tmpCsChiaveFasc = (CSChiaveFasc) rispostaControlli.getrObject();
-	    } else {
-		setRispostaWsFascError();
-		rispostaWsFasc.setEsitoWsError(rispostaControlli.getCodErr(),
-			rispostaControlli.getDsErr());
-	    }
-	}
+        // genero i nomi delle cartelle relative alla struttura ed al fascicolo per il recupero
+        if (rispostaWsFasc.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+            rispostaControlli = controlliRecuperoFasc
+                    .leggiChiaveFascicolo(recuperoFasc.getParametriRecuperoFasc().getIdFascicolo());
+            if (rispostaControlli.isrBoolean()) {
+                tmpCsChiaveFasc = (CSChiaveFasc) rispostaControlli.getrObject();
+            } else {
+                setRispostaWsFascError();
+                rispostaWsFasc.setEsitoWsError(rispostaControlli.getCodErr(),
+                        rispostaControlli.getDsErr());
+            }
+        }
 
-	if (rispostaWsFasc.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-	    rispostaControlli = controlliRecuperoFasc.leggiVersatoreFascicolo(
-		    recuperoFasc.getParametriRecuperoFasc().getIdFascicolo());
-	    if (rispostaControlli.isrBoolean()) {
-		tmpCsVersatore = (CSVersatore) rispostaControlli.getrObject();
-	    } else {
-		setRispostaWsFascError();
-		rispostaWsFasc.setEsitoWsError(rispostaControlli.getCodErr(),
-			rispostaControlli.getDsErr());
-	    }
-	}
+        if (rispostaWsFasc.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+            rispostaControlli = controlliRecuperoFasc.leggiVersatoreFascicolo(
+                    recuperoFasc.getParametriRecuperoFasc().getIdFascicolo());
+            if (rispostaControlli.isrBoolean()) {
+                tmpCsVersatore = (CSVersatore) rispostaControlli.getrObject();
+            } else {
+                setRispostaWsFascError();
+                rispostaWsFasc.setEsitoWsError(rispostaControlli.getCodErr(),
+                        rispostaControlli.getDsErr());
+            }
+        }
 
-	// crea Stato fasc
-	// compila Chiave e tipo conservazione
-	if (rispostaWsFasc.getSeverity() == SeverityEnum.OK) {
-	    myEsito.setFascicolo(new DatiFascicoloType());
-	    SCVersatoreFascType tmpVersatoreFasc = new SCVersatoreFascType();
-	    tmpVersatoreFasc.setAmbiente(tmpCsVersatore.getAmbiente());
-	    tmpVersatoreFasc.setEnte(tmpCsVersatore.getEnte());
-	    tmpVersatoreFasc.setStruttura(tmpCsVersatore.getStruttura());
-	    tmpVersatoreFasc.setUserID(parsedFasc.getVersatore().getUserID());
-	    //
-	    if (parsedFasc.getVersatore().getUtente() != null
-		    && !parsedFasc.getVersatore().getUtente().isEmpty()) {
-		tmpVersatoreFasc.setUtente(parsedFasc.getVersatore().getUtente());
-	    }
-	    myEsito.getFascicolo().setVersatore(tmpVersatoreFasc);
+        // crea Stato fasc
+        // compila Chiave e tipo conservazione
+        if (rispostaWsFasc.getSeverity() == SeverityEnum.OK) {
+            myEsito.setFascicolo(new DatiFascicoloType());
+            SCVersatoreFascType tmpVersatoreFasc = new SCVersatoreFascType();
+            tmpVersatoreFasc.setAmbiente(tmpCsVersatore.getAmbiente());
+            tmpVersatoreFasc.setEnte(tmpCsVersatore.getEnte());
+            tmpVersatoreFasc.setStruttura(tmpCsVersatore.getStruttura());
+            tmpVersatoreFasc.setUserID(parsedFasc.getVersatore().getUserID());
+            //
+            if (parsedFasc.getVersatore().getUtente() != null
+                    && !parsedFasc.getVersatore().getUtente().isEmpty()) {
+                tmpVersatoreFasc.setUtente(parsedFasc.getVersatore().getUtente());
+            }
+            myEsito.getFascicolo().setVersatore(tmpVersatoreFasc);
 
-	    ChiaveFascType tmpChiaveFasc = new ChiaveFascType();
-	    tmpChiaveFasc.setAnno(BigInteger.valueOf(tmpCsChiaveFasc.getAnno()));
-	    tmpChiaveFasc.setNumero(tmpCsChiaveFasc.getNumero());
-	    myEsito.getFascicolo().setChiave(tmpChiaveFasc);
-	}
+            ChiaveFascType tmpChiaveFasc = new ChiaveFascType();
+            tmpChiaveFasc.setAnno(BigInteger.valueOf(tmpCsChiaveFasc.getAnno()));
+            tmpChiaveFasc.setNumero(tmpCsChiaveFasc.getNumero());
+            myEsito.getFascicolo().setChiave(tmpChiaveFasc);
+        }
 
-	// compila Stato Conservazione
-	if (rispostaWsFasc.getSeverity() == SeverityEnum.OK) {
-	    String tmpUrnFasc = MessaggiWSFormat
-		    .formattaUrnDocUniDoc(MessaggiWSFormat.formattaBaseUrnUnitaDoc(
-			    MessaggiWSFormat.formattaUrnPartVersatore(tmpCsVersatore),
-			    MessaggiWSFormat.formattaUrnPartFasc(tmpCsChiaveFasc)));
-	    myEsito.getFascicolo().setUrnFASC(tmpUrnFasc);
-	    //
-	    rispostaControlli.reset();
-	    rispostaControlli = controlliRecuperoFasc
-		    .leggiFasc(recuperoFasc.getParametriRecuperoFasc().getIdFascicolo());
-	    if (rispostaControlli.isrBoolean() == false) {
-		setRispostaWsFascError();
-		rispostaWsFasc.setEsitoWsError(rispostaControlli.getCodErr(),
-			rispostaControlli.getDsErr());
-	    } else {
-		myEsito.getFascicolo()
-			.setStatoConservazioneFASC(StatoConservazioneFascType
-				.valueOf((((FasFascicolo) rispostaControlli.getrObject())
-					.getTiStatoConservazione().name())));
-	    }
-	}
+        // compila Stato Conservazione
+        if (rispostaWsFasc.getSeverity() == SeverityEnum.OK) {
+            String tmpUrnFasc = MessaggiWSFormat
+                    .formattaUrnDocUniDoc(MessaggiWSFormat.formattaBaseUrnUnitaDoc(
+                            MessaggiWSFormat.formattaUrnPartVersatore(tmpCsVersatore),
+                            MessaggiWSFormat.formattaUrnPartFasc(tmpCsChiaveFasc)));
+            myEsito.getFascicolo().setUrnFASC(tmpUrnFasc);
+            //
+            rispostaControlli.reset();
+            rispostaControlli = controlliRecuperoFasc
+                    .leggiFasc(recuperoFasc.getParametriRecuperoFasc().getIdFascicolo());
+            if (rispostaControlli.isrBoolean() == false) {
+                setRispostaWsFascError();
+                rispostaWsFasc.setEsitoWsError(rispostaControlli.getCodErr(),
+                        rispostaControlli.getDsErr());
+            } else {
+                myEsito.getFascicolo()
+                        .setStatoConservazioneFASC(StatoConservazioneFascType
+                                .valueOf((((FasFascicolo) rispostaControlli.getrObject())
+                                        .getTiStatoConservazione().name())));
+            }
+        }
     }
 
     private void setRispostaWsFascError() {
-	rispostaWsFasc.setSeverity(SeverityEnum.ERROR);
-	rispostaWsFasc.setErrorCode(rispostaControlli.getCodErr());
-	rispostaWsFasc.setErrorMessage(rispostaControlli.getDsErr());
+        rispostaWsFasc.setSeverity(SeverityEnum.ERROR);
+        rispostaWsFasc.setErrorCode(rispostaControlli.getCodErr());
+        rispostaWsFasc.setErrorMessage(rispostaControlli.getDsErr());
     }
 }

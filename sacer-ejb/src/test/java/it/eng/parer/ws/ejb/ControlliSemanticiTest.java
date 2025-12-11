@@ -30,55 +30,55 @@ public class ControlliSemanticiTest extends HelperTest<ControlliSemantici> {
 
     @Test
     void caricaDefaultDaDBParametriApplicQueryIsOk() {
-	String tipoPar = "TEST";
-	helper.caricaDefaultDaDBParametriApplic(tipoPar);
-	assertTrue(true);
+        String tipoPar = "TEST";
+        helper.caricaDefaultDaDBParametriApplic(tipoPar);
+        assertTrue(true);
     }
 
     @Test
     void checkIdStrutQueryIsOk() {
-	CSVersatore vers = new CSVersatore();
-	for (Costanti.TipiWSPerControlli tipows : Costanti.TipiWSPerControlli.values()) {
-	    helper.checkIdStrut(vers, tipows);
-	}
-	assertTrue(true);
+        CSVersatore vers = new CSVersatore();
+        for (Costanti.TipiWSPerControlli tipows : Costanti.TipiWSPerControlli.values()) {
+            helper.checkIdStrut(vers, tipows);
+        }
+        assertTrue(true);
     }
 
     @Test
     void checkChiaveQueryIsOk() {
-	CSChiave key = new CSChiave();
-	Long idStruttura = 0L;
-	for (ControlliSemantici.TipiGestioneUDAnnullate tguda : ControlliSemantici.TipiGestioneUDAnnullate
-		.values()) {
-	    helper.checkChiave(key, idStruttura, tguda);
-	}
-	assertTrue(true);
+        CSChiave key = new CSChiave();
+        Long idStruttura = 0L;
+        for (ControlliSemantici.TipiGestioneUDAnnullate tguda : ControlliSemantici.TipiGestioneUDAnnullate
+                .values()) {
+            helper.checkChiave(key, idStruttura, tguda);
+        }
+        assertTrue(true);
     }
 
     @Test
     void caricaPartiAARegistroQueryIsOk() {
-	long idAaRegistroUnitaDoc = 0L;
-	helper.caricaPartiAARegistro(idAaRegistroUnitaDoc);
-	assertTrue(true);
+        long idAaRegistroUnitaDoc = 0L;
+        helper.caricaPartiAARegistro(idAaRegistroUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void checkStrutCessataQueryIsOk() {
-	long idStrut = 0L;
-	helper.checkStrutCessata(idStrut);
-	assertTrue(true);
+        long idStrut = 0L;
+        helper.checkStrutCessata(idStrut);
+        assertTrue(true);
     }
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return createEnterpriseArchive(ControlliSemanticiTest.class.getSimpleName(),
-		createSacerLogJar(), createPaginatorJavaArchive(),
-		createSacerJavaArchive(
-			Arrays.asList("it.eng.parer.ws.versamento.dto", "it.eng.parer.ws.dto",
-				"it.eng.parer.ws.utils", "it.eng.spagoCore.util",
-				"com.fasterxml.uuid", "com.fasterxml.uuid.impl"),
-			ControlliSemanticiTest.class, it.eng.parer.ws.ejb.ControlliSemantici.class,
-			it.eng.parer.web.helper.ConfigurationHelper.class,
-			it.eng.parer.ws.utils.Costanti.class));
+        return createEnterpriseArchive(ControlliSemanticiTest.class.getSimpleName(),
+                createSacerLogJar(), createPaginatorJavaArchive(),
+                createSacerJavaArchive(
+                        Arrays.asList("it.eng.parer.ws.versamento.dto", "it.eng.parer.ws.dto",
+                                "it.eng.parer.ws.utils", "it.eng.spagoCore.util",
+                                "com.fasterxml.uuid", "com.fasterxml.uuid.impl"),
+                        ControlliSemanticiTest.class, it.eng.parer.ws.ejb.ControlliSemantici.class,
+                        it.eng.parer.web.helper.ConfigurationHelper.class,
+                        it.eng.parer.ws.utils.Costanti.class));
     }
 }

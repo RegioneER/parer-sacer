@@ -41,56 +41,56 @@ public class CancellaUtenteCheck {
     ControlliReplicaUtente controlliRU = null;
 
     public CancellaUtenteCheck(CancellaUtenteExt cancellaUtenteExt,
-	    RispostaWSCancellaUtente rispostaWs) {
-	this.cancellaUtenteExt = cancellaUtenteExt;
-	this.rispostaWs = rispostaWs;
-	this.rispostaControlli = new RispostaControlli();
+            RispostaWSCancellaUtente rispostaWs) {
+        this.cancellaUtenteExt = cancellaUtenteExt;
+        this.rispostaWs = rispostaWs;
+        this.rispostaControlli = new RispostaControlli();
 
-	try {
-	    controlliRU = (ControlliReplicaUtente) new InitialContext()
-		    .lookup("java:module/ControlliReplicaUtente");
-	} catch (NamingException ex) {
-	    rispostaWs.setSeverity(SeverityEnum.ERROR);
-	    rispostaWs.setErrorCode(MessaggiWSBundle.ERR_666);
-	    String msg = MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, ex.getMessage());
-	    rispostaWs.setErrorMessage(msg);
-	    rispostaWs.getCancellaUtenteRisposta().setCdEsito(Costanti.EsitoServizio.KO);
-	    rispostaWs.getCancellaUtenteRisposta().setCdErr(MessaggiWSBundle.ERR_666);
-	    rispostaWs.getCancellaUtenteRisposta().setDsErr(msg);
-	    log.error("Errore nel recupero dell'EJB dei controlli replica utente ", ex);
-	}
+        try {
+            controlliRU = (ControlliReplicaUtente) new InitialContext()
+                    .lookup("java:module/ControlliReplicaUtente");
+        } catch (NamingException ex) {
+            rispostaWs.setSeverity(SeverityEnum.ERROR);
+            rispostaWs.setErrorCode(MessaggiWSBundle.ERR_666);
+            String msg = MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, ex.getMessage());
+            rispostaWs.setErrorMessage(msg);
+            rispostaWs.getCancellaUtenteRisposta().setCdEsito(Costanti.EsitoServizio.KO);
+            rispostaWs.getCancellaUtenteRisposta().setCdErr(MessaggiWSBundle.ERR_666);
+            rispostaWs.getCancellaUtenteRisposta().setDsErr(msg);
+            log.error("Errore nel recupero dell'EJB dei controlli replica utente ", ex);
+        }
     }
 
     public void checkSessione() {
-	// Verifica Utente
-	if (rispostaWs.getSeverity() != SeverityEnum.ERROR) {
-	    rispostaControlli.reset();
-	    rispostaControlli = controlliRU
-		    .verificaEsistenzaUtente(cancellaUtenteExt.getIdUserIam());
-	    if (!rispostaControlli.isrBoolean()) {
-		if (rispostaControlli.getCodErr() == null) {
-		    rispostaControlli.setCodErr(MessaggiWSBundle.SERVIZI_USR_004);
-		    rispostaControlli.setDsErr(MessaggiWSBundle.getString(
-			    MessaggiWSBundle.SERVIZI_USR_004, cancellaUtenteExt.getIdUserIam()));
-		    setRispostaWsError(SeverityEnum.ERROR, Costanti.EsitoServizio.KO);
-		} else {
-		    // Errore 666
-		    setRispostaWsError(SeverityEnum.ERROR, Costanti.EsitoServizio.KO);
-		}
-	    }
-	}
+        // Verifica Utente
+        if (rispostaWs.getSeverity() != SeverityEnum.ERROR) {
+            rispostaControlli.reset();
+            rispostaControlli = controlliRU
+                    .verificaEsistenzaUtente(cancellaUtenteExt.getIdUserIam());
+            if (!rispostaControlli.isrBoolean()) {
+                if (rispostaControlli.getCodErr() == null) {
+                    rispostaControlli.setCodErr(MessaggiWSBundle.SERVIZI_USR_004);
+                    rispostaControlli.setDsErr(MessaggiWSBundle.getString(
+                            MessaggiWSBundle.SERVIZI_USR_004, cancellaUtenteExt.getIdUserIam()));
+                    setRispostaWsError(SeverityEnum.ERROR, Costanti.EsitoServizio.KO);
+                } else {
+                    // Errore 666
+                    setRispostaWsError(SeverityEnum.ERROR, Costanti.EsitoServizio.KO);
+                }
+            }
+        }
     }
 
     public RispostaWSCancellaUtente getRispostaWs() {
-	return rispostaWs;
+        return rispostaWs;
     }
 
     private void setRispostaWsError(SeverityEnum sev, EsitoServizio esito) {
-	rispostaWs.setSeverity(sev);
-	rispostaWs.setErrorCode(rispostaControlli.getCodErr());
-	rispostaWs.setErrorMessage(rispostaControlli.getDsErr());
-	rispostaWs.getCancellaUtenteRisposta().setCdEsito(esito);
-	rispostaWs.getCancellaUtenteRisposta().setCdErr(rispostaControlli.getCodErr());
-	rispostaWs.getCancellaUtenteRisposta().setDsErr(rispostaControlli.getDsErr());
+        rispostaWs.setSeverity(sev);
+        rispostaWs.setErrorCode(rispostaControlli.getCodErr());
+        rispostaWs.setErrorMessage(rispostaControlli.getDsErr());
+        rispostaWs.getCancellaUtenteRisposta().setCdEsito(esito);
+        rispostaWs.getCancellaUtenteRisposta().setCdErr(rispostaControlli.getCodErr());
+        rispostaWs.getCancellaUtenteRisposta().setDsErr(rispostaControlli.getDsErr());
     }
 }

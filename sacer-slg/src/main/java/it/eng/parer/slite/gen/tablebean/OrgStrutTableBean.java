@@ -33,19 +33,19 @@ public class OrgStrutTableBean extends AbstractBaseTable<OrgStrutRowBean> {
     public static OrgStrutTableDescriptor TABLE_DESCRIPTOR = new OrgStrutTableDescriptor();
 
     public OrgStrutTableBean() {
-	super();
+        super();
     }
 
     protected OrgStrutRowBean createRow() {
-	return new OrgStrutRowBean();
+        return new OrgStrutRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<OrgStrutRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

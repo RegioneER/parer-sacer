@@ -54,43 +54,43 @@ public class VrsContenutoFileKo implements Serializable {
     @Id
     @Column(name = "ID_CONTENUTO_FILE_KO")
     @GenericGenerator(name = "SVRS_CONTENUTO_FILE_ID_CONTENUTO_FILE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVRS_CONTENUTO_FILE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVRS_CONTENUTO_FILE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SVRS_CONTENUTO_FILE_ID_CONTENUTO_FILE_GENERATOR")
     public Long getIdContenutoFileKo() {
-	return this.idContenutoFileKo;
+        return this.idContenutoFileKo;
     }
 
     public void setIdContenutoFileKo(Long idContenutoFileKo) {
-	this.idContenutoFileKo = idContenutoFileKo;
+        this.idContenutoFileKo = idContenutoFileKo;
     }
 
     @Lob()
     @Column(name = "BL_CONTENUTO_FILE_SESSIONE")
     public byte[] getBlContenutoFileSessione() {
-	return this.blContenutoFileSessione;
+        return this.blContenutoFileSessione;
     }
 
     public void setBlContenutoFileSessione(byte[] blContenutoFileSessione) {
-	this.blContenutoFileSessione = blContenutoFileSessione;
+        this.blContenutoFileSessione = blContenutoFileSessione;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FILE_SESSIONE_KO")
     public VrsFileSessioneKo getVrsFileSessioneKo() {
-	return this.vrsFileSessioneKo;
+        return this.vrsFileSessioneKo;
     }
 
     public void setVrsFileSessioneKo(VrsFileSessioneKo vrsFileSessioneKo) {
-	this.vrsFileSessioneKo = vrsFileSessioneKo;
+        this.vrsFileSessioneKo = vrsFileSessioneKo;
     }
 }

@@ -31,18 +31,18 @@ import java.util.Iterator;
  */
 public class Utils {
     public static final BigDecimal getDecodedBigDecimalFromTablebean(AbstractBaseTable tb,
-	    String nmKey, String nmDesc, String descQuery) {
-	BigDecimal id = null;
-	if (tb != null) {
-	    Iterator<BaseRow> it = tb.iterator();
-	    while (it.hasNext()) {
-		BaseRow r = it.next();
-		if (r.getString(nmDesc).equals(descQuery)) {
-		    id = r.getBigDecimal(nmKey);
-		    break;
-		}
-	    }
-	}
-	return id;
+            String nmKey, String nmDesc, String descQuery) {
+        BigDecimal id = null;
+        if (tb != null) {
+            Iterator<BaseRow> it = tb.iterator();
+            while (it.hasNext()) {
+                BaseRow r = it.next();
+                if (r.getString(nmDesc).equals(descQuery)) {
+                    id = r.getBigDecimal(nmKey);
+                    break;
+                }
+            }
+        }
+        return id;
     }
 }

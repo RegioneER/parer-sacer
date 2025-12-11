@@ -56,50 +56,50 @@ public class DecVCreaCritRaggrTipoUdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_TIPO_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_TIPO_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_NM_CRITERIO_RAGGR,
-		new ColumnDescriptor(COL_NM_CRITERIO_RAGGR, Types.VARCHAR, 233, true));
-	map.put(COL_DS_CRITERIO_RAGGR,
-		new ColumnDescriptor(COL_DS_CRITERIO_RAGGR, Types.VARCHAR, 386, true));
-	map.put(COL_NI_MAX_COMP, new ColumnDescriptor(COL_NI_MAX_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_TI_TEMPO_SCAD_CHIUS,
-		new ColumnDescriptor(COL_TI_TEMPO_SCAD_CHIUS, Types.VARCHAR, 6, true));
-	map.put(COL_NI_TEMPO_SCAD_CHIUS,
-		new ColumnDescriptor(COL_NI_TEMPO_SCAD_CHIUS, Types.DECIMAL, 22, true));
-	map.put(COL_TI_TEMPO_SCAD_CHIUS_FIRME,
-		new ColumnDescriptor(COL_TI_TEMPO_SCAD_CHIUS_FIRME, Types.VARCHAR, 6, true));
-	map.put(COL_NI_TEMPO_SCAD_CHIUS_FIRME,
-		new ColumnDescriptor(COL_NI_TEMPO_SCAD_CHIUS_FIRME, Types.DECIMAL, 22, true));
-	map.put(COL_FL_FILTRO_TIPO_UNITA_DOC,
-		new ColumnDescriptor(COL_FL_FILTRO_TIPO_UNITA_DOC, Types.VARCHAR, 1, true));
-	map.put(COL_FL_FILTRO_REGISTRO_KEY,
-		new ColumnDescriptor(COL_FL_FILTRO_REGISTRO_KEY, Types.VARCHAR, 1, true));
-	map.put(COL_FL_FILTRO_RANGE_REGISTRO_KEY,
-		new ColumnDescriptor(COL_FL_FILTRO_RANGE_REGISTRO_KEY, Types.VARCHAR, 1, true));
-	map.put(COL_FL_FILTRO_TI_ESITO_VERIF_FIRME,
-		new ColumnDescriptor(COL_FL_FILTRO_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 1, true));
-	map.put(COL_FL_FILTRO_TIPO_DOC,
-		new ColumnDescriptor(COL_FL_FILTRO_TIPO_DOC, Types.VARCHAR, 1, true));
-	map.put(COL_FL_FILTRO_SISTEMA_MIGRAZ,
-		new ColumnDescriptor(COL_FL_FILTRO_SISTEMA_MIGRAZ, Types.VARCHAR, 1, true));
-	map.put(COL_TI_VALID_ELENCO,
-		new ColumnDescriptor(COL_TI_VALID_ELENCO, Types.VARCHAR, 8, true));
-	map.put(COL_TI_MOD_VALID_ELENCO,
-		new ColumnDescriptor(COL_TI_MOD_VALID_ELENCO, Types.VARCHAR, 10, true));
+        map.put(COL_ID_TIPO_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_TIPO_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_NM_CRITERIO_RAGGR,
+                new ColumnDescriptor(COL_NM_CRITERIO_RAGGR, Types.VARCHAR, 233, true));
+        map.put(COL_DS_CRITERIO_RAGGR,
+                new ColumnDescriptor(COL_DS_CRITERIO_RAGGR, Types.VARCHAR, 386, true));
+        map.put(COL_NI_MAX_COMP, new ColumnDescriptor(COL_NI_MAX_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_TI_TEMPO_SCAD_CHIUS,
+                new ColumnDescriptor(COL_TI_TEMPO_SCAD_CHIUS, Types.VARCHAR, 6, true));
+        map.put(COL_NI_TEMPO_SCAD_CHIUS,
+                new ColumnDescriptor(COL_NI_TEMPO_SCAD_CHIUS, Types.DECIMAL, 22, true));
+        map.put(COL_TI_TEMPO_SCAD_CHIUS_FIRME,
+                new ColumnDescriptor(COL_TI_TEMPO_SCAD_CHIUS_FIRME, Types.VARCHAR, 6, true));
+        map.put(COL_NI_TEMPO_SCAD_CHIUS_FIRME,
+                new ColumnDescriptor(COL_NI_TEMPO_SCAD_CHIUS_FIRME, Types.DECIMAL, 22, true));
+        map.put(COL_FL_FILTRO_TIPO_UNITA_DOC,
+                new ColumnDescriptor(COL_FL_FILTRO_TIPO_UNITA_DOC, Types.VARCHAR, 1, true));
+        map.put(COL_FL_FILTRO_REGISTRO_KEY,
+                new ColumnDescriptor(COL_FL_FILTRO_REGISTRO_KEY, Types.VARCHAR, 1, true));
+        map.put(COL_FL_FILTRO_RANGE_REGISTRO_KEY,
+                new ColumnDescriptor(COL_FL_FILTRO_RANGE_REGISTRO_KEY, Types.VARCHAR, 1, true));
+        map.put(COL_FL_FILTRO_TI_ESITO_VERIF_FIRME,
+                new ColumnDescriptor(COL_FL_FILTRO_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 1, true));
+        map.put(COL_FL_FILTRO_TIPO_DOC,
+                new ColumnDescriptor(COL_FL_FILTRO_TIPO_DOC, Types.VARCHAR, 1, true));
+        map.put(COL_FL_FILTRO_SISTEMA_MIGRAZ,
+                new ColumnDescriptor(COL_FL_FILTRO_SISTEMA_MIGRAZ, Types.VARCHAR, 1, true));
+        map.put(COL_TI_VALID_ELENCO,
+                new ColumnDescriptor(COL_TI_VALID_ELENCO, Types.VARCHAR, 8, true));
+        map.put(COL_TI_MOD_VALID_ELENCO,
+                new ColumnDescriptor(COL_TI_MOD_VALID_ELENCO, Types.VARCHAR, 10, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

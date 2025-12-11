@@ -47,27 +47,27 @@ public class AroRichiestaRaTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_RICHIESTA_RA,
-		new ColumnDescriptor(COL_ID_RICHIESTA_RA, Types.DECIMAL, 22, true));
-	map.put(COL_TS_INIZIO, new ColumnDescriptor(COL_TS_INIZIO, Types.TIMESTAMP, 11, false));
-	map.put(COL_TS_FINE, new ColumnDescriptor(COL_TS_FINE, Types.TIMESTAMP, 11, false));
-	map.put(COL_TI_STATO, new ColumnDescriptor(COL_TI_STATO, Types.VARCHAR, 30, false));
-	map.put(COL_CD_ERRORE, new ColumnDescriptor(COL_CD_ERRORE, Types.VARCHAR, 300, false));
-	map.put(COL_NOTE, new ColumnDescriptor(COL_NOTE, Types.VARCHAR, 300, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, false));
+        map.put(COL_ID_RICHIESTA_RA,
+                new ColumnDescriptor(COL_ID_RICHIESTA_RA, Types.DECIMAL, 22, true));
+        map.put(COL_TS_INIZIO, new ColumnDescriptor(COL_TS_INIZIO, Types.TIMESTAMP, 11, false));
+        map.put(COL_TS_FINE, new ColumnDescriptor(COL_TS_FINE, Types.TIMESTAMP, 11, false));
+        map.put(COL_TI_STATO, new ColumnDescriptor(COL_TI_STATO, Types.VARCHAR, 30, false));
+        map.put(COL_CD_ERRORE, new ColumnDescriptor(COL_CD_ERRORE, Types.VARCHAR, 300, false));
+        map.put(COL_NOTE, new ColumnDescriptor(COL_NOTE, Types.VARCHAR, 300, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

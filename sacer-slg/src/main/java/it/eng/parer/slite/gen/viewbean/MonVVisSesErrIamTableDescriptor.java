@@ -62,51 +62,51 @@ public class MonVVisSesErrIamTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
-	map.put(COL_NM_USERID_WS, new ColumnDescriptor(COL_NM_USERID_WS, Types.VARCHAR, 100, true));
-	map.put(COL_NM_USERID, new ColumnDescriptor(COL_NM_USERID, Types.VARCHAR, 100, true));
-	map.put(COL_NM_COGNOME_USER,
-		new ColumnDescriptor(COL_NM_COGNOME_USER, Types.VARCHAR, 100, true));
-	map.put(COL_NM_NOME_USER, new ColumnDescriptor(COL_NM_NOME_USER, Types.VARCHAR, 100, true));
-	map.put(COL_ID_SESSIONE_VERS,
-		new ColumnDescriptor(COL_ID_SESSIONE_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_DT_APERTURA, new ColumnDescriptor(COL_DT_APERTURA, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_CHIUSURA, new ColumnDescriptor(COL_DT_CHIUSURA, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_SESSIONE_VERS,
-		new ColumnDescriptor(COL_TI_SESSIONE_VERS, Types.VARCHAR, 20, true));
-	map.put(COL_CD_VERSIONE_WS,
-		new ColumnDescriptor(COL_CD_VERSIONE_WS, Types.VARCHAR, 100, true));
-	map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_AA_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_CD_KEY_DOC_VERS,
-		new ColumnDescriptor(COL_CD_KEY_DOC_VERS, Types.VARCHAR, 100, true));
-	map.put(COL_FL_SESSIONE_ERR_VERIF,
-		new ColumnDescriptor(COL_FL_SESSIONE_ERR_VERIF, Types.VARCHAR, 1, true));
-	map.put(COL_ID_ERR_SESSIONE_VERS,
-		new ColumnDescriptor(COL_ID_ERR_SESSIONE_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_CD_ERR, new ColumnDescriptor(COL_CD_ERR, Types.VARCHAR, 20, true));
-	map.put(COL_DS_ERR, new ColumnDescriptor(COL_DS_ERR, Types.VARCHAR, 1024, true));
-	map.put(COL_BL_XML_RICH, new ColumnDescriptor(COL_BL_XML_RICH, Types.CLOB, 4000, true));
-	map.put(COL_BL_XML_INDEX, new ColumnDescriptor(COL_BL_XML_INDEX, Types.CLOB, 4000, true));
-	map.put(COL_BL_XML_RISP, new ColumnDescriptor(COL_BL_XML_RISP, Types.CLOB, 4000, true));
+        map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
+        map.put(COL_NM_USERID_WS, new ColumnDescriptor(COL_NM_USERID_WS, Types.VARCHAR, 100, true));
+        map.put(COL_NM_USERID, new ColumnDescriptor(COL_NM_USERID, Types.VARCHAR, 100, true));
+        map.put(COL_NM_COGNOME_USER,
+                new ColumnDescriptor(COL_NM_COGNOME_USER, Types.VARCHAR, 100, true));
+        map.put(COL_NM_NOME_USER, new ColumnDescriptor(COL_NM_NOME_USER, Types.VARCHAR, 100, true));
+        map.put(COL_ID_SESSIONE_VERS,
+                new ColumnDescriptor(COL_ID_SESSIONE_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_DT_APERTURA, new ColumnDescriptor(COL_DT_APERTURA, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_CHIUSURA, new ColumnDescriptor(COL_DT_CHIUSURA, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_SESSIONE_VERS,
+                new ColumnDescriptor(COL_TI_SESSIONE_VERS, Types.VARCHAR, 20, true));
+        map.put(COL_CD_VERSIONE_WS,
+                new ColumnDescriptor(COL_CD_VERSIONE_WS, Types.VARCHAR, 100, true));
+        map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_AA_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_CD_KEY_DOC_VERS,
+                new ColumnDescriptor(COL_CD_KEY_DOC_VERS, Types.VARCHAR, 100, true));
+        map.put(COL_FL_SESSIONE_ERR_VERIF,
+                new ColumnDescriptor(COL_FL_SESSIONE_ERR_VERIF, Types.VARCHAR, 1, true));
+        map.put(COL_ID_ERR_SESSIONE_VERS,
+                new ColumnDescriptor(COL_ID_ERR_SESSIONE_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_CD_ERR, new ColumnDescriptor(COL_CD_ERR, Types.VARCHAR, 20, true));
+        map.put(COL_DS_ERR, new ColumnDescriptor(COL_DS_ERR, Types.VARCHAR, 1024, true));
+        map.put(COL_BL_XML_RICH, new ColumnDescriptor(COL_BL_XML_RICH, Types.CLOB, 4000, true));
+        map.put(COL_BL_XML_INDEX, new ColumnDescriptor(COL_BL_XML_INDEX, Types.CLOB, 4000, true));
+        map.put(COL_BL_XML_RISP, new ColumnDescriptor(COL_BL_XML_RISP, Types.CLOB, 4000, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

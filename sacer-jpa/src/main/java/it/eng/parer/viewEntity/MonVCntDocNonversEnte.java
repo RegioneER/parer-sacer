@@ -39,19 +39,19 @@ public class MonVCntDocNonversEnte implements Serializable {
 
     @EmbeddedId
     public MonVCntDocNonversEnteId getMonVCntDocNonversEnteId() {
-	return monVCntDocNonversEnteId;
+        return monVCntDocNonversEnteId;
     }
 
     public void setMonVCntDocNonversEnteId(MonVCntDocNonversEnteId monVCntDocNonversEnteId) {
-	this.monVCntDocNonversEnteId = monVCntDocNonversEnteId;
+        this.monVCntDocNonversEnteId = monVCntDocNonversEnteId;
     }
 
     @Column(name = "NI_DOC_NONVERS")
     public BigDecimal getNiDocNonvers() {
-	return this.niDocNonvers;
+        return this.niDocNonvers;
     }
 
     public void setNiDocNonvers(BigDecimal niDocNonvers) {
-	this.niDocNonvers = niDocNonvers;
+        this.niDocNonvers = niDocNonvers;
     }
 }

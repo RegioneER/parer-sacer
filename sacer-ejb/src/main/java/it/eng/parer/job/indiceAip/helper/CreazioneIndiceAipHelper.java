@@ -72,7 +72,7 @@ import it.eng.parer.ws.utils.MessaggiWSFormat;
 @Stateless(mappedName = "CreazioneIndiceAipHelper")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class CreazioneIndiceAipHelper extends GenericHelper {
 
     private static final Logger log = LoggerFactory.getLogger(CreazioneIndiceAipHelper.class);
@@ -101,26 +101,26 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return la lista da elaborare
      */
     public List<Long> getIndexAplIndiceAipUdDaElab() {
-	String queryStr = "SELECT u.idIndiceAipDaElab FROM AroIndiceAipUdDaElab u "
-		+ "WHERE u.flInCoda = '0' "
-		+ "ORDER BY u.dtCreazioneDaElab, u.aroUnitaDoc.idUnitaDoc, u.pgCreazioneDaElab ";
-	TypedQuery<Long> query = entityManager.createQuery(queryStr, Long.class);
-	query.setMaxResults(Integer.parseInt(configurationHelper.getValoreParamApplicByApplic(
-		CostantiDB.ParametroAppl.NUM_MAX_UNITA_DOC_IN_CODA_INDICE_AIP)));
-	return query.getResultList();
+        String queryStr = "SELECT u.idIndiceAipDaElab FROM AroIndiceAipUdDaElab u "
+                + "WHERE u.flInCoda = '0' "
+                + "ORDER BY u.dtCreazioneDaElab, u.aroUnitaDoc.idUnitaDoc, u.pgCreazioneDaElab ";
+        TypedQuery<Long> query = entityManager.createQuery(queryStr, Long.class);
+        query.setMaxResults(Integer.parseInt(configurationHelper.getValoreParamApplicByApplic(
+                CostantiDB.ParametroAppl.NUM_MAX_UNITA_DOC_IN_CODA_INDICE_AIP)));
+        return query.getResultList();
     }
 
     public boolean existsIndexAplIndiceAipInCodaPrgMinore(AroUnitaDoc ud,
-	    long progressivoIndiceAip) {
-	String queryStr = "SELECT u FROM AroIndiceAipUdDaElab u " + "WHERE u.aroUnitaDoc = :ud "
-		+ "AND u.pgCreazioneDaElab < :prg " + "AND u.flInCoda = '1' ";
-	TypedQuery<AroIndiceAipUdDaElab> query = entityManager.createQuery(queryStr,
-		AroIndiceAipUdDaElab.class);
-	query.setParameter("ud", ud);
-	query.setParameter("prg", bigDecimalFromLong(progressivoIndiceAip));
-	query.setMaxResults(1);
-	List<AroIndiceAipUdDaElab> l = query.getResultList();
-	return !l.isEmpty();
+            long progressivoIndiceAip) {
+        String queryStr = "SELECT u FROM AroIndiceAipUdDaElab u " + "WHERE u.aroUnitaDoc = :ud "
+                + "AND u.pgCreazioneDaElab < :prg " + "AND u.flInCoda = '1' ";
+        TypedQuery<AroIndiceAipUdDaElab> query = entityManager.createQuery(queryStr,
+                AroIndiceAipUdDaElab.class);
+        query.setParameter("ud", ud);
+        query.setParameter("prg", bigDecimalFromLong(progressivoIndiceAip));
+        query.setMaxResults(1);
+        List<AroIndiceAipUdDaElab> l = query.getResultList();
+        return !l.isEmpty();
     }
 
     /**
@@ -131,19 +131,19 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return il progressivo versione oppure 0 se questo ancora non esiste
      */
     public int getProgressivoVersione(Long idUnitaDoc) {
-	List<AroVerIndiceAipUd> aroVerIndiceAipList;
-	String queryStr = "SELECT u FROM AroVerIndiceAipUd u "
-		+ "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-		+ "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' "
-		+ "ORDER BY u.pgVerIndiceAip DESC ";
-	javax.persistence.Query query = entityManager.createQuery(queryStr);
-	query.setParameter("idUnitaDoc", idUnitaDoc);
-	aroVerIndiceAipList = query.getResultList();
-	if (aroVerIndiceAipList != null && !aroVerIndiceAipList.isEmpty()) {
-	    return aroVerIndiceAipList.get(0).getPgVerIndiceAip().intValue();
-	} else {
-	    return 0;
-	}
+        List<AroVerIndiceAipUd> aroVerIndiceAipList;
+        String queryStr = "SELECT u FROM AroVerIndiceAipUd u "
+                + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                + "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' "
+                + "ORDER BY u.pgVerIndiceAip DESC ";
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        query.setParameter("idUnitaDoc", idUnitaDoc);
+        aroVerIndiceAipList = query.getResultList();
+        if (aroVerIndiceAipList != null && !aroVerIndiceAipList.isEmpty()) {
+            return aroVerIndiceAipList.get(0).getPgVerIndiceAip().intValue();
+        } else {
+            return 0;
+        }
     }
 
     /**
@@ -157,56 +157,56 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @throws ParerInternalError errore generico
      */
     public String getVersioneAIP(Long idUnitaDoc, String tiCreazione) throws ParerInternalError {
-	String versione = null;
-	try {
-	    String queryStr;
-	    Query query;
-	    if (tiCreazione.equals("ANTICIPATO")) {
-		// Ricavo l'ultima versione dell'AIP di tipo "ANTICIPATO" (cdVerIndiceAip che
-		// comincia per 0.)"
-		queryStr = "SELECT u FROM AroVerIndiceAipUd u "
-			+ "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-			+ "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' "
-			+ "AND u.cdVerIndiceAip LIKE '0.%' " + "ORDER BY u.pgVerIndiceAip DESC ";
-		query = entityManager.createQuery(queryStr);
-		query.setParameter("idUnitaDoc", idUnitaDoc);
-		List<AroVerIndiceAipUd> aroVerIndiceAipUdList = query.getResultList();
-		if (!aroVerIndiceAipUdList.isEmpty()) {
-		    // Scompatto il campo cdVerIndiceAip
-		    String[] numbers = aroVerIndiceAipUdList.get(0).getCdVerIndiceAip()
-			    .split("[.]");
-		    int minorNumber = Integer.parseInt(numbers[1]);
-		    versione = "0.".concat(Integer.toString(++minorNumber));
-		} else {
-		    // Se non ho risultati significa che sto inserendo la prima versione
-		    versione = "0.1";
-		}
-	    } else {
-		// Ricavo l'ultima versione dell'AIP di tipo "ARCHIVIO" (cdVerIndiceAip che comincia
-		// per 1.)"
-		queryStr = "SELECT u FROM AroVerIndiceAipUd u "
-			+ "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-			+ "AND u.cdVerIndiceAip LIKE '1.%' " + "ORDER BY u.pgVerIndiceAip DESC ";
+        String versione = null;
+        try {
+            String queryStr;
+            Query query;
+            if (tiCreazione.equals("ANTICIPATO")) {
+                // Ricavo l'ultima versione dell'AIP di tipo "ANTICIPATO" (cdVerIndiceAip che
+                // comincia per 0.)"
+                queryStr = "SELECT u FROM AroVerIndiceAipUd u "
+                        + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                        + "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' "
+                        + "AND u.cdVerIndiceAip LIKE '0.%' " + "ORDER BY u.pgVerIndiceAip DESC ";
+                query = entityManager.createQuery(queryStr);
+                query.setParameter("idUnitaDoc", idUnitaDoc);
+                List<AroVerIndiceAipUd> aroVerIndiceAipUdList = query.getResultList();
+                if (!aroVerIndiceAipUdList.isEmpty()) {
+                    // Scompatto il campo cdVerIndiceAip
+                    String[] numbers = aroVerIndiceAipUdList.get(0).getCdVerIndiceAip()
+                            .split("[.]");
+                    int minorNumber = Integer.parseInt(numbers[1]);
+                    versione = "0.".concat(Integer.toString(++minorNumber));
+                } else {
+                    // Se non ho risultati significa che sto inserendo la prima versione
+                    versione = "0.1";
+                }
+            } else {
+                // Ricavo l'ultima versione dell'AIP di tipo "ARCHIVIO" (cdVerIndiceAip che comincia
+                // per 1.)"
+                queryStr = "SELECT u FROM AroVerIndiceAipUd u "
+                        + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                        + "AND u.cdVerIndiceAip LIKE '1.%' " + "ORDER BY u.pgVerIndiceAip DESC ";
 
-		query = entityManager.createQuery(queryStr);
-		query.setParameter("idUnitaDoc", idUnitaDoc);
-		List<AroVerIndiceAipUd> aroVerIndiceAipUdList = query.getResultList();
-		if (!aroVerIndiceAipUdList.isEmpty()) {
-		    // Scompatto il campo cdVerIndiceAip
-		    String[] numbers = aroVerIndiceAipUdList.get(0).getCdVerIndiceAip()
-			    .split("[.]");
-		    int minorNumber = Integer.parseInt(numbers[1]);
-		    versione = "1.".concat(Integer.toString(++minorNumber));
-		} else {
-		    // Se non ho risultati significa che sto inserendo la prima versione
-		    versione = "1.0";
-		}
-	    }
-	} catch (NumberFormatException e) {
-	    log.error("Eccezione durante il recupero della versione AIP ", e);
-	    throw new ParerInternalError(e);
-	}
-	return versione;
+                query = entityManager.createQuery(queryStr);
+                query.setParameter("idUnitaDoc", idUnitaDoc);
+                List<AroVerIndiceAipUd> aroVerIndiceAipUdList = query.getResultList();
+                if (!aroVerIndiceAipUdList.isEmpty()) {
+                    // Scompatto il campo cdVerIndiceAip
+                    String[] numbers = aroVerIndiceAipUdList.get(0).getCdVerIndiceAip()
+                            .split("[.]");
+                    int minorNumber = Integer.parseInt(numbers[1]);
+                    versione = "1.".concat(Integer.toString(++minorNumber));
+                } else {
+                    // Se non ho risultati significa che sto inserendo la prima versione
+                    versione = "1.0";
+                }
+            }
+        } catch (NumberFormatException e) {
+            log.error("Eccezione durante il recupero della versione AIP ", e);
+            throw new ParerInternalError(e);
+        }
+        return versione;
     }
 
     // EVO#20792
@@ -221,37 +221,37 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @throws ParerInternalError errore generico
      */
     public String getVersioneIndiceAIPV2(Long idUnitaDoc, String tiCreazione)
-	    throws ParerInternalError {
-	String versione = null;
-	try {
-	    String queryStr;
-	    Query query;
-	    if (tiCreazione.equals("ANTICIPATO")) {
-		// Ricavo l'ultima versione dell'AIP di tipo "ANTICIPATO" (cdVerIndiceAip che
-		// comincia per 1.)"
-		queryStr = "SELECT u FROM AroVerIndiceAipUd u "
-			+ "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-			+ "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' "
-			+ "AND u.cdVerIndiceAip LIKE '1.%' " + "ORDER BY u.pgVerIndiceAip DESC ";
-		query = entityManager.createQuery(queryStr);
-		query.setParameter("idUnitaDoc", idUnitaDoc);
-		List<AroVerIndiceAipUd> aroVerIndiceAipUdList = query.getResultList();
-		if (!aroVerIndiceAipUdList.isEmpty()) {
-		    // Scompatto il campo cdVerIndiceAip
-		    String[] numbers = aroVerIndiceAipUdList.get(0).getCdVerIndiceAip()
-			    .split("[.]");
-		    int minorNumber = Integer.parseInt(numbers[1]);
-		    versione = "1.".concat(Integer.toString(++minorNumber));
-		} else {
-		    // Se non ho risultati significa che sto inserendo la prima versione
-		    versione = "1.0";
-		}
-	    }
-	} catch (NumberFormatException e) {
-	    log.error("Eccezione durante il recupero della versione AIP v2.0", e);
-	    throw new ParerInternalError(e);
-	}
-	return versione;
+            throws ParerInternalError {
+        String versione = null;
+        try {
+            String queryStr;
+            Query query;
+            if (tiCreazione.equals("ANTICIPATO")) {
+                // Ricavo l'ultima versione dell'AIP di tipo "ANTICIPATO" (cdVerIndiceAip che
+                // comincia per 1.)"
+                queryStr = "SELECT u FROM AroVerIndiceAipUd u "
+                        + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                        + "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' "
+                        + "AND u.cdVerIndiceAip LIKE '1.%' " + "ORDER BY u.pgVerIndiceAip DESC ";
+                query = entityManager.createQuery(queryStr);
+                query.setParameter("idUnitaDoc", idUnitaDoc);
+                List<AroVerIndiceAipUd> aroVerIndiceAipUdList = query.getResultList();
+                if (!aroVerIndiceAipUdList.isEmpty()) {
+                    // Scompatto il campo cdVerIndiceAip
+                    String[] numbers = aroVerIndiceAipUdList.get(0).getCdVerIndiceAip()
+                            .split("[.]");
+                    int minorNumber = Integer.parseInt(numbers[1]);
+                    versione = "1.".concat(Integer.toString(++minorNumber));
+                } else {
+                    // Se non ho risultati significa che sto inserendo la prima versione
+                    versione = "1.0";
+                }
+            }
+        } catch (NumberFormatException e) {
+            log.error("Eccezione durante il recupero della versione AIP v2.0", e);
+            throw new ParerInternalError(e);
+        }
+        return versione;
     }
     // end EVO#20792
 
@@ -265,35 +265,35 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @throws ParerInternalError errore generico
      */
     public String getVersioneXSDIndiceAIP(Long idUnitaDoc) throws ParerInternalError {
-	String versione = null;
-	String queryStr;
-	Query query;
-	List<AroVerIndiceAipUd> aroVerIndiceAipUdList = null;
-	try {
+        String versione = null;
+        String queryStr;
+        Query query;
+        List<AroVerIndiceAipUd> aroVerIndiceAipUdList = null;
+        try {
 
-	    queryStr = "SELECT u FROM AroVerIndiceAipUd u "
-		    + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-		    + "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' "
-		    + "AND u.pgVerIndiceAip =(select MAX(d.pgVerIndiceAip) FROM AroVerIndiceAipUd d "
-		    + "WHERE d.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDocD )";
+            queryStr = "SELECT u FROM AroVerIndiceAipUd u "
+                    + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                    + "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' "
+                    + "AND u.pgVerIndiceAip =(select MAX(d.pgVerIndiceAip) FROM AroVerIndiceAipUd d "
+                    + "WHERE d.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDocD )";
 
-	    query = entityManager.createQuery(queryStr);
-	    query.setParameter("idUnitaDoc", idUnitaDoc);
-	    query.setParameter("idUnitaDocD", idUnitaDoc);
-	    aroVerIndiceAipUdList = query.getResultList();
-	    if (aroVerIndiceAipUdList != null && !aroVerIndiceAipUdList.isEmpty()) {
-		// Scompatto il campo cdVerIndiceAip
-		versione = aroVerIndiceAipUdList.get(0).getCdVerXsdIndiceAip();
+            query = entityManager.createQuery(queryStr);
+            query.setParameter("idUnitaDoc", idUnitaDoc);
+            query.setParameter("idUnitaDocD", idUnitaDoc);
+            aroVerIndiceAipUdList = query.getResultList();
+            if (aroVerIndiceAipUdList != null && !aroVerIndiceAipUdList.isEmpty()) {
+                // Scompatto il campo cdVerIndiceAip
+                versione = aroVerIndiceAipUdList.get(0).getCdVerXsdIndiceAip();
 
-	    } else {
-		// Se non ho risultati significa che sto inserendo la prima versione
-		versione = "";
-	    }
-	} catch (NumberFormatException e) {
-	    log.error("Eccezione durante il recupero della versione XSD indice AIP ", e);
-	    throw new ParerInternalError(e);
-	}
-	return versione;
+            } else {
+                // Se non ho risultati significa che sto inserendo la prima versione
+                versione = "";
+            }
+        } catch (NumberFormatException e) {
+            log.error("Eccezione durante il recupero della versione XSD indice AIP ", e);
+            throw new ParerInternalError(e);
+        }
+        return versione;
     }
 
     /**
@@ -304,18 +304,18 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return il record dell'indice AIP, null se non esiste
      */
     public AroIndiceAipUd getAroIndiceAipUd(Long idUnitaDoc) {
-	List<AroIndiceAipUd> aroIndiceAipUdList;
-	String queryStr = "SELECT u FROM AroIndiceAipUd u "
-		+ "WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-		+ "AND u.tiFormatoIndiceAip = 'UNISYNCRO' ";
-	javax.persistence.Query query = entityManager.createQuery(queryStr);
-	query.setParameter("idUnitaDoc", idUnitaDoc);
-	aroIndiceAipUdList = query.getResultList();
-	if (aroIndiceAipUdList != null && !aroIndiceAipUdList.isEmpty()) {
-	    return aroIndiceAipUdList.get(0);
-	} else {
-	    return null;
-	}
+        List<AroIndiceAipUd> aroIndiceAipUdList;
+        String queryStr = "SELECT u FROM AroIndiceAipUd u "
+                + "WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                + "AND u.tiFormatoIndiceAip = 'UNISYNCRO' ";
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        query.setParameter("idUnitaDoc", idUnitaDoc);
+        aroIndiceAipUdList = query.getResultList();
+        if (aroIndiceAipUdList != null && !aroIndiceAipUdList.isEmpty()) {
+            return aroIndiceAipUdList.get(0);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -335,100 +335,100 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public AroVerIndiceAipUd creaAIP(AroIndiceAipUdDaElab udDaElab, String annoMese,
-	    int progressivoVersione, String codiceVersione, String hash, String xml,
-	    CSVersatore versatore, CSChiave chiave) {
-	AroIndiceAipUd indiceAip = context.getBusinessObject(CreazioneIndiceAipHelper.class)
-		.getAroIndiceAipUd(udDaElab.getAroUnitaDoc().getIdUnitaDoc());
-	// Chiamata locale, è giusto che partecipi alla stessa transazione. Non occorre che passi
-	// dal proxy EJB.
-	boolean persistiPadre = false;
-	// Se non esiste gia una versione, creo la prima
-	if (indiceAip == null) {
-	    persistiPadre = true;
-	    indiceAip = new AroIndiceAipUd();
-	    indiceAip.setIdVerIndiceAipLast(BigDecimal.ZERO);
-	    indiceAip.setAroUnitaDoc(udDaElab.getAroUnitaDoc());
-	    indiceAip.setAroVerIndiceAipUds(new ArrayList<>());
-	    indiceAip.setTiFormatoIndiceAip("UNISYNCRO");
-	}
+            int progressivoVersione, String codiceVersione, String hash, String xml,
+            CSVersatore versatore, CSChiave chiave) {
+        AroIndiceAipUd indiceAip = context.getBusinessObject(CreazioneIndiceAipHelper.class)
+                .getAroIndiceAipUd(udDaElab.getAroUnitaDoc().getIdUnitaDoc());
+        // Chiamata locale, è giusto che partecipi alla stessa transazione. Non occorre che passi
+        // dal proxy EJB.
+        boolean persistiPadre = false;
+        // Se non esiste gia una versione, creo la prima
+        if (indiceAip == null) {
+            persistiPadre = true;
+            indiceAip = new AroIndiceAipUd();
+            indiceAip.setIdVerIndiceAipLast(BigDecimal.ZERO);
+            indiceAip.setAroUnitaDoc(udDaElab.getAroUnitaDoc());
+            indiceAip.setAroVerIndiceAipUds(new ArrayList<>());
+            indiceAip.setTiFormatoIndiceAip("UNISYNCRO");
+        }
 
-	/* Inserisco ARO_VER_INDICE_AIP_UD */
-	AroVerIndiceAipUd verIndiceAip = new AroVerIndiceAipUd();
-	verIndiceAip.setAroIndiceAipUd(indiceAip);
-	verIndiceAip.setAroFileVerIndiceAipUds(new ArrayList<>());
-	verIndiceAip.setAroCompVerIndiceAipUds(new ArrayList<>());
-	verIndiceAip.setAroUrnVerIndiceAipUds(new ArrayList<>());
-	verIndiceAip.setPgVerIndiceAip(new BigDecimal(progressivoVersione));
-	verIndiceAip.setCdVerIndiceAip(codiceVersione);
-	verIndiceAip.setDtCreazione(new Date());
-	// EVO#16486
-	verIndiceAip.setDsHashIndiceAip(hash);
-	verIndiceAip.setDsAlgoHashIndiceAip(TipiHash.SHA_256.descrivi());
-	verIndiceAip.setCdEncodingHashIndiceAip(TipiEncBinari.HEX_BINARY.descrivi());
-	// end EVO#16486
-	verIndiceAip.setDsCausale(udDaElab.getDsCausale());
-	verIndiceAip.setCdVerXsdIndiceAip(Costanti.VERSIONE_XSD_INDICE_AIP);
-	verIndiceAip.setElvElencoVer(udDaElab.getElvElencoVer());
-	verIndiceAip.setIdEnteConserv(indiceAip.getAroUnitaDoc().getOrgStrut().getOrgEnte()
-		.getOrgAmbiente().getIdEnteConserv());
-	indiceAip.getAroVerIndiceAipUds().add(verIndiceAip);
+        /* Inserisco ARO_VER_INDICE_AIP_UD */
+        AroVerIndiceAipUd verIndiceAip = new AroVerIndiceAipUd();
+        verIndiceAip.setAroIndiceAipUd(indiceAip);
+        verIndiceAip.setAroFileVerIndiceAipUds(new ArrayList<>());
+        verIndiceAip.setAroCompVerIndiceAipUds(new ArrayList<>());
+        verIndiceAip.setAroUrnVerIndiceAipUds(new ArrayList<>());
+        verIndiceAip.setPgVerIndiceAip(new BigDecimal(progressivoVersione));
+        verIndiceAip.setCdVerIndiceAip(codiceVersione);
+        verIndiceAip.setDtCreazione(new Date());
+        // EVO#16486
+        verIndiceAip.setDsHashIndiceAip(hash);
+        verIndiceAip.setDsAlgoHashIndiceAip(TipiHash.SHA_256.descrivi());
+        verIndiceAip.setCdEncodingHashIndiceAip(TipiEncBinari.HEX_BINARY.descrivi());
+        // end EVO#16486
+        verIndiceAip.setDsCausale(udDaElab.getDsCausale());
+        verIndiceAip.setCdVerXsdIndiceAip(Costanti.VERSIONE_XSD_INDICE_AIP);
+        verIndiceAip.setElvElencoVer(udDaElab.getElvElencoVer());
+        verIndiceAip.setIdEnteConserv(indiceAip.getAroUnitaDoc().getOrgStrut().getOrgEnte()
+                .getOrgAmbiente().getIdEnteConserv());
+        indiceAip.getAroVerIndiceAipUds().add(verIndiceAip);
 
-	/* Inserisco ARO_COMP_VER_INDICE_AIP_UD */
-	for (AroCompIndiceAipDaElab compDocDaElab : udDaElab.getAroCompIndiceAipDaElabs()) {
-	    AroCompVerIndiceAipUd compVerIndice = new AroCompVerIndiceAipUd();
-	    compVerIndice.setAroCompDoc(compDocDaElab.getAroCompDoc());
-	    compVerIndice.setAroVerIndiceAipUd(verIndiceAip);
-	    verIndiceAip.getAroCompVerIndiceAipUds().add(compVerIndice);
-	}
+        /* Inserisco ARO_COMP_VER_INDICE_AIP_UD */
+        for (AroCompIndiceAipDaElab compDocDaElab : udDaElab.getAroCompIndiceAipDaElabs()) {
+            AroCompVerIndiceAipUd compVerIndice = new AroCompVerIndiceAipUd();
+            compVerIndice.setAroCompDoc(compDocDaElab.getAroCompDoc());
+            compVerIndice.setAroVerIndiceAipUd(verIndiceAip);
+            verIndiceAip.getAroCompVerIndiceAipUds().add(compVerIndice);
+        }
 
-	// MAC#27786
-	/* Inserisco ARO_UPD_UD_VER_INDICE_AIP_UD */
-	for (AroUpdUdIndiceAipDaElab updUdDaElab : udDaElab.getAroUpdUdIndiceAipDaElabs()) {
-	    AroUpdUdVerIndiceAipUd updVerIndice = new AroUpdUdVerIndiceAipUd();
-	    updVerIndice.setAroUpdUnitaDoc(updUdDaElab.getAroUpdUnitaDoc());
-	    updVerIndice.setAroVerIndiceAipUd(verIndiceAip);
-	    verIndiceAip.getAroUpdUdVerIndiceAipUdss().add(updVerIndice);
-	}
-	// end MAC#27786
+        // MAC#27786
+        /* Inserisco ARO_UPD_UD_VER_INDICE_AIP_UD */
+        for (AroUpdUdIndiceAipDaElab updUdDaElab : udDaElab.getAroUpdUdIndiceAipDaElabs()) {
+            AroUpdUdVerIndiceAipUd updVerIndice = new AroUpdUdVerIndiceAipUd();
+            updVerIndice.setAroUpdUnitaDoc(updUdDaElab.getAroUpdUnitaDoc());
+            updVerIndice.setAroVerIndiceAipUd(verIndiceAip);
+            verIndiceAip.getAroUpdUdVerIndiceAipUdss().add(updVerIndice);
+        }
+        // end MAC#27786
 
-	// EVO#16486
-	/* Inserisco ARO_URN_VER_INDICE_AIP_UD */
-	// calcolo parte urn ORIGINALE
-	String tmpUrn = MessaggiWSFormat.formattaBaseUrnUnitaDoc(
-		MessaggiWSFormat.formattaUrnPartVersatore(versatore),
-		MessaggiWSFormat.formattaUrnPartUnitaDoc(chiave));
-	// salvo ORIGINALE
-	AroUrnVerIndiceAipUd aroUrnVerIndiceAipUd = new AroUrnVerIndiceAipUd();
-	aroUrnVerIndiceAipUd.setDsUrn(
-		MessaggiWSFormat.formattaUrnIndiceAIP(tmpUrn, verIndiceAip.getCdVerIndiceAip(),
-			Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
-	aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.ORIGINALE);
-	aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
-	verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
+        // EVO#16486
+        /* Inserisco ARO_URN_VER_INDICE_AIP_UD */
+        // calcolo parte urn ORIGINALE
+        String tmpUrn = MessaggiWSFormat.formattaBaseUrnUnitaDoc(
+                MessaggiWSFormat.formattaUrnPartVersatore(versatore),
+                MessaggiWSFormat.formattaUrnPartUnitaDoc(chiave));
+        // salvo ORIGINALE
+        AroUrnVerIndiceAipUd aroUrnVerIndiceAipUd = new AroUrnVerIndiceAipUd();
+        aroUrnVerIndiceAipUd.setDsUrn(
+                MessaggiWSFormat.formattaUrnIndiceAIP(tmpUrn, verIndiceAip.getCdVerIndiceAip(),
+                        Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
+        aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.ORIGINALE);
+        aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
+        verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
 
-	// calcolo parte urn NORMALIZZATO
-	String tmpUrnNorm = MessaggiWSFormat.formattaBaseUrnUnitaDoc(
-		MessaggiWSFormat.formattaUrnPartVersatore(versatore, true,
-			Costanti.UrnFormatter.VERS_FMT_STRING),
-		MessaggiWSFormat.formattaUrnPartUnitaDoc(chiave, true,
-			Costanti.UrnFormatter.UD_FMT_STRING));
-	// salvo NORMALIZZATO
-	aroUrnVerIndiceAipUd = new AroUrnVerIndiceAipUd();
-	aroUrnVerIndiceAipUd.setDsUrn(
-		MessaggiWSFormat.formattaUrnIndiceAIP(tmpUrnNorm, verIndiceAip.getCdVerIndiceAip(),
-			Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
-	aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.NORMALIZZATO);
-	aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
-	verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
-	// end EVO#16486
+        // calcolo parte urn NORMALIZZATO
+        String tmpUrnNorm = MessaggiWSFormat.formattaBaseUrnUnitaDoc(
+                MessaggiWSFormat.formattaUrnPartVersatore(versatore, true,
+                        Costanti.UrnFormatter.VERS_FMT_STRING),
+                MessaggiWSFormat.formattaUrnPartUnitaDoc(chiave, true,
+                        Costanti.UrnFormatter.UD_FMT_STRING));
+        // salvo NORMALIZZATO
+        aroUrnVerIndiceAipUd = new AroUrnVerIndiceAipUd();
+        aroUrnVerIndiceAipUd.setDsUrn(
+                MessaggiWSFormat.formattaUrnIndiceAIP(tmpUrnNorm, verIndiceAip.getCdVerIndiceAip(),
+                        Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
+        aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.NORMALIZZATO);
+        aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
+        verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
+        // end EVO#16486
 
-	/* Persisto a seconda che l'elemento di AroIndiceAipUd sia gia presente o meno */
-	if (persistiPadre) {
-	    entityManager.persist(indiceAip);
-	} else if (verIndiceAip.getIdVerIndiceAip() == null) {
-	    entityManager.persist(verIndiceAip);
-	}
-	return verIndiceAip;
+        /* Persisto a seconda che l'elemento di AroIndiceAipUd sia gia presente o meno */
+        if (persistiPadre) {
+            entityManager.persist(indiceAip);
+        } else if (verIndiceAip.getIdVerIndiceAip() == null) {
+            entityManager.persist(verIndiceAip);
+        }
+        return verIndiceAip;
     }
 
     /**
@@ -448,94 +448,94 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public AroVerIndiceAipUd creaAIP(AroUnitaDoc ud, String annoMese, int progressivoVersione,
-	    String codiceVersione, String hash, String xml, CSVersatore versatore,
-	    CSChiave chiave) {
-	AroIndiceAipUd indiceAip = context.getBusinessObject(CreazioneIndiceAipHelper.class)
-		.getAroIndiceAipUd(ud.getIdUnitaDoc());
-	// Chiamata locale, è giusto che partecipi alla stessa transazione. Non occorre che passi
-	// dal proxy EJB.
-	boolean persistiPadre = false;
-	// Se non esiste gia una versione, creo la prima
-	if (indiceAip == null) {
-	    persistiPadre = true;
-	    indiceAip = new AroIndiceAipUd();
-	    indiceAip.setAroUnitaDoc(ud);
-	    indiceAip.setAroVerIndiceAipUds(new ArrayList<>());
-	    indiceAip.setTiFormatoIndiceAip("UNISYNCRO");
-	}
+            String codiceVersione, String hash, String xml, CSVersatore versatore,
+            CSChiave chiave) {
+        AroIndiceAipUd indiceAip = context.getBusinessObject(CreazioneIndiceAipHelper.class)
+                .getAroIndiceAipUd(ud.getIdUnitaDoc());
+        // Chiamata locale, è giusto che partecipi alla stessa transazione. Non occorre che passi
+        // dal proxy EJB.
+        boolean persistiPadre = false;
+        // Se non esiste gia una versione, creo la prima
+        if (indiceAip == null) {
+            persistiPadre = true;
+            indiceAip = new AroIndiceAipUd();
+            indiceAip.setAroUnitaDoc(ud);
+            indiceAip.setAroVerIndiceAipUds(new ArrayList<>());
+            indiceAip.setTiFormatoIndiceAip("UNISYNCRO");
+        }
 
-	VolVolumeConserv vol = volHelper.getVolInfo(ud.getIdUnitaDoc());
-	DateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
+        VolVolumeConserv vol = volHelper.getVolInfo(ud.getIdUnitaDoc());
+        DateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
 
-	/* Inserisco ARO_VER_INDICE_AIP_UD */
-	AroVerIndiceAipUd verIndiceAip = new AroVerIndiceAipUd();
-	verIndiceAip.setAroIndiceAipUd(indiceAip);
-	verIndiceAip.setAroFileVerIndiceAipUds(new ArrayList<>());
-	verIndiceAip.setAroCompVerIndiceAipUds(new ArrayList<>());
-	verIndiceAip.setAroUrnVerIndiceAipUds(new ArrayList<>());
-	verIndiceAip.setPgVerIndiceAip(new BigDecimal(progressivoVersione));
-	verIndiceAip.setCdVerIndiceAip(codiceVersione);
-	verIndiceAip.setDtCreazione(new Date());
-	// EVO#16486
-	verIndiceAip.setDsHashIndiceAip(hash);
-	verIndiceAip.setDsAlgoHashIndiceAip(TipiHash.SHA_256.descrivi());
-	verIndiceAip.setCdEncodingHashIndiceAip(TipiEncBinari.HEX_BINARY.descrivi());
-	// end EVO#16486
-	verIndiceAip.setDsCausale("Aggiornamento alle nuove modalit\u00E0 di conservazione "
-		+ "di unit\u00E0 documentaria gi\u00E0 presente nel Volume di conservazione "
-		+ "n. " + vol.getIdVolumeConserv() + " del " + df.format(vol.getTmMarcaIndice()));
-	verIndiceAip.setCdVerXsdIndiceAip(Costanti.VERSIONE_XSD_INDICE_AIP);
-	verIndiceAip.setIdEnteConserv(indiceAip.getAroUnitaDoc().getOrgStrut().getOrgEnte()
-		.getOrgAmbiente().getIdEnteConserv());
-	indiceAip.getAroVerIndiceAipUds().add(verIndiceAip);
+        /* Inserisco ARO_VER_INDICE_AIP_UD */
+        AroVerIndiceAipUd verIndiceAip = new AroVerIndiceAipUd();
+        verIndiceAip.setAroIndiceAipUd(indiceAip);
+        verIndiceAip.setAroFileVerIndiceAipUds(new ArrayList<>());
+        verIndiceAip.setAroCompVerIndiceAipUds(new ArrayList<>());
+        verIndiceAip.setAroUrnVerIndiceAipUds(new ArrayList<>());
+        verIndiceAip.setPgVerIndiceAip(new BigDecimal(progressivoVersione));
+        verIndiceAip.setCdVerIndiceAip(codiceVersione);
+        verIndiceAip.setDtCreazione(new Date());
+        // EVO#16486
+        verIndiceAip.setDsHashIndiceAip(hash);
+        verIndiceAip.setDsAlgoHashIndiceAip(TipiHash.SHA_256.descrivi());
+        verIndiceAip.setCdEncodingHashIndiceAip(TipiEncBinari.HEX_BINARY.descrivi());
+        // end EVO#16486
+        verIndiceAip.setDsCausale("Aggiornamento alle nuove modalit\u00E0 di conservazione "
+                + "di unit\u00E0 documentaria gi\u00E0 presente nel Volume di conservazione "
+                + "n. " + vol.getIdVolumeConserv() + " del " + df.format(vol.getTmMarcaIndice()));
+        verIndiceAip.setCdVerXsdIndiceAip(Costanti.VERSIONE_XSD_INDICE_AIP);
+        verIndiceAip.setIdEnteConserv(indiceAip.getAroUnitaDoc().getOrgStrut().getOrgEnte()
+                .getOrgAmbiente().getIdEnteConserv());
+        indiceAip.getAroVerIndiceAipUds().add(verIndiceAip);
 
-	/* Inserisco ARO_COMP_VER_INDICE_AIP_UD */
-	List<AroCompDoc> aroCompDocs = compHelper.getAroCompDocsByIdUnitaDoc(ud.getIdUnitaDoc());
-	for (AroCompDoc compDoc : aroCompDocs) {
-	    AroCompVerIndiceAipUd compVerIndice = new AroCompVerIndiceAipUd();
-	    compVerIndice.setAroCompDoc(compDoc);
-	    compVerIndice.setAroVerIndiceAipUd(verIndiceAip);
-	    verIndiceAip.getAroCompVerIndiceAipUds().add(compVerIndice);
-	}
+        /* Inserisco ARO_COMP_VER_INDICE_AIP_UD */
+        List<AroCompDoc> aroCompDocs = compHelper.getAroCompDocsByIdUnitaDoc(ud.getIdUnitaDoc());
+        for (AroCompDoc compDoc : aroCompDocs) {
+            AroCompVerIndiceAipUd compVerIndice = new AroCompVerIndiceAipUd();
+            compVerIndice.setAroCompDoc(compDoc);
+            compVerIndice.setAroVerIndiceAipUd(verIndiceAip);
+            verIndiceAip.getAroCompVerIndiceAipUds().add(compVerIndice);
+        }
 
-	// EVO#16486
-	/* Inserisco ARO_URN_VER_INDICE_AIP_UD */
-	// calcolo parte urn ORIGINALE
-	String tmpUrn = MessaggiWSFormat.formattaBaseUrnUnitaDoc(
-		MessaggiWSFormat.formattaUrnPartVersatore(versatore),
-		MessaggiWSFormat.formattaUrnPartUnitaDoc(chiave));
-	// salvo ORIGINALE
-	AroUrnVerIndiceAipUd aroUrnVerIndiceAipUd = new AroUrnVerIndiceAipUd();
-	aroUrnVerIndiceAipUd.setDsUrn(
-		MessaggiWSFormat.formattaUrnIndiceAIP(tmpUrn, verIndiceAip.getCdVerIndiceAip(),
-			Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
-	aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.ORIGINALE);
-	aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
-	verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
+        // EVO#16486
+        /* Inserisco ARO_URN_VER_INDICE_AIP_UD */
+        // calcolo parte urn ORIGINALE
+        String tmpUrn = MessaggiWSFormat.formattaBaseUrnUnitaDoc(
+                MessaggiWSFormat.formattaUrnPartVersatore(versatore),
+                MessaggiWSFormat.formattaUrnPartUnitaDoc(chiave));
+        // salvo ORIGINALE
+        AroUrnVerIndiceAipUd aroUrnVerIndiceAipUd = new AroUrnVerIndiceAipUd();
+        aroUrnVerIndiceAipUd.setDsUrn(
+                MessaggiWSFormat.formattaUrnIndiceAIP(tmpUrn, verIndiceAip.getCdVerIndiceAip(),
+                        Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
+        aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.ORIGINALE);
+        aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
+        verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
 
-	// calcolo parte urn NORMALIZZATO
-	String tmpUrnNorm = MessaggiWSFormat.formattaBaseUrnUnitaDoc(
-		MessaggiWSFormat.formattaUrnPartVersatore(versatore, true,
-			Costanti.UrnFormatter.VERS_FMT_STRING),
-		MessaggiWSFormat.formattaUrnPartUnitaDoc(chiave, true,
-			Costanti.UrnFormatter.UD_FMT_STRING));
-	// salvo NORMALIZZATO
-	aroUrnVerIndiceAipUd = new AroUrnVerIndiceAipUd();
-	aroUrnVerIndiceAipUd.setDsUrn(
-		MessaggiWSFormat.formattaUrnIndiceAIP(tmpUrnNorm, verIndiceAip.getCdVerIndiceAip(),
-			Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
-	aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.NORMALIZZATO);
-	aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
-	verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
-	// end EVO#16486
+        // calcolo parte urn NORMALIZZATO
+        String tmpUrnNorm = MessaggiWSFormat.formattaBaseUrnUnitaDoc(
+                MessaggiWSFormat.formattaUrnPartVersatore(versatore, true,
+                        Costanti.UrnFormatter.VERS_FMT_STRING),
+                MessaggiWSFormat.formattaUrnPartUnitaDoc(chiave, true,
+                        Costanti.UrnFormatter.UD_FMT_STRING));
+        // salvo NORMALIZZATO
+        aroUrnVerIndiceAipUd = new AroUrnVerIndiceAipUd();
+        aroUrnVerIndiceAipUd.setDsUrn(
+                MessaggiWSFormat.formattaUrnIndiceAIP(tmpUrnNorm, verIndiceAip.getCdVerIndiceAip(),
+                        Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
+        aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.NORMALIZZATO);
+        aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
+        verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
+        // end EVO#16486
 
-	/* Persisto a seconda che l'elemento di AroIndiceAipUd sia gia presente o meno */
-	if (persistiPadre) {
-	    entityManager.persist(indiceAip);
-	} else if (verIndiceAip.getIdVerIndiceAip() == 0L) {
-	    entityManager.persist(verIndiceAip);
-	}
-	return verIndiceAip;
+        /* Persisto a seconda che l'elemento di AroIndiceAipUd sia gia presente o meno */
+        if (persistiPadre) {
+            entityManager.persist(indiceAip);
+        } else if (verIndiceAip.getIdVerIndiceAip() == 0L) {
+            entityManager.persist(verIndiceAip);
+        }
+        return verIndiceAip;
     }
 
     // MEV#30395
@@ -551,30 +551,30 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public AroFileVerIndiceAipUd insertFileVerIndiceAipUd(AroVerIndiceAipUd verIndiceAip,
-	    String annoMese, String xml) {
+            String annoMese, String xml) {
 
-	/* Inserisco record nella ARO_FILE_VER_INDICE_AIP_UD */
-	AroFileVerIndiceAipUd fileVerIndice = new AroFileVerIndiceAipUd();
-	fileVerIndice.setBlFileVerIndiceAip(xml);
-	fileVerIndice.setMmCreazione(new BigDecimal(annoMese));
-	fileVerIndice.setIdStrut(new BigDecimal(
-		verIndiceAip.getAroIndiceAipUd().getAroUnitaDoc().getOrgStrut().getIdStrut()));
-	fileVerIndice.setAroVerIndiceAipUd(verIndiceAip);
-	verIndiceAip.getAroFileVerIndiceAipUds().add(fileVerIndice);
+        /* Inserisco record nella ARO_FILE_VER_INDICE_AIP_UD */
+        AroFileVerIndiceAipUd fileVerIndice = new AroFileVerIndiceAipUd();
+        fileVerIndice.setBlFileVerIndiceAip(xml);
+        fileVerIndice.setMmCreazione(new BigDecimal(annoMese));
+        fileVerIndice.setIdStrut(new BigDecimal(
+                verIndiceAip.getAroIndiceAipUd().getAroUnitaDoc().getOrgStrut().getIdStrut()));
+        fileVerIndice.setAroVerIndiceAipUd(verIndiceAip);
+        verIndiceAip.getAroFileVerIndiceAipUds().add(fileVerIndice);
 
-	entityManager.persist(fileVerIndice);
+        entityManager.persist(fileVerIndice);
 
-	return fileVerIndice;
+        return fileVerIndice;
     }
     // end MEV#30395
 
     public void eliminaIndiceAipDaElab(AroIndiceAipUdDaElab udDaElab) {
-	entityManager.remove(udDaElab);
-	entityManager.flush();
+        entityManager.remove(udDaElab);
+        entityManager.flush();
     }
 
     public AroIndiceAipUdDaElab findAroIndiceAipUdDaElab(long idAroIndiceAipUdDaElab) {
-	return entityManager.find(AroIndiceAipUdDaElab.class, idAroIndiceAipUdDaElab);
+        return entityManager.find(AroIndiceAipUdDaElab.class, idAroIndiceAipUdDaElab);
     }
 
     /**
@@ -586,15 +586,15 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return true se esiste almeno un componente che soddisfa i requisti. false altrimenti.
      */
     public boolean checkComponentiPresentiCount(long idUnitaDoc, long idVerIndiceAip) {
-	String queryStr = "SELECT COUNT(compDoc) FROM AroCompDoc compDoc "
-		+ "WHERE compDoc.aroStrutDoc.aroDoc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-		+ "AND compDoc.aroStrutDoc.aroDoc.tiCreazione = 'AGGIUNTA_DOCUMENTO' "
-		+ "AND compDoc.idCompDoc NOT IN (SELECT compVerIndiceAipUd.aroCompDoc.idCompDoc "
-		+ "FROM AroCompVerIndiceAipUd compVerIndiceAipUd WHERE compVerIndiceAipUd.aroVerIndiceAipUd.idVerIndiceAip = :idVerIndiceAip) ";
-	TypedQuery<Long> query = entityManager.createQuery(queryStr, Long.class);
-	query.setParameter("idUnitaDoc", idUnitaDoc);
-	query.setParameter("idVerIndiceAip", idVerIndiceAip);
-	return query.getSingleResult().intValue() > 0;
+        String queryStr = "SELECT COUNT(compDoc) FROM AroCompDoc compDoc "
+                + "WHERE compDoc.aroStrutDoc.aroDoc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                + "AND compDoc.aroStrutDoc.aroDoc.tiCreazione = 'AGGIUNTA_DOCUMENTO' "
+                + "AND compDoc.idCompDoc NOT IN (SELECT compVerIndiceAipUd.aroCompDoc.idCompDoc "
+                + "FROM AroCompVerIndiceAipUd compVerIndiceAipUd WHERE compVerIndiceAipUd.aroVerIndiceAipUd.idVerIndiceAip = :idVerIndiceAip) ";
+        TypedQuery<Long> query = entityManager.createQuery(queryStr, Long.class);
+        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("idVerIndiceAip", idVerIndiceAip);
+        return query.getSingleResult().intValue() > 0;
     }
 
     // MAC#27786
@@ -609,14 +609,14 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *         altrimenti.
      */
     public boolean checkAggMdPresentiCount(long idUnitaDoc, long idVerIndiceAip) {
-	String queryStr = "SELECT COUNT(aggMd) FROM AroUpdUnitaDoc aggMd "
-		+ "WHERE aggMd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-		+ "AND aggMd.idUpdUnitaDoc NOT IN (SELECT updUdVerIndiceAipUd.aroUpdUnitaDoc.idUpdUnitaDoc "
-		+ "FROM AroUpdUdVerIndiceAipUd updUdVerIndiceAipUd WHERE updUdVerIndiceAipUd.aroVerIndiceAipUd.idVerIndiceAip = :idVerIndiceAip) ";
-	TypedQuery<Long> query = entityManager.createQuery(queryStr, Long.class);
-	query.setParameter("idUnitaDoc", idUnitaDoc);
-	query.setParameter("idVerIndiceAip", idVerIndiceAip);
-	return query.getSingleResult().intValue() > 0;
+        String queryStr = "SELECT COUNT(aggMd) FROM AroUpdUnitaDoc aggMd "
+                + "WHERE aggMd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                + "AND aggMd.idUpdUnitaDoc NOT IN (SELECT updUdVerIndiceAipUd.aroUpdUnitaDoc.idUpdUnitaDoc "
+                + "FROM AroUpdUdVerIndiceAipUd updUdVerIndiceAipUd WHERE updUdVerIndiceAipUd.aroVerIndiceAipUd.idVerIndiceAip = :idVerIndiceAip) ";
+        TypedQuery<Long> query = entityManager.createQuery(queryStr, Long.class);
+        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("idVerIndiceAip", idVerIndiceAip);
+        return query.getSingleResult().intValue() > 0;
     }
     // end MAC#27786
 
@@ -630,12 +630,12 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return int pk documento aggiunto su elenco indice aip
      */
     public int updateDocumentiAggiuntiElencoIndiceAIP(long idUnitaDoc, long idElencoVers) {
-	Query query = entityManager.createQuery(
-		"UPDATE AroDoc doc SET doc.tiStatoDocElencoVers = 'IN_ELENCO_CON_INDICI_AIP_GENERATI' WHERE doc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc AND doc.tiCreazione = :tiCreazione AND doc.elvElencoVer.idElencoVers = :idElencoVers");
-	query.setParameter("idUnitaDoc", idUnitaDoc);
-	query.setParameter("tiCreazione", CostantiDB.TipoCreazioneDoc.AGGIUNTA_DOCUMENTO.name());
-	query.setParameter("idElencoVers", idElencoVers);
-	return query.executeUpdate();
+        Query query = entityManager.createQuery(
+                "UPDATE AroDoc doc SET doc.tiStatoDocElencoVers = 'IN_ELENCO_CON_INDICI_AIP_GENERATI' WHERE doc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc AND doc.tiCreazione = :tiCreazione AND doc.elvElencoVer.idElencoVers = :idElencoVers");
+        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("tiCreazione", CostantiDB.TipoCreazioneDoc.AGGIUNTA_DOCUMENTO.name());
+        query.setParameter("idElencoVers", idElencoVers);
+        return query.executeUpdate();
     }
 
     /**
@@ -648,11 +648,11 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return il numero di record aggiornati
      */
     public int updateDocumentiElencoIndiceAIP(long idElencoVers, String tiStatoElenco) {
-	Query query = entityManager.createQuery(
-		"UPDATE AroDoc doc SET doc.tiStatoDocElencoVers = :tiStatoElenco WHERE doc.elvElencoVer.idElencoVers = :idElencoVers");
-	query.setParameter("idElencoVers", idElencoVers);
-	query.setParameter("tiStatoElenco", tiStatoElenco);
-	return query.executeUpdate();
+        Query query = entityManager.createQuery(
+                "UPDATE AroDoc doc SET doc.tiStatoDocElencoVers = :tiStatoElenco WHERE doc.elvElencoVer.idElencoVers = :idElencoVers");
+        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("tiStatoElenco", tiStatoElenco);
+        return query.executeUpdate();
     }
 
     /**
@@ -666,24 +666,24 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return il numero di record aggiornati
      */
     public int updateDocumentiElencoIndiceAIP(long idElencoVers,
-	    List<String> tiStatoDocElencoVersOld, String tiStatoDocElencoVersNew) {
-	StringBuilder queryStr = new StringBuilder(
-		"UPDATE AroDoc doc SET doc.tiStatoDocElencoVers = :tiStatoDocElencoVersNew "
-			+ "WHERE doc.elvElencoVer.idElencoVers = :idElencoVers ");
+            List<String> tiStatoDocElencoVersOld, String tiStatoDocElencoVersNew) {
+        StringBuilder queryStr = new StringBuilder(
+                "UPDATE AroDoc doc SET doc.tiStatoDocElencoVers = :tiStatoDocElencoVersNew "
+                        + "WHERE doc.elvElencoVer.idElencoVers = :idElencoVers ");
 
-	if (tiStatoDocElencoVersOld != null && !tiStatoDocElencoVersOld.isEmpty()) {
-	    queryStr.append("AND doc.tiStatoDocElencoVers IN (:tiStatoDocElencoVersOld) ");
-	}
+        if (tiStatoDocElencoVersOld != null && !tiStatoDocElencoVersOld.isEmpty()) {
+            queryStr.append("AND doc.tiStatoDocElencoVers IN (:tiStatoDocElencoVersOld) ");
+        }
 
-	Query query = entityManager.createQuery(queryStr.toString());
-	query.setParameter("idElencoVers", idElencoVers);
-	query.setParameter("tiStatoDocElencoVersNew", tiStatoDocElencoVersNew);
+        Query query = entityManager.createQuery(queryStr.toString());
+        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("tiStatoDocElencoVersNew", tiStatoDocElencoVersNew);
 
-	if (tiStatoDocElencoVersOld != null && !tiStatoDocElencoVersOld.isEmpty()) {
-	    query.setParameter("tiStatoDocElencoVersOld", tiStatoDocElencoVersOld);
-	}
+        if (tiStatoDocElencoVersOld != null && !tiStatoDocElencoVersOld.isEmpty()) {
+            query.setParameter("tiStatoDocElencoVersOld", tiStatoDocElencoVersOld);
+        }
 
-	return query.executeUpdate();
+        return query.executeUpdate();
     }
 
     /**
@@ -697,21 +697,21 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return int numero aggiornati
      */
     public int updateAggiornamentiMetadatiElencoIndiceAIP(long idUnitaDoc, long idElencoVers,
-	    AroUpdUDTiStatoUpdElencoVers stato) {
-	TypedQuery<AroUpdUnitaDoc> query = entityManager.createQuery(
-		"SELECT upd " + "FROM AroUpdUnitaDoc upd "
-			+ "WHERE upd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-			+ "AND upd.elvElencoVer.idElencoVers = :idElencoVers",
-		AroUpdUnitaDoc.class);
-	query.setParameter("idUnitaDoc", idUnitaDoc).setParameter("idElencoVers", idElencoVers);
-	List<AroUpdUnitaDoc> lstUpd = query.getResultList();
+            AroUpdUDTiStatoUpdElencoVers stato) {
+        TypedQuery<AroUpdUnitaDoc> query = entityManager.createQuery(
+                "SELECT upd " + "FROM AroUpdUnitaDoc upd "
+                        + "WHERE upd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                        + "AND upd.elvElencoVer.idElencoVers = :idElencoVers",
+                AroUpdUnitaDoc.class);
+        query.setParameter("idUnitaDoc", idUnitaDoc).setParameter("idElencoVers", idElencoVers);
+        List<AroUpdUnitaDoc> lstUpd = query.getResultList();
 
-	for (AroUpdUnitaDoc aroUpdUnitaDoc : lstUpd) {
-	    aroUpdUnitaDoc.setTiStatoUpdElencoVers(stato);
-	    entityManager.persist(aroUpdUnitaDoc);
-	}
+        for (AroUpdUnitaDoc aroUpdUnitaDoc : lstUpd) {
+            aroUpdUnitaDoc.setTiStatoUpdElencoVers(stato);
+            entityManager.persist(aroUpdUnitaDoc);
+        }
 
-	return lstUpd.size();
+        return lstUpd.size();
     }
 
     /**
@@ -725,25 +725,25 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return il numero di record aggiornati
      */
     public int updateAggiornamentiElencoIndiceAIP(long idElencoVers,
-	    List<AroUpdUDTiStatoUpdElencoVers> tiStatoUpdElencoVersOld,
-	    AroUpdUDTiStatoUpdElencoVers tiStatoUpdElencoVersNew) {
-	StringBuilder queryStr = new StringBuilder(
-		"UPDATE AroUpdUnitaDoc upd SET upd.tiStatoUpdElencoVers = :tiStatoUpdElencoVersNew "
-			+ "WHERE upd.elvElencoVer.idElencoVers = :idElencoVers ");
+            List<AroUpdUDTiStatoUpdElencoVers> tiStatoUpdElencoVersOld,
+            AroUpdUDTiStatoUpdElencoVers tiStatoUpdElencoVersNew) {
+        StringBuilder queryStr = new StringBuilder(
+                "UPDATE AroUpdUnitaDoc upd SET upd.tiStatoUpdElencoVers = :tiStatoUpdElencoVersNew "
+                        + "WHERE upd.elvElencoVer.idElencoVers = :idElencoVers ");
 
-	if (tiStatoUpdElencoVersOld != null && !tiStatoUpdElencoVersOld.isEmpty()) {
-	    queryStr.append("AND upd.tiStatoUpdElencoVers IN (:tiStatoUpdElencoVersOld) ");
-	}
+        if (tiStatoUpdElencoVersOld != null && !tiStatoUpdElencoVersOld.isEmpty()) {
+            queryStr.append("AND upd.tiStatoUpdElencoVers IN (:tiStatoUpdElencoVersOld) ");
+        }
 
-	Query query = entityManager.createQuery(queryStr.toString());
-	query.setParameter("idElencoVers", idElencoVers);
-	query.setParameter("tiStatoUpdElencoVersNew", tiStatoUpdElencoVersNew);
+        Query query = entityManager.createQuery(queryStr.toString());
+        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("tiStatoUpdElencoVersNew", tiStatoUpdElencoVersNew);
 
-	if (tiStatoUpdElencoVersOld != null && !tiStatoUpdElencoVersOld.isEmpty()) {
-	    query.setParameter("tiStatoUpdElencoVersOld", tiStatoUpdElencoVersOld);
-	}
+        if (tiStatoUpdElencoVersOld != null && !tiStatoUpdElencoVersOld.isEmpty()) {
+            query.setParameter("tiStatoUpdElencoVersOld", tiStatoUpdElencoVersOld);
+        }
 
-	return query.executeUpdate();
+        return query.executeUpdate();
     }
 
     /**
@@ -759,35 +759,35 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return il numero di record aggiornati
      */
     public int updateDocumentiElencoIndiceAIPStatoConservDiverso(long idElencoVers,
-	    String tiStatoConservazione, String tiStatoDocElencoVersCor, String tiStatoElenco) {
-	StringBuilder queryStr = new StringBuilder("SELECT doc FROM AroDoc doc "
-		+ "WHERE doc.elvElencoVer.idElencoVers = :idElencoVers ");
+            String tiStatoConservazione, String tiStatoDocElencoVersCor, String tiStatoElenco) {
+        StringBuilder queryStr = new StringBuilder("SELECT doc FROM AroDoc doc "
+                + "WHERE doc.elvElencoVer.idElencoVers = :idElencoVers ");
 
-	if (tiStatoConservazione != null) {
-	    queryStr.append("AND doc.aroUnitaDoc.tiStatoConservazione != :tiStatoConservazione ");
-	}
+        if (tiStatoConservazione != null) {
+            queryStr.append("AND doc.aroUnitaDoc.tiStatoConservazione != :tiStatoConservazione ");
+        }
 
-	if (tiStatoDocElencoVersCor != null) {
-	    queryStr.append("AND doc.tiStatoDocElencoVers = :tiStatoDocElencoVersCor ");
-	}
+        if (tiStatoDocElencoVersCor != null) {
+            queryStr.append("AND doc.tiStatoDocElencoVers = :tiStatoDocElencoVersCor ");
+        }
 
-	queryStr.insert(0,
-		"UPDATE AroDoc ad SET ad.tiStatoDocElencoVers = :tiStatoElenco WHERE ad IN (");
-	queryStr.append(")");
-	Query query = entityManager.createQuery(queryStr.toString());
+        queryStr.insert(0,
+                "UPDATE AroDoc ad SET ad.tiStatoDocElencoVers = :tiStatoElenco WHERE ad IN (");
+        queryStr.append(")");
+        Query query = entityManager.createQuery(queryStr.toString());
 
-	query.setParameter("idElencoVers", idElencoVers);
-	query.setParameter("tiStatoElenco", tiStatoElenco);
+        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("tiStatoElenco", tiStatoElenco);
 
-	if (tiStatoConservazione != null) {
-	    query.setParameter("tiStatoConservazione", tiStatoConservazione);
-	}
+        if (tiStatoConservazione != null) {
+            query.setParameter("tiStatoConservazione", tiStatoConservazione);
+        }
 
-	if (tiStatoDocElencoVersCor != null) {
-	    query.setParameter("tiStatoDocElencoVersCor", tiStatoDocElencoVersCor);
-	}
+        if (tiStatoDocElencoVersCor != null) {
+            query.setParameter("tiStatoDocElencoVersCor", tiStatoDocElencoVersCor);
+        }
 
-	return query.executeUpdate();
+        return query.executeUpdate();
     }
 
     /**
@@ -803,36 +803,36 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return il numero di record aggiornati
      */
     public int updateAggiornamentiElencoIndiceAIPStatoConservDiverso(long idElencoVers,
-	    String tiStatoConservazione, AroUpdUDTiStatoUpdElencoVers tiStatoUpdElencoVersCor,
-	    AroUpdUDTiStatoUpdElencoVers tiStatoElenco) {
-	StringBuilder queryStr = new StringBuilder("SELECT upd FROM AroUpdUnitaDoc upd "
-		+ "WHERE upd.elvElencoVer.idElencoVers = :idElencoVers ");
+            String tiStatoConservazione, AroUpdUDTiStatoUpdElencoVers tiStatoUpdElencoVersCor,
+            AroUpdUDTiStatoUpdElencoVers tiStatoElenco) {
+        StringBuilder queryStr = new StringBuilder("SELECT upd FROM AroUpdUnitaDoc upd "
+                + "WHERE upd.elvElencoVer.idElencoVers = :idElencoVers ");
 
-	if (tiStatoConservazione != null) {
-	    queryStr.append("AND upd.aroUnitaDoc.tiStatoConservazione != :tiStatoConservazione ");
-	}
+        if (tiStatoConservazione != null) {
+            queryStr.append("AND upd.aroUnitaDoc.tiStatoConservazione != :tiStatoConservazione ");
+        }
 
-	if (tiStatoUpdElencoVersCor != null) {
-	    queryStr.append("AND upd.tiStatoUpdElencoVers = :tiStatoUpdElencoVersCor ");
-	}
+        if (tiStatoUpdElencoVersCor != null) {
+            queryStr.append("AND upd.tiStatoUpdElencoVers = :tiStatoUpdElencoVersCor ");
+        }
 
-	queryStr.insert(0,
-		"UPDATE AroUpdUnitaDoc a SET a.tiStatoUpdElencoVers = :tiStatoElenco WHERE a IN (");
-	queryStr.append(")");
-	Query query = entityManager.createQuery(queryStr.toString());
+        queryStr.insert(0,
+                "UPDATE AroUpdUnitaDoc a SET a.tiStatoUpdElencoVers = :tiStatoElenco WHERE a IN (");
+        queryStr.append(")");
+        Query query = entityManager.createQuery(queryStr.toString());
 
-	query.setParameter("idElencoVers", idElencoVers);
-	query.setParameter("tiStatoElenco", tiStatoElenco);
+        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("tiStatoElenco", tiStatoElenco);
 
-	if (tiStatoConservazione != null) {
-	    query.setParameter("tiStatoConservazione", tiStatoConservazione);
-	}
+        if (tiStatoConservazione != null) {
+            query.setParameter("tiStatoConservazione", tiStatoConservazione);
+        }
 
-	if (tiStatoUpdElencoVersCor != null) {
-	    query.setParameter("tiStatoUpdElencoVersCor", tiStatoUpdElencoVersCor);
-	}
+        if (tiStatoUpdElencoVersCor != null) {
+            query.setParameter("tiStatoUpdElencoVersCor", tiStatoUpdElencoVersCor);
+        }
 
-	return query.executeUpdate();
+        return query.executeUpdate();
     }
 
     /**
@@ -845,11 +845,11 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return il numero di record aggiornati
      */
     public int updateUnitaDocElencoIndiceAIP(long idElencoVers, String tiStatoElenco) {
-	Query query = entityManager.createQuery(
-		"UPDATE AroUnitaDoc ud SET ud.tiStatoUdElencoVers = :tiStatoElenco WHERE ud.elvElencoVer.idElencoVers = :idElencoVers");
-	query.setParameter("idElencoVers", idElencoVers);
-	query.setParameter("tiStatoElenco", tiStatoElenco);
-	return query.executeUpdate();
+        Query query = entityManager.createQuery(
+                "UPDATE AroUnitaDoc ud SET ud.tiStatoUdElencoVers = :tiStatoElenco WHERE ud.elvElencoVer.idElencoVers = :idElencoVers");
+        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("tiStatoElenco", tiStatoElenco);
+        return query.executeUpdate();
     }
 
     /**
@@ -863,24 +863,24 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return il numero di record aggiornati
      */
     public int updateUnitaDocElencoIndiceAIP(long idElencoVers, List<String> tiStatoUdElencoVersOld,
-	    String tiStatoUdElencoVersNew) {
-	StringBuilder queryStr = new StringBuilder(
-		"UPDATE AroUnitaDoc ud SET ud.tiStatoUdElencoVers = :tiStatoUdElencoVersNew "
-			+ "WHERE ud.elvElencoVer.idElencoVers = :idElencoVers ");
+            String tiStatoUdElencoVersNew) {
+        StringBuilder queryStr = new StringBuilder(
+                "UPDATE AroUnitaDoc ud SET ud.tiStatoUdElencoVers = :tiStatoUdElencoVersNew "
+                        + "WHERE ud.elvElencoVer.idElencoVers = :idElencoVers ");
 
-	if (tiStatoUdElencoVersOld != null && !tiStatoUdElencoVersOld.isEmpty()) {
-	    queryStr.append("AND ud.tiStatoUdElencoVers IN (:tiStatoUdElencoVersOld) ");
-	}
-	Query query = entityManager.createQuery(queryStr.toString());
+        if (tiStatoUdElencoVersOld != null && !tiStatoUdElencoVersOld.isEmpty()) {
+            queryStr.append("AND ud.tiStatoUdElencoVers IN (:tiStatoUdElencoVersOld) ");
+        }
+        Query query = entityManager.createQuery(queryStr.toString());
 
-	query.setParameter("idElencoVers", idElencoVers);
-	query.setParameter("tiStatoUdElencoVersNew", tiStatoUdElencoVersNew);
+        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("tiStatoUdElencoVersNew", tiStatoUdElencoVersNew);
 
-	if (tiStatoUdElencoVersOld != null && !tiStatoUdElencoVersOld.isEmpty()) {
-	    query.setParameter("tiStatoUdElencoVersOld", tiStatoUdElencoVersOld);
-	}
+        if (tiStatoUdElencoVersOld != null && !tiStatoUdElencoVersOld.isEmpty()) {
+            query.setParameter("tiStatoUdElencoVersOld", tiStatoUdElencoVersOld);
+        }
 
-	return query.executeUpdate();
+        return query.executeUpdate();
     }
 
     /**
@@ -896,96 +896,96 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return il numero di record aggiornati
      */
     public int updateUnitaDocElencoIndiceAIPStatoConvervDiverso(long idElencoVers,
-	    String tiStatoConservazione, String tiStatoUdElencoVersCor, String tiStatoElenco) {
-	StringBuilder queryStr = new StringBuilder(
-		"UPDATE AroUnitaDoc ud SET ud.tiStatoUdElencoVers = :tiStatoElenco "
-			+ "WHERE ud.elvElencoVer.idElencoVers = :idElencoVers ");
+            String tiStatoConservazione, String tiStatoUdElencoVersCor, String tiStatoElenco) {
+        StringBuilder queryStr = new StringBuilder(
+                "UPDATE AroUnitaDoc ud SET ud.tiStatoUdElencoVers = :tiStatoElenco "
+                        + "WHERE ud.elvElencoVer.idElencoVers = :idElencoVers ");
 
-	if (tiStatoConservazione != null) {
-	    queryStr.append("AND ud.tiStatoConservazione != :tiStatoConservazione ");
-	}
+        if (tiStatoConservazione != null) {
+            queryStr.append("AND ud.tiStatoConservazione != :tiStatoConservazione ");
+        }
 
-	if (tiStatoUdElencoVersCor != null) {
-	    queryStr.append("AND ud.tiStatoUdElencoVers = :tiStatoUdElencoVersCor ");
-	}
+        if (tiStatoUdElencoVersCor != null) {
+            queryStr.append("AND ud.tiStatoUdElencoVers = :tiStatoUdElencoVersCor ");
+        }
 
-	Query query = entityManager.createQuery(queryStr.toString());
+        Query query = entityManager.createQuery(queryStr.toString());
 
-	query.setParameter("idElencoVers", idElencoVers);
-	query.setParameter("tiStatoElenco", tiStatoElenco);
+        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("tiStatoElenco", tiStatoElenco);
 
-	if (tiStatoConservazione != null) {
-	    query.setParameter("tiStatoConservazione", tiStatoConservazione);
-	}
+        if (tiStatoConservazione != null) {
+            query.setParameter("tiStatoConservazione", tiStatoConservazione);
+        }
 
-	if (tiStatoUdElencoVersCor != null) {
-	    query.setParameter("tiStatoUdElencoVersCor", tiStatoUdElencoVersCor);
-	}
+        if (tiStatoUdElencoVersCor != null) {
+            query.setParameter("tiStatoUdElencoVersCor", tiStatoUdElencoVersCor);
+        }
 
-	return query.executeUpdate();
+        return query.executeUpdate();
     }
 
     public List<AroVerIndiceAipUd> retrieveAroVerIndiceAipUdOrdered(long idElencoVers) {
-	Query query = entityManager
-		.createQuery("SELECT verIndiceAipUd FROM AroVerIndiceAipUd verIndiceAipUd "
-			+ "JOIN verIndiceAipUd.aroIndiceAipUd indiceAipUd "
-			+ "JOIN indiceAipUd.aroUnitaDoc ud "
-			+ "WHERE verIndiceAipUd.elvElencoVer.idElencoVers = :idElencoVers "
-			+ "AND ud.tiStatoConservazione != 'ANNULLATA' "
-			+ "ORDER BY ud.dsKeyOrd, verIndiceAipUd.pgVerIndiceAip");
-	query.setParameter("idElencoVers", idElencoVers);
-	return query.getResultList();
+        Query query = entityManager
+                .createQuery("SELECT verIndiceAipUd FROM AroVerIndiceAipUd verIndiceAipUd "
+                        + "JOIN verIndiceAipUd.aroIndiceAipUd indiceAipUd "
+                        + "JOIN indiceAipUd.aroUnitaDoc ud "
+                        + "WHERE verIndiceAipUd.elvElencoVer.idElencoVers = :idElencoVers "
+                        + "AND ud.tiStatoConservazione != 'ANNULLATA' "
+                        + "ORDER BY ud.dsKeyOrd, verIndiceAipUd.pgVerIndiceAip");
+        query.setParameter("idElencoVers", idElencoVers);
+        return query.getResultList();
     }
 
     public List<SerVerSerie> getVersioniSerieCorrentiContenEffettivoByUdAndStato(long idUnitaDoc,
-	    String... statiSerie) {
-	Query query = getEntityManager()
-		.createQuery("SELECT DISTINCT v FROM AroUdAppartVerSerie u, SerStatoVerSerie stato "
-			+ "JOIN u.serContenutoVerSerie c JOIN c.serVerSerie v JOIN v.serSerie s "
-			+ "WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-			+ "AND c.tiContenutoVerSerie = 'EFFETTIVO' "
-			+ "AND v.pgVerSerie = (SELECT MAX(versCorr.pgVerSerie) FROM SerVerSerie versCorr WHERE versCorr.serSerie.idSerie = s.idSerie) "
-			+ "AND v.idStatoVerSerieCor = stato.idStatoVerSerie "
-			+ "AND ((stato.tiStatoVerSerie IN (:statiSerie)) OR (stato.tiStatoVerSerie = 'DA_CONTROLLARE' AND c.tiStatoContenutoVerSerie = 'CONTROLLO_CONSIST_IN_CORSO')) "
-			+ "AND s.dtAnnul = :defaultAnnul");
+            String... statiSerie) {
+        Query query = getEntityManager()
+                .createQuery("SELECT DISTINCT v FROM AroUdAppartVerSerie u, SerStatoVerSerie stato "
+                        + "JOIN u.serContenutoVerSerie c JOIN c.serVerSerie v JOIN v.serSerie s "
+                        + "WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                        + "AND c.tiContenutoVerSerie = 'EFFETTIVO' "
+                        + "AND v.pgVerSerie = (SELECT MAX(versCorr.pgVerSerie) FROM SerVerSerie versCorr WHERE versCorr.serSerie.idSerie = s.idSerie) "
+                        + "AND v.idStatoVerSerieCor = stato.idStatoVerSerie "
+                        + "AND ((stato.tiStatoVerSerie IN (:statiSerie)) OR (stato.tiStatoVerSerie = 'DA_CONTROLLARE' AND c.tiStatoContenutoVerSerie = 'CONTROLLO_CONSIST_IN_CORSO')) "
+                        + "AND s.dtAnnul = :defaultAnnul");
 
-	query.setParameter("idUnitaDoc", idUnitaDoc);
-	query.setParameter("statiSerie", Arrays.asList(statiSerie));
-	Calendar c = Calendar.getInstance();
-	c.set(Calendar.HOUR_OF_DAY, 0);
-	c.set(Calendar.MINUTE, 0);
-	c.set(Calendar.SECOND, 0);
-	c.set(Calendar.MILLISECOND, 0);
-	c.set(Calendar.YEAR, 2444);
-	c.set(Calendar.MONTH, Calendar.DECEMBER);
-	c.set(Calendar.DATE, 31);
-	query.setParameter("defaultAnnul", c.getTime());
+        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("statiSerie", Arrays.asList(statiSerie));
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        c.set(Calendar.YEAR, 2444);
+        c.set(Calendar.MONTH, Calendar.DECEMBER);
+        c.set(Calendar.DATE, 31);
+        query.setParameter("defaultAnnul", c.getTime());
 
-	return query.getResultList();
+        return query.getResultList();
     }
 
     public List<FasFascicolo> getFascicoliByUdAndStato(long idUnitaDoc,
-	    TiStatoFascElencoVers... statiFascicolo) {
-	Query query = getEntityManager()
-		.createQuery("SELECT DISTINCT f FROM FasUnitaDocFascicolo u JOIN u.fasFascicolo f "
-			+ "WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-			+ "AND f.tiStatoFascElencoVers IN (:statiFascicolo) "
-			+ "AND f.dtAnnull = :defaultAnnul");
+            TiStatoFascElencoVers... statiFascicolo) {
+        Query query = getEntityManager()
+                .createQuery("SELECT DISTINCT f FROM FasUnitaDocFascicolo u JOIN u.fasFascicolo f "
+                        + "WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                        + "AND f.tiStatoFascElencoVers IN (:statiFascicolo) "
+                        + "AND f.dtAnnull = :defaultAnnul");
 
-	query.setParameter("idUnitaDoc", idUnitaDoc);
-	query.setParameter("statiFascicolo", Arrays.asList(statiFascicolo));
+        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("statiFascicolo", Arrays.asList(statiFascicolo));
 
-	Calendar c = Calendar.getInstance();
-	c.set(Calendar.HOUR_OF_DAY, 0);
-	c.set(Calendar.MINUTE, 0);
-	c.set(Calendar.SECOND, 0);
-	c.set(Calendar.MILLISECOND, 0);
-	c.set(Calendar.YEAR, 2444);
-	c.set(Calendar.MONTH, Calendar.DECEMBER);
-	c.set(Calendar.DATE, 31);
-	query.setParameter("defaultAnnul", c.getTime());
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        c.set(Calendar.YEAR, 2444);
+        c.set(Calendar.MONTH, Calendar.DECEMBER);
+        c.set(Calendar.DATE, 31);
+        query.setParameter("defaultAnnul", c.getTime());
 
-	return query.getResultList();
+        return query.getResultList();
     }
 
     /**
@@ -996,12 +996,12 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return lista oggetti di tipo {@link AroVLisLinkUnitaDoc}
      */
     public List<AroLinkUnitaDoc> getAroLinkUnitaDoc(long idUnitaDoc) {
-	String queryStr = "SELECT u FROM AroLinkUnitaDoc u WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-		+ "AND u.aroUnitaDocLink is not null " + "ORDER BY u.aroUnitaDocLink";
+        String queryStr = "SELECT u FROM AroLinkUnitaDoc u WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                + "AND u.aroUnitaDocLink is not null " + "ORDER BY u.aroUnitaDocLink";
 
-	Query query = getEntityManager().createQuery(queryStr);
-	query.setParameter("idUnitaDoc", idUnitaDoc);
-	return query.getResultList();
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idUnitaDoc", idUnitaDoc);
+        return query.getResultList();
     }
 
     /**
@@ -1012,71 +1012,71 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      * @return entity di tipo AroVerIndiceAipUd
      */
     public AroVerIndiceAipUd getUltimaVersioneIndiceAip(long idUnitaDoc) {
-	Query q = getEntityManager().createQuery("SELECT u FROM AroVerIndiceAipUd u "
-		+ "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-		+ "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' "
-		+ "ORDER BY u.pgVerIndiceAip DESC ");
-	q.setParameter("idUnitaDoc", idUnitaDoc);
-	List<AroVerIndiceAipUd> lista = q.getResultList();
-	if (!lista.isEmpty()) {
-	    return lista.get(0);
-	}
-	return null;
+        Query q = getEntityManager().createQuery("SELECT u FROM AroVerIndiceAipUd u "
+                + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                + "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' "
+                + "ORDER BY u.pgVerIndiceAip DESC ");
+        q.setParameter("idUnitaDoc", idUnitaDoc);
+        List<AroVerIndiceAipUd> lista = q.getResultList();
+        if (!lista.isEmpty()) {
+            return lista.get(0);
+        }
+        return null;
     }
 
     public AroVDtVersMaxByUnitaDoc getAroVDtVersMaxByUd(long idUnitaDoc) {
-	String queryStr = "SELECT aro FROM AroVDtVersMaxByUnitaDoc aro WHERE aro.idUnitaDoc = :idUnitaDoc ";
-	Query query = getEntityManager().createQuery(queryStr);
-	query.setParameter("idUnitaDoc", bigDecimalFromLong(idUnitaDoc));
-	List<AroVDtVersMaxByUnitaDoc> lista = query.getResultList();
-	if (!lista.isEmpty()) {
-	    return lista.get(0);
-	}
-	return null;
+        String queryStr = "SELECT aro FROM AroVDtVersMaxByUnitaDoc aro WHERE aro.idUnitaDoc = :idUnitaDoc ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idUnitaDoc", bigDecimalFromLong(idUnitaDoc));
+        List<AroVDtVersMaxByUnitaDoc> lista = query.getResultList();
+        if (!lista.isEmpty()) {
+            return lista.get(0);
+        }
+        return null;
     }
 
     public List<ElvVLisaipudUrndacalcByele> getElvVLisaipudUrndacalcByele(long idElencoVers) {
-	String queryStr = "SELECT elv FROM ElvVLisaipudUrndacalcByele elv WHERE elv.id.idElencoVers = :idElencoVers ";
-	Query query = getEntityManager().createQuery(queryStr);
-	query.setParameter("idElencoVers", HibernateUtils.bigDecimalFrom(idElencoVers));
-	return query.getResultList();
+        String queryStr = "SELECT elv FROM ElvVLisaipudUrndacalcByele elv WHERE elv.id.idElencoVers = :idElencoVers ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idElencoVers", HibernateUtils.bigDecimalFrom(idElencoVers));
+        return query.getResultList();
     }
 
     // MEV#17709
     public boolean riparaCollegamentiUdNonRisolti(AroUnitaDoc ud) {
-	boolean tmpReturn = true;
-	/*
-	 * aggiusto gli eventuali collegamenti di unità documentarie non risolti e forzati durante
-	 * il versamento. Cerco tutti i collegamenti che puntano all'UD appena inserita (li cerco
-	 * per la tupla che definisce la chiave) e in ognuno di essi valorizzo il campo
-	 * aroUnitaDocLink con il valore dell'UD appena creata.
-	 */
-	long numCollAggiustati;
-	String queryStr = "update AroLinkUnitaDoc al "
-		+ "set al.aroUnitaDocLink = :aroUnitaDocLinkIn "
-		+ "where al.aroUnitaDocLink is null " + "and al.idStrut = :idStrutIn "
-		+ "and al.aaKeyUnitaDocLink = :aaKeyUnitaDocLinkIn "
-		+ "and al.cdKeyUnitaDocLink = :cdKeyUnitaDocLinkIn "
-		+ "and al.cdRegistroKeyUnitaDocLink = :cdRegistroKeyUnitaDocLinkIn ";
-	javax.persistence.Query query = entityManager.createQuery(queryStr);
-	query.setParameter("aroUnitaDocLinkIn", ud);
-	query.setParameter("idStrutIn", new BigDecimal(ud.getOrgStrut().getIdStrut()));
-	query.setParameter("cdRegistroKeyUnitaDocLinkIn", ud.getCdRegistroKeyUnitaDoc());
-	query.setParameter("aaKeyUnitaDocLinkIn", ud.getAaKeyUnitaDoc());
-	query.setParameter("cdKeyUnitaDocLinkIn", ud.getCdKeyUnitaDoc());
-	try {
-	    numCollAggiustati = query.executeUpdate();
-	    if (numCollAggiustati > 0) {
-		log.debug("Sono stati connessi {} collegamenti forzati da precedenti versamenti",
-			numCollAggiustati);
-	    }
-	} catch (RuntimeException re) {
-	    /// logga l'errore e blocca tutto
-	    log.error("Eccezione nell'aggiornamento della tabella AroLinkUnitaDoc ", re);
-	    tmpReturn = false;
-	}
+        boolean tmpReturn = true;
+        /*
+         * aggiusto gli eventuali collegamenti di unità documentarie non risolti e forzati durante
+         * il versamento. Cerco tutti i collegamenti che puntano all'UD appena inserita (li cerco
+         * per la tupla che definisce la chiave) e in ognuno di essi valorizzo il campo
+         * aroUnitaDocLink con il valore dell'UD appena creata.
+         */
+        long numCollAggiustati;
+        String queryStr = "update AroLinkUnitaDoc al "
+                + "set al.aroUnitaDocLink = :aroUnitaDocLinkIn "
+                + "where al.aroUnitaDocLink is null " + "and al.idStrut = :idStrutIn "
+                + "and al.aaKeyUnitaDocLink = :aaKeyUnitaDocLinkIn "
+                + "and al.cdKeyUnitaDocLink = :cdKeyUnitaDocLinkIn "
+                + "and al.cdRegistroKeyUnitaDocLink = :cdRegistroKeyUnitaDocLinkIn ";
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        query.setParameter("aroUnitaDocLinkIn", ud);
+        query.setParameter("idStrutIn", new BigDecimal(ud.getOrgStrut().getIdStrut()));
+        query.setParameter("cdRegistroKeyUnitaDocLinkIn", ud.getCdRegistroKeyUnitaDoc());
+        query.setParameter("aaKeyUnitaDocLinkIn", ud.getAaKeyUnitaDoc());
+        query.setParameter("cdKeyUnitaDocLinkIn", ud.getCdKeyUnitaDoc());
+        try {
+            numCollAggiustati = query.executeUpdate();
+            if (numCollAggiustati > 0) {
+                log.debug("Sono stati connessi {} collegamenti forzati da precedenti versamenti",
+                        numCollAggiustati);
+            }
+        } catch (RuntimeException re) {
+            /// logga l'errore e blocca tutto
+            log.error("Eccezione nell'aggiornamento della tabella AroLinkUnitaDoc ", re);
+            tmpReturn = false;
+        }
 
-	return tmpReturn;
+        return tmpReturn;
     }
     // end MEV#17709
 }

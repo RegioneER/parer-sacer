@@ -36,112 +36,112 @@ public class DecErrAaRegistroUnitaDocRowBean extends BaseRow implements JEEBaseR
     public static DecErrAaRegistroUnitaDocTableDescriptor TABLE_DESCRIPTOR = new DecErrAaRegistroUnitaDocTableDescriptor();
 
     public DecErrAaRegistroUnitaDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdErrAaRegistroUnitaDoc() {
-	return getBigDecimal("id_err_aa_registro_unita_doc");
+        return getBigDecimal("id_err_aa_registro_unita_doc");
     }
 
     public void setIdErrAaRegistroUnitaDoc(BigDecimal idErrAaRegistroUnitaDoc) {
-	setObject("id_err_aa_registro_unita_doc", idErrAaRegistroUnitaDoc);
+        setObject("id_err_aa_registro_unita_doc", idErrAaRegistroUnitaDoc);
     }
 
     public BigDecimal getIdAaRegistroUnitaDoc() {
-	return getBigDecimal("id_aa_registro_unita_doc");
+        return getBigDecimal("id_aa_registro_unita_doc");
     }
 
     public void setIdAaRegistroUnitaDoc(BigDecimal idAaRegistroUnitaDoc) {
-	setObject("id_aa_registro_unita_doc", idAaRegistroUnitaDoc);
+        setObject("id_aa_registro_unita_doc", idAaRegistroUnitaDoc);
     }
 
     public BigDecimal getAaRegistroUnitaDoc() {
-	return getBigDecimal("aa_registro_unita_doc");
+        return getBigDecimal("aa_registro_unita_doc");
     }
 
     public void setAaRegistroUnitaDoc(BigDecimal aaRegistroUnitaDoc) {
-	setObject("aa_registro_unita_doc", aaRegistroUnitaDoc);
+        setObject("aa_registro_unita_doc", aaRegistroUnitaDoc);
     }
 
     public String getDsErrFmtNumero() {
-	return getString("ds_err_fmt_numero");
+        return getString("ds_err_fmt_numero");
     }
 
     public void setDsErrFmtNumero(String dsErrFmtNumero) {
-	setObject("ds_err_fmt_numero", dsErrFmtNumero);
+        setObject("ds_err_fmt_numero", dsErrFmtNumero);
     }
 
     public BigDecimal getIdUnitaDocErrFmtNumero() {
-	return getBigDecimal("id_unita_doc_err_fmt_numero");
+        return getBigDecimal("id_unita_doc_err_fmt_numero");
     }
 
     public void setIdUnitaDocErrFmtNumero(BigDecimal idUnitaDocErrFmtNumero) {
-	setObject("id_unita_doc_err_fmt_numero", idUnitaDocErrFmtNumero);
+        setObject("id_unita_doc_err_fmt_numero", idUnitaDocErrFmtNumero);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecErrAaRegistroUnitaDoc entity = (DecErrAaRegistroUnitaDoc) obj;
+        DecErrAaRegistroUnitaDoc entity = (DecErrAaRegistroUnitaDoc) obj;
 
-	this.setIdErrAaRegistroUnitaDoc(entity.getIdErrAaRegistroUnitaDoc() == null ? null
-		: BigDecimal.valueOf(entity.getIdErrAaRegistroUnitaDoc()));
+        this.setIdErrAaRegistroUnitaDoc(entity.getIdErrAaRegistroUnitaDoc() == null ? null
+                : BigDecimal.valueOf(entity.getIdErrAaRegistroUnitaDoc()));
 
-	if (entity.getDecAaRegistroUnitaDoc() != null) {
-	    this.setIdAaRegistroUnitaDoc(
-		    new BigDecimal(entity.getDecAaRegistroUnitaDoc().getIdAaRegistroUnitaDoc()));
-	}
-	this.setAaRegistroUnitaDoc(entity.getAaRegistroUnitaDoc());
-	this.setDsErrFmtNumero(entity.getDsErrFmtNumero());
-	this.setIdUnitaDocErrFmtNumero(entity.getIdUnitaDocErrFmtNumero());
+        if (entity.getDecAaRegistroUnitaDoc() != null) {
+            this.setIdAaRegistroUnitaDoc(
+                    new BigDecimal(entity.getDecAaRegistroUnitaDoc().getIdAaRegistroUnitaDoc()));
+        }
+        this.setAaRegistroUnitaDoc(entity.getAaRegistroUnitaDoc());
+        this.setDsErrFmtNumero(entity.getDsErrFmtNumero());
+        this.setIdUnitaDocErrFmtNumero(entity.getIdUnitaDocErrFmtNumero());
     }
 
     @Override
     public DecErrAaRegistroUnitaDoc rowBeanToEntity() {
-	DecErrAaRegistroUnitaDoc entity = new DecErrAaRegistroUnitaDoc();
-	if (this.getIdErrAaRegistroUnitaDoc() != null) {
-	    entity.setIdErrAaRegistroUnitaDoc(this.getIdErrAaRegistroUnitaDoc().longValue());
-	}
-	if (this.getIdAaRegistroUnitaDoc() != null) {
-	    if (entity.getDecAaRegistroUnitaDoc() == null) {
-		entity.setDecAaRegistroUnitaDoc(new DecAaRegistroUnitaDoc());
-	    }
-	    entity.getDecAaRegistroUnitaDoc()
-		    .setIdAaRegistroUnitaDoc(this.getIdAaRegistroUnitaDoc().longValue());
-	}
-	entity.setAaRegistroUnitaDoc(this.getAaRegistroUnitaDoc());
-	entity.setDsErrFmtNumero(this.getDsErrFmtNumero());
-	entity.setIdUnitaDocErrFmtNumero(this.getIdUnitaDocErrFmtNumero());
-	return entity;
+        DecErrAaRegistroUnitaDoc entity = new DecErrAaRegistroUnitaDoc();
+        if (this.getIdErrAaRegistroUnitaDoc() != null) {
+            entity.setIdErrAaRegistroUnitaDoc(this.getIdErrAaRegistroUnitaDoc().longValue());
+        }
+        if (this.getIdAaRegistroUnitaDoc() != null) {
+            if (entity.getDecAaRegistroUnitaDoc() == null) {
+                entity.setDecAaRegistroUnitaDoc(new DecAaRegistroUnitaDoc());
+            }
+            entity.getDecAaRegistroUnitaDoc()
+                    .setIdAaRegistroUnitaDoc(this.getIdAaRegistroUnitaDoc().longValue());
+        }
+        entity.setAaRegistroUnitaDoc(this.getAaRegistroUnitaDoc());
+        entity.setDsErrFmtNumero(this.getDsErrFmtNumero());
+        entity.setIdUnitaDocErrFmtNumero(this.getIdUnitaDocErrFmtNumero());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

@@ -56,165 +56,165 @@ public class DecVCreaCritRaggrTipoUd implements Serializable {
 
     @Column(name = "DS_CRITERIO_RAGGR")
     public String getDsCriterioRaggr() {
-	return this.dsCriterioRaggr;
+        return this.dsCriterioRaggr;
     }
 
     public void setDsCriterioRaggr(String dsCriterioRaggr) {
-	this.dsCriterioRaggr = dsCriterioRaggr;
+        this.dsCriterioRaggr = dsCriterioRaggr;
     }
 
     @Column(name = "FL_CRITERIO_RAGGR_FISC", columnDefinition = "char(1)")
     public String getFlCriterioRaggrFisc() {
-	return this.flCriterioRaggrFisc;
+        return this.flCriterioRaggrFisc;
     }
 
     public void setFlCriterioRaggrFisc(String flCriterioRaggrFisc) {
-	this.flCriterioRaggrFisc = flCriterioRaggrFisc;
+        this.flCriterioRaggrFisc = flCriterioRaggrFisc;
     }
 
     @Column(name = "FL_FILTRO_RANGE_REGISTRO_KEY", columnDefinition = "char(1)")
     public String getFlFiltroRangeRegistroKey() {
-	return this.flFiltroRangeRegistroKey;
+        return this.flFiltroRangeRegistroKey;
     }
 
     public void setFlFiltroRangeRegistroKey(String flFiltroRangeRegistroKey) {
-	this.flFiltroRangeRegistroKey = flFiltroRangeRegistroKey;
+        this.flFiltroRangeRegistroKey = flFiltroRangeRegistroKey;
     }
 
     @Column(name = "FL_FILTRO_REGISTRO_KEY", columnDefinition = "char(1)")
     public String getFlFiltroRegistroKey() {
-	return this.flFiltroRegistroKey;
+        return this.flFiltroRegistroKey;
     }
 
     public void setFlFiltroRegistroKey(String flFiltroRegistroKey) {
-	this.flFiltroRegistroKey = flFiltroRegistroKey;
+        this.flFiltroRegistroKey = flFiltroRegistroKey;
     }
 
     @Column(name = "FL_FILTRO_SISTEMA_MIGRAZ", columnDefinition = "char(1)")
     public String getFlFiltroSistemaMigraz() {
-	return this.flFiltroSistemaMigraz;
+        return this.flFiltroSistemaMigraz;
     }
 
     public void setFlFiltroSistemaMigraz(String flFiltroSistemaMigraz) {
-	this.flFiltroSistemaMigraz = flFiltroSistemaMigraz;
+        this.flFiltroSistemaMigraz = flFiltroSistemaMigraz;
     }
 
     @Column(name = "FL_FILTRO_TI_ESITO_VERIF_FIRME", columnDefinition = "char(1)")
     public String getFlFiltroTiEsitoVerifFirme() {
-	return this.flFiltroTiEsitoVerifFirme;
+        return this.flFiltroTiEsitoVerifFirme;
     }
 
     public void setFlFiltroTiEsitoVerifFirme(String flFiltroTiEsitoVerifFirme) {
-	this.flFiltroTiEsitoVerifFirme = flFiltroTiEsitoVerifFirme;
+        this.flFiltroTiEsitoVerifFirme = flFiltroTiEsitoVerifFirme;
     }
 
     @Column(name = "FL_FILTRO_TIPO_DOC", columnDefinition = "char(1)")
     public String getFlFiltroTipoDoc() {
-	return this.flFiltroTipoDoc;
+        return this.flFiltroTipoDoc;
     }
 
     public void setFlFiltroTipoDoc(String flFiltroTipoDoc) {
-	this.flFiltroTipoDoc = flFiltroTipoDoc;
+        this.flFiltroTipoDoc = flFiltroTipoDoc;
     }
 
     @Column(name = "FL_FILTRO_TIPO_UNITA_DOC", columnDefinition = "char(1)")
     public String getFlFiltroTipoUnitaDoc() {
-	return this.flFiltroTipoUnitaDoc;
+        return this.flFiltroTipoUnitaDoc;
     }
 
     public void setFlFiltroTipoUnitaDoc(String flFiltroTipoUnitaDoc) {
-	this.flFiltroTipoUnitaDoc = flFiltroTipoUnitaDoc;
+        this.flFiltroTipoUnitaDoc = flFiltroTipoUnitaDoc;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Id
     @Column(name = "ID_TIPO_UNITA_DOC")
     public BigDecimal getIdTipoUnitaDoc() {
-	return this.idTipoUnitaDoc;
+        return this.idTipoUnitaDoc;
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	this.idTipoUnitaDoc = idTipoUnitaDoc;
+        this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
     @Column(name = "NI_MAX_COMP", columnDefinition = "varchar2")
     public BigDecimal getNiMaxComp() {
-	return this.niMaxComp;
+        return this.niMaxComp;
     }
 
     public void setNiMaxComp(BigDecimal niMaxComp) {
-	this.niMaxComp = niMaxComp;
+        this.niMaxComp = niMaxComp;
     }
 
     @Column(name = "NI_TEMPO_SCAD_CHIUS")
     public BigDecimal getNiTempoScadChius() {
-	return this.niTempoScadChius;
+        return this.niTempoScadChius;
     }
 
     public void setNiTempoScadChius(BigDecimal niTempoScadChius) {
-	this.niTempoScadChius = niTempoScadChius;
+        this.niTempoScadChius = niTempoScadChius;
     }
 
     @Column(name = "NI_TEMPO_SCAD_CHIUS_FIRME")
     public BigDecimal getNiTempoScadChiusFirme() {
-	return this.niTempoScadChiusFirme;
+        return this.niTempoScadChiusFirme;
     }
 
     public void setNiTempoScadChiusFirme(BigDecimal niTempoScadChiusFirme) {
-	this.niTempoScadChiusFirme = niTempoScadChiusFirme;
+        this.niTempoScadChiusFirme = niTempoScadChiusFirme;
     }
 
     @Column(name = "NM_CRITERIO_RAGGR")
     public String getNmCriterioRaggr() {
-	return this.nmCriterioRaggr;
+        return this.nmCriterioRaggr;
     }
 
     public void setNmCriterioRaggr(String nmCriterioRaggr) {
-	this.nmCriterioRaggr = nmCriterioRaggr;
+        this.nmCriterioRaggr = nmCriterioRaggr;
     }
 
     @Column(name = "TI_TEMPO_SCAD_CHIUS", columnDefinition = "char")
     public String getTiTempoScadChius() {
-	return this.tiTempoScadChius;
+        return this.tiTempoScadChius;
     }
 
     public void setTiTempoScadChius(String tiTempoScadChius) {
-	this.tiTempoScadChius = tiTempoScadChius;
+        this.tiTempoScadChius = tiTempoScadChius;
     }
 
     @Column(name = "TI_TEMPO_SCAD_CHIUS_FIRME", columnDefinition = "char")
     public String getTiTempoScadChiusFirme() {
-	return this.tiTempoScadChiusFirme;
+        return this.tiTempoScadChiusFirme;
     }
 
     public void setTiTempoScadChiusFirme(String tiTempoScadChiusFirme) {
-	this.tiTempoScadChiusFirme = tiTempoScadChiusFirme;
+        this.tiTempoScadChiusFirme = tiTempoScadChiusFirme;
     }
 
     @Column(name = "TI_VALID_ELENCO")
     public String getTiValidElenco() {
-	return this.tiValidElenco;
+        return this.tiValidElenco;
     }
 
     public void setTiValidElenco(String tiValidElenco) {
-	this.tiValidElenco = tiValidElenco;
+        this.tiValidElenco = tiValidElenco;
     }
 
     @Column(name = "TI_MOD_VALID_ELENCO")
     public String getTiModValidElenco() {
-	return this.tiModValidElenco;
+        return this.tiModValidElenco;
     }
 
     public void setTiModValidElenco(String tiModValidElenco) {
-	this.tiModValidElenco = tiModValidElenco;
+        this.tiModValidElenco = tiModValidElenco;
     }
 
 }

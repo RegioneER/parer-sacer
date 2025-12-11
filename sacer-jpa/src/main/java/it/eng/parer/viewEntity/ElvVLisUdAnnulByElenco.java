@@ -42,39 +42,39 @@ public class ElvVLisUdAnnulByElenco implements Serializable {
 
     @Column(name = "DS_URN_UNITA_DOC_ANNUL")
     public String getDsUrnUnitaDocAnnul() {
-	return this.dsUrnUnitaDocAnnul;
+        return this.dsUrnUnitaDocAnnul;
     }
 
     public void setDsUrnUnitaDocAnnul(String dsUrnUnitaDocAnnul) {
-	this.dsUrnUnitaDocAnnul = dsUrnUnitaDocAnnul;
+        this.dsUrnUnitaDocAnnul = dsUrnUnitaDocAnnul;
     }
 
     @Column(name = "ID_ELENCO_VERS")
     public BigDecimal getIdElencoVers() {
-	return this.idElencoVers;
+        return this.idElencoVers;
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-	this.idElencoVers = idElencoVers;
+        this.idElencoVers = idElencoVers;
     }
 
     @Column(name = "ID_RICH_ANNUL_VERS")
     public BigDecimal getIdRichAnnulVers() {
-	return this.idRichAnnulVers;
+        return this.idRichAnnulVers;
     }
 
     public void setIdRichAnnulVers(BigDecimal idRichAnnulVers) {
-	this.idRichAnnulVers = idRichAnnulVers;
+        this.idRichAnnulVers = idRichAnnulVers;
     }
 
     @Id
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
 }

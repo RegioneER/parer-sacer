@@ -24,8 +24,8 @@ public class UnitaDocumentariaInElenco {
     private boolean flSoloDocAggiunti;
 
     public UnitaDocumentariaInElenco(long idUnitaDoc, Boolean flSoloDocAggiunti) {
-	this.idUnitaDoc = idUnitaDoc;
-	this.flSoloDocAggiunti = flSoloDocAggiunti;
+        this.idUnitaDoc = idUnitaDoc;
+        this.flSoloDocAggiunti = flSoloDocAggiunti;
     }
 
     /**
@@ -34,7 +34,7 @@ public class UnitaDocumentariaInElenco {
      * @return long id
      */
     public long getIdUnitaDoc() {
-	return idUnitaDoc;
+        return idUnitaDoc;
     }
 
     /**
@@ -44,32 +44,32 @@ public class UnitaDocumentariaInElenco {
      * @return boolean true o false
      */
     public boolean isFlSoloDocAggiunti() {
-	return flSoloDocAggiunti;
+        return flSoloDocAggiunti;
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 61 * hash + (int) (this.idUnitaDoc ^ (this.idUnitaDoc >>> 32));
-	return hash;
+        int hash = 7;
+        hash = 61 * hash + (int) (this.idUnitaDoc ^ (this.idUnitaDoc >>> 32));
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final UnitaDocumentariaInElenco other = (UnitaDocumentariaInElenco) obj;
-	if (this.idUnitaDoc != other.idUnitaDoc) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final UnitaDocumentariaInElenco other = (UnitaDocumentariaInElenco) obj;
+        if (this.idUnitaDoc != other.idUnitaDoc) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -36,98 +36,98 @@ public class AroControfirmaFirmaRowBean extends BaseRow implements JEEBaseRowInt
     public static AroControfirmaFirmaTableDescriptor TABLE_DESCRIPTOR = new AroControfirmaFirmaTableDescriptor();
 
     public AroControfirmaFirmaRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdControfirmaFirma() {
-	return getBigDecimal("id_controfirma_firma");
+        return getBigDecimal("id_controfirma_firma");
     }
 
     public void setIdControfirmaFirma(BigDecimal idControfirmaFirma) {
-	setObject("id_controfirma_firma", idControfirmaFirma);
+        setObject("id_controfirma_firma", idControfirmaFirma);
     }
 
     public BigDecimal getIdFirmaFiglio() {
-	return getBigDecimal("id_firma_figlio");
+        return getBigDecimal("id_firma_figlio");
     }
 
     public void setIdFirmaFiglio(BigDecimal idFirmaFiglio) {
-	setObject("id_firma_figlio", idFirmaFiglio);
+        setObject("id_firma_figlio", idFirmaFiglio);
     }
 
     public BigDecimal getIdFirmaPadre() {
-	return getBigDecimal("id_firma_padre");
+        return getBigDecimal("id_firma_padre");
     }
 
     public void setIdFirmaPadre(BigDecimal idFirmaPadre) {
-	setObject("id_firma_padre", idFirmaPadre);
+        setObject("id_firma_padre", idFirmaPadre);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroControfirmaFirma entity = (AroControfirmaFirma) obj;
-	this.setIdControfirmaFirma(entity.getIdControfirmaFirma() == null ? null
-		: BigDecimal.valueOf(entity.getIdControfirmaFirma()));
+        AroControfirmaFirma entity = (AroControfirmaFirma) obj;
+        this.setIdControfirmaFirma(entity.getIdControfirmaFirma() == null ? null
+                : BigDecimal.valueOf(entity.getIdControfirmaFirma()));
 
-	if (entity.getAroFirmaFiglio() != null) {
-	    this.setIdFirmaFiglio(new BigDecimal(entity.getAroFirmaFiglio().getIdFirmaComp()));
-	}
+        if (entity.getAroFirmaFiglio() != null) {
+            this.setIdFirmaFiglio(new BigDecimal(entity.getAroFirmaFiglio().getIdFirmaComp()));
+        }
 
-	if (entity.getAroFirmaPadre() != null) {
-	    this.setIdFirmaPadre(new BigDecimal(entity.getAroFirmaPadre().getIdFirmaComp()));
-	}
+        if (entity.getAroFirmaPadre() != null) {
+            this.setIdFirmaPadre(new BigDecimal(entity.getAroFirmaPadre().getIdFirmaComp()));
+        }
 
     }
 
     @Override
     public AroControfirmaFirma rowBeanToEntity() {
-	AroControfirmaFirma entity = new AroControfirmaFirma();
-	if (this.getIdControfirmaFirma() != null) {
-	    entity.setIdControfirmaFirma(this.getIdControfirmaFirma().longValue());
-	}
-	if (this.getIdFirmaFiglio() != null) {
-	    if (entity.getAroFirmaFiglio() == null) {
-		entity.setAroFirmaFiglio(new AroFirmaComp());
-	    }
-	    entity.getAroFirmaFiglio().setIdFirmaComp(this.getIdFirmaFiglio().longValue());
-	}
-	if (this.getIdFirmaPadre() != null) {
-	    if (entity.getAroFirmaPadre() == null) {
-		entity.setAroFirmaPadre(new AroFirmaComp());
-	    }
-	    entity.getAroFirmaPadre().setIdFirmaComp(this.getIdFirmaPadre().longValue());
-	}
-	return entity;
+        AroControfirmaFirma entity = new AroControfirmaFirma();
+        if (this.getIdControfirmaFirma() != null) {
+            entity.setIdControfirmaFirma(this.getIdControfirmaFirma().longValue());
+        }
+        if (this.getIdFirmaFiglio() != null) {
+            if (entity.getAroFirmaFiglio() == null) {
+                entity.setAroFirmaFiglio(new AroFirmaComp());
+            }
+            entity.getAroFirmaFiglio().setIdFirmaComp(this.getIdFirmaFiglio().longValue());
+        }
+        if (this.getIdFirmaPadre() != null) {
+            if (entity.getAroFirmaPadre() == null) {
+                entity.setAroFirmaPadre(new AroFirmaComp());
+            }
+            entity.getAroFirmaPadre().setIdFirmaComp(this.getIdFirmaPadre().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

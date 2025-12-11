@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class MonVChkFascKoByTiFascTableBean
-	extends AbstractBaseTable<MonVChkFascKoByTiFascRowBean> {
+        extends AbstractBaseTable<MonVChkFascKoByTiFascRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class MonVChkFascKoByTiFascTableBean
     public static MonVChkFascKoByTiFascTableDescriptor TABLE_DESCRIPTOR = new MonVChkFascKoByTiFascTableDescriptor();
 
     public MonVChkFascKoByTiFascTableBean() {
-	super();
+        super();
     }
 
     protected MonVChkFascKoByTiFascRowBean createRow() {
-	return new MonVChkFascKoByTiFascRowBean();
+        return new MonVChkFascKoByTiFascRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVChkFascKoByTiFascRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

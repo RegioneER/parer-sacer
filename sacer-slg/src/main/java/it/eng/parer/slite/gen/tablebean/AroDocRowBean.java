@@ -38,260 +38,260 @@ public class AroDocRowBean extends BaseRow implements JEEBaseRowInterface {
     public static AroDocTableDescriptor TABLE_DESCRIPTOR = new AroDocTableDescriptor();
 
     public AroDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdDoc() {
-	return getBigDecimal("id_doc");
+        return getBigDecimal("id_doc");
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	setObject("id_doc", idDoc);
+        setObject("id_doc", idDoc);
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public BigDecimal getPgDoc() {
-	return getBigDecimal("pg_doc");
+        return getBigDecimal("pg_doc");
     }
 
     public void setPgDoc(BigDecimal pgDoc) {
-	setObject("pg_doc", pgDoc);
+        setObject("pg_doc", pgDoc);
     }
 
     public BigDecimal getIdTipoDoc() {
-	return getBigDecimal("id_tipo_doc");
+        return getBigDecimal("id_tipo_doc");
     }
 
     public void setIdTipoDoc(BigDecimal idTipoDoc) {
-	setObject("id_tipo_doc", idTipoDoc);
+        setObject("id_tipo_doc", idTipoDoc);
     }
 
     public String getTiStatoDoc() {
-	return getString("ti_stato_doc");
+        return getString("ti_stato_doc");
     }
 
     public void setTiStatoDoc(String tiStatoDoc) {
-	setObject("ti_stato_doc", tiStatoDoc);
+        setObject("ti_stato_doc", tiStatoDoc);
     }
 
     public Timestamp getDtCreazione() {
-	return getTimestamp("dt_creazione");
+        return getTimestamp("dt_creazione");
     }
 
     public void setDtCreazione(Timestamp dtCreazione) {
-	setObject("dt_creazione", dtCreazione);
+        setObject("dt_creazione", dtCreazione);
     }
 
     public String getCdKeyDocVers() {
-	return getString("cd_key_doc_vers");
+        return getString("cd_key_doc_vers");
     }
 
     public void setCdKeyDocVers(String cdKeyDocVers) {
-	setObject("cd_key_doc_vers", cdKeyDocVers);
+        setObject("cd_key_doc_vers", cdKeyDocVers);
     }
 
     public String getDlDoc() {
-	return getString("dl_doc");
+        return getString("dl_doc");
     }
 
     public void setDlDoc(String dlDoc) {
-	setObject("dl_doc", dlDoc);
+        setObject("dl_doc", dlDoc);
     }
 
     public String getDsAutoreDoc() {
-	return getString("ds_autore_doc");
+        return getString("ds_autore_doc");
     }
 
     public void setDsAutoreDoc(String dsAutoreDoc) {
-	setObject("ds_autore_doc", dsAutoreDoc);
+        setObject("ds_autore_doc", dsAutoreDoc);
     }
 
     public String getFlDocFisc() {
-	return getString("fl_doc_fisc");
+        return getString("fl_doc_fisc");
     }
 
     public void setFlDocFisc(String flDocFisc) {
-	setObject("fl_doc_fisc", flDocFisc);
+        setObject("fl_doc_fisc", flDocFisc);
     }
 
     public String getFlDocFirmato() {
-	return getString("fl_doc_firmato");
+        return getString("fl_doc_firmato");
     }
 
     public void setFlDocFirmato(String flDocFirmato) {
-	setObject("fl_doc_firmato", flDocFirmato);
+        setObject("fl_doc_firmato", flDocFirmato);
     }
 
     public String getTiEsitoVerifFirme() {
-	return getString("ti_esito_verif_firme");
+        return getString("ti_esito_verif_firme");
     }
 
     public void setTiEsitoVerifFirme(String tiEsitoVerifFirme) {
-	setObject("ti_esito_verif_firme", tiEsitoVerifFirme);
+        setObject("ti_esito_verif_firme", tiEsitoVerifFirme);
     }
 
     public String getDsMsgEsitoVerifFirme() {
-	return getString("ds_msg_esito_verif_firme");
+        return getString("ds_msg_esito_verif_firme");
     }
 
     public void setDsMsgEsitoVerifFirme(String dsMsgEsitoVerifFirme) {
-	setObject("ds_msg_esito_verif_firme", dsMsgEsitoVerifFirme);
+        setObject("ds_msg_esito_verif_firme", dsMsgEsitoVerifFirme);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getTiDoc() {
-	return getString("ti_doc");
+        return getString("ti_doc");
     }
 
     public void setTiDoc(String tiDoc) {
-	setObject("ti_doc", tiDoc);
+        setObject("ti_doc", tiDoc);
     }
 
     public String getFlForzaAccettazione() {
-	return getString("fl_forza_accettazione");
+        return getString("fl_forza_accettazione");
     }
 
     public void setFlForzaAccettazione(String flForzaAccettazione) {
-	setObject("fl_forza_accettazione", flForzaAccettazione);
+        setObject("fl_forza_accettazione", flForzaAccettazione);
     }
 
     public String getFlForzaConservazione() {
-	return getString("fl_forza_conservazione");
+        return getString("fl_forza_conservazione");
     }
 
     public void setFlForzaConservazione(String flForzaConservazione) {
-	setObject("fl_forza_conservazione", flForzaConservazione);
+        setObject("fl_forza_conservazione", flForzaConservazione);
     }
 
     public String getTiConservazione() {
-	return getString("ti_conservazione");
+        return getString("ti_conservazione");
     }
 
     public void setTiConservazione(String tiConservazione) {
-	setObject("ti_conservazione", tiConservazione);
+        setObject("ti_conservazione", tiConservazione);
     }
 
     public String getNmSistemaMigraz() {
-	return getString("nm_sistema_migraz");
+        return getString("nm_sistema_migraz");
     }
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
-	setObject("nm_sistema_migraz", nmSistemaMigraz);
+        setObject("nm_sistema_migraz", nmSistemaMigraz);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroDoc entity = (AroDoc) obj;
-	this.setIdDoc(entity.getIdDoc() == null ? null : BigDecimal.valueOf(entity.getIdDoc()));
+        AroDoc entity = (AroDoc) obj;
+        this.setIdDoc(entity.getIdDoc() == null ? null : BigDecimal.valueOf(entity.getIdDoc()));
 
-	if (entity.getAroUnitaDoc() != null) {
-	    this.setIdUnitaDoc(new BigDecimal(entity.getAroUnitaDoc().getIdUnitaDoc()));
-	}
+        if (entity.getAroUnitaDoc() != null) {
+            this.setIdUnitaDoc(new BigDecimal(entity.getAroUnitaDoc().getIdUnitaDoc()));
+        }
 
-	this.setPgDoc(entity.getPgDoc());
+        this.setPgDoc(entity.getPgDoc());
 
-	if (entity.getDecTipoDoc() != null) {
-	    this.setIdTipoDoc(new BigDecimal(entity.getDecTipoDoc().getIdTipoDoc()));
-	}
+        if (entity.getDecTipoDoc() != null) {
+            this.setIdTipoDoc(new BigDecimal(entity.getDecTipoDoc().getIdTipoDoc()));
+        }
 
-	this.setTiStatoDoc(entity.getTiStatoDoc());
-	if (entity.getDtCreazione() != null) {
-	    this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
-	}
-	this.setCdKeyDocVers(entity.getCdKeyDocVers());
-	this.setDlDoc(entity.getDlDoc());
-	this.setDsAutoreDoc(entity.getDsAutoreDoc());
-	this.setFlDocFisc(entity.getFlDocFisc());
-	this.setFlDocFirmato(entity.getFlDocFirmato());
-	this.setTiEsitoVerifFirme(entity.getTiEsitoVerifFirme());
-	this.setDsMsgEsitoVerifFirme(entity.getDsMsgEsitoVerifFirme());
-	this.setIdStrut(entity.getIdStrut());
-	this.setTiDoc(entity.getTiDoc());
-	this.setFlForzaAccettazione(entity.getFlForzaAccettazione());
-	this.setFlForzaConservazione(entity.getFlForzaConservazione());
-	this.setTiConservazione(entity.getTiConservazione());
-	this.setNmSistemaMigraz(entity.getNmSistemaMigraz());
+        this.setTiStatoDoc(entity.getTiStatoDoc());
+        if (entity.getDtCreazione() != null) {
+            this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
+        }
+        this.setCdKeyDocVers(entity.getCdKeyDocVers());
+        this.setDlDoc(entity.getDlDoc());
+        this.setDsAutoreDoc(entity.getDsAutoreDoc());
+        this.setFlDocFisc(entity.getFlDocFisc());
+        this.setFlDocFirmato(entity.getFlDocFirmato());
+        this.setTiEsitoVerifFirme(entity.getTiEsitoVerifFirme());
+        this.setDsMsgEsitoVerifFirme(entity.getDsMsgEsitoVerifFirme());
+        this.setIdStrut(entity.getIdStrut());
+        this.setTiDoc(entity.getTiDoc());
+        this.setFlForzaAccettazione(entity.getFlForzaAccettazione());
+        this.setFlForzaConservazione(entity.getFlForzaConservazione());
+        this.setTiConservazione(entity.getTiConservazione());
+        this.setNmSistemaMigraz(entity.getNmSistemaMigraz());
     }
 
     @Override
     public AroDoc rowBeanToEntity() {
-	AroDoc entity = new AroDoc();
-	if (this.getIdDoc() != null) {
-	    entity.setIdDoc(this.getIdDoc().longValue());
-	}
-	if (this.getIdUnitaDoc() != null) {
-	    if (entity.getAroUnitaDoc() == null) {
-		entity.setAroUnitaDoc(new AroUnitaDoc());
-	    }
-	    entity.getAroUnitaDoc().setIdUnitaDoc(this.getIdUnitaDoc().longValue());
-	}
-	entity.setPgDoc(this.getPgDoc());
-	if (this.getIdTipoDoc() != null) {
-	    if (entity.getDecTipoDoc() == null) {
-		entity.setDecTipoDoc(new DecTipoDoc());
-	    }
-	    entity.getDecTipoDoc().setIdTipoDoc(this.getIdTipoDoc().longValue());
-	}
-	entity.setTiStatoDoc(this.getTiStatoDoc());
-	entity.setDtCreazione(this.getDtCreazione());
-	entity.setCdKeyDocVers(this.getCdKeyDocVers());
-	entity.setDlDoc(this.getDlDoc());
-	entity.setDsAutoreDoc(this.getDsAutoreDoc());
-	entity.setFlDocFisc(this.getFlDocFisc());
-	entity.setFlDocFirmato(this.getFlDocFirmato());
-	entity.setTiEsitoVerifFirme(this.getTiEsitoVerifFirme());
-	entity.setDsMsgEsitoVerifFirme(this.getDsMsgEsitoVerifFirme());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setTiDoc(this.getTiDoc());
-	entity.setFlForzaAccettazione(this.getFlForzaAccettazione());
-	entity.setFlForzaConservazione(this.getFlForzaConservazione());
-	entity.setTiConservazione(this.getTiConservazione());
-	entity.setNmSistemaMigraz(this.getNmSistemaMigraz());
-	return entity;
+        AroDoc entity = new AroDoc();
+        if (this.getIdDoc() != null) {
+            entity.setIdDoc(this.getIdDoc().longValue());
+        }
+        if (this.getIdUnitaDoc() != null) {
+            if (entity.getAroUnitaDoc() == null) {
+                entity.setAroUnitaDoc(new AroUnitaDoc());
+            }
+            entity.getAroUnitaDoc().setIdUnitaDoc(this.getIdUnitaDoc().longValue());
+        }
+        entity.setPgDoc(this.getPgDoc());
+        if (this.getIdTipoDoc() != null) {
+            if (entity.getDecTipoDoc() == null) {
+                entity.setDecTipoDoc(new DecTipoDoc());
+            }
+            entity.getDecTipoDoc().setIdTipoDoc(this.getIdTipoDoc().longValue());
+        }
+        entity.setTiStatoDoc(this.getTiStatoDoc());
+        entity.setDtCreazione(this.getDtCreazione());
+        entity.setCdKeyDocVers(this.getCdKeyDocVers());
+        entity.setDlDoc(this.getDlDoc());
+        entity.setDsAutoreDoc(this.getDsAutoreDoc());
+        entity.setFlDocFisc(this.getFlDocFisc());
+        entity.setFlDocFirmato(this.getFlDocFirmato());
+        entity.setTiEsitoVerifFirme(this.getTiEsitoVerifFirme());
+        entity.setDsMsgEsitoVerifFirme(this.getDsMsgEsitoVerifFirme());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setTiDoc(this.getTiDoc());
+        entity.setFlForzaAccettazione(this.getFlForzaAccettazione());
+        entity.setFlForzaConservazione(this.getFlForzaConservazione());
+        entity.setTiConservazione(this.getTiConservazione());
+        entity.setNmSistemaMigraz(this.getNmSistemaMigraz());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

@@ -37,131 +37,131 @@ public class VolAppartDocVolumeRowBean extends BaseRow implements JEEBaseRowInte
     public static VolAppartDocVolumeTableDescriptor TABLE_DESCRIPTOR = new VolAppartDocVolumeTableDescriptor();
 
     public VolAppartDocVolumeRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdAppartDocVolume() {
-	return getBigDecimal("id_appart_doc_volume");
+        return getBigDecimal("id_appart_doc_volume");
     }
 
     public void setIdAppartDocVolume(BigDecimal idAppartDocVolume) {
-	setObject("id_appart_doc_volume", idAppartDocVolume);
+        setObject("id_appart_doc_volume", idAppartDocVolume);
     }
 
     public BigDecimal getIdAppartUnitaDocVolume() {
-	return getBigDecimal("id_appart_unita_doc_volume");
+        return getBigDecimal("id_appart_unita_doc_volume");
     }
 
     public void setIdAppartUnitaDocVolume(BigDecimal idAppartUnitaDocVolume) {
-	setObject("id_appart_unita_doc_volume", idAppartUnitaDocVolume);
+        setObject("id_appart_unita_doc_volume", idAppartUnitaDocVolume);
     }
 
     public BigDecimal getIdDoc() {
-	return getBigDecimal("id_doc");
+        return getBigDecimal("id_doc");
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	setObject("id_doc", idDoc);
+        setObject("id_doc", idDoc);
     }
 
     public String getFlValida() {
-	return getString("fl_valida");
+        return getString("fl_valida");
     }
 
     public void setFlValida(String flValida) {
-	setObject("fl_valida", flValida);
+        setObject("fl_valida", flValida);
     }
 
     public String getNtGenericheDoc() {
-	return getString("nt_generiche_doc");
+        return getString("nt_generiche_doc");
     }
 
     public void setNtGenericheDoc(String ntGenericheDoc) {
-	setObject("nt_generiche_doc", ntGenericheDoc);
+        setObject("nt_generiche_doc", ntGenericheDoc);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	VolAppartDocVolume entity = (VolAppartDocVolume) obj;
+        VolAppartDocVolume entity = (VolAppartDocVolume) obj;
 
-	this.setIdAppartDocVolume(entity.getIdAppartDocVolume() == null ? null
-		: BigDecimal.valueOf(entity.getIdAppartDocVolume()));
+        this.setIdAppartDocVolume(entity.getIdAppartDocVolume() == null ? null
+                : BigDecimal.valueOf(entity.getIdAppartDocVolume()));
 
-	if (entity.getVolAppartUnitaDocVolume() != null) {
-	    this.setIdAppartUnitaDocVolume(new BigDecimal(
-		    entity.getVolAppartUnitaDocVolume().getIdAppartUnitaDocVolume()));
-	}
+        if (entity.getVolAppartUnitaDocVolume() != null) {
+            this.setIdAppartUnitaDocVolume(new BigDecimal(
+                    entity.getVolAppartUnitaDocVolume().getIdAppartUnitaDocVolume()));
+        }
 
-	if (entity.getAroDoc() != null) {
-	    this.setIdDoc(new BigDecimal(entity.getAroDoc().getIdDoc()));
-	}
+        if (entity.getAroDoc() != null) {
+            this.setIdDoc(new BigDecimal(entity.getAroDoc().getIdDoc()));
+        }
 
-	this.setFlValida(entity.getFlValida());
-	this.setNtGenericheDoc(entity.getNtGenericheDoc());
-	this.setIdStrut(entity.getIdStrut());
+        this.setFlValida(entity.getFlValida());
+        this.setNtGenericheDoc(entity.getNtGenericheDoc());
+        this.setIdStrut(entity.getIdStrut());
     }
 
     @Override
     public VolAppartDocVolume rowBeanToEntity() {
-	VolAppartDocVolume entity = new VolAppartDocVolume();
-	if (this.getIdAppartDocVolume() != null) {
-	    entity.setIdAppartDocVolume(this.getIdAppartDocVolume().longValue());
-	}
-	if (this.getIdAppartUnitaDocVolume() != null) {
-	    if (entity.getVolAppartUnitaDocVolume() == null) {
-		entity.setVolAppartUnitaDocVolume(new VolAppartUnitaDocVolume());
-	    }
-	    entity.getVolAppartUnitaDocVolume()
-		    .setIdAppartUnitaDocVolume(this.getIdAppartUnitaDocVolume().longValue());
-	}
-	if (this.getIdDoc() != null) {
-	    if (entity.getAroDoc() == null) {
-		entity.setAroDoc(new AroDoc());
-	    }
-	    entity.getAroDoc().setIdDoc(this.getIdDoc().longValue());
-	}
-	entity.setFlValida(this.getFlValida());
-	entity.setNtGenericheDoc(this.getNtGenericheDoc());
-	entity.setIdStrut(this.getIdStrut());
-	return entity;
+        VolAppartDocVolume entity = new VolAppartDocVolume();
+        if (this.getIdAppartDocVolume() != null) {
+            entity.setIdAppartDocVolume(this.getIdAppartDocVolume().longValue());
+        }
+        if (this.getIdAppartUnitaDocVolume() != null) {
+            if (entity.getVolAppartUnitaDocVolume() == null) {
+                entity.setVolAppartUnitaDocVolume(new VolAppartUnitaDocVolume());
+            }
+            entity.getVolAppartUnitaDocVolume()
+                    .setIdAppartUnitaDocVolume(this.getIdAppartUnitaDocVolume().longValue());
+        }
+        if (this.getIdDoc() != null) {
+            if (entity.getAroDoc() == null) {
+                entity.setAroDoc(new AroDoc());
+            }
+            entity.getAroDoc().setIdDoc(this.getIdDoc().longValue());
+        }
+        entity.setFlValida(this.getFlValida());
+        entity.setNtGenericheDoc(this.getNtGenericheDoc());
+        entity.setIdStrut(this.getIdStrut());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

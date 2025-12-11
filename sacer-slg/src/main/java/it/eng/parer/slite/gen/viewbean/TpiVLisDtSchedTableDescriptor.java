@@ -54,46 +54,46 @@ public class TpiVLisDtSchedTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_DT_SCHED, new ColumnDescriptor(COL_ID_DT_SCHED, Types.DECIMAL, 22, true));
-	map.put(COL_DT_SCHED, new ColumnDescriptor(COL_DT_SCHED, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_STATO_DT_SCHED,
-		new ColumnDescriptor(COL_TI_STATO_DT_SCHED, Types.VARCHAR, 20, true));
-	map.put(COL_FL_PRESENZA_SECONDARIO,
-		new ColumnDescriptor(COL_FL_PRESENZA_SECONDARIO, Types.VARCHAR, 1, true));
-	map.put(COL_FL_MIGRAZ_IN_CORSO,
-		new ColumnDescriptor(COL_FL_MIGRAZ_IN_CORSO, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ANOMALIA_ARK_PRIM,
-		new ColumnDescriptor(COL_FL_ANOMALIA_ARK_PRIM, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ANOMALIA_COPIA_PRIM,
-		new ColumnDescriptor(COL_FL_ANOMALIA_COPIA_PRIM, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ANOMALIA_BACKUP_PRIM,
-		new ColumnDescriptor(COL_FL_ANOMALIA_BACKUP_PRIM, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ANOMALIA_MIGRATE_PRIM,
-		new ColumnDescriptor(COL_FL_ANOMALIA_MIGRATE_PRIM, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ANOMALIA_RI_ARK_PRIM,
-		new ColumnDescriptor(COL_FL_ANOMALIA_RI_ARK_PRIM, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ANOMALIA_ARK_SECOND,
-		new ColumnDescriptor(COL_FL_ANOMALIA_ARK_SECOND, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ANOMALIA_COPIA_SECOND,
-		new ColumnDescriptor(COL_FL_ANOMALIA_COPIA_SECOND, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ANOMALIA_BACKUP_SECOND,
-		new ColumnDescriptor(COL_FL_ANOMALIA_BACKUP_SECOND, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ANOMALIA_MIGRATE_SECOND,
-		new ColumnDescriptor(COL_FL_ANOMALIA_MIGRATE_SECOND, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ANOMALIA_RI_ARK_SECOND,
-		new ColumnDescriptor(COL_FL_ANOMALIA_RI_ARK_SECOND, Types.VARCHAR, 1, true));
+        map.put(COL_ID_DT_SCHED, new ColumnDescriptor(COL_ID_DT_SCHED, Types.DECIMAL, 22, true));
+        map.put(COL_DT_SCHED, new ColumnDescriptor(COL_DT_SCHED, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_STATO_DT_SCHED,
+                new ColumnDescriptor(COL_TI_STATO_DT_SCHED, Types.VARCHAR, 20, true));
+        map.put(COL_FL_PRESENZA_SECONDARIO,
+                new ColumnDescriptor(COL_FL_PRESENZA_SECONDARIO, Types.VARCHAR, 1, true));
+        map.put(COL_FL_MIGRAZ_IN_CORSO,
+                new ColumnDescriptor(COL_FL_MIGRAZ_IN_CORSO, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ANOMALIA_ARK_PRIM,
+                new ColumnDescriptor(COL_FL_ANOMALIA_ARK_PRIM, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ANOMALIA_COPIA_PRIM,
+                new ColumnDescriptor(COL_FL_ANOMALIA_COPIA_PRIM, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ANOMALIA_BACKUP_PRIM,
+                new ColumnDescriptor(COL_FL_ANOMALIA_BACKUP_PRIM, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ANOMALIA_MIGRATE_PRIM,
+                new ColumnDescriptor(COL_FL_ANOMALIA_MIGRATE_PRIM, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ANOMALIA_RI_ARK_PRIM,
+                new ColumnDescriptor(COL_FL_ANOMALIA_RI_ARK_PRIM, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ANOMALIA_ARK_SECOND,
+                new ColumnDescriptor(COL_FL_ANOMALIA_ARK_SECOND, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ANOMALIA_COPIA_SECOND,
+                new ColumnDescriptor(COL_FL_ANOMALIA_COPIA_SECOND, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ANOMALIA_BACKUP_SECOND,
+                new ColumnDescriptor(COL_FL_ANOMALIA_BACKUP_SECOND, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ANOMALIA_MIGRATE_SECOND,
+                new ColumnDescriptor(COL_FL_ANOMALIA_MIGRATE_SECOND, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ANOMALIA_RI_ARK_SECOND,
+                new ColumnDescriptor(COL_FL_ANOMALIA_RI_ARK_SECOND, Types.VARCHAR, 1, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

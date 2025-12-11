@@ -44,24 +44,24 @@ public class FirCrlTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_CRL, new ColumnDescriptor(COL_ID_CRL, Types.DECIMAL, 22, true));
-	map.put(COL_ID_CERTIF_CA, new ColumnDescriptor(COL_ID_CERTIF_CA, Types.DECIMAL, 22, false));
-	map.put(COL_NI_SERIAL_CRL,
-		new ColumnDescriptor(COL_NI_SERIAL_CRL, Types.DECIMAL, 22, false));
-	map.put(COL_DT_SCAD_CRL, new ColumnDescriptor(COL_DT_SCAD_CRL, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_INI_CRL, new ColumnDescriptor(COL_DT_INI_CRL, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_CRL, new ColumnDescriptor(COL_ID_CRL, Types.DECIMAL, 22, true));
+        map.put(COL_ID_CERTIF_CA, new ColumnDescriptor(COL_ID_CERTIF_CA, Types.DECIMAL, 22, false));
+        map.put(COL_NI_SERIAL_CRL,
+                new ColumnDescriptor(COL_NI_SERIAL_CRL, Types.DECIMAL, 22, false));
+        map.put(COL_DT_SCAD_CRL, new ColumnDescriptor(COL_DT_SCAD_CRL, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_INI_CRL, new ColumnDescriptor(COL_DT_INI_CRL, Types.TIMESTAMP, 7, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

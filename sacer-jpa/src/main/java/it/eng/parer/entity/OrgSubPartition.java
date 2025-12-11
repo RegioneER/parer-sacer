@@ -56,43 +56,43 @@ public class OrgSubPartition implements Serializable {
 
     @Column(name = "ID_SUB_PARTITION")
     @GenericGenerator(name = "SORG_SUB_PARTITION_ID_SUB_PARTITION_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_SUB_PARTITION"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_SUB_PARTITION"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SORG_SUB_PARTITION_ID_SUB_PARTITION_GENERATOR")
     public Long getIdSubPartition() {
-	return this.idSubPartition;
+        return this.idSubPartition;
     }
 
     public void setIdSubPartition(Long idSubPartition) {
-	this.idSubPartition = idSubPartition;
+        this.idSubPartition = idSubPartition;
     }
 
     @Column(name = "CD_SUB_PARTITION")
     public String getCdSubPartition() {
-	return this.cdSubPartition;
+        return this.cdSubPartition;
     }
 
     public void setCdSubPartition(String cdSubPartition) {
-	this.cdSubPartition = cdSubPartition;
+        this.cdSubPartition = cdSubPartition;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PARTITION")
     public OrgPartition getOrgPartition() {
-	return this.orgPartition;
+        return this.orgPartition;
     }
 
     public void setOrgPartition(OrgPartition orgPartition) {
-	this.orgPartition = orgPartition;
+        this.orgPartition = orgPartition;
     }
 
     @OneToMany(mappedBy = "orgSubPartition")
     public List<OrgValSubPartition> getOrgValSubPartitions() {
-	return this.orgValSubPartitions;
+        return this.orgValSubPartitions;
     }
 
     public void setOrgValSubPartitions(List<OrgValSubPartition> orgValSubPartitions) {
-	this.orgValSubPartitions = orgValSubPartitions;
+        this.orgValSubPartitions = orgValSubPartitions;
     }
 
 }

@@ -33,19 +33,19 @@ public class DecModelloCampoInpUdTableBean extends AbstractBaseTable<DecModelloC
     public static DecModelloCampoInpUdTableDescriptor TABLE_DESCRIPTOR = new DecModelloCampoInpUdTableDescriptor();
 
     public DecModelloCampoInpUdTableBean() {
-	super();
+        super();
     }
 
     protected DecModelloCampoInpUdRowBean createRow() {
-	return new DecModelloCampoInpUdRowBean();
+        return new DecModelloCampoInpUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecModelloCampoInpUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

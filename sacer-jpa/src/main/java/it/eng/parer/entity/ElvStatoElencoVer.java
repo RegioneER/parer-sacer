@@ -56,7 +56,7 @@ public class ElvStatoElencoVer implements Serializable {
     private IamUser iamUser;
 
     public ElvStatoElencoVer() {
-	// hibernate
+        // hibernate
     }
 
     @Id
@@ -64,79 +64,79 @@ public class ElvStatoElencoVer implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ELV_STATO_ELENCO_VERS_IDSTATOELENCOVERS_GENERATOR")
     @Column(name = "ID_STATO_ELENCO_VERS")
     public long getIdStatoElencoVers() {
-	return this.idStatoElencoVers;
+        return this.idStatoElencoVers;
     }
 
     public void setIdStatoElencoVers(long idStatoElencoVers) {
-	this.idStatoElencoVers = idStatoElencoVers;
+        this.idStatoElencoVers = idStatoElencoVers;
     }
 
     @Column(name = "DS_COND_STATO_ELENCO_VERS")
     public String getDsCondStatoElencoVers() {
-	return this.dsCondStatoElencoVers;
+        return this.dsCondStatoElencoVers;
     }
 
     public void setDsCondStatoElencoVers(String dsCondStatoElencoVers) {
-	this.dsCondStatoElencoVers = dsCondStatoElencoVers;
+        this.dsCondStatoElencoVers = dsCondStatoElencoVers;
     }
 
     @Column(name = "ID_TI_EVE_STATO_ELENCO_VERS")
     public BigDecimal getIdTiEveStatoElencoVers() {
-	return this.idTiEveStatoElencoVers;
+        return this.idTiEveStatoElencoVers;
     }
 
     public void setIdTiEveStatoElencoVers(BigDecimal idTiEveStatoElencoVers) {
-	this.idTiEveStatoElencoVers = idTiEveStatoElencoVers;
+        this.idTiEveStatoElencoVers = idTiEveStatoElencoVers;
     }
 
     @Column(name = "PG_STATO_ELENCO_VERS")
     public BigDecimal getPgStatoElencoVers() {
-	return this.pgStatoElencoVers;
+        return this.pgStatoElencoVers;
     }
 
     public void setPgStatoElencoVers(BigDecimal pgStatoElencoVers) {
-	this.pgStatoElencoVers = pgStatoElencoVers;
+        this.pgStatoElencoVers = pgStatoElencoVers;
     }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TI_STATO_ELENCO")
     public TiStatoElenco getTiStatoElenco() {
-	return this.tiStatoElenco;
+        return this.tiStatoElenco;
     }
 
     public void setTiStatoElenco(TiStatoElenco tiStatoElenco) {
-	this.tiStatoElenco = tiStatoElenco;
+        this.tiStatoElenco = tiStatoElenco;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_STATO_ELENCO_VERS")
     public Date getTsStatoElencoVers() {
-	return this.tsStatoElencoVers;
+        return this.tsStatoElencoVers;
     }
 
     public void setTsStatoElencoVers(Date tsStatoElencoVers) {
-	this.tsStatoElencoVers = tsStatoElencoVers;
+        this.tsStatoElencoVers = tsStatoElencoVers;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {
-	    CascadeType.PERSIST })
+            CascadeType.PERSIST })
     @JoinColumn(name = "ID_ELENCO_VERS")
     public ElvElencoVer getElvElencoVer() {
-	return this.elvElencoVer;
+        return this.elvElencoVer;
     }
 
     public void setElvElencoVer(ElvElencoVer elvElencoVer) {
-	this.elvElencoVer = elvElencoVer;
+        this.elvElencoVer = elvElencoVer;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USER_IAM")
     public IamUser getIamUser() {
-	return this.iamUser;
+        return this.iamUser;
     }
 
     public void setIamUser(IamUser iamUser) {
-	this.iamUser = iamUser;
+        this.iamUser = iamUser;
     }
 
 }

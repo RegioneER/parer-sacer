@@ -45,27 +45,27 @@ public class VolAppartDocVolumeTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_APPART_DOC_VOLUME,
-		new ColumnDescriptor(COL_ID_APPART_DOC_VOLUME, Types.DECIMAL, 22, true));
-	map.put(COL_ID_APPART_UNITA_DOC_VOLUME,
-		new ColumnDescriptor(COL_ID_APPART_UNITA_DOC_VOLUME, Types.DECIMAL, 22, false));
-	map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_FL_VALIDA, new ColumnDescriptor(COL_FL_VALIDA, Types.VARCHAR, 1, false));
-	map.put(COL_NT_GENERICHE_DOC,
-		new ColumnDescriptor(COL_NT_GENERICHE_DOC, Types.VARCHAR, 2000, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_ID_APPART_DOC_VOLUME,
+                new ColumnDescriptor(COL_ID_APPART_DOC_VOLUME, Types.DECIMAL, 22, true));
+        map.put(COL_ID_APPART_UNITA_DOC_VOLUME,
+                new ColumnDescriptor(COL_ID_APPART_UNITA_DOC_VOLUME, Types.DECIMAL, 22, false));
+        map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_FL_VALIDA, new ColumnDescriptor(COL_FL_VALIDA, Types.VARCHAR, 1, false));
+        map.put(COL_NT_GENERICHE_DOC,
+                new ColumnDescriptor(COL_NT_GENERICHE_DOC, Types.VARCHAR, 2000, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

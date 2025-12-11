@@ -33,19 +33,19 @@ public class AroFirmaCompTableBean extends AbstractBaseTable<AroFirmaCompRowBean
     public static AroFirmaCompTableDescriptor TABLE_DESCRIPTOR = new AroFirmaCompTableDescriptor();
 
     public AroFirmaCompTableBean() {
-	super();
+        super();
     }
 
     protected AroFirmaCompRowBean createRow() {
-	return new AroFirmaCompRowBean();
+        return new AroFirmaCompRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroFirmaCompRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

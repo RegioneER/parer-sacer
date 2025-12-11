@@ -42,23 +42,23 @@ public class FasUniOrgRespFascicoloTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_UNI_ORG_RESP_FASCICOLO,
-		new ColumnDescriptor(COL_ID_UNI_ORG_RESP_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_CD_UNI_ORG_RESP,
-		new ColumnDescriptor(COL_CD_UNI_ORG_RESP, Types.VARCHAR, 100, false));
+        map.put(COL_ID_UNI_ORG_RESP_FASCICOLO,
+                new ColumnDescriptor(COL_ID_UNI_ORG_RESP_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_CD_UNI_ORG_RESP,
+                new ColumnDescriptor(COL_CD_UNI_ORG_RESP, Types.VARCHAR, 100, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

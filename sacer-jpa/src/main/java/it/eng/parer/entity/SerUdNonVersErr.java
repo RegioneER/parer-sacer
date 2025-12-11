@@ -53,35 +53,35 @@ public class SerUdNonVersErr implements Serializable {
 
     @Column(name = "ID_UD_NON_VERS_ERR")
     @GenericGenerator(name = "SSER_UD_NON_VERS_ERR_ID_UD_NON_VERS_ERR_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SSER_UD_NON_VERS_ERR"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SSER_UD_NON_VERS_ERR"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SSER_UD_NON_VERS_ERR_ID_UD_NON_VERS_ERR_GENERATOR")
     public Long getIdUdNonVersErr() {
-	return this.idUdNonVersErr;
+        return this.idUdNonVersErr;
     }
 
     public void setIdUdNonVersErr(Long idUdNonVersErr) {
-	this.idUdNonVersErr = idUdNonVersErr;
+        this.idUdNonVersErr = idUdNonVersErr;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ERR_CONTENUTO_VER_SERIE")
     public SerErrContenutoVerSerie getSerErrContenutoVerSerie() {
-	return this.serErrContenutoVerSerie;
+        return this.serErrContenutoVerSerie;
     }
 
     public void setSerErrContenutoVerSerie(SerErrContenutoVerSerie serErrContenutoVerSerie) {
-	this.serErrContenutoVerSerie = serErrContenutoVerSerie;
+        this.serErrContenutoVerSerie = serErrContenutoVerSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_UNITA_DOC_NON_VERS")
     public VrsUnitaDocNonVer getVrsUnitaDocNonVer() {
-	return this.vrsUnitaDocNonVer;
+        return this.vrsUnitaDocNonVer;
     }
 
     public void setVrsUnitaDocNonVer(VrsUnitaDocNonVer vrsUnitaDocNonVer) {
-	this.vrsUnitaDocNonVer = vrsUnitaDocNonVer;
+        this.vrsUnitaDocNonVer = vrsUnitaDocNonVer;
     }
 
 }

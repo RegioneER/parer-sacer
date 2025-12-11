@@ -26,37 +26,37 @@ public class ElvVLisaipudUrndacalcByeleId implements Serializable {
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return idUnitaDoc;
+        return idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     private BigDecimal idElencoVers;
 
     @Column(name = "ID_ELENCO_VERS")
     public BigDecimal getIdElencoVers() {
-	return idElencoVers;
+        return idElencoVers;
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-	this.idElencoVers = idElencoVers;
+        this.idElencoVers = idElencoVers;
     }
 
     @Override
     public boolean equals(Object o) {
-	if (this == o)
-	    return true;
-	if (o == null || getClass() != o.getClass())
-	    return false;
-	ElvVLisaipudUrndacalcByeleId that = (ElvVLisaipudUrndacalcByeleId) o;
-	return Objects.equals(idUnitaDoc, that.idUnitaDoc)
-		&& Objects.equals(idElencoVers, that.idElencoVers);
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        ElvVLisaipudUrndacalcByeleId that = (ElvVLisaipudUrndacalcByeleId) o;
+        return Objects.equals(idUnitaDoc, that.idUnitaDoc)
+                && Objects.equals(idElencoVers, that.idElencoVers);
     }
 
     @Override
     public int hashCode() {
-	return Objects.hash(idUnitaDoc, idElencoVers);
+        return Objects.hash(idUnitaDoc, idElencoVers);
     }
 }

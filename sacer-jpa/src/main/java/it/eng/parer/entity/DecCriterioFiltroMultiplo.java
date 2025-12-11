@@ -68,96 +68,96 @@ public class DecCriterioFiltroMultiplo implements Serializable {
     @Column(name = "ID_CRITERIO_FILTRO_MULT")
     @XmlID
     @GenericGenerator(name = "SDEC_CRITERIO_FILTRO_MULTIPLO_ID_CRITERIO_FILTRO_MULT_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_CRITERIO_FILTRO_MULTIPLO"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_CRITERIO_FILTRO_MULTIPLO"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_CRITERIO_FILTRO_MULTIPLO_ID_CRITERIO_FILTRO_MULT_GENERATOR")
     public Long getIdCriterioFiltroMult() {
-	return this.idCriterioFiltroMult;
+        return this.idCriterioFiltroMult;
     }
 
     public void setIdCriterioFiltroMult(Long idCriterioFiltroMult) {
-	this.idCriterioFiltroMult = idCriterioFiltroMult;
+        this.idCriterioFiltroMult = idCriterioFiltroMult;
     }
 
     @Column(name = "NM_SISTEMA_MIGRAZ")
     public String getNmSistemaMigraz() {
-	return this.nmSistemaMigraz;
+        return this.nmSistemaMigraz;
     }
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
-	this.nmSistemaMigraz = nmSistemaMigraz;
+        this.nmSistemaMigraz = nmSistemaMigraz;
     }
 
     @Column(name = "TI_ESITO_VERIF_FIRME")
     public String getTiEsitoVerifFirme() {
-	return this.tiEsitoVerifFirme;
+        return this.tiEsitoVerifFirme;
     }
 
     public void setTiEsitoVerifFirme(String tiEsitoVerifFirme) {
-	this.tiEsitoVerifFirme = tiEsitoVerifFirme;
+        this.tiEsitoVerifFirme = tiEsitoVerifFirme;
     }
 
     @Column(name = "TI_FILTRO_MULTIPLO")
     public String getTiFiltroMultiplo() {
-	return this.tiFiltroMultiplo;
+        return this.tiFiltroMultiplo;
     }
 
     public void setTiFiltroMultiplo(String tiFiltroMultiplo) {
-	this.tiFiltroMultiplo = tiFiltroMultiplo;
+        this.tiFiltroMultiplo = tiFiltroMultiplo;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_CRITERIO_RAGGR")
     @XmlInverseReference(mappedBy = "decCriterioFiltroMultiplos")
     public DecCriterioRaggr getDecCriterioRaggr() {
-	return this.decCriterioRaggr;
+        return this.decCriterioRaggr;
     }
 
     public void setDecCriterioRaggr(DecCriterioRaggr decCriterioRaggr) {
-	this.decCriterioRaggr = decCriterioRaggr;
+        this.decCriterioRaggr = decCriterioRaggr;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_REGISTRO_UNITA_DOC")
     @XmlInverseReference(mappedBy = "decCriterioFiltroMultiplos")
     public DecRegistroUnitaDoc getDecRegistroUnitaDoc() {
-	return this.decRegistroUnitaDoc;
+        return this.decRegistroUnitaDoc;
     }
 
     public void setDecRegistroUnitaDoc(DecRegistroUnitaDoc decRegistroUnitaDoc) {
-	this.decRegistroUnitaDoc = decRegistroUnitaDoc;
+        this.decRegistroUnitaDoc = decRegistroUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_REGISTRO_RANGE_UNITA_DOC")
     @XmlInverseReference(mappedBy = "decRangeCriterioFiltroMultiplos")
     public DecRegistroUnitaDoc getDecRegistroRangeUnitaDoc() {
-	return this.decRegistroRangeUnitaDoc;
+        return this.decRegistroRangeUnitaDoc;
     }
 
     public void setDecRegistroRangeUnitaDoc(DecRegistroUnitaDoc decRegistroRangeUnitaDoc) {
-	this.decRegistroRangeUnitaDoc = decRegistroRangeUnitaDoc;
+        this.decRegistroRangeUnitaDoc = decRegistroRangeUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_DOC")
     @XmlInverseReference(mappedBy = "decCriterioFiltroMultiplos")
     public DecTipoDoc getDecTipoDoc() {
-	return this.decTipoDoc;
+        return this.decTipoDoc;
     }
 
     public void setDecTipoDoc(DecTipoDoc decTipoDoc) {
-	this.decTipoDoc = decTipoDoc;
+        this.decTipoDoc = decTipoDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_UNITA_DOC")
     @XmlInverseReference(mappedBy = "decCriterioFiltroMultiplos")
     public DecTipoUnitaDoc getDecTipoUnitaDoc() {
-	return this.decTipoUnitaDoc;
+        return this.decTipoUnitaDoc;
     }
 
     public void setDecTipoUnitaDoc(DecTipoUnitaDoc decTipoUnitaDoc) {
-	this.decTipoUnitaDoc = decTipoUnitaDoc;
+        this.decTipoUnitaDoc = decTipoUnitaDoc;
     }
 }

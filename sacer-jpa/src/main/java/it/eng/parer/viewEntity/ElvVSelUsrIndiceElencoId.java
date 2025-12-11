@@ -25,52 +25,52 @@ public class ElvVSelUsrIndiceElencoId implements Serializable {
 
     @Override
     public int hashCode() {
-	int hash = 5;
-	hash = 37 * hash + Objects.hashCode(this.idElencoVers);
-	hash = 37 * hash + Objects.hashCode(this.nmUserid);
-	return hash;
+        int hash = 5;
+        hash = 37 * hash + Objects.hashCode(this.idElencoVers);
+        hash = 37 * hash + Objects.hashCode(this.nmUserid);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final ElvVSelUsrIndiceElencoId other = (ElvVSelUsrIndiceElencoId) obj;
-	if (!Objects.equals(this.nmUserid, other.nmUserid)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idElencoVers, other.idElencoVers)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ElvVSelUsrIndiceElencoId other = (ElvVSelUsrIndiceElencoId) obj;
+        if (!Objects.equals(this.nmUserid, other.nmUserid)) {
+            return false;
+        }
+        if (!Objects.equals(this.idElencoVers, other.idElencoVers)) {
+            return false;
+        }
+        return true;
     }
 
     private BigDecimal idElencoVers;
 
     @Column(name = "ID_ELENCO_VERS")
     public BigDecimal getIdElencoVers() {
-	return idElencoVers;
+        return idElencoVers;
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-	this.idElencoVers = idElencoVers;
+        this.idElencoVers = idElencoVers;
     }
 
     private String nmUserid;
 
     @Column(name = "NM_USERID")
     public String getNmUserid() {
-	return nmUserid;
+        return nmUserid;
     }
 
     public void setNmUserid(String nmUserid) {
-	this.nmUserid = nmUserid;
+        this.nmUserid = nmUserid;
     }
 }

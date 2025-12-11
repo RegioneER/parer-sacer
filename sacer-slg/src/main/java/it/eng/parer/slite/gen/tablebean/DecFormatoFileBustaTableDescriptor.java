@@ -42,24 +42,24 @@ public class DecFormatoFileBustaTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_FORMATO_FILE_BUSTA,
-		new ColumnDescriptor(COL_ID_FORMATO_FILE_BUSTA, Types.DECIMAL, 22, true));
-	map.put(COL_ID_FORMATO_FILE_STANDARD,
-		new ColumnDescriptor(COL_ID_FORMATO_FILE_STANDARD, Types.DECIMAL, 22, false));
-	map.put(COL_TI_FORMATO_FIRMA_MARCA,
-		new ColumnDescriptor(COL_TI_FORMATO_FIRMA_MARCA, Types.VARCHAR, 20, false));
+        map.put(COL_ID_FORMATO_FILE_BUSTA,
+                new ColumnDescriptor(COL_ID_FORMATO_FILE_BUSTA, Types.DECIMAL, 22, true));
+        map.put(COL_ID_FORMATO_FILE_STANDARD,
+                new ColumnDescriptor(COL_ID_FORMATO_FILE_STANDARD, Types.DECIMAL, 22, false));
+        map.put(COL_TI_FORMATO_FIRMA_MARCA,
+                new ColumnDescriptor(COL_TI_FORMATO_FIRMA_MARCA, Types.VARCHAR, 20, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

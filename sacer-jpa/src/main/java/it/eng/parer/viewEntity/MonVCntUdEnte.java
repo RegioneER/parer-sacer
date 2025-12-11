@@ -40,20 +40,20 @@ public class MonVCntUdEnte implements Serializable {
 
     @EmbeddedId
     public MonVCntUdEnteId getMonVCntUdEnteId() {
-	return monVCntUdEnteId;
+        return monVCntUdEnteId;
     }
 
     public void setMonVCntUdEnteId(MonVCntUdEnteId monVCntUdEnteId) {
-	this.monVCntUdEnteId = monVCntUdEnteId;
+        this.monVCntUdEnteId = monVCntUdEnteId;
     }
 
     @Column(name = "NI_UD")
     public BigDecimal getNiUd() {
-	return this.niUd;
+        return this.niUd;
     }
 
     public void setNiUd(BigDecimal niUd) {
-	this.niUd = niUd;
+        this.niUd = niUd;
     }
 
 }

@@ -50,111 +50,111 @@ public class ProducerCodaIndiciAipDaElabTimer extends JobTimer {
     private ProducerCodaIndiciAipDaElabTimer thisTimer;
 
     public ProducerCodaIndiciAipDaElabTimer() {
-	super(JobConstants.JobEnum.PRODUCER_CODA_INDICI_AIP_DA_ELAB.name());
-	logger.debug("{} creato", ProducerCodaIndiciAipDaElabTimer.class.getName());
+        super(JobConstants.JobEnum.PRODUCER_CODA_INDICI_AIP_DA_ELAB.name());
+        logger.debug("{} creato", ProducerCodaIndiciAipDaElabTimer.class.getName());
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startSingleAction(String applicationName) {
-	boolean existTimer = false;
+        boolean existTimer = false;
 
-	for (Object obj : timerService.getTimers()) {
-	    Timer timer = (Timer) obj;
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		existTimer = true;
-	    }
-	}
-	if (!existTimer) {
-	    timerService.createTimer(TIME_DURATION, jobName);
-	}
+        for (Object obj : timerService.getTimers()) {
+            Timer timer = (Timer) obj;
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                existTimer = true;
+            }
+        }
+        if (!existTimer) {
+            timerService.createTimer(TIME_DURATION, jobName);
+        }
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startCronScheduled(CronSchedule sched, String applicationName) {
-	boolean existTimer = false;
-	ScheduleExpression tmpScheduleExpression;
+        boolean existTimer = false;
+        ScheduleExpression tmpScheduleExpression;
 
-	for (Object obj : timerService.getTimers()) {
-	    Timer timer = (Timer) obj;
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		existTimer = true;
-	    }
-	}
-	if (!existTimer) {
-	    logger.info("Schedulazione: Ore: " + sched.getHour());
-	    logger.info("Schedulazione: Minuti: " + sched.getMinute());
-	    logger.info("Schedulazione: DOW: " + sched.getDayOfWeek());
-	    logger.info("Schedulazione: Mese: " + sched.getMonth());
-	    logger.info("Schedulazione: DOM: " + sched.getDayOfMonth());
+        for (Object obj : timerService.getTimers()) {
+            Timer timer = (Timer) obj;
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                existTimer = true;
+            }
+        }
+        if (!existTimer) {
+            logger.info("Schedulazione: Ore: " + sched.getHour());
+            logger.info("Schedulazione: Minuti: " + sched.getMinute());
+            logger.info("Schedulazione: DOW: " + sched.getDayOfWeek());
+            logger.info("Schedulazione: Mese: " + sched.getMonth());
+            logger.info("Schedulazione: DOM: " + sched.getDayOfMonth());
 
-	    tmpScheduleExpression = new ScheduleExpression();
-	    tmpScheduleExpression.hour(sched.getHour());
-	    tmpScheduleExpression.minute(sched.getMinute());
-	    tmpScheduleExpression.dayOfWeek(sched.getDayOfWeek());
-	    tmpScheduleExpression.dayOfMonth(sched.getDayOfMonth());
-	    tmpScheduleExpression.month(sched.getMonth());
-	    logger.info("Lancio il timer ProducerCodaIndiciAipDaElabTimer...");
-	    timerService.createCalendarTimer(tmpScheduleExpression,
-		    new TimerConfig(jobName, false));
-	}
+            tmpScheduleExpression = new ScheduleExpression();
+            tmpScheduleExpression.hour(sched.getHour());
+            tmpScheduleExpression.minute(sched.getMinute());
+            tmpScheduleExpression.dayOfWeek(sched.getDayOfWeek());
+            tmpScheduleExpression.dayOfMonth(sched.getDayOfMonth());
+            tmpScheduleExpression.month(sched.getMonth());
+            logger.info("Lancio il timer ProducerCodaIndiciAipDaElabTimer...");
+            timerService.createCalendarTimer(tmpScheduleExpression,
+                    new TimerConfig(jobName, false));
+        }
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void stop(String applicationName) {
-	for (Object obj : timerService.getTimers()) {
-	    Timer timer = (Timer) obj;
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		timer.cancel();
-	    }
-	}
+        for (Object obj : timerService.getTimers()) {
+            Timer timer = (Timer) obj;
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                timer.cancel();
+            }
+        }
     }
 
     @Timeout
     public void doJob(Timer timer) {
-	if (timer.getInfo().equals(jobName)) {
-	    try {
-		thisTimer.startProcess(timer);
-	    } catch (Exception e) {
-		logger.error(
-			"Errore nell'esecuzione del job di producer coda indici aip da elaborare",
-			e);
-	    }
-	}
+        if (timer.getInfo().equals(jobName)) {
+            try {
+                thisTimer.startProcess(timer);
+            } catch (Exception e) {
+                logger.error(
+                        "Errore nell'esecuzione del job di producer coda indici aip da elaborare",
+                        e);
+            }
+        }
     }
 
     @Override
     public void startProcess(Timer timer) throws Exception {
-	logger.info("Job automatico per il producer coda indici aip da elaborare avviato");
-	LogJob logJob = jobHelper.writeAtomicLogJob(
-		JobConstants.JobEnum.PRODUCER_CODA_INDICI_AIP_DA_ELAB.name(),
-		OpTypeEnum.INIZIO_SCHEDULAZIONE.name());
-	try {
-	    codaIndiciAipUdDaElabEjb.codaIndiciAipUdDaElab();
-	} catch (ParerUserError ue) {
-	    jobHelper.writeAtomicLogJob(
-		    JobConstants.JobEnum.PRODUCER_CODA_INDICI_AIP_DA_ELAB.name(),
-		    OpTypeEnum.ERRORE.name(), ue.getDescription());
-	    logger.error("Errore nell'esecuzione del job di producer coda indici aip da elaborare",
-		    ue);
-	    logger.info("Timer cancellato");
-	    timer.cancel();
-	} catch (Exception e) {
-	    String message = null;
-	    if (e.getCause() != null) {
-		message = e.getCause().getMessage();
-	    }
-	    jobHelper.writeAtomicLogJob(OpTypeEnum.PRODUCER_CODA_INDICI_AIP_DA_ELAB.name(),
-		    OpTypeEnum.ERRORE.name(), message);
-	    logger.error("Errore nell'esecuzione del job di producer coda indici aip da elaborare",
-		    e);
-	    logger.info("Timer cancellato");
-	    timer.cancel();
-	}
+        logger.info("Job automatico per il producer coda indici aip da elaborare avviato");
+        LogJob logJob = jobHelper.writeAtomicLogJob(
+                JobConstants.JobEnum.PRODUCER_CODA_INDICI_AIP_DA_ELAB.name(),
+                OpTypeEnum.INIZIO_SCHEDULAZIONE.name());
+        try {
+            codaIndiciAipUdDaElabEjb.codaIndiciAipUdDaElab();
+        } catch (ParerUserError ue) {
+            jobHelper.writeAtomicLogJob(
+                    JobConstants.JobEnum.PRODUCER_CODA_INDICI_AIP_DA_ELAB.name(),
+                    OpTypeEnum.ERRORE.name(), ue.getDescription());
+            logger.error("Errore nell'esecuzione del job di producer coda indici aip da elaborare",
+                    ue);
+            logger.info("Timer cancellato");
+            timer.cancel();
+        } catch (Exception e) {
+            String message = null;
+            if (e.getCause() != null) {
+                message = e.getCause().getMessage();
+            }
+            jobHelper.writeAtomicLogJob(OpTypeEnum.PRODUCER_CODA_INDICI_AIP_DA_ELAB.name(),
+                    OpTypeEnum.ERRORE.name(), message);
+            logger.error("Errore nell'esecuzione del job di producer coda indici aip da elaborare",
+                    e);
+            logger.info("Timer cancellato");
+            timer.cancel();
+        }
     }
 }

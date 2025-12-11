@@ -39,21 +39,21 @@ public class OstVChkUsoTb implements Serializable {
 
     @Column(name = "FL_OK", columnDefinition = "char(1)")
     public String getFlOk() {
-	return this.flOk;
+        return this.flOk;
     }
 
     public void setFlOk(String flOk) {
-	this.flOk = flOk;
+        this.flOk = flOk;
     }
 
     @Id
     @Column(name = "NM_TABLESPACE")
     public String getNmTablespace() {
-	return this.nmTablespace;
+        return this.nmTablespace;
     }
 
     public void setNmTablespace(String nmTablespace) {
-	this.nmTablespace = nmTablespace;
+        this.nmTablespace = nmTablespace;
     }
 
 }

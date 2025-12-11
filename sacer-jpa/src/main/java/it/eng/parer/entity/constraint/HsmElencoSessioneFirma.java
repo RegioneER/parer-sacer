@@ -27,6 +27,6 @@ public final class HsmElencoSessioneFirma {
      * ti_esito_firma_elenco IN ('DA_FARE', 'IN_ERRORE', 'OK')
      */
     public enum TiEsitoFirmaElenco {
-	DA_FARE, IN_ERRORE, OK
+        DA_FARE, IN_ERRORE, OK
     }
 }

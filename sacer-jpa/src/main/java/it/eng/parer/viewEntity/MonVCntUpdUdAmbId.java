@@ -36,79 +36,79 @@ public class MonVCntUpdUdAmbId implements Serializable {
     }
 
     public MonVCntUpdUdAmbId(BigDecimal idUserIam, BigDecimal idAmbiente, String tiStatoUpdUd,
-	    String tiDtCreazione) {
-	this.idUserIam = idUserIam;
-	this.idAmbiente = idAmbiente;
-	this.tiStatoUpdUd = tiStatoUpdUd;
-	this.tiDtCreazione = tiDtCreazione;
+            String tiDtCreazione) {
+        this.idUserIam = idUserIam;
+        this.idAmbiente = idAmbiente;
+        this.tiStatoUpdUd = tiStatoUpdUd;
+        this.tiDtCreazione = tiDtCreazione;
     }
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return this.idUserIam;
+        return this.idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-	return this.idAmbiente;
+        return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	this.idAmbiente = idAmbiente;
+        this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "TI_STATO_UDP_UD")
     public String getTiStatoUpdUd() {
-	return this.tiStatoUpdUd;
+        return this.tiStatoUpdUd;
     }
 
     public void setTiStatoUpdUd(String tiStatoUpdUd) {
-	this.tiStatoUpdUd = tiStatoUpdUd;
+        this.tiStatoUpdUd = tiStatoUpdUd;
     }
 
     @Column(name = "TI_DT_CREAZIONE")
     public String getTiDtCreazione() {
-	return this.tiDtCreazione;
+        return this.tiDtCreazione;
     }
 
     public void setTiDtCreazione(String tiDtCreazione) {
-	this.tiDtCreazione = tiDtCreazione;
+        this.tiDtCreazione = tiDtCreazione;
     }
 
     @Override
     public boolean equals(Object other) {
-	if (this == other) {
-	    return true;
-	}
-	if (!(other instanceof MonVCntUpdUdAmbId)) {
-	    return false;
-	}
-	MonVCntUpdUdAmbId castOther = (MonVCntUpdUdAmbId) other;
-	return ((this.idUserIam == castOther.idUserIam) || ((this.idUserIam != null)
-		&& (castOther.idUserIam != null) && this.idUserIam.equals(castOther.idUserIam)))
-		&& ((this.idAmbiente == castOther.idAmbiente)
-			|| ((this.idAmbiente != null) && (castOther.idAmbiente != null)
-				&& this.idAmbiente.equals(castOther.idAmbiente)))
-		&& ((this.tiStatoUpdUd == castOther.tiStatoUpdUd)
-			|| ((this.tiStatoUpdUd != null) && (castOther.tiStatoUpdUd != null)
-				&& this.tiStatoUpdUd.equals(castOther.tiStatoUpdUd)))
-		&& ((this.tiDtCreazione == castOther.tiDtCreazione)
-			|| ((this.tiDtCreazione != null) && (castOther.tiDtCreazione != null)
-				&& this.tiDtCreazione.equals(castOther.tiDtCreazione)));
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof MonVCntUpdUdAmbId)) {
+            return false;
+        }
+        MonVCntUpdUdAmbId castOther = (MonVCntUpdUdAmbId) other;
+        return ((this.idUserIam == castOther.idUserIam) || ((this.idUserIam != null)
+                && (castOther.idUserIam != null) && this.idUserIam.equals(castOther.idUserIam)))
+                && ((this.idAmbiente == castOther.idAmbiente)
+                        || ((this.idAmbiente != null) && (castOther.idAmbiente != null)
+                                && this.idAmbiente.equals(castOther.idAmbiente)))
+                && ((this.tiStatoUpdUd == castOther.tiStatoUpdUd)
+                        || ((this.tiStatoUpdUd != null) && (castOther.tiStatoUpdUd != null)
+                                && this.tiStatoUpdUd.equals(castOther.tiStatoUpdUd)))
+                && ((this.tiDtCreazione == castOther.tiDtCreazione)
+                        || ((this.tiDtCreazione != null) && (castOther.tiDtCreazione != null)
+                                && this.tiDtCreazione.equals(castOther.tiDtCreazione)));
     }
 
     @Override
     public int hashCode() {
-	final int prime = 31;
-	int hash = 17;
-	hash = hash * prime + ((this.idUserIam != null) ? this.idUserIam.hashCode() : 0);
-	hash = hash * prime + ((this.idAmbiente != null) ? this.idAmbiente.hashCode() : 0);
-	hash = hash * prime + ((this.tiStatoUpdUd != null) ? this.tiStatoUpdUd.hashCode() : 0);
-	hash = hash * prime + ((this.tiDtCreazione != null) ? this.tiDtCreazione.hashCode() : 0);
-	return hash;
+        final int prime = 31;
+        int hash = 17;
+        hash = hash * prime + ((this.idUserIam != null) ? this.idUserIam.hashCode() : 0);
+        hash = hash * prime + ((this.idAmbiente != null) ? this.idAmbiente.hashCode() : 0);
+        hash = hash * prime + ((this.tiStatoUpdUd != null) ? this.tiStatoUpdUd.hashCode() : 0);
+        hash = hash * prime + ((this.tiDtCreazione != null) ? this.tiDtCreazione.hashCode() : 0);
+        return hash;
     }
 }

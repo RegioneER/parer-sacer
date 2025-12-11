@@ -44,65 +44,65 @@ public class RecObjectStorage {
     private ObjectStorageService objectStorageService;
 
     private boolean recuperaObjectStorageCompSuStream(long idCompDoc, OutputStream outputStream) {
-	boolean rc = false;
+        boolean rc = false;
 
-	try {
-	    objectStorageService.getObjectComponente(idCompDoc, outputStream);
-	    rc = true;
-	} catch (Exception e) {
+        try {
+            objectStorageService.getObjectComponente(idCompDoc, outputStream);
+            rc = true;
+        } catch (Exception e) {
 
-	    log.error(LOG_EXCEPTION_OS, e);
-	}
+            log.error(LOG_EXCEPTION_OS, e);
+        }
 
-	return rc;
+        return rc;
     }
 
     private boolean recuperaObjectStorageReportvfSuStream(long idCompDoc,
-	    OutputStream outputStream) {
-	boolean rc = false;
+            OutputStream outputStream) {
+        boolean rc = false;
 
-	try {
-	    objectStorageService.getObjectReportvf(idCompDoc, outputStream);
-	    rc = true;
-	} catch (Exception e) {
-	    log.error(LOG_EXCEPTION_OS, e);
+        try {
+            objectStorageService.getObjectReportvf(idCompDoc, outputStream);
+            rc = true;
+        } catch (Exception e) {
+            log.error(LOG_EXCEPTION_OS, e);
 
-	}
-	return rc;
+        }
+        return rc;
 
     }
 
     // MEV#30395
     private boolean recuperaObjectStorageIndiceAipUdSuStream(long idVerIndiceAip,
-	    OutputStream outputStream) {
-	boolean rc = false;
+            OutputStream outputStream) {
+        boolean rc = false;
 
-	try {
-	    objectStorageService.getObjectIndiceAipUd(idVerIndiceAip, outputStream);
-	    rc = true;
-	} catch (Exception e) {
+        try {
+            objectStorageService.getObjectIndiceAipUd(idVerIndiceAip, outputStream);
+            rc = true;
+        } catch (Exception e) {
 
-	    log.error(LOG_EXCEPTION_OS, e);
-	}
+            log.error(LOG_EXCEPTION_OS, e);
+        }
 
-	return rc;
+        return rc;
     }
     // end MEV#30395
 
     // MEV#30397
     private boolean recuperaObjectStorageElencoIndiciAipSuStream(long idFileElencoVers,
-	    OutputStream outputStream) {
-	boolean rc = false;
+            OutputStream outputStream) {
+        boolean rc = false;
 
-	try {
-	    objectStorageService.getObjectElencoIndiciAip(idFileElencoVers, outputStream);
-	    rc = true;
-	} catch (Exception e) {
+        try {
+            objectStorageService.getObjectElencoIndiciAip(idFileElencoVers, outputStream);
+            rc = true;
+        } catch (Exception e) {
 
-	    log.error(LOG_EXCEPTION_OS, e);
-	}
+            log.error(LOG_EXCEPTION_OS, e);
+        }
 
-	return rc;
+        return rc;
     }
     // end MEV#30397
 
@@ -115,94 +115,94 @@ public class RecObjectStorage {
      */
     public boolean recuperaObjectStorageSuStream(RecuperoDocBean dto) {
 
-	boolean rc = false;
-	switch (dto.getTipo()) {
-	case COMP_DOC:
-	    rc = this.recuperaObjectStorageCompSuStream(dto.getId(), dto.getOs());
-	    break;
-	case REPORTVF:
-	    rc = this.recuperaObjectStorageReportvfSuStream(dto.getId(), dto.getOs());
-	    break;
-	// MEV#30395
-	case INDICE_AIP:
-	    rc = this.recuperaObjectStorageIndiceAipUdSuStream(dto.getId(), dto.getOs());
-	    break;
-	// end MEV#30395
-	// MEV#30397
-	case ELENCO_INDICI_AIP:
-	    rc = this.recuperaObjectStorageElencoIndiciAipSuStream(dto.getId(), dto.getOs());
-	    break;
-	// end MEV#30397
-	// MEV #30398
-	case INDICE_AIP_FASC:
-	    rc = this.recuperaObjectStorageIndiceAipFascSuStream(dto.getId(), dto.getOs());
-	    break;
-	// end MEV #30398
-	// MEV #30399
-	case ELENCO_INDICI_AIP_FASC:
-	    rc = this.recuperaObjectStorageElencoIndiciAipFascSuStream(dto.getId(), dto.getOs());
-	    break;
-	// end MEV #30399
-	case INDICE_AIP_SERIE:
-	    rc = this.recuperaObjectStorageIndiceAipSerieUDSuStream(dto.getId(), dto.getOs(),
-		    dto.getTiFile());
-	    break;
-	default:
-	    log.warn("Tipo oggetto {} non supportato", dto.getTipo());
-	    break;
-	}
+        boolean rc = false;
+        switch (dto.getTipo()) {
+        case COMP_DOC:
+            rc = this.recuperaObjectStorageCompSuStream(dto.getId(), dto.getOs());
+            break;
+        case REPORTVF:
+            rc = this.recuperaObjectStorageReportvfSuStream(dto.getId(), dto.getOs());
+            break;
+        // MEV#30395
+        case INDICE_AIP:
+            rc = this.recuperaObjectStorageIndiceAipUdSuStream(dto.getId(), dto.getOs());
+            break;
+        // end MEV#30395
+        // MEV#30397
+        case ELENCO_INDICI_AIP:
+            rc = this.recuperaObjectStorageElencoIndiciAipSuStream(dto.getId(), dto.getOs());
+            break;
+        // end MEV#30397
+        // MEV #30398
+        case INDICE_AIP_FASC:
+            rc = this.recuperaObjectStorageIndiceAipFascSuStream(dto.getId(), dto.getOs());
+            break;
+        // end MEV #30398
+        // MEV #30399
+        case ELENCO_INDICI_AIP_FASC:
+            rc = this.recuperaObjectStorageElencoIndiciAipFascSuStream(dto.getId(), dto.getOs());
+            break;
+        // end MEV #30399
+        case INDICE_AIP_SERIE:
+            rc = this.recuperaObjectStorageIndiceAipSerieUDSuStream(dto.getId(), dto.getOs(),
+                    dto.getTiFile());
+            break;
+        default:
+            log.warn("Tipo oggetto {} non supportato", dto.getTipo());
+            break;
+        }
 
-	return rc;
+        return rc;
     }
 
     // MEV#30398
     private boolean recuperaObjectStorageIndiceAipFascSuStream(long idVerAipFascicolo,
-	    OutputStream outputStream) {
-	boolean rc = false;
+            OutputStream outputStream) {
+        boolean rc = false;
 
-	try {
-	    objectStorageService.getObjectIndiceAipFasc(idVerAipFascicolo, outputStream);
-	    rc = true;
-	} catch (Exception e) {
+        try {
+            objectStorageService.getObjectIndiceAipFasc(idVerAipFascicolo, outputStream);
+            rc = true;
+        } catch (Exception e) {
 
-	    log.error(LOG_EXCEPTION_OS, e);
-	}
+            log.error(LOG_EXCEPTION_OS, e);
+        }
 
-	return rc;
+        return rc;
     }
     // end MEV#30398
 
     // MEV #30399
     private boolean recuperaObjectStorageElencoIndiciAipFascSuStream(long idFileElencoVersFasc,
-	    OutputStream outputStream) {
-	boolean rc = false;
+            OutputStream outputStream) {
+        boolean rc = false;
 
-	try {
-	    objectStorageService.getObjectElencoIndiciAipFasc(idFileElencoVersFasc, outputStream);
-	    rc = true;
-	} catch (Exception e) {
+        try {
+            objectStorageService.getObjectElencoIndiciAipFasc(idFileElencoVersFasc, outputStream);
+            rc = true;
+        } catch (Exception e) {
 
-	    log.error(LOG_EXCEPTION_OS, e);
-	}
+            log.error(LOG_EXCEPTION_OS, e);
+        }
 
-	return rc;
+        return rc;
     }
     // end MEV #30399
 
     // MEV #30400
     private boolean recuperaObjectStorageIndiceAipSerieUDSuStream(long serVerSerie,
-	    OutputStream outputStream, String tiFile) {
-	boolean rc = false;
+            OutputStream outputStream, String tiFile) {
+        boolean rc = false;
 
-	try {
-	    objectStorageService.getSerVerSerieObjectStorage(serVerSerie, tiFile, outputStream);
-	    rc = true;
-	} catch (Exception e) {
+        try {
+            objectStorageService.getSerVerSerieObjectStorage(serVerSerie, tiFile, outputStream);
+            rc = true;
+        } catch (Exception e) {
 
-	    log.error(LOG_EXCEPTION_OS, e);
-	}
+            log.error(LOG_EXCEPTION_OS, e);
+        }
 
-	return rc;
+        return rc;
     }
     // end MEV #30400
 }

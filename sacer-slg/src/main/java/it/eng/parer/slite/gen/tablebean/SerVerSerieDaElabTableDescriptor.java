@@ -44,26 +44,26 @@ public class SerVerSerieDaElabTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_VER_SERIE_DA_ELAB,
-		new ColumnDescriptor(COL_ID_VER_SERIE_DA_ELAB, Types.DECIMAL, 22, true));
-	map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, false));
-	map.put(COL_TI_STATO_VER_SERIE,
-		new ColumnDescriptor(COL_TI_STATO_VER_SERIE, Types.VARCHAR, 20, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_DT_REG_STATO_VER_SERIE,
-		new ColumnDescriptor(COL_DT_REG_STATO_VER_SERIE, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_VER_SERIE_DA_ELAB,
+                new ColumnDescriptor(COL_ID_VER_SERIE_DA_ELAB, Types.DECIMAL, 22, true));
+        map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, false));
+        map.put(COL_TI_STATO_VER_SERIE,
+                new ColumnDescriptor(COL_TI_STATO_VER_SERIE, Types.VARCHAR, 20, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_DT_REG_STATO_VER_SERIE,
+                new ColumnDescriptor(COL_DT_REG_STATO_VER_SERIE, Types.TIMESTAMP, 7, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -74,137 +74,137 @@ public class AroIndiceAipUdDaElab implements Serializable {
     @Id
     @Column(name = "ID_INDICE_AIP_DA_ELAB")
     @GenericGenerator(name = "SARO_INDICE_AIP_UD_DA_ELAB_ID_INDICE_AIP_DA_ELAB_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_INDICE_AIP_UD_DA_ELAB"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_INDICE_AIP_UD_DA_ELAB"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_INDICE_AIP_UD_DA_ELAB_ID_INDICE_AIP_DA_ELAB_GENERATOR")
     public Long getIdIndiceAipDaElab() {
-	return this.idIndiceAipDaElab;
+        return this.idIndiceAipDaElab;
     }
 
     public void setIdIndiceAipDaElab(Long idIndiceAipDaElab) {
-	this.idIndiceAipDaElab = idIndiceAipDaElab;
+        this.idIndiceAipDaElab = idIndiceAipDaElab;
     }
 
     @Column(name = "DS_CAUSALE")
     public String getDsCausale() {
-	return this.dsCausale;
+        return this.dsCausale;
     }
 
     public void setDsCausale(String dsCausale) {
-	this.dsCausale = dsCausale;
+        this.dsCausale = dsCausale;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE_DA_ELAB")
     public Date getDtCreazioneDaElab() {
-	return this.dtCreazioneDaElab;
+        return this.dtCreazioneDaElab;
     }
 
     public void setDtCreazioneDaElab(Date dtCreazioneDaElab) {
-	this.dtCreazioneDaElab = dtCreazioneDaElab;
+        this.dtCreazioneDaElab = dtCreazioneDaElab;
     }
 
     @Column(name = "PG_CREAZIONE_DA_ELAB")
     public BigDecimal getPgCreazioneDaElab() {
-	return this.pgCreazioneDaElab;
+        return this.pgCreazioneDaElab;
     }
 
     public void setPgCreazioneDaElab(BigDecimal pgCreazioneDaElab) {
-	this.pgCreazioneDaElab = pgCreazioneDaElab;
+        this.pgCreazioneDaElab = pgCreazioneDaElab;
     }
 
     @Column(name = "TI_CREAZIONE")
     public String getTiCreazione() {
-	return this.tiCreazione;
+        return this.tiCreazione;
     }
 
     public void setTiCreazione(String tiCreazione) {
-	this.tiCreazione = tiCreazione;
+        this.tiCreazione = tiCreazione;
     }
 
     @OneToMany(mappedBy = "aroIndiceAipUdDaElab", cascade = CascadeType.REMOVE)
     public List<AroCompIndiceAipDaElab> getAroCompIndiceAipDaElabs() {
-	return this.aroCompIndiceAipDaElabs;
+        return this.aroCompIndiceAipDaElabs;
     }
 
     public void setAroCompIndiceAipDaElabs(List<AroCompIndiceAipDaElab> aroCompIndiceAipDaElabs) {
-	this.aroCompIndiceAipDaElabs = aroCompIndiceAipDaElabs;
+        this.aroCompIndiceAipDaElabs = aroCompIndiceAipDaElabs;
     }
 
     public AroCompIndiceAipDaElab addAroCompIndiceAipDaElab(
-	    AroCompIndiceAipDaElab aroCompIndiceAipDaElab) {
-	getAroCompIndiceAipDaElabs().add(aroCompIndiceAipDaElab);
-	aroCompIndiceAipDaElab.setAroIndiceAipUdDaElab(this);
-	return aroCompIndiceAipDaElab;
+            AroCompIndiceAipDaElab aroCompIndiceAipDaElab) {
+        getAroCompIndiceAipDaElabs().add(aroCompIndiceAipDaElab);
+        aroCompIndiceAipDaElab.setAroIndiceAipUdDaElab(this);
+        return aroCompIndiceAipDaElab;
     }
 
     public AroCompIndiceAipDaElab removeAroCompIndiceAipDaElab(
-	    AroCompIndiceAipDaElab aroCompIndiceAipDaElab) {
-	getAroCompIndiceAipDaElabs().remove(aroCompIndiceAipDaElab);
-	aroCompIndiceAipDaElab.setAroIndiceAipUdDaElab(null);
-	return aroCompIndiceAipDaElab;
+            AroCompIndiceAipDaElab aroCompIndiceAipDaElab) {
+        getAroCompIndiceAipDaElabs().remove(aroCompIndiceAipDaElab);
+        aroCompIndiceAipDaElab.setAroIndiceAipUdDaElab(null);
+        return aroCompIndiceAipDaElab;
     }
 
     @OneToMany(mappedBy = "aroIndiceAipUdDaElab", cascade = CascadeType.REMOVE)
     public List<AroUpdUdIndiceAipDaElab> getAroUpdUdIndiceAipDaElabs() {
-	return this.aroUpdUdIndiceAipDaElabs;
+        return this.aroUpdUdIndiceAipDaElabs;
     }
 
     public void setAroUpdUdIndiceAipDaElabs(
-	    List<AroUpdUdIndiceAipDaElab> aroUpdUdIndiceAipDaElabs) {
-	this.aroUpdUdIndiceAipDaElabs = aroUpdUdIndiceAipDaElabs;
+            List<AroUpdUdIndiceAipDaElab> aroUpdUdIndiceAipDaElabs) {
+        this.aroUpdUdIndiceAipDaElabs = aroUpdUdIndiceAipDaElabs;
     }
 
     public AroUpdUdIndiceAipDaElab addAroUpdUdIndiceAipDaElab(
-	    AroUpdUdIndiceAipDaElab aroUpdUdIndiceAipDaElab) {
-	getAroUpdUdIndiceAipDaElabs().add(aroUpdUdIndiceAipDaElab);
-	aroUpdUdIndiceAipDaElab.setAroIndiceAipUdDaElab(this);
-	return aroUpdUdIndiceAipDaElab;
+            AroUpdUdIndiceAipDaElab aroUpdUdIndiceAipDaElab) {
+        getAroUpdUdIndiceAipDaElabs().add(aroUpdUdIndiceAipDaElab);
+        aroUpdUdIndiceAipDaElab.setAroIndiceAipUdDaElab(this);
+        return aroUpdUdIndiceAipDaElab;
     }
 
     public AroUpdUdIndiceAipDaElab removeAroUpdUdIndiceAipDaElab(
-	    AroUpdUdIndiceAipDaElab aroUpdUdIndiceAipDaElab) {
-	getAroUpdUdIndiceAipDaElabs().remove(aroUpdUdIndiceAipDaElab);
-	aroUpdUdIndiceAipDaElab.setAroIndiceAipUdDaElab(null);
-	return aroUpdUdIndiceAipDaElab;
+            AroUpdUdIndiceAipDaElab aroUpdUdIndiceAipDaElab) {
+        getAroUpdUdIndiceAipDaElabs().remove(aroUpdUdIndiceAipDaElab);
+        aroUpdUdIndiceAipDaElab.setAroIndiceAipUdDaElab(null);
+        return aroUpdUdIndiceAipDaElab;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_UNITA_DOC")
     public AroUnitaDoc getAroUnitaDoc() {
-	return this.aroUnitaDoc;
+        return this.aroUnitaDoc;
     }
 
     public void setAroUnitaDoc(AroUnitaDoc aroUnitaDoc) {
-	this.aroUnitaDoc = aroUnitaDoc;
+        this.aroUnitaDoc = aroUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ELENCO_VERS")
     public ElvElencoVer getElvElencoVer() {
-	return this.elvElencoVer;
+        return this.elvElencoVer;
     }
 
     public void setElvElencoVer(ElvElencoVer elvElencoVer) {
-	this.elvElencoVer = elvElencoVer;
+        this.elvElencoVer = elvElencoVer;
     }
 
     @Column(name = "FL_IN_CODA", columnDefinition = "char(1)")
     public String getFlInCoda() {
-	return flInCoda;
+        return flInCoda;
     }
 
     public void setFlInCoda(String flInCoda) {
-	this.flInCoda = flInCoda;
+        this.flInCoda = flInCoda;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_IN_CODA")
     public Date getTsInCoda() {
-	return tsInCoda;
+        return tsInCoda;
     }
 
     public void setTsInCoda(Date tsInCoda) {
-	this.tsInCoda = tsInCoda;
+        this.tsInCoda = tsInCoda;
     }
 }

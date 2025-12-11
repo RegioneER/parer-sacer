@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "ErrArk")
 @XmlType(propOrder = {
-	"niErrArk", "tiErrArk", "cdErrArk", "dsErrArk" })
+        "niErrArk", "tiErrArk", "cdErrArk", "dsErrArk" })
 public class JobErrArk {
 
     protected Integer niErrArk;
@@ -29,38 +29,38 @@ public class JobErrArk {
 
     @XmlElement(name = "NiErrArk")
     public Integer getNiErrArk() {
-	return niErrArk;
+        return niErrArk;
     }
 
     public void setNiErrArk(Integer niErrArk) {
-	this.niErrArk = niErrArk;
+        this.niErrArk = niErrArk;
     }
 
     @XmlElement(name = "TiErrArk")
     public String getTiErrArk() {
-	return tiErrArk;
+        return tiErrArk;
     }
 
     public void setTiErrArk(String tiErrArk) {
-	this.tiErrArk = tiErrArk;
+        this.tiErrArk = tiErrArk;
     }
 
     @XmlElement(name = "CdErrArk")
     public String getCdErrArk() {
-	return cdErrArk;
+        return cdErrArk;
     }
 
     public void setCdErrArk(String cdErrArk) {
-	this.cdErrArk = cdErrArk;
+        this.cdErrArk = cdErrArk;
     }
 
     @XmlElement(name = "DsErrArk")
     public String getDsErrArk() {
-	return dsErrArk;
+        return dsErrArk;
     }
 
     public void setDsErrArk(String dsErrArk) {
-	this.dsErrArk = dsErrArk;
+        this.dsErrArk = dsErrArk;
     }
 
 }

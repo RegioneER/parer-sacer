@@ -37,165 +37,165 @@ public class DecTipoCompDocRowBean extends BaseRow implements JEEBaseRowInterfac
     public static DecTipoCompDocTableDescriptor TABLE_DESCRIPTOR = new DecTipoCompDocTableDescriptor();
 
     public DecTipoCompDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdTipoCompDoc() {
-	return getBigDecimal("id_tipo_comp_doc");
+        return getBigDecimal("id_tipo_comp_doc");
     }
 
     public void setIdTipoCompDoc(BigDecimal idTipoCompDoc) {
-	setObject("id_tipo_comp_doc", idTipoCompDoc);
+        setObject("id_tipo_comp_doc", idTipoCompDoc);
     }
 
     public BigDecimal getIdTipoStrutDoc() {
-	return getBigDecimal("id_tipo_strut_doc");
+        return getBigDecimal("id_tipo_strut_doc");
     }
 
     public void setIdTipoStrutDoc(BigDecimal idTipoStrutDoc) {
-	setObject("id_tipo_strut_doc", idTipoStrutDoc);
+        setObject("id_tipo_strut_doc", idTipoStrutDoc);
     }
 
     public String getNmTipoCompDoc() {
-	return getString("nm_tipo_comp_doc");
+        return getString("nm_tipo_comp_doc");
     }
 
     public void setNmTipoCompDoc(String nmTipoCompDoc) {
-	setObject("nm_tipo_comp_doc", nmTipoCompDoc);
+        setObject("nm_tipo_comp_doc", nmTipoCompDoc);
     }
 
     public String getDsTipoCompDoc() {
-	return getString("ds_tipo_comp_doc");
+        return getString("ds_tipo_comp_doc");
     }
 
     public void setDsTipoCompDoc(String dsTipoCompDoc) {
-	setObject("ds_tipo_comp_doc", dsTipoCompDoc);
+        setObject("ds_tipo_comp_doc", dsTipoCompDoc);
     }
 
     public String getFlGestiti() {
-	return getString("fl_gestiti");
+        return getString("fl_gestiti");
     }
 
     public void setFlGestiti(String flGestiti) {
-	setObject("fl_gestiti", flGestiti);
+        setObject("fl_gestiti", flGestiti);
     }
 
     public String getFlIdonei() {
-	return getString("fl_idonei");
+        return getString("fl_idonei");
     }
 
     public void setFlIdonei(String flIdonei) {
-	setObject("fl_idonei", flIdonei);
+        setObject("fl_idonei", flIdonei);
     }
 
     public String getFlDeprecati() {
-	return getString("fl_deprecati");
+        return getString("fl_deprecati");
     }
 
     public void setFlDeprecati(String flDeprecati) {
-	setObject("fl_deprecati", flDeprecati);
+        setObject("fl_deprecati", flDeprecati);
     }
 
     public Timestamp getDtIstituz() {
-	return getTimestamp("dt_istituz");
+        return getTimestamp("dt_istituz");
     }
 
     public void setDtIstituz(Timestamp dtIstituz) {
-	setObject("dt_istituz", dtIstituz);
+        setObject("dt_istituz", dtIstituz);
     }
 
     public Timestamp getDtSoppres() {
-	return getTimestamp("dt_soppres");
+        return getTimestamp("dt_soppres");
     }
 
     public void setDtSoppres(Timestamp dtSoppres) {
-	setObject("dt_soppres", dtSoppres);
+        setObject("dt_soppres", dtSoppres);
     }
 
     public String getTiUsoCompDoc() {
-	return getString("ti_uso_comp_doc");
+        return getString("ti_uso_comp_doc");
     }
 
     public void setTiUsoCompDoc(String tiUsoCompDoc) {
-	setObject("ti_uso_comp_doc", tiUsoCompDoc);
+        setObject("ti_uso_comp_doc", tiUsoCompDoc);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecTipoCompDoc entity = (DecTipoCompDoc) obj;
+        DecTipoCompDoc entity = (DecTipoCompDoc) obj;
 
-	this.setIdTipoCompDoc(entity.getIdTipoCompDoc() == null ? null
-		: BigDecimal.valueOf(entity.getIdTipoCompDoc()));
+        this.setIdTipoCompDoc(entity.getIdTipoCompDoc() == null ? null
+                : BigDecimal.valueOf(entity.getIdTipoCompDoc()));
 
-	if (entity.getDecTipoStrutDoc() != null) {
-	    this.setIdTipoStrutDoc(new BigDecimal(entity.getDecTipoStrutDoc().getIdTipoStrutDoc()));
-	}
+        if (entity.getDecTipoStrutDoc() != null) {
+            this.setIdTipoStrutDoc(new BigDecimal(entity.getDecTipoStrutDoc().getIdTipoStrutDoc()));
+        }
 
-	this.setNmTipoCompDoc(entity.getNmTipoCompDoc());
-	this.setDsTipoCompDoc(entity.getDsTipoCompDoc());
-	this.setFlGestiti(entity.getFlGestiti());
-	this.setFlIdonei(entity.getFlIdonei());
-	this.setFlDeprecati(entity.getFlDeprecati());
-	if (entity.getDtIstituz() != null) {
-	    this.setDtIstituz(new Timestamp(entity.getDtIstituz().getTime()));
-	}
-	if (entity.getDtSoppres() != null) {
-	    this.setDtSoppres(new Timestamp(entity.getDtSoppres().getTime()));
-	}
-	this.setTiUsoCompDoc(entity.getTiUsoCompDoc());
+        this.setNmTipoCompDoc(entity.getNmTipoCompDoc());
+        this.setDsTipoCompDoc(entity.getDsTipoCompDoc());
+        this.setFlGestiti(entity.getFlGestiti());
+        this.setFlIdonei(entity.getFlIdonei());
+        this.setFlDeprecati(entity.getFlDeprecati());
+        if (entity.getDtIstituz() != null) {
+            this.setDtIstituz(new Timestamp(entity.getDtIstituz().getTime()));
+        }
+        if (entity.getDtSoppres() != null) {
+            this.setDtSoppres(new Timestamp(entity.getDtSoppres().getTime()));
+        }
+        this.setTiUsoCompDoc(entity.getTiUsoCompDoc());
     }
 
     @Override
     public DecTipoCompDoc rowBeanToEntity() {
-	DecTipoCompDoc entity = new DecTipoCompDoc();
-	if (this.getIdTipoCompDoc() != null) {
-	    entity.setIdTipoCompDoc(this.getIdTipoCompDoc().longValue());
-	}
-	if (this.getIdTipoStrutDoc() != null) {
-	    if (entity.getDecTipoStrutDoc() == null) {
-		entity.setDecTipoStrutDoc(new DecTipoStrutDoc());
-	    }
-	    entity.getDecTipoStrutDoc().setIdTipoStrutDoc(this.getIdTipoStrutDoc().longValue());
-	}
-	entity.setNmTipoCompDoc(this.getNmTipoCompDoc());
-	entity.setDsTipoCompDoc(this.getDsTipoCompDoc());
-	entity.setFlGestiti(this.getFlGestiti());
-	entity.setFlIdonei(this.getFlIdonei());
-	entity.setFlDeprecati(this.getFlDeprecati());
-	entity.setDtIstituz(this.getDtIstituz());
-	entity.setDtSoppres(this.getDtSoppres());
-	entity.setTiUsoCompDoc(this.getTiUsoCompDoc());
-	return entity;
+        DecTipoCompDoc entity = new DecTipoCompDoc();
+        if (this.getIdTipoCompDoc() != null) {
+            entity.setIdTipoCompDoc(this.getIdTipoCompDoc().longValue());
+        }
+        if (this.getIdTipoStrutDoc() != null) {
+            if (entity.getDecTipoStrutDoc() == null) {
+                entity.setDecTipoStrutDoc(new DecTipoStrutDoc());
+            }
+            entity.getDecTipoStrutDoc().setIdTipoStrutDoc(this.getIdTipoStrutDoc().longValue());
+        }
+        entity.setNmTipoCompDoc(this.getNmTipoCompDoc());
+        entity.setDsTipoCompDoc(this.getDsTipoCompDoc());
+        entity.setFlGestiti(this.getFlGestiti());
+        entity.setFlIdonei(this.getFlIdonei());
+        entity.setFlDeprecati(this.getFlDeprecati());
+        entity.setDtIstituz(this.getDtIstituz());
+        entity.setDtSoppres(this.getDtSoppres());
+        entity.setTiUsoCompDoc(this.getTiUsoCompDoc());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

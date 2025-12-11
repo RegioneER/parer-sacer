@@ -48,34 +48,34 @@ public class AroVLisLinkUnitaDocTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_LINK_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_LINK_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_REGISTRO_KEY_UNITA_DOC_LINK,
-		new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC_LINK, Types.VARCHAR, 100, true));
-	map.put(COL_AA_KEY_UNITA_DOC_LINK,
-		new ColumnDescriptor(COL_AA_KEY_UNITA_DOC_LINK, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_UNITA_DOC_LINK,
-		new ColumnDescriptor(COL_CD_KEY_UNITA_DOC_LINK, Types.VARCHAR, 100, true));
-	map.put(COL_DS_LINK_UNITA_DOC,
-		new ColumnDescriptor(COL_DS_LINK_UNITA_DOC, Types.VARCHAR, 254, true));
-	map.put(COL_FL_RISOLTO, new ColumnDescriptor(COL_FL_RISOLTO, Types.VARCHAR, 1, true));
-	map.put(COL_ID_UNITA_DOC_COLLEG,
-		new ColumnDescriptor(COL_ID_UNITA_DOC_COLLEG, Types.DECIMAL, 22, true));
-	map.put(COL_DT_REG_UNITA_DOC,
-		new ColumnDescriptor(COL_DT_REG_UNITA_DOC, Types.TIMESTAMP, 7, true));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_LINK_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_LINK_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_REGISTRO_KEY_UNITA_DOC_LINK,
+                new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC_LINK, Types.VARCHAR, 100, true));
+        map.put(COL_AA_KEY_UNITA_DOC_LINK,
+                new ColumnDescriptor(COL_AA_KEY_UNITA_DOC_LINK, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_UNITA_DOC_LINK,
+                new ColumnDescriptor(COL_CD_KEY_UNITA_DOC_LINK, Types.VARCHAR, 100, true));
+        map.put(COL_DS_LINK_UNITA_DOC,
+                new ColumnDescriptor(COL_DS_LINK_UNITA_DOC, Types.VARCHAR, 254, true));
+        map.put(COL_FL_RISOLTO, new ColumnDescriptor(COL_FL_RISOLTO, Types.VARCHAR, 1, true));
+        map.put(COL_ID_UNITA_DOC_COLLEG,
+                new ColumnDescriptor(COL_ID_UNITA_DOC_COLLEG, Types.DECIMAL, 22, true));
+        map.put(COL_DT_REG_UNITA_DOC,
+                new ColumnDescriptor(COL_DT_REG_UNITA_DOC, Types.TIMESTAMP, 7, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

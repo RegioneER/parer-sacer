@@ -88,498 +88,498 @@ public class AroVVisMarcaComp implements Serializable {
     private String dsNote;
 
     public AroVVisMarcaComp() {
-	// hibernate
+        // hibernate
     }
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "CD_KEY_DOC_VERS")
     public String getCdKeyDocVers() {
-	return this.cdKeyDocVers;
+        return this.cdKeyDocVers;
     }
 
     public void setCdKeyDocVers(String cdKeyDocVers) {
-	this.cdKeyDocVers = cdKeyDocVers;
+        this.cdKeyDocVers = cdKeyDocVers;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC")
     public String getCdKeyUnitaDoc() {
-	return this.cdKeyUnitaDoc;
+        return this.cdKeyUnitaDoc;
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     @Column(name = "CD_REGISTRO_KEY_UNITA_DOC")
     public String getCdRegistroKeyUnitaDoc() {
-	return this.cdRegistroKeyUnitaDoc;
+        return this.cdRegistroKeyUnitaDoc;
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
     }
 
     @Column(name = "DS_ALGO_MARCA")
     public String getDsAlgoMarca() {
-	return this.dsAlgoMarca;
+        return this.dsAlgoMarca;
     }
 
     public void setDsAlgoMarca(String dsAlgoMarca) {
-	this.dsAlgoMarca = dsAlgoMarca;
+        this.dsAlgoMarca = dsAlgoMarca;
     }
 
     @Column(name = "DS_MARCA_BASE64")
     public String getDsMarcaBase64() {
-	return this.dsMarcaBase64;
+        return this.dsMarcaBase64;
     }
 
     public void setDsMarcaBase64(String dsMarcaBase64) {
-	this.dsMarcaBase64 = dsMarcaBase64;
+        this.dsMarcaBase64 = dsMarcaBase64;
     }
 
     @Column(name = "DS_MSG_ESITO_CONTR_CONFORME")
     public String getDsMsgEsitoContrConforme() {
-	return this.dsMsgEsitoContrConforme;
+        return this.dsMsgEsitoContrConforme;
     }
 
     public void setDsMsgEsitoContrConforme(String dsMsgEsitoContrConforme) {
-	this.dsMsgEsitoContrConforme = dsMsgEsitoContrConforme;
+        this.dsMsgEsitoContrConforme = dsMsgEsitoContrConforme;
     }
 
     @Column(name = "DS_MSG_ESITO_VERIF_MARCA")
     public String getDsMsgEsitoVerifMarca() {
-	return this.dsMsgEsitoVerifMarca;
+        return this.dsMsgEsitoVerifMarca;
     }
 
     public void setDsMsgEsitoVerifMarca(String dsMsgEsitoVerifMarca) {
-	this.dsMsgEsitoVerifMarca = dsMsgEsitoVerifMarca;
+        this.dsMsgEsitoVerifMarca = dsMsgEsitoVerifMarca;
     }
 
     @Column(name = "DS_URN_COMP_CALC")
     public String getDsUrnCompCalc() {
-	return this.dsUrnCompCalc;
+        return this.dsUrnCompCalc;
     }
 
     public void setDsUrnCompCalc(String dsUrnCompCalc) {
-	this.dsUrnCompCalc = dsUrnCompCalc;
+        this.dsUrnCompCalc = dsUrnCompCalc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIN_VAL_CERTIF_TSA")
     public Date getDtFinValCertifTsa() {
-	return this.dtFinValCertifTsa;
+        return this.dtFinValCertifTsa;
     }
 
     public void setDtFinValCertifTsa(Date dtFinValCertifTsa) {
-	this.dtFinValCertifTsa = dtFinValCertifTsa;
+        this.dtFinValCertifTsa = dtFinValCertifTsa;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_INI_VAL_CERTIF_TSA")
     public Date getDtIniValCertifTsa() {
-	return this.dtIniValCertifTsa;
+        return this.dtIniValCertifTsa;
     }
 
     public void setDtIniValCertifTsa(Date dtIniValCertifTsa) {
-	this.dtIniValCertifTsa = dtIniValCertifTsa;
+        this.dtIniValCertifTsa = dtIniValCertifTsa;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SCAD_CRL")
     public Date getDtScadCrl() {
-	return this.dtScadCrl;
+        return this.dtScadCrl;
     }
 
     public void setDtScadCrl(Date dtScadCrl) {
-	this.dtScadCrl = dtScadCrl;
+        this.dtScadCrl = dtScadCrl;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SCAD_MARCA")
     public Date getDtScadMarca() {
-	return this.dtScadMarca;
+        return this.dtScadMarca;
     }
 
     public void setDtScadMarca(Date dtScadMarca) {
-	this.dtScadMarca = dtScadMarca;
+        this.dtScadMarca = dtScadMarca;
     }
 
     @Column(name = "ESITO_CATENA")
     public String getEsitoCatena() {
-	return this.esitoCatena;
+        return this.esitoCatena;
     }
 
     public void setEsitoCatena(String esitoCatena) {
-	this.esitoCatena = esitoCatena;
+        this.esitoCatena = esitoCatena;
     }
 
     @Column(name = "ESITO_CERTIFICATO")
     public String getEsitoCertificato() {
-	return this.esitoCertificato;
+        return this.esitoCertificato;
     }
 
     public void setEsitoCertificato(String esitoCertificato) {
-	this.esitoCertificato = esitoCertificato;
+        this.esitoCertificato = esitoCertificato;
     }
 
     @Column(name = "ESITO_CRITTOGRAFICO")
     public String getEsitoCrittografico() {
-	return this.esitoCrittografico;
+        return this.esitoCrittografico;
     }
 
     public void setEsitoCrittografico(String esitoCrittografico) {
-	this.esitoCrittografico = esitoCrittografico;
+        this.esitoCrittografico = esitoCrittografico;
     }
 
     @Column(name = "ESITO_CRL")
     public String getEsitoCrl() {
-	return this.esitoCrl;
+        return this.esitoCrl;
     }
 
     public void setEsitoCrl(String esitoCrl) {
-	this.esitoCrl = esitoCrl;
+        this.esitoCrl = esitoCrl;
     }
 
     @Column(name = "ESITO_OCSP")
     public String getEsitoOcsp() {
-	return this.esitoOcsp;
+        return this.esitoOcsp;
     }
 
     public void setEsitoOcsp(String esitoOcsp) {
-	this.esitoOcsp = esitoOcsp;
+        this.esitoOcsp = esitoOcsp;
     }
 
     @Column(name = "ID_COMP_DOC")
     public BigDecimal getIdCompDoc() {
-	return this.idCompDoc;
+        return this.idCompDoc;
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	this.idCompDoc = idCompDoc;
+        this.idCompDoc = idCompDoc;
     }
 
     @Column(name = "ID_CONTR_MARCA_CATENA")
     public BigDecimal getIdContrMarcaCatena() {
-	return this.idContrMarcaCatena;
+        return this.idContrMarcaCatena;
     }
 
     public void setIdContrMarcaCatena(BigDecimal idContrMarcaCatena) {
-	this.idContrMarcaCatena = idContrMarcaCatena;
+        this.idContrMarcaCatena = idContrMarcaCatena;
     }
 
     @Column(name = "ID_DOC")
     public BigDecimal getIdDoc() {
-	return this.idDoc;
+        return this.idDoc;
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	this.idDoc = idDoc;
+        this.idDoc = idDoc;
     }
 
     @Id
     @Column(name = "ID_MARCA_COMP")
     public BigDecimal getIdMarcaComp() {
-	return this.idMarcaComp;
+        return this.idMarcaComp;
     }
 
     public void setIdMarcaComp(BigDecimal idMarcaComp) {
-	this.idMarcaComp = idMarcaComp;
+        this.idMarcaComp = idMarcaComp;
     }
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     @Column(name = "ISSUER_CERTIF_TSA")
     public String getIssuerCertifTsa() {
-	return this.issuerCertifTsa;
+        return this.issuerCertifTsa;
     }
 
     public void setIssuerCertifTsa(String issuerCertifTsa) {
-	this.issuerCertifTsa = issuerCertifTsa;
+        this.issuerCertifTsa = issuerCertifTsa;
     }
 
     @Column(name = "ISSUER_CRL")
     public String getIssuerCrl() {
-	return this.issuerCrl;
+        return this.issuerCrl;
     }
 
     public void setIssuerCrl(String issuerCrl) {
-	this.issuerCrl = issuerCrl;
+        this.issuerCrl = issuerCrl;
     }
 
     @Column(name = "MSG_ESITO_CATENA")
     public String getMsgEsitoCatena() {
-	return this.msgEsitoCatena;
+        return this.msgEsitoCatena;
     }
 
     public void setMsgEsitoCatena(String msgEsitoCatena) {
-	this.msgEsitoCatena = msgEsitoCatena;
+        this.msgEsitoCatena = msgEsitoCatena;
     }
 
     @Column(name = "MSG_ESITO_CERTIFICATO")
     public String getMsgEsitoCertificato() {
-	return this.msgEsitoCertificato;
+        return this.msgEsitoCertificato;
     }
 
     public void setMsgEsitoCertificato(String msgEsitoCertificato) {
-	this.msgEsitoCertificato = msgEsitoCertificato;
+        this.msgEsitoCertificato = msgEsitoCertificato;
     }
 
     @Column(name = "MSG_ESITO_CRITTOGRAFICO")
     public String getMsgEsitoCrittografico() {
-	return this.msgEsitoCrittografico;
+        return this.msgEsitoCrittografico;
     }
 
     public void setMsgEsitoCrittografico(String msgEsitoCrittografico) {
-	this.msgEsitoCrittografico = msgEsitoCrittografico;
+        this.msgEsitoCrittografico = msgEsitoCrittografico;
     }
 
     @Column(name = "MSG_ESITO_CRL")
     public String getMsgEsitoCrl() {
-	return this.msgEsitoCrl;
+        return this.msgEsitoCrl;
     }
 
     public void setMsgEsitoCrl(String msgEsitoCrl) {
-	this.msgEsitoCrl = msgEsitoCrl;
+        this.msgEsitoCrl = msgEsitoCrl;
     }
 
     @Column(name = "MSG_ESITO_OCSP")
     public String getMsgEsitoOcsp() {
-	return this.msgEsitoOcsp;
+        return this.msgEsitoOcsp;
     }
 
     public void setMsgEsitoOcsp(String msgEsitoOcsp) {
-	this.msgEsitoOcsp = msgEsitoOcsp;
+        this.msgEsitoOcsp = msgEsitoOcsp;
     }
 
     @Column(name = "NI_ORD_COMP_DOC")
     public BigDecimal getNiOrdCompDoc() {
-	return this.niOrdCompDoc;
+        return this.niOrdCompDoc;
     }
 
     public void setNiOrdCompDoc(BigDecimal niOrdCompDoc) {
-	this.niOrdCompDoc = niOrdCompDoc;
+        this.niOrdCompDoc = niOrdCompDoc;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-	return this.nmAmbiente;
+        return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	this.nmAmbiente = nmAmbiente;
+        this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-	return this.nmEnte;
+        return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_FORMATO_CALC")
     public String getNmFormatoCalc() {
-	return this.nmFormatoCalc;
+        return this.nmFormatoCalc;
     }
 
     public void setNmFormatoCalc(String nmFormatoCalc) {
-	this.nmFormatoCalc = nmFormatoCalc;
+        this.nmFormatoCalc = nmFormatoCalc;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-	return this.nmStrut;
+        return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
     @Column(name = "NM_TIPO_COMP_DOC")
     public String getNmTipoCompDoc() {
-	return this.nmTipoCompDoc;
+        return this.nmTipoCompDoc;
     }
 
     public void setNmTipoCompDoc(String nmTipoCompDoc) {
-	this.nmTipoCompDoc = nmTipoCompDoc;
+        this.nmTipoCompDoc = nmTipoCompDoc;
     }
 
     @Column(name = "NM_TIPO_DOC")
     public String getNmTipoDoc() {
-	return this.nmTipoDoc;
+        return this.nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	this.nmTipoDoc = nmTipoDoc;
+        this.nmTipoDoc = nmTipoDoc;
     }
 
     @Column(name = "NM_TIPO_UNITA_DOC")
     public String getNmTipoUnitaDoc() {
-	return this.nmTipoUnitaDoc;
+        return this.nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     @Column(name = "PG_BUSTA")
     public BigDecimal getPgBusta() {
-	return this.pgBusta;
+        return this.pgBusta;
     }
 
     public void setPgBusta(BigDecimal pgBusta) {
-	this.pgBusta = pgBusta;
+        this.pgBusta = pgBusta;
     }
 
     @Column(name = "PG_DOC")
     public BigDecimal getPgDoc() {
-	return this.pgDoc;
+        return this.pgDoc;
     }
 
     public void setPgDoc(BigDecimal pgDoc) {
-	this.pgDoc = pgDoc;
+        this.pgDoc = pgDoc;
     }
 
     @Column(name = "PG_MARCA")
     public BigDecimal getPgMarca() {
-	return this.pgMarca;
+        return this.pgMarca;
     }
 
     public void setPgMarca(BigDecimal pgMarca) {
-	this.pgMarca = pgMarca;
+        this.pgMarca = pgMarca;
     }
 
     @Column(name = "SERIAL_CA_CRL")
     public BigDecimal getSerialCaCrl() {
-	return this.serialCaCrl;
+        return this.serialCaCrl;
     }
 
     public void setSerialCaCrl(BigDecimal serialCaCrl) {
-	this.serialCaCrl = serialCaCrl;
+        this.serialCaCrl = serialCaCrl;
     }
 
     @Column(name = "SERIAL_CRL")
     public BigDecimal getSerialCrl() {
-	return this.serialCrl;
+        return this.serialCrl;
     }
 
     public void setSerialCrl(BigDecimal serialCrl) {
-	this.serialCrl = serialCrl;
+        this.serialCrl = serialCrl;
     }
 
     @Column(name = "SERIAL_TSA")
     public BigDecimal getSerialTsa() {
-	return this.serialTsa;
+        return this.serialTsa;
     }
 
     public void setSerialTsa(BigDecimal serialTsa) {
-	this.serialTsa = serialTsa;
+        this.serialTsa = serialTsa;
     }
 
     @Column(name = "TI_DOC")
     public String getTiDoc() {
-	return this.tiDoc;
+        return this.tiDoc;
     }
 
     public void setTiDoc(String tiDoc) {
-	this.tiDoc = tiDoc;
+        this.tiDoc = tiDoc;
     }
 
     @Column(name = "TI_ESITO_CONTR_CONFORME")
     public String getTiEsitoContrConforme() {
-	return this.tiEsitoContrConforme;
+        return this.tiEsitoContrConforme;
     }
 
     public void setTiEsitoContrConforme(String tiEsitoContrConforme) {
-	this.tiEsitoContrConforme = tiEsitoContrConforme;
+        this.tiEsitoContrConforme = tiEsitoContrConforme;
     }
 
     @Column(name = "TI_ESITO_VERIF_MARCA")
     public String getTiEsitoVerifMarca() {
-	return this.tiEsitoVerifMarca;
+        return this.tiEsitoVerifMarca;
     }
 
     public void setTiEsitoVerifMarca(String tiEsitoVerifMarca) {
-	this.tiEsitoVerifMarca = tiEsitoVerifMarca;
+        this.tiEsitoVerifMarca = tiEsitoVerifMarca;
     }
 
     @Column(name = "TI_FORMATO_MARCA")
     public String getTiFormatoMarca() {
-	return this.tiFormatoMarca;
+        return this.tiFormatoMarca;
     }
 
     public void setTiFormatoMarca(String tiFormatoMarca) {
-	this.tiFormatoMarca = tiFormatoMarca;
+        this.tiFormatoMarca = tiFormatoMarca;
     }
 
     @Column(name = "TI_MARCA_TEMP")
     public String getTiMarcaTemp() {
-	return this.tiMarcaTemp;
+        return this.tiMarcaTemp;
     }
 
     public void setTiMarcaTemp(String tiMarcaTemp) {
-	this.tiMarcaTemp = tiMarcaTemp;
+        this.tiMarcaTemp = tiMarcaTemp;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TM_MARCA_TEMP")
     public Date getTmMarcaTemp() {
-	return this.tmMarcaTemp;
+        return this.tmMarcaTemp;
     }
 
     public void setTmMarcaTemp(Date tmMarcaTemp) {
-	this.tmMarcaTemp = tmMarcaTemp;
+        this.tmMarcaTemp = tmMarcaTemp;
     }
 
     @Column(name = "IDENTIFIER_OCSP")
     public String getIdentifierOcsp() {
-	return this.identifierOcsp;
+        return this.identifierOcsp;
     }
 
     public void setIdentifierOcsp(String identifierOcsp) {
-	this.identifierOcsp = identifierOcsp;
+        this.identifierOcsp = identifierOcsp;
     }
 
     @Column(name = "ISSUER_CERTIF_OCSP")
     public String getIssuerCertifOcsp() {
-	return this.issuerCertiftOcsp;
+        return this.issuerCertiftOcsp;
     }
 
     public void setIssuerCertifOcsp(String issuerCertiftOcsp) {
-	this.issuerCertiftOcsp = issuerCertiftOcsp;
+        this.issuerCertiftOcsp = issuerCertiftOcsp;
     }
 
     @Column(name = "SERIAL_CERTIF_OCSP", columnDefinition = "NUMBER")
     public String getSerialCertifOcsp() {
-	return this.serialCertifOcsp;
+        return this.serialCertifOcsp;
     }
 
     public void setSerialCertifOcsp(String serialCertifOcsp) {
-	this.serialCertifOcsp = serialCertifOcsp;
+        this.serialCertifOcsp = serialCertifOcsp;
     }
 
     @Column(name = "DS_NOTE")
     public String getDsNote() {
-	return this.dsNote;
+        return this.dsNote;
     }
 
     public void setDsNote(String dsNote) {
-	this.dsNote = dsNote;
+        this.dsNote = dsNote;
     }
 }

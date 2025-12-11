@@ -31,26 +31,26 @@ public class RecuperoMMExt extends RecuperoExt {
     //
 
     public IndiceMM getIndiceMM() {
-	return indiceMM;
+        return indiceMM;
     }
 
     public void setIndiceMM(IndiceMM indiceMM) {
-	this.indiceMM = indiceMM;
+        this.indiceMM = indiceMM;
     }
 
     public String getPrefissoPathPerApp() {
-	return prefissoPathPerApp;
+        return prefissoPathPerApp;
     }
 
     public void setPrefissoPathPerApp(String prefissoPathPerApp) {
-	this.prefissoPathPerApp = prefissoPathPerApp;
+        this.prefissoPathPerApp = prefissoPathPerApp;
     }
 
     public String getPathContainerZip() {
-	return pathContainerZip;
+        return pathContainerZip;
     }
 
     public void setPathContainerZip(String pathContainerZip) {
-	this.pathContainerZip = pathContainerZip;
+        this.pathContainerZip = pathContainerZip;
     }
 }

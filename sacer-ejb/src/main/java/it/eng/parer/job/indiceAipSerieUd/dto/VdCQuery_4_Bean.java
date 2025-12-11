@@ -25,35 +25,35 @@ public class VdCQuery_4_Bean {
     private String nmTipoUnitaDoc;
 
     public Long getIdVerSerieCor() {
-	return idVerSerieCor;
+        return idVerSerieCor;
     }
 
     public void setIdVerSerieCor(Long idVerSerieCor) {
-	this.idVerSerieCor = idVerSerieCor;
+        this.idVerSerieCor = idVerSerieCor;
     }
 
     public Long getIdTipoSerieUd() {
-	return idTipoSerieUd;
+        return idTipoSerieUd;
     }
 
     public void setIdTipoSerieUd(Long idTipoSerieUd) {
-	this.idTipoSerieUd = idTipoSerieUd;
+        this.idTipoSerieUd = idTipoSerieUd;
     }
 
     public String getCdRegistroUnitaDoc() {
-	return cdRegistroUnitaDoc;
+        return cdRegistroUnitaDoc;
     }
 
     public void setCdRegistroUnitaDoc(String cdRegistroUnitaDoc) {
-	this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
+        this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
     }
 
     public String getNmTipoUnitaDoc() {
-	return nmTipoUnitaDoc;
+        return nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
 }

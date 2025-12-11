@@ -58,54 +58,54 @@ public class ElvElencoVersFascTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_ELENCO_VERS_FASC,
-		new ColumnDescriptor(COL_ID_ELENCO_VERS_FASC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_ID_CRITERIO_RAGGR_FASC,
-		new ColumnDescriptor(COL_ID_CRITERIO_RAGGR_FASC, Types.DECIMAL, 22, false));
-	map.put(COL_TS_CREAZIONE_ELENCO,
-		new ColumnDescriptor(COL_TS_CREAZIONE_ELENCO, Types.TIMESTAMP, 11, false));
-	map.put(COL_NI_FASC_VERS_ELENCO,
-		new ColumnDescriptor(COL_NI_FASC_VERS_ELENCO, Types.DECIMAL, 22, false));
-	map.put(COL_NT_INDICE_ELENCO,
-		new ColumnDescriptor(COL_NT_INDICE_ELENCO, Types.VARCHAR, 2000, false));
-	map.put(COL_DT_SCAD_CHIUS,
-		new ColumnDescriptor(COL_DT_SCAD_CHIUS, Types.TIMESTAMP, 7, false));
-	map.put(COL_DS_URN_ELENCO,
-		new ColumnDescriptor(COL_DS_URN_ELENCO, Types.VARCHAR, 254, false));
-	map.put(COL_DS_URN_NORMALIZ_ELENCO,
-		new ColumnDescriptor(COL_DS_URN_NORMALIZ_ELENCO, Types.VARCHAR, 254, false));
-	map.put(COL_DL_MOTIVO_CHIUS,
-		new ColumnDescriptor(COL_DL_MOTIVO_CHIUS, Types.VARCHAR, 1024, false));
-	map.put(COL_NT_ELENCO_CHIUSO,
-		new ColumnDescriptor(COL_NT_ELENCO_CHIUSO, Types.VARCHAR, 2000, false));
-	map.put(COL_AA_FASCICOLO, new ColumnDescriptor(COL_AA_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_FL_ELENCO_STANDARD,
-		new ColumnDescriptor(COL_FL_ELENCO_STANDARD, Types.VARCHAR, 1, false));
-	map.put(COL_NI_MAX_FASC_CRIT,
-		new ColumnDescriptor(COL_NI_MAX_FASC_CRIT, Types.DECIMAL, 22, false));
-	map.put(COL_TI_SCAD_CHIUS_CRIT,
-		new ColumnDescriptor(COL_TI_SCAD_CHIUS_CRIT, Types.VARCHAR, 20, false));
-	map.put(COL_TI_TEMPO_SCAD_CHIUS_CRIT,
-		new ColumnDescriptor(COL_TI_TEMPO_SCAD_CHIUS_CRIT, Types.VARCHAR, 20, false));
-	map.put(COL_NI_TEMPO_SCAD_CHIUS_CRIT,
-		new ColumnDescriptor(COL_NI_TEMPO_SCAD_CHIUS_CRIT, Types.DECIMAL, 22, false));
-	map.put(COL_NI_INDICI_AIP,
-		new ColumnDescriptor(COL_NI_INDICI_AIP, Types.DECIMAL, 22, false));
-	map.put(COL_ID_STATO_ELENCO_VERS_FASC_COR,
-		new ColumnDescriptor(COL_ID_STATO_ELENCO_VERS_FASC_COR, Types.DECIMAL, 22, false));
+        map.put(COL_ID_ELENCO_VERS_FASC,
+                new ColumnDescriptor(COL_ID_ELENCO_VERS_FASC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_ID_CRITERIO_RAGGR_FASC,
+                new ColumnDescriptor(COL_ID_CRITERIO_RAGGR_FASC, Types.DECIMAL, 22, false));
+        map.put(COL_TS_CREAZIONE_ELENCO,
+                new ColumnDescriptor(COL_TS_CREAZIONE_ELENCO, Types.TIMESTAMP, 11, false));
+        map.put(COL_NI_FASC_VERS_ELENCO,
+                new ColumnDescriptor(COL_NI_FASC_VERS_ELENCO, Types.DECIMAL, 22, false));
+        map.put(COL_NT_INDICE_ELENCO,
+                new ColumnDescriptor(COL_NT_INDICE_ELENCO, Types.VARCHAR, 2000, false));
+        map.put(COL_DT_SCAD_CHIUS,
+                new ColumnDescriptor(COL_DT_SCAD_CHIUS, Types.TIMESTAMP, 7, false));
+        map.put(COL_DS_URN_ELENCO,
+                new ColumnDescriptor(COL_DS_URN_ELENCO, Types.VARCHAR, 254, false));
+        map.put(COL_DS_URN_NORMALIZ_ELENCO,
+                new ColumnDescriptor(COL_DS_URN_NORMALIZ_ELENCO, Types.VARCHAR, 254, false));
+        map.put(COL_DL_MOTIVO_CHIUS,
+                new ColumnDescriptor(COL_DL_MOTIVO_CHIUS, Types.VARCHAR, 1024, false));
+        map.put(COL_NT_ELENCO_CHIUSO,
+                new ColumnDescriptor(COL_NT_ELENCO_CHIUSO, Types.VARCHAR, 2000, false));
+        map.put(COL_AA_FASCICOLO, new ColumnDescriptor(COL_AA_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_FL_ELENCO_STANDARD,
+                new ColumnDescriptor(COL_FL_ELENCO_STANDARD, Types.VARCHAR, 1, false));
+        map.put(COL_NI_MAX_FASC_CRIT,
+                new ColumnDescriptor(COL_NI_MAX_FASC_CRIT, Types.DECIMAL, 22, false));
+        map.put(COL_TI_SCAD_CHIUS_CRIT,
+                new ColumnDescriptor(COL_TI_SCAD_CHIUS_CRIT, Types.VARCHAR, 20, false));
+        map.put(COL_TI_TEMPO_SCAD_CHIUS_CRIT,
+                new ColumnDescriptor(COL_TI_TEMPO_SCAD_CHIUS_CRIT, Types.VARCHAR, 20, false));
+        map.put(COL_NI_TEMPO_SCAD_CHIUS_CRIT,
+                new ColumnDescriptor(COL_NI_TEMPO_SCAD_CHIUS_CRIT, Types.DECIMAL, 22, false));
+        map.put(COL_NI_INDICI_AIP,
+                new ColumnDescriptor(COL_NI_INDICI_AIP, Types.DECIMAL, 22, false));
+        map.put(COL_ID_STATO_ELENCO_VERS_FASC_COR,
+                new ColumnDescriptor(COL_ID_STATO_ELENCO_VERS_FASC_COR, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

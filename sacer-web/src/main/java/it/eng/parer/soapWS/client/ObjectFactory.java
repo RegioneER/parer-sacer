@@ -33,11 +33,11 @@ public class ObjectFactory {
 
     public static final String HTTP_WS_SACERASI = "http://ws.sacerasi.eng.it/";
     private static final QName _RecuperoStatoOggetto_QNAME = new QName(HTTP_WS_SACERASI,
-	    "RecuperoStatoOggetto");
+            "RecuperoStatoOggetto");
     private static final QName _GetStatoOggetto_QNAME = new QName(HTTP_WS_SACERASI,
-	    "getStatoOggetto");
+            "getStatoOggetto");
     private static final QName _GetStatoOggettoResponse_QNAME = new QName(HTTP_WS_SACERASI,
-	    "getStatoOggettoResponse");
+            "getStatoOggettoResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes
@@ -45,7 +45,7 @@ public class ObjectFactory {
      *
      */
     public ObjectFactory() {
-	// override default
+        // override default
     }
 
     /**
@@ -55,7 +55,7 @@ public class ObjectFactory {
      *
      */
     public GetStatoOggetto createGetStatoOggetto() {
-	return new GetStatoOggetto();
+        return new GetStatoOggetto();
     }
 
     /**
@@ -64,7 +64,7 @@ public class ObjectFactory {
      * @return un oggetto {@link GetStatoOggettoResponse }
      */
     public GetStatoOggettoResponse createGetStatoOggettoResponse() {
-	return new GetStatoOggettoResponse();
+        return new GetStatoOggettoResponse();
     }
 
     /**
@@ -73,7 +73,7 @@ public class ObjectFactory {
      * @return un oggetto {@link RecuperoStatoOggettoRisposta }
      */
     public RecuperoStatoOggettoRisposta createRecuperoStatoOggettoRisposta() {
-	return new RecuperoStatoOggettoRisposta();
+        return new RecuperoStatoOggettoRisposta();
     }
 
     /**
@@ -86,9 +86,9 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = HTTP_WS_SACERASI, name = "RecuperoStatoOggetto")
     public JAXBElement<RecuperoStatoOggettoRisposta> createRecuperoStatoOggetto(
-	    RecuperoStatoOggettoRisposta value) {
-	return new JAXBElement<>(_RecuperoStatoOggetto_QNAME, RecuperoStatoOggettoRisposta.class,
-		null, value);
+            RecuperoStatoOggettoRisposta value) {
+        return new JAXBElement<>(_RecuperoStatoOggetto_QNAME, RecuperoStatoOggettoRisposta.class,
+                null, value);
     }
 
     /**
@@ -100,7 +100,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = HTTP_WS_SACERASI, name = "getStatoOggetto")
     public JAXBElement<GetStatoOggetto> createGetStatoOggetto(GetStatoOggetto value) {
-	return new JAXBElement<>(_GetStatoOggetto_QNAME, GetStatoOggetto.class, null, value);
+        return new JAXBElement<>(_GetStatoOggetto_QNAME, GetStatoOggetto.class, null, value);
     }
 
     /**
@@ -112,9 +112,9 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = HTTP_WS_SACERASI, name = "getStatoOggettoResponse1")
     public JAXBElement<GetStatoOggettoResponse> createGetStatoOggettoResponse(
-	    GetStatoOggettoResponse value) {
-	return new JAXBElement<>(_GetStatoOggettoResponse_QNAME, GetStatoOggettoResponse.class,
-		null, value);
+            GetStatoOggettoResponse value) {
+        return new JAXBElement<>(_GetStatoOggettoResponse_QNAME, GetStatoOggettoResponse.class,
+                null, value);
     }
 
 }

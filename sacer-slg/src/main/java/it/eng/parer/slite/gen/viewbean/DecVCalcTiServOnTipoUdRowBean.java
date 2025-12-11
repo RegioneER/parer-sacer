@@ -37,101 +37,101 @@ public class DecVCalcTiServOnTipoUdRowBean extends BaseRow implements JEEBaseRow
     public static DecVCalcTiServOnTipoUdTableDescriptor TABLE_DESCRIPTOR = new DecVCalcTiServOnTipoUdTableDescriptor();
 
     public DecVCalcTiServOnTipoUdRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdCategTipoUnitaDoc() {
-	return getBigDecimal("id_categ_tipo_unita_doc");
+        return getBigDecimal("id_categ_tipo_unita_doc");
     }
 
     public void setIdCategTipoUnitaDoc(BigDecimal idCategTipoUnitaDoc) {
-	setObject("id_categ_tipo_unita_doc", idCategTipoUnitaDoc);
+        setObject("id_categ_tipo_unita_doc", idCategTipoUnitaDoc);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getIdTipoServizioConserv() {
-	return getBigDecimal("id_tipo_servizio_conserv");
+        return getBigDecimal("id_tipo_servizio_conserv");
     }
 
     public void setIdTipoServizioConserv(BigDecimal idTipoServizioConserv) {
-	setObject("id_tipo_servizio_conserv", idTipoServizioConserv);
+        setObject("id_tipo_servizio_conserv", idTipoServizioConserv);
     }
 
     public BigDecimal getIdTipoServizioAttiv() {
-	return getBigDecimal("id_tipo_servizio_attiv");
+        return getBigDecimal("id_tipo_servizio_attiv");
     }
 
     public void setIdTipoServizioAttiv(BigDecimal idTipoServizioAttiv) {
-	setObject("id_tipo_servizio_attiv", idTipoServizioAttiv);
+        setObject("id_tipo_servizio_attiv", idTipoServizioAttiv);
     }
 
     public String getCdAlgoTariffario() {
-	return getString("cd_algo_tariffario");
+        return getString("cd_algo_tariffario");
     }
 
     public void setCdAlgoTariffario(String cd_algo_tariffario) {
-	setObject("cd_algo_tariffario", cd_algo_tariffario);
+        setObject("cd_algo_tariffario", cd_algo_tariffario);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecVCalcTiServOnTipoUd entity = (DecVCalcTiServOnTipoUd) obj;
-	if (entity.getDecVCalcTiServOnTipoUdId() != null) {
-	    this.setIdCategTipoUnitaDoc(
-		    entity.getDecVCalcTiServOnTipoUdId().getIdCategTipoUnitaDoc());
-	    this.setIdStrut(entity.getDecVCalcTiServOnTipoUdId().getIdStrut());
-	}
-	this.setIdTipoServizioConserv(entity.getIdTipoServizioConserv());
-	this.setIdTipoServizioAttiv(entity.getIdTipoServizioAttiv());
-	this.setCdAlgoTariffario(entity.getCdAlgoTariffario());
+        DecVCalcTiServOnTipoUd entity = (DecVCalcTiServOnTipoUd) obj;
+        if (entity.getDecVCalcTiServOnTipoUdId() != null) {
+            this.setIdCategTipoUnitaDoc(
+                    entity.getDecVCalcTiServOnTipoUdId().getIdCategTipoUnitaDoc());
+            this.setIdStrut(entity.getDecVCalcTiServOnTipoUdId().getIdStrut());
+        }
+        this.setIdTipoServizioConserv(entity.getIdTipoServizioConserv());
+        this.setIdTipoServizioAttiv(entity.getIdTipoServizioAttiv());
+        this.setCdAlgoTariffario(entity.getCdAlgoTariffario());
     }
 
     @Override
     public DecVCalcTiServOnTipoUd rowBeanToEntity() {
-	DecVCalcTiServOnTipoUd entity = new DecVCalcTiServOnTipoUd();
-	entity.setDecVCalcTiServOnTipoUdId(new DecVCalcTiServOnTipoUdId());
-	entity.getDecVCalcTiServOnTipoUdId().setIdCategTipoUnitaDoc(this.getIdCategTipoUnitaDoc());
-	entity.getDecVCalcTiServOnTipoUdId().setIdStrut(this.getIdStrut());
-	entity.setIdTipoServizioConserv(this.getIdTipoServizioConserv());
-	entity.setIdTipoServizioAttiv(this.getIdTipoServizioAttiv());
-	entity.setCdAlgoTariffario(this.getCdAlgoTariffario());
-	return entity;
+        DecVCalcTiServOnTipoUd entity = new DecVCalcTiServOnTipoUd();
+        entity.setDecVCalcTiServOnTipoUdId(new DecVCalcTiServOnTipoUdId());
+        entity.getDecVCalcTiServOnTipoUdId().setIdCategTipoUnitaDoc(this.getIdCategTipoUnitaDoc());
+        entity.getDecVCalcTiServOnTipoUdId().setIdStrut(this.getIdStrut());
+        entity.setIdTipoServizioConserv(this.getIdTipoServizioConserv());
+        entity.setIdTipoServizioAttiv(this.getIdTipoServizioAttiv());
+        entity.setCdAlgoTariffario(this.getCdAlgoTariffario());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

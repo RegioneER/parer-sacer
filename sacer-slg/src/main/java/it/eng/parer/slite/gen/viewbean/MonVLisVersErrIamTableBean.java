@@ -37,19 +37,19 @@ public class MonVLisVersErrIamTableBean extends AbstractBaseTable<MonVLisVersErr
     public static MonVLisVersErrIamTableDescriptor TABLE_DESCRIPTOR = new MonVLisVersErrIamTableDescriptor();
 
     public MonVLisVersErrIamTableBean() {
-	super();
+        super();
     }
 
     protected MonVLisVersErrIamRowBean createRow() {
-	return new MonVLisVersErrIamRowBean();
+        return new MonVLisVersErrIamRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVLisVersErrIamRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

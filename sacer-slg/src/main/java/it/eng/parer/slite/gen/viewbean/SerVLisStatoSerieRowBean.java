@@ -36,139 +36,139 @@ public class SerVLisStatoSerieRowBean extends BaseRow implements JEEBaseRowInter
     public static SerVLisStatoSerieTableDescriptor TABLE_DESCRIPTOR = new SerVLisStatoSerieTableDescriptor();
 
     public SerVLisStatoSerieRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdStatoVerSerie() {
-	return getBigDecimal("id_stato_ver_serie");
+        return getBigDecimal("id_stato_ver_serie");
     }
 
     public void setIdStatoVerSerie(BigDecimal idStatoVerSerie) {
-	setObject("id_stato_ver_serie", idStatoVerSerie);
+        setObject("id_stato_ver_serie", idStatoVerSerie);
     }
 
     public BigDecimal getIdVerSerie() {
-	return getBigDecimal("id_ver_serie");
+        return getBigDecimal("id_ver_serie");
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	setObject("id_ver_serie", idVerSerie);
+        setObject("id_ver_serie", idVerSerie);
     }
 
     public BigDecimal getPgStatoVerSerie() {
-	return getBigDecimal("pg_stato_ver_serie");
+        return getBigDecimal("pg_stato_ver_serie");
     }
 
     public void setPgStatoVerSerie(BigDecimal pgStatoVerSerie) {
-	setObject("pg_stato_ver_serie", pgStatoVerSerie);
+        setObject("pg_stato_ver_serie", pgStatoVerSerie);
     }
 
     public String getTiStatoVerSerie() {
-	return getString("ti_stato_ver_serie");
+        return getString("ti_stato_ver_serie");
     }
 
     public void setTiStatoVerSerie(String tiStatoVerSerie) {
-	setObject("ti_stato_ver_serie", tiStatoVerSerie);
+        setObject("ti_stato_ver_serie", tiStatoVerSerie);
     }
 
     public Timestamp getDtRegStatoVerSerie() {
-	return getTimestamp("dt_reg_stato_ver_serie");
+        return getTimestamp("dt_reg_stato_ver_serie");
     }
 
     public void setDtRegStatoVerSerie(Timestamp dtRegStatoVerSerie) {
-	setObject("dt_reg_stato_ver_serie", dtRegStatoVerSerie);
+        setObject("dt_reg_stato_ver_serie", dtRegStatoVerSerie);
     }
 
     public BigDecimal getIdUserIam() {
-	return getBigDecimal("id_user_iam");
+        return getBigDecimal("id_user_iam");
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	setObject("id_user_iam", idUserIam);
+        setObject("id_user_iam", idUserIam);
     }
 
     public String getDsAzione() {
-	return getString("ds_azione");
+        return getString("ds_azione");
     }
 
     public void setDsAzione(String dsAzione) {
-	setObject("ds_azione", dsAzione);
+        setObject("ds_azione", dsAzione);
     }
 
     public String getDsNotaAzione() {
-	return getString("ds_nota_azione");
+        return getString("ds_nota_azione");
     }
 
     public void setDsNotaAzione(String dsNotaAzione) {
-	setObject("ds_nota_azione", dsNotaAzione);
+        setObject("ds_nota_azione", dsNotaAzione);
     }
 
     public String getNmUserid() {
-	return getString("nm_userid");
+        return getString("nm_userid");
     }
 
     public void setNmUserid(String nmUserid) {
-	setObject("nm_userid", nmUserid);
+        setObject("nm_userid", nmUserid);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SerVLisStatoSerie entity = (SerVLisStatoSerie) obj;
-	this.setIdStatoVerSerie(entity.getIdStatoVerSerie());
-	this.setIdVerSerie(entity.getIdVerSerie());
-	this.setPgStatoVerSerie(entity.getPgStatoVerSerie());
-	this.setTiStatoVerSerie(entity.getTiStatoVerSerie());
-	if (entity.getDtRegStatoVerSerie() != null) {
-	    this.setDtRegStatoVerSerie(new Timestamp(entity.getDtRegStatoVerSerie().getTime()));
-	}
-	this.setIdUserIam(entity.getIdUserIam());
-	this.setDsAzione(entity.getDsAzione());
-	this.setDsNotaAzione(entity.getDsNotaAzione());
-	this.setNmUserid(entity.getNmUserid());
+        SerVLisStatoSerie entity = (SerVLisStatoSerie) obj;
+        this.setIdStatoVerSerie(entity.getIdStatoVerSerie());
+        this.setIdVerSerie(entity.getIdVerSerie());
+        this.setPgStatoVerSerie(entity.getPgStatoVerSerie());
+        this.setTiStatoVerSerie(entity.getTiStatoVerSerie());
+        if (entity.getDtRegStatoVerSerie() != null) {
+            this.setDtRegStatoVerSerie(new Timestamp(entity.getDtRegStatoVerSerie().getTime()));
+        }
+        this.setIdUserIam(entity.getIdUserIam());
+        this.setDsAzione(entity.getDsAzione());
+        this.setDsNotaAzione(entity.getDsNotaAzione());
+        this.setNmUserid(entity.getNmUserid());
     }
 
     @Override
     public SerVLisStatoSerie rowBeanToEntity() {
-	SerVLisStatoSerie entity = new SerVLisStatoSerie();
-	entity.setIdStatoVerSerie(this.getIdStatoVerSerie());
-	entity.setIdVerSerie(this.getIdVerSerie());
-	entity.setPgStatoVerSerie(this.getPgStatoVerSerie());
-	entity.setTiStatoVerSerie(this.getTiStatoVerSerie());
-	entity.setDtRegStatoVerSerie(this.getDtRegStatoVerSerie());
-	entity.setIdUserIam(this.getIdUserIam());
-	entity.setDsAzione(this.getDsAzione());
-	entity.setDsNotaAzione(this.getDsNotaAzione());
-	entity.setNmUserid(this.getNmUserid());
-	return entity;
+        SerVLisStatoSerie entity = new SerVLisStatoSerie();
+        entity.setIdStatoVerSerie(this.getIdStatoVerSerie());
+        entity.setIdVerSerie(this.getIdVerSerie());
+        entity.setPgStatoVerSerie(this.getPgStatoVerSerie());
+        entity.setTiStatoVerSerie(this.getTiStatoVerSerie());
+        entity.setDtRegStatoVerSerie(this.getDtRegStatoVerSerie());
+        entity.setIdUserIam(this.getIdUserIam());
+        entity.setDsAzione(this.getDsAzione());
+        entity.setDsNotaAzione(this.getDsNotaAzione());
+        entity.setNmUserid(this.getNmUserid());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

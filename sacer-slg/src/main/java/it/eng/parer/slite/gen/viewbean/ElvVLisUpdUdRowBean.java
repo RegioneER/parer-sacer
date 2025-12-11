@@ -36,179 +36,179 @@ public class ElvVLisUpdUdRowBean extends BaseRow implements JEEBaseRowInterface 
     public static ElvVLisUpdUdTableDescriptor TABLE_DESCRIPTOR = new ElvVLisUpdUdTableDescriptor();
 
     public ElvVLisUpdUdRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdElencoVers() {
-	return getBigDecimal("id_elenco_vers");
+        return getBigDecimal("id_elenco_vers");
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-	setObject("id_elenco_vers", idElencoVers);
+        setObject("id_elenco_vers", idElencoVers);
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public BigDecimal getIdStrutUnitaDoc() {
-	return getBigDecimal("id_strut_unita_doc");
+        return getBigDecimal("id_strut_unita_doc");
     }
 
     public void setIdStrutUnitaDoc(BigDecimal idStrutUnitaDoc) {
-	setObject("id_strut_unita_doc", idStrutUnitaDoc);
+        setObject("id_strut_unita_doc", idStrutUnitaDoc);
     }
 
     public String getCdRegistroKeyUnitaDoc() {
-	return getString("cd_registro_key_unita_doc");
+        return getString("cd_registro_key_unita_doc");
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
+        setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return getBigDecimal("aa_key_unita_doc");
+        return getBigDecimal("aa_key_unita_doc");
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	setObject("aa_key_unita_doc", aaKeyUnitaDoc);
+        setObject("aa_key_unita_doc", aaKeyUnitaDoc);
     }
 
     public String getCdKeyUnitaDoc() {
-	return getString("cd_key_unita_doc");
+        return getString("cd_key_unita_doc");
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	setObject("cd_key_unita_doc", cdKeyUnitaDoc);
+        setObject("cd_key_unita_doc", cdKeyUnitaDoc);
     }
 
     public String getDsKeyOrd() {
-	return getString("ds_key_ord");
+        return getString("ds_key_ord");
     }
 
     public void setDsKeyOrd(String dsKeyOrd) {
-	setObject("ds_key_ord", dsKeyOrd);
+        setObject("ds_key_ord", dsKeyOrd);
     }
 
     public String getTiStatoUpdElencoVers() {
-	return getString("ti_stato_upd_elenco_vers");
+        return getString("ti_stato_upd_elenco_vers");
     }
 
     public void setTiStatoUpdElencoVers(String tiStatoUpdElencoVers) {
-	setObject("ti_stato_upd_elenco_vers", tiStatoUpdElencoVers);
+        setObject("ti_stato_upd_elenco_vers", tiStatoUpdElencoVers);
     }
 
     public String getTiStatoConservazione() {
-	return getString("ti_stato_conservazione");
+        return getString("ti_stato_conservazione");
     }
 
     public void setTiStatoConservazione(String tiStatoConservazione) {
-	setObject("ti_stato_conservazione", tiStatoConservazione);
+        setObject("ti_stato_conservazione", tiStatoConservazione);
     }
 
     public BigDecimal getIdUpdUnitaDoc() {
-	return getBigDecimal("id_upd_unita_doc");
+        return getBigDecimal("id_upd_unita_doc");
     }
 
     public void setIdUpdUnitaDoc(BigDecimal idUpdUnitaDoc) {
-	setObject("id_upd_unita_doc", idUpdUnitaDoc);
+        setObject("id_upd_unita_doc", idUpdUnitaDoc);
     }
 
     public BigDecimal getPgUpdUnitaDoc() {
-	return getBigDecimal("pg_upd_unita_doc");
+        return getBigDecimal("pg_upd_unita_doc");
     }
 
     public void setPgUpdUnitaDoc(BigDecimal pgUpdUnitaDoc) {
-	setObject("pg_upd_unita_doc", pgUpdUnitaDoc);
+        setObject("pg_upd_unita_doc", pgUpdUnitaDoc);
     }
 
     public Timestamp getTsIniSes() {
-	return getTimestamp("ts_ini_ses");
+        return getTimestamp("ts_ini_ses");
     }
 
     public void setTsIniSes(Timestamp tsIniSes) {
-	setObject("ts_ini_ses", tsIniSes);
+        setObject("ts_ini_ses", tsIniSes);
     }
 
     public String getDsUrnUpdUnitaDoc() {
-	return getString("ds_urn_upd_unita_doc");
+        return getString("ds_urn_upd_unita_doc");
     }
 
     public void setDsUrnUpdUnitaDoc(String dsUrnUpdUnitaDoc) {
-	setObject("ds_urn_upd_unita_doc", dsUrnUpdUnitaDoc);
+        setObject("ds_urn_upd_unita_doc", dsUrnUpdUnitaDoc);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	ElvVLisUpdUd entity = (ElvVLisUpdUd) obj;
-	this.setIdElencoVers(entity.getIdElencoVers());
-	this.setIdUnitaDoc(entity.getIdUnitaDoc());
-	this.setIdStrutUnitaDoc(entity.getIdStrutUnitaDoc());
-	this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
-	this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
-	this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
-	this.setDsKeyOrd(entity.getDsKeyOrd());
-	this.setTiStatoUpdElencoVers(entity.getTiStatoUpdElencoVers());
-	this.setTiStatoConservazione(entity.getTiStatoConservazione());
-	this.setIdUpdUnitaDoc(entity.getIdUpdUnitaDoc());
-	this.setPgUpdUnitaDoc(entity.getPgUpdUnitaDoc());
-	if (entity.getTsIniSes() != null) {
-	    this.setTsIniSes(new Timestamp(entity.getTsIniSes().getTime()));
-	}
-	this.setDsUrnUpdUnitaDoc(entity.getDsUrnUpdUnitaDoc());
+        ElvVLisUpdUd entity = (ElvVLisUpdUd) obj;
+        this.setIdElencoVers(entity.getIdElencoVers());
+        this.setIdUnitaDoc(entity.getIdUnitaDoc());
+        this.setIdStrutUnitaDoc(entity.getIdStrutUnitaDoc());
+        this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
+        this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
+        this.setDsKeyOrd(entity.getDsKeyOrd());
+        this.setTiStatoUpdElencoVers(entity.getTiStatoUpdElencoVers());
+        this.setTiStatoConservazione(entity.getTiStatoConservazione());
+        this.setIdUpdUnitaDoc(entity.getIdUpdUnitaDoc());
+        this.setPgUpdUnitaDoc(entity.getPgUpdUnitaDoc());
+        if (entity.getTsIniSes() != null) {
+            this.setTsIniSes(new Timestamp(entity.getTsIniSes().getTime()));
+        }
+        this.setDsUrnUpdUnitaDoc(entity.getDsUrnUpdUnitaDoc());
     }
 
     @Override
     public ElvVLisUpdUd rowBeanToEntity() {
-	ElvVLisUpdUd entity = new ElvVLisUpdUd();
-	entity.setIdElencoVers(this.getIdElencoVers());
-	entity.setIdUnitaDoc(this.getIdUnitaDoc());
-	entity.setIdStrutUnitaDoc(this.getIdStrutUnitaDoc());
-	entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
-	entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
-	entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
-	entity.setDsKeyOrd(this.getDsKeyOrd());
-	entity.setTiStatoUpdElencoVers(this.getTiStatoUpdElencoVers());
-	entity.setTiStatoConservazione(this.getTiStatoConservazione());
-	entity.setIdUpdUnitaDoc(this.getIdUpdUnitaDoc());
-	entity.setPgUpdUnitaDoc(this.getPgUpdUnitaDoc());
-	entity.setTsIniSes(this.getTsIniSes());
-	entity.setDsUrnUpdUnitaDoc(this.getDsUrnUpdUnitaDoc());
-	return entity;
+        ElvVLisUpdUd entity = new ElvVLisUpdUd();
+        entity.setIdElencoVers(this.getIdElencoVers());
+        entity.setIdUnitaDoc(this.getIdUnitaDoc());
+        entity.setIdStrutUnitaDoc(this.getIdStrutUnitaDoc());
+        entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
+        entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
+        entity.setDsKeyOrd(this.getDsKeyOrd());
+        entity.setTiStatoUpdElencoVers(this.getTiStatoUpdElencoVers());
+        entity.setTiStatoConservazione(this.getTiStatoConservazione());
+        entity.setIdUpdUnitaDoc(this.getIdUpdUnitaDoc());
+        entity.setPgUpdUnitaDoc(this.getPgUpdUnitaDoc());
+        entity.setTsIniSes(this.getTsIniSes());
+        entity.setDsUrnUpdUnitaDoc(this.getDsUrnUpdUnitaDoc());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

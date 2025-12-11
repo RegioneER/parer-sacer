@@ -70,391 +70,391 @@ public class FasVRicFascicoli implements Serializable {
     }
 
     public FasVRicFascicoli(BigDecimal aaFascicolo, BigDecimal aaFascicoloPadre,
-	    String cdCompositoVoceTitol, String cdKeyFascicolo, String cdKeyFascicoloPadre,
-	    String cdLivelloRiserv, String cdProcAmmin, String dsOggettoFascicolo,
-	    String dsOggettoFascicoloPadre, String dsProcAmmin, Date dtApeFascicolo,
-	    Date dtChiuFascicolo, String flForzaContrClassif, String flForzaContrColleg,
-	    String flForzaContrNumero, BigDecimal idFascicolo, BigDecimal idSistemaVersante,
-	    BigDecimal idStrut, BigDecimal idTipoFascicolo, BigDecimal idUserIamCorrente,
-	    BigDecimal idUserIamVers, BigDecimal idVoceTitol, BigDecimal niAaConservazione,
-	    BigDecimal niUnitaDoc, String nmSistemaVersante, String nmTipoFascicolo,
-	    String nmUserid, String tiConservazione, String tiEsito, String tiStatoConservazione,
-	    String tiStatoFascElencoVers, Date tsVersFascicolo) {
-	this.aaFascicolo = aaFascicolo;
-	this.aaFascicoloPadre = aaFascicoloPadre;
-	this.cdCompositoVoceTitol = cdCompositoVoceTitol;
-	this.cdKeyFascicolo = cdKeyFascicolo;
-	this.cdKeyFascicoloPadre = cdKeyFascicoloPadre;
-	this.cdLivelloRiserv = cdLivelloRiserv;
-	this.cdProcAmmin = cdProcAmmin;
-	this.dsOggettoFascicolo = dsOggettoFascicolo;
-	this.dsOggettoFascicoloPadre = dsOggettoFascicoloPadre;
-	this.dsProcAmmin = dsProcAmmin;
-	this.dtApeFascicolo = dtApeFascicolo;
-	this.dtChiuFascicolo = dtChiuFascicolo;
-	this.flForzaContrClassif = flForzaContrClassif;
-	this.flForzaContrColleg = flForzaContrColleg;
-	this.flForzaContrNumero = flForzaContrNumero;
-	this.idFascicolo = idFascicolo;
-	this.idSistemaVersante = idSistemaVersante;
-	this.idStrut = idStrut;
-	this.idTipoFascicolo = idTipoFascicolo;
-	this.idUserIamCorrente = idUserIamCorrente;
-	this.idUserIamVers = idUserIamVers;
-	this.idVoceTitol = idVoceTitol;
-	this.niAaConservazione = niAaConservazione;
-	this.niUnitaDoc = niUnitaDoc;
-	this.nmSistemaVersante = nmSistemaVersante;
-	this.nmTipoFascicolo = nmTipoFascicolo;
-	this.nmUserid = nmUserid;
-	this.tiConservazione = tiConservazione;
-	this.tiEsito = tiEsito;
-	this.tiStatoConservazione = tiStatoConservazione;
-	this.tiStatoFascElencoVers = tiStatoFascElencoVers;
-	this.tsVersFascicolo = tsVersFascicolo;
+            String cdCompositoVoceTitol, String cdKeyFascicolo, String cdKeyFascicoloPadre,
+            String cdLivelloRiserv, String cdProcAmmin, String dsOggettoFascicolo,
+            String dsOggettoFascicoloPadre, String dsProcAmmin, Date dtApeFascicolo,
+            Date dtChiuFascicolo, String flForzaContrClassif, String flForzaContrColleg,
+            String flForzaContrNumero, BigDecimal idFascicolo, BigDecimal idSistemaVersante,
+            BigDecimal idStrut, BigDecimal idTipoFascicolo, BigDecimal idUserIamCorrente,
+            BigDecimal idUserIamVers, BigDecimal idVoceTitol, BigDecimal niAaConservazione,
+            BigDecimal niUnitaDoc, String nmSistemaVersante, String nmTipoFascicolo,
+            String nmUserid, String tiConservazione, String tiEsito, String tiStatoConservazione,
+            String tiStatoFascElencoVers, Date tsVersFascicolo) {
+        this.aaFascicolo = aaFascicolo;
+        this.aaFascicoloPadre = aaFascicoloPadre;
+        this.cdCompositoVoceTitol = cdCompositoVoceTitol;
+        this.cdKeyFascicolo = cdKeyFascicolo;
+        this.cdKeyFascicoloPadre = cdKeyFascicoloPadre;
+        this.cdLivelloRiserv = cdLivelloRiserv;
+        this.cdProcAmmin = cdProcAmmin;
+        this.dsOggettoFascicolo = dsOggettoFascicolo;
+        this.dsOggettoFascicoloPadre = dsOggettoFascicoloPadre;
+        this.dsProcAmmin = dsProcAmmin;
+        this.dtApeFascicolo = dtApeFascicolo;
+        this.dtChiuFascicolo = dtChiuFascicolo;
+        this.flForzaContrClassif = flForzaContrClassif;
+        this.flForzaContrColleg = flForzaContrColleg;
+        this.flForzaContrNumero = flForzaContrNumero;
+        this.idFascicolo = idFascicolo;
+        this.idSistemaVersante = idSistemaVersante;
+        this.idStrut = idStrut;
+        this.idTipoFascicolo = idTipoFascicolo;
+        this.idUserIamCorrente = idUserIamCorrente;
+        this.idUserIamVers = idUserIamVers;
+        this.idVoceTitol = idVoceTitol;
+        this.niAaConservazione = niAaConservazione;
+        this.niUnitaDoc = niUnitaDoc;
+        this.nmSistemaVersante = nmSistemaVersante;
+        this.nmTipoFascicolo = nmTipoFascicolo;
+        this.nmUserid = nmUserid;
+        this.tiConservazione = tiConservazione;
+        this.tiEsito = tiEsito;
+        this.tiStatoConservazione = tiStatoConservazione;
+        this.tiStatoFascElencoVers = tiStatoFascElencoVers;
+        this.tsVersFascicolo = tsVersFascicolo;
     }
 
     public FasVRicFascicoli(BigDecimal idFascicolo, BigDecimal aaFascicolo, String cdKeyFascicolo,
-	    String cdCompositoVoceTitol, String nmTipoFascicolo, Date dtApeFascicolo,
-	    Date dtChiuFascicolo, Date tsVersFascicolo, BigDecimal niUnitaDoc,
-	    BigDecimal niAaConservazione, String cdLivelloRiserv, String flForzaContrClassif,
-	    String flForzaContrNumero, String flForzaContrColleg, String tiStatoFascElencoVers,
-	    String tiStatoConservazione) {
-	this.idFascicolo = idFascicolo;
-	this.aaFascicolo = aaFascicolo;
-	this.cdKeyFascicolo = cdKeyFascicolo;
-	this.cdCompositoVoceTitol = cdCompositoVoceTitol;
-	this.nmTipoFascicolo = nmTipoFascicolo;
-	this.dtApeFascicolo = dtApeFascicolo;
-	this.dtChiuFascicolo = dtChiuFascicolo;
-	this.tsVersFascicolo = tsVersFascicolo;
-	this.niUnitaDoc = niUnitaDoc;
-	this.niAaConservazione = niAaConservazione;
-	this.cdLivelloRiserv = cdLivelloRiserv;
-	this.flForzaContrClassif = flForzaContrClassif;
-	this.flForzaContrColleg = flForzaContrColleg;
-	this.flForzaContrNumero = flForzaContrNumero;
-	this.tiStatoFascElencoVers = tiStatoFascElencoVers;
-	this.tiStatoConservazione = tiStatoConservazione;
+            String cdCompositoVoceTitol, String nmTipoFascicolo, Date dtApeFascicolo,
+            Date dtChiuFascicolo, Date tsVersFascicolo, BigDecimal niUnitaDoc,
+            BigDecimal niAaConservazione, String cdLivelloRiserv, String flForzaContrClassif,
+            String flForzaContrNumero, String flForzaContrColleg, String tiStatoFascElencoVers,
+            String tiStatoConservazione) {
+        this.idFascicolo = idFascicolo;
+        this.aaFascicolo = aaFascicolo;
+        this.cdKeyFascicolo = cdKeyFascicolo;
+        this.cdCompositoVoceTitol = cdCompositoVoceTitol;
+        this.nmTipoFascicolo = nmTipoFascicolo;
+        this.dtApeFascicolo = dtApeFascicolo;
+        this.dtChiuFascicolo = dtChiuFascicolo;
+        this.tsVersFascicolo = tsVersFascicolo;
+        this.niUnitaDoc = niUnitaDoc;
+        this.niAaConservazione = niAaConservazione;
+        this.cdLivelloRiserv = cdLivelloRiserv;
+        this.flForzaContrClassif = flForzaContrClassif;
+        this.flForzaContrColleg = flForzaContrColleg;
+        this.flForzaContrNumero = flForzaContrNumero;
+        this.tiStatoFascElencoVers = tiStatoFascElencoVers;
+        this.tiStatoConservazione = tiStatoConservazione;
     }
 
     @Column(name = "AA_FASCICOLO")
     public BigDecimal getAaFascicolo() {
-	return this.aaFascicolo;
+        return this.aaFascicolo;
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-	this.aaFascicolo = aaFascicolo;
+        this.aaFascicolo = aaFascicolo;
     }
 
     @Column(name = "AA_FASCICOLO_PADRE")
     public BigDecimal getAaFascicoloPadre() {
-	return this.aaFascicoloPadre;
+        return this.aaFascicoloPadre;
     }
 
     public void setAaFascicoloPadre(BigDecimal aaFascicoloPadre) {
-	this.aaFascicoloPadre = aaFascicoloPadre;
+        this.aaFascicoloPadre = aaFascicoloPadre;
     }
 
     @Column(name = "CD_COMPOSITO_VOCE_TITOL")
     public String getCdCompositoVoceTitol() {
-	return this.cdCompositoVoceTitol;
+        return this.cdCompositoVoceTitol;
     }
 
     public void setCdCompositoVoceTitol(String cdCompositoVoceTitol) {
-	this.cdCompositoVoceTitol = cdCompositoVoceTitol;
+        this.cdCompositoVoceTitol = cdCompositoVoceTitol;
     }
 
     @Column(name = "CD_KEY_FASCICOLO")
     public String getCdKeyFascicolo() {
-	return this.cdKeyFascicolo;
+        return this.cdKeyFascicolo;
     }
 
     public void setCdKeyFascicolo(String cdKeyFascicolo) {
-	this.cdKeyFascicolo = cdKeyFascicolo;
+        this.cdKeyFascicolo = cdKeyFascicolo;
     }
 
     @Column(name = "CD_KEY_FASCICOLO_PADRE")
     public String getCdKeyFascicoloPadre() {
-	return this.cdKeyFascicoloPadre;
+        return this.cdKeyFascicoloPadre;
     }
 
     public void setCdKeyFascicoloPadre(String cdKeyFascicoloPadre) {
-	this.cdKeyFascicoloPadre = cdKeyFascicoloPadre;
+        this.cdKeyFascicoloPadre = cdKeyFascicoloPadre;
     }
 
     @Column(name = "CD_LIVELLO_RISERV")
     public String getCdLivelloRiserv() {
-	return this.cdLivelloRiserv;
+        return this.cdLivelloRiserv;
     }
 
     public void setCdLivelloRiserv(String cdLivelloRiserv) {
-	this.cdLivelloRiserv = cdLivelloRiserv;
+        this.cdLivelloRiserv = cdLivelloRiserv;
     }
 
     @Column(name = "CD_PROC_AMMIN")
     public String getCdProcAmmin() {
-	return this.cdProcAmmin;
+        return this.cdProcAmmin;
     }
 
     public void setCdProcAmmin(String cdProcAmmin) {
-	this.cdProcAmmin = cdProcAmmin;
+        this.cdProcAmmin = cdProcAmmin;
     }
 
     @Column(name = "CD_VERSIONE_XML_SIP")
     public String getCdVersioneXmlSip() {
-	return this.cdVersioneXmlSip;
+        return this.cdVersioneXmlSip;
     }
 
     public void setCdVersioneXmlSip(String cdVersioneXmlSip) {
-	this.cdVersioneXmlSip = cdVersioneXmlSip;
+        this.cdVersioneXmlSip = cdVersioneXmlSip;
     }
 
     @Column(name = "DS_OGGETTO_FASCICOLO")
     public String getDsOggettoFascicolo() {
-	return this.dsOggettoFascicolo;
+        return this.dsOggettoFascicolo;
     }
 
     public void setDsOggettoFascicolo(String dsOggettoFascicolo) {
-	this.dsOggettoFascicolo = dsOggettoFascicolo;
+        this.dsOggettoFascicolo = dsOggettoFascicolo;
     }
 
     @Column(name = "DS_OGGETTO_FASCICOLO_PADRE")
     public String getDsOggettoFascicoloPadre() {
-	return this.dsOggettoFascicoloPadre;
+        return this.dsOggettoFascicoloPadre;
     }
 
     public void setDsOggettoFascicoloPadre(String dsOggettoFascicoloPadre) {
-	this.dsOggettoFascicoloPadre = dsOggettoFascicoloPadre;
+        this.dsOggettoFascicoloPadre = dsOggettoFascicoloPadre;
     }
 
     @Column(name = "DS_PROC_AMMIN")
     public String getDsProcAmmin() {
-	return this.dsProcAmmin;
+        return this.dsProcAmmin;
     }
 
     public void setDsProcAmmin(String dsProcAmmin) {
-	this.dsProcAmmin = dsProcAmmin;
+        this.dsProcAmmin = dsProcAmmin;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_APE_FASCICOLO")
     public Date getDtApeFascicolo() {
-	return this.dtApeFascicolo;
+        return this.dtApeFascicolo;
     }
 
     public void setDtApeFascicolo(Date dtApeFascicolo) {
-	this.dtApeFascicolo = dtApeFascicolo;
+        this.dtApeFascicolo = dtApeFascicolo;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CHIU_FASCICOLO")
     public Date getDtChiuFascicolo() {
-	return this.dtChiuFascicolo;
+        return this.dtChiuFascicolo;
     }
 
     public void setDtChiuFascicolo(Date dtChiuFascicolo) {
-	this.dtChiuFascicolo = dtChiuFascicolo;
+        this.dtChiuFascicolo = dtChiuFascicolo;
     }
 
     @Column(name = "FL_FORZA_CONTR_CLASSIF", columnDefinition = "char(1)")
     public String getFlForzaContrClassif() {
-	return this.flForzaContrClassif;
+        return this.flForzaContrClassif;
     }
 
     public void setFlForzaContrClassif(String flForzaContrClassif) {
-	this.flForzaContrClassif = flForzaContrClassif;
+        this.flForzaContrClassif = flForzaContrClassif;
     }
 
     @Column(name = "FL_FORZA_CONTR_COLLEG", columnDefinition = "char(1)")
     public String getFlForzaContrColleg() {
-	return this.flForzaContrColleg;
+        return this.flForzaContrColleg;
     }
 
     public void setFlForzaContrColleg(String flForzaContrColleg) {
-	this.flForzaContrColleg = flForzaContrColleg;
+        this.flForzaContrColleg = flForzaContrColleg;
     }
 
     @Column(name = "FL_FORZA_CONTR_NUMERO", columnDefinition = "char(1)")
     public String getFlForzaContrNumero() {
-	return this.flForzaContrNumero;
+        return this.flForzaContrNumero;
     }
 
     public void setFlForzaContrNumero(String flForzaContrNumero) {
-	this.flForzaContrNumero = flForzaContrNumero;
+        this.flForzaContrNumero = flForzaContrNumero;
     }
 
     @Id
     @Column(name = "ID_FASCICOLO")
     public BigDecimal getIdFascicolo() {
-	return this.idFascicolo;
+        return this.idFascicolo;
     }
 
     public void setIdFascicolo(BigDecimal idFascicolo) {
-	this.idFascicolo = idFascicolo;
+        this.idFascicolo = idFascicolo;
     }
 
     @Column(name = "ID_SISTEMA_VERSANTE")
     public BigDecimal getIdSistemaVersante() {
-	return this.idSistemaVersante;
+        return this.idSistemaVersante;
     }
 
     public void setIdSistemaVersante(BigDecimal idSistemaVersante) {
-	this.idSistemaVersante = idSistemaVersante;
+        this.idSistemaVersante = idSistemaVersante;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "ID_TIPO_FASCICOLO")
     public BigDecimal getIdTipoFascicolo() {
-	return this.idTipoFascicolo;
+        return this.idTipoFascicolo;
     }
 
     public void setIdTipoFascicolo(BigDecimal idTipoFascicolo) {
-	this.idTipoFascicolo = idTipoFascicolo;
+        this.idTipoFascicolo = idTipoFascicolo;
     }
 
     @Column(name = "ID_USER_IAM_CORRENTE")
     public BigDecimal getIdUserIamCorrente() {
-	return this.idUserIamCorrente;
+        return this.idUserIamCorrente;
     }
 
     public void setIdUserIamCorrente(BigDecimal idUserIamCorrente) {
-	this.idUserIamCorrente = idUserIamCorrente;
+        this.idUserIamCorrente = idUserIamCorrente;
     }
 
     @Column(name = "ID_USER_IAM_VERS")
     public BigDecimal getIdUserIamVers() {
-	return this.idUserIamVers;
+        return this.idUserIamVers;
     }
 
     public void setIdUserIamVers(BigDecimal idUserIamVers) {
-	this.idUserIamVers = idUserIamVers;
+        this.idUserIamVers = idUserIamVers;
     }
 
     @Column(name = "ID_VOCE_TITOL")
     public BigDecimal getIdVoceTitol() {
-	return this.idVoceTitol;
+        return this.idVoceTitol;
     }
 
     public void setIdVoceTitol(BigDecimal idVoceTitol) {
-	this.idVoceTitol = idVoceTitol;
+        this.idVoceTitol = idVoceTitol;
     }
 
     @Column(name = "NI_AA_CONSERVAZIONE")
     public BigDecimal getNiAaConservazione() {
-	return this.niAaConservazione;
+        return this.niAaConservazione;
     }
 
     public void setNiAaConservazione(BigDecimal niAaConservazione) {
-	this.niAaConservazione = niAaConservazione;
+        this.niAaConservazione = niAaConservazione;
     }
 
     @Column(name = "NI_UNITA_DOC")
     public BigDecimal getNiUnitaDoc() {
-	return this.niUnitaDoc;
+        return this.niUnitaDoc;
     }
 
     public void setNiUnitaDoc(BigDecimal niUnitaDoc) {
-	this.niUnitaDoc = niUnitaDoc;
+        this.niUnitaDoc = niUnitaDoc;
     }
 
     @Column(name = "NM_SISTEMA_VERSANTE")
     public String getNmSistemaVersante() {
-	return this.nmSistemaVersante;
+        return this.nmSistemaVersante;
     }
 
     public void setNmSistemaVersante(String nmSistemaVersante) {
-	this.nmSistemaVersante = nmSistemaVersante;
+        this.nmSistemaVersante = nmSistemaVersante;
     }
 
     @Column(name = "NM_TIPO_FASCICOLO")
     public String getNmTipoFascicolo() {
-	return this.nmTipoFascicolo;
+        return this.nmTipoFascicolo;
     }
 
     public void setNmTipoFascicolo(String nmTipoFascicolo) {
-	this.nmTipoFascicolo = nmTipoFascicolo;
+        this.nmTipoFascicolo = nmTipoFascicolo;
     }
 
     @Column(name = "NM_USERID")
     public String getNmUserid() {
-	return this.nmUserid;
+        return this.nmUserid;
     }
 
     public void setNmUserid(String nmUserid) {
-	this.nmUserid = nmUserid;
+        this.nmUserid = nmUserid;
     }
 
     @Column(name = "TI_CONSERVAZIONE")
     public String getTiConservazione() {
-	return this.tiConservazione;
+        return this.tiConservazione;
     }
 
     public void setTiConservazione(String tiConservazione) {
-	this.tiConservazione = tiConservazione;
+        this.tiConservazione = tiConservazione;
     }
 
     @Column(name = "TI_ESITO")
     public String getTiEsito() {
-	return this.tiEsito;
+        return this.tiEsito;
     }
 
     public void setTiEsito(String tiEsito) {
-	this.tiEsito = tiEsito;
+        this.tiEsito = tiEsito;
     }
 
     @Column(name = "TI_STATO_CONSERVAZIONE")
     public String getTiStatoConservazione() {
-	return this.tiStatoConservazione;
+        return this.tiStatoConservazione;
     }
 
     public void setTiStatoConservazione(String tiStatoConservazione) {
-	this.tiStatoConservazione = tiStatoConservazione;
+        this.tiStatoConservazione = tiStatoConservazione;
     }
 
     @Column(name = "TI_STATO_FASC_ELENCO_VERS")
     public String getTiStatoFascElencoVers() {
-	return this.tiStatoFascElencoVers;
+        return this.tiStatoFascElencoVers;
     }
 
     public void setTiStatoFascElencoVers(String tiStatoFascElencoVers) {
-	this.tiStatoFascElencoVers = tiStatoFascElencoVers;
+        this.tiStatoFascElencoVers = tiStatoFascElencoVers;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_VERS_FASCICOLO")
     public Date getTsVersFascicolo() {
-	return this.tsVersFascicolo;
+        return this.tsVersFascicolo;
     }
 
     public void setTsVersFascicolo(Date tsVersFascicolo) {
-	this.tsVersFascicolo = tsVersFascicolo;
+        this.tsVersFascicolo = tsVersFascicolo;
     }
 
     @Column(name = "CD_VERSIONE_XSD")
     public String getCdVersioneXsd() {
-	return cdVersioneXsd;
+        return cdVersioneXsd;
     }
 
     public void setCdVersioneXsd(String cdVersioneXsd) {
-	this.cdVersioneXsd = cdVersioneXsd;
+        this.cdVersioneXsd = cdVersioneXsd;
     }
 
     @Column(name = "TI_MODELLO_XSD")
     public String getTiModelloXsd() {
-	return tiModelloXsd;
+        return tiModelloXsd;
     }
 
     public void setTiModelloXsd(String tiModelloXsd) {
-	this.tiModelloXsd = tiModelloXsd;
+        this.tiModelloXsd = tiModelloXsd;
     }
 
 }

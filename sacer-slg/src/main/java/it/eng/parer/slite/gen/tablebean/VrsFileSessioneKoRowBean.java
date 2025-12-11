@@ -33,123 +33,123 @@ public class VrsFileSessioneKoRowBean extends BaseRow implements JEEBaseRowInter
     public static VrsFileSessioneKoTableDescriptor TABLE_DESCRIPTOR = new VrsFileSessioneKoTableDescriptor();
 
     public VrsFileSessioneKoRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdFileSessione() {
-	return getBigDecimal("id_file_sessione");
+        return getBigDecimal("id_file_sessione");
     }
 
     public void setIdFileSessione(BigDecimal idFileSessione) {
-	setObject("id_file_sessione", idFileSessione);
+        setObject("id_file_sessione", idFileSessione);
     }
 
     public BigDecimal getIdDatiSessioneVers() {
-	return getBigDecimal("id_dati_sessione_vers");
+        return getBigDecimal("id_dati_sessione_vers");
     }
 
     public void setIdDatiSessioneVers(BigDecimal idDatiSessioneVers) {
-	setObject("id_dati_sessione_vers", idDatiSessioneVers);
+        setObject("id_dati_sessione_vers", idDatiSessioneVers);
     }
 
     public BigDecimal getPgFileSessione() {
-	return getBigDecimal("pg_file_sessione");
+        return getBigDecimal("pg_file_sessione");
     }
 
     public void setPgFileSessione(BigDecimal pgFileSessione) {
-	setObject("pg_file_sessione", pgFileSessione);
+        setObject("pg_file_sessione", pgFileSessione);
     }
 
     public String getNmFileSessione() {
-	return getString("nm_file_sessione");
+        return getString("nm_file_sessione");
     }
 
     public void setNmFileSessione(String nmFileSessione) {
-	setObject("nm_file_sessione", nmFileSessione);
+        setObject("nm_file_sessione", nmFileSessione);
     }
 
     public String getTiStatoFileSessione() {
-	return getString("ti_stato_file_sessione");
+        return getString("ti_stato_file_sessione");
     }
 
     public void setTiStatoFileSessione(String tiStatoFileSessione) {
-	setObject("ti_stato_file_sessione", tiStatoFileSessione);
+        setObject("ti_stato_file_sessione", tiStatoFileSessione);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	VrsFileSessioneKo entity = (VrsFileSessioneKo) obj;
+        VrsFileSessioneKo entity = (VrsFileSessioneKo) obj;
 
-	this.setIdFileSessione(entity.getIdFileSessioneKo() == null ? null
-		: BigDecimal.valueOf(entity.getIdFileSessioneKo()));
+        this.setIdFileSessione(entity.getIdFileSessioneKo() == null ? null
+                : BigDecimal.valueOf(entity.getIdFileSessioneKo()));
 
-	if (entity.getVrsDatiSessioneVersKo() != null) {
-	    this.setIdDatiSessioneVers(
-		    new BigDecimal(entity.getVrsDatiSessioneVersKo().getIdDatiSessioneVersKo()));
-	}
+        if (entity.getVrsDatiSessioneVersKo() != null) {
+            this.setIdDatiSessioneVers(
+                    new BigDecimal(entity.getVrsDatiSessioneVersKo().getIdDatiSessioneVersKo()));
+        }
 
-	this.setPgFileSessione(entity.getPgFileSessione());
-	this.setNmFileSessione(entity.getNmFileSessione());
-	this.setTiStatoFileSessione(entity.getTiStatoFileSessione());
-	this.setIdStrut(entity.getIdStrut());
+        this.setPgFileSessione(entity.getPgFileSessione());
+        this.setNmFileSessione(entity.getNmFileSessione());
+        this.setTiStatoFileSessione(entity.getTiStatoFileSessione());
+        this.setIdStrut(entity.getIdStrut());
     }
 
     @Override
     public VrsFileSessioneKo rowBeanToEntity() {
-	VrsFileSessioneKo entity = new VrsFileSessioneKo();
-	if (this.getIdFileSessione() != null) {
-	    entity.setIdFileSessioneKo(this.getIdFileSessione().longValue());
-	}
-	if (this.getIdDatiSessioneVers() != null) {
-	    if (entity.getVrsDatiSessioneVersKo() == null) {
-		entity.setVrsDatiSessioneVersKo(new VrsDatiSessioneVersKo());
-	    }
-	    entity.getVrsDatiSessioneVersKo()
-		    .setIdDatiSessioneVersKo(this.getIdDatiSessioneVers().longValue());
-	}
-	entity.setPgFileSessione(this.getPgFileSessione());
-	entity.setNmFileSessione(this.getNmFileSessione());
-	entity.setTiStatoFileSessione(this.getTiStatoFileSessione());
-	entity.setIdStrut(this.getIdStrut());
-	return entity;
+        VrsFileSessioneKo entity = new VrsFileSessioneKo();
+        if (this.getIdFileSessione() != null) {
+            entity.setIdFileSessioneKo(this.getIdFileSessione().longValue());
+        }
+        if (this.getIdDatiSessioneVers() != null) {
+            if (entity.getVrsDatiSessioneVersKo() == null) {
+                entity.setVrsDatiSessioneVersKo(new VrsDatiSessioneVersKo());
+            }
+            entity.getVrsDatiSessioneVersKo()
+                    .setIdDatiSessioneVersKo(this.getIdDatiSessioneVers().longValue());
+        }
+        entity.setPgFileSessione(this.getPgFileSessione());
+        entity.setNmFileSessione(this.getNmFileSessione());
+        entity.setTiStatoFileSessione(this.getTiStatoFileSessione());
+        entity.setIdStrut(this.getIdStrut());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

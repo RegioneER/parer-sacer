@@ -40,97 +40,97 @@ public class FormatoFileDocHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(FormatoFileDocHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), FormatoFileDocHelperTest.class,
-			FormatoFileDocHelper.class));
+        return HelperTest.createEnterpriseArchive(FormatoFileDocHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), FormatoFileDocHelperTest.class,
+                        FormatoFileDocHelper.class));
     }
 
     @Test
     void retrieveDecFormatoFileDocList_BigDecimal_boolean_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	boolean filterValid = false;
-	helper.retrieveDecFormatoFileDocList(idStrut, filterValid);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        boolean filterValid = false;
+        helper.retrieveDecFormatoFileDocList(idStrut, filterValid);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecFormatoFileDocList_BigDecimal_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	helper.retrieveDecFormatoFileDocList(idStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        helper.retrieveDecFormatoFileDocList(idStrut);
+        assertTrue(true);
     }
 
     @Test
     void getDecFormatoFileDocByName_queryIsOk() {
-	String nmFormatoFileDoc = aString();
-	BigDecimal idStrut = aBigDecimal();
-	helper.getDecFormatoFileDocByName(nmFormatoFileDoc, idStrut);
-	assertTrue(true);
+        String nmFormatoFileDoc = aString();
+        BigDecimal idStrut = aBigDecimal();
+        helper.getDecFormatoFileDocByName(nmFormatoFileDoc, idStrut);
+        assertTrue(true);
     }
 
     @Test
     void removeUsoFormatoFileStandardByFormatoFDoc_queryIsOk() {
-	BigDecimal idFormatoFileDoc = aBigDecimal();
-	helper.removeUsoFormatoFileStandardByFormatoFDoc(idFormatoFileDoc);
-	assertTrue(true);
+        BigDecimal idFormatoFileDoc = aBigDecimal();
+        helper.removeUsoFormatoFileStandardByFormatoFDoc(idFormatoFileDoc);
+        assertTrue(true);
     }
 
     @Test
     void getUsoFormatoFileStandardMaxNrOrder_queryIsOk() {
-	BigDecimal idFormatoFileDoc = aBigDecimal();
-	helper.getUsoFormatoFileStandardMaxNrOrder(idFormatoFileDoc);
-	assertTrue(true);
+        BigDecimal idFormatoFileDoc = aBigDecimal();
+        helper.getUsoFormatoFileStandardMaxNrOrder(idFormatoFileDoc);
+        assertTrue(true);
     }
 
     @Test
     void getDecFormatoFileAmmessoList_queryIsOk() {
-	BigDecimal idTipoCompDoc = aBigDecimal();
-	helper.getDecFormatoFileAmmessoList(idTipoCompDoc);
-	assertTrue(true);
+        BigDecimal idTipoCompDoc = aBigDecimal();
+        helper.getDecFormatoFileAmmessoList(idTipoCompDoc);
+        assertTrue(true);
     }
 
     @Test
     void getDecFormatoFileAmmessoNotInList_queryIsOk() {
-	Set<String> formati = aSetOfString(2);
-	BigDecimal idStrut = aBigDecimal();
-	helper.getDecFormatoFileAmmessoNotInList(formati, idStrut);
-	assertTrue(true);
+        Set<String> formati = aSetOfString(2);
+        BigDecimal idStrut = aBigDecimal();
+        helper.getDecFormatoFileAmmessoNotInList(formati, idStrut);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecFormatoFileDocList_BigDecimal_List_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	List<String> formatoFileDocList = aListOfString(2);
-	helper.retrieveDecFormatoFileDocList(idStrut, formatoFileDocList);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        List<String> formatoFileDocList = aListOfString(2);
+        helper.retrieveDecFormatoFileDocList(idStrut, formatoFileDocList);
+        assertTrue(true);
     }
 
     @Test
     void checkRelationsAreEmptyForDecFormatoFileDoc_queryIsOk() {
-	long idFormatoFileDoc = aLong();
-	helper.checkRelationsAreEmptyForDecFormatoFileDoc(idFormatoFileDoc);
-	assertTrue(true);
+        long idFormatoFileDoc = aLong();
+        helper.checkRelationsAreEmptyForDecFormatoFileDoc(idFormatoFileDoc);
+        assertTrue(true);
     }
 
     @Test
     void checkRelationsAreEmptyForDecFormatoFileDocCont_queryIsOk() {
-	long idFormatoFileDoc = aLong();
-	helper.checkRelationsAreEmptyForDecFormatoFileDocCont(idFormatoFileDoc);
-	assertTrue(true);
+        long idFormatoFileDoc = aLong();
+        helper.checkRelationsAreEmptyForDecFormatoFileDocCont(idFormatoFileDoc);
+        assertTrue(true);
     }
 
     @Test
     void checkRelationsAreEmptyForDecFormatoFileDocConv_queryIsOk() {
-	long idFormatoFileDoc = aLong();
-	helper.checkRelationsAreEmptyForDecFormatoFileDocConv(idFormatoFileDoc);
-	assertTrue(true);
+        long idFormatoFileDoc = aLong();
+        helper.checkRelationsAreEmptyForDecFormatoFileDocConv(idFormatoFileDoc);
+        assertTrue(true);
     }
 
     @Test
     void retrieveFormatoFileDocNiOrdUsoTB_queryIsOk() {
-	BigDecimal idStruttura = aBigDecimal();
-	helper.retrieveFormatoFileDocNiOrdUsoTB(idStruttura);
-	assertTrue(true);
+        BigDecimal idStruttura = aBigDecimal();
+        helper.retrieveFormatoFileDocNiOrdUsoTB(idStruttura);
+        assertTrue(true);
     }
 }

@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class OrgStoricoEnteAmbienteTableBean
-	extends AbstractBaseTable<OrgStoricoEnteAmbienteRowBean> {
+        extends AbstractBaseTable<OrgStoricoEnteAmbienteRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class OrgStoricoEnteAmbienteTableBean
     public static OrgStoricoEnteAmbienteTableDescriptor TABLE_DESCRIPTOR = new OrgStoricoEnteAmbienteTableDescriptor();
 
     public OrgStoricoEnteAmbienteTableBean() {
-	super();
+        super();
     }
 
     protected OrgStoricoEnteAmbienteRowBean createRow() {
-	return new OrgStoricoEnteAmbienteRowBean();
+        return new OrgStoricoEnteAmbienteRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<OrgStoricoEnteAmbienteRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

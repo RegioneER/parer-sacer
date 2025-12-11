@@ -37,19 +37,19 @@ public class VolVListaCompVolTableBean extends AbstractBaseTable<VolVListaCompVo
     public static VolVListaCompVolTableDescriptor TABLE_DESCRIPTOR = new VolVListaCompVolTableDescriptor();
 
     public VolVListaCompVolTableBean() {
-	super();
+        super();
     }
 
     protected VolVListaCompVolRowBean createRow() {
-	return new VolVListaCompVolRowBean();
+        return new VolVListaCompVolRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VolVListaCompVolRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

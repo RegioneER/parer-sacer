@@ -36,122 +36,122 @@ public class DecAaTipoFascicoloRowBean extends BaseRow implements JEEBaseRowInte
     public static DecAaTipoFascicoloTableDescriptor TABLE_DESCRIPTOR = new DecAaTipoFascicoloTableDescriptor();
 
     public DecAaTipoFascicoloRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdAaTipoFascicolo() {
-	return getBigDecimal("id_aa_tipo_fascicolo");
+        return getBigDecimal("id_aa_tipo_fascicolo");
     }
 
     public void setIdAaTipoFascicolo(BigDecimal idAaTipoFascicolo) {
-	setObject("id_aa_tipo_fascicolo", idAaTipoFascicolo);
+        setObject("id_aa_tipo_fascicolo", idAaTipoFascicolo);
     }
 
     public BigDecimal getIdTipoFascicolo() {
-	return getBigDecimal("id_tipo_fascicolo");
+        return getBigDecimal("id_tipo_fascicolo");
     }
 
     public void setIdTipoFascicolo(BigDecimal idTipoFascicolo) {
-	setObject("id_tipo_fascicolo", idTipoFascicolo);
+        setObject("id_tipo_fascicolo", idTipoFascicolo);
     }
 
     public BigDecimal getAaIniTipoFascicolo() {
-	return getBigDecimal("aa_ini_tipo_fascicolo");
+        return getBigDecimal("aa_ini_tipo_fascicolo");
     }
 
     public void setAaIniTipoFascicolo(BigDecimal aaIniTipoFascicolo) {
-	setObject("aa_ini_tipo_fascicolo", aaIniTipoFascicolo);
+        setObject("aa_ini_tipo_fascicolo", aaIniTipoFascicolo);
     }
 
     public BigDecimal getAaFinTipoFascicolo() {
-	return getBigDecimal("aa_fin_tipo_fascicolo");
+        return getBigDecimal("aa_fin_tipo_fascicolo");
     }
 
     public void setAaFinTipoFascicolo(BigDecimal aaFinTipoFascicolo) {
-	setObject("aa_fin_tipo_fascicolo", aaFinTipoFascicolo);
+        setObject("aa_fin_tipo_fascicolo", aaFinTipoFascicolo);
     }
 
     public String getFlUpdFmtNumero() {
-	return getString("fl_upd_fmt_numero");
+        return getString("fl_upd_fmt_numero");
     }
 
     public void setFlUpdFmtNumero(String flUpdFmtNumero) {
-	setObject("fl_upd_fmt_numero", flUpdFmtNumero);
+        setObject("fl_upd_fmt_numero", flUpdFmtNumero);
     }
 
     public BigDecimal getNiCharPadParteClassif() {
-	return getBigDecimal("ni_char_pad_parte_classif");
+        return getBigDecimal("ni_char_pad_parte_classif");
     }
 
     public void setNiCharPadParteClassif(BigDecimal niCharPadParteClassif) {
-	setObject("ni_char_pad_parte_classif", niCharPadParteClassif);
+        setObject("ni_char_pad_parte_classif", niCharPadParteClassif);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecAaTipoFascicolo entity = (DecAaTipoFascicolo) obj;
+        DecAaTipoFascicolo entity = (DecAaTipoFascicolo) obj;
 
-	this.setIdAaTipoFascicolo(entity.getIdAaTipoFascicolo() == null ? null
-		: BigDecimal.valueOf(entity.getIdAaTipoFascicolo()));
+        this.setIdAaTipoFascicolo(entity.getIdAaTipoFascicolo() == null ? null
+                : BigDecimal.valueOf(entity.getIdAaTipoFascicolo()));
 
-	if (entity.getDecTipoFascicolo() != null) {
-	    this.setIdTipoFascicolo(
-		    new BigDecimal(entity.getDecTipoFascicolo().getIdTipoFascicolo()));
-	}
+        if (entity.getDecTipoFascicolo() != null) {
+            this.setIdTipoFascicolo(
+                    new BigDecimal(entity.getDecTipoFascicolo().getIdTipoFascicolo()));
+        }
 
-	this.setAaIniTipoFascicolo(entity.getAaIniTipoFascicolo());
-	this.setAaFinTipoFascicolo(entity.getAaFinTipoFascicolo());
-	this.setFlUpdFmtNumero(entity.getFlUpdFmtNumero());
-	this.setNiCharPadParteClassif(entity.getNiCharPadParteClassif());
+        this.setAaIniTipoFascicolo(entity.getAaIniTipoFascicolo());
+        this.setAaFinTipoFascicolo(entity.getAaFinTipoFascicolo());
+        this.setFlUpdFmtNumero(entity.getFlUpdFmtNumero());
+        this.setNiCharPadParteClassif(entity.getNiCharPadParteClassif());
     }
 
     @Override
     public DecAaTipoFascicolo rowBeanToEntity() {
-	DecAaTipoFascicolo entity = new DecAaTipoFascicolo();
-	if (this.getIdAaTipoFascicolo() != null) {
-	    entity.setIdAaTipoFascicolo(this.getIdAaTipoFascicolo().longValue());
-	}
-	if (this.getIdTipoFascicolo() != null) {
-	    if (entity.getDecTipoFascicolo() == null) {
-		entity.setDecTipoFascicolo(new DecTipoFascicolo());
-	    }
-	    entity.getDecTipoFascicolo().setIdTipoFascicolo(this.getIdTipoFascicolo().longValue());
-	}
-	entity.setAaIniTipoFascicolo(this.getAaIniTipoFascicolo());
-	entity.setAaFinTipoFascicolo(this.getAaFinTipoFascicolo());
-	entity.setFlUpdFmtNumero(this.getFlUpdFmtNumero());
-	entity.setNiCharPadParteClassif(this.getNiCharPadParteClassif());
-	return entity;
+        DecAaTipoFascicolo entity = new DecAaTipoFascicolo();
+        if (this.getIdAaTipoFascicolo() != null) {
+            entity.setIdAaTipoFascicolo(this.getIdAaTipoFascicolo().longValue());
+        }
+        if (this.getIdTipoFascicolo() != null) {
+            if (entity.getDecTipoFascicolo() == null) {
+                entity.setDecTipoFascicolo(new DecTipoFascicolo());
+            }
+            entity.getDecTipoFascicolo().setIdTipoFascicolo(this.getIdTipoFascicolo().longValue());
+        }
+        entity.setAaIniTipoFascicolo(this.getAaIniTipoFascicolo());
+        entity.setAaFinTipoFascicolo(this.getAaFinTipoFascicolo());
+        entity.setFlUpdFmtNumero(this.getFlUpdFmtNumero());
+        entity.setNiCharPadParteClassif(this.getNiCharPadParteClassif());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

@@ -61,53 +61,53 @@ public class SerVerSerieDaElab implements Serializable {
 
     @Column(name = "ID_VER_SERIE_DA_ELAB")
     @GenericGenerator(name = "SSER_VER_SERIE_DA_ELAB_ID_VER_SERIE_DA_ELAB_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SSER_VER_SERIE_DA_ELAB"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SSER_VER_SERIE_DA_ELAB"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SSER_VER_SERIE_DA_ELAB_ID_VER_SERIE_DA_ELAB_GENERATOR")
     public Long getIdVerSerieDaElab() {
-	return this.idVerSerieDaElab;
+        return this.idVerSerieDaElab;
     }
 
     public void setIdVerSerieDaElab(Long idVerSerieDaElab) {
-	this.idVerSerieDaElab = idVerSerieDaElab;
+        this.idVerSerieDaElab = idVerSerieDaElab;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_STATO_VER_SERIE")
     public Date getDtRegStatoVerSerie() {
-	return this.dtRegStatoVerSerie;
+        return this.dtRegStatoVerSerie;
     }
 
     public void setDtRegStatoVerSerie(Date dtRegStatoVerSerie) {
-	this.dtRegStatoVerSerie = dtRegStatoVerSerie;
+        this.dtRegStatoVerSerie = dtRegStatoVerSerie;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "TI_STATO_VER_SERIE")
     public String getTiStatoVerSerie() {
-	return this.tiStatoVerSerie;
+        return this.tiStatoVerSerie;
     }
 
     public void setTiStatoVerSerie(String tiStatoVerSerie) {
-	this.tiStatoVerSerie = tiStatoVerSerie;
+        this.tiStatoVerSerie = tiStatoVerSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VER_SERIE")
     public SerVerSerie getSerVerSerie() {
-	return this.serVerSerie;
+        return this.serVerSerie;
     }
 
     public void setSerVerSerie(SerVerSerie serVerSerie) {
-	this.serVerSerie = serVerSerie;
+        this.serVerSerie = serVerSerie;
     }
 
 }

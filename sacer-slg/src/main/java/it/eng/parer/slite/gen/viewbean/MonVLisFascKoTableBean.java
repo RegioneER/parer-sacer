@@ -37,19 +37,19 @@ public class MonVLisFascKoTableBean extends AbstractBaseTable<MonVLisFascKoRowBe
     public static MonVLisFascKoTableDescriptor TABLE_DESCRIPTOR = new MonVLisFascKoTableDescriptor();
 
     public MonVLisFascKoTableBean() {
-	super();
+        super();
     }
 
     protected MonVLisFascKoRowBean createRow() {
-	return new MonVLisFascKoRowBean();
+        return new MonVLisFascKoRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVLisFascKoRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

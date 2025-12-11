@@ -51,347 +51,347 @@ public class ControlliRecuperoTest extends HelperTest<ControlliRecupero> {
 
     @Test
     void leggiUnitaDocQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiUnitaDoc(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiUnitaDoc(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiVolumeConservQueryIsOk() {
-	Long idVolumeConserv = 1L;
-	RispostaControlli rispostaControlli = helper.leggiVolumeConserv(idVolumeConserv);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idVolumeConserv = 1L;
+        RispostaControlli rispostaControlli = helper.leggiVolumeConserv(idVolumeConserv);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiVolumiUnitaDocQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiVolumiUnitaDoc(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiVolumiUnitaDoc(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiCompFileInUDQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	boolean estraiFileIndiceAip = false;
-	RispostaControlli rispostaControlli = helper.leggiCompFileInUD(idUnitaDoc,
-		estraiFileIndiceAip);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        boolean estraiFileIndiceAip = false;
+        RispostaControlli rispostaControlli = helper.leggiCompFileInUD(idUnitaDoc,
+                estraiFileIndiceAip);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiCompFileInUDAIPV2QueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiCompFileInUDAIPV2(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiCompFileInUDAIPV2(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiCompFileInUDVersamentoUdQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiCompFileInUDVersamentoUd(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiCompFileInUDVersamentoUd(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiCompFileInUDByTipoDocQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	Long idTipoDoc = 7L;
-	RispostaControlli rispostaControlli = helper.leggiCompFileInUDByTipoDoc(idUnitaDoc,
-		idTipoDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        Long idTipoDoc = 7L;
+        RispostaControlli rispostaControlli = helper.leggiCompFileInUDByTipoDoc(idUnitaDoc,
+                idTipoDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void getChiaveUdQueryIsOk() {
-	AroUnitaDoc aroUnitaDoc = new AroUnitaDoc();
-	aroUnitaDoc.setIdUnitaDoc(28L);
-	aroUnitaDoc.setAaKeyUnitaDoc(BigDecimal.ZERO);
-	helper.getChiaveUd(aroUnitaDoc);
-	assertTrue(true);
+        AroUnitaDoc aroUnitaDoc = new AroUnitaDoc();
+        aroUnitaDoc.setIdUnitaDoc(28L);
+        aroUnitaDoc.setAaKeyUnitaDoc(BigDecimal.ZERO);
+        helper.getChiaveUd(aroUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void leggiCompFileInDocQueryIsOk() {
-	long idDoc = 39L;
-	RispostaControlli rispostaControlli = helper.leggiCompFileInDoc(idDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        long idDoc = 39L;
+        RispostaControlli rispostaControlli = helper.leggiCompFileInDoc(idDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiCompFileInCompQueryIsOk() {
-	Long idComp = 71L;
-	RispostaControlli rispostaControlli = helper.leggiCompFileInComp(idComp);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idComp = 71L;
+        RispostaControlli rispostaControlli = helper.leggiCompFileInComp(idComp);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiChiaveUnitaDocQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiChiaveUnitaDoc(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiChiaveUnitaDoc(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiVersatoreUnitaDocQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiVersatoreUnitaDoc(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiVersatoreUnitaDoc(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiXMLSessioneversUdQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiXMLSessioneversUd(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiXMLSessioneversUd(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiXMLSessioneversDocQueryIsOk() {
-	long idDoc = 39L;
-	RispostaControlli rispostaControlli = helper.leggiXMLSessioneversDoc(idDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        long idDoc = 39L;
+        RispostaControlli rispostaControlli = helper.leggiXMLSessioneversDoc(idDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     @Disabled("richiama leggiXMLSessioneversDoc ma chiede un id realmente presente su db se no da nullpointer")
     void leggiXMLSessioneversCompQueryIsOk() {
-	Long idComp = 71L;
-	RispostaControlli rispostaControlli = helper.leggiXMLSessioneversComp(idComp);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idComp = 71L;
+        RispostaControlli rispostaControlli = helper.leggiXMLSessioneversComp(idComp);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiXMLSessioneVersUdPrincipaleQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiXMLSessioneVersUdPrincipale(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiXMLSessioneVersUdPrincipale(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiXMLSessioneVersDocAggiuntoQueryIsOk() {
-	long idDoc = 39L;
-	RispostaControlli rispostaControlli = helper.leggiXMLSessioneVersDocAggiunto(idDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        long idDoc = 39L;
+        RispostaControlli rispostaControlli = helper.leggiXMLSessioneVersDocAggiunto(idDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiXMLSessioneversUpdQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiXMLSessioneversUpd(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiXMLSessioneversUpd(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void contaXMLIndiceAIPQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.contaXMLIndiceAIP(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.contaXMLIndiceAIP(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiXMLIndiceAIPQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiXMLIndiceAIP(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiXMLIndiceAIP(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiXMLIndiceAIPV2QueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiXMLIndiceAIPV2(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiXMLIndiceAIPV2(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiXMLIndiceAIPExternalQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiXMLIndiceAIPExternal(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiXMLIndiceAIPExternal(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiElvFileElencoVersQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	String tiFileElencoVers = "BOH";
-	String tiFileElencoVers2 = "BOH2";
-	RispostaControlli rispostaControlli = helper.leggiElvFileElencoVers(idUnitaDoc,
-		tiFileElencoVers, tiFileElencoVers2);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        String tiFileElencoVers = "BOH";
+        String tiFileElencoVers2 = "BOH2";
+        RispostaControlli rispostaControlli = helper.leggiElvFileElencoVers(idUnitaDoc,
+                tiFileElencoVers, tiFileElencoVers2);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiAroUdAppartVerSerieQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiAroUdAppartVerSerie(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiAroUdAppartVerSerie(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiFasUnitaDocFascicoloQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	RispostaControlli rispostaControlli = helper.leggiFasUnitaDocFascicolo(idUnitaDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        RispostaControlli rispostaControlli = helper.leggiFasUnitaDocFascicolo(idUnitaDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void checkIdDocumentoinUDQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	String idDocumento = "TEST";
-	RispostaControlli rispostaControlli = helper.checkIdDocumentoinUD(idUnitaDoc, idDocumento);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        String idDocumento = "TEST";
+        RispostaControlli rispostaControlli = helper.checkIdDocumentoinUD(idUnitaDoc, idDocumento);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void checkIdComponenteinDocQueryIsOk() {
-	long idDoc = 39L;
-	long progressivo = -9L;
-	RispostaControlli rispostaControlli = helper.checkIdComponenteinDoc(idDoc, progressivo);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        long idDoc = 39L;
+        long progressivo = -9L;
+        RispostaControlli rispostaControlli = helper.checkIdComponenteinDoc(idDoc, progressivo);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void checkTipoDocumentoperStrutQueryIsOk() {
-	long idStrut = 2L;
-	String nmTipoDoc = "DELIBERA";
-	String descChiaveUd = "TEST";
-	RispostaControlli rispostaControlli = helper.checkTipoDocumentoperStrut(idStrut, nmTipoDoc,
-		descChiaveUd);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        long idStrut = 2L;
+        String nmTipoDoc = "DELIBERA";
+        String descChiaveUd = "TEST";
+        RispostaControlli rispostaControlli = helper.checkTipoDocumentoperStrut(idStrut, nmTipoDoc,
+                descChiaveUd);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void checkTipoDocumentoinUDQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	String nmTipoDoc = "TEST";
-	String descChiaveUd = "TEST";
-	RispostaControlli rispostaControlli = helper.checkTipoDocumentoinUD(idUnitaDoc, nmTipoDoc,
-		descChiaveUd);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        Long idUnitaDoc = 28L;
+        String nmTipoDoc = "TEST";
+        String descChiaveUd = "TEST";
+        RispostaControlli rispostaControlli = helper.checkTipoDocumentoinUD(idUnitaDoc, nmTipoDoc,
+                descChiaveUd);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     @Disabled("fa delle persist, faccio il test dei metodi privati by reflection")
     void calcCdKeyNormAndUrnPregQueryIsOk() {
-	CSVersatore csvVersatore = new CSVersatore();
-	CSChiave cschiave = new CSChiave();
-	long idRegistro = -9L;
-	long idUnitaDoc = -9L;
-	String cdKey = "TEST";
-	RispostaControlli rispostaControlli = helper.calcCdKeyNormAndUrnPreg(csvVersatore, cschiave,
-		idRegistro, idUnitaDoc, cdKey);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        CSVersatore csvVersatore = new CSVersatore();
+        CSChiave cschiave = new CSChiave();
+        long idRegistro = -9L;
+        long idUnitaDoc = -9L;
+        String cdKey = "TEST";
+        RispostaControlli rispostaControlli = helper.calcCdKeyNormAndUrnPreg(csvVersatore, cschiave,
+                idRegistro, idUnitaDoc, cdKey);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiFirReportIdsAndGenZipNameQueryIsOk() {
-	long idCompDoc = 71L;
-	RispostaControlli rispostaControlli = helper.leggiFirReportIdsAndGenZipName(idCompDoc);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        long idCompDoc = 71L;
+        RispostaControlli rispostaControlli = helper.leggiFirReportIdsAndGenZipName(idCompDoc);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiListaUserByHsmUsernameQueryIsOk() {
-	BigDecimal idAmbiente = BigDecimal.ZERO;
-	RispostaControlli rispostaControlli = helper.leggiListaUserByHsmUsername(idAmbiente);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        BigDecimal idAmbiente = BigDecimal.ZERO;
+        RispostaControlli rispostaControlli = helper.leggiListaUserByHsmUsername(idAmbiente);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     void leggiRuoloAuthorizedSignerQueryIsOk() {
-	long idUseriamCor = -9L;
-	BigDecimal idAmbiente = BigDecimal.ZERO;
-	RispostaControlli rispostaControlli = helper.leggiRuoloAuthorizedSigner(idUseriamCor,
-		idAmbiente);
-	assertNotEquals("666", rispostaControlli.getCodErr());
+        long idUseriamCor = -9L;
+        BigDecimal idAmbiente = BigDecimal.ZERO;
+        RispostaControlli rispostaControlli = helper.leggiRuoloAuthorizedSigner(idUseriamCor,
+                idAmbiente);
+        assertNotEquals("666", rispostaControlli.getCodErr());
     }
 
     @Test
     @Disabled("metodo private")
     void checkCdKeyNormalizedQueryIsOk() {
-	long idRegistro = 0L;
-	CSChiave key = new CSChiave();
-	key.setAnno(2021L);
-	key.setNumero("1124");
-	String cdKeyUnitaDocNormaliz = "TEST";
-	// RispostaControlli rispostaControlli = helper.checkCdKeyNormalized(idRegistro, key,
-	// cdKeyUnitaDocNormaliz);
-	// assertNotEquals("666", rispostaControlli.getCodErr());
-	assertTrue(true);
+        long idRegistro = 0L;
+        CSChiave key = new CSChiave();
+        key.setAnno(2021L);
+        key.setNumero("1124");
+        String cdKeyUnitaDocNormaliz = "TEST";
+        // RispostaControlli rispostaControlli = helper.checkCdKeyNormalized(idRegistro, key,
+        // cdKeyUnitaDocNormaliz);
+        // assertNotEquals("666", rispostaControlli.getCodErr());
+        assertTrue(true);
     }
 
     @Test
     @Disabled("metodo private")
     void getDtMaxVersMaxByUdQueryIsOk() {
-	Long idUnitaDoc = 28L;
-	// RispostaControlli rispostaControlli = helper.getDtMaxVersMaxByUd(idUnitaDoc);
-	// assertNotEquals("666", rispostaControlli.getCodErr());
-	assertTrue(true);
+        Long idUnitaDoc = 28L;
+        // RispostaControlli rispostaControlli = helper.getDtMaxVersMaxByUd(idUnitaDoc);
+        // assertNotEquals("666", rispostaControlli.getCodErr());
+        assertTrue(true);
     }
 
     @Test
     void findVrsUrnXmlSessioneVersByTiUrnQueryIsOk() {
-	final VrsXmlDatiSessioneVers vrsXmlDatiSessioneVers = new VrsXmlDatiSessioneVers();
-	vrsXmlDatiSessioneVers.setIdXmlDatiSessioneVers(0L);
-	try {
-	    helper.findVrsUrnXmlSessioneVersByTiUrn(vrsXmlDatiSessioneVers,
-		    VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers.ORIGINALE);
-	} catch (Exception e) {
-	    assertExceptionMessage(e, "NoResultException");
-	}
+        final VrsXmlDatiSessioneVers vrsXmlDatiSessioneVers = new VrsXmlDatiSessioneVers();
+        vrsXmlDatiSessioneVers.setIdXmlDatiSessioneVers(0L);
+        try {
+            helper.findVrsUrnXmlSessioneVersByTiUrn(vrsXmlDatiSessioneVers,
+                    VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers.ORIGINALE);
+        } catch (Exception e) {
+            assertExceptionMessage(e, "NoResultException");
+        }
     }
 
     @Test
     void getTipoSessioneFromQueryIsOk() {
-	final VrsXmlDatiSessioneVers vrsXmlDatiSessioneVers = new VrsXmlDatiSessioneVers();
-	vrsXmlDatiSessioneVers.setIdXmlDatiSessioneVers(1L);
-	final VrsDatiSessioneVers vrsDatiSessioneVers = new VrsDatiSessioneVers();
-	vrsDatiSessioneVers.setIdDatiSessioneVers(1L);
-	vrsXmlDatiSessioneVers.setVrsDatiSessioneVers(vrsDatiSessioneVers);
-	final Constants.TipoSessione tipoSessioneFrom = helper
-		.getTipoSessioneFrom(vrsXmlDatiSessioneVers);
-	assertEquals(Constants.TipoSessione.VERSAMENTO, tipoSessioneFrom);
-	assertTrue(true);
+        final VrsXmlDatiSessioneVers vrsXmlDatiSessioneVers = new VrsXmlDatiSessioneVers();
+        vrsXmlDatiSessioneVers.setIdXmlDatiSessioneVers(1L);
+        final VrsDatiSessioneVers vrsDatiSessioneVers = new VrsDatiSessioneVers();
+        vrsDatiSessioneVers.setIdDatiSessioneVers(1L);
+        vrsXmlDatiSessioneVers.setVrsDatiSessioneVers(vrsDatiSessioneVers);
+        final Constants.TipoSessione tipoSessioneFrom = helper
+                .getTipoSessioneFrom(vrsXmlDatiSessioneVers);
+        assertEquals(Constants.TipoSessione.VERSAMENTO, tipoSessioneFrom);
+        assertTrue(true);
     }
 
     @Test
     void loadElvElencoVerQueryIsOk() {
-	final ElvFileElencoVer fileElencoVers = new ElvFileElencoVer();
-	fileElencoVers.setElvElencoVer(new ElvElencoVer());
-	fileElencoVers.getElvElencoVer().setIdElencoVers(1L);
+        final ElvFileElencoVer fileElencoVers = new ElvFileElencoVer();
+        fileElencoVers.setElvElencoVer(new ElvElencoVer());
+        fileElencoVers.getElvElencoVer().setIdElencoVers(1L);
 
-	Exception exception = assertThrows(Exception.class, () -> {
-	    helper.loadElvElencoVer(fileElencoVers);
-	});
-	assertExceptionMessage(exception, "NoResultException");
+        Exception exception = assertThrows(Exception.class, () -> {
+            helper.loadElvElencoVer(fileElencoVers);
+        });
+        assertExceptionMessage(exception, "NoResultException");
     }
 
     @Test
     void findVolFileVolumeConservQueryIsOk() {
-	final VolVolumeConserv volume = new VolVolumeConserv();
-	volume.setIdVolumeConserv(1L);
-	helper.findVolFileVolumeConserv(volume);
-	assertTrue(true);
+        final VolVolumeConserv volume = new VolVolumeConserv();
+        volume.setIdVolumeConserv(1L);
+        helper.findVolFileVolumeConserv(volume);
+        assertTrue(true);
     }
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return createEnterpriseArchive(ControlliRecuperoTest.class.getSimpleName(),
-		createSacerLogJar(), createPaginatorJavaArchive(), createSacerLogJar(),
-		createSacerJavaArchive(Arrays.asList("it.eng.parer.web.dto", "it.eng.parer.ws.dto",
-			"it.eng.parer.ws.recupero.dto", "it.eng.parer.elencoVersamento.utils",
-			"it.eng.parer.job.dto", "it.eng.parer.ws.utils", "com.fasterxml.uuid",
-			"com.fasterxml.uuid.impl"), ControlliRecuperoTest.class,
-			it.eng.parer.ws.recupero.ejb.ControlliRecupero.class,
-			it.eng.parer.volume.helper.VolumeHelper.class,
-			it.eng.parer.web.helper.UnitaDocumentarieHelper.class,
-			it.eng.parer.volume.utils.ReturnParams.class,
-			it.eng.parer.web.helper.ConfigurationHelper.class,
-			it.eng.parer.web.util.Constants.class,
-			it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper.class,
-			it.eng.parer.util.helper.UniformResourceNameUtilHelper.class,
-			it.eng.parer.web.helper.UserHelper.class,
-			it.eng.parer.web.helper.AmministrazioneHelper.class,
-			it.eng.spagoCore.util.UUIDMdcLogUtil.class));
+        return createEnterpriseArchive(ControlliRecuperoTest.class.getSimpleName(),
+                createSacerLogJar(), createPaginatorJavaArchive(), createSacerLogJar(),
+                createSacerJavaArchive(Arrays.asList("it.eng.parer.web.dto", "it.eng.parer.ws.dto",
+                        "it.eng.parer.ws.recupero.dto", "it.eng.parer.elencoVersamento.utils",
+                        "it.eng.parer.job.dto", "it.eng.parer.ws.utils", "com.fasterxml.uuid",
+                        "com.fasterxml.uuid.impl"), ControlliRecuperoTest.class,
+                        it.eng.parer.ws.recupero.ejb.ControlliRecupero.class,
+                        it.eng.parer.volume.helper.VolumeHelper.class,
+                        it.eng.parer.web.helper.UnitaDocumentarieHelper.class,
+                        it.eng.parer.volume.utils.ReturnParams.class,
+                        it.eng.parer.web.helper.ConfigurationHelper.class,
+                        it.eng.parer.web.util.Constants.class,
+                        it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper.class,
+                        it.eng.parer.util.helper.UniformResourceNameUtilHelper.class,
+                        it.eng.parer.web.helper.UserHelper.class,
+                        it.eng.parer.web.helper.AmministrazioneHelper.class,
+                        it.eng.spagoCore.util.UUIDMdcLogUtil.class));
     }
 }

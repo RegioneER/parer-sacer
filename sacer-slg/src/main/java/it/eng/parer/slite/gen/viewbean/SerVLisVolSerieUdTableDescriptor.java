@@ -47,33 +47,33 @@ public class SerVLisVolSerieUdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_VOL_VER_SERIE,
-		new ColumnDescriptor(COL_ID_VOL_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_PG_VOL_VER_SERIE,
-		new ColumnDescriptor(COL_PG_VOL_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_NI_UNITA_DOC_VOL,
-		new ColumnDescriptor(COL_NI_UNITA_DOC_VOL, Types.DECIMAL, 22, true));
-	map.put(COL_CD_FIRST_UNITA_DOC_VOL,
-		new ColumnDescriptor(COL_CD_FIRST_UNITA_DOC_VOL, Types.VARCHAR, 254, true));
-	map.put(COL_DT_FIRST_UNITA_DOC_VOL,
-		new ColumnDescriptor(COL_DT_FIRST_UNITA_DOC_VOL, Types.TIMESTAMP, 7, true));
-	map.put(COL_CD_LAST_UNITA_DOC_VOL,
-		new ColumnDescriptor(COL_CD_LAST_UNITA_DOC_VOL, Types.VARCHAR, 254, true));
-	map.put(COL_DT_LAST_UNITA_DOC_VOL,
-		new ColumnDescriptor(COL_DT_LAST_UNITA_DOC_VOL, Types.TIMESTAMP, 7, true));
+        map.put(COL_ID_VOL_VER_SERIE,
+                new ColumnDescriptor(COL_ID_VOL_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_PG_VOL_VER_SERIE,
+                new ColumnDescriptor(COL_PG_VOL_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_NI_UNITA_DOC_VOL,
+                new ColumnDescriptor(COL_NI_UNITA_DOC_VOL, Types.DECIMAL, 22, true));
+        map.put(COL_CD_FIRST_UNITA_DOC_VOL,
+                new ColumnDescriptor(COL_CD_FIRST_UNITA_DOC_VOL, Types.VARCHAR, 254, true));
+        map.put(COL_DT_FIRST_UNITA_DOC_VOL,
+                new ColumnDescriptor(COL_DT_FIRST_UNITA_DOC_VOL, Types.TIMESTAMP, 7, true));
+        map.put(COL_CD_LAST_UNITA_DOC_VOL,
+                new ColumnDescriptor(COL_CD_LAST_UNITA_DOC_VOL, Types.VARCHAR, 254, true));
+        map.put(COL_DT_LAST_UNITA_DOC_VOL,
+                new ColumnDescriptor(COL_DT_LAST_UNITA_DOC_VOL, Types.TIMESTAMP, 7, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

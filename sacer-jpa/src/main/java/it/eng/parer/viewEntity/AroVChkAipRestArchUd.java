@@ -43,48 +43,48 @@ public class AroVChkAipRestArchUd implements Serializable {
 
     @Column(name = "FL_ESTRATTO", columnDefinition = "number")
     public String getFlEstratto() {
-	return this.flEstratto;
+        return this.flEstratto;
     }
 
     public void setFlEstratto(String flEstratto) {
-	this.flEstratto = flEstratto;
+        this.flEstratto = flEstratto;
     }
 
     @Column(name = "FL_ERRORE", columnDefinition = "number")
     public String getFlErrore() {
-	return this.flErrore;
+        return this.flErrore;
     }
 
     public void setFlErrore(String flErrore) {
-	this.flErrore = flErrore;
+        this.flErrore = flErrore;
     }
 
     @Column(name = "FL_DA_ELABORARE", columnDefinition = "number")
     public String getFlDaElaborare() {
-	return flDaElaborare;
+        return flDaElaborare;
     }
 
     public void setFlDaElaborare(String flDaElaborare) {
-	this.flDaElaborare = flDaElaborare;
+        this.flDaElaborare = flDaElaborare;
     }
 
     @Column(name = "FL_ALL_DA_ELAB", columnDefinition = "number")
     public String getFlAllDaElab() {
-	return flAllDaElab;
+        return flAllDaElab;
     }
 
     public void setFlAllDaElab(String flAllDaElab) {
-	this.flAllDaElab = flAllDaElab;
+        this.flAllDaElab = flAllDaElab;
     }
 
     @Id
     @Column(name = "ID_RICHIESTA_RA")
     public BigDecimal getIdRichiestaRa() {
-	return this.idRichiestaRa;
+        return this.idRichiestaRa;
     }
 
     public void setIdRichiestaRa(BigDecimal idRichiestaRa) {
-	this.idRichiestaRa = idRichiestaRa;
+        this.idRichiestaRa = idRichiestaRa;
     }
 
 }

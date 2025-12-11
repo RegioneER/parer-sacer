@@ -33,19 +33,19 @@ public class OrgRegolaValSubStrutTableBean extends AbstractBaseTable<OrgRegolaVa
     public static OrgRegolaValSubStrutTableDescriptor TABLE_DESCRIPTOR = new OrgRegolaValSubStrutTableDescriptor();
 
     public OrgRegolaValSubStrutTableBean() {
-	super();
+        super();
     }
 
     protected OrgRegolaValSubStrutRowBean createRow() {
-	return new OrgRegolaValSubStrutRowBean();
+        return new OrgRegolaValSubStrutRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<OrgRegolaValSubStrutRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

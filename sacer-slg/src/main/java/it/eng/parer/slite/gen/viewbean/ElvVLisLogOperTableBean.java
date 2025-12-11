@@ -37,19 +37,19 @@ public class ElvVLisLogOperTableBean extends AbstractBaseTable<ElvVLisLogOperRow
     public static ElvVLisLogOperTableDescriptor TABLE_DESCRIPTOR = new ElvVLisLogOperTableDescriptor();
 
     public ElvVLisLogOperTableBean() {
-	super();
+        super();
     }
 
     protected ElvVLisLogOperRowBean createRow() {
-	return new ElvVLisLogOperRowBean();
+        return new ElvVLisLogOperRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<ElvVLisLogOperRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

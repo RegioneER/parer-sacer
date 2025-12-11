@@ -36,159 +36,159 @@ public class SerVLisNotaSerieRowBean extends BaseRow implements JEEBaseRowInterf
     public static SerVLisNotaSerieTableDescriptor TABLE_DESCRIPTOR = new SerVLisNotaSerieTableDescriptor();
 
     public SerVLisNotaSerieRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdNotaVerSerie() {
-	return getBigDecimal("id_nota_ver_serie");
+        return getBigDecimal("id_nota_ver_serie");
     }
 
     public void setIdNotaVerSerie(BigDecimal idNotaVerSerie) {
-	setObject("id_nota_ver_serie", idNotaVerSerie);
+        setObject("id_nota_ver_serie", idNotaVerSerie);
     }
 
     public BigDecimal getIdVerSerie() {
-	return getBigDecimal("id_ver_serie");
+        return getBigDecimal("id_ver_serie");
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	setObject("id_ver_serie", idVerSerie);
+        setObject("id_ver_serie", idVerSerie);
     }
 
     public BigDecimal getIdTipoNotaSerie() {
-	return getBigDecimal("id_tipo_nota_serie");
+        return getBigDecimal("id_tipo_nota_serie");
     }
 
     public void setIdTipoNotaSerie(BigDecimal idTipoNotaSerie) {
-	setObject("id_tipo_nota_serie", idTipoNotaSerie);
+        setObject("id_tipo_nota_serie", idTipoNotaSerie);
     }
 
     public String getDsTipoNotaSerie() {
-	return getString("ds_tipo_nota_serie");
+        return getString("ds_tipo_nota_serie");
     }
 
     public void setDsTipoNotaSerie(String dsTipoNotaSerie) {
-	setObject("ds_tipo_nota_serie", dsTipoNotaSerie);
+        setObject("ds_tipo_nota_serie", dsTipoNotaSerie);
     }
 
     public String getCdTipoNotaSerie() {
-	return getString("cd_tipo_nota_serie");
+        return getString("cd_tipo_nota_serie");
     }
 
     public void setCdTipoNotaSerie(String cdTipoNotaSerie) {
-	setObject("cd_tipo_nota_serie", cdTipoNotaSerie);
+        setObject("cd_tipo_nota_serie", cdTipoNotaSerie);
     }
 
     public BigDecimal getNiOrd() {
-	return getBigDecimal("ni_ord");
+        return getBigDecimal("ni_ord");
     }
 
     public void setNiOrd(BigDecimal niOrd) {
-	setObject("ni_ord", niOrd);
+        setObject("ni_ord", niOrd);
     }
 
     public BigDecimal getPgNotaVerSerie() {
-	return getBigDecimal("pg_nota_ver_serie");
+        return getBigDecimal("pg_nota_ver_serie");
     }
 
     public void setPgNotaVerSerie(BigDecimal pgNotaVerSerie) {
-	setObject("pg_nota_ver_serie", pgNotaVerSerie);
+        setObject("pg_nota_ver_serie", pgNotaVerSerie);
     }
 
     public Timestamp getDtNotaVerSerie() {
-	return getTimestamp("dt_nota_ver_serie");
+        return getTimestamp("dt_nota_ver_serie");
     }
 
     public void setDtNotaVerSerie(Timestamp dtNotaVerSerie) {
-	setObject("dt_nota_ver_serie", dtNotaVerSerie);
+        setObject("dt_nota_ver_serie", dtNotaVerSerie);
     }
 
     public String getDsNotaVerSerie() {
-	return getString("ds_nota_ver_serie");
+        return getString("ds_nota_ver_serie");
     }
 
     public void setDsNotaVerSerie(String dsNotaVerSerie) {
-	setObject("ds_nota_ver_serie", dsNotaVerSerie);
+        setObject("ds_nota_ver_serie", dsNotaVerSerie);
     }
 
     public BigDecimal getIdUserIam() {
-	return getBigDecimal("id_user_iam");
+        return getBigDecimal("id_user_iam");
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	setObject("id_user_iam", idUserIam);
+        setObject("id_user_iam", idUserIam);
     }
 
     public String getNmUserid() {
-	return getString("nm_userid");
+        return getString("nm_userid");
     }
 
     public void setNmUserid(String nmUserid) {
-	setObject("nm_userid", nmUserid);
+        setObject("nm_userid", nmUserid);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SerVLisNotaSerie entity = (SerVLisNotaSerie) obj;
-	this.setIdNotaVerSerie(entity.getIdNotaVerSerie());
-	this.setIdVerSerie(entity.getIdVerSerie());
-	this.setIdTipoNotaSerie(entity.getIdTipoNotaSerie());
-	this.setDsTipoNotaSerie(entity.getDsTipoNotaSerie());
-	this.setCdTipoNotaSerie(entity.getCdTipoNotaSerie());
-	this.setNiOrd(entity.getNiOrd());
-	this.setPgNotaVerSerie(entity.getPgNotaVerSerie());
-	if (entity.getDtNotaVerSerie() != null) {
-	    this.setDtNotaVerSerie(new Timestamp(entity.getDtNotaVerSerie().getTime()));
-	}
-	this.setDsNotaVerSerie(entity.getDsNotaVerSerie());
-	this.setIdUserIam(entity.getIdUserIam());
-	this.setNmUserid(entity.getNmUserid());
+        SerVLisNotaSerie entity = (SerVLisNotaSerie) obj;
+        this.setIdNotaVerSerie(entity.getIdNotaVerSerie());
+        this.setIdVerSerie(entity.getIdVerSerie());
+        this.setIdTipoNotaSerie(entity.getIdTipoNotaSerie());
+        this.setDsTipoNotaSerie(entity.getDsTipoNotaSerie());
+        this.setCdTipoNotaSerie(entity.getCdTipoNotaSerie());
+        this.setNiOrd(entity.getNiOrd());
+        this.setPgNotaVerSerie(entity.getPgNotaVerSerie());
+        if (entity.getDtNotaVerSerie() != null) {
+            this.setDtNotaVerSerie(new Timestamp(entity.getDtNotaVerSerie().getTime()));
+        }
+        this.setDsNotaVerSerie(entity.getDsNotaVerSerie());
+        this.setIdUserIam(entity.getIdUserIam());
+        this.setNmUserid(entity.getNmUserid());
     }
 
     @Override
     public SerVLisNotaSerie rowBeanToEntity() {
-	SerVLisNotaSerie entity = new SerVLisNotaSerie();
-	entity.setIdNotaVerSerie(this.getIdNotaVerSerie());
-	entity.setIdVerSerie(this.getIdVerSerie());
-	entity.setIdTipoNotaSerie(this.getIdTipoNotaSerie());
-	entity.setDsTipoNotaSerie(this.getDsTipoNotaSerie());
-	entity.setCdTipoNotaSerie(this.getCdTipoNotaSerie());
-	entity.setNiOrd(this.getNiOrd());
-	entity.setPgNotaVerSerie(this.getPgNotaVerSerie());
-	entity.setDtNotaVerSerie(this.getDtNotaVerSerie());
-	entity.setDsNotaVerSerie(this.getDsNotaVerSerie());
-	entity.setIdUserIam(this.getIdUserIam());
-	entity.setNmUserid(this.getNmUserid());
-	return entity;
+        SerVLisNotaSerie entity = new SerVLisNotaSerie();
+        entity.setIdNotaVerSerie(this.getIdNotaVerSerie());
+        entity.setIdVerSerie(this.getIdVerSerie());
+        entity.setIdTipoNotaSerie(this.getIdTipoNotaSerie());
+        entity.setDsTipoNotaSerie(this.getDsTipoNotaSerie());
+        entity.setCdTipoNotaSerie(this.getCdTipoNotaSerie());
+        entity.setNiOrd(this.getNiOrd());
+        entity.setPgNotaVerSerie(this.getPgNotaVerSerie());
+        entity.setDtNotaVerSerie(this.getDtNotaVerSerie());
+        entity.setDsNotaVerSerie(this.getDsNotaVerSerie());
+        entity.setIdUserIam(this.getIdUserIam());
+        entity.setNmUserid(this.getNmUserid());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

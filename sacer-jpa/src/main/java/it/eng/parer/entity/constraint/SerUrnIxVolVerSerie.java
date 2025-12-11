@@ -23,7 +23,7 @@ public final class SerUrnIxVolVerSerie {
     }
 
     public enum TiUrnIxVolVerSerie {
-	ORIGINALE, NORMALIZZATO, INIZIALE
+        ORIGINALE, NORMALIZZATO, INIZIALE
     }
 
 }

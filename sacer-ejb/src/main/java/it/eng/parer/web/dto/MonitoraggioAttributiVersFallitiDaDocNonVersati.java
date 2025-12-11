@@ -38,84 +38,84 @@ public class MonitoraggioAttributiVersFallitiDaDocNonVersati implements Serializ
      * @return the cdRegistroKeyUnitaDoc
      */
     public String getCdRegistroKeyUnitaDoc() {
-	return cdRegistroKeyUnitaDoc;
+        return cdRegistroKeyUnitaDoc;
     }
 
     /**
      * @param cdRegistroKeyUnitaDoc the cdRegistroKeyUnitaDoc to set
      */
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
     }
 
     /**
      * @return the aaKeyUnitaDoc
      */
     public BigDecimal getAaKeyUnitaDoc() {
-	return aaKeyUnitaDoc;
+        return aaKeyUnitaDoc;
     }
 
     /**
      * @param aaKeyUnitaDoc the aaKeyUnitaDoc to set
      */
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     /**
      * @return the cdKeyUnitaDoc
      */
     public String getCdKeyUnitaDoc() {
-	return cdKeyUnitaDoc;
+        return cdKeyUnitaDoc;
     }
 
     /**
      * @param cdKeyUnitaDoc the cdKeyUnitaDoc to set
      */
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     /**
      * @return the cdKeyDocVers
      */
     public String getCdKeyDocVers() {
-	return cdKeyDocVers;
+        return cdKeyDocVers;
     }
 
     /**
      * @param cdKeyDocVers the cdKeyDocVers to set
      */
     public void setCdKeyDocVers(String cdKeyDocVers) {
-	this.cdKeyDocVers = cdKeyDocVers;
+        this.cdKeyDocVers = cdKeyDocVers;
     }
 
     /**
      * @return the idStrut
      */
     public BigDecimal getIdStrut() {
-	return idStrut;
+        return idStrut;
     }
 
     /**
      * @param idStrut the idStrut to set
      */
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     /**
      * @return the tipoVers
      */
     public String getTipoVers() {
-	return tipoVers;
+        return tipoVers;
     }
 
     /**
      * @param tipoVers the tipoVers to set
      */
     public void setTipoVers(String tipoVers) {
-	this.tipoVers = tipoVers;
+        this.tipoVers = tipoVers;
     }
 
 }

@@ -26,43 +26,43 @@ public class AsyncException extends Exception {
     Exception ex;
 
     public Long getIdLock() {
-	return idLock;
+        return idLock;
     }
 
     public void setIdLock(Long idLock) {
-	this.idLock = idLock;
+        this.idLock = idLock;
     }
 
     public String getAsyncTask() {
-	return asyncTask;
+        return asyncTask;
     }
 
     public void setAsyncTask(String asyncTask) {
-	this.asyncTask = asyncTask;
+        this.asyncTask = asyncTask;
     }
 
     public Exception getEx() {
-	return ex;
+        return ex;
     }
 
     public void setEx(Exception ex) {
-	this.ex = ex;
+        this.ex = ex;
     }
 
     public Long getIdStrut() {
-	return idStrut;
+        return idStrut;
     }
 
     public void setIdStrut(Long idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     public AsyncException(String message, String asyncTask, Long idLock, Long idStrut,
-	    Exception ex) {
-	super(message);
-	this.asyncTask = asyncTask;
-	this.idLock = idLock;
-	this.idStrut = idStrut;
-	this.ex = ex;
+            Exception ex) {
+        super(message);
+        this.asyncTask = asyncTask;
+        this.idLock = idLock;
+        this.idStrut = idStrut;
+        this.ex = ex;
     }
 }

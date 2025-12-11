@@ -38,123 +38,123 @@ public class OrgRegolaValSubStrutRowBean extends BaseRow implements JEEBaseRowIn
     public static OrgRegolaValSubStrutTableDescriptor TABLE_DESCRIPTOR = new OrgRegolaValSubStrutTableDescriptor();
 
     public OrgRegolaValSubStrutRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdRegolaValSubStrut() {
-	return getBigDecimal("id_regola_val_sub_strut");
+        return getBigDecimal("id_regola_val_sub_strut");
     }
 
     public void setIdRegolaValSubStrut(BigDecimal idRegolaValSubStrut) {
-	setObject("id_regola_val_sub_strut", idRegolaValSubStrut);
+        setObject("id_regola_val_sub_strut", idRegolaValSubStrut);
     }
 
     public BigDecimal getIdTipoUnitaDoc() {
-	return getBigDecimal("id_tipo_unita_doc");
+        return getBigDecimal("id_tipo_unita_doc");
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	setObject("id_tipo_unita_doc", idTipoUnitaDoc);
+        setObject("id_tipo_unita_doc", idTipoUnitaDoc);
     }
 
     public BigDecimal getIdTipoDoc() {
-	return getBigDecimal("id_tipo_doc");
+        return getBigDecimal("id_tipo_doc");
     }
 
     public void setIdTipoDoc(BigDecimal idTipoDoc) {
-	setObject("id_tipo_doc", idTipoDoc);
+        setObject("id_tipo_doc", idTipoDoc);
     }
 
     public Timestamp getDtIstituz() {
-	return getTimestamp("dt_istituz");
+        return getTimestamp("dt_istituz");
     }
 
     public void setDtIstituz(Timestamp dtIstituz) {
-	setObject("dt_istituz", dtIstituz);
+        setObject("dt_istituz", dtIstituz);
     }
 
     public Timestamp getDtSoppres() {
-	return getTimestamp("dt_soppres");
+        return getTimestamp("dt_soppres");
     }
 
     public void setDtSoppres(Timestamp dtSoppres) {
-	setObject("dt_soppres", dtSoppres);
+        setObject("dt_soppres", dtSoppres);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	OrgRegolaValSubStrut entity = (OrgRegolaValSubStrut) obj;
+        OrgRegolaValSubStrut entity = (OrgRegolaValSubStrut) obj;
 
-	this.setIdRegolaValSubStrut(entity.getIdRegolaValSubStrut() == null ? null
-		: BigDecimal.valueOf(entity.getIdRegolaValSubStrut()));
+        this.setIdRegolaValSubStrut(entity.getIdRegolaValSubStrut() == null ? null
+                : BigDecimal.valueOf(entity.getIdRegolaValSubStrut()));
 
-	if (entity.getDecTipoUnitaDoc() != null) {
-	    this.setIdTipoUnitaDoc(new BigDecimal(entity.getDecTipoUnitaDoc().getIdTipoUnitaDoc()));
-	}
+        if (entity.getDecTipoUnitaDoc() != null) {
+            this.setIdTipoUnitaDoc(new BigDecimal(entity.getDecTipoUnitaDoc().getIdTipoUnitaDoc()));
+        }
 
-	if (entity.getDecTipoDoc() != null) {
-	    this.setIdTipoDoc(new BigDecimal(entity.getDecTipoDoc().getIdTipoDoc()));
-	}
+        if (entity.getDecTipoDoc() != null) {
+            this.setIdTipoDoc(new BigDecimal(entity.getDecTipoDoc().getIdTipoDoc()));
+        }
 
-	if (entity.getDtIstituz() != null) {
-	    this.setDtIstituz(new Timestamp(entity.getDtIstituz().getTime()));
-	}
-	if (entity.getDtSoppres() != null) {
-	    this.setDtSoppres(new Timestamp(entity.getDtSoppres().getTime()));
-	}
+        if (entity.getDtIstituz() != null) {
+            this.setDtIstituz(new Timestamp(entity.getDtIstituz().getTime()));
+        }
+        if (entity.getDtSoppres() != null) {
+            this.setDtSoppres(new Timestamp(entity.getDtSoppres().getTime()));
+        }
     }
 
     @Override
     public OrgRegolaValSubStrut rowBeanToEntity() {
-	OrgRegolaValSubStrut entity = new OrgRegolaValSubStrut();
-	if (this.getIdRegolaValSubStrut() != null) {
-	    entity.setIdRegolaValSubStrut(this.getIdRegolaValSubStrut().longValue());
-	}
-	if (this.getIdTipoUnitaDoc() != null) {
-	    if (entity.getDecTipoUnitaDoc() == null) {
-		entity.setDecTipoUnitaDoc(new DecTipoUnitaDoc());
-	    }
-	    entity.getDecTipoUnitaDoc().setIdTipoUnitaDoc(this.getIdTipoUnitaDoc().longValue());
-	}
-	if (this.getIdTipoDoc() != null) {
-	    if (entity.getDecTipoDoc() == null) {
-		entity.setDecTipoDoc(new DecTipoDoc());
-	    }
-	    entity.getDecTipoDoc().setIdTipoDoc(this.getIdTipoDoc().longValue());
-	}
-	entity.setDtIstituz(this.getDtIstituz());
-	entity.setDtSoppres(this.getDtSoppres());
-	return entity;
+        OrgRegolaValSubStrut entity = new OrgRegolaValSubStrut();
+        if (this.getIdRegolaValSubStrut() != null) {
+            entity.setIdRegolaValSubStrut(this.getIdRegolaValSubStrut().longValue());
+        }
+        if (this.getIdTipoUnitaDoc() != null) {
+            if (entity.getDecTipoUnitaDoc() == null) {
+                entity.setDecTipoUnitaDoc(new DecTipoUnitaDoc());
+            }
+            entity.getDecTipoUnitaDoc().setIdTipoUnitaDoc(this.getIdTipoUnitaDoc().longValue());
+        }
+        if (this.getIdTipoDoc() != null) {
+            if (entity.getDecTipoDoc() == null) {
+                entity.setDecTipoDoc(new DecTipoDoc());
+            }
+            entity.getDecTipoDoc().setIdTipoDoc(this.getIdTipoDoc().longValue());
+        }
+        entity.setDtIstituz(this.getDtIstituz());
+        entity.setDtSoppres(this.getDtSoppres());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

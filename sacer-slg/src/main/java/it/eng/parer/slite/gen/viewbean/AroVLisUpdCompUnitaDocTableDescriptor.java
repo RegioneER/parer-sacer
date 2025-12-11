@@ -51,37 +51,37 @@ public class AroVLisUpdCompUnitaDocTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_UPD_COMP_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_UPD_COMP_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_UPD_DOC_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_UPD_DOC_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_UPD_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_UPD_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_DS_ELEMENTO, new ColumnDescriptor(COL_DS_ELEMENTO, Types.VARCHAR, 61, true));
-	map.put(COL_NM_TIPO_DOC, new ColumnDescriptor(COL_NM_TIPO_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_NI_ORD_COMP_DOC,
-		new ColumnDescriptor(COL_NI_ORD_COMP_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_FL_UPD_INFO_VERS,
-		new ColumnDescriptor(COL_FL_UPD_INFO_VERS, Types.VARCHAR, 1, true));
-	map.put(COL_FL_UPD_DATI_SPEC,
-		new ColumnDescriptor(COL_FL_UPD_DATI_SPEC, Types.VARCHAR, 1, true));
-	map.put(COL_FL_UPD_DATI_SPEC_MIGRAZ,
-		new ColumnDescriptor(COL_FL_UPD_DATI_SPEC_MIGRAZ, Types.VARCHAR, 1, true));
-	map.put(COL_TI_DOC_ORD, new ColumnDescriptor(COL_TI_DOC_ORD, Types.DECIMAL, 22, true));
-	map.put(COL_PG_DOC, new ColumnDescriptor(COL_PG_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_UPD_COMP_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_UPD_COMP_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_UPD_DOC_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_UPD_DOC_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_UPD_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_UPD_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_DS_ELEMENTO, new ColumnDescriptor(COL_DS_ELEMENTO, Types.VARCHAR, 61, true));
+        map.put(COL_NM_TIPO_DOC, new ColumnDescriptor(COL_NM_TIPO_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_NI_ORD_COMP_DOC,
+                new ColumnDescriptor(COL_NI_ORD_COMP_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_FL_UPD_INFO_VERS,
+                new ColumnDescriptor(COL_FL_UPD_INFO_VERS, Types.VARCHAR, 1, true));
+        map.put(COL_FL_UPD_DATI_SPEC,
+                new ColumnDescriptor(COL_FL_UPD_DATI_SPEC, Types.VARCHAR, 1, true));
+        map.put(COL_FL_UPD_DATI_SPEC_MIGRAZ,
+                new ColumnDescriptor(COL_FL_UPD_DATI_SPEC_MIGRAZ, Types.VARCHAR, 1, true));
+        map.put(COL_TI_DOC_ORD, new ColumnDescriptor(COL_TI_DOC_ORD, Types.DECIMAL, 22, true));
+        map.put(COL_PG_DOC, new ColumnDescriptor(COL_PG_DOC, Types.DECIMAL, 22, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

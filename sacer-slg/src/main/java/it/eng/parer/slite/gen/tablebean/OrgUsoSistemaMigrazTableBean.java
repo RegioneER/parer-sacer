@@ -33,19 +33,19 @@ public class OrgUsoSistemaMigrazTableBean extends AbstractBaseTable<OrgUsoSistem
     public static OrgUsoSistemaMigrazTableDescriptor TABLE_DESCRIPTOR = new OrgUsoSistemaMigrazTableDescriptor();
 
     public OrgUsoSistemaMigrazTableBean() {
-	super();
+        super();
     }
 
     protected OrgUsoSistemaMigrazRowBean createRow() {
-	return new OrgUsoSistemaMigrazRowBean();
+        return new OrgUsoSistemaMigrazRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<OrgUsoSistemaMigrazRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

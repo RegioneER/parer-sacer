@@ -24,7 +24,7 @@ public final class DecSelCriterioRaggrFasc {
     }
 
     public enum TiSelFasc {
-	SISTEMA_MIGRAZ, VOCE_TITOL, TIPO_FASCICOLO
+        SISTEMA_MIGRAZ, VOCE_TITOL, TIPO_FASCICOLO
     }
 
 }

@@ -39,190 +39,190 @@ public class DecCriterioFiltroMultiploRowBean extends BaseRow implements JEEBase
     public static DecCriterioFiltroMultiploTableDescriptor TABLE_DESCRIPTOR = new DecCriterioFiltroMultiploTableDescriptor();
 
     public DecCriterioFiltroMultiploRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdCriterioFiltroMult() {
-	return getBigDecimal("id_criterio_filtro_mult");
+        return getBigDecimal("id_criterio_filtro_mult");
     }
 
     public void setIdCriterioFiltroMult(BigDecimal idCriterioFiltroMult) {
-	setObject("id_criterio_filtro_mult", idCriterioFiltroMult);
+        setObject("id_criterio_filtro_mult", idCriterioFiltroMult);
     }
 
     public BigDecimal getIdCriterioRaggr() {
-	return getBigDecimal("id_criterio_raggr");
+        return getBigDecimal("id_criterio_raggr");
     }
 
     public void setIdCriterioRaggr(BigDecimal idCriterioRaggr) {
-	setObject("id_criterio_raggr", idCriterioRaggr);
+        setObject("id_criterio_raggr", idCriterioRaggr);
     }
 
     public String getTiFiltroMultiplo() {
-	return getString("ti_filtro_multiplo");
+        return getString("ti_filtro_multiplo");
     }
 
     public void setTiFiltroMultiplo(String tiFiltroMultiplo) {
-	setObject("ti_filtro_multiplo", tiFiltroMultiplo);
+        setObject("ti_filtro_multiplo", tiFiltroMultiplo);
     }
 
     public BigDecimal getIdTipoUnitaDoc() {
-	return getBigDecimal("id_tipo_unita_doc");
+        return getBigDecimal("id_tipo_unita_doc");
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	setObject("id_tipo_unita_doc", idTipoUnitaDoc);
+        setObject("id_tipo_unita_doc", idTipoUnitaDoc);
     }
 
     public String getTiEsitoVerifFirme() {
-	return getString("ti_esito_verif_firme");
+        return getString("ti_esito_verif_firme");
     }
 
     public void setTiEsitoVerifFirme(String tiEsitoVerifFirme) {
-	setObject("ti_esito_verif_firme", tiEsitoVerifFirme);
+        setObject("ti_esito_verif_firme", tiEsitoVerifFirme);
     }
 
     public BigDecimal getIdRegistroUnitaDoc() {
-	return getBigDecimal("id_registro_unita_doc");
+        return getBigDecimal("id_registro_unita_doc");
     }
 
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-	setObject("id_registro_unita_doc", idRegistroUnitaDoc);
+        setObject("id_registro_unita_doc", idRegistroUnitaDoc);
     }
 
     public BigDecimal getIdTipoDoc() {
-	return getBigDecimal("id_tipo_doc");
+        return getBigDecimal("id_tipo_doc");
     }
 
     public void setIdTipoDoc(BigDecimal idTipoDoc) {
-	setObject("id_tipo_doc", idTipoDoc);
+        setObject("id_tipo_doc", idTipoDoc);
     }
 
     public BigDecimal getIdRegistroRangeUnitaDoc() {
-	return getBigDecimal("id_registro_range_unita_doc");
+        return getBigDecimal("id_registro_range_unita_doc");
     }
 
     public void setIdRegistroRangeUnitaDoc(BigDecimal idRegistroRangeUnitaDoc) {
-	setObject("id_registro_range_unita_doc", idRegistroRangeUnitaDoc);
+        setObject("id_registro_range_unita_doc", idRegistroRangeUnitaDoc);
     }
 
     public String getNmSistemaMigraz() {
-	return getString("nm_sistema_migraz");
+        return getString("nm_sistema_migraz");
     }
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
-	setObject("nm_sistema_migraz", nmSistemaMigraz);
+        setObject("nm_sistema_migraz", nmSistemaMigraz);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecCriterioFiltroMultiplo entity = (DecCriterioFiltroMultiplo) obj;
+        DecCriterioFiltroMultiplo entity = (DecCriterioFiltroMultiplo) obj;
 
-	this.setIdCriterioFiltroMult(entity.getIdCriterioFiltroMult() == null ? null
-		: BigDecimal.valueOf(entity.getIdCriterioFiltroMult()));
+        this.setIdCriterioFiltroMult(entity.getIdCriterioFiltroMult() == null ? null
+                : BigDecimal.valueOf(entity.getIdCriterioFiltroMult()));
 
-	if (entity.getDecCriterioRaggr() != null) {
-	    this.setIdCriterioRaggr(
-		    new BigDecimal(entity.getDecCriterioRaggr().getIdCriterioRaggr()));
-	}
+        if (entity.getDecCriterioRaggr() != null) {
+            this.setIdCriterioRaggr(
+                    new BigDecimal(entity.getDecCriterioRaggr().getIdCriterioRaggr()));
+        }
 
-	this.setTiFiltroMultiplo(entity.getTiFiltroMultiplo());
+        this.setTiFiltroMultiplo(entity.getTiFiltroMultiplo());
 
-	if (entity.getDecTipoUnitaDoc() != null) {
-	    this.setIdTipoUnitaDoc(new BigDecimal(entity.getDecTipoUnitaDoc().getIdTipoUnitaDoc()));
-	}
+        if (entity.getDecTipoUnitaDoc() != null) {
+            this.setIdTipoUnitaDoc(new BigDecimal(entity.getDecTipoUnitaDoc().getIdTipoUnitaDoc()));
+        }
 
-	this.setTiEsitoVerifFirme(entity.getTiEsitoVerifFirme());
+        this.setTiEsitoVerifFirme(entity.getTiEsitoVerifFirme());
 
-	if (entity.getDecRegistroUnitaDoc() != null) {
-	    this.setIdRegistroUnitaDoc(
-		    new BigDecimal(entity.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc()));
-	}
+        if (entity.getDecRegistroUnitaDoc() != null) {
+            this.setIdRegistroUnitaDoc(
+                    new BigDecimal(entity.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc()));
+        }
 
-	if (entity.getDecTipoDoc() != null) {
-	    this.setIdTipoDoc(new BigDecimal(entity.getDecTipoDoc().getIdTipoDoc()));
-	}
+        if (entity.getDecTipoDoc() != null) {
+            this.setIdTipoDoc(new BigDecimal(entity.getDecTipoDoc().getIdTipoDoc()));
+        }
 
-	if (entity.getDecRegistroRangeUnitaDoc() != null) {
-	    this.setIdRegistroRangeUnitaDoc(
-		    new BigDecimal(entity.getDecRegistroRangeUnitaDoc().getIdRegistroUnitaDoc()));
-	}
+        if (entity.getDecRegistroRangeUnitaDoc() != null) {
+            this.setIdRegistroRangeUnitaDoc(
+                    new BigDecimal(entity.getDecRegistroRangeUnitaDoc().getIdRegistroUnitaDoc()));
+        }
 
-	this.setNmSistemaMigraz(entity.getNmSistemaMigraz());
+        this.setNmSistemaMigraz(entity.getNmSistemaMigraz());
     }
 
     @Override
     public DecCriterioFiltroMultiplo rowBeanToEntity() {
-	DecCriterioFiltroMultiplo entity = new DecCriterioFiltroMultiplo();
-	if (this.getIdCriterioFiltroMult() != null) {
-	    entity.setIdCriterioFiltroMult(this.getIdCriterioFiltroMult().longValue());
-	}
-	if (this.getIdCriterioRaggr() != null) {
-	    if (entity.getDecCriterioRaggr() == null) {
-		entity.setDecCriterioRaggr(new DecCriterioRaggr());
-	    }
-	    entity.getDecCriterioRaggr().setIdCriterioRaggr(this.getIdCriterioRaggr().longValue());
-	}
-	entity.setTiFiltroMultiplo(this.getTiFiltroMultiplo());
-	if (this.getIdTipoUnitaDoc() != null) {
-	    if (entity.getDecTipoUnitaDoc() == null) {
-		entity.setDecTipoUnitaDoc(new DecTipoUnitaDoc());
-	    }
-	    entity.getDecTipoUnitaDoc().setIdTipoUnitaDoc(this.getIdTipoUnitaDoc().longValue());
-	}
-	entity.setTiEsitoVerifFirme(this.getTiEsitoVerifFirme());
-	if (this.getIdRegistroUnitaDoc() != null) {
-	    if (entity.getDecRegistroUnitaDoc() == null) {
-		entity.setDecRegistroUnitaDoc(new DecRegistroUnitaDoc());
-	    }
-	    entity.getDecRegistroUnitaDoc()
-		    .setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc().longValue());
-	}
-	if (this.getIdTipoDoc() != null) {
-	    if (entity.getDecTipoDoc() == null) {
-		entity.setDecTipoDoc(new DecTipoDoc());
-	    }
-	    entity.getDecTipoDoc().setIdTipoDoc(this.getIdTipoDoc().longValue());
-	}
-	if (this.getIdRegistroRangeUnitaDoc() != null) {
-	    if (entity.getDecRegistroRangeUnitaDoc() == null) {
-		entity.setDecRegistroRangeUnitaDoc(new DecRegistroUnitaDoc());
-	    }
-	    entity.getDecRegistroRangeUnitaDoc()
-		    .setIdRegistroUnitaDoc(this.getIdRegistroRangeUnitaDoc().longValue());
-	}
-	entity.setNmSistemaMigraz(this.getNmSistemaMigraz());
-	return entity;
+        DecCriterioFiltroMultiplo entity = new DecCriterioFiltroMultiplo();
+        if (this.getIdCriterioFiltroMult() != null) {
+            entity.setIdCriterioFiltroMult(this.getIdCriterioFiltroMult().longValue());
+        }
+        if (this.getIdCriterioRaggr() != null) {
+            if (entity.getDecCriterioRaggr() == null) {
+                entity.setDecCriterioRaggr(new DecCriterioRaggr());
+            }
+            entity.getDecCriterioRaggr().setIdCriterioRaggr(this.getIdCriterioRaggr().longValue());
+        }
+        entity.setTiFiltroMultiplo(this.getTiFiltroMultiplo());
+        if (this.getIdTipoUnitaDoc() != null) {
+            if (entity.getDecTipoUnitaDoc() == null) {
+                entity.setDecTipoUnitaDoc(new DecTipoUnitaDoc());
+            }
+            entity.getDecTipoUnitaDoc().setIdTipoUnitaDoc(this.getIdTipoUnitaDoc().longValue());
+        }
+        entity.setTiEsitoVerifFirme(this.getTiEsitoVerifFirme());
+        if (this.getIdRegistroUnitaDoc() != null) {
+            if (entity.getDecRegistroUnitaDoc() == null) {
+                entity.setDecRegistroUnitaDoc(new DecRegistroUnitaDoc());
+            }
+            entity.getDecRegistroUnitaDoc()
+                    .setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc().longValue());
+        }
+        if (this.getIdTipoDoc() != null) {
+            if (entity.getDecTipoDoc() == null) {
+                entity.setDecTipoDoc(new DecTipoDoc());
+            }
+            entity.getDecTipoDoc().setIdTipoDoc(this.getIdTipoDoc().longValue());
+        }
+        if (this.getIdRegistroRangeUnitaDoc() != null) {
+            if (entity.getDecRegistroRangeUnitaDoc() == null) {
+                entity.setDecRegistroRangeUnitaDoc(new DecRegistroUnitaDoc());
+            }
+            entity.getDecRegistroRangeUnitaDoc()
+                    .setIdRegistroUnitaDoc(this.getIdRegistroRangeUnitaDoc().longValue());
+        }
+        entity.setNmSistemaMigraz(this.getNmSistemaMigraz());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

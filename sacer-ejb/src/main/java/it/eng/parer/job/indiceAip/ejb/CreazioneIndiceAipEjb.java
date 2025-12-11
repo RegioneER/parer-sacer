@@ -55,7 +55,7 @@ import it.eng.parer.web.helper.ConfigurationHelper;
 @Stateless(mappedName = "CreazioneIndiceAipEjb")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class CreazioneIndiceAipEjb {
 
     Logger log = LoggerFactory.getLogger(CreazioneIndiceAipEjb.class);
@@ -80,20 +80,20 @@ public class CreazioneIndiceAipEjb {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void creazioneIndiceAip() throws ParerInternalError, ParseException {
-	/* Il sistema apre una nuova transazione */
-	log.debug("Creazione Indice AIP - Inizio transazione di creazione indice");
-	/* Reupero gli indici da elaborare */
-	log.debug("Creazione Indice AIP - Recupero gli AroIndiceAipUdDaElab ");
-	List<Long> udDaElabList = ciaHelper.getIndexAplIndiceAipUdDaElab();
-	log.info("Creazione Indice AIP - Ottenuti {} indici AIP da elaborare", udDaElabList.size());
-	/* Per ogni unità documentaria presente nella coda */
-	for (Long udDaElab : udDaElabList) {
-	    elaborazione.gestisciIndiceAipDaElaborareNelJob(udDaElab);
-	}
-	/* Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione indice AIP */
-	jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CREAZIONE_INDICE_AIP.name(),
-		JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
-	log.debug("Creazione Indice AIP - Chiusura transazione di creazione indice");
+        /* Il sistema apre una nuova transazione */
+        log.debug("Creazione Indice AIP - Inizio transazione di creazione indice");
+        /* Reupero gli indici da elaborare */
+        log.debug("Creazione Indice AIP - Recupero gli AroIndiceAipUdDaElab ");
+        List<Long> udDaElabList = ciaHelper.getIndexAplIndiceAipUdDaElab();
+        log.info("Creazione Indice AIP - Ottenuti {} indici AIP da elaborare", udDaElabList.size());
+        /* Per ogni unità documentaria presente nella coda */
+        for (Long udDaElab : udDaElabList) {
+            elaborazione.gestisciIndiceAipDaElaborareNelJob(udDaElab);
+        }
+        /* Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione indice AIP */
+        jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CREAZIONE_INDICE_AIP.name(),
+                JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
+        log.debug("Creazione Indice AIP - Chiusura transazione di creazione indice");
     }
 
     /*
@@ -103,62 +103,62 @@ public class CreazioneIndiceAipEjb {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void setIndiciAipGeneratiInNewTransaction(long idElenco) {
-	ElvElencoVer elenco = ciaHelper.findById(ElvElencoVer.class, idElenco);
-	// Vista per verificare che tutte le ud e doc aggiunti e aggiornamenti metadati appartenenti
-	// all'indice aip
-	// abbiano stato IN_ELENCO_CON_INDICI_AIP_GENERATI
-	ElvVChkIxAipUdGen view = ciaHelper.findViewById(ElvVChkIxAipUdGen.class,
-		BigDecimal.valueOf(idElenco));
-	if (view.getFlIxAipUdGenOk().equals("1")) {
-	    log.debug(
-		    "Creazione Indice AIP - per l'elenco tutte le ud e i doc aggiunti hanno stato IN_ELENCO_CON_INDICI_AIP_GENERATI - aggiorno l'elenco");
-	    elenco.setTiStatoElenco(ElencoEnums.ElencoStatusEnum.INDICI_AIP_GENERATI.name());
+        ElvElencoVer elenco = ciaHelper.findById(ElvElencoVer.class, idElenco);
+        // Vista per verificare che tutte le ud e doc aggiunti e aggiornamenti metadati appartenenti
+        // all'indice aip
+        // abbiano stato IN_ELENCO_CON_INDICI_AIP_GENERATI
+        ElvVChkIxAipUdGen view = ciaHelper.findViewById(ElvVChkIxAipUdGen.class,
+                BigDecimal.valueOf(idElenco));
+        if (view.getFlIxAipUdGenOk().equals("1")) {
+            log.debug(
+                    "Creazione Indice AIP - per l'elenco tutte le ud e i doc aggiunti hanno stato IN_ELENCO_CON_INDICI_AIP_GENERATI - aggiorno l'elenco");
+            elenco.setTiStatoElenco(ElencoEnums.ElencoStatusEnum.INDICI_AIP_GENERATI.name());
 
-	    // EVO 19304
-	    evEjb.registraStatoElencoVersamento(BigDecimal.valueOf(idElenco),
-		    "ESEGUITA_CREAZIONE_INDICE_AIP",
-		    "Tutte unità documentarie non annullate hanno stato = IN_ELENCO_CON_INDICI_AIP_GENERATI",
-		    ElvStatoElencoVer.TiStatoElenco.INDICI_AIP_GENERATI, null);
+            // EVO 19304
+            evEjb.registraStatoElencoVersamento(BigDecimal.valueOf(idElenco),
+                    "ESEGUITA_CREAZIONE_INDICE_AIP",
+                    "Tutte unità documentarie non annullate hanno stato = IN_ELENCO_CON_INDICI_AIP_GENERATI",
+                    ElvStatoElencoVer.TiStatoElenco.INDICI_AIP_GENERATI, null);
 
-	    ElvElencoVersDaElab elencoDaElab = elencoHelper.retrieveElencoInQueue(elenco);
-	    if (elencoDaElab != null) {
-		elencoDaElab
-			.setTiStatoElenco(ElencoEnums.ElencoStatusEnum.INDICI_AIP_GENERATI.name());
-		elencoDaElab.setTsStatoElenco(new Date());
-	    }
-	}
+            ElvElencoVersDaElab elencoDaElab = elencoHelper.retrieveElencoInQueue(elenco);
+            if (elencoDaElab != null) {
+                elencoDaElab
+                        .setTiStatoElenco(ElencoEnums.ElencoStatusEnum.INDICI_AIP_GENERATI.name());
+                elencoDaElab.setTsStatoElenco(new Date());
+            }
+        }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void creazioneElenchiIndiceAip(long idLogJob) throws ParerInternalError, IOException,
-	    JAXBException, NoSuchAlgorithmException, ParseException {
-	// MAC#16424
-	List<Long> idElenchiInCoda = elencoHelper.retrieveElenchiIndiciAipDaProcessare(
-		ElencoEnums.ElencoStatusEnum.IN_CODA_INDICE_AIP.name());
-	if (!idElenchiInCoda.isEmpty()) {
-	    for (Long idElenco : idElenchiInCoda) {
-		me.setIndiciAipGeneratiInNewTransaction(idElenco);
-	    }
-	}
-	// Fine MAC#16424
+            JAXBException, NoSuchAlgorithmException, ParseException {
+        // MAC#16424
+        List<Long> idElenchiInCoda = elencoHelper.retrieveElenchiIndiciAipDaProcessare(
+                ElencoEnums.ElencoStatusEnum.IN_CODA_INDICE_AIP.name());
+        if (!idElenchiInCoda.isEmpty()) {
+            for (Long idElenco : idElenchiInCoda) {
+                me.setIndiciAipGeneratiInNewTransaction(idElenco);
+            }
+        }
+        // Fine MAC#16424
 
-	List<Long> idElenchi = elencoHelper.retrieveElenchiIndiciAipDaProcessare(
-		ElencoEnums.ElencoStatusEnum.INDICI_AIP_GENERATI.name());
-	Set<Long> struttureVerificate = new HashSet<>();
-	if (!idElenchi.isEmpty()) {
-	    for (Long idElenco : idElenchi) {
-		ElvElencoVer elenco = ciaHelper.findById(ElvElencoVer.class, idElenco);
-		struttureVerificate.add(elenco.getOrgStrut().getIdStrut());
-		elabElencoIndiciAip.creaElencoIndiciAIP(idElenco, idLogJob);
-	    }
-	}
-	/*
-	 * Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione elenchi indici
-	 * AIP
-	 */
-	jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CREAZIONE_ELENCHI_INDICI_AIP_UD.name(),
-		JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
-	log.debug("Creazione Indice AIP - Chiusura transazione di creazione elenchi indici AIP");
+        List<Long> idElenchi = elencoHelper.retrieveElenchiIndiciAipDaProcessare(
+                ElencoEnums.ElencoStatusEnum.INDICI_AIP_GENERATI.name());
+        Set<Long> struttureVerificate = new HashSet<>();
+        if (!idElenchi.isEmpty()) {
+            for (Long idElenco : idElenchi) {
+                ElvElencoVer elenco = ciaHelper.findById(ElvElencoVer.class, idElenco);
+                struttureVerificate.add(elenco.getOrgStrut().getIdStrut());
+                elabElencoIndiciAip.creaElencoIndiciAIP(idElenco, idLogJob);
+            }
+        }
+        /*
+         * Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione elenchi indici
+         * AIP
+         */
+        jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CREAZIONE_ELENCHI_INDICI_AIP_UD.name(),
+                JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
+        log.debug("Creazione Indice AIP - Chiusura transazione di creazione elenchi indici AIP");
     }
 
 }

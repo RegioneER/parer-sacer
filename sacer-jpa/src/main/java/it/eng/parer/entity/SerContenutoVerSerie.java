@@ -79,158 +79,158 @@ public class SerContenutoVerSerie implements Serializable {
 
     @Column(name = "ID_CONTENUTO_VER_SERIE")
     @GenericGenerator(name = "SSER_CONTENUTO_VER_SERIE_ID_CONTENUTO_VER_SERIE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SSER_CONTENUTO_VER_SERIE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SSER_CONTENUTO_VER_SERIE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SSER_CONTENUTO_VER_SERIE_ID_CONTENUTO_VER_SERIE_GENERATOR")
     public Long getIdContenutoVerSerie() {
-	return this.idContenutoVerSerie;
+        return this.idContenutoVerSerie;
     }
 
     public void setIdContenutoVerSerie(Long idContenutoVerSerie) {
-	this.idContenutoVerSerie = idContenutoVerSerie;
+        this.idContenutoVerSerie = idContenutoVerSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_STATO_CONTENUTO_VER_SERIE")
     public Date getDtStatoContenutoVerSerie() {
-	return this.dtStatoContenutoVerSerie;
+        return this.dtStatoContenutoVerSerie;
     }
 
     public void setDtStatoContenutoVerSerie(Date dtStatoContenutoVerSerie) {
-	this.dtStatoContenutoVerSerie = dtStatoContenutoVerSerie;
+        this.dtStatoContenutoVerSerie = dtStatoContenutoVerSerie;
     }
 
     @Column(name = "FL_TIPO_SERIE_UPD", columnDefinition = "char(1)")
     public String getFlTipoSerieUpd() {
-	return this.flTipoSerieUpd;
+        return this.flTipoSerieUpd;
     }
 
     public void setFlTipoSerieUpd(String flTipoSerieUpd) {
-	this.flTipoSerieUpd = flTipoSerieUpd;
+        this.flTipoSerieUpd = flTipoSerieUpd;
     }
 
     @Column(name = "ID_FIRST_UD_APPART_VER_SERIE")
     public BigDecimal getIdFirstUdAppartVerSerie() {
-	return this.idFirstUdAppartVerSerie;
+        return this.idFirstUdAppartVerSerie;
     }
 
     public void setIdFirstUdAppartVerSerie(BigDecimal idFirstUdAppartVerSerie) {
-	this.idFirstUdAppartVerSerie = idFirstUdAppartVerSerie;
+        this.idFirstUdAppartVerSerie = idFirstUdAppartVerSerie;
     }
 
     @Column(name = "ID_LAST_UD_APPART_VER_SERIE")
     public BigDecimal getIdLastUdAppartVerSerie() {
-	return this.idLastUdAppartVerSerie;
+        return this.idLastUdAppartVerSerie;
     }
 
     public void setIdLastUdAppartVerSerie(BigDecimal idLastUdAppartVerSerie) {
-	this.idLastUdAppartVerSerie = idLastUdAppartVerSerie;
+        this.idLastUdAppartVerSerie = idLastUdAppartVerSerie;
     }
 
     @Column(name = "NI_UD_CONTENUTO_VER_SERIE")
     public BigDecimal getNiUdContenutoVerSerie() {
-	return this.niUdContenutoVerSerie;
+        return this.niUdContenutoVerSerie;
     }
 
     public void setNiUdContenutoVerSerie(BigDecimal niUdContenutoVerSerie) {
-	this.niUdContenutoVerSerie = niUdContenutoVerSerie;
+        this.niUdContenutoVerSerie = niUdContenutoVerSerie;
     }
 
     @Column(name = "TI_CONTENUTO_VER_SERIE")
     public String getTiContenutoVerSerie() {
-	return this.tiContenutoVerSerie;
+        return this.tiContenutoVerSerie;
     }
 
     public void setTiContenutoVerSerie(String tiContenutoVerSerie) {
-	this.tiContenutoVerSerie = tiContenutoVerSerie;
+        this.tiContenutoVerSerie = tiContenutoVerSerie;
     }
 
     @Column(name = "TI_STATO_CONTENUTO_VER_SERIE")
     public String getTiStatoContenutoVerSerie() {
-	return this.tiStatoContenutoVerSerie;
+        return this.tiStatoContenutoVerSerie;
     }
 
     public void setTiStatoContenutoVerSerie(String tiStatoContenutoVerSerie) {
-	this.tiStatoContenutoVerSerie = tiStatoContenutoVerSerie;
+        this.tiStatoContenutoVerSerie = tiStatoContenutoVerSerie;
     }
 
     @OneToMany(mappedBy = "serContenutoVerSerie", cascade = CascadeType.PERSIST)
     public List<AroUdAppartVerSerie> getAroUdAppartVerSeries() {
-	return this.aroUdAppartVerSeries;
+        return this.aroUdAppartVerSeries;
     }
 
     public void setAroUdAppartVerSeries(List<AroUdAppartVerSerie> aroUdAppartVerSeries) {
-	this.aroUdAppartVerSeries = aroUdAppartVerSeries;
+        this.aroUdAppartVerSeries = aroUdAppartVerSeries;
     }
 
     public AroUdAppartVerSerie addAroUdAppartVerSery(AroUdAppartVerSerie aroUdAppartVerSery) {
-	getAroUdAppartVerSeries().add(aroUdAppartVerSery);
-	aroUdAppartVerSery.setSerContenutoVerSerie(this);
-	return aroUdAppartVerSery;
+        getAroUdAppartVerSeries().add(aroUdAppartVerSery);
+        aroUdAppartVerSery.setSerContenutoVerSerie(this);
+        return aroUdAppartVerSery;
     }
 
     public AroUdAppartVerSerie removeAroUdAppartVerSery(AroUdAppartVerSerie aroUdAppartVerSery) {
-	getAroUdAppartVerSeries().remove(aroUdAppartVerSery);
-	aroUdAppartVerSery.setSerContenutoVerSerie(null);
-	return aroUdAppartVerSery;
+        getAroUdAppartVerSeries().remove(aroUdAppartVerSery);
+        aroUdAppartVerSery.setSerContenutoVerSerie(null);
+        return aroUdAppartVerSery;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VER_SERIE")
     public SerVerSerie getSerVerSerie() {
-	return this.serVerSerie;
+        return this.serVerSerie;
     }
 
     public void setSerVerSerie(SerVerSerie serVerSerie) {
-	this.serVerSerie = serVerSerie;
+        this.serVerSerie = serVerSerie;
     }
 
     @OneToMany(mappedBy = "serContenutoVerSerie", cascade = CascadeType.PERSIST)
     public List<SerErrContenutoVerSerie> getSerErrContenutoVerSeries() {
-	return this.serErrContenutoVerSeries;
+        return this.serErrContenutoVerSeries;
     }
 
     public void setSerErrContenutoVerSeries(
-	    List<SerErrContenutoVerSerie> serErrContenutoVerSeries) {
-	this.serErrContenutoVerSeries = serErrContenutoVerSeries;
+            List<SerErrContenutoVerSerie> serErrContenutoVerSeries) {
+        this.serErrContenutoVerSeries = serErrContenutoVerSeries;
     }
 
     public SerErrContenutoVerSerie addSerErrContenutoVerSery(
-	    SerErrContenutoVerSerie serErrContenutoVerSery) {
-	getSerErrContenutoVerSeries().add(serErrContenutoVerSery);
-	serErrContenutoVerSery.setSerContenutoVerSerie(this);
-	return serErrContenutoVerSery;
+            SerErrContenutoVerSerie serErrContenutoVerSery) {
+        getSerErrContenutoVerSeries().add(serErrContenutoVerSery);
+        serErrContenutoVerSery.setSerContenutoVerSerie(this);
+        return serErrContenutoVerSery;
     }
 
     public SerErrContenutoVerSerie removeSerErrContenutoVerSery(
-	    SerErrContenutoVerSerie serErrContenutoVerSery) {
-	getSerErrContenutoVerSeries().remove(serErrContenutoVerSery);
-	serErrContenutoVerSery.setSerContenutoVerSerie(null);
-	return serErrContenutoVerSery;
+            SerErrContenutoVerSerie serErrContenutoVerSery) {
+        getSerErrContenutoVerSeries().remove(serErrContenutoVerSery);
+        serErrContenutoVerSery.setSerContenutoVerSerie(null);
+        return serErrContenutoVerSery;
     }
 
     @OneToMany(mappedBy = "serContenutoVerSerie", cascade = CascadeType.PERSIST)
     public List<SerQueryContenutoVerSerie> getSerQueryContenutoVerSeries() {
-	return this.serQueryContenutoVerSeries;
+        return this.serQueryContenutoVerSeries;
     }
 
     public void setSerQueryContenutoVerSeries(
-	    List<SerQueryContenutoVerSerie> serQueryContenutoVerSeries) {
-	this.serQueryContenutoVerSeries = serQueryContenutoVerSeries;
+            List<SerQueryContenutoVerSerie> serQueryContenutoVerSeries) {
+        this.serQueryContenutoVerSeries = serQueryContenutoVerSeries;
     }
 
     public SerQueryContenutoVerSerie addSerQueryContenutoVerSery(
-	    SerQueryContenutoVerSerie serQueryContenutoVerSery) {
-	getSerQueryContenutoVerSeries().add(serQueryContenutoVerSery);
-	serQueryContenutoVerSery.setSerContenutoVerSerie(this);
-	return serQueryContenutoVerSery;
+            SerQueryContenutoVerSerie serQueryContenutoVerSery) {
+        getSerQueryContenutoVerSeries().add(serQueryContenutoVerSery);
+        serQueryContenutoVerSery.setSerContenutoVerSerie(this);
+        return serQueryContenutoVerSery;
     }
 
     public SerQueryContenutoVerSerie removeSerQueryContenutoVerSery(
-	    SerQueryContenutoVerSerie serQueryContenutoVerSery) {
-	getSerQueryContenutoVerSeries().remove(serQueryContenutoVerSery);
-	serQueryContenutoVerSery.setSerContenutoVerSerie(null);
-	return serQueryContenutoVerSery;
+            SerQueryContenutoVerSerie serQueryContenutoVerSery) {
+        getSerQueryContenutoVerSeries().remove(serQueryContenutoVerSery);
+        serQueryContenutoVerSery.setSerContenutoVerSerie(null);
+        return serQueryContenutoVerSery;
     }
 
 }

@@ -26,23 +26,23 @@ public class UdSerFascObj {
     private TipoEntitaSacer tiEntitaSacer;
 
     public UdSerFascObj(BigDecimal id, TipoEntitaSacer tiEntitaSacer) {
-	this.id = id;
-	this.tiEntitaSacer = tiEntitaSacer;
+        this.id = id;
+        this.tiEntitaSacer = tiEntitaSacer;
     }
 
     public BigDecimal getId() {
-	return id;
+        return id;
     }
 
     public void setId(BigDecimal id) {
-	this.id = id;
+        this.id = id;
     }
 
     public TipoEntitaSacer getTiEntitaSacer() {
-	return tiEntitaSacer;
+        return tiEntitaSacer;
     }
 
     public void setTiEntitaSacer(TipoEntitaSacer tiEntitaSacer) {
-	this.tiEntitaSacer = tiEntitaSacer;
+        this.tiEntitaSacer = tiEntitaSacer;
     }
 }

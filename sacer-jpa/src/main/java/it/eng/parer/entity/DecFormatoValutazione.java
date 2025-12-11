@@ -53,58 +53,58 @@ public class DecFormatoValutazione implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DEC_FORMATO_VALUTAZIONE_GENERATOR")
     @Column(name = "ID_FORMATO_VALUTAZIONE")
     public Long getIdFormatoValutazione() {
-	return idFormatoValutazione;
+        return idFormatoValutazione;
     }
 
     public void setIdFormatoValutazione(Long idFormatoValutazione) {
-	this.idFormatoValutazione = idFormatoValutazione;
+        this.idFormatoValutazione = idFormatoValutazione;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FORMATO_PROPRIETA")
     public DecFormatoProprieta getDecFormatoProprieta() {
-	return decFormatoProprieta;
+        return decFormatoProprieta;
     }
 
     public void setDecFormatoProprieta(DecFormatoProprieta decFormatoProprieta) {
-	this.decFormatoProprieta = decFormatoProprieta;
+        this.decFormatoProprieta = decFormatoProprieta;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FORMATO_FILE_STANDARD")
     public DecFormatoFileStandard getDecFormatoFileStandard() {
-	return decFormatoFileStandard;
+        return decFormatoFileStandard;
     }
 
     public void setDecFormatoFileStandard(DecFormatoFileStandard decFormatoFileStandard) {
-	this.decFormatoFileStandard = decFormatoFileStandard;
+        this.decFormatoFileStandard = decFormatoFileStandard;
     }
 
     @Column(name = "NI_PUNTEGGIO")
     public BigDecimal getNiPunteggio() {
-	return niPunteggio;
+        return niPunteggio;
     }
 
     public void setNiPunteggio(BigDecimal niPunteggio) {
-	this.niPunteggio = niPunteggio;
+        this.niPunteggio = niPunteggio;
     }
 
     @Column(name = "FLG_INTEROPERABILITA")
     public Integer getFlgInteroperabilita() {
-	return flgInteroperabilita;
+        return flgInteroperabilita;
     }
 
     public void setFlgInteroperabilita(Integer flgInteroperabilita) {
-	this.flgInteroperabilita = flgInteroperabilita;
+        this.flgInteroperabilita = flgInteroperabilita;
     }
 
     @Column(name = "NT_PUNTEGGIO_VALUTAZIONE")
     public String getNtPunteggioValutazione() {
-	return ntPunteggioValutazione;
+        return ntPunteggioValutazione;
     }
 
     public void setNtPunteggioValutazione(String ntPunteggioValutazione) {
-	this.ntPunteggioValutazione = ntPunteggioValutazione;
+        this.ntPunteggioValutazione = ntPunteggioValutazione;
     }
 
 }

@@ -35,36 +35,36 @@ public class ElvVLisAllUdByElenco implements Serializable {
     private Date dtVersMax;
 
     public ElvVLisAllUdByElenco() {
-	/* Hibernate */
+        /* Hibernate */
     }
 
     @Column(name = "CD_KEY_UNITA_DOC_NORMALIZ")
     public String getCdKeyUnitaDocNormaliz() {
-	return this.cdKeyUnitaDocNormaliz;
+        return this.cdKeyUnitaDocNormaliz;
     }
 
     public void setCdKeyUnitaDocNormaliz(String cdKeyUnitaDocNormaliz) {
-	this.cdKeyUnitaDocNormaliz = cdKeyUnitaDocNormaliz;
+        this.cdKeyUnitaDocNormaliz = cdKeyUnitaDocNormaliz;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VERS_MAX")
     public Date getDtVersMax() {
-	return this.dtVersMax;
+        return this.dtVersMax;
     }
 
     public void setDtVersMax(Date dtVersMax) {
-	this.dtVersMax = dtVersMax;
+        this.dtVersMax = dtVersMax;
     }
 
     private ElvVLisAllUdByElencoId id;
 
     @EmbeddedId()
     public ElvVLisAllUdByElencoId getId() {
-	return id;
+        return id;
     }
 
     public void setId(ElvVLisAllUdByElencoId id) {
-	this.id = id;
+        this.id = id;
     }
 }

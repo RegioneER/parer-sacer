@@ -40,29 +40,29 @@ public class UsrVAbilAmbEnteConvenz implements Serializable {
 
     @EmbeddedId
     public UsrVAbilAmbEnteConvenzId getUsrVAbilAmbEnteConvenzId() {
-	return usrVAbilAmbEnteConvenzId;
+        return usrVAbilAmbEnteConvenzId;
     }
 
     public void setUsrVAbilAmbEnteConvenzId(UsrVAbilAmbEnteConvenzId usrVAbilAmbEnteConvenzId) {
-	this.usrVAbilAmbEnteConvenzId = usrVAbilAmbEnteConvenzId;
+        this.usrVAbilAmbEnteConvenzId = usrVAbilAmbEnteConvenzId;
     }
 
     @Column(name = "NM_AMBIENTE_ENTE_CONVENZ")
     public String getNmAmbienteEnteConvenz() {
-	return this.nmAmbienteEnteConvenz;
+        return this.nmAmbienteEnteConvenz;
     }
 
     public void setNmAmbienteEnteConvenz(String nmAmbienteEnteConvenz) {
-	this.nmAmbienteEnteConvenz = nmAmbienteEnteConvenz;
+        this.nmAmbienteEnteConvenz = nmAmbienteEnteConvenz;
     }
 
     @Column(name = "NM_USERID")
     public String getNmUserid() {
-	return this.nmUserid;
+        return this.nmUserid;
     }
 
     public void setNmUserid(String nmUserid) {
-	this.nmUserid = nmUserid;
+        this.nmUserid = nmUserid;
     }
 
 }

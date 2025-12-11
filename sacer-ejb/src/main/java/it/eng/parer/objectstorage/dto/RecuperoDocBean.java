@@ -46,101 +46,101 @@ public class RecuperoDocBean implements java.io.Serializable {
     // end MEV#30400
 
     public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os,
-	    TabellaBlob tabellaBlobDaLeggere) {
-	super();
-	this.tipo = tipo;
-	this.id = id;
-	this.os = os;
-	this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
+            TabellaBlob tabellaBlobDaLeggere) {
+        super();
+        this.tipo = tipo;
+        this.id = id;
+        this.os = os;
+        this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
     }
 
     public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os,
-	    TabellaClob tabellaClobDaLeggere) {
-	super();
-	this.tipo = tipo;
-	this.id = id;
-	this.os = os;
-	this.tabellaClobDaLeggere = tabellaClobDaLeggere;
+            TabellaClob tabellaClobDaLeggere) {
+        super();
+        this.tipo = tipo;
+        this.id = id;
+        this.os = os;
+        this.tabellaClobDaLeggere = tabellaClobDaLeggere;
     }
 
     public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os,
-	    TabellaBlob tabellaBlobDaLeggere, String tiFile) {
-	super();
-	this.tipo = tipo;
-	this.id = id;
-	this.os = os;
-	this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
-	this.tiFile = tiFile;
+            TabellaBlob tabellaBlobDaLeggere, String tiFile) {
+        super();
+        this.tipo = tipo;
+        this.id = id;
+        this.os = os;
+        this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
+        this.tiFile = tiFile;
     }
 
     /**
      * @return the id
      */
     public long getId() {
-	return id;
+        return id;
     }
 
     /**
      * @param id the id to set
      */
     public void setId(long id) {
-	this.id = id;
+        this.id = id;
     }
 
     /**
      * @return the tipo
      */
     public TiEntitaSacerObjectStorage getTipo() {
-	return tipo;
+        return tipo;
     }
 
     /**
      * @param tipo the tipo to set
      */
     public void setTipo(TiEntitaSacerObjectStorage tipo) {
-	this.tipo = tipo;
+        this.tipo = tipo;
     }
 
     /**
      * @return the os
      */
     public OutputStream getOs() {
-	return os;
+        return os;
     }
 
     /**
      * @param os the os to set
      */
     public void setOs(OutputStream os) {
-	this.os = os;
+        this.os = os;
     }
 
     /**
      * @return the tabellaBlobDaLeggere
      */
     public TabellaBlob getTabellaBlobDaLeggere() {
-	return tabellaBlobDaLeggere;
+        return tabellaBlobDaLeggere;
     }
 
     /**
      * @param tabellaBlobDaLeggere the tabellaBlobDaLeggere to set
      */
     public void setTabellaBlobDaLeggere(TabellaBlob tabellaBlobDaLeggere) {
-	this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
+        this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
     }
 
     /**
      * @return the tabellaClobDaLeggere
      */
     public TabellaClob getTabellaClobDaLeggere() {
-	return tabellaClobDaLeggere;
+        return tabellaClobDaLeggere;
     }
 
     /**
      * @param tabellaClobDaLeggere the tabellaClobDaLeggere to set
      */
     public void setTabellaClobDaLeggere(TabellaClob tabellaClobDaLeggere) {
-	this.tabellaClobDaLeggere = tabellaClobDaLeggere;
+        this.tabellaClobDaLeggere = tabellaClobDaLeggere;
     }
 
     /*
@@ -150,21 +150,21 @@ public class RecuperoDocBean implements java.io.Serializable {
      */
     @Override
     public String toString() {
-	return "id=" + id + ", tipo=" + tipo + ", tabellaBlobDaLeggere=" + tabellaBlobDaLeggere;
+        return "id=" + id + ", tipo=" + tipo + ", tabellaBlobDaLeggere=" + tabellaBlobDaLeggere;
     }
 
     /**
      * @return tiFile
      */
     public String getTiFile() {
-	return tiFile;
+        return tiFile;
     }
 
     /**
      * @param tiFile tipo file
      */
     public void setTiFile(String tiFile) {
-	this.tiFile = tiFile;
+        this.tiFile = tiFile;
     }
 
 }

@@ -39,21 +39,21 @@ public class MonVCntUdAnnulStrut implements Serializable {
 
     @Column(name = "NI_ANNUL")
     public BigDecimal getNiAnnul() {
-	return this.niAnnul;
+        return this.niAnnul;
     }
 
     public void setNiAnnul(BigDecimal niAnnul) {
-	this.niAnnul = niAnnul;
+        this.niAnnul = niAnnul;
     }
 
     private MonVCntUdAnnulStrutId monVCntUdAnnulStrutId;
 
     @EmbeddedId()
     public MonVCntUdAnnulStrutId getMonVCntUdAnnulStrutId() {
-	return monVCntUdAnnulStrutId;
+        return monVCntUdAnnulStrutId;
     }
 
     public void setMonVCntUdAnnulStrutId(MonVCntUdAnnulStrutId monVCntUdAnnulStrutId) {
-	this.monVCntUdAnnulStrutId = monVCntUdAnnulStrutId;
+        this.monVCntUdAnnulStrutId = monVCntUdAnnulStrutId;
     }
 }

@@ -83,198 +83,198 @@ public class AplParamApplic implements Serializable {
     @Id
     @Column(name = "ID_PARAM_APPLIC")
     @GenericGenerator(name = "SAPL_PARAM_APPLIC_ID_PARAM_APPLIC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SAPL_PARAM_APPLIC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SAPL_PARAM_APPLIC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAPL_PARAM_APPLIC_ID_PARAM_APPLIC_GENERATOR")
     public Long getIdParamApplic() {
-	return this.idParamApplic;
+        return this.idParamApplic;
     }
 
     public void setIdParamApplic(Long idParamApplic) {
-	this.idParamApplic = idParamApplic;
+        this.idParamApplic = idParamApplic;
     }
 
     @Column(name = "CD_VERSIONE_APP_INI")
     public String getCdVersioneAppIni() {
-	return this.cdVersioneAppIni;
+        return this.cdVersioneAppIni;
     }
 
     public void setCdVersioneAppIni(String cdVersioneAppIni) {
-	this.cdVersioneAppIni = cdVersioneAppIni;
+        this.cdVersioneAppIni = cdVersioneAppIni;
     }
 
     @Column(name = "CD_VERSIONE_APP_FINE")
     public String getCdVersioneAppFine() {
-	return this.cdVersioneAppFine;
+        return this.cdVersioneAppFine;
     }
 
     public void setCdVersioneAppFine(String cdVersioneAppFine) {
-	this.cdVersioneAppFine = cdVersioneAppFine;
+        this.cdVersioneAppFine = cdVersioneAppFine;
     }
 
     @Column(name = "DM_PARAM_APPLIC")
     public String getDmParamApplic() {
-	return this.dmParamApplic;
+        return this.dmParamApplic;
     }
 
     public void setDmParamApplic(String dmParamApplic) {
-	this.dmParamApplic = dmParamApplic;
+        this.dmParamApplic = dmParamApplic;
     }
 
     @Column(name = "DS_PARAM_APPLIC")
     public String getDsParamApplic() {
-	return this.dsParamApplic;
+        return this.dsParamApplic;
     }
 
     public void setDsParamApplic(String dsParamApplic) {
-	this.dsParamApplic = dsParamApplic;
+        this.dsParamApplic = dsParamApplic;
     }
 
     @Column(name = "DS_LISTA_VALORI_AMMESSI")
     public String getDsListaValoriAmmessi() {
-	return this.dsListaValoriAmmessi;
+        return this.dsListaValoriAmmessi;
     }
 
     public void setDsListaValoriAmmessi(String dsListaValoriAmmessi) {
-	this.dsListaValoriAmmessi = dsListaValoriAmmessi;
+        this.dsListaValoriAmmessi = dsListaValoriAmmessi;
     }
 
     @Column(name = "FL_APPART_AA_TIPO_FASCICOLO", columnDefinition = "char(1)")
     public String getFlAppartAaTipoFascicolo() {
-	return this.flAppartAaTipoFascicolo;
+        return this.flAppartAaTipoFascicolo;
     }
 
     public void setFlAppartAaTipoFascicolo(String flAppartAaTipoFascicolo) {
-	this.flAppartAaTipoFascicolo = flAppartAaTipoFascicolo;
+        this.flAppartAaTipoFascicolo = flAppartAaTipoFascicolo;
     }
 
     @Column(name = "FL_APPART_AMBIENTE", columnDefinition = "char(1)")
     public String getFlAppartAmbiente() {
-	return this.flAppartAmbiente;
+        return this.flAppartAmbiente;
     }
 
     public void setFlAppartAmbiente(String flAppartAmbiente) {
-	this.flAppartAmbiente = flAppartAmbiente;
+        this.flAppartAmbiente = flAppartAmbiente;
     }
 
     @Column(name = "FL_APPART_APPLIC", columnDefinition = "char(1)")
     public String getFlAppartApplic() {
-	return this.flAppartApplic;
+        return this.flAppartApplic;
     }
 
     public void setFlAppartApplic(String flAppartApplic) {
-	this.flAppartApplic = flAppartApplic;
+        this.flAppartApplic = flAppartApplic;
     }
 
     @Column(name = "FL_APPART_STRUT", columnDefinition = "char(1)")
     public String getFlAppartStrut() {
-	return this.flAppartStrut;
+        return this.flAppartStrut;
     }
 
     public void setFlAppartStrut(String flAppartStrut) {
-	this.flAppartStrut = flAppartStrut;
+        this.flAppartStrut = flAppartStrut;
     }
 
     @Column(name = "FL_APPART_TIPO_UNITA_DOC", columnDefinition = "char(1)")
     public String getFlAppartTipoUnitaDoc() {
-	return this.flAppartTipoUnitaDoc;
+        return this.flAppartTipoUnitaDoc;
     }
 
     public void setFlAppartTipoUnitaDoc(String flAppartTipoUnitaDoc) {
-	this.flAppartTipoUnitaDoc = flAppartTipoUnitaDoc;
+        this.flAppartTipoUnitaDoc = flAppartTipoUnitaDoc;
     }
 
     @Column(name = "FL_MULTI", columnDefinition = "char(1)")
     public String getFlMulti() {
-	return this.flMulti;
+        return this.flMulti;
     }
 
     public void setFlMulti(String flMulti) {
-	this.flMulti = flMulti;
+        this.flMulti = flMulti;
     }
 
     @Column(name = "NM_PARAM_APPLIC")
     public String getNmParamApplic() {
-	return this.nmParamApplic;
+        return this.nmParamApplic;
     }
 
     public void setNmParamApplic(String nmParamApplic) {
-	this.nmParamApplic = nmParamApplic;
+        this.nmParamApplic = nmParamApplic;
     }
 
     @Column(name = "TI_GESTIONE_PARAM")
     public String getTiGestioneParam() {
-	return this.tiGestioneParam;
+        return this.tiGestioneParam;
     }
 
     public void setTiGestioneParam(String tiGestioneParam) {
-	this.tiGestioneParam = tiGestioneParam;
+        this.tiGestioneParam = tiGestioneParam;
     }
 
     @Column(name = "TI_PARAM_APPLIC")
     public String getTiParamApplic() {
-	return this.tiParamApplic;
+        return this.tiParamApplic;
     }
 
     public void setTiParamApplic(String tiParamApplic) {
-	this.tiParamApplic = tiParamApplic;
+        this.tiParamApplic = tiParamApplic;
     }
 
     @OneToMany(mappedBy = "aplParamApplic", cascade = {
-	    CascadeType.REMOVE })
+            CascadeType.REMOVE })
     @XmlTransient
     public List<AplValoreParamApplic> getAplValoreParamApplics() {
-	return this.aplValoreParamApplics;
+        return this.aplValoreParamApplics;
     }
 
     public void setAplValoreParamApplics(List<AplValoreParamApplic> aplValoreParamApplics) {
-	this.aplValoreParamApplics = aplValoreParamApplics;
+        this.aplValoreParamApplics = aplValoreParamApplics;
     }
 
     @Column(name = "TI_VALORE_PARAM_APPLIC")
     public String getTiValoreParamApplic() {
-	return tiValoreParamApplic;
+        return tiValoreParamApplic;
     }
 
     public void setTiValoreParamApplic(String tiValoreParamApplic) {
-	this.tiValoreParamApplic = tiValoreParamApplic;
+        this.tiValoreParamApplic = tiValoreParamApplic;
     }
 
     public AplValoreParamApplic addAplValoreParamApplic(AplValoreParamApplic aplValoreParamApplic) {
-	getAplValoreParamApplics().add(aplValoreParamApplic);
-	aplValoreParamApplic.setAplParamApplic(this);
-	return aplValoreParamApplic;
+        getAplValoreParamApplics().add(aplValoreParamApplic);
+        aplValoreParamApplic.setAplParamApplic(this);
+        return aplValoreParamApplic;
     }
 
     public AplValoreParamApplic removeAplValoreParamApplic(
-	    AplValoreParamApplic aplValoreParamApplic) {
-	getAplValoreParamApplics().remove(aplValoreParamApplic);
-	aplValoreParamApplic.setAplParamApplic(null);
-	return aplValoreParamApplic;
+            AplValoreParamApplic aplValoreParamApplic) {
+        getAplValoreParamApplics().remove(aplValoreParamApplic);
+        aplValoreParamApplic.setAplParamApplic(null);
+        return aplValoreParamApplic;
     }
 
     @OneToMany(mappedBy = "aplParamApplic", cascade = {
-	    CascadeType.REMOVE })
+            CascadeType.REMOVE })
     @XmlTransient
     public List<AplValParamApplicMulti> getAplValParamApplicMultis() {
-	return this.aplValParamApplicMultis;
+        return this.aplValParamApplicMultis;
     }
 
     public void setAplValParamApplicMultis(List<AplValParamApplicMulti> aplValParamApplicMultis) {
-	this.aplValParamApplicMultis = aplValParamApplicMultis;
+        this.aplValParamApplicMultis = aplValParamApplicMultis;
     }
 
     public AplValParamApplicMulti addAplValParamApplicMulti(
-	    AplValParamApplicMulti aplValParamApplicMulti) {
-	getAplValParamApplicMultis().add(aplValParamApplicMulti);
-	aplValParamApplicMulti.setAplParamApplic(this);
-	return aplValParamApplicMulti;
+            AplValParamApplicMulti aplValParamApplicMulti) {
+        getAplValParamApplicMultis().add(aplValParamApplicMulti);
+        aplValParamApplicMulti.setAplParamApplic(this);
+        return aplValParamApplicMulti;
     }
 
     public AplValParamApplicMulti removeAplValParamApplicMulti(
-	    AplValParamApplicMulti aplValParamApplicMulti) {
-	getAplValParamApplicMultis().remove(aplValParamApplicMulti);
-	aplValParamApplicMulti.setAplParamApplic(null);
-	return aplValParamApplicMulti;
+            AplValParamApplicMulti aplValParamApplicMulti) {
+        getAplValParamApplicMultis().remove(aplValParamApplicMulti);
+        aplValParamApplicMulti.setAplParamApplic(null);
+        return aplValParamApplicMulti;
     }
 }

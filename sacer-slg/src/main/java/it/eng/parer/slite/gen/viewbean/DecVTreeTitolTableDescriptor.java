@@ -60,52 +60,52 @@ public class DecVTreeTitolTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_VOCE_TITOL,
-		new ColumnDescriptor(COL_ID_VOCE_TITOL, Types.DECIMAL, 22, true));
-	map.put(COL_ID_TITOL, new ColumnDescriptor(COL_ID_TITOL, Types.DECIMAL, 22, true));
-	map.put(COL_CD_COMPOSITO_VOCE_TITOL,
-		new ColumnDescriptor(COL_CD_COMPOSITO_VOCE_TITOL, Types.VARCHAR, 100, true));
-	map.put(COL_CD_VOCE_TITOL,
-		new ColumnDescriptor(COL_CD_VOCE_TITOL, Types.VARCHAR, 100, true));
-	map.put(COL_ID_LIVELLO_TITOL,
-		new ColumnDescriptor(COL_ID_LIVELLO_TITOL, Types.DECIMAL, 22, true));
-	map.put(COL_NM_LIVELLO_TITOL,
-		new ColumnDescriptor(COL_NM_LIVELLO_TITOL, Types.VARCHAR, 100, true));
-	map.put(COL_NI_LIVELLO, new ColumnDescriptor(COL_NI_LIVELLO, Types.DECIMAL, 22, true));
-	map.put(COL_NI_ORD_VOCE_TITOL,
-		new ColumnDescriptor(COL_NI_ORD_VOCE_TITOL, Types.DECIMAL, 22, true));
-	map.put(COL_DT_ISTITUZ, new ColumnDescriptor(COL_DT_ISTITUZ, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_SOPPRES, new ColumnDescriptor(COL_DT_SOPPRES, Types.TIMESTAMP, 7, true));
-	map.put(COL_ID_VOCE_TITOL_PADRE,
-		new ColumnDescriptor(COL_ID_VOCE_TITOL_PADRE, Types.DECIMAL, 22, true));
-	map.put(COL_CD_COMPOSITO_VOCE_PADRE,
-		new ColumnDescriptor(COL_CD_COMPOSITO_VOCE_PADRE, Types.VARCHAR, 100, true));
-	map.put(COL_NI_FASCIC, new ColumnDescriptor(COL_NI_FASCIC, Types.DECIMAL, 22, true));
-	map.put(COL_NI_FASCIC_VOCI_FIGLIE,
-		new ColumnDescriptor(COL_NI_FASCIC_VOCI_FIGLIE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_VAL_VOCE_TITOL,
-		new ColumnDescriptor(COL_ID_VAL_VOCE_TITOL, Types.DECIMAL, 22, true));
-	map.put(COL_DS_VOCE_TITOL,
-		new ColumnDescriptor(COL_DS_VOCE_TITOL, Types.VARCHAR, 1024, true));
-	map.put(COL_DT_INI_VAL, new ColumnDescriptor(COL_DT_INI_VAL, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_FIN_VAL, new ColumnDescriptor(COL_DT_FIN_VAL, Types.TIMESTAMP, 7, true));
-	map.put(COL_FL_USO_CLASSIF,
-		new ColumnDescriptor(COL_FL_USO_CLASSIF, Types.VARCHAR, 1, true));
-	map.put(COL_NI_ANNI_CONSERV,
-		new ColumnDescriptor(COL_NI_ANNI_CONSERV, Types.DECIMAL, 22, true));
-	map.put(COL_DL_NOTE, new ColumnDescriptor(COL_DL_NOTE, Types.VARCHAR, 1024, true));
+        map.put(COL_ID_VOCE_TITOL,
+                new ColumnDescriptor(COL_ID_VOCE_TITOL, Types.DECIMAL, 22, true));
+        map.put(COL_ID_TITOL, new ColumnDescriptor(COL_ID_TITOL, Types.DECIMAL, 22, true));
+        map.put(COL_CD_COMPOSITO_VOCE_TITOL,
+                new ColumnDescriptor(COL_CD_COMPOSITO_VOCE_TITOL, Types.VARCHAR, 100, true));
+        map.put(COL_CD_VOCE_TITOL,
+                new ColumnDescriptor(COL_CD_VOCE_TITOL, Types.VARCHAR, 100, true));
+        map.put(COL_ID_LIVELLO_TITOL,
+                new ColumnDescriptor(COL_ID_LIVELLO_TITOL, Types.DECIMAL, 22, true));
+        map.put(COL_NM_LIVELLO_TITOL,
+                new ColumnDescriptor(COL_NM_LIVELLO_TITOL, Types.VARCHAR, 100, true));
+        map.put(COL_NI_LIVELLO, new ColumnDescriptor(COL_NI_LIVELLO, Types.DECIMAL, 22, true));
+        map.put(COL_NI_ORD_VOCE_TITOL,
+                new ColumnDescriptor(COL_NI_ORD_VOCE_TITOL, Types.DECIMAL, 22, true));
+        map.put(COL_DT_ISTITUZ, new ColumnDescriptor(COL_DT_ISTITUZ, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_SOPPRES, new ColumnDescriptor(COL_DT_SOPPRES, Types.TIMESTAMP, 7, true));
+        map.put(COL_ID_VOCE_TITOL_PADRE,
+                new ColumnDescriptor(COL_ID_VOCE_TITOL_PADRE, Types.DECIMAL, 22, true));
+        map.put(COL_CD_COMPOSITO_VOCE_PADRE,
+                new ColumnDescriptor(COL_CD_COMPOSITO_VOCE_PADRE, Types.VARCHAR, 100, true));
+        map.put(COL_NI_FASCIC, new ColumnDescriptor(COL_NI_FASCIC, Types.DECIMAL, 22, true));
+        map.put(COL_NI_FASCIC_VOCI_FIGLIE,
+                new ColumnDescriptor(COL_NI_FASCIC_VOCI_FIGLIE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_VAL_VOCE_TITOL,
+                new ColumnDescriptor(COL_ID_VAL_VOCE_TITOL, Types.DECIMAL, 22, true));
+        map.put(COL_DS_VOCE_TITOL,
+                new ColumnDescriptor(COL_DS_VOCE_TITOL, Types.VARCHAR, 1024, true));
+        map.put(COL_DT_INI_VAL, new ColumnDescriptor(COL_DT_INI_VAL, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_FIN_VAL, new ColumnDescriptor(COL_DT_FIN_VAL, Types.TIMESTAMP, 7, true));
+        map.put(COL_FL_USO_CLASSIF,
+                new ColumnDescriptor(COL_FL_USO_CLASSIF, Types.VARCHAR, 1, true));
+        map.put(COL_NI_ANNI_CONSERV,
+                new ColumnDescriptor(COL_NI_ANNI_CONSERV, Types.DECIMAL, 22, true));
+        map.put(COL_DL_NOTE, new ColumnDescriptor(COL_DL_NOTE, Types.VARCHAR, 1024, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -45,28 +45,28 @@ public class AroContrMarcaCompTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_CONTR_MARCA_COMP,
-		new ColumnDescriptor(COL_ID_CONTR_MARCA_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_ID_MARCA_COMP,
-		new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, false));
-	map.put(COL_TI_CONTR, new ColumnDescriptor(COL_TI_CONTR, Types.VARCHAR, 20, false));
-	map.put(COL_TI_ESITO_CONTR_MARCA,
-		new ColumnDescriptor(COL_TI_ESITO_CONTR_MARCA, Types.VARCHAR, 30, false));
-	map.put(COL_DS_MSG_ESITO_CONTR_MARCA,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_CONTR_MARCA, Types.VARCHAR, 254, false));
-	map.put(COL_ID_CRL_USATA, new ColumnDescriptor(COL_ID_CRL_USATA, Types.DECIMAL, 22, false));
+        map.put(COL_ID_CONTR_MARCA_COMP,
+                new ColumnDescriptor(COL_ID_CONTR_MARCA_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_ID_MARCA_COMP,
+                new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, false));
+        map.put(COL_TI_CONTR, new ColumnDescriptor(COL_TI_CONTR, Types.VARCHAR, 20, false));
+        map.put(COL_TI_ESITO_CONTR_MARCA,
+                new ColumnDescriptor(COL_TI_ESITO_CONTR_MARCA, Types.VARCHAR, 30, false));
+        map.put(COL_DS_MSG_ESITO_CONTR_MARCA,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_CONTR_MARCA, Types.VARCHAR, 254, false));
+        map.put(COL_ID_CRL_USATA, new ColumnDescriptor(COL_ID_CRL_USATA, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

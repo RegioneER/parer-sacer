@@ -48,121 +48,121 @@ public class AggiornaStatoArchiviazioneTimer extends JobTimer {
     // private final String NAME_JOB_AGGORNA_STATO_ARK = "IntervalloAggiornaStatoArchiviazione";
 
     public AggiornaStatoArchiviazioneTimer() {
-	super(JobConstants.JobEnum.AGGIORNA_STATO_ARCHIVIAZIONE.name());
-	logger.debug(AggiornaStatoArchiviazioneTimer.class.getName() + " creato");
+        super(JobConstants.JobEnum.AGGIORNA_STATO_ARCHIVIAZIONE.name());
+        logger.debug(AggiornaStatoArchiviazioneTimer.class.getName() + " creato");
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startSingleAction(String appplicationName) {
-	boolean existTimer = false;
+        boolean existTimer = false;
 
-	for (Object obj : timerService.getTimers()) {
-	    Timer timer = (Timer) obj;
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		existTimer = true;
-	    }
-	}
-	if (!existTimer) {
-	    timerService.createTimer(TIME_DURATION, jobName);
-	}
+        for (Object obj : timerService.getTimers()) {
+            Timer timer = (Timer) obj;
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                existTimer = true;
+            }
+        }
+        if (!existTimer) {
+            timerService.createTimer(TIME_DURATION, jobName);
+        }
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startCronScheduled(CronSchedule sched, String appplicationName) {
-	boolean existTimer = false;
-	ScheduleExpression tmpScheduleExpression;
+        boolean existTimer = false;
+        ScheduleExpression tmpScheduleExpression;
 
-	for (Object obj : timerService.getTimers()) {
-	    Timer timer = (Timer) obj;
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		existTimer = true;
-	    }
-	}
-	if (!existTimer) {
-	    logger.info("Schedulazione: Ore: " + sched.getHour());
-	    logger.info("Schedulazione: Minuti: " + sched.getMinute());
-	    logger.info("Schedulazione: DOW: " + sched.getDayOfWeek());
-	    logger.info("Schedulazione: Mese: " + sched.getMonth());
-	    logger.info("Schedulazione: DOM: " + sched.getDayOfMonth());
+        for (Object obj : timerService.getTimers()) {
+            Timer timer = (Timer) obj;
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                existTimer = true;
+            }
+        }
+        if (!existTimer) {
+            logger.info("Schedulazione: Ore: " + sched.getHour());
+            logger.info("Schedulazione: Minuti: " + sched.getMinute());
+            logger.info("Schedulazione: DOW: " + sched.getDayOfWeek());
+            logger.info("Schedulazione: Mese: " + sched.getMonth());
+            logger.info("Schedulazione: DOM: " + sched.getDayOfMonth());
 
-	    tmpScheduleExpression = new ScheduleExpression();
-	    tmpScheduleExpression.hour(sched.getHour());
-	    tmpScheduleExpression.minute(sched.getMinute());
-	    tmpScheduleExpression.dayOfWeek(sched.getDayOfWeek());
-	    tmpScheduleExpression.month(sched.getMonth());
-	    tmpScheduleExpression.dayOfMonth(sched.getDayOfMonth());
-	    logger.info("Lancio il timer AggiornaStatoArchiviazioneTimer...");
-	    timerService.createCalendarTimer(tmpScheduleExpression,
-		    new TimerConfig(jobName, false));
-	}
+            tmpScheduleExpression = new ScheduleExpression();
+            tmpScheduleExpression.hour(sched.getHour());
+            tmpScheduleExpression.minute(sched.getMinute());
+            tmpScheduleExpression.dayOfWeek(sched.getDayOfWeek());
+            tmpScheduleExpression.month(sched.getMonth());
+            tmpScheduleExpression.dayOfMonth(sched.getDayOfMonth());
+            logger.info("Lancio il timer AggiornaStatoArchiviazioneTimer...");
+            timerService.createCalendarTimer(tmpScheduleExpression,
+                    new TimerConfig(jobName, false));
+        }
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void stop(String appplicationName) {
-	for (Object obj : timerService.getTimers()) {
-	    Timer timer = (Timer) obj;
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		timer.cancel();
-	    }
-	}
+        for (Object obj : timerService.getTimers()) {
+            Timer timer = (Timer) obj;
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                timer.cancel();
+            }
+        }
     }
 
     @Timeout
     public void doJob(Timer timer) {
-	if (timer.getInfo().equals(jobName)) {
-	    thisTimer.startProcess(timer);
-	}
+        if (timer.getInfo().equals(jobName)) {
+            thisTimer.startProcess(timer);
+        }
     }
 
     @Override
     public void startProcess(Timer timer) {
-	try {
-	    jobHelper.writeAtomicLogJob(jobName,
-		    JobConstants.OpTypeEnum.INIZIO_SCHEDULAZIONE.name());
-	    /*
-	     * se il TPI non è stato installato, vuol dire che tutta la gestione asincrona del
-	     * versamento basata su TIVOLI è inutilizabile, compresi i job.
-	     */
-	    RispostaControlli rispostaControlli = controlliTpi.verificaAbilitazioneTpi();
-	    if (rispostaControlli.isrBoolean()) { // il TPI è abilitato, esegue il job
-		statoArkEjb.aggiornaStatoArk();
-	    } else if (rispostaControlli.getCodErr() != null) {
-		// si è verificato un errore leggendo le property, ferma tutto e logga l'errore.
-		throw new ParerInternalError(rispostaControlli.getDsErr());
-	    } else { // il TPI non è abilitato. Ferma tutto e logga l'errore.
-		throw new ParerInternalError("Il job non può essere avviato se TPI_Enable=false");
-	    }
-	} catch (ParerInternalError e) {
-	    // questo log viene scritto solo in caso di errore.
-	    String message = null;
-	    Exception nativeExcp = e.getNativeException();
-	    if (nativeExcp != null) {
-		message = nativeExcp.getMessage();
-	    }
-	    if (e.getCause() != null) {
-		message = e.getCause().getMessage();
-	    }
-	    if (message == null) {
-		message = e.getDescription();
-	    }
-	    jobHelper.writeAtomicLogJob(jobName, JobConstants.OpTypeEnum.ERRORE.name(), message);
-	    logger.error("Errore nell'esecuzione del job di aggiornamento stato archiviazione", e);
-	    timer.cancel();
-	} catch (Exception e) {
-	    // questo log viene scritto solo in caso di errore.
-	    String message = null;
-	    if (e.getCause() != null) {
-		message = e.getCause().getMessage();
-	    }
-	    jobHelper.writeAtomicLogJob(jobName, JobConstants.OpTypeEnum.ERRORE.name(), message);
-	    logger.error("Errore nell'esecuzione del job di aggiornamento stato archiviazione", e);
-	    timer.cancel();
-	}
+        try {
+            jobHelper.writeAtomicLogJob(jobName,
+                    JobConstants.OpTypeEnum.INIZIO_SCHEDULAZIONE.name());
+            /*
+             * se il TPI non è stato installato, vuol dire che tutta la gestione asincrona del
+             * versamento basata su TIVOLI è inutilizabile, compresi i job.
+             */
+            RispostaControlli rispostaControlli = controlliTpi.verificaAbilitazioneTpi();
+            if (rispostaControlli.isrBoolean()) { // il TPI è abilitato, esegue il job
+                statoArkEjb.aggiornaStatoArk();
+            } else if (rispostaControlli.getCodErr() != null) {
+                // si è verificato un errore leggendo le property, ferma tutto e logga l'errore.
+                throw new ParerInternalError(rispostaControlli.getDsErr());
+            } else { // il TPI non è abilitato. Ferma tutto e logga l'errore.
+                throw new ParerInternalError("Il job non può essere avviato se TPI_Enable=false");
+            }
+        } catch (ParerInternalError e) {
+            // questo log viene scritto solo in caso di errore.
+            String message = null;
+            Exception nativeExcp = e.getNativeException();
+            if (nativeExcp != null) {
+                message = nativeExcp.getMessage();
+            }
+            if (e.getCause() != null) {
+                message = e.getCause().getMessage();
+            }
+            if (message == null) {
+                message = e.getDescription();
+            }
+            jobHelper.writeAtomicLogJob(jobName, JobConstants.OpTypeEnum.ERRORE.name(), message);
+            logger.error("Errore nell'esecuzione del job di aggiornamento stato archiviazione", e);
+            timer.cancel();
+        } catch (Exception e) {
+            // questo log viene scritto solo in caso di errore.
+            String message = null;
+            if (e.getCause() != null) {
+                message = e.getCause().getMessage();
+            }
+            jobHelper.writeAtomicLogJob(jobName, JobConstants.OpTypeEnum.ERRORE.name(), message);
+            logger.error("Errore nell'esecuzione del job di aggiornamento stato archiviazione", e);
+            timer.cancel();
+        }
     }
 }

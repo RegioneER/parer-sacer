@@ -58,61 +58,61 @@ public class AroContenutoComp implements Serializable {
     @Id
     @Column(name = "ID_CONTEN_COMP")
     @GenericGenerator(name = "SARO_CONTENUTO_COMP_ID_CONTEN_COMP_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_CONTENUTO_COMP"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_CONTENUTO_COMP"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_CONTENUTO_COMP_ID_CONTEN_COMP_GENERATOR")
     public Long getIdContenComp() {
-	return this.idContenComp;
+        return this.idContenComp;
     }
 
     public void setIdContenComp(Long idContenComp) {
-	this.idContenComp = idContenComp;
+        this.idContenComp = idContenComp;
     }
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Lob()
     @Column(name = "BL_CONTEN_COMP")
     public byte[] getBlContenComp() {
-	return this.blContenComp;
+        return this.blContenComp;
     }
 
     public void setBlContenComp(byte[] blContenComp) {
-	this.blContenComp = blContenComp;
+        this.blContenComp = blContenComp;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "MM_VERS")
     public BigDecimal getMmVers() {
-	return this.mmVers;
+        return this.mmVers;
     }
 
     public void setMmVers(BigDecimal mmVers) {
-	this.mmVers = mmVers;
+        this.mmVers = mmVers;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_COMP_STRUT_DOC")
     public AroCompDoc getAroCompDoc() {
-	return this.aroCompDoc;
+        return this.aroCompDoc;
     }
 
     public void setAroCompDoc(AroCompDoc aroCompDoc) {
-	this.aroCompDoc = aroCompDoc;
+        this.aroCompDoc = aroCompDoc;
     }
 }

@@ -36,283 +36,285 @@ public class ElvVRicElencoFascRowBean extends BaseRow implements JEEBaseRowInter
     public static ElvVRicElencoFascTableDescriptor TABLE_DESCRIPTOR = new ElvVRicElencoFascTableDescriptor();
 
     public ElvVRicElencoFascRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdElencoVersFasc() {
-	return getBigDecimal("id_elenco_vers_fasc");
+        return getBigDecimal("id_elenco_vers_fasc");
     }
 
     public void setIdElencoVersFasc(BigDecimal idElencoVersFasc) {
-	setObject("id_elenco_vers_fasc", idElencoVersFasc);
+        setObject("id_elenco_vers_fasc", idElencoVersFasc);
     }
 
     public BigDecimal getIdAmbiente() {
-	return getBigDecimal("id_ambiente");
+        return getBigDecimal("id_ambiente");
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	setObject("id_ambiente", idAmbiente);
+        setObject("id_ambiente", idAmbiente);
     }
 
     public String getNmAmbiente() {
-	return getString("nm_ambiente");
+        return getString("nm_ambiente");
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	setObject("nm_ambiente", nmAmbiente);
+        setObject("nm_ambiente", nmAmbiente);
     }
 
     public BigDecimal getIdEnte() {
-	return getBigDecimal("id_ente");
+        return getBigDecimal("id_ente");
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	setObject("id_ente", idEnte);
+        setObject("id_ente", idEnte);
     }
 
     public String getNmEnte() {
-	return getString("nm_ente");
+        return getString("nm_ente");
     }
 
     public void setNmEnte(String nmEnte) {
-	setObject("nm_ente", nmEnte);
+        setObject("nm_ente", nmEnte);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getNmStrut() {
-	return getString("nm_strut");
+        return getString("nm_strut");
     }
 
     public void setNmStrut(String nmStrut) {
-	setObject("nm_strut", nmStrut);
+        setObject("nm_strut", nmStrut);
     }
 
     public BigDecimal getIdUserIam() {
-	return getBigDecimal("id_user_iam");
+        return getBigDecimal("id_user_iam");
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	setObject("id_user_iam", idUserIam);
+        setObject("id_user_iam", idUserIam);
     }
 
     public BigDecimal getAaFascicolo() {
-	return getBigDecimal("aa_fascicolo");
+        return getBigDecimal("aa_fascicolo");
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-	setObject("aa_fascicolo", aaFascicolo);
+        setObject("aa_fascicolo", aaFascicolo);
     }
 
     public String getTiStato() {
-	return getString("ti_stato");
+        return getString("ti_stato");
     }
 
     public void setTiStato(String tiStato) {
-	setObject("ti_stato", tiStato);
+        setObject("ti_stato", tiStato);
     }
 
     public Timestamp getTsCreazioneElenco() {
-	return getTimestamp("ts_creazione_elenco");
+        return getTimestamp("ts_creazione_elenco");
     }
 
     public void setTsCreazioneElenco(Timestamp tsCreazioneElenco) {
-	setObject("ts_creazione_elenco", tsCreazioneElenco);
+        setObject("ts_creazione_elenco", tsCreazioneElenco);
     }
 
     public Timestamp getDtChiusura() {
-	return getTimestamp("dt_chiusura");
+        return getTimestamp("dt_chiusura");
     }
 
     public void setDtChiusura(Timestamp dtChiusura) {
-	setObject("dt_chiusura", dtChiusura);
+        setObject("dt_chiusura", dtChiusura);
     }
 
     public String getDlMotivoChius() {
-	return getString("dl_motivo_chius");
+        return getString("dl_motivo_chius");
     }
 
     public void setDlMotivoChius(String dlMotivoChius) {
-	setObject("dl_motivo_chius", dlMotivoChius);
+        setObject("dl_motivo_chius", dlMotivoChius);
     }
 
     public Timestamp getDtValidazione() {
-	return getTimestamp("dt_validazione");
+        return getTimestamp("dt_validazione");
     }
 
     public void setDtValidazione(Timestamp dtValidazione) {
-	setObject("dt_validazione", dtValidazione);
+        setObject("dt_validazione", dtValidazione);
     }
 
     public Timestamp getDtFirma() {
-	return getTimestamp("dt_firma");
+        return getTimestamp("dt_firma");
     }
 
     public void setDtFirma(Timestamp dtFirma) {
-	setObject("dt_firma", dtFirma);
+        setObject("dt_firma", dtFirma);
     }
 
     public BigDecimal getNiFascVersElenco() {
-	return getBigDecimal("ni_fasc_vers_elenco");
+        return getBigDecimal("ni_fasc_vers_elenco");
     }
 
     public void setNiFascVersElenco(BigDecimal niFascVersElenco) {
-	setObject("ni_fasc_vers_elenco", niFascVersElenco);
+        setObject("ni_fasc_vers_elenco", niFascVersElenco);
     }
 
     public String getNtIndiceElenco() {
-	return getString("nt_indice_elenco");
+        return getString("nt_indice_elenco");
     }
 
     public void setNtIndiceElenco(String ntIndiceElenco) {
-	setObject("nt_indice_elenco", ntIndiceElenco);
+        setObject("nt_indice_elenco", ntIndiceElenco);
     }
 
     public String getNtElencoChiuso() {
-	return getString("nt_elenco_chiuso");
+        return getString("nt_elenco_chiuso");
     }
 
     public void setNtElencoChiuso(String ntElencoChiuso) {
-	setObject("nt_elenco_chiuso", ntElencoChiuso);
+        setObject("nt_elenco_chiuso", ntElencoChiuso);
     }
 
     public BigDecimal getIdCriterioRaggrFasc() {
-	return getBigDecimal("id_criterio_raggr_fasc");
+        return getBigDecimal("id_criterio_raggr_fasc");
     }
 
     public void setIdCriterioRaggrFasc(BigDecimal idCriterioRaggrFasc) {
-	setObject("id_criterio_raggr_fasc", idCriterioRaggrFasc);
+        setObject("id_criterio_raggr_fasc", idCriterioRaggrFasc);
     }
 
     public String getNmCriterioRaggr() {
-	return getString("nm_criterio_raggr");
+        return getString("nm_criterio_raggr");
     }
 
     public void setNmCriterioRaggr(String nmCriterioRaggr) {
-	setObject("nm_criterio_raggr", nmCriterioRaggr);
+        setObject("nm_criterio_raggr", nmCriterioRaggr);
     }
 
     public String getFlElencoStandard() {
-	return getString("fl_elenco_standard");
+        return getString("fl_elenco_standard");
     }
 
     public void setFlElencoStandard(String flElencoStandard) {
-	setObject("fl_elenco_standard", flElencoStandard);
+        setObject("fl_elenco_standard", flElencoStandard);
     }
 
     public String getCdVoceTitol() {
-	return getString("cd_voce_titol");
+        return getString("cd_voce_titol");
     }
 
     public void setCdVoceTitol(String cdVoceTitol) {
-	setObject("cd_voce_titol", cdVoceTitol);
+        setObject("cd_voce_titol", cdVoceTitol);
     }
 
     public String getNmTipoFascicolo() {
-	return getString("nm_tipo_fascicolo");
+        return getString("nm_tipo_fascicolo");
     }
 
     public void setNmTipoFascicolo(String nmTipoFascicolo) {
-	setObject("nm_tipo_fascicolo", nmTipoFascicolo);
+        setObject("nm_tipo_fascicolo", nmTipoFascicolo);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	ElvVRicElencoFasc entity = (ElvVRicElencoFasc) obj;
-	this.setIdElencoVersFasc(entity.getIdElencoVersFasc());
-	this.setIdAmbiente(entity.getIdAmbiente());
-	this.setNmAmbiente(entity.getNmAmbiente());
-	this.setIdEnte(entity.getIdEnte());
-	this.setNmEnte(entity.getNmEnte());
-	this.setIdStrut(entity.getIdStrut());
-	this.setNmStrut(entity.getNmStrut());
-	this.setIdUserIam(entity.getIdUserIam());
-	this.setAaFascicolo(entity.getAaFascicolo());
-	this.setTiStato(entity.getTiStato());
-	if (entity.getTsCreazioneElenco() != null) {
-	    this.setTsCreazioneElenco(new Timestamp(entity.getTsCreazioneElenco().getTime()));
-	}
-	if (entity.getDtChiusura() != null) {
-	    this.setDtChiusura(new Timestamp(entity.getDtChiusura().getTime()));
-	}
-	this.setDlMotivoChius(entity.getDlMotivoChius());
-	if (entity.getDtFirma() != null) {
-	    this.setDtFirma(new Timestamp(entity.getDtFirma().getTime()));
-	}
-	this.setNiFascVersElenco(entity.getNiFascVersElenco());
-	this.setNtIndiceElenco(entity.getNtIndiceElenco());
-	this.setNtElencoChiuso(entity.getNtElencoChiuso());
-	this.setIdCriterioRaggrFasc(entity.getIdCriterioRaggrFasc());
-	this.setNmCriterioRaggr(entity.getNmCriterioRaggr());
-	this.setFlElencoStandard(entity.getFlElencoStandard());
-	this.setCdVoceTitol(entity.getCdVoceTitol());
-	this.setNmTipoFascicolo(entity.getNmTipoFascicolo());
-	this.setDtValidazione(new Timestamp(entity.getDtValidazione().getTime()));
+        ElvVRicElencoFasc entity = (ElvVRicElencoFasc) obj;
+        this.setIdElencoVersFasc(entity.getIdElencoVersFasc());
+        this.setIdAmbiente(entity.getIdAmbiente());
+        this.setNmAmbiente(entity.getNmAmbiente());
+        this.setIdEnte(entity.getIdEnte());
+        this.setNmEnte(entity.getNmEnte());
+        this.setIdStrut(entity.getIdStrut());
+        this.setNmStrut(entity.getNmStrut());
+        this.setIdUserIam(entity.getIdUserIam());
+        this.setAaFascicolo(entity.getAaFascicolo());
+        this.setTiStato(entity.getTiStato());
+        if (entity.getTsCreazioneElenco() != null) {
+            this.setTsCreazioneElenco(new Timestamp(entity.getTsCreazioneElenco().getTime()));
+        }
+        if (entity.getDtChiusura() != null) {
+            this.setDtChiusura(new Timestamp(entity.getDtChiusura().getTime()));
+        }
+        this.setDlMotivoChius(entity.getDlMotivoChius());
+        if (entity.getDtFirma() != null) {
+            this.setDtFirma(new Timestamp(entity.getDtFirma().getTime()));
+        }
+        this.setNiFascVersElenco(entity.getNiFascVersElenco());
+        this.setNtIndiceElenco(entity.getNtIndiceElenco());
+        this.setNtElencoChiuso(entity.getNtElencoChiuso());
+        this.setIdCriterioRaggrFasc(entity.getIdCriterioRaggrFasc());
+        this.setNmCriterioRaggr(entity.getNmCriterioRaggr());
+        this.setFlElencoStandard(entity.getFlElencoStandard());
+        this.setCdVoceTitol(entity.getCdVoceTitol());
+        this.setNmTipoFascicolo(entity.getNmTipoFascicolo());
+        if (entity.getDtValidazione() != null) {
+            this.setDtValidazione(new Timestamp(entity.getDtValidazione().getTime()));
+        }
     }
 
     @Override
     public ElvVRicElencoFasc rowBeanToEntity() {
-	ElvVRicElencoFasc entity = new ElvVRicElencoFasc();
-	entity.setIdElencoVersFasc(this.getIdElencoVersFasc());
-	entity.setIdAmbiente(this.getIdAmbiente());
-	entity.setNmAmbiente(this.getNmAmbiente());
-	entity.setIdEnte(this.getIdEnte());
-	entity.setNmEnte(this.getNmEnte());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setNmStrut(this.getNmStrut());
-	entity.setIdUserIam(this.getIdUserIam());
-	entity.setAaFascicolo(this.getAaFascicolo());
-	entity.setTiStato(this.getTiStato());
-	entity.setTsCreazioneElenco(this.getTsCreazioneElenco());
-	entity.setDtChiusura(this.getDtChiusura());
-	entity.setDlMotivoChius(this.getDlMotivoChius());
-	entity.setDtFirma(this.getDtFirma());
-	entity.setNiFascVersElenco(this.getNiFascVersElenco());
-	entity.setNtIndiceElenco(this.getNtIndiceElenco());
-	entity.setNtElencoChiuso(this.getNtElencoChiuso());
-	entity.setIdCriterioRaggrFasc(this.getIdCriterioRaggrFasc());
-	entity.setNmCriterioRaggr(this.getNmCriterioRaggr());
-	entity.setFlElencoStandard(this.getFlElencoStandard());
-	entity.setCdVoceTitol(this.getCdVoceTitol());
-	entity.setNmTipoFascicolo(this.getNmTipoFascicolo());
-	entity.setDtValidazione(this.getDtValidazione());
-	return entity;
+        ElvVRicElencoFasc entity = new ElvVRicElencoFasc();
+        entity.setIdElencoVersFasc(this.getIdElencoVersFasc());
+        entity.setIdAmbiente(this.getIdAmbiente());
+        entity.setNmAmbiente(this.getNmAmbiente());
+        entity.setIdEnte(this.getIdEnte());
+        entity.setNmEnte(this.getNmEnte());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setNmStrut(this.getNmStrut());
+        entity.setIdUserIam(this.getIdUserIam());
+        entity.setAaFascicolo(this.getAaFascicolo());
+        entity.setTiStato(this.getTiStato());
+        entity.setTsCreazioneElenco(this.getTsCreazioneElenco());
+        entity.setDtChiusura(this.getDtChiusura());
+        entity.setDlMotivoChius(this.getDlMotivoChius());
+        entity.setDtFirma(this.getDtFirma());
+        entity.setNiFascVersElenco(this.getNiFascVersElenco());
+        entity.setNtIndiceElenco(this.getNtIndiceElenco());
+        entity.setNtElencoChiuso(this.getNtElencoChiuso());
+        entity.setIdCriterioRaggrFasc(this.getIdCriterioRaggrFasc());
+        entity.setNmCriterioRaggr(this.getNmCriterioRaggr());
+        entity.setFlElencoStandard(this.getFlElencoStandard());
+        entity.setCdVoceTitol(this.getCdVoceTitol());
+        entity.setNmTipoFascicolo(this.getNmTipoFascicolo());
+        entity.setDtValidazione(this.getDtValidazione());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

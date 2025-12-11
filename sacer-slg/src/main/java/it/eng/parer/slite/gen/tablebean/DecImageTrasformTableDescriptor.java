@@ -45,30 +45,30 @@ public class DecImageTrasformTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_IMAGE_TRASFORM,
-		new ColumnDescriptor(COL_ID_IMAGE_TRASFORM, Types.DECIMAL, 22, true));
-	map.put(COL_ID_TRASFORM_TIPO_RAPPR,
-		new ColumnDescriptor(COL_ID_TRASFORM_TIPO_RAPPR, Types.DECIMAL, 22, false));
-	map.put(COL_NM_IMAGE_TRASFORM,
-		new ColumnDescriptor(COL_NM_IMAGE_TRASFORM, Types.VARCHAR, 100, false));
-	map.put(COL_BL_IMAGE_TRASFORM,
-		new ColumnDescriptor(COL_BL_IMAGE_TRASFORM, Types.BLOB, 4000, false));
-	map.put(COL_DT_LAST_MOD_IMAGE_TRASFORM,
-		new ColumnDescriptor(COL_DT_LAST_MOD_IMAGE_TRASFORM, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_LAST_SCARICO_IMAGE_TRASFORM, new ColumnDescriptor(
-		COL_DT_LAST_SCARICO_IMAGE_TRASFORM, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_IMAGE_TRASFORM,
+                new ColumnDescriptor(COL_ID_IMAGE_TRASFORM, Types.DECIMAL, 22, true));
+        map.put(COL_ID_TRASFORM_TIPO_RAPPR,
+                new ColumnDescriptor(COL_ID_TRASFORM_TIPO_RAPPR, Types.DECIMAL, 22, false));
+        map.put(COL_NM_IMAGE_TRASFORM,
+                new ColumnDescriptor(COL_NM_IMAGE_TRASFORM, Types.VARCHAR, 100, false));
+        map.put(COL_BL_IMAGE_TRASFORM,
+                new ColumnDescriptor(COL_BL_IMAGE_TRASFORM, Types.BLOB, 4000, false));
+        map.put(COL_DT_LAST_MOD_IMAGE_TRASFORM,
+                new ColumnDescriptor(COL_DT_LAST_MOD_IMAGE_TRASFORM, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_LAST_SCARICO_IMAGE_TRASFORM, new ColumnDescriptor(
+                COL_DT_LAST_SCARICO_IMAGE_TRASFORM, Types.TIMESTAMP, 7, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

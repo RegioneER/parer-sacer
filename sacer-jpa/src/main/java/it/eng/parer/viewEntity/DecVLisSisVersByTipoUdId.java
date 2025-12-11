@@ -32,49 +32,49 @@ public class DecVLisSisVersByTipoUdId implements Serializable {
 
     @Column(name = "ID_SISTEMA_VERSANTE")
     public BigDecimal getIdSistemaVersante() {
-	return this.idSistemaVersante;
+        return this.idSistemaVersante;
     }
 
     public void setIdSistemaVersante(BigDecimal idSistemaVersante) {
-	this.idSistemaVersante = idSistemaVersante;
+        this.idSistemaVersante = idSistemaVersante;
     }
 
     @Column(name = "ID_TIPO_UNITA_DOC")
     public BigDecimal getIdTipoUnitaDoc() {
-	return this.idTipoUnitaDoc;
+        return this.idTipoUnitaDoc;
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	this.idTipoUnitaDoc = idTipoUnitaDoc;
+        this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 71 * hash + Objects.hashCode(this.idSistemaVersante);
-	hash = 71 * hash + Objects.hashCode(this.idTipoUnitaDoc);
-	return hash;
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.idSistemaVersante);
+        hash = 71 * hash + Objects.hashCode(this.idTipoUnitaDoc);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final DecVLisSisVersByTipoUdId other = (DecVLisSisVersByTipoUdId) obj;
-	if (!Objects.equals(this.idSistemaVersante, other.idSistemaVersante)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idTipoUnitaDoc, other.idTipoUnitaDoc)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DecVLisSisVersByTipoUdId other = (DecVLisSisVersByTipoUdId) obj;
+        if (!Objects.equals(this.idSistemaVersante, other.idSistemaVersante)) {
+            return false;
+        }
+        if (!Objects.equals(this.idTipoUnitaDoc, other.idTipoUnitaDoc)) {
+            return false;
+        }
+        return true;
     }
 
 }

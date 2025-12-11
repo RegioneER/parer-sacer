@@ -60,120 +60,120 @@ public class XmlToPdfTransform implements ICompTransformer {
 
     private class SysOutEventListener implements EventListener {
 
-	StringWriter tmpWriter = new StringWriter();
+        StringWriter tmpWriter = new StringWriter();
 
-	@Override
-	public void processEvent(Event event) {
-	    String msg = EventFormatter.format(event);
-	    EventSeverity severity = event.getSeverity();
+        @Override
+        public void processEvent(Event event) {
+            String msg = EventFormatter.format(event);
+            EventSeverity severity = event.getSeverity();
 
-	    if (severity == EventSeverity.ERROR || severity == EventSeverity.FATAL) {
-		tmpWriter.append(msg + "; ");
-	    }
-	}
+            if (severity == EventSeverity.ERROR || severity == EventSeverity.FATAL) {
+                tmpWriter.append(msg + "; ");
+            }
+        }
 
-	public String getErrors() {
-	    return tmpWriter.toString();
-	}
+        public String getErrors() {
+            return tmpWriter.toString();
+        }
     }
 
     @Override
     public RispostaControlli convertiSuStream(ParametriTrasf parametri) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
 
-	try {
-	    // Inizializzo la factory (sarebbe consigliabile riusarla...)
-	    DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-	    Configuration cfg = cfgBuilder.build(
-		    this.getClass().getClassLoader().getResourceAsStream("META-INF/fop.xconf"));
-	    FopFactoryBuilder fopFactoryBuilder = new FopFactoryBuilder(new File(".").toURI())
-		    .setConfiguration(cfg);
+        try {
+            // Inizializzo la factory (sarebbe consigliabile riusarla...)
+            DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
+            Configuration cfg = cfgBuilder.build(
+                    this.getClass().getClassLoader().getResourceAsStream("META-INF/fop.xconf"));
+            FopFactoryBuilder fopFactoryBuilder = new FopFactoryBuilder(new File(".").toURI())
+                    .setConfiguration(cfg);
 
-	    FopFactory fopFactory = fopFactoryBuilder.build();
-	    SysOutEventListener tmpOutListener = new SysOutEventListener();
-	    FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-	    foUserAgent.getEventBroadcaster().addEventListener(tmpOutListener);
-	    Fop fop = null;
-	    // inizializzo FOP con il tipo di output desiderato
-	    fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, parametri.getFileXmlOut());
-	    // gli eventi SAX verranno processati dall'handler FOP
-	    Result res = new SAXResult(fop.getDefaultHandler());
-	    // predispongo la trasformazione XSLT ed FO
-	    Source src = null;
-	    if (parametri.getFileXslFo() != null) {
-		src = new StreamSource(parametri.getFileXslFo());
-	    } else {
-		src = new StreamSource(parametri.getFileXml());
-	    }
-	    // iniz. JAXP
-	    // Nota: al fine di evitare problemi di classloading e "override" del parser (vedi
-	    // libreria Saxon-HE)
-	    // viene esplicitato a codice quale impementazione (xalan standard in questo caso)
-	    // utilizzare
-	    TransformerFactory factory = TransformerFactory.newInstance();
-	    factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-	    factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-	    Transformer transformer = null;
-	    // verifico se devo effettuare la trasformazione XSLT o solo quella FO
-	    if (parametri.getFileXslt() != null) {
-		transformer = factory.newTransformer(new StreamSource(parametri.getFileXslt()));
-	    } else {
-		transformer = factory.newTransformer(); // identity transformer
-	    }
-	    if (transformer != null) {
-		// trasformazione XSLT ed FO
-		try {
-		    transformer.transform(src, res);
-		    if (tmpOutListener.getErrors() != null
-			    && !tmpOutListener.getErrors().isEmpty()) {
-			rispostaControlli.setCodErr(null);
-			rispostaControlli.setDsErr("Errore nella conversione XmlToPdfTransform: "
-				+ tmpOutListener.getErrors());
-		    } else {
-			rispostaControlli.setrBoolean(true);
-		    }
-		} catch (Exception ex) {
-		    // se cod_err è nullo, vuol dire che l'xslt è errato e va marcato come tale
-		    if (tmpOutListener.getErrors() != null
-			    && !tmpOutListener.getErrors().isEmpty()) {
-			rispostaControlli.setCodErr(null);
-			rispostaControlli.setDsErr("Errore nella conversione XmlToPdfTransform: "
-				+ tmpOutListener.getErrors());
-		    } else if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
-			rispostaControlli.setCodErr(null);
-			rispostaControlli
-				.setDsErr("Errore grave nella conversione XmlToPdfTransform: "
-					+ ex.getMessage());
-		    } else {
-			rispostaControlli.setCodErr(null);
-			rispostaControlli.setDsErr(
-				"Errore grave nella conversione XmlToPdfTransform: probabilmente il file xslt è malformato.");
-		    }
-		}
-	    } else {
-		// se cod_err è nullo, vuol dire che l'xslt è errato e va marcato come tale
-		rispostaControlli.setCodErr(null);
-		rispostaControlli.setDsErr(
-			"Errore nella conversione XmlToPdfTransform: il file xslt non è valido");
-	    }
+            FopFactory fopFactory = fopFactoryBuilder.build();
+            SysOutEventListener tmpOutListener = new SysOutEventListener();
+            FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+            foUserAgent.getEventBroadcaster().addEventListener(tmpOutListener);
+            Fop fop = null;
+            // inizializzo FOP con il tipo di output desiderato
+            fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, parametri.getFileXmlOut());
+            // gli eventi SAX verranno processati dall'handler FOP
+            Result res = new SAXResult(fop.getDefaultHandler());
+            // predispongo la trasformazione XSLT ed FO
+            Source src = null;
+            if (parametri.getFileXslFo() != null) {
+                src = new StreamSource(parametri.getFileXslFo());
+            } else {
+                src = new StreamSource(parametri.getFileXml());
+            }
+            // iniz. JAXP
+            // Nota: al fine di evitare problemi di classloading e "override" del parser (vedi
+            // libreria Saxon-HE)
+            // viene esplicitato a codice quale impementazione (xalan standard in questo caso)
+            // utilizzare
+            TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            Transformer transformer = null;
+            // verifico se devo effettuare la trasformazione XSLT o solo quella FO
+            if (parametri.getFileXslt() != null) {
+                transformer = factory.newTransformer(new StreamSource(parametri.getFileXslt()));
+            } else {
+                transformer = factory.newTransformer(); // identity transformer
+            }
+            if (transformer != null) {
+                // trasformazione XSLT ed FO
+                try {
+                    transformer.transform(src, res);
+                    if (tmpOutListener.getErrors() != null
+                            && !tmpOutListener.getErrors().isEmpty()) {
+                        rispostaControlli.setCodErr(null);
+                        rispostaControlli.setDsErr("Errore nella conversione XmlToPdfTransform: "
+                                + tmpOutListener.getErrors());
+                    } else {
+                        rispostaControlli.setrBoolean(true);
+                    }
+                } catch (Exception ex) {
+                    // se cod_err è nullo, vuol dire che l'xslt è errato e va marcato come tale
+                    if (tmpOutListener.getErrors() != null
+                            && !tmpOutListener.getErrors().isEmpty()) {
+                        rispostaControlli.setCodErr(null);
+                        rispostaControlli.setDsErr("Errore nella conversione XmlToPdfTransform: "
+                                + tmpOutListener.getErrors());
+                    } else if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
+                        rispostaControlli.setCodErr(null);
+                        rispostaControlli
+                                .setDsErr("Errore grave nella conversione XmlToPdfTransform: "
+                                        + ex.getMessage());
+                    } else {
+                        rispostaControlli.setCodErr(null);
+                        rispostaControlli.setDsErr(
+                                "Errore grave nella conversione XmlToPdfTransform: probabilmente il file xslt è malformato.");
+                    }
+                }
+            } else {
+                // se cod_err è nullo, vuol dire che l'xslt è errato e va marcato come tale
+                rispostaControlli.setCodErr(null);
+                rispostaControlli.setDsErr(
+                        "Errore nella conversione XmlToPdfTransform: il file xslt non è valido");
+            }
 
-	} catch (TransformerException | FOPException ex) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-		    "Eccezione XmlToPdfTransform.convertiSuStream " + ex.getMessage()));
-	    log.error("Eccezione XmlToPdfTransform.convertiSuStream " + ex);
-	} catch (ConfigurationException ex) {
-	    java.util.logging.Logger.getLogger(XmlToPdfTransform.class.getName()).log(Level.SEVERE,
-		    null, ex);
-	} finally {
-	    IOUtils.closeQuietly(parametri.getFileXslt());
-	    IOUtils.closeQuietly(parametri.getFileXslFo());
-	    IOUtils.closeQuietly(parametri.getFileXml());
-	}
+        } catch (TransformerException | FOPException ex) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione XmlToPdfTransform.convertiSuStream " + ex.getMessage()));
+            log.error("Eccezione XmlToPdfTransform.convertiSuStream " + ex);
+        } catch (ConfigurationException ex) {
+            java.util.logging.Logger.getLogger(XmlToPdfTransform.class.getName()).log(Level.SEVERE,
+                    null, ex);
+        } finally {
+            IOUtils.closeQuietly(parametri.getFileXslt());
+            IOUtils.closeQuietly(parametri.getFileXslFo());
+            IOUtils.closeQuietly(parametri.getFileXml());
+        }
 
-	return rispostaControlli;
+        return rispostaControlli;
     }
 
 }

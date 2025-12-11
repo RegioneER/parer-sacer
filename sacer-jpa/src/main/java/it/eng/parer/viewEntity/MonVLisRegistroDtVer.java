@@ -32,37 +32,37 @@ public class MonVLisRegistroDtVer implements Serializable {
     private BigDecimal idRegistroUnitaDoc;
 
     public MonVLisRegistroDtVer() {
-	/* hibernate */
+        /* hibernate */
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_EROG")
     public Date getDtErog() {
-	return this.dtErog;
+        return this.dtErog;
     }
 
     public void setDtErog(Date dtErog) {
-	this.dtErog = dtErog;
+        this.dtErog = dtErog;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_LAST_EROG")
     public Date getDtLastErog() {
-	return this.dtLastErog;
+        return this.dtLastErog;
     }
 
     public void setDtLastErog(Date dtLastErog) {
-	this.dtLastErog = dtLastErog;
+        this.dtLastErog = dtLastErog;
     }
 
     @Id
     @Column(name = "ID_REGISTRO_UNITA_DOC")
     public BigDecimal getIdRegistroUnitaDoc() {
-	return this.idRegistroUnitaDoc;
+        return this.idRegistroUnitaDoc;
     }
 
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-	this.idRegistroUnitaDoc = idRegistroUnitaDoc;
+        this.idRegistroUnitaDoc = idRegistroUnitaDoc;
     }
 
 }

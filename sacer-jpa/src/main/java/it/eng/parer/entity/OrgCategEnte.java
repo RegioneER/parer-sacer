@@ -54,42 +54,42 @@ public class OrgCategEnte implements Serializable {
 
     @Column(name = "ID_CATEG_ENTE")
     @GenericGenerator(name = "SORG_CATEG_ENTE_ID_CATEG_ENTE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_CATEG_ENTE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_CATEG_ENTE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SORG_CATEG_ENTE_ID_CATEG_ENTE_GENERATOR")
     public Long getIdCategEnte() {
-	return this.idCategEnte;
+        return this.idCategEnte;
     }
 
     public void setIdCategEnte(Long idCategEnte) {
-	this.idCategEnte = idCategEnte;
+        this.idCategEnte = idCategEnte;
     }
 
     @Column(name = "CD_CATEG_ENTE")
     public String getCdCategEnte() {
-	return this.cdCategEnte;
+        return this.cdCategEnte;
     }
 
     public void setCdCategEnte(String cdCategEnte) {
-	this.cdCategEnte = cdCategEnte;
+        this.cdCategEnte = cdCategEnte;
     }
 
     @Column(name = "DS_CATEG_ENTE")
     public String getDsCategEnte() {
-	return this.dsCategEnte;
+        return this.dsCategEnte;
     }
 
     public void setDsCategEnte(String dsCategEnte) {
-	this.dsCategEnte = dsCategEnte;
+        this.dsCategEnte = dsCategEnte;
     }
 
     @OneToMany(mappedBy = "orgCategEnte")
     public List<OrgEnte> getOrgEntes() {
-	return this.orgEntes;
+        return this.orgEntes;
     }
 
     public void setOrgEntes(List<OrgEnte> orgEntes) {
-	this.orgEntes = orgEntes;
+        this.orgEntes = orgEntes;
     }
 
 }

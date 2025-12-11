@@ -33,19 +33,19 @@ public class SerVerSerieDaElabTableBean extends AbstractBaseTable<SerVerSerieDaE
     public static SerVerSerieDaElabTableDescriptor TABLE_DESCRIPTOR = new SerVerSerieDaElabTableDescriptor();
 
     public SerVerSerieDaElabTableBean() {
-	super();
+        super();
     }
 
     protected SerVerSerieDaElabRowBean createRow() {
-	return new SerVerSerieDaElabRowBean();
+        return new SerVerSerieDaElabRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerVerSerieDaElabRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

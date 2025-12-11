@@ -33,19 +33,19 @@ public class MonContaUdDocCompTableBean extends AbstractBaseTable<MonContaUdDocC
     public static MonContaUdDocCompTableDescriptor TABLE_DESCRIPTOR = new MonContaUdDocCompTableDescriptor();
 
     public MonContaUdDocCompTableBean() {
-	super();
+        super();
     }
 
     protected MonContaUdDocCompRowBean createRow() {
-	return new MonContaUdDocCompRowBean();
+        return new MonContaUdDocCompRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonContaUdDocCompRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

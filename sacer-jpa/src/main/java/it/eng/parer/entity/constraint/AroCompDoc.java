@@ -23,7 +23,7 @@ public final class AroCompDoc {
     }
 
     public enum TiSupportoComp {
-	FILE, METADATA, RIFERIMENTO
+        FILE, METADATA, RIFERIMENTO
     }
 
 }

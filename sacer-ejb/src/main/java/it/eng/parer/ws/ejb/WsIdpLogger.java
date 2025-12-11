@@ -65,88 +65,88 @@ public class WsIdpLogger {
     @SuppressWarnings("unchecked")
     @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
     public void scriviLog(LogDto logDto, String password) {
-	HashMap<String, String> iamDefaults = null;
+        HashMap<String, String> iamDefaults = null;
 
-	RispostaControlli rispostaControlli = controlliSemantici
-		.caricaDefaultDaDBParametriApplic(CostantiDB.TipoParametroAppl.IAM);
-	if (!rispostaControlli.isrBoolean()) {
-	    throw new RuntimeException("WsIdpLogger: Impossibile accedere alla tabella parametri");
-	} else {
-	    iamDefaults = (HashMap<String, String>) rispostaControlli.getrObject();
-	}
-	if (iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_REGISTRA_EVENTO_UTENTE) != null
-		&& !iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_REGISTRA_EVENTO_UTENTE)
-			.isEmpty()
-		&& iamDefaults.get(
-			CostantiDB.ParametroAppl.IDP_QRY_VERIFICA_DISATTIVAZIONE_UTENTE) != null
-		&& !iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_VERIFICA_DISATTIVAZIONE_UTENTE)
-			.isEmpty()
-		&& iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_DISABLE_USER) != null
-		&& !iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_DISABLE_USER).isEmpty()
-		&& iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_GIORNI) != null
-		&& !iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_GIORNI).isEmpty()
-		&& iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_TENTATIVI_FALLITI) != null
-		&& !iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_TENTATIVI_FALLITI).isEmpty()) {
-	    Connection connection = null;
-	    try {
-		connection = JpaUtils.provideConnectionFrom(entityManager);
-		IdpConfigLog icl = new IdpConfigLog();
-		icl.setQryRegistraEventoUtente(
-			iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_REGISTRA_EVENTO_UTENTE));
+        RispostaControlli rispostaControlli = controlliSemantici
+                .caricaDefaultDaDBParametriApplic(CostantiDB.TipoParametroAppl.IAM);
+        if (!rispostaControlli.isrBoolean()) {
+            throw new RuntimeException("WsIdpLogger: Impossibile accedere alla tabella parametri");
+        } else {
+            iamDefaults = (HashMap<String, String>) rispostaControlli.getrObject();
+        }
+        if (iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_REGISTRA_EVENTO_UTENTE) != null
+                && !iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_REGISTRA_EVENTO_UTENTE)
+                        .isEmpty()
+                && iamDefaults.get(
+                        CostantiDB.ParametroAppl.IDP_QRY_VERIFICA_DISATTIVAZIONE_UTENTE) != null
+                && !iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_VERIFICA_DISATTIVAZIONE_UTENTE)
+                        .isEmpty()
+                && iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_DISABLE_USER) != null
+                && !iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_DISABLE_USER).isEmpty()
+                && iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_GIORNI) != null
+                && !iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_GIORNI).isEmpty()
+                && iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_TENTATIVI_FALLITI) != null
+                && !iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_TENTATIVI_FALLITI).isEmpty()) {
+            Connection connection = null;
+            try {
+                connection = JpaUtils.provideConnectionFrom(entityManager);
+                IdpConfigLog icl = new IdpConfigLog();
+                icl.setQryRegistraEventoUtente(
+                        iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_REGISTRA_EVENTO_UTENTE));
 
-		if (!StringUtils.isBlank(password)) {
-		    icl.setQryVerificaDisattivazioneUtente(iamDefaults
-			    .get(CostantiDB.ParametroAppl.IDP_QRY_VERIFICA_DISATTIVAZIONE_UTENTE));
-		}
-		icl.setQryDisabilitaUtente(
-			iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_DISABLE_USER));
-		icl.setMaxTentativi(Integer.parseInt(
-			iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_TENTATIVI_FALLITI)));
-		icl.setMaxGiorni(
-			Integer.parseInt(iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_GIORNI)));
+                if (!StringUtils.isBlank(password)) {
+                    icl.setQryVerificaDisattivazioneUtente(iamDefaults
+                            .get(CostantiDB.ParametroAppl.IDP_QRY_VERIFICA_DISATTIVAZIONE_UTENTE));
+                }
+                icl.setQryDisabilitaUtente(
+                        iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_DISABLE_USER));
+                icl.setMaxTentativi(Integer.parseInt(
+                        iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_TENTATIVI_FALLITI)));
+                icl.setMaxGiorni(
+                        Integer.parseInt(iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_GIORNI)));
 
-		logDto.setServername(asi.getName());
-		IdpLogger.EsitiLog risposta = (new IdpLogger(icl).scriviLog(logDto, connection));
+                logDto.setServername(asi.getName());
+                IdpLogger.EsitiLog risposta = (new IdpLogger(icl).scriviLog(logDto, connection));
 
-		if (risposta == IdpLogger.EsitiLog.UTENTE_DISATTIVATO
-			&& !StringUtils.isBlank(password)) {
-		    String queryStr = "update IamUser iu " + "set iu.flAttivo = :flAttivoIn "
-			    + "where iu.nmUserid = :nmUseridIn ";
+                if (risposta == IdpLogger.EsitiLog.UTENTE_DISATTIVATO
+                        && !StringUtils.isBlank(password)) {
+                    String queryStr = "update IamUser iu " + "set iu.flAttivo = :flAttivoIn "
+                            + "where iu.nmUserid = :nmUseridIn ";
 
-		    // l'operazione di log dell'evento BAD_PASS ha causato la disattivazione
-		    // dell'utente nella tabella USR_USER di IAM; questa situazione verrà recepita
-		    // tra circa 5 minuti, durante i qali l'utente risulta ancora attivo per SACER.
-		    // Per accelerare la risposta del sistema, disattivo l'utente anche nella
-		    // tabella locale. Tra 5 minuti il job di aggiornamento utenti ripeterà
-		    // la stessa situazione.
-		    javax.persistence.Query query = entityManager.createQuery(queryStr);
-		    query.setParameter("flAttivoIn", "0");
-		    query.setParameter("nmUseridIn", logDto.getNmUser());
-		    query.executeUpdate();
+                    // l'operazione di log dell'evento BAD_PASS ha causato la disattivazione
+                    // dell'utente nella tabella USR_USER di IAM; questa situazione verrà recepita
+                    // tra circa 5 minuti, durante i qali l'utente risulta ancora attivo per SACER.
+                    // Per accelerare la risposta del sistema, disattivo l'utente anche nella
+                    // tabella locale. Tra 5 minuti il job di aggiornamento utenti ripeterà
+                    // la stessa situazione.
+                    javax.persistence.Query query = entityManager.createQuery(queryStr);
+                    query.setParameter("flAttivoIn", "0");
+                    query.setParameter("nmUseridIn", logDto.getNmUser());
+                    query.executeUpdate();
 
-		    log.warn("ERRORE DI AUTENTICAZIONE WS.{} DISATTIVAZIONE UTENTE: ",
-			    logDto.getNmUser());
-		}
+                    log.warn("ERRORE DI AUTENTICAZIONE WS.{} DISATTIVAZIONE UTENTE: ",
+                            logDto.getNmUser());
+                }
 
-	    } catch (UnknownHostException ex) {
-		throw new RuntimeException(
-			"WsIdpLogger: Errore nel determinare il nome host per il server: "
-				+ ex.getMessage());
-	    } catch (SQLException ex) {
-		throw new RuntimeException(
-			"WsIdpLogger: Errore nell'accesso ai dati di log: " + ex.getMessage());
-	    } catch (Exception ex) {
-		throw new RuntimeException("WsIdpLogger: Errore: " + ex.getMessage());
-	    } finally {
-		if (connection != null) {
-		    try {
-			connection.close();
-		    } catch (SQLException ex) {
-			log.error("Errore nella chiusura della connessione: ", ex);
-		    }
-		}
-	    }
-	}
+            } catch (UnknownHostException ex) {
+                throw new RuntimeException(
+                        "WsIdpLogger: Errore nel determinare il nome host per il server: "
+                                + ex.getMessage());
+            } catch (SQLException ex) {
+                throw new RuntimeException(
+                        "WsIdpLogger: Errore nell'accesso ai dati di log: " + ex.getMessage());
+            } catch (Exception ex) {
+                throw new RuntimeException("WsIdpLogger: Errore: " + ex.getMessage());
+            } finally {
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (SQLException ex) {
+                        log.error("Errore nella chiusura della connessione: ", ex);
+                    }
+                }
+            }
+        }
 
     }
 

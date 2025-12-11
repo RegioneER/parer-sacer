@@ -37,19 +37,19 @@ public class LogVLisSchedHistTableBean extends AbstractBaseTable<LogVLisSchedHis
     public static LogVLisSchedTableDescriptor TABLE_DESCRIPTOR = new LogVLisSchedTableDescriptor();
 
     public LogVLisSchedHistTableBean() {
-	super();
+        super();
     }
 
     protected LogVLisSchedHistRowBean createRow() {
-	return new LogVLisSchedHistRowBean();
+        return new LogVLisSchedHistRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<LogVLisSchedHistRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

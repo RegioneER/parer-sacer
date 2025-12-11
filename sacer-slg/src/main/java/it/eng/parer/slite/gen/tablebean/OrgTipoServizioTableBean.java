@@ -33,19 +33,19 @@ public class OrgTipoServizioTableBean extends AbstractBaseTable<OrgTipoServizioR
     public static OrgTipoServizioTableDescriptor TABLE_DESCRIPTOR = new OrgTipoServizioTableDescriptor();
 
     public OrgTipoServizioTableBean() {
-	super();
+        super();
     }
 
     protected OrgTipoServizioRowBean createRow() {
-	return new OrgTipoServizioRowBean();
+        return new OrgTipoServizioRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<OrgTipoServizioRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -50,26 +50,26 @@ public class CounterResultBean implements Serializable {
      * @param counter contatore
      */
     public CounterResultBean(Object date, BigDecimal counter) {
-	if (date != null && date instanceof Date && counter != null) {
-	    this.date = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE).format(date);
-	    this.counter = counter.longValue();
-	}
+        if (date != null && date instanceof Date && counter != null) {
+            this.date = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE).format(date);
+            this.counter = counter.longValue();
+        }
     }
 
     public String getDate() {
-	return date;
+        return date;
     }
 
     public void setDate(String date) {
-	this.date = date;
+        this.date = date;
     }
 
     public long getCounter() {
-	return counter;
+        return counter;
     }
 
     public void setCounter(long counter) {
-	this.counter = counter;
+        this.counter = counter;
     }
 
 }

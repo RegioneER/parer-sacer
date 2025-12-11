@@ -60,119 +60,119 @@ public class CaricaErrori {
 
     @PostConstruct
     protected void initSingleton() {
-	BaseTable tabellaClasse = new BaseTable();
-	Properties props = new Properties();
-	InputStream tmpStream = null;
-	try {
-	    tmpStream = this.getClass().getClassLoader()
-		    .getResourceAsStream("/descrizione_errori.properties");
-	    props.load(tmpStream);
-	    Enumeration<Object> enumeratore = props.keys();
-	    while (enumeratore.hasMoreElements()) {
-		Object obj = enumeratore.nextElement();
-		String[] items = ((String) obj).split("-");
-		// Piazzo il codice nella mappa di competenza a seconda dei casi
-		if (items.length == 1) {
-		    classeErroreMap.put(items[0], items[0] + " - " + (String) props.get(obj));
-		} else if (items.length == 2) {
-		    String sottoClasse = items[0] + "-" + items[1];
-		    sottoClasseErroreMap.put(sottoClasse,
-			    sottoClasse + " - " + (String) props.get(obj));
-		} else if (items.length == 3) {
-		    codiceErroreMap.put((String) obj,
-			    (String) obj + " - " + (String) props.get(obj));
-		}
-	    }
-	    // Inizializzo la lista della classe errore che verrà subito caricata
-	    Iterator<String> iteratore = classeErroreMap.keySet().iterator();
-	    while (iteratore.hasNext()) {
-		String codice = (String) iteratore.next();
-		BaseRow riga = new BaseRow();
-		riga.setString("cd_err", codice);
-		riga.setString("ds_err", (String) classeErroreMap.get(codice));
-		tabellaClasse.add(riga);
-	    }
-	} catch (IOException e) {
-	    logger.error("Errore nel recupero della lista errori:" + e.getMessage(), e);
-	} finally {
-	    IOUtils.closeQuietly(tmpStream);
-	}
-	mappaClasseErrore.populatedMap(tabellaClasse, "cd_err", "ds_err");
+        BaseTable tabellaClasse = new BaseTable();
+        Properties props = new Properties();
+        InputStream tmpStream = null;
+        try {
+            tmpStream = this.getClass().getClassLoader()
+                    .getResourceAsStream("/descrizione_errori.properties");
+            props.load(tmpStream);
+            Enumeration<Object> enumeratore = props.keys();
+            while (enumeratore.hasMoreElements()) {
+                Object obj = enumeratore.nextElement();
+                String[] items = ((String) obj).split("-");
+                // Piazzo il codice nella mappa di competenza a seconda dei casi
+                if (items.length == 1) {
+                    classeErroreMap.put(items[0], items[0] + " - " + (String) props.get(obj));
+                } else if (items.length == 2) {
+                    String sottoClasse = items[0] + "-" + items[1];
+                    sottoClasseErroreMap.put(sottoClasse,
+                            sottoClasse + " - " + (String) props.get(obj));
+                } else if (items.length == 3) {
+                    codiceErroreMap.put((String) obj,
+                            (String) obj + " - " + (String) props.get(obj));
+                }
+            }
+            // Inizializzo la lista della classe errore che verrà subito caricata
+            Iterator<String> iteratore = classeErroreMap.keySet().iterator();
+            while (iteratore.hasNext()) {
+                String codice = (String) iteratore.next();
+                BaseRow riga = new BaseRow();
+                riga.setString("cd_err", codice);
+                riga.setString("ds_err", (String) classeErroreMap.get(codice));
+                tabellaClasse.add(riga);
+            }
+        } catch (IOException e) {
+            logger.error("Errore nel recupero della lista errori:" + e.getMessage(), e);
+        } finally {
+            IOUtils.closeQuietly(tmpStream);
+        }
+        mappaClasseErrore.populatedMap(tabellaClasse, "cd_err", "ds_err");
     }
 
     public DecodeMap getMappaClasseErrore() {
-	return mappaClasseErrore;
+        return mappaClasseErrore;
     }
 
     public void setMappaClasseErrore(DecodeMap mappaClasseErrore) {
-	this.mappaClasseErrore = mappaClasseErrore;
+        this.mappaClasseErrore = mappaClasseErrore;
     }
 
     public SortedMap<String, String> getClasseErroreMap() {
-	return classeErroreMap;
+        return classeErroreMap;
     }
 
     public void setClasseErroreMap(SortedMap<String, String> classeErroreMap) {
-	this.classeErroreMap = classeErroreMap;
+        this.classeErroreMap = classeErroreMap;
     }
 
     public SortedMap<String, String> getSottoClasseErroreMap() {
-	return sottoClasseErroreMap;
+        return sottoClasseErroreMap;
     }
 
     public void setSottoClasseErroreMap(SortedMap<String, String> sottoClasseErroreMap) {
-	this.sottoClasseErroreMap = sottoClasseErroreMap;
+        this.sottoClasseErroreMap = sottoClasseErroreMap;
     }
 
     public SortedMap<String, String> getCodiceErroreMap() {
-	return codiceErroreMap;
+        return codiceErroreMap;
     }
 
     public void setCodiceErroreMap(SortedMap<String, String> codiceErroreMap) {
-	this.codiceErroreMap = codiceErroreMap;
+        this.codiceErroreMap = codiceErroreMap;
     }
 
     public DecodeMap filtraSottoclasse(String classe) {
-	BaseTable tabellaSottoClasse = new BaseTable();
-	DecodeMap mappaSottoClasseErrore = new DecodeMap();
-	Iterator<String> iteratore = sottoClasseErroreMap.keySet().iterator();
-	while (iteratore.hasNext()) {
-	    String codice = (String) iteratore.next();
-	    String[] items = codice.split("-");
-	    if (items[0].equals(classe) && items.length == 2) {
-		BaseRow riga = new BaseRow();
-		riga.setString("cd_err", codice);
-		riga.setString("ds_err", (String) sottoClasseErroreMap.get(codice));
-		tabellaSottoClasse.add(riga);
-	    }
-	}
-	mappaSottoClasseErrore.populatedMap(tabellaSottoClasse, "cd_err", "ds_err");
-	return mappaSottoClasseErrore;
+        BaseTable tabellaSottoClasse = new BaseTable();
+        DecodeMap mappaSottoClasseErrore = new DecodeMap();
+        Iterator<String> iteratore = sottoClasseErroreMap.keySet().iterator();
+        while (iteratore.hasNext()) {
+            String codice = (String) iteratore.next();
+            String[] items = codice.split("-");
+            if (items[0].equals(classe) && items.length == 2) {
+                BaseRow riga = new BaseRow();
+                riga.setString("cd_err", codice);
+                riga.setString("ds_err", (String) sottoClasseErroreMap.get(codice));
+                tabellaSottoClasse.add(riga);
+            }
+        }
+        mappaSottoClasseErrore.populatedMap(tabellaSottoClasse, "cd_err", "ds_err");
+        return mappaSottoClasseErrore;
     }
 
     public DecodeMap filtraCodice(String sottoClasse) {
-	BaseTable tabellaCodice = new BaseTable();
-	DecodeMap mappaCodiceErrore = new DecodeMap();
-	Iterator<String> iteratore = codiceErroreMap.keySet().iterator();
-	while (iteratore.hasNext()) {
-	    String codice = iteratore.next();
-	    String[] items = codice.split("-");
-	    String sc = "";
+        BaseTable tabellaCodice = new BaseTable();
+        DecodeMap mappaCodiceErrore = new DecodeMap();
+        Iterator<String> iteratore = codiceErroreMap.keySet().iterator();
+        while (iteratore.hasNext()) {
+            String codice = iteratore.next();
+            String[] items = codice.split("-");
+            String sc = "";
 
-	    if (items.length == 1) {
-		sc = items[0];
-	    } else {
-		sc = items[0] + "-" + items[1];
-	    }
+            if (items.length == 1) {
+                sc = items[0];
+            } else {
+                sc = items[0] + "-" + items[1];
+            }
 
-	    if (sc.equals(sottoClasse) && items.length == 3) {
-		BaseRow riga = new BaseRow();
-		riga.setString("cd_err", codice);
-		riga.setString("ds_err", (String) codiceErroreMap.get(codice));
-		tabellaCodice.add(riga);
-	    }
-	}
-	mappaCodiceErrore.populatedMap(tabellaCodice, "cd_err", "ds_err");
-	return mappaCodiceErrore;
+            if (sc.equals(sottoClasse) && items.length == 3) {
+                BaseRow riga = new BaseRow();
+                riga.setString("cd_err", codice);
+                riga.setString("ds_err", (String) codiceErroreMap.get(codice));
+                tabellaCodice.add(riga);
+            }
+        }
+        mappaCodiceErrore.populatedMap(tabellaCodice, "cd_err", "ds_err");
+        return mappaCodiceErrore;
     }
 }

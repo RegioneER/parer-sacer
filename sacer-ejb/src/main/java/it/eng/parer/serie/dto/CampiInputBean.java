@@ -31,50 +31,50 @@ public class CampiInputBean {
     String vlCampoTransform;
 
     public BigDecimal getPgOrdCampo() {
-	return pgOrdCampo;
+        return pgOrdCampo;
     }
 
     public void setPgOrdCampo(BigDecimal pgOrdCampo) {
-	this.pgOrdCampo = pgOrdCampo;
+        this.pgOrdCampo = pgOrdCampo;
     }
 
     public String getNmCampo() {
-	return nmCampo;
+        return nmCampo;
     }
 
     public void setNmCampo(String nmCampo) {
-	this.nmCampo = nmCampo;
+        this.nmCampo = nmCampo;
     }
 
     public String getTiTransformCampo() {
-	return tiTransformCampo;
+        return tiTransformCampo;
     }
 
     public void setTiTransformCampo(String tiTransformCampo) {
-	this.tiTransformCampo = tiTransformCampo;
+        this.tiTransformCampo = tiTransformCampo;
     }
 
     public String getVlCampoRecord() {
-	return vlCampoRecord;
+        return vlCampoRecord;
     }
 
     public void setVlCampoRecord(String vlCampoRecord) {
-	this.vlCampoRecord = vlCampoRecord;
+        this.vlCampoRecord = vlCampoRecord;
     }
 
     public String getVlCampoTransform() {
-	return vlCampoTransform;
+        return vlCampoTransform;
     }
 
     public void setVlCampoTransform(String vlCampoTransform) {
-	this.vlCampoTransform = vlCampoTransform;
+        this.vlCampoTransform = vlCampoTransform;
     }
 
     public CostantiDB.TipoCampo getTipoCampo() {
-	return tipoCampo;
+        return tipoCampo;
     }
 
     public void setTipoCampo(CostantiDB.TipoCampo tipoCampo) {
-	this.tipoCampo = tipoCampo;
+        this.tipoCampo = tipoCampo;
     }
 }

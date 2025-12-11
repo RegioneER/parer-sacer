@@ -36,281 +36,281 @@ public class SerVRicSerieUdUsrRowBean extends BaseRow implements JEEBaseRowInter
     public static SerVRicSerieUdUsrTableDescriptor TABLE_DESCRIPTOR = new SerVRicSerieUdUsrTableDescriptor();
 
     public SerVRicSerieUdUsrRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdSerie() {
-	return getBigDecimal("id_serie");
+        return getBigDecimal("id_serie");
     }
 
     public void setIdSerie(BigDecimal idSerie) {
-	setObject("id_serie", idSerie);
+        setObject("id_serie", idSerie);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getCdCompositoSerie() {
-	return getString("cd_composito_serie");
+        return getString("cd_composito_serie");
     }
 
     public void setCdCompositoSerie(String cdCompositoSerie) {
-	setObject("cd_composito_serie", cdCompositoSerie);
+        setObject("cd_composito_serie", cdCompositoSerie);
     }
 
     public BigDecimal getAaSerie() {
-	return getBigDecimal("aa_serie");
+        return getBigDecimal("aa_serie");
     }
 
     public void setAaSerie(BigDecimal aaSerie) {
-	setObject("aa_serie", aaSerie);
+        setObject("aa_serie", aaSerie);
     }
 
     public String getDsSerie() {
-	return getString("ds_serie");
+        return getString("ds_serie");
     }
 
     public void setDsSerie(String dsSerie) {
-	setObject("ds_serie", dsSerie);
+        setObject("ds_serie", dsSerie);
     }
 
     public String getNmStrut() {
-	return getString("nm_strut");
+        return getString("nm_strut");
     }
 
     public void setNmStrut(String nmStrut) {
-	setObject("nm_strut", nmStrut);
+        setObject("nm_strut", nmStrut);
     }
 
     public BigDecimal getIdEnte() {
-	return getBigDecimal("id_ente");
+        return getBigDecimal("id_ente");
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	setObject("id_ente", idEnte);
+        setObject("id_ente", idEnte);
     }
 
     public String getNmEnte() {
-	return getString("nm_ente");
+        return getString("nm_ente");
     }
 
     public void setNmEnte(String nmEnte) {
-	setObject("nm_ente", nmEnte);
+        setObject("nm_ente", nmEnte);
     }
 
     public BigDecimal getIdAmbiente() {
-	return getBigDecimal("id_ambiente");
+        return getBigDecimal("id_ambiente");
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	setObject("id_ambiente", idAmbiente);
+        setObject("id_ambiente", idAmbiente);
     }
 
     public String getNmAmbiente() {
-	return getString("nm_ambiente");
+        return getString("nm_ambiente");
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	setObject("nm_ambiente", nmAmbiente);
+        setObject("nm_ambiente", nmAmbiente);
     }
 
     public BigDecimal getIdVerSerie() {
-	return getBigDecimal("id_ver_serie");
+        return getBigDecimal("id_ver_serie");
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	setObject("id_ver_serie", idVerSerie);
+        setObject("id_ver_serie", idVerSerie);
     }
 
     public String getCdVerSerie() {
-	return getString("cd_ver_serie");
+        return getString("cd_ver_serie");
     }
 
     public void setCdVerSerie(String cdVerSerie) {
-	setObject("cd_ver_serie", cdVerSerie);
+        setObject("cd_ver_serie", cdVerSerie);
     }
 
     public String getTiStatoVerSerie() {
-	return getString("ti_stato_ver_serie");
+        return getString("ti_stato_ver_serie");
     }
 
     public void setTiStatoVerSerie(String tiStatoVerSerie) {
-	setObject("ti_stato_ver_serie", tiStatoVerSerie);
+        setObject("ti_stato_ver_serie", tiStatoVerSerie);
     }
 
     public String getTiStatoSerie() {
-	return getString("ti_stato_serie");
+        return getString("ti_stato_serie");
     }
 
     public void setTiStatoSerie(String tiStatoSerie) {
-	setObject("ti_stato_serie", tiStatoSerie);
+        setObject("ti_stato_serie", tiStatoSerie);
     }
 
     public BigDecimal getIdTipoUnitaDoc() {
-	return getBigDecimal("id_tipo_unita_doc");
+        return getBigDecimal("id_tipo_unita_doc");
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	setObject("id_tipo_unita_doc", idTipoUnitaDoc);
+        setObject("id_tipo_unita_doc", idTipoUnitaDoc);
     }
 
     public BigDecimal getIdRegistroUnitaDoc() {
-	return getBigDecimal("id_registro_unita_doc");
+        return getBigDecimal("id_registro_unita_doc");
     }
 
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-	setObject("id_registro_unita_doc", idRegistroUnitaDoc);
+        setObject("id_registro_unita_doc", idRegistroUnitaDoc);
     }
 
     public BigDecimal getNiUdContenuto() {
-	return getBigDecimal("ni_ud_contenuto");
+        return getBigDecimal("ni_ud_contenuto");
     }
 
     public void setNiUdContenuto(BigDecimal niUdContenuto) {
-	setObject("ni_ud_contenuto", niUdContenuto);
+        setObject("ni_ud_contenuto", niUdContenuto);
     }
 
     public BigDecimal getIdFirstUnitaDoc() {
-	return getBigDecimal("id_first_unita_doc");
+        return getBigDecimal("id_first_unita_doc");
     }
 
     public void setIdFirstUnitaDoc(BigDecimal idFirstUnitaDoc) {
-	setObject("id_first_unita_doc", idFirstUnitaDoc);
+        setObject("id_first_unita_doc", idFirstUnitaDoc);
     }
 
     public String getDsChiaveFirst() {
-	return getString("ds_chiave_first");
+        return getString("ds_chiave_first");
     }
 
     public void setDsChiaveFirst(String dsChiaveFirst) {
-	setObject("ds_chiave_first", dsChiaveFirst);
+        setObject("ds_chiave_first", dsChiaveFirst);
     }
 
     public Timestamp getDtRegUnitaDocFirst() {
-	return getTimestamp("dt_reg_unita_doc_first");
+        return getTimestamp("dt_reg_unita_doc_first");
     }
 
     public void setDtRegUnitaDocFirst(Timestamp dtRegUnitaDocFirst) {
-	setObject("dt_reg_unita_doc_first", dtRegUnitaDocFirst);
+        setObject("dt_reg_unita_doc_first", dtRegUnitaDocFirst);
     }
 
     public BigDecimal getIdLastUnitaDoc() {
-	return getBigDecimal("id_last_unita_doc");
+        return getBigDecimal("id_last_unita_doc");
     }
 
     public void setIdLastUnitaDoc(BigDecimal idLastUnitaDoc) {
-	setObject("id_last_unita_doc", idLastUnitaDoc);
+        setObject("id_last_unita_doc", idLastUnitaDoc);
     }
 
     public String getDsChiaveLast() {
-	return getString("ds_chiave_last");
+        return getString("ds_chiave_last");
     }
 
     public void setDsChiaveLast(String dsChiaveLast) {
-	setObject("ds_chiave_last", dsChiaveLast);
+        setObject("ds_chiave_last", dsChiaveLast);
     }
 
     public Timestamp getDtRegUnitaDocLast() {
-	return getTimestamp("dt_reg_unita_doc_last");
+        return getTimestamp("dt_reg_unita_doc_last");
     }
 
     public void setDtRegUnitaDocLast(Timestamp dtRegUnitaDocLast) {
-	setObject("dt_reg_unita_doc_last", dtRegUnitaDocLast);
+        setObject("dt_reg_unita_doc_last", dtRegUnitaDocLast);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SerVRicSerieUdUsr entity = (SerVRicSerieUdUsr) obj;
-	this.setIdSerie(entity.getIdSerie());
-	this.setIdStrut(entity.getIdStrut());
-	this.setCdCompositoSerie(entity.getCdCompositoSerie());
-	this.setAaSerie(entity.getAaSerie());
-	this.setDsSerie(entity.getDsSerie());
-	this.setNmStrut(entity.getNmStrut());
-	this.setIdEnte(entity.getIdEnte());
-	this.setNmEnte(entity.getNmEnte());
-	this.setIdAmbiente(entity.getIdAmbiente());
-	this.setNmAmbiente(entity.getNmAmbiente());
-	this.setIdVerSerie(entity.getIdVerSerie());
-	this.setCdVerSerie(entity.getCdVerSerie());
-	this.setTiStatoVerSerie(entity.getTiStatoVerSerie());
-	this.setTiStatoSerie(entity.getTiStatoSerie());
-	this.setIdTipoUnitaDoc(entity.getIdTipoUnitaDoc());
-	this.setIdRegistroUnitaDoc(entity.getIdRegistroUnitaDoc());
-	this.setNiUdContenuto(entity.getNiUdContenuto());
-	this.setIdFirstUnitaDoc(entity.getIdFirstUnitaDoc());
-	this.setDsChiaveFirst(entity.getDsChiaveFirst());
-	if (entity.getDtRegUnitaDocFirst() != null) {
-	    this.setDtRegUnitaDocFirst(new Timestamp(entity.getDtRegUnitaDocFirst().getTime()));
-	}
-	this.setIdLastUnitaDoc(entity.getIdLastUnitaDoc());
-	this.setDsChiaveLast(entity.getDsChiaveLast());
-	if (entity.getDtRegUnitaDocLast() != null) {
-	    this.setDtRegUnitaDocLast(new Timestamp(entity.getDtRegUnitaDocLast().getTime()));
-	}
+        SerVRicSerieUdUsr entity = (SerVRicSerieUdUsr) obj;
+        this.setIdSerie(entity.getIdSerie());
+        this.setIdStrut(entity.getIdStrut());
+        this.setCdCompositoSerie(entity.getCdCompositoSerie());
+        this.setAaSerie(entity.getAaSerie());
+        this.setDsSerie(entity.getDsSerie());
+        this.setNmStrut(entity.getNmStrut());
+        this.setIdEnte(entity.getIdEnte());
+        this.setNmEnte(entity.getNmEnte());
+        this.setIdAmbiente(entity.getIdAmbiente());
+        this.setNmAmbiente(entity.getNmAmbiente());
+        this.setIdVerSerie(entity.getIdVerSerie());
+        this.setCdVerSerie(entity.getCdVerSerie());
+        this.setTiStatoVerSerie(entity.getTiStatoVerSerie());
+        this.setTiStatoSerie(entity.getTiStatoSerie());
+        this.setIdTipoUnitaDoc(entity.getIdTipoUnitaDoc());
+        this.setIdRegistroUnitaDoc(entity.getIdRegistroUnitaDoc());
+        this.setNiUdContenuto(entity.getNiUdContenuto());
+        this.setIdFirstUnitaDoc(entity.getIdFirstUnitaDoc());
+        this.setDsChiaveFirst(entity.getDsChiaveFirst());
+        if (entity.getDtRegUnitaDocFirst() != null) {
+            this.setDtRegUnitaDocFirst(new Timestamp(entity.getDtRegUnitaDocFirst().getTime()));
+        }
+        this.setIdLastUnitaDoc(entity.getIdLastUnitaDoc());
+        this.setDsChiaveLast(entity.getDsChiaveLast());
+        if (entity.getDtRegUnitaDocLast() != null) {
+            this.setDtRegUnitaDocLast(new Timestamp(entity.getDtRegUnitaDocLast().getTime()));
+        }
     }
 
     @Override
     public SerVRicSerieUdUsr rowBeanToEntity() {
-	SerVRicSerieUdUsr entity = new SerVRicSerieUdUsr();
-	entity.setIdSerie(this.getIdSerie());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setCdCompositoSerie(this.getCdCompositoSerie());
-	entity.setAaSerie(this.getAaSerie());
-	entity.setDsSerie(this.getDsSerie());
-	entity.setNmStrut(this.getNmStrut());
-	entity.setIdEnte(this.getIdEnte());
-	entity.setNmEnte(this.getNmEnte());
-	entity.setIdAmbiente(this.getIdAmbiente());
-	entity.setNmAmbiente(this.getNmAmbiente());
-	entity.setIdVerSerie(this.getIdVerSerie());
-	entity.setCdVerSerie(this.getCdVerSerie());
-	entity.setTiStatoVerSerie(this.getTiStatoVerSerie());
-	entity.setTiStatoSerie(this.getTiStatoSerie());
-	entity.setIdTipoUnitaDoc(this.getIdTipoUnitaDoc());
-	entity.setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc());
-	entity.setNiUdContenuto(this.getNiUdContenuto());
-	entity.setIdFirstUnitaDoc(this.getIdFirstUnitaDoc());
-	entity.setDsChiaveFirst(this.getDsChiaveFirst());
-	entity.setDtRegUnitaDocFirst(this.getDtRegUnitaDocFirst());
-	entity.setIdLastUnitaDoc(this.getIdLastUnitaDoc());
-	entity.setDsChiaveLast(this.getDsChiaveLast());
-	entity.setDtRegUnitaDocLast(this.getDtRegUnitaDocLast());
-	return entity;
+        SerVRicSerieUdUsr entity = new SerVRicSerieUdUsr();
+        entity.setIdSerie(this.getIdSerie());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setCdCompositoSerie(this.getCdCompositoSerie());
+        entity.setAaSerie(this.getAaSerie());
+        entity.setDsSerie(this.getDsSerie());
+        entity.setNmStrut(this.getNmStrut());
+        entity.setIdEnte(this.getIdEnte());
+        entity.setNmEnte(this.getNmEnte());
+        entity.setIdAmbiente(this.getIdAmbiente());
+        entity.setNmAmbiente(this.getNmAmbiente());
+        entity.setIdVerSerie(this.getIdVerSerie());
+        entity.setCdVerSerie(this.getCdVerSerie());
+        entity.setTiStatoVerSerie(this.getTiStatoVerSerie());
+        entity.setTiStatoSerie(this.getTiStatoSerie());
+        entity.setIdTipoUnitaDoc(this.getIdTipoUnitaDoc());
+        entity.setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc());
+        entity.setNiUdContenuto(this.getNiUdContenuto());
+        entity.setIdFirstUnitaDoc(this.getIdFirstUnitaDoc());
+        entity.setDsChiaveFirst(this.getDsChiaveFirst());
+        entity.setDtRegUnitaDocFirst(this.getDtRegUnitaDocFirst());
+        entity.setIdLastUnitaDoc(this.getIdLastUnitaDoc());
+        entity.setDsChiaveLast(this.getDsChiaveLast());
+        entity.setDtRegUnitaDocLast(this.getDtRegUnitaDocLast());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

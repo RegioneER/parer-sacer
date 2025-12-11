@@ -26,13 +26,13 @@ public class BlobObject {
     public byte[] blobbo;
 
     public BlobObject(long id, byte[] blobbo) {
-	this.id = id;
-	this.blobbo = blobbo;
+        this.id = id;
+        this.blobbo = blobbo;
     }
 
     public BlobObject(long id, String name, byte[] blobbo) {
-	this.id = id;
-	this.name = name;
-	this.blobbo = blobbo;
+        this.id = id;
+        this.name = name;
+        this.blobbo = blobbo;
     }
 }

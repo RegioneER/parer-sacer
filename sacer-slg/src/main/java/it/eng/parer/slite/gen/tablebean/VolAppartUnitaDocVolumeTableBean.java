@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class VolAppartUnitaDocVolumeTableBean
-	extends AbstractBaseTable<VolAppartUnitaDocVolumeRowBean> {
+        extends AbstractBaseTable<VolAppartUnitaDocVolumeRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class VolAppartUnitaDocVolumeTableBean
     public static VolAppartUnitaDocVolumeTableDescriptor TABLE_DESCRIPTOR = new VolAppartUnitaDocVolumeTableDescriptor();
 
     public VolAppartUnitaDocVolumeTableBean() {
-	super();
+        super();
     }
 
     protected VolAppartUnitaDocVolumeRowBean createRow() {
-	return new VolAppartUnitaDocVolumeRowBean();
+        return new VolAppartUnitaDocVolumeRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VolAppartUnitaDocVolumeRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

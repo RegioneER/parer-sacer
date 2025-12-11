@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class ElvStatoElencoVersFascTableBean
-	extends AbstractBaseTable<ElvStatoElencoVersFascRowBean> {
+        extends AbstractBaseTable<ElvStatoElencoVersFascRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class ElvStatoElencoVersFascTableBean
     public static ElvStatoElencoVersFascTableDescriptor TABLE_DESCRIPTOR = new ElvStatoElencoVersFascTableDescriptor();
 
     public ElvStatoElencoVersFascTableBean() {
-	super();
+        super();
     }
 
     protected ElvStatoElencoVersFascRowBean createRow() {
-	return new ElvStatoElencoVersFascRowBean();
+        return new ElvStatoElencoVersFascRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<ElvStatoElencoVersFascRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

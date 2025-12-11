@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class ElvVLisElencoVersStatoTableBean
-	extends AbstractBaseTable<ElvVLisElencoVersStatoRowBean> {
+        extends AbstractBaseTable<ElvVLisElencoVersStatoRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class ElvVLisElencoVersStatoTableBean
     public static ElvVLisElencoVersStatoTableDescriptor TABLE_DESCRIPTOR = new ElvVLisElencoVersStatoTableDescriptor();
 
     public ElvVLisElencoVersStatoTableBean() {
-	super();
+        super();
     }
 
     protected ElvVLisElencoVersStatoRowBean createRow() {
-	return new ElvVLisElencoVersStatoRowBean();
+        return new ElvVLisElencoVersStatoRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<ElvVLisElencoVersStatoRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

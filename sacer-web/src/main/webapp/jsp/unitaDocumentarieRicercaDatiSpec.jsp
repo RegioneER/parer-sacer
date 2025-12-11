@@ -1,4 +1,4 @@
-<!--
+<%--
  Engineering Ingegneria Informatica S.p.A.
 
  Copyright (C) 2023 Regione Emilia-Romagna
@@ -13,7 +13,7 @@
  <p/>
  You should have received a copy of the GNU Affero General Public License along with this program.
  If not, see <https://www.gnu.org/licenses/>.
--->
+ --%>
 
 <%@ page import="it.eng.parer.slite.gen.form.UnitaDocumentarieForm" pageEncoding="UTF-8"%>
 <%@ include file="../include.jsp"%>
@@ -145,7 +145,8 @@
             <!-- piazzo i bottoni ricerca e pulisci -->
             <sl:pulsantiera>
                 <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.RICERCA_UD%>" colSpan="3" />
-                <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.PULISCI_UD%>" colSpan="3" />               
+                <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.PULISCI_UD%>" colSpan="3" />  
+                <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.DOWNLOAD_CONTENUTO%>" colSpan="3" />
             </sl:pulsantiera>
             <div><slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentariePerSerie.ID_CONTENUTO_SERIE%>" colSpan="1" /></div>
             <div><slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentariePerRichAnnulVers.ID_RICH_ANNUL_VERS%>" colSpan="1" /></div>

@@ -47,32 +47,32 @@ public class AroVLisMarcaCompTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ISSUER_CERTIF_TSA,
-		new ColumnDescriptor(COL_ISSUER_CERTIF_TSA, Types.VARCHAR, 1024, true));
-	map.put(COL_ID_MARCA_COMP,
-		new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_PG_MARCA, new ColumnDescriptor(COL_PG_MARCA, Types.DECIMAL, 22, true));
-	map.put(COL_TM_MARCA_TEMP,
-		new ColumnDescriptor(COL_TM_MARCA_TEMP, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_FORMATO_MARCA,
-		new ColumnDescriptor(COL_TI_FORMATO_MARCA, Types.VARCHAR, 20, true));
-	map.put(COL_TI_ESITO_CONTR_CONFORME,
-		new ColumnDescriptor(COL_TI_ESITO_CONTR_CONFORME, Types.VARCHAR, 30, true));
-	map.put(COL_TI_ESITO_VERIF_MARCA,
-		new ColumnDescriptor(COL_TI_ESITO_VERIF_MARCA, Types.VARCHAR, 20, true));
+        map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ISSUER_CERTIF_TSA,
+                new ColumnDescriptor(COL_ISSUER_CERTIF_TSA, Types.VARCHAR, 1024, true));
+        map.put(COL_ID_MARCA_COMP,
+                new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_PG_MARCA, new ColumnDescriptor(COL_PG_MARCA, Types.DECIMAL, 22, true));
+        map.put(COL_TM_MARCA_TEMP,
+                new ColumnDescriptor(COL_TM_MARCA_TEMP, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_FORMATO_MARCA,
+                new ColumnDescriptor(COL_TI_FORMATO_MARCA, Types.VARCHAR, 20, true));
+        map.put(COL_TI_ESITO_CONTR_CONFORME,
+                new ColumnDescriptor(COL_TI_ESITO_CONTR_CONFORME, Types.VARCHAR, 30, true));
+        map.put(COL_TI_ESITO_VERIF_MARCA,
+                new ColumnDescriptor(COL_TI_ESITO_VERIF_MARCA, Types.VARCHAR, 20, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

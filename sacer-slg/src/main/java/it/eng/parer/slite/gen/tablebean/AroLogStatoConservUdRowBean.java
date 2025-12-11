@@ -29,7 +29,7 @@ import java.sql.Timestamp;
  *
  */
 public class AroLogStatoConservUdRowBean extends BaseRow
-	implements BaseRowInterface, JEEBaseRowInterface {
+        implements BaseRowInterface, JEEBaseRowInterface {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -39,156 +39,156 @@ public class AroLogStatoConservUdRowBean extends BaseRow
     public static AroLogStatoConservUdTableDescriptor TABLE_DESCRIPTOR = new AroLogStatoConservUdTableDescriptor();
 
     public AroLogStatoConservUdRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdLogStatoConservUd() {
-	return getBigDecimal("id_log_stato_conserv_ud");
+        return getBigDecimal("id_log_stato_conserv_ud");
     }
 
     public void setIdLogStatoConservUd(BigDecimal id_log_stato_conserv_ud) {
-	setObject("id_log_stato_conserv_ud", id_log_stato_conserv_ud);
+        setObject("id_log_stato_conserv_ud", id_log_stato_conserv_ud);
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal id_unita_doc) {
-	setObject("id_unita_doc", id_unita_doc);
+        setObject("id_unita_doc", id_unita_doc);
     }
 
     public BigDecimal getIdSubStrut() {
-	return getBigDecimal("id_sub_strut");
+        return getBigDecimal("id_sub_strut");
     }
 
     public void setIdSubStrut(BigDecimal id_sub_strut) {
-	setObject("id_sub_strut", id_sub_strut);
+        setObject("id_sub_strut", id_sub_strut);
     }
 
     public Timestamp getDtStato() {
-	return getTimestamp("dt_stato");
+        return getTimestamp("dt_stato");
     }
 
     public void setDtStato(Timestamp dt_stato) {
-	setObject("dt_stato", dt_stato);
+        setObject("dt_stato", dt_stato);
     }
 
     public String getTiEvento() {
-	return getString("ti_evento");
+        return getString("ti_evento");
     }
 
     public void setTiEvento(String ti_evento) {
-	setObject("ti_evento", ti_evento);
+        setObject("ti_evento", ti_evento);
     }
 
     public String getTiMod() {
-	return getString("ti_mod");
+        return getString("ti_mod");
     }
 
     public void setTiMod(String ti_mod) {
-	setObject("ti_mod", ti_mod);
+        setObject("ti_mod", ti_mod);
     }
 
     public String getTiStatoConservazione() {
-	return getString("ti_stato_conservazione");
+        return getString("ti_stato_conservazione");
     }
 
     public void setTiStatoConservazione(String ti_stato_conservazione) {
-	setObject("ti_stato_conservazione", ti_stato_conservazione);
+        setObject("ti_stato_conservazione", ti_stato_conservazione);
     }
 
     public String getNmAgente() {
-	return getString("nm_agente");
+        return getString("nm_agente");
     }
 
     public void setNmAgente(String nm_agente) {
-	setObject("nm_agente", nm_agente);
+        setObject("nm_agente", nm_agente);
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return getBigDecimal("aa_key_unita_doc");
+        return getBigDecimal("aa_key_unita_doc");
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aa_key_unita_doc) {
-	setObject("aa_key_unita_doc", aa_key_unita_doc);
+        setObject("aa_key_unita_doc", aa_key_unita_doc);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroLogStatoConservUd entity = (AroLogStatoConservUd) obj;
-	this.setIdLogStatoConservUd(new BigDecimal(entity.getIdLogStatoConservUd()));
-	if (entity.getAroUnitaDoc() != null) {
-	    this.setIdUnitaDoc(new BigDecimal(entity.getAroUnitaDoc().getIdUnitaDoc()));
-	}
-	if (entity.getOrgSubStrut() != null) {
-	    this.setIdSubStrut(new BigDecimal(entity.getOrgSubStrut().getIdSubStrut()));
-	}
-	if (entity.getDtStato() != null) {
-	    this.setDtStato(new Timestamp(entity.getDtStato().getTime()));
-	}
-	this.setTiEvento(entity.getTiEvento());
-	this.setTiStatoConservazione(entity.getTiStatoConservazione());
-	this.setNmAgente(entity.getNmAgente());
-	this.setTiMod(entity.getTiMod());
-	this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
+        AroLogStatoConservUd entity = (AroLogStatoConservUd) obj;
+        this.setIdLogStatoConservUd(new BigDecimal(entity.getIdLogStatoConservUd()));
+        if (entity.getAroUnitaDoc() != null) {
+            this.setIdUnitaDoc(new BigDecimal(entity.getAroUnitaDoc().getIdUnitaDoc()));
+        }
+        if (entity.getOrgSubStrut() != null) {
+            this.setIdSubStrut(new BigDecimal(entity.getOrgSubStrut().getIdSubStrut()));
+        }
+        if (entity.getDtStato() != null) {
+            this.setDtStato(new Timestamp(entity.getDtStato().getTime()));
+        }
+        this.setTiEvento(entity.getTiEvento());
+        this.setTiStatoConservazione(entity.getTiStatoConservazione());
+        this.setNmAgente(entity.getNmAgente());
+        this.setTiMod(entity.getTiMod());
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
     }
 
     @Override
     public AroLogStatoConservUd rowBeanToEntity() {
-	AroLogStatoConservUd entity = new AroLogStatoConservUd();
-	if (this.getIdLogStatoConservUd() != null) {
-	    entity.setIdLogStatoConservUd(this.getIdLogStatoConservUd().longValue());
-	}
-	if (this.getIdUnitaDoc() != null) {
-	    if (entity.getAroUnitaDoc() == null) {
-		entity.setAroUnitaDoc(new AroUnitaDoc());
-	    }
-	    entity.getAroUnitaDoc().setIdUnitaDoc(this.getIdUnitaDoc().longValue());
-	}
-	if (this.getIdSubStrut() != null) {
-	    if (entity.getOrgSubStrut() == null) {
-		entity.setOrgSubStrut(new OrgSubStrut());
-	    }
-	    entity.getOrgSubStrut().setIdSubStrut(this.getIdSubStrut().longValue());
-	}
-	entity.setDtStato(this.getDtStato());
-	entity.setTiEvento(this.getTiEvento());
-	entity.setTiStatoConservazione(this.getTiStatoConservazione());
-	entity.setNmAgente(this.getNmAgente());
-	entity.setTiMod(this.getTiMod());
-	entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
-	return entity;
+        AroLogStatoConservUd entity = new AroLogStatoConservUd();
+        if (this.getIdLogStatoConservUd() != null) {
+            entity.setIdLogStatoConservUd(this.getIdLogStatoConservUd().longValue());
+        }
+        if (this.getIdUnitaDoc() != null) {
+            if (entity.getAroUnitaDoc() == null) {
+                entity.setAroUnitaDoc(new AroUnitaDoc());
+            }
+            entity.getAroUnitaDoc().setIdUnitaDoc(this.getIdUnitaDoc().longValue());
+        }
+        if (this.getIdSubStrut() != null) {
+            if (entity.getOrgSubStrut() == null) {
+                entity.setOrgSubStrut(new OrgSubStrut());
+            }
+            entity.getOrgSubStrut().setIdSubStrut(this.getIdSubStrut().longValue());
+        }
+        entity.setDtStato(this.getDtStato());
+        entity.setTiEvento(this.getTiEvento());
+        entity.setTiStatoConservazione(this.getTiStatoConservazione());
+        entity.setNmAgente(this.getNmAgente());
+        entity.setTiMod(this.getTiMod());
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

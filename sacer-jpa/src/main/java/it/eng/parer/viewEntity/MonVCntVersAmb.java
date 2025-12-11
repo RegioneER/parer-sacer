@@ -36,11 +36,11 @@ public class MonVCntVersAmb implements Serializable {
 
     @EmbeddedId
     public MonVCntVersAmbId getMonVCntVersAmbId() {
-	return monVCntVersAmbId;
+        return monVCntVersAmbId;
     }
 
     public void setMonVCntVersAmbId(MonVCntVersAmbId monVCntVersAmbId) {
-	this.monVCntVersAmbId = monVCntVersAmbId;
+        this.monVCntVersAmbId = monVCntVersAmbId;
     }
 
     public MonVCntVersAmb() {/* Hibernate */
@@ -48,11 +48,11 @@ public class MonVCntVersAmb implements Serializable {
 
     @Column(name = "NI_VERS")
     public BigDecimal getNiVers() {
-	return this.niVers;
+        return this.niVers;
     }
 
     public void setNiVers(BigDecimal niVers) {
-	this.niVers = niVers;
+        this.niVers = niVers;
     }
 
 }

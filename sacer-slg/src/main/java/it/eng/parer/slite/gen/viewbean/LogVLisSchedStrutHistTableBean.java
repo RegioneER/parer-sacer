@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class LogVLisSchedStrutHistTableBean
-	extends AbstractBaseTable<LogVLisSchedStrutHistRowBean> {
+        extends AbstractBaseTable<LogVLisSchedStrutHistRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class LogVLisSchedStrutHistTableBean
     public static LogVLisSchedStrutTableDescriptor TABLE_DESCRIPTOR = new LogVLisSchedStrutTableDescriptor();
 
     public LogVLisSchedStrutHistTableBean() {
-	super();
+        super();
     }
 
     protected LogVLisSchedStrutHistRowBean createRow() {
-	return new LogVLisSchedStrutHistRowBean();
+        return new LogVLisSchedStrutHistRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<LogVLisSchedStrutHistRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

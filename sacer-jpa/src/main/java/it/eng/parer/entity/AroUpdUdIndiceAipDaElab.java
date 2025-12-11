@@ -52,34 +52,34 @@ public class AroUpdUdIndiceAipDaElab implements Serializable {
     @Id
     @Column(name = "ID_UPD_UD_INDICE_AIP_DA_ELAB")
     @GenericGenerator(name = "SARO_UPD_UD_INDICE_AIP_DA_ELAB_ID_UPD_UD_INDICE_AIP_DA_ELAB_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_UPD_UD_INDICE_AIP_DA_ELAB"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_UPD_UD_INDICE_AIP_DA_ELAB"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_UPD_UD_INDICE_AIP_DA_ELAB_ID_UPD_UD_INDICE_AIP_DA_ELAB_GENERATOR")
     public Long getIdUpdUdIndiceAipDaElab() {
-	return this.idUpdUdIndiceAipDaElab;
+        return this.idUpdUdIndiceAipDaElab;
     }
 
     public void setIdUpdUdIndiceAipDaElab(Long idUpdUdIndiceAipDaElab) {
-	this.idUpdUdIndiceAipDaElab = idUpdUdIndiceAipDaElab;
+        this.idUpdUdIndiceAipDaElab = idUpdUdIndiceAipDaElab;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_INDICE_AIP_DA_ELAB")
     public AroIndiceAipUdDaElab getAroIndiceAipUdDaElab() {
-	return this.aroIndiceAipUdDaElab;
+        return this.aroIndiceAipUdDaElab;
     }
 
     public void setAroIndiceAipUdDaElab(AroIndiceAipUdDaElab aroIndiceAipUdDaElab) {
-	this.aroIndiceAipUdDaElab = aroIndiceAipUdDaElab;
+        this.aroIndiceAipUdDaElab = aroIndiceAipUdDaElab;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_UPD_UNITA_DOC")
     public AroUpdUnitaDoc getAroUpdUnitaDoc() {
-	return this.aroUpdUnitaDoc;
+        return this.aroUpdUnitaDoc;
     }
 
     public void setAroUpdUnitaDoc(AroUpdUnitaDoc aroUpdUnitaDoc) {
-	this.aroUpdUnitaDoc = aroUpdUnitaDoc;
+        this.aroUpdUnitaDoc = aroUpdUnitaDoc;
     }
 }

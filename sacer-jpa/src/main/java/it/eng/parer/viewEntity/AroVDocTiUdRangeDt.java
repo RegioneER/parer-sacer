@@ -34,11 +34,11 @@ public class AroVDocTiUdRangeDt implements Serializable {
 
     @EmbeddedId
     public AroVDocTiUdRangeDtId getAroVDocTiUdRangeDtId() {
-	return aroVDocTiUdRangeDtId;
+        return aroVDocTiUdRangeDtId;
     }
 
     public void setAroVDocTiUdRangeDtId(AroVDocTiUdRangeDtId aroVDocTiUdRangeDtId) {
-	this.aroVDocTiUdRangeDtId = aroVDocTiUdRangeDtId;
+        this.aroVDocTiUdRangeDtId = aroVDocTiUdRangeDtId;
     }
 
 }

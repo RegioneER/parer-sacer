@@ -37,19 +37,19 @@ public class AroVDocTiUdRangeDtTableBean extends AbstractBaseTable<AroVDocTiUdRa
     public static AroVDocTiUdRangeDtTableDescriptor TABLE_DESCRIPTOR = new AroVDocTiUdRangeDtTableDescriptor();
 
     public AroVDocTiUdRangeDtTableBean() {
-	super();
+        super();
     }
 
     protected AroVDocTiUdRangeDtRowBean createRow() {
-	return new AroVDocTiUdRangeDtRowBean();
+        return new AroVDocTiUdRangeDtRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVDocTiUdRangeDtRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

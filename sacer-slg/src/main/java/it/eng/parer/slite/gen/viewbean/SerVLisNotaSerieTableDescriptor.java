@@ -50,36 +50,36 @@ public class SerVLisNotaSerieTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_NOTA_VER_SERIE,
-		new ColumnDescriptor(COL_ID_NOTA_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_TIPO_NOTA_SERIE,
-		new ColumnDescriptor(COL_ID_TIPO_NOTA_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_DS_TIPO_NOTA_SERIE,
-		new ColumnDescriptor(COL_DS_TIPO_NOTA_SERIE, Types.VARCHAR, 269, true));
-	map.put(COL_CD_TIPO_NOTA_SERIE,
-		new ColumnDescriptor(COL_CD_TIPO_NOTA_SERIE, Types.VARCHAR, 100, true));
-	map.put(COL_NI_ORD, new ColumnDescriptor(COL_NI_ORD, Types.DECIMAL, 22, true));
-	map.put(COL_PG_NOTA_VER_SERIE,
-		new ColumnDescriptor(COL_PG_NOTA_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_DT_NOTA_VER_SERIE,
-		new ColumnDescriptor(COL_DT_NOTA_VER_SERIE, Types.TIMESTAMP, 7, true));
-	map.put(COL_DS_NOTA_VER_SERIE,
-		new ColumnDescriptor(COL_DS_NOTA_VER_SERIE, Types.VARCHAR, 1024, true));
-	map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
-	map.put(COL_NM_USERID, new ColumnDescriptor(COL_NM_USERID, Types.VARCHAR, 100, true));
+        map.put(COL_ID_NOTA_VER_SERIE,
+                new ColumnDescriptor(COL_ID_NOTA_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_TIPO_NOTA_SERIE,
+                new ColumnDescriptor(COL_ID_TIPO_NOTA_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_DS_TIPO_NOTA_SERIE,
+                new ColumnDescriptor(COL_DS_TIPO_NOTA_SERIE, Types.VARCHAR, 269, true));
+        map.put(COL_CD_TIPO_NOTA_SERIE,
+                new ColumnDescriptor(COL_CD_TIPO_NOTA_SERIE, Types.VARCHAR, 100, true));
+        map.put(COL_NI_ORD, new ColumnDescriptor(COL_NI_ORD, Types.DECIMAL, 22, true));
+        map.put(COL_PG_NOTA_VER_SERIE,
+                new ColumnDescriptor(COL_PG_NOTA_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_DT_NOTA_VER_SERIE,
+                new ColumnDescriptor(COL_DT_NOTA_VER_SERIE, Types.TIMESTAMP, 7, true));
+        map.put(COL_DS_NOTA_VER_SERIE,
+                new ColumnDescriptor(COL_DS_NOTA_VER_SERIE, Types.VARCHAR, 1024, true));
+        map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
+        map.put(COL_NM_USERID, new ColumnDescriptor(COL_NM_USERID, Types.VARCHAR, 100, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

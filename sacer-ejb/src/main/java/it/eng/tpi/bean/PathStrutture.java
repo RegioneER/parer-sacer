@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "PathStrutture")
 @XmlType(propOrder = {
-	"dsPath", "listaFileNoArk", "listaFileNoArkSecondario", "niFilePathArk",
-	"niFilePathArkSecondario" })
+        "dsPath", "listaFileNoArk", "listaFileNoArkSecondario", "niFilePathArk",
+        "niFilePathArkSecondario" })
 public class PathStrutture {
 
     protected String dsPath;
@@ -36,50 +36,50 @@ public class PathStrutture {
     protected BigDecimal niFilePathArkSecondario;
 
     public String getDsPath() {
-	return dsPath;
+        return dsPath;
     }
 
     public void setDsPath(String dsPath) {
-	this.dsPath = dsPath;
+        this.dsPath = dsPath;
     }
 
     @XmlElement(name = "FileNoArk")
     @XmlElementWrapper(name = "ListaFileNoArk")
     public List<FilePathNoArk> getListaFileNoArk() {
-	return listaFileNoArk;
+        return listaFileNoArk;
     }
 
     @XmlElement(name = "FileNoArkSecondario")
     @XmlElementWrapper(name = "ListaFileNoArkSecondario")
     public List<FilePathNoArk> getListaFileNoArkSecondario() {
-	return listaFileNoArkSecondario;
+        return listaFileNoArkSecondario;
     }
 
     /**
      * @return the niFilePathArk
      */
     public BigDecimal getNiFilePathArk() {
-	return niFilePathArk;
+        return niFilePathArk;
     }
 
     /**
      * @param niFilePathArk the niFilePathArk to set
      */
     public void setNiFilePathArk(BigDecimal niFilePathArk) {
-	this.niFilePathArk = niFilePathArk;
+        this.niFilePathArk = niFilePathArk;
     }
 
     /**
      * @return the niFilePathArkSecondario
      */
     public BigDecimal getNiFilePathArkSecondario() {
-	return niFilePathArkSecondario;
+        return niFilePathArkSecondario;
     }
 
     /**
      * @param niFilePathArkSecondario the niFilePathArkSecondario to set
      */
     public void setNiFilePathArkSecondario(BigDecimal niFilePathArkSecondario) {
-	this.niFilePathArkSecondario = niFilePathArkSecondario;
+        this.niFilePathArkSecondario = niFilePathArkSecondario;
     }
 }

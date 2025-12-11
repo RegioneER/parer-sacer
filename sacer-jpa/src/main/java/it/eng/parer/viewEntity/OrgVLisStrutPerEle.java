@@ -41,20 +41,20 @@ public class OrgVLisStrutPerEle implements Serializable {
     @Id
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "FL_PRESENZA_ELENCO_FISC", columnDefinition = "char(1)")
     public String getFlPresenzaElencoFisc() {
-	return this.flPresenzaElencoFisc;
+        return this.flPresenzaElencoFisc;
     }
 
     public void setFlPresenzaElencoFisc(String flPresenzaElencoFisc) {
-	this.flPresenzaElencoFisc = flPresenzaElencoFisc;
+        this.flPresenzaElencoFisc = flPresenzaElencoFisc;
     }
 
 }

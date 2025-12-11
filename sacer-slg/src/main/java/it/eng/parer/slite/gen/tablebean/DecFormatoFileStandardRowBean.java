@@ -36,152 +36,152 @@ public class DecFormatoFileStandardRowBean extends BaseRow implements JEEBaseRow
     public static DecFormatoFileStandardTableDescriptor TABLE_DESCRIPTOR = new DecFormatoFileStandardTableDescriptor();
 
     public DecFormatoFileStandardRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdFormatoFileStandard() {
-	return getBigDecimal("id_formato_file_standard");
+        return getBigDecimal("id_formato_file_standard");
     }
 
     public void setIdFormatoFileStandard(BigDecimal idFormatoFileStandard) {
-	setObject("id_formato_file_standard", idFormatoFileStandard);
+        setObject("id_formato_file_standard", idFormatoFileStandard);
     }
 
     public String getNmFormatoFileStandard() {
-	return getString("nm_formato_file_standard");
+        return getString("nm_formato_file_standard");
     }
 
     public void setNmFormatoFileStandard(String nmFormatoFileStandard) {
-	setObject("nm_formato_file_standard", nmFormatoFileStandard);
+        setObject("nm_formato_file_standard", nmFormatoFileStandard);
     }
 
     public String getDsFormatoFileStandard() {
-	return getString("ds_formato_file_standard");
+        return getString("ds_formato_file_standard");
     }
 
     public void setDsFormatoFileStandard(String dsFormatoFileStandard) {
-	setObject("ds_formato_file_standard", dsFormatoFileStandard);
+        setObject("ds_formato_file_standard", dsFormatoFileStandard);
     }
 
     public String getCdVersione() {
-	return getString("cd_versione");
+        return getString("cd_versione");
     }
 
     public void setCdVersione(String cdVersione) {
-	setObject("cd_versione", cdVersione);
+        setObject("cd_versione", cdVersione);
     }
 
     public String getDsCopyright() {
-	return getString("ds_copyright");
+        return getString("ds_copyright");
     }
 
     public void setDsCopyright(String dsCopyright) {
-	setObject("ds_copyright", dsCopyright);
+        setObject("ds_copyright", dsCopyright);
     }
 
     public String getNmMimetypeFile() {
-	return getString("nm_mimetype_file");
+        return getString("nm_mimetype_file");
     }
 
     public void setNmMimetypeFile(String nmMimetypeFile) {
-	setObject("nm_mimetype_file", nmMimetypeFile);
+        setObject("nm_mimetype_file", nmMimetypeFile);
     }
 
     public String getTiEsitoContrFormato() {
-	return getString("ti_esito_contr_formato");
+        return getString("ti_esito_contr_formato");
     }
 
     public void setTiEsitoContrFormato(String tiEsitoContrFormato) {
-	setObject("ti_esito_contr_formato", tiEsitoContrFormato);
+        setObject("ti_esito_contr_formato", tiEsitoContrFormato);
     }
 
     public String getFlFormatoConcat() {
-	return getString("fl_formato_concat");
+        return getString("fl_formato_concat");
     }
 
     public void setFlFormatoConcat(String flFormatoConcat) {
-	setObject("fl_formato_concat", flFormatoConcat);
+        setObject("fl_formato_concat", flFormatoConcat);
     }
 
     public String getNtIdoneita() {
-	return getString("nt_idoneita");
+        return getString("nt_idoneita");
     }
 
     public void setNtIdoneita(String ntIdoneita) {
-	setObject("nt_idoneita", ntIdoneita);
+        setObject("nt_idoneita", ntIdoneita);
     }
 
     public Date getDtValutazioneFormato() {
-	return (Date) getObject("dt_valutazione_formato");
+        return (Date) getObject("dt_valutazione_formato");
     }
 
     public void setDtValutazioneFormato(Date dtValutazioneFormato) {
-	setObject("dt_valutazione_formato", dtValutazioneFormato);
+        setObject("dt_valutazione_formato", dtValutazioneFormato);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecFormatoFileStandard entity = (DecFormatoFileStandard) obj;
+        DecFormatoFileStandard entity = (DecFormatoFileStandard) obj;
 
-	this.setIdFormatoFileStandard(entity.getIdFormatoFileStandard() == null ? null
-		: BigDecimal.valueOf(entity.getIdFormatoFileStandard()));
-	this.setNmFormatoFileStandard(entity.getNmFormatoFileStandard());
-	this.setDsFormatoFileStandard(entity.getDsFormatoFileStandard());
-	this.setCdVersione(entity.getCdVersione());
-	this.setDsCopyright(entity.getDsCopyright());
-	this.setNmMimetypeFile(entity.getNmMimetypeFile());
-	this.setTiEsitoContrFormato(entity.getTiEsitoContrFormato());
-	this.setFlFormatoConcat(entity.getFlFormatoConcat());
-	this.setNtIdoneita(entity.getNtIdoneita());
-	this.setDtValutazioneFormato(entity.getDtValutazioneFormato());
+        this.setIdFormatoFileStandard(entity.getIdFormatoFileStandard() == null ? null
+                : BigDecimal.valueOf(entity.getIdFormatoFileStandard()));
+        this.setNmFormatoFileStandard(entity.getNmFormatoFileStandard());
+        this.setDsFormatoFileStandard(entity.getDsFormatoFileStandard());
+        this.setCdVersione(entity.getCdVersione());
+        this.setDsCopyright(entity.getDsCopyright());
+        this.setNmMimetypeFile(entity.getNmMimetypeFile());
+        this.setTiEsitoContrFormato(entity.getTiEsitoContrFormato());
+        this.setFlFormatoConcat(entity.getFlFormatoConcat());
+        this.setNtIdoneita(entity.getNtIdoneita());
+        this.setDtValutazioneFormato(entity.getDtValutazioneFormato());
     }
 
     @Override
     public DecFormatoFileStandard rowBeanToEntity() {
-	DecFormatoFileStandard entity = new DecFormatoFileStandard();
-	if (this.getIdFormatoFileStandard() != null) {
-	    entity.setIdFormatoFileStandard(this.getIdFormatoFileStandard().longValue());
-	}
-	entity.setNmFormatoFileStandard(this.getNmFormatoFileStandard());
-	entity.setDsFormatoFileStandard(this.getDsFormatoFileStandard());
-	entity.setCdVersione(this.getCdVersione());
-	entity.setDsCopyright(this.getDsCopyright());
-	entity.setNmMimetypeFile(this.getNmMimetypeFile());
-	entity.setTiEsitoContrFormato(this.getTiEsitoContrFormato());
-	entity.setFlFormatoConcat(this.getFlFormatoConcat());
-	entity.setNtIdoneita(this.getNtIdoneita());
-	entity.setDtValutazioneFormato(this.getDtValutazioneFormato());
-	return entity;
+        DecFormatoFileStandard entity = new DecFormatoFileStandard();
+        if (this.getIdFormatoFileStandard() != null) {
+            entity.setIdFormatoFileStandard(this.getIdFormatoFileStandard().longValue());
+        }
+        entity.setNmFormatoFileStandard(this.getNmFormatoFileStandard());
+        entity.setDsFormatoFileStandard(this.getDsFormatoFileStandard());
+        entity.setCdVersione(this.getCdVersione());
+        entity.setDsCopyright(this.getDsCopyright());
+        entity.setNmMimetypeFile(this.getNmMimetypeFile());
+        entity.setTiEsitoContrFormato(this.getTiEsitoContrFormato());
+        entity.setFlFormatoConcat(this.getFlFormatoConcat());
+        entity.setNtIdoneita(this.getNtIdoneita());
+        entity.setDtValutazioneFormato(this.getDtValutazioneFormato());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

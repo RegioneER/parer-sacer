@@ -51,7 +51,7 @@ public class TipoDocumentoHelper extends GenericHelper {
      * @return l'oggetto DecTipoDoc o null se inesistente
      */
     public DecTipoDoc getDecTipoDocByName(String nmTipoDoc, BigDecimal idStrut) {
-	return getDecTipoDocByName(nmTipoDoc, idStrut.longValue());
+        return getDecTipoDocByName(nmTipoDoc, idStrut.longValue());
     }
 
     /**
@@ -63,15 +63,15 @@ public class TipoDocumentoHelper extends GenericHelper {
      * @return l'oggetto DecTipoDoc o null se inesistente
      */
     public DecTipoDoc getDecTipoDocByName(String nmTipoDoc, long idStrut) {
-	Query query = getEntityManager().createQuery(
-		"SELECT tipoDoc FROM DecTipoDoc tipoDoc WHERE UPPER(tipoDoc.nmTipoDoc) = :nmTipoDoc AND tipoDoc.orgStrut.idStrut = :idStrut");
-	query.setParameter("nmTipoDoc", nmTipoDoc.toUpperCase());
-	query.setParameter("idStrut", idStrut);
-	List<DecTipoDoc> list = query.getResultList();
-	if (list.isEmpty()) {
-	    return null;
-	}
-	return list.get(0);
+        Query query = getEntityManager().createQuery(
+                "SELECT tipoDoc FROM DecTipoDoc tipoDoc WHERE UPPER(tipoDoc.nmTipoDoc) = :nmTipoDoc AND tipoDoc.orgStrut.idStrut = :idStrut");
+        query.setParameter("nmTipoDoc", nmTipoDoc.toUpperCase());
+        query.setParameter("idStrut", idStrut);
+        List<DecTipoDoc> list = query.getResultList();
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
     }
 
     /**
@@ -84,9 +84,9 @@ public class TipoDocumentoHelper extends GenericHelper {
      * @return DecRegistroUnitaDocTableBean
      */
     public List<DecTipoDoc> getTipiDocAbilitati(long idUtente, BigDecimal idStruttura) {
-	List<BigDecimal> idStrutList = new ArrayList<>();
-	idStrutList.add(idStruttura);
-	return getTipiDocAbilitatiDaStrutturaList(idUtente, idStrutList, false);
+        List<BigDecimal> idStrutList = new ArrayList<>();
+        idStrutList.add(idStruttura);
+        return getTipiDocAbilitatiDaStrutturaList(idUtente, idStrutList, false);
     }
 
     /**
@@ -99,9 +99,9 @@ public class TipoDocumentoHelper extends GenericHelper {
      * @return DecRegistroUnitaDocTableBean bean DecRegistroUnitaDoc
      */
     public List<DecTipoDoc> getTipiDocPrincipaliAbilitati(long idUtente, BigDecimal idStruttura) {
-	List<BigDecimal> idStrutList = new ArrayList<>();
-	idStrutList.add(idStruttura);
-	return getTipiDocAbilitatiDaStrutturaList(idUtente, idStrutList, true);
+        List<BigDecimal> idStrutList = new ArrayList<>();
+        idStrutList.add(idStruttura);
+        return getTipiDocAbilitatiDaStrutturaList(idUtente, idStrutList, true);
     }
 
     /**
@@ -115,153 +115,153 @@ public class TipoDocumentoHelper extends GenericHelper {
      * @return lista oggetti di tipo {@link DecTipoDoc}
      */
     public List<DecTipoDoc> getTipiDocAbilitatiDaStrutturaList(long idUtente,
-	    List<BigDecimal> idStrutturaList, boolean docPrincipale) {
-	String queryStr = "SELECT u FROM DecTipoDoc u , IamAbilTipoDato iatd WHERE iatd.idTipoDatoApplic = u.idTipoDoc AND iatd.nmClasseTipoDato = 'TIPO_DOC' AND iatd.iamAbilOrganiz.iamUser.idUserIam = :idUtente AND u.orgStrut.idStrut IN (:idStrutturaList)"
-		+ (docPrincipale ? " AND u.flTipoDocPrincipale = '1'" : "");
-	Query query = getEntityManager().createQuery(queryStr);
-	query.setParameter("idUtente", idUtente);
-	query.setParameter("idStrutturaList", longListFrom(idStrutturaList));
-	return query.getResultList();
+            List<BigDecimal> idStrutturaList, boolean docPrincipale) {
+        String queryStr = "SELECT u FROM DecTipoDoc u , IamAbilTipoDato iatd WHERE iatd.idTipoDatoApplic = u.idTipoDoc AND iatd.nmClasseTipoDato = 'TIPO_DOC' AND iatd.iamAbilOrganiz.iamUser.idUserIam = :idUtente AND u.orgStrut.idStrut IN (:idStrutturaList)"
+                + (docPrincipale ? " AND u.flTipoDocPrincipale = '1'" : "");
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idUtente", idUtente);
+        query.setParameter("idStrutturaList", longListFrom(idStrutturaList));
+        return query.getResultList();
     }
 
     public Long countDecTipoDocPrincipalePerTipoUnitaDoc(long idTipoUnitaDoc, long idTipoDoc) {
-	Query query = getEntityManager().createQuery(
-		"Select COUNT(dtda.decTipoDoc) from DecTipoDocAmmesso dtda WHERE dtda.decTipoDoc.flTipoDocPrincipale='1' AND dtda.decTipoStrutUnitaDoc.decTipoUnitaDoc.idTipoUnitaDoc=:idTipoUnitaDoc AND dtda.decTipoDoc.idTipoDoc = :idTipoDoc");
-	query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
-	query.setParameter("idTipoDoc", idTipoDoc);
-	return (Long) query.getSingleResult();
+        Query query = getEntityManager().createQuery(
+                "Select COUNT(dtda.decTipoDoc) from DecTipoDocAmmesso dtda WHERE dtda.decTipoDoc.flTipoDocPrincipale='1' AND dtda.decTipoStrutUnitaDoc.decTipoUnitaDoc.idTipoUnitaDoc=:idTipoUnitaDoc AND dtda.decTipoDoc.idTipoDoc = :idTipoDoc");
+        query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+        query.setParameter("idTipoDoc", idTipoDoc);
+        return (Long) query.getSingleResult();
     }
 
     public List<DecTipoDoc> retrieveDecTipoDocList(BigDecimal idStrut, boolean flPrinc,
-	    Date dtSoppressione, boolean filterValid) {
-	StringBuilder queryStr = new StringBuilder("SELECT tipoDoc FROM DecTipoDoc tipoDoc ");
-	String whereClause = " WHERE ";
-	if (idStrut != null) {
-	    queryStr.append(whereClause).append("tipoDoc.orgStrut.idStrut = :idStrut ");
-	    whereClause = " AND ";
-	}
-	if (flPrinc) {
-	    queryStr.append(whereClause).append("tipoDoc.flTipoDocPrincipale = '1' ");
-	    whereClause = " AND ";
-	}
-	if (dtSoppressione != null) {
-	    queryStr.append(whereClause).append("tipoDoc.dtSoppres > :dtSoppressione ");
-	    whereClause = " AND ";
-	}
-	if (filterValid) {
-	    queryStr.append(whereClause).append(
-		    " tipoDoc.dtIstituz <= :filterDate AND tipoDoc.dtSoppres >= :filterDate ");
-	}
+            Date dtSoppressione, boolean filterValid) {
+        StringBuilder queryStr = new StringBuilder("SELECT tipoDoc FROM DecTipoDoc tipoDoc ");
+        String whereClause = " WHERE ";
+        if (idStrut != null) {
+            queryStr.append(whereClause).append("tipoDoc.orgStrut.idStrut = :idStrut ");
+            whereClause = " AND ";
+        }
+        if (flPrinc) {
+            queryStr.append(whereClause).append("tipoDoc.flTipoDocPrincipale = '1' ");
+            whereClause = " AND ";
+        }
+        if (dtSoppressione != null) {
+            queryStr.append(whereClause).append("tipoDoc.dtSoppres > :dtSoppressione ");
+            whereClause = " AND ";
+        }
+        if (filterValid) {
+            queryStr.append(whereClause).append(
+                    " tipoDoc.dtIstituz <= :filterDate AND tipoDoc.dtSoppres >= :filterDate ");
+        }
 
-	queryStr.append("ORDER BY tipoDoc.nmTipoDoc ");
-	Query query = getEntityManager().createQuery(queryStr.toString());
+        queryStr.append("ORDER BY tipoDoc.nmTipoDoc ");
+        Query query = getEntityManager().createQuery(queryStr.toString());
 
-	if (idStrut != null) {
-	    query.setParameter("idStrut", longFromBigDecimal(idStrut));
-	}
+        if (idStrut != null) {
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        }
 
-	if (dtSoppressione != null) {
-	    query.setParameter("dtSoppressione", dtSoppressione);
-	}
+        if (dtSoppressione != null) {
+            query.setParameter("dtSoppressione", dtSoppressione);
+        }
 
-	if (filterValid) {
-	    Date now = Calendar.getInstance().getTime();
-	    query.setParameter("filterDate", now);
-	}
+        if (filterValid) {
+            Date now = Calendar.getInstance().getTime();
+            query.setParameter("filterDate", now);
+        }
 
-	return query.getResultList();
+        return query.getResultList();
     }
 
     public List<DecTipoStrutDocAmmesso> getDecTipoStrutDocAmmessoListByIdTipoDoc(Long idTipoDoc) {
-	String queryStr = "SELECT u FROM DecTipoStrutDocAmmesso u "
-		+ "WHERE u.decTipoDoc.idTipoDoc = :idTipoDoc ";
-	Query query = getEntityManager().createQuery(queryStr);
-	query.setParameter("idTipoDoc", idTipoDoc);
-	return query.getResultList();
+        String queryStr = "SELECT u FROM DecTipoStrutDocAmmesso u "
+                + "WHERE u.decTipoDoc.idTipoDoc = :idTipoDoc ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idTipoDoc", idTipoDoc);
+        return query.getResultList();
     }
 
     public List<DecTipoStrutDocAmmesso> getDecTipoStrutDocAmmessoListByIdTipoStrutDoc(
-	    Long idTipoStrutDoc) {
-	String queryStr = "SELECT u FROM DecTipoStrutDocAmmesso u "
-		+ "WHERE u.decTipoStrutDoc.idTipoStrutDoc = :idTipoStrutDoc ";
-	Query query = getEntityManager().createQuery(queryStr);
-	query.setParameter("idTipoStrutDoc", idTipoStrutDoc);
-	return query.getResultList();
+            Long idTipoStrutDoc) {
+        String queryStr = "SELECT u FROM DecTipoStrutDocAmmesso u "
+                + "WHERE u.decTipoStrutDoc.idTipoStrutDoc = :idTipoStrutDoc ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idTipoStrutDoc", idTipoStrutDoc);
+        return query.getResultList();
     }
 
     public List<DecTipoStrutDoc> getDecTipoStrutDocListByIdStrut(Long idStrut, Date data) {
-	String queryStr = "SELECT u FROM DecTipoStrutDoc u "
-		+ "WHERE u.orgStrut.idStrut = :idStrut " + "AND u.dtSoppres > :data ";
-	Query query = getEntityManager().createQuery(queryStr);
-	query.setParameter("idStrut", idStrut);
-	query.setParameter("data", data);
-	return query.getResultList();
+        String queryStr = "SELECT u FROM DecTipoStrutDoc u "
+                + "WHERE u.orgStrut.idStrut = :idStrut " + "AND u.dtSoppres > :data ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idStrut", idStrut);
+        query.setParameter("data", data);
+        return query.getResultList();
     }
 
     public DecTipoStrutDocAmmesso getDecTipoStrutDocAmmessoByName(BigDecimal idStrutCorrente,
-	    String nmTipoStrutDoc, String nmTipoDoc) {
-	String queryStr = "SELECT u FROM DecTipoStrutDocAmmesso u "
-		+ "WHERE u.decTipoDoc.nmTipoDoc = :nmTipoDoc "
-		+ "AND u.decTipoDoc.orgStrut.idStrut = :idStrutCorrente "
-		+ "AND u.decTipoStrutDoc.nmTipoStrutDoc = :nmTipoStrutDoc "
-		+ "AND u.decTipoStrutDoc.orgStrut.idStrut = :idStrutCorrente ";
+            String nmTipoStrutDoc, String nmTipoDoc) {
+        String queryStr = "SELECT u FROM DecTipoStrutDocAmmesso u "
+                + "WHERE u.decTipoDoc.nmTipoDoc = :nmTipoDoc "
+                + "AND u.decTipoDoc.orgStrut.idStrut = :idStrutCorrente "
+                + "AND u.decTipoStrutDoc.nmTipoStrutDoc = :nmTipoStrutDoc "
+                + "AND u.decTipoStrutDoc.orgStrut.idStrut = :idStrutCorrente ";
 
-	Query query = getEntityManager().createQuery(queryStr);
+        Query query = getEntityManager().createQuery(queryStr);
 
-	query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
-	query.setParameter("nmTipoStrutDoc", nmTipoStrutDoc);
-	query.setParameter("nmTipoDoc", nmTipoDoc);
+        query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
+        query.setParameter("nmTipoStrutDoc", nmTipoStrutDoc);
+        query.setParameter("nmTipoDoc", nmTipoDoc);
 
-	List<DecTipoStrutDocAmmesso> list = query.getResultList();
+        List<DecTipoStrutDocAmmesso> list = query.getResultList();
 
-	if (list.isEmpty()) {
-	    return null;
-	}
+        if (list.isEmpty()) {
+            return null;
+        }
 
-	return list.get(0);
+        return list.get(0);
     }
 
     public DecTipoStrutDocAmmesso getDecTipoStrutDocAmmessoByParentId(Long idTipoDoc,
-	    Long idTipoStrutDoc) {
+            Long idTipoStrutDoc) {
 
-	String queryStr = "SELECT u FROM DecTipoStrutDocAmmesso u "
-		+ "WHERE u.decTipoDoc.idTipoDoc = :idTipoDoc "
-		+ "AND u.decTipoStrutDoc.idTipoStrutDoc = :idTipoStrutDoc ";
+        String queryStr = "SELECT u FROM DecTipoStrutDocAmmesso u "
+                + "WHERE u.decTipoDoc.idTipoDoc = :idTipoDoc "
+                + "AND u.decTipoStrutDoc.idTipoStrutDoc = :idTipoStrutDoc ";
 
-	Query query = getEntityManager().createQuery(queryStr);
+        Query query = getEntityManager().createQuery(queryStr);
 
-	query.setParameter("idTipoDoc", idTipoDoc);
-	query.setParameter("idTipoStrutDoc", idTipoStrutDoc);
+        query.setParameter("idTipoDoc", idTipoDoc);
+        query.setParameter("idTipoStrutDoc", idTipoStrutDoc);
 
-	List<DecTipoStrutDocAmmesso> list = query.getResultList();
+        List<DecTipoStrutDocAmmesso> list = query.getResultList();
 
-	if (list.isEmpty()) {
-	    return null;
-	}
+        if (list.isEmpty()) {
+            return null;
+        }
 
-	return list.get(0);
+        return list.get(0);
     }
 
     public DecTipoStrutUdXsd getDecTipoStrutUdXsdByName(BigDecimal idStrutCorrente,
-	    String nmTipoUnitaDoc, String nmTipoStrutUnitaDoc) {
-	String queryStr = "SELECT u FROM DecTipoStrutUdXsd u "
-		+ "WHERE u.decTipoStrutUnitaDoc.nmTipoStrutUnitaDoc = :nmTipoStrutUnitaDoc "
-		+ "AND u.decTipoStrutUnitaDoc.decTipoUnitaDoc.orgStrut.idStrut = :idStrutCorrente "
-		+ "AND u.decTipoStrutUnitaDoc.decTipoUnitaDoc.nmTipoUnitaDoc = :nmTipoUnitaDoc ";
+            String nmTipoUnitaDoc, String nmTipoStrutUnitaDoc) {
+        String queryStr = "SELECT u FROM DecTipoStrutUdXsd u "
+                + "WHERE u.decTipoStrutUnitaDoc.nmTipoStrutUnitaDoc = :nmTipoStrutUnitaDoc "
+                + "AND u.decTipoStrutUnitaDoc.decTipoUnitaDoc.orgStrut.idStrut = :idStrutCorrente "
+                + "AND u.decTipoStrutUnitaDoc.decTipoUnitaDoc.nmTipoUnitaDoc = :nmTipoUnitaDoc ";
 
-	Query query = getEntityManager().createQuery(queryStr);
+        Query query = getEntityManager().createQuery(queryStr);
 
-	query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
-	query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
-	query.setParameter("nmTipoStrutUnitaDoc", nmTipoStrutUnitaDoc);
+        query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
+        query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
+        query.setParameter("nmTipoStrutUnitaDoc", nmTipoStrutUnitaDoc);
 
-	List<DecTipoStrutUdXsd> list = query.getResultList();
+        List<DecTipoStrutUdXsd> list = query.getResultList();
 
-	if (list.isEmpty()) {
-	    return null;
-	}
+        if (list.isEmpty()) {
+            return null;
+        }
 
-	return list.get(0);
+        return list.get(0);
     }
 
 }

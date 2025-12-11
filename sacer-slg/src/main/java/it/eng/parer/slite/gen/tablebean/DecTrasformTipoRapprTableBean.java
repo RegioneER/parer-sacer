@@ -33,19 +33,19 @@ public class DecTrasformTipoRapprTableBean extends AbstractBaseTable<DecTrasform
     public static DecTrasformTipoRapprTableDescriptor TABLE_DESCRIPTOR = new DecTrasformTipoRapprTableDescriptor();
 
     public DecTrasformTipoRapprTableBean() {
-	super();
+        super();
     }
 
     protected DecTrasformTipoRapprRowBean createRow() {
-	return new DecTrasformTipoRapprRowBean();
+        return new DecTrasformTipoRapprRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecTrasformTipoRapprRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

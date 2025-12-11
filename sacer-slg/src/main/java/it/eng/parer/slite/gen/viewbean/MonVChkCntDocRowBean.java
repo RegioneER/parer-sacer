@@ -38,336 +38,336 @@ public class MonVChkCntDocRowBean extends BaseRow implements JEEBaseRowInterface
     public static MonVChkCntDocTableDescriptor TABLE_DESCRIPTOR = new MonVChkCntDocTableDescriptor();
 
     public MonVChkCntDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public String getFlDocCorr() {
-	return getString("fl_doc_corr");
+        return getString("fl_doc_corr");
     }
 
     public void setFlDocCorr(String flDocCorr) {
-	setObject("fl_doc_corr", flDocCorr);
+        setObject("fl_doc_corr", flDocCorr);
     }
 
     public String getFlDoc30gg() {
-	return getString("fl_doc_30gg");
+        return getString("fl_doc_30gg");
     }
 
     public void setFlDoc30gg(String fl_doc_30gg) {
-	setObject("fl_doc_30gg", fl_doc_30gg);
+        setObject("fl_doc_30gg", fl_doc_30gg);
     }
 
     public String getFlDocAttesaMemCorr() {
-	return getString("fl_doc_attesa_mem_corr");
+        return getString("fl_doc_attesa_mem_corr");
     }
 
     public void setFlDocAttesaMemCorr(String flDocAttesaMemCorr) {
-	setObject("fl_doc_attesa_mem_corr", flDocAttesaMemCorr);
+        setObject("fl_doc_attesa_mem_corr", flDocAttesaMemCorr);
     }
 
     public String getFlDocAttesaMem30gg() {
-	return getString("fl_doc_attesa_mem_30gg");
+        return getString("fl_doc_attesa_mem_30gg");
     }
 
     public void setFlDocAttesaMem30gg(String fl_doc_attesa_mem_30gg) {
-	setObject("fl_doc_attesa_mem_30gg", fl_doc_attesa_mem_30gg);
+        setObject("fl_doc_attesa_mem_30gg", fl_doc_attesa_mem_30gg);
     }
 
     public String getFlDocAttesaSchedCorr() {
-	return getString("fl_doc_attesa_sched_corr");
+        return getString("fl_doc_attesa_sched_corr");
     }
 
     public void setFlDocAttesaSchedCorr(String flDocAttesaSchedCorr) {
-	setObject("fl_doc_attesa_sched_corr", flDocAttesaSchedCorr);
+        setObject("fl_doc_attesa_sched_corr", flDocAttesaSchedCorr);
     }
 
     public String getFlDocAttesaSched30gg() {
-	return getString("fl_doc_attesa_sched_30gg");
+        return getString("fl_doc_attesa_sched_30gg");
     }
 
     public void setFlDocAttesaSched30gg(String fl_doc_attesa_sched_30gg) {
-	setObject("fl_doc_attesa_sched_30gg", fl_doc_attesa_sched_30gg);
+        setObject("fl_doc_attesa_sched_30gg", fl_doc_attesa_sched_30gg);
     }
 
     public String getFlDocNoselSchedCorr() {
-	return getString("fl_doc_nosel_sched_corr");
+        return getString("fl_doc_nosel_sched_corr");
     }
 
     public void setFlDocNoselSchedCorr(String flDocNoselSchedCorr) {
-	setObject("fl_doc_nosel_sched_corr", flDocNoselSchedCorr);
+        setObject("fl_doc_nosel_sched_corr", flDocNoselSchedCorr);
     }
 
     public String getFlDocNoselSched30gg() {
-	return getString("fl_doc_nosel_sched_30gg");
+        return getString("fl_doc_nosel_sched_30gg");
     }
 
     public void setFlDocNoselSched30gg(String fl_doc_nosel_sched_30gg) {
-	setObject("fl_doc_nosel_sched_30gg", fl_doc_nosel_sched_30gg);
+        setObject("fl_doc_nosel_sched_30gg", fl_doc_nosel_sched_30gg);
     }
 
     public BigDecimal getNiDocCorr() {
-	return getBigDecimal("ni_doc_corr");
+        return getBigDecimal("ni_doc_corr");
     }
 
     public void setNiDocCorr(BigDecimal niDocCorr) {
-	setObject("ni_doc_corr", niDocCorr);
+        setObject("ni_doc_corr", niDocCorr);
     }
 
     public BigDecimal getNiDoc30gg() {
-	return getBigDecimal("ni_doc_30gg");
+        return getBigDecimal("ni_doc_30gg");
     }
 
     public void setNiDoc30gg(BigDecimal ni_doc_30gg) {
-	setObject("ni_doc_30gg", ni_doc_30gg);
+        setObject("ni_doc_30gg", ni_doc_30gg);
     }
 
     public BigDecimal getNiDocAttesaMemCorr() {
-	return getBigDecimal("ni_doc_attesa_mem_corr");
+        return getBigDecimal("ni_doc_attesa_mem_corr");
     }
 
     public void setNiDocAttesaMemCorr(BigDecimal niDocAttesaMemCorr) {
-	setObject("ni_doc_attesa_mem_corr", niDocAttesaMemCorr);
+        setObject("ni_doc_attesa_mem_corr", niDocAttesaMemCorr);
     }
 
     public BigDecimal getNiDocAttesaMem30gg() {
-	return getBigDecimal("ni_doc_attesa_mem_30gg");
+        return getBigDecimal("ni_doc_attesa_mem_30gg");
     }
 
     public void setNiDocAttesaMem30gg(BigDecimal ni_doc_attesa_mem_30gg) {
-	setObject("ni_doc_attesa_mem_30gg", ni_doc_attesa_mem_30gg);
+        setObject("ni_doc_attesa_mem_30gg", ni_doc_attesa_mem_30gg);
     }
 
     public BigDecimal getNiDocAttesaSchedCorr() {
-	return getBigDecimal("ni_doc_attesa_sched_corr");
+        return getBigDecimal("ni_doc_attesa_sched_corr");
     }
 
     public void setNiDocAttesaSchedCorr(BigDecimal niDocAttesaSchedCorr) {
-	setObject("ni_doc_attesa_sched_corr", niDocAttesaSchedCorr);
+        setObject("ni_doc_attesa_sched_corr", niDocAttesaSchedCorr);
     }
 
     public BigDecimal getNiDocAttesaSched30gg() {
-	return getBigDecimal("ni_doc_attesa_sched_30gg");
+        return getBigDecimal("ni_doc_attesa_sched_30gg");
     }
 
     public void setNiDocAttesaSched30gg(BigDecimal ni_doc_attesa_sched_30gg) {
-	setObject("ni_doc_attesa_sched_30gg", ni_doc_attesa_sched_30gg);
+        setObject("ni_doc_attesa_sched_30gg", ni_doc_attesa_sched_30gg);
     }
 
     public BigDecimal getNiDocNoselSchedCorr() {
-	return getBigDecimal("ni_doc_nosel_sched_corr");
+        return getBigDecimal("ni_doc_nosel_sched_corr");
     }
 
     public void setNiDocNoselSchedCorr(BigDecimal niDocNoselSchedCorr) {
-	setObject("ni_doc_nosel_sched_corr", niDocNoselSchedCorr);
+        setObject("ni_doc_nosel_sched_corr", niDocNoselSchedCorr);
     }
 
     public BigDecimal getNiDocNoselSched30gg() {
-	return getBigDecimal("ni_doc_nosel_sched_30gg");
+        return getBigDecimal("ni_doc_nosel_sched_30gg");
     }
 
     public void setNiDocNoselSched30gg(BigDecimal ni_doc_nosel_sched_30gg) {
-	setObject("ni_doc_nosel_sched_30gg", ni_doc_nosel_sched_30gg);
+        setObject("ni_doc_nosel_sched_30gg", ni_doc_nosel_sched_30gg);
     }
 
     public void resetCounters() {
-	this.setNiDocCorr(BigDecimal.ZERO);
-	this.setNiDoc30gg(BigDecimal.ZERO);
-	this.setNiDocAttesaMemCorr(BigDecimal.ZERO);
-	this.setNiDocAttesaMem30gg(BigDecimal.ZERO);
-	this.setNiDocAttesaSchedCorr(BigDecimal.ZERO);
-	this.setNiDocAttesaSched30gg(BigDecimal.ZERO);
-	this.setNiDocNoselSchedCorr(BigDecimal.ZERO);
-	this.setNiDocNoselSched30gg(BigDecimal.ZERO);
+        this.setNiDocCorr(BigDecimal.ZERO);
+        this.setNiDoc30gg(BigDecimal.ZERO);
+        this.setNiDocAttesaMemCorr(BigDecimal.ZERO);
+        this.setNiDocAttesaMem30gg(BigDecimal.ZERO);
+        this.setNiDocAttesaSchedCorr(BigDecimal.ZERO);
+        this.setNiDocAttesaSched30gg(BigDecimal.ZERO);
+        this.setNiDocNoselSchedCorr(BigDecimal.ZERO);
+        this.setNiDocNoselSched30gg(BigDecimal.ZERO);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	MonVChkDoc entity;
-	if (obj instanceof MonVChkDocTipoUd) {
-	    entity = new MonVChkDoc((MonVChkDocTipoUd) obj);
-	} else if (obj instanceof MonVChkDocStrut) {
-	    entity = new MonVChkDoc((MonVChkDocStrut) obj);
-	} else if (obj instanceof MonVChkDocEnte) {
-	    entity = new MonVChkDoc((MonVChkDocEnte) obj);
-	} else if (obj instanceof MonVChkDocAmb) {
-	    entity = new MonVChkDoc((MonVChkDocAmb) obj);
-	} else {
-	    throw new IllegalArgumentException("Errore inaspettato nel casting dell'entity");
-	}
-	this.setFlDocCorr(entity.getFlDocCorr());
-	this.setFlDoc30gg(entity.getFlDoc30gg());
-	this.setFlDocAttesaMemCorr(entity.getFlDocAttesaMemCorr());
-	this.setFlDocAttesaMem30gg(entity.getFlDocAttesaMem30gg());
-	this.setFlDocAttesaSchedCorr(entity.getFlDocAttesaSchedCorr());
-	this.setFlDocAttesaSched30gg(entity.getFlDocAttesaSched30gg());
-	this.setFlDocNoselSchedCorr(entity.getFlDocNoselSchedCorr());
-	this.setFlDocNoselSched30gg(entity.getFlDocNoselSched30gg());
+        MonVChkDoc entity;
+        if (obj instanceof MonVChkDocTipoUd) {
+            entity = new MonVChkDoc((MonVChkDocTipoUd) obj);
+        } else if (obj instanceof MonVChkDocStrut) {
+            entity = new MonVChkDoc((MonVChkDocStrut) obj);
+        } else if (obj instanceof MonVChkDocEnte) {
+            entity = new MonVChkDoc((MonVChkDocEnte) obj);
+        } else if (obj instanceof MonVChkDocAmb) {
+            entity = new MonVChkDoc((MonVChkDocAmb) obj);
+        } else {
+            throw new IllegalArgumentException("Errore inaspettato nel casting dell'entity");
+        }
+        this.setFlDocCorr(entity.getFlDocCorr());
+        this.setFlDoc30gg(entity.getFlDoc30gg());
+        this.setFlDocAttesaMemCorr(entity.getFlDocAttesaMemCorr());
+        this.setFlDocAttesaMem30gg(entity.getFlDocAttesaMem30gg());
+        this.setFlDocAttesaSchedCorr(entity.getFlDocAttesaSchedCorr());
+        this.setFlDocAttesaSched30gg(entity.getFlDocAttesaSched30gg());
+        this.setFlDocNoselSchedCorr(entity.getFlDocNoselSchedCorr());
+        this.setFlDocNoselSched30gg(entity.getFlDocNoselSched30gg());
     }
 
     @Override
     public MonVChkDoc rowBeanToEntity() {
-	MonVChkDoc entity = new MonVChkDoc();
-	entity.setFlDocCorr(this.getFlDocCorr());
-	entity.setFlDoc30gg(this.getFlDoc30gg());
-	entity.setFlDocAttesaMemCorr(this.getFlDocAttesaMemCorr());
-	entity.setFlDocAttesaMem30gg(this.getFlDocAttesaMem30gg());
-	entity.setFlDocAttesaSchedCorr(this.getFlDocAttesaSchedCorr());
-	entity.setFlDocAttesaSched30gg(this.getFlDocAttesaSched30gg());
-	entity.setFlDocNoselSchedCorr(this.getFlDocNoselSchedCorr());
-	entity.setFlDocNoselSched30gg(this.getFlDocNoselSched30gg());
-	return entity;
+        MonVChkDoc entity = new MonVChkDoc();
+        entity.setFlDocCorr(this.getFlDocCorr());
+        entity.setFlDoc30gg(this.getFlDoc30gg());
+        entity.setFlDocAttesaMemCorr(this.getFlDocAttesaMemCorr());
+        entity.setFlDocAttesaMem30gg(this.getFlDocAttesaMem30gg());
+        entity.setFlDocAttesaSchedCorr(this.getFlDocAttesaSchedCorr());
+        entity.setFlDocAttesaSched30gg(this.getFlDocAttesaSched30gg());
+        entity.setFlDocNoselSchedCorr(this.getFlDocNoselSchedCorr());
+        entity.setFlDocNoselSched30gg(this.getFlDocNoselSched30gg());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
     public class MonVChkDoc {
 
-	private String flDoc30gg;
-	private String flDocAttesaMem30gg;
-	private String flDocAttesaMemCorr;
-	private String flDocAttesaSched30gg;
-	private String flDocAttesaSchedCorr;
-	private String flDocCorr;
-	private String flDocNoselSched30gg;
-	private String flDocNoselSchedCorr;
+        private String flDoc30gg;
+        private String flDocAttesaMem30gg;
+        private String flDocAttesaMemCorr;
+        private String flDocAttesaSched30gg;
+        private String flDocAttesaSchedCorr;
+        private String flDocCorr;
+        private String flDocNoselSched30gg;
+        private String flDocNoselSchedCorr;
 
-	public MonVChkDoc() {
-	}
+        public MonVChkDoc() {
+        }
 
-	public MonVChkDoc(MonVChkDocTipoUd entity) {
-	    this.flDocCorr = entity.getFlDocCorr();
-	    this.flDoc30gg = entity.getFlDoc30gg();
-	    this.flDocAttesaMemCorr = entity.getFlDocAttesaMemCorr();
-	    this.flDocAttesaMem30gg = entity.getFlDocAttesaMem30gg();
-	    this.flDocAttesaSchedCorr = entity.getFlDocAttesaSchedCorr();
-	    this.flDocAttesaSched30gg = entity.getFlDocAttesaSched30gg();
-	    this.flDocNoselSchedCorr = entity.getFlDocNoselSchedCorr();
-	    this.flDocNoselSched30gg = entity.getFlDocNoselSched30gg();
-	}
+        public MonVChkDoc(MonVChkDocTipoUd entity) {
+            this.flDocCorr = entity.getFlDocCorr();
+            this.flDoc30gg = entity.getFlDoc30gg();
+            this.flDocAttesaMemCorr = entity.getFlDocAttesaMemCorr();
+            this.flDocAttesaMem30gg = entity.getFlDocAttesaMem30gg();
+            this.flDocAttesaSchedCorr = entity.getFlDocAttesaSchedCorr();
+            this.flDocAttesaSched30gg = entity.getFlDocAttesaSched30gg();
+            this.flDocNoselSchedCorr = entity.getFlDocNoselSchedCorr();
+            this.flDocNoselSched30gg = entity.getFlDocNoselSched30gg();
+        }
 
-	public MonVChkDoc(MonVChkDocStrut entity) {
-	    this.flDocCorr = entity.getFlDocCorr();
-	    this.flDoc30gg = entity.getFlDoc30gg();
-	    this.flDocAttesaMemCorr = entity.getFlDocAttesaMemCorr();
-	    this.flDocAttesaMem30gg = entity.getFlDocAttesaMem30gg();
-	    this.flDocAttesaSchedCorr = entity.getFlDocAttesaSchedCorr();
-	    this.flDocAttesaSched30gg = entity.getFlDocAttesaSched30gg();
-	    this.flDocNoselSchedCorr = entity.getFlDocNoselSchedCorr();
-	    this.flDocNoselSched30gg = entity.getFlDocNoselSched30gg();
-	}
+        public MonVChkDoc(MonVChkDocStrut entity) {
+            this.flDocCorr = entity.getFlDocCorr();
+            this.flDoc30gg = entity.getFlDoc30gg();
+            this.flDocAttesaMemCorr = entity.getFlDocAttesaMemCorr();
+            this.flDocAttesaMem30gg = entity.getFlDocAttesaMem30gg();
+            this.flDocAttesaSchedCorr = entity.getFlDocAttesaSchedCorr();
+            this.flDocAttesaSched30gg = entity.getFlDocAttesaSched30gg();
+            this.flDocNoselSchedCorr = entity.getFlDocNoselSchedCorr();
+            this.flDocNoselSched30gg = entity.getFlDocNoselSched30gg();
+        }
 
-	public MonVChkDoc(MonVChkDocEnte entity) {
-	    this.flDocCorr = entity.getFlDocCorr();
-	    this.flDoc30gg = entity.getFlDoc30gg();
-	    this.flDocAttesaMemCorr = entity.getFlDocAttesaMemCorr();
-	    this.flDocAttesaMem30gg = entity.getFlDocAttesaMem30gg();
-	    this.flDocAttesaSchedCorr = entity.getFlDocAttesaSchedCorr();
-	    this.flDocAttesaSched30gg = entity.getFlDocAttesaSched30gg();
-	    this.flDocNoselSchedCorr = entity.getFlDocNoselSchedCorr();
-	    this.flDocNoselSched30gg = entity.getFlDocNoselSched30gg();
-	}
+        public MonVChkDoc(MonVChkDocEnte entity) {
+            this.flDocCorr = entity.getFlDocCorr();
+            this.flDoc30gg = entity.getFlDoc30gg();
+            this.flDocAttesaMemCorr = entity.getFlDocAttesaMemCorr();
+            this.flDocAttesaMem30gg = entity.getFlDocAttesaMem30gg();
+            this.flDocAttesaSchedCorr = entity.getFlDocAttesaSchedCorr();
+            this.flDocAttesaSched30gg = entity.getFlDocAttesaSched30gg();
+            this.flDocNoselSchedCorr = entity.getFlDocNoselSchedCorr();
+            this.flDocNoselSched30gg = entity.getFlDocNoselSched30gg();
+        }
 
-	public MonVChkDoc(MonVChkDocAmb entity) {
-	    this.flDocCorr = entity.getFlDocCorr();
-	    this.flDoc30gg = entity.getFlDoc30gg();
-	    this.flDocAttesaMemCorr = entity.getFlDocAttesaMemCorr();
-	    this.flDocAttesaMem30gg = entity.getFlDocAttesaMem30gg();
-	    this.flDocAttesaSchedCorr = entity.getFlDocAttesaSchedCorr();
-	    this.flDocAttesaSched30gg = entity.getFlDocAttesaSched30gg();
-	    this.flDocNoselSchedCorr = entity.getFlDocNoselSchedCorr();
-	    this.flDocNoselSched30gg = entity.getFlDocNoselSched30gg();
-	}
+        public MonVChkDoc(MonVChkDocAmb entity) {
+            this.flDocCorr = entity.getFlDocCorr();
+            this.flDoc30gg = entity.getFlDoc30gg();
+            this.flDocAttesaMemCorr = entity.getFlDocAttesaMemCorr();
+            this.flDocAttesaMem30gg = entity.getFlDocAttesaMem30gg();
+            this.flDocAttesaSchedCorr = entity.getFlDocAttesaSchedCorr();
+            this.flDocAttesaSched30gg = entity.getFlDocAttesaSched30gg();
+            this.flDocNoselSchedCorr = entity.getFlDocNoselSchedCorr();
+            this.flDocNoselSched30gg = entity.getFlDocNoselSched30gg();
+        }
 
-	public String getFlDoc30gg() {
-	    return this.flDoc30gg;
-	}
+        public String getFlDoc30gg() {
+            return this.flDoc30gg;
+        }
 
-	public String getFlDocAttesaMem30gg() {
-	    return this.flDocAttesaMem30gg;
-	}
+        public String getFlDocAttesaMem30gg() {
+            return this.flDocAttesaMem30gg;
+        }
 
-	public String getFlDocAttesaMemCorr() {
-	    return this.flDocAttesaMemCorr;
-	}
+        public String getFlDocAttesaMemCorr() {
+            return this.flDocAttesaMemCorr;
+        }
 
-	public String getFlDocAttesaSched30gg() {
-	    return this.flDocAttesaSched30gg;
-	}
+        public String getFlDocAttesaSched30gg() {
+            return this.flDocAttesaSched30gg;
+        }
 
-	public String getFlDocAttesaSchedCorr() {
-	    return this.flDocAttesaSchedCorr;
-	}
+        public String getFlDocAttesaSchedCorr() {
+            return this.flDocAttesaSchedCorr;
+        }
 
-	public String getFlDocCorr() {
-	    return this.flDocCorr;
-	}
+        public String getFlDocCorr() {
+            return this.flDocCorr;
+        }
 
-	public String getFlDocNoselSched30gg() {
-	    return this.flDocNoselSched30gg;
-	}
+        public String getFlDocNoselSched30gg() {
+            return this.flDocNoselSched30gg;
+        }
 
-	public String getFlDocNoselSchedCorr() {
-	    return this.flDocNoselSchedCorr;
-	}
+        public String getFlDocNoselSchedCorr() {
+            return this.flDocNoselSchedCorr;
+        }
 
-	public void setFlDoc30gg(String flDoc30gg) {
-	    this.flDoc30gg = flDoc30gg;
-	}
+        public void setFlDoc30gg(String flDoc30gg) {
+            this.flDoc30gg = flDoc30gg;
+        }
 
-	public void setFlDocAttesaMem30gg(String flDocAttesaMem30gg) {
-	    this.flDocAttesaMem30gg = flDocAttesaMem30gg;
-	}
+        public void setFlDocAttesaMem30gg(String flDocAttesaMem30gg) {
+            this.flDocAttesaMem30gg = flDocAttesaMem30gg;
+        }
 
-	public void setFlDocAttesaMemCorr(String flDocAttesaMemCorr) {
-	    this.flDocAttesaMemCorr = flDocAttesaMemCorr;
-	}
+        public void setFlDocAttesaMemCorr(String flDocAttesaMemCorr) {
+            this.flDocAttesaMemCorr = flDocAttesaMemCorr;
+        }
 
-	public void setFlDocAttesaSched30gg(String flDocAttesaSched30gg) {
-	    this.flDocAttesaSched30gg = flDocAttesaSched30gg;
-	}
+        public void setFlDocAttesaSched30gg(String flDocAttesaSched30gg) {
+            this.flDocAttesaSched30gg = flDocAttesaSched30gg;
+        }
 
-	public void setFlDocAttesaSchedCorr(String flDocAttesaSchedCorr) {
-	    this.flDocAttesaSchedCorr = flDocAttesaSchedCorr;
-	}
+        public void setFlDocAttesaSchedCorr(String flDocAttesaSchedCorr) {
+            this.flDocAttesaSchedCorr = flDocAttesaSchedCorr;
+        }
 
-	public void setFlDocCorr(String flDocCorr) {
-	    this.flDocCorr = flDocCorr;
-	}
+        public void setFlDocCorr(String flDocCorr) {
+            this.flDocCorr = flDocCorr;
+        }
 
-	public void setFlDocNoselSched30gg(String flDocNoselSched30gg) {
-	    this.flDocNoselSched30gg = flDocNoselSched30gg;
-	}
+        public void setFlDocNoselSched30gg(String flDocNoselSched30gg) {
+            this.flDocNoselSched30gg = flDocNoselSched30gg;
+        }
 
-	public void setFlDocNoselSchedCorr(String flDocNoselSchedCorr) {
-	    this.flDocNoselSchedCorr = flDocNoselSchedCorr;
-	}
+        public void setFlDocNoselSchedCorr(String flDocNoselSchedCorr) {
+            this.flDocNoselSchedCorr = flDocNoselSchedCorr;
+        }
     }
 
 }

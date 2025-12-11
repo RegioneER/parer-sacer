@@ -36,171 +36,171 @@ public class SerVLisUdNoversRowBean extends BaseRow implements JEEBaseRowInterfa
     public static SerVLisUdNoversTableDescriptor TABLE_DESCRIPTOR = new SerVLisUdNoversTableDescriptor();
 
     public SerVLisUdNoversRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdUdNonVersErr() {
-	return getBigDecimal("id_ud_non_vers_err");
+        return getBigDecimal("id_ud_non_vers_err");
     }
 
     public void setIdUdNonVersErr(BigDecimal idUdNonVersErr) {
-	setObject("id_ud_non_vers_err", idUdNonVersErr);
+        setObject("id_ud_non_vers_err", idUdNonVersErr);
     }
 
     public BigDecimal getIdErrContenutoVerSerie() {
-	return getBigDecimal("id_err_contenuto_ver_serie");
+        return getBigDecimal("id_err_contenuto_ver_serie");
     }
 
     public void setIdErrContenutoVerSerie(BigDecimal idErrContenutoVerSerie) {
-	setObject("id_err_contenuto_ver_serie", idErrContenutoVerSerie);
+        setObject("id_err_contenuto_ver_serie", idErrContenutoVerSerie);
     }
 
     public BigDecimal getIdUnitaDocNonVers() {
-	return getBigDecimal("id_unita_doc_non_vers");
+        return getBigDecimal("id_unita_doc_non_vers");
     }
 
     public void setIdUnitaDocNonVers(BigDecimal idUnitaDocNonVers) {
-	setObject("id_unita_doc_non_vers", idUnitaDocNonVers);
+        setObject("id_unita_doc_non_vers", idUnitaDocNonVers);
     }
 
     public String getCdUnitaDoc() {
-	return getString("cd_unita_doc");
+        return getString("cd_unita_doc");
     }
 
     public void setCdUnitaDoc(String cdUnitaDoc) {
-	setObject("cd_unita_doc", cdUnitaDoc);
+        setObject("cd_unita_doc", cdUnitaDoc);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getCdRegistroKeyUnitaDoc() {
-	return getString("cd_registro_key_unita_doc");
+        return getString("cd_registro_key_unita_doc");
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
+        setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return getBigDecimal("aa_key_unita_doc");
+        return getBigDecimal("aa_key_unita_doc");
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	setObject("aa_key_unita_doc", aaKeyUnitaDoc);
+        setObject("aa_key_unita_doc", aaKeyUnitaDoc);
     }
 
     public String getCdKeyUnitaDoc() {
-	return getString("cd_key_unita_doc");
+        return getString("cd_key_unita_doc");
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	setObject("cd_key_unita_doc", cdKeyUnitaDoc);
+        setObject("cd_key_unita_doc", cdKeyUnitaDoc);
     }
 
     public Timestamp getDtFirstSesErr() {
-	return getTimestamp("dt_first_ses_err");
+        return getTimestamp("dt_first_ses_err");
     }
 
     public void setDtFirstSesErr(Timestamp dtFirstSesErr) {
-	setObject("dt_first_ses_err", dtFirstSesErr);
+        setObject("dt_first_ses_err", dtFirstSesErr);
     }
 
     public Timestamp getDtLastSesErr() {
-	return getTimestamp("dt_last_ses_err");
+        return getTimestamp("dt_last_ses_err");
     }
 
     public void setDtLastSesErr(Timestamp dtLastSesErr) {
-	setObject("dt_last_ses_err", dtLastSesErr);
+        setObject("dt_last_ses_err", dtLastSesErr);
     }
 
     public String getCdErrPrinc() {
-	return getString("cd_err_princ");
+        return getString("cd_err_princ");
     }
 
     public void setCdErrPrinc(String cdErrPrinc) {
-	setObject("cd_err_princ", cdErrPrinc);
+        setObject("cd_err_princ", cdErrPrinc);
     }
 
     public String getDsErrPrinc() {
-	return getString("ds_err_princ");
+        return getString("ds_err_princ");
     }
 
     public void setDsErrPrinc(String dsErrPrinc) {
-	setObject("ds_err_princ", dsErrPrinc);
+        setObject("ds_err_princ", dsErrPrinc);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SerVLisUdNovers entity = (SerVLisUdNovers) obj;
-	this.setIdUdNonVersErr(entity.getIdUdNonVersErr());
-	this.setIdErrContenutoVerSerie(entity.getIdErrContenutoVerSerie());
-	this.setIdUnitaDocNonVers(entity.getIdUnitaDocNonVers());
-	this.setCdUnitaDoc(entity.getCdUnitaDoc());
-	this.setIdStrut(entity.getIdStrut());
-	this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
-	this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
-	this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
-	if (entity.getDtFirstSesErr() != null) {
-	    this.setDtFirstSesErr(new Timestamp(entity.getDtFirstSesErr().getTime()));
-	}
-	if (entity.getDtLastSesErr() != null) {
-	    this.setDtLastSesErr(new Timestamp(entity.getDtLastSesErr().getTime()));
-	}
-	this.setCdErrPrinc(entity.getCdErrPrinc());
-	this.setDsErrPrinc(entity.getDsErrPrinc());
+        SerVLisUdNovers entity = (SerVLisUdNovers) obj;
+        this.setIdUdNonVersErr(entity.getIdUdNonVersErr());
+        this.setIdErrContenutoVerSerie(entity.getIdErrContenutoVerSerie());
+        this.setIdUnitaDocNonVers(entity.getIdUnitaDocNonVers());
+        this.setCdUnitaDoc(entity.getCdUnitaDoc());
+        this.setIdStrut(entity.getIdStrut());
+        this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
+        this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
+        if (entity.getDtFirstSesErr() != null) {
+            this.setDtFirstSesErr(new Timestamp(entity.getDtFirstSesErr().getTime()));
+        }
+        if (entity.getDtLastSesErr() != null) {
+            this.setDtLastSesErr(new Timestamp(entity.getDtLastSesErr().getTime()));
+        }
+        this.setCdErrPrinc(entity.getCdErrPrinc());
+        this.setDsErrPrinc(entity.getDsErrPrinc());
     }
 
     @Override
     public SerVLisUdNovers rowBeanToEntity() {
-	SerVLisUdNovers entity = new SerVLisUdNovers();
-	entity.setIdUdNonVersErr(this.getIdUdNonVersErr());
-	entity.setIdErrContenutoVerSerie(this.getIdErrContenutoVerSerie());
-	entity.setIdUnitaDocNonVers(this.getIdUnitaDocNonVers());
-	entity.setCdUnitaDoc(this.getCdUnitaDoc());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
-	entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
-	entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
-	entity.setDtFirstSesErr(this.getDtFirstSesErr());
-	entity.setDtLastSesErr(this.getDtLastSesErr());
-	entity.setCdErrPrinc(this.getCdErrPrinc());
-	entity.setDsErrPrinc(this.getDsErrPrinc());
-	return entity;
+        SerVLisUdNovers entity = new SerVLisUdNovers();
+        entity.setIdUdNonVersErr(this.getIdUdNonVersErr());
+        entity.setIdErrContenutoVerSerie(this.getIdErrContenutoVerSerie());
+        entity.setIdUnitaDocNonVers(this.getIdUnitaDocNonVers());
+        entity.setCdUnitaDoc(this.getCdUnitaDoc());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
+        entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
+        entity.setDtFirstSesErr(this.getDtFirstSesErr());
+        entity.setDtLastSesErr(this.getDtLastSesErr());
+        entity.setCdErrPrinc(this.getCdErrPrinc());
+        entity.setDsErrPrinc(this.getDsErrPrinc());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

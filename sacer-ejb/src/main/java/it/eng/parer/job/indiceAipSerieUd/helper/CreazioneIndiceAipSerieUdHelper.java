@@ -31,7 +31,7 @@ import it.eng.parer.helper.GenericHelper;
 @Stateless(mappedName = "CreazioneIndiceAipSerieUdHelper")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class CreazioneIndiceAipSerieUdHelper extends GenericHelper {
 
     /**
@@ -45,26 +45,26 @@ public class CreazioneIndiceAipSerieUdHelper extends GenericHelper {
      */
     @SuppressWarnings("unchecked")
     public List<SerVerSerieDaElab> getSerVerSerieDaElab(BigDecimal idStrut,
-	    String tiStatoVerSerie) {
-	List<SerVerSerieDaElab> serieDaElabList;
-	String whereWord = "WHERE ";
-	String queryStr = "SELECT u FROM SerVerSerieDaElab u ";
-	if (idStrut != null) {
-	    queryStr = queryStr + whereWord + "u.idStrut = :idStrut ";
-	    whereWord = "AND ";
-	}
-	if (tiStatoVerSerie != null) {
-	    queryStr = queryStr + whereWord + "u.tiStatoVerSerie = :tiStatoVerSerie ";
-	}
-	Query query = getEntityManager().createQuery(queryStr);
-	if (idStrut != null) {
-	    query.setParameter("idStrut", idStrut);
-	}
-	if (tiStatoVerSerie != null) {
-	    query.setParameter("tiStatoVerSerie", tiStatoVerSerie);
-	}
-	serieDaElabList = query.getResultList();
-	return serieDaElabList;
+            String tiStatoVerSerie) {
+        List<SerVerSerieDaElab> serieDaElabList;
+        String whereWord = "WHERE ";
+        String queryStr = "SELECT u FROM SerVerSerieDaElab u ";
+        if (idStrut != null) {
+            queryStr = queryStr + whereWord + "u.idStrut = :idStrut ";
+            whereWord = "AND ";
+        }
+        if (tiStatoVerSerie != null) {
+            queryStr = queryStr + whereWord + "u.tiStatoVerSerie = :tiStatoVerSerie ";
+        }
+        Query query = getEntityManager().createQuery(queryStr);
+        if (idStrut != null) {
+            query.setParameter("idStrut", idStrut);
+        }
+        if (tiStatoVerSerie != null) {
+            query.setParameter("tiStatoVerSerie", tiStatoVerSerie);
+        }
+        serieDaElabList = query.getResultList();
+        return serieDaElabList;
     }
 
     /**
@@ -76,14 +76,14 @@ public class CreazioneIndiceAipSerieUdHelper extends GenericHelper {
      * @return pk entity AroUdAppartVerSerie
      */
     public Long getNumUdEffettiveSenzaVolume(Long idVerSerie) {
-	String queryStr = "SELECT COUNT(u) FROM AroUdAppartVerSerie u "
-		+ "JOIN u.serContenutoVerSerie contenutoVerSerie "
-		+ "JOIN contenutoVerSerie.serVerSerie verSerie "
-		+ "WHERE contenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' "
-		+ "AND u.serVolVerSerie IS NULL " + "AND verSerie.idVerSerie = :idVerSerie ";
-	Query query = getEntityManager().createQuery(queryStr);
-	query.setParameter("idVerSerie", idVerSerie);
-	return (Long) query.getSingleResult();
+        String queryStr = "SELECT COUNT(u) FROM AroUdAppartVerSerie u "
+                + "JOIN u.serContenutoVerSerie contenutoVerSerie "
+                + "JOIN contenutoVerSerie.serVerSerie verSerie "
+                + "WHERE contenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' "
+                + "AND u.serVolVerSerie IS NULL " + "AND verSerie.idVerSerie = :idVerSerie ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idVerSerie", idVerSerie);
+        return (Long) query.getSingleResult();
     }
 
     /**
@@ -94,11 +94,11 @@ public class CreazioneIndiceAipSerieUdHelper extends GenericHelper {
      * @return progressivo
      */
     public BigDecimal getUltimoProgressivoSerStatoVerSerie(Long idVerSerie) {
-	String queryStr = "SELECT MAX(u.pgStatoVerSerie) FROM SerStatoVerSerie u "
-		+ "WHERE u.serVerSerie.idVerSerie = :idVerSerie ";
-	Query query = getEntityManager().createQuery(queryStr);
-	query.setParameter("idVerSerie", idVerSerie);
-	return (BigDecimal) query.getSingleResult();
+        String queryStr = "SELECT MAX(u.pgStatoVerSerie) FROM SerStatoVerSerie u "
+                + "WHERE u.serVerSerie.idVerSerie = :idVerSerie ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idVerSerie", idVerSerie);
+        return (BigDecimal) query.getSingleResult();
     }
 
     /**
@@ -109,10 +109,10 @@ public class CreazioneIndiceAipSerieUdHelper extends GenericHelper {
      * @return progressivo
      */
     public BigDecimal getUltimoProgressivoSerStatoSerie(Long idSerie) {
-	String queryStr = "SELECT MAX(u.pgStatoSerie) FROM SerStatoSerie u "
-		+ "WHERE u.serSerie.idSerie = :idSerie ";
-	Query query = getEntityManager().createQuery(queryStr);
-	query.setParameter("idSerie", idSerie);
-	return (BigDecimal) query.getSingleResult();
+        String queryStr = "SELECT MAX(u.pgStatoSerie) FROM SerStatoSerie u "
+                + "WHERE u.serSerie.idSerie = :idSerie ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idSerie", idSerie);
+        return (BigDecimal) query.getSingleResult();
     }
 }

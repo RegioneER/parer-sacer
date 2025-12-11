@@ -60,203 +60,203 @@ public class MonVLisOperVolIam implements Serializable {
 
     @Column(name = "CD_DOC")
     public String getCdDoc() {
-	return this.cdDoc;
+        return this.cdDoc;
     }
 
     public void setCdDoc(String cdDoc) {
-	this.cdDoc = cdDoc;
+        this.cdDoc = cdDoc;
     }
 
     @Column(name = "DL_MOTIVO_CHIUS")
     public String getDlMotivoChius() {
-	return this.dlMotivoChius;
+        return this.dlMotivoChius;
     }
 
     public void setDlMotivoChius(String dlMotivoChius) {
-	this.dlMotivoChius = dlMotivoChius;
+        this.dlMotivoChius = dlMotivoChius;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_OPER")
     public Date getDtOper() {
-	return this.dtOper;
+        return this.dtOper;
     }
 
     public void setDtOper(Date dtOper) {
-	this.dtOper = dtOper;
+        this.dtOper = dtOper;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SCAD_CHIUS")
     public Date getDtScadChius() {
-	return this.dtScadChius;
+        return this.dtScadChius;
     }
 
     public void setDtScadChius(Date dtScadChius) {
-	this.dtScadChius = dtScadChius;
+        this.dtScadChius = dtScadChius;
     }
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-	return this.idAmbiente;
+        return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	this.idAmbiente = idAmbiente;
+        this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_DOC")
     public BigDecimal getIdDoc() {
-	return this.idDoc;
+        return this.idDoc;
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	this.idDoc = idDoc;
+        this.idDoc = idDoc;
     }
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-	return this.idEnte;
+        return this.idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	this.idEnte = idEnte;
+        this.idEnte = idEnte;
     }
 
     @Column(name = "ID_LOG_JOB")
     public BigDecimal getIdLogJob() {
-	return this.idLogJob;
+        return this.idLogJob;
     }
 
     public void setIdLogJob(BigDecimal idLogJob) {
-	this.idLogJob = idLogJob;
+        this.idLogJob = idLogJob;
     }
 
     @Id
     @Column(name = "ID_LOG_OPER")
     public BigDecimal getIdLogOper() {
-	return this.idLogOper;
+        return this.idLogOper;
     }
 
     public void setIdLogOper(BigDecimal idLogOper) {
-	this.idLogOper = idLogOper;
+        this.idLogOper = idLogOper;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     @Column(name = "ID_VOLUME_CONSERV")
     public BigDecimal getIdVolumeConserv() {
-	return this.idVolumeConserv;
+        return this.idVolumeConserv;
     }
 
     public void setIdVolumeConserv(BigDecimal idVolumeConserv) {
-	this.idVolumeConserv = idVolumeConserv;
+        this.idVolumeConserv = idVolumeConserv;
     }
 
     @Column(name = "NI_MAX_COMP")
     public BigDecimal getNiMaxComp() {
-	return this.niMaxComp;
+        return this.niMaxComp;
     }
 
     public void setNiMaxComp(BigDecimal niMaxComp) {
-	this.niMaxComp = niMaxComp;
+        this.niMaxComp = niMaxComp;
     }
 
     @Column(name = "NI_MAX_UNITA_DOC")
     public BigDecimal getNiMaxUnitaDoc() {
-	return this.niMaxUnitaDoc;
+        return this.niMaxUnitaDoc;
     }
 
     public void setNiMaxUnitaDoc(BigDecimal niMaxUnitaDoc) {
-	this.niMaxUnitaDoc = niMaxUnitaDoc;
+        this.niMaxUnitaDoc = niMaxUnitaDoc;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-	return this.nmAmbiente;
+        return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	this.nmAmbiente = nmAmbiente;
+        this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_COGNOME_FIRMATARIO")
     public String getNmCognomeFirmatario() {
-	return this.nmCognomeFirmatario;
+        return this.nmCognomeFirmatario;
     }
 
     public void setNmCognomeFirmatario(String nmCognomeFirmatario) {
-	this.nmCognomeFirmatario = nmCognomeFirmatario;
+        this.nmCognomeFirmatario = nmCognomeFirmatario;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-	return this.nmEnte;
+        return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_NOME_FIRMATARIO")
     public String getNmNomeFirmatario() {
-	return this.nmNomeFirmatario;
+        return this.nmNomeFirmatario;
     }
 
     public void setNmNomeFirmatario(String nmNomeFirmatario) {
-	this.nmNomeFirmatario = nmNomeFirmatario;
+        this.nmNomeFirmatario = nmNomeFirmatario;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-	return this.nmStrut;
+        return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
     @Column(name = "NM_VOLUME_CONSERV")
     public String getNmVolumeConserv() {
-	return this.nmVolumeConserv;
+        return this.nmVolumeConserv;
     }
 
     public void setNmVolumeConserv(String nmVolumeConserv) {
-	this.nmVolumeConserv = nmVolumeConserv;
+        this.nmVolumeConserv = nmVolumeConserv;
     }
 
     @Column(name = "TI_MOD_OPER")
     public String getTiModOper() {
-	return this.tiModOper;
+        return this.tiModOper;
     }
 
     public void setTiModOper(String tiModOper) {
-	this.tiModOper = tiModOper;
+        this.tiModOper = tiModOper;
     }
 
     @Column(name = "TI_OPER")
     public String getTiOper() {
-	return this.tiOper;
+        return this.tiOper;
     }
 
     public void setTiOper(String tiOper) {
-	this.tiOper = tiOper;
+        this.tiOper = tiOper;
     }
 
 }

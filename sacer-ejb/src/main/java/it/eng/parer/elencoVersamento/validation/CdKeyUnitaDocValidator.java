@@ -24,7 +24,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
 public class CdKeyUnitaDocValidator
-	implements ConstraintValidator<ValidateCdKeyUnitaDoc, CriterioFiltroUnitaDoc> {
+        implements ConstraintValidator<ValidateCdKeyUnitaDoc, CriterioFiltroUnitaDoc> {
 
     @Override
     public void initialize(ValidateCdKeyUnitaDoc constraintAnnotation) {
@@ -32,38 +32,38 @@ public class CdKeyUnitaDocValidator
 
     @Override
     public boolean isValid(CriterioFiltroUnitaDoc critFiltroUnitaDoc,
-	    ConstraintValidatorContext context) {
+            ConstraintValidatorContext context) {
 
-	DecCriterioRaggr criterio = critFiltroUnitaDoc.getCriterioRaggr();
-	AroUnitaDoc unitaDoc = critFiltroUnitaDoc.getUnitaDoc();
+        DecCriterioRaggr criterio = critFiltroUnitaDoc.getCriterioRaggr();
+        AroUnitaDoc unitaDoc = critFiltroUnitaDoc.getUnitaDoc();
 
-	// valido filtro su range numero chiave
-	if (criterio.getCdKeyUnitaDocDa() != null && criterio.getCdKeyUnitaDocA() != null
-		&& (StringUtils.leftPad(criterio.getCdKeyUnitaDocDa(), 12, "0")
-			.compareTo(StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) <= 0
-			&& StringUtils.leftPad(criterio.getCdKeyUnitaDocA(), 12, "0").compareTo(
-				StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) >= 0)) {
-	    return true;
-	}
-	if (criterio.getCdKeyUnitaDocDa() != null && criterio.getCdKeyUnitaDocA() == null
-		&& (StringUtils.leftPad(criterio.getCdKeyUnitaDocDa(), 12, "0")
-			.compareTo(StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) <= 0
-			&& "zzzzzzzzzzzz".compareTo(
-				StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) >= 0)) {
-	    return true;
-	}
-	if (criterio.getCdKeyUnitaDocDa() == null && criterio.getCdKeyUnitaDocA() != null
-		&& ("000000000000"
-			.compareTo(StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) <= 0
-			&& StringUtils.leftPad(criterio.getCdKeyUnitaDocA(), 12, "0").compareTo(
-				StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) >= 0)) {
-	    return true;
-	}
+        // valido filtro su range numero chiave
+        if (criterio.getCdKeyUnitaDocDa() != null && criterio.getCdKeyUnitaDocA() != null
+                && (StringUtils.leftPad(criterio.getCdKeyUnitaDocDa(), 12, "0")
+                        .compareTo(StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) <= 0
+                        && StringUtils.leftPad(criterio.getCdKeyUnitaDocA(), 12, "0").compareTo(
+                                StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) >= 0)) {
+            return true;
+        }
+        if (criterio.getCdKeyUnitaDocDa() != null && criterio.getCdKeyUnitaDocA() == null
+                && (StringUtils.leftPad(criterio.getCdKeyUnitaDocDa(), 12, "0")
+                        .compareTo(StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) <= 0
+                        && "zzzzzzzzzzzz".compareTo(
+                                StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) >= 0)) {
+            return true;
+        }
+        if (criterio.getCdKeyUnitaDocDa() == null && criterio.getCdKeyUnitaDocA() != null
+                && ("000000000000"
+                        .compareTo(StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) <= 0
+                        && StringUtils.leftPad(criterio.getCdKeyUnitaDocA(), 12, "0").compareTo(
+                                StringUtils.leftPad(unitaDoc.getCdKeyUnitaDoc(), 12, "0")) >= 0)) {
+            return true;
+        }
 
-	if (criterio.getCdKeyUnitaDocDa() == null && criterio.getCdKeyUnitaDocA() == null) {
-	    return true;
-	}
+        if (criterio.getCdKeyUnitaDocDa() == null && criterio.getCdKeyUnitaDocA() == null) {
+            return true;
+        }
 
-	return false;
+        return false;
     }
 }

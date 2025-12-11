@@ -60,54 +60,54 @@ public class OrgStoricoEnteAmbiente implements Serializable {
 
     @Column(name = "ID_STORICO_ENTE_AMBIENTE")
     @GenericGenerator(name = "SORG_STORICO_ENTE_AMBIENTE_ID_STORICO_ENTE_AMBIENTE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_STORICO_ENTE_AMBIENTE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_STORICO_ENTE_AMBIENTE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SORG_STORICO_ENTE_AMBIENTE_ID_STORICO_ENTE_AMBIENTE_GENERATOR")
     public Long getIdStoricoEnteAmbiente() {
-	return this.idStoricoEnteAmbiente;
+        return this.idStoricoEnteAmbiente;
     }
 
     public void setIdStoricoEnteAmbiente(Long idStoricoEnteAmbiente) {
-	this.idStoricoEnteAmbiente = idStoricoEnteAmbiente;
+        this.idStoricoEnteAmbiente = idStoricoEnteAmbiente;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIN_VAL")
     public Date getDtFinVal() {
-	return this.dtFinVal;
+        return this.dtFinVal;
     }
 
     public void setDtFinVal(Date dtFinVal) {
-	this.dtFinVal = dtFinVal;
+        this.dtFinVal = dtFinVal;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_INI_VAL")
     public Date getDtIniVal() {
-	return this.dtIniVal;
+        return this.dtIniVal;
     }
 
     public void setDtIniVal(Date dtIniVal) {
-	this.dtIniVal = dtIniVal;
+        this.dtIniVal = dtIniVal;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_AMBIENTE")
     public OrgAmbiente getOrgAmbiente() {
-	return this.orgAmbiente;
+        return this.orgAmbiente;
     }
 
     public void setOrgAmbiente(OrgAmbiente orgAmbiente) {
-	this.orgAmbiente = orgAmbiente;
+        this.orgAmbiente = orgAmbiente;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ENTE")
     public OrgEnte getOrgEnte() {
-	return this.orgEnte;
+        return this.orgEnte;
     }
 
     public void setOrgEnte(OrgEnte orgEnte) {
-	this.orgEnte = orgEnte;
+        this.orgEnte = orgEnte;
     }
 }

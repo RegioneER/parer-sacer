@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class VrsVSessioneVersRisoltaTableBean
-	extends AbstractBaseTable<VrsVSessioneVersRisoltaRowBean> {
+        extends AbstractBaseTable<VrsVSessioneVersRisoltaRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class VrsVSessioneVersRisoltaTableBean
     public static VrsVSessioneVersRisoltaTableDescriptor TABLE_DESCRIPTOR = new VrsVSessioneVersRisoltaTableDescriptor();
 
     public VrsVSessioneVersRisoltaTableBean() {
-	super();
+        super();
     }
 
     protected VrsVSessioneVersRisoltaRowBean createRow() {
-	return new VrsVSessioneVersRisoltaRowBean();
+        return new VrsVSessioneVersRisoltaRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VrsVSessioneVersRisoltaRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -39,21 +39,21 @@ public class SerVChkConservazioneUd implements Serializable {
 
     @Column(name = "FL_OK_STATO_CONSERVAZIONE", columnDefinition = "char(1)")
     public String getFlOkStatoConservazione() {
-	return this.flOkStatoConservazione;
+        return this.flOkStatoConservazione;
     }
 
     public void setFlOkStatoConservazione(String flOkStatoConservazione) {
-	this.flOkStatoConservazione = flOkStatoConservazione;
+        this.flOkStatoConservazione = flOkStatoConservazione;
     }
 
     @Id
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-	return this.idVerSerie;
+        return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	this.idVerSerie = idVerSerie;
+        this.idVerSerie = idVerSerie;
     }
 
 }

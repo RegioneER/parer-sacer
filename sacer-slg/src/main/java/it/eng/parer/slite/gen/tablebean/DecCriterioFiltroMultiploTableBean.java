@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class DecCriterioFiltroMultiploTableBean
-	extends AbstractBaseTable<DecCriterioFiltroMultiploRowBean> {
+        extends AbstractBaseTable<DecCriterioFiltroMultiploRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class DecCriterioFiltroMultiploTableBean
     public static DecCriterioFiltroMultiploTableDescriptor TABLE_DESCRIPTOR = new DecCriterioFiltroMultiploTableDescriptor();
 
     public DecCriterioFiltroMultiploTableBean() {
-	super();
+        super();
     }
 
     protected DecCriterioFiltroMultiploRowBean createRow() {
-	return new DecCriterioFiltroMultiploRowBean();
+        return new DecCriterioFiltroMultiploRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecCriterioFiltroMultiploRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

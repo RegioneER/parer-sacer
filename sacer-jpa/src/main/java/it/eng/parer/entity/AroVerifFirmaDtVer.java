@@ -60,67 +60,67 @@ public class AroVerifFirmaDtVer implements Serializable {
     @Id
     @Column(name = "ID_VERIF_FIRMA_DT_VERS")
     @GenericGenerator(name = "SARO_VERIF_FIRMA_DT_VERS_ID_VERIF_FIRMA_DT_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_VERIF_FIRMA_DT_VERS"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_VERIF_FIRMA_DT_VERS"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_VERIF_FIRMA_DT_VERS_ID_VERIF_FIRMA_DT_VERS_GENERATOR")
     public Long getIdVerifFirmaDtVers() {
-	return this.idVerifFirmaDtVers;
+        return this.idVerifFirmaDtVers;
     }
 
     public void setIdVerifFirmaDtVers(Long idVerifFirmaDtVers) {
-	this.idVerifFirmaDtVers = idVerifFirmaDtVers;
+        this.idVerifFirmaDtVers = idVerifFirmaDtVers;
     }
 
     @Column(name = "DS_MSG_ESITO_VERIF_FIRMA")
     public String getDsMsgEsitoVerifFirma() {
-	return this.dsMsgEsitoVerifFirma;
+        return this.dsMsgEsitoVerifFirma;
     }
 
     public void setDsMsgEsitoVerifFirma(String dsMsgEsitoVerifFirma) {
-	this.dsMsgEsitoVerifFirma = dsMsgEsitoVerifFirma;
+        this.dsMsgEsitoVerifFirma = dsMsgEsitoVerifFirma;
     }
 
     @Column(name = "TI_ESITO_VERIF_FIRMA")
     public String getTiEsitoVerifFirma() {
-	return this.tiEsitoVerifFirma;
+        return this.tiEsitoVerifFirma;
     }
 
     public void setTiEsitoVerifFirma(String tiEsitoVerifFirma) {
-	this.tiEsitoVerifFirma = tiEsitoVerifFirma;
+        this.tiEsitoVerifFirma = tiEsitoVerifFirma;
     }
 
     @OneToMany(mappedBy = "aroVerifFirmaDtVer", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     public List<AroContrVerifFirmaDtVer> getAroContrVerifFirmaDtVers() {
-	return this.aroContrVerifFirmaDtVers;
+        return this.aroContrVerifFirmaDtVers;
     }
 
     public void setAroContrVerifFirmaDtVers(
-	    List<AroContrVerifFirmaDtVer> aroContrVerifFirmaDtVers) {
-	this.aroContrVerifFirmaDtVers = aroContrVerifFirmaDtVers;
+            List<AroContrVerifFirmaDtVer> aroContrVerifFirmaDtVers) {
+        this.aroContrVerifFirmaDtVers = aroContrVerifFirmaDtVers;
     }
 
     public AroContrVerifFirmaDtVer addAroContrVerifFirmaDtVer(
-	    AroContrVerifFirmaDtVer aroContrVerifFirmaDtVer) {
-	getAroContrVerifFirmaDtVers().add(aroContrVerifFirmaDtVer);
-	aroContrVerifFirmaDtVer.setAroVerifFirmaDtVer(this);
-	return aroContrVerifFirmaDtVer;
+            AroContrVerifFirmaDtVer aroContrVerifFirmaDtVer) {
+        getAroContrVerifFirmaDtVers().add(aroContrVerifFirmaDtVer);
+        aroContrVerifFirmaDtVer.setAroVerifFirmaDtVer(this);
+        return aroContrVerifFirmaDtVer;
     }
 
     public AroContrVerifFirmaDtVer removeAroContrVerifFirmaDtVer(
-	    AroContrVerifFirmaDtVer aroContrVerifFirmaDtVer) {
-	getAroContrVerifFirmaDtVers().remove(aroContrVerifFirmaDtVer);
-	aroContrVerifFirmaDtVer.setAroVerifFirmaDtVer(null);
-	return aroContrVerifFirmaDtVer;
+            AroContrVerifFirmaDtVer aroContrVerifFirmaDtVer) {
+        getAroContrVerifFirmaDtVers().remove(aroContrVerifFirmaDtVer);
+        aroContrVerifFirmaDtVer.setAroVerifFirmaDtVer(null);
+        return aroContrVerifFirmaDtVer;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FIRMA_COMP")
     public AroFirmaComp getAroFirmaComp() {
-	return this.aroFirmaComp;
+        return this.aroFirmaComp;
     }
 
     public void setAroFirmaComp(AroFirmaComp aroFirmaComp) {
-	this.aroFirmaComp = aroFirmaComp;
+        this.aroFirmaComp = aroFirmaComp;
     }
 }

@@ -33,19 +33,19 @@ public class DecXsdDatiSpecTableBean extends AbstractBaseTable<DecXsdDatiSpecRow
     public static DecXsdDatiSpecTableDescriptor TABLE_DESCRIPTOR = new DecXsdDatiSpecTableDescriptor();
 
     public DecXsdDatiSpecTableBean() {
-	super();
+        super();
     }
 
     protected DecXsdDatiSpecRowBean createRow() {
-	return new DecXsdDatiSpecRowBean();
+        return new DecXsdDatiSpecRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecXsdDatiSpecRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

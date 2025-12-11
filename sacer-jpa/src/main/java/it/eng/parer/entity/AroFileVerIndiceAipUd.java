@@ -56,52 +56,52 @@ public class AroFileVerIndiceAipUd implements Serializable {
     @Id
     @Column(name = "ID_FILE_VER_INDICE_AIP")
     @GenericGenerator(name = "SARO_FILE_VER_INDICE_AIP_UD_ID_FILE_VER_INDICE_AIP_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_FILE_VER_INDICE_AIP_UD"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_FILE_VER_INDICE_AIP_UD"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_FILE_VER_INDICE_AIP_UD_ID_FILE_VER_INDICE_AIP_GENERATOR")
     public Long getIdFileVerIndiceAip() {
-	return this.idFileVerIndiceAip;
+        return this.idFileVerIndiceAip;
     }
 
     public void setIdFileVerIndiceAip(Long idFileVerIndiceAip) {
-	this.idFileVerIndiceAip = idFileVerIndiceAip;
+        this.idFileVerIndiceAip = idFileVerIndiceAip;
     }
 
     @Lob()
     @Column(name = "BL_FILE_VER_INDICE_AIP")
     public String getBlFileVerIndiceAip() {
-	return this.blFileVerIndiceAip;
+        return this.blFileVerIndiceAip;
     }
 
     public void setBlFileVerIndiceAip(String blFileVerIndiceAip) {
-	this.blFileVerIndiceAip = blFileVerIndiceAip;
+        this.blFileVerIndiceAip = blFileVerIndiceAip;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "MM_CREAZIONE")
     public BigDecimal getMmCreazione() {
-	return this.mmCreazione;
+        return this.mmCreazione;
     }
 
     public void setMmCreazione(BigDecimal mmCreazione) {
-	this.mmCreazione = mmCreazione;
+        this.mmCreazione = mmCreazione;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VER_INDICE_AIP")
     public AroVerIndiceAipUd getAroVerIndiceAipUd() {
-	return this.aroVerIndiceAipUd;
+        return this.aroVerIndiceAipUd;
     }
 
     public void setAroVerIndiceAipUd(AroVerIndiceAipUd aroVerIndiceAipUd) {
-	this.aroVerIndiceAipUd = aroVerIndiceAipUd;
+        this.aroVerIndiceAipUd = aroVerIndiceAipUd;
     }
 }

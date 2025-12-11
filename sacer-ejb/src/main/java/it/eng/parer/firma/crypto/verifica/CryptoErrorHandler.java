@@ -38,8 +38,8 @@ public class CryptoErrorHandler extends DefaultResponseErrorHandler {
     private final ObjectMapper objectMapper;
 
     public CryptoErrorHandler() {
-	objectMapper = new ObjectMapper();
-	objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     /*
@@ -48,27 +48,27 @@ public class CryptoErrorHandler extends DefaultResponseErrorHandler {
      */
     @Override
     public boolean hasError(ClientHttpResponse response) throws IOException {
-	return (response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR
-		|| response.getStatusCode() == HttpStatus.BAD_REQUEST
-		|| response.getStatusCode() == HttpStatus.EXPECTATION_FAILED
-		|| response.getStatusCode() == HttpStatus.NOT_FOUND);
+        return (response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR
+                || response.getStatusCode() == HttpStatus.BAD_REQUEST
+                || response.getStatusCode() == HttpStatus.EXPECTATION_FAILED
+                || response.getStatusCode() == HttpStatus.NOT_FOUND);
     }
 
     @Override
     public void handleError(ClientHttpResponse response) throws IOException {
-	CryptoParerException exceptionFromJson;
-	try {
-	    exceptionFromJson = objectMapper.readValue(response.getBody(),
-		    CryptoParerException.class);
-	    log.warn("Eccezione registrata {} con codice {}", exceptionFromJson,
-		    exceptionFromJson.getCode());
-	} catch (IOException e) {
-	    exceptionFromJson = new CryptoParerException()
-		    .withCode(ParerError.ErrorCode.GENERIC_ERROR).withMessage("Errore "
-			    + response.getRawStatusCode() + ": " + response.getStatusCode().name());
-	    log.warn("Eccezione sull'oggetto di errore costruito", e);
-	}
-	throw exceptionFromJson;
+        CryptoParerException exceptionFromJson;
+        try {
+            exceptionFromJson = objectMapper.readValue(response.getBody(),
+                    CryptoParerException.class);
+            log.warn("Eccezione registrata {} con codice {}", exceptionFromJson,
+                    exceptionFromJson.getCode());
+        } catch (IOException e) {
+            exceptionFromJson = new CryptoParerException()
+                    .withCode(ParerError.ErrorCode.GENERIC_ERROR).withMessage("Errore "
+                            + response.getRawStatusCode() + ": " + response.getStatusCode().name());
+            log.warn("Eccezione sull'oggetto di errore costruito", e);
+        }
+        throw exceptionFromJson;
     }
 
 }

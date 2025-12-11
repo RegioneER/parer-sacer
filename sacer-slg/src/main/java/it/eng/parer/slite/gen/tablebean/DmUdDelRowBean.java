@@ -1,3 +1,16 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.slite.gen.tablebean;
 
 import it.eng.spagoLite.db.base.BaseRowInterface;
@@ -9,10 +22,6 @@ import it.eng.parer.entity.DmUdDelRichieste;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.sql.Clob;
-import java.sql.Types;
-import java.sql.SQLException;
-import javax.annotation.Generated;
 
 /**
  * RowBean per la tabella Dm_Ud_Del
@@ -28,184 +37,184 @@ public class DmUdDelRowBean extends BaseRow implements BaseRowInterface, JEEBase
     public static DmUdDelTableDescriptor TABLE_DESCRIPTOR = new DmUdDelTableDescriptor();
 
     public DmUdDelRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return getBigDecimal("aa_key_unita_doc");
+        return getBigDecimal("aa_key_unita_doc");
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	setObject("aa_key_unita_doc", aaKeyUnitaDoc);
+        setObject("aa_key_unita_doc", aaKeyUnitaDoc);
     }
 
     public String getCdKeyUnitaDoc() {
-	return getString("cd_key_unita_doc");
+        return getString("cd_key_unita_doc");
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	setObject("cd_key_unita_doc", cdKeyUnitaDoc);
+        setObject("cd_key_unita_doc", cdKeyUnitaDoc);
     }
 
     public String getCdRegistroKeyUnitaDoc() {
-	return getString("cd_registro_key_unita_doc");
+        return getString("cd_registro_key_unita_doc");
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
+        setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
     }
 
     public BigDecimal getIdEnte() {
-	return getBigDecimal("id_ente");
+        return getBigDecimal("id_ente");
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	setObject("id_ente", idEnte);
+        setObject("id_ente", idEnte);
     }
 
     public String getNmEnte() {
-	return getString("nm_ente");
+        return getString("nm_ente");
     }
 
     public void setNmEnte(String nmEnte) {
-	setObject("nm_ente", nmEnte);
+        setObject("nm_ente", nmEnte);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getNmStrut() {
-	return getString("nm_strut");
+        return getString("nm_strut");
     }
 
     public void setNmStrut(String nmStrut) {
-	setObject("nm_strut", nmStrut);
+        setObject("nm_strut", nmStrut);
     }
 
     public Timestamp getDtStatoUdCancellate() {
-	return getTimestamp("dt_stato_ud_cancellate");
+        return getTimestamp("dt_stato_ud_cancellate");
     }
 
     public void setDtStatoUdCancellate(Timestamp dtStatoUdCancellate) {
-	setObject("dt_stato_ud_cancellate", dtStatoUdCancellate);
+        setObject("dt_stato_ud_cancellate", dtStatoUdCancellate);
     }
 
     public Timestamp getDtVersamento() {
-	return getTimestamp("dt_versamento");
+        return getTimestamp("dt_versamento");
     }
 
     public void setDtVersamento(Timestamp dtVersamento) {
-	setObject("dt_versamento", dtVersamento);
+        setObject("dt_versamento", dtVersamento);
     }
 
     public String getTiStatoUdCancellate() {
-	return getString("ti_stato_ud_cancellate");
+        return getString("ti_stato_ud_cancellate");
     }
 
     public void setTiStatoUdCancellate(String tiStatoUdCancellate) {
-	setObject("ti_stato_ud_cancellate", tiStatoUdCancellate);
+        setObject("ti_stato_ud_cancellate", tiStatoUdCancellate);
     }
 
     public BigDecimal getIdUdDelRichiesta() {
-	return getBigDecimal("id_ud_del_richiesta");
+        return getBigDecimal("id_ud_del_richiesta");
     }
 
     public void setIdUdDelRichiesta(BigDecimal idUdDelRichiesta) {
-	setObject("id_ud_del_richiesta", idUdDelRichiesta);
+        setObject("id_ud_del_richiesta", idUdDelRichiesta);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DmUdDel entity = (DmUdDel) obj;
-	this.setIdUnitaDoc(
-		entity.getIdUnitaDoc() == null ? null : BigDecimal.valueOf(entity.getIdUnitaDoc()));
-	this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
-	this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
-	this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
-	this.setIdEnte(entity.getIdEnte());
-	this.setNmEnte(entity.getNmEnte());
-	this.setIdStrut(entity.getIdStrut());
-	this.setNmStrut(entity.getNmStrut());
-	if (entity.getDtStatoUdCancellate() != null) {
-	    this.setDtStatoUdCancellate(new Timestamp(entity.getDtStatoUdCancellate().getTime()));
-	}
-	if (entity.getDtVersamento() != null) {
-	    this.setDtVersamento(new Timestamp(entity.getDtVersamento().getTime()));
-	}
-	this.setTiStatoUdCancellate(entity.getTiStatoUdCancellate());
-	if (entity.getDmUdDelRichieste() != null) {
-	    this.setIdUdDelRichiesta(
-		    new BigDecimal(entity.getDmUdDelRichieste().getIdUdDelRichiesta()));
-	}
+        DmUdDel entity = (DmUdDel) obj;
+        this.setIdUnitaDoc(
+                entity.getIdUnitaDoc() == null ? null : BigDecimal.valueOf(entity.getIdUnitaDoc()));
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
+        this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
+        this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
+        this.setIdEnte(entity.getIdEnte());
+        this.setNmEnte(entity.getNmEnte());
+        this.setIdStrut(entity.getIdStrut());
+        this.setNmStrut(entity.getNmStrut());
+        if (entity.getDtStatoUdCancellate() != null) {
+            this.setDtStatoUdCancellate(new Timestamp(entity.getDtStatoUdCancellate().getTime()));
+        }
+        if (entity.getDtVersamento() != null) {
+            this.setDtVersamento(new Timestamp(entity.getDtVersamento().getTime()));
+        }
+        this.setTiStatoUdCancellate(entity.getTiStatoUdCancellate());
+        if (entity.getDmUdDelRichieste() != null) {
+            this.setIdUdDelRichiesta(
+                    new BigDecimal(entity.getDmUdDelRichieste().getIdUdDelRichiesta()));
+        }
     }
 
     @Override
     public DmUdDel rowBeanToEntity() {
-	DmUdDel entity = new DmUdDel();
-	if (this.getIdUnitaDoc() != null) {
-	    entity.setIdUnitaDoc(this.getIdUnitaDoc().longValue());
-	}
-	entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
-	entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
-	entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
-	entity.setIdEnte(this.getIdEnte());
-	entity.setNmEnte(this.getNmEnte());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setNmStrut(this.getNmStrut());
-	entity.setDtStatoUdCancellate(this.getDtStatoUdCancellate());
-	entity.setDtVersamento(this.getDtVersamento());
-	entity.setTiStatoUdCancellate(this.getTiStatoUdCancellate());
-	if (this.getIdUdDelRichiesta() != null) {
-	    if (entity.getDmUdDelRichieste() == null) {
-		entity.setDmUdDelRichieste(new DmUdDelRichieste());
-	    }
-	    entity.getDmUdDelRichieste()
-		    .setIdUdDelRichiesta(this.getIdUdDelRichiesta().longValue());
-	}
-	return entity;
+        DmUdDel entity = new DmUdDel();
+        if (this.getIdUnitaDoc() != null) {
+            entity.setIdUnitaDoc(this.getIdUnitaDoc().longValue());
+        }
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
+        entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
+        entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
+        entity.setIdEnte(this.getIdEnte());
+        entity.setNmEnte(this.getNmEnte());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setNmStrut(this.getNmStrut());
+        entity.setDtStatoUdCancellate(this.getDtStatoUdCancellate());
+        entity.setDtVersamento(this.getDtVersamento());
+        entity.setTiStatoUdCancellate(this.getTiStatoUdCancellate());
+        if (this.getIdUdDelRichiesta() != null) {
+            if (entity.getDmUdDelRichieste() == null) {
+                entity.setDmUdDelRichieste(new DmUdDelRichieste());
+            }
+            entity.getDmUdDelRichieste()
+                    .setIdUdDelRichiesta(this.getIdUdDelRichiesta().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

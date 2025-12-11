@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class SerVLisUdAppartVolSerieTableBean
-	extends AbstractBaseTable<SerVLisUdAppartVolSerieRowBean> {
+        extends AbstractBaseTable<SerVLisUdAppartVolSerieRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class SerVLisUdAppartVolSerieTableBean
     public static SerVLisUdAppartVolSerieTableDescriptor TABLE_DESCRIPTOR = new SerVLisUdAppartVolSerieTableDescriptor();
 
     public SerVLisUdAppartVolSerieTableBean() {
-	super();
+        super();
     }
 
     protected SerVLisUdAppartVolSerieRowBean createRow() {
-	return new SerVLisUdAppartVolSerieRowBean();
+        return new SerVLisUdAppartVolSerieRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerVLisUdAppartVolSerieRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

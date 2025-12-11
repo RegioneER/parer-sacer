@@ -61,62 +61,62 @@ public class TpiDtSched implements Serializable {
 
     @Column(name = "ID_DT_SCHED")
     @GenericGenerator(name = "STPI_DT_SCHED_ID_DT_SCHED_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "STPI_DT_SCHED"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "STPI_DT_SCHED"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STPI_DT_SCHED_ID_DT_SCHED_GENERATOR")
     public Long getIdDtSched() {
-	return this.idDtSched;
+        return this.idDtSched;
     }
 
     public void setIdDtSched(Long idDtSched) {
-	this.idDtSched = idDtSched;
+        this.idDtSched = idDtSched;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_SCHED")
     public Date getDtSched() {
-	return this.dtSched;
+        return this.dtSched;
     }
 
     public void setDtSched(Date dtSched) {
-	this.dtSched = dtSched;
+        this.dtSched = dtSched;
     }
 
     @Column(name = "FL_MIGRAZ_IN_CORSO", columnDefinition = "char(1)")
     public String getFlMigrazInCorso() {
-	return this.flMigrazInCorso;
+        return this.flMigrazInCorso;
     }
 
     public void setFlMigrazInCorso(String flMigrazInCorso) {
-	this.flMigrazInCorso = flMigrazInCorso;
+        this.flMigrazInCorso = flMigrazInCorso;
     }
 
     @Column(name = "FL_PRESENZA_SECONDARIO", columnDefinition = "char(1)")
     public String getFlPresenzaSecondario() {
-	return this.flPresenzaSecondario;
+        return this.flPresenzaSecondario;
     }
 
     public void setFlPresenzaSecondario(String flPresenzaSecondario) {
-	this.flPresenzaSecondario = flPresenzaSecondario;
+        this.flPresenzaSecondario = flPresenzaSecondario;
     }
 
     @Column(name = "TI_STATO_DT_SCHED")
     public String getTiStatoDtSched() {
-	return this.tiStatoDtSched;
+        return this.tiStatoDtSched;
     }
 
     public void setTiStatoDtSched(String tiStatoDtSched) {
-	this.tiStatoDtSched = tiStatoDtSched;
+        this.tiStatoDtSched = tiStatoDtSched;
     }
 
     @OneToMany(cascade = {
-	    CascadeType.PERSIST }, mappedBy = "tpiDtSched")
+            CascadeType.PERSIST }, mappedBy = "tpiDtSched")
     public List<TpiSchedJob> getTpiSchedJobs() {
-	return this.tpiSchedJobs;
+        return this.tpiSchedJobs;
     }
 
     public void setTpiSchedJobs(List<TpiSchedJob> tpiSchedJobs) {
-	this.tpiSchedJobs = tpiSchedJobs;
+        this.tpiSchedJobs = tpiSchedJobs;
     }
 
 }

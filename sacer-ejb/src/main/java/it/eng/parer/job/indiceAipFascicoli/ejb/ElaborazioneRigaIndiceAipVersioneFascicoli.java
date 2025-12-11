@@ -66,7 +66,7 @@ import org.xml.sax.SAXException;
 @Stateless(mappedName = "ElaborazioneRigaIndiceAipVersioneFascicoli")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class ElaborazioneRigaIndiceAipVersioneFascicoli {
 
     @EJB
@@ -82,21 +82,17 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
 
     /* Ricavo i valori degli Agent dalla tabella APL_PARAM_APPLIC */
     private static final List<String> agentParam = Arrays.asList(AGENT_PRESERVER_FORMALNAME,
-	    AGENT_PRESERVER_TAXCODE, AGENT_PRESERVATION_MNGR_TAXCODE,
-	    AGENT_PRESERVATION_MNGR_LASTNAME, AGENT_PRESERVATION_MNGR_FIRSTNAME);
+            AGENT_PRESERVER_TAXCODE, AGENT_PRESERVATION_MNGR_TAXCODE,
+            AGENT_PRESERVATION_MNGR_LASTNAME, AGENT_PRESERVATION_MNGR_FIRSTNAME);
 
     /* Ricavo i valori degli Agent v2.0 dalla tabella APL_PARAM_APPLIC */
     private static final List<String> agentParamV2 = Arrays.asList();
 
     /* Ricavo i valori degli Agent v2.0 dalla tabella IAM_PARAM_APPLIC */
     private static final List<String> agentParamIamV2 = Arrays.asList(AGENT_HOLDER_RELEVANTDOCUMENT,
-	    AGENT_SUBMITTER_RELEVANTDOCUMENT);
+            AGENT_SUBMITTER_RELEVANTDOCUMENT);
 
     // MEV#29589
-    /*
-     * Determino la modalità per effettuare la generazione dell'indice aip (default: FALSE)
-     */
-    private static final Boolean STRICT_MODE = Boolean.FALSE;
     /*
      * Determino la versione Unisincro di riferimento per la quale effettuare la generazione
      * dell'indice aip (default: v2.0)
@@ -107,172 +103,172 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
     // end MEV#29589
 
     public void creaIndiceAipVerFascicolo(Long idVerAipFascicolo, String codiceVersione,
-	    String codiceVersioneMetadati, String sistemaConservazione,
-	    String creatingApplicationProducer, String cdVersioneXml,
-	    BackendStorage backendIndiciAipFascicoli, Map<String, String> indiciAipFascicoliBlob)
-	    throws ParerInternalError, Exception {
+            String codiceVersioneMetadati, String sistemaConservazione,
+            String creatingApplicationProducer, String cdVersioneXml,
+            BackendStorage backendIndiciAipFascicoli, Map<String, String> indiciAipFascicoliBlob)
+            throws ParerInternalError, Exception {
 
-	String desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
+        String desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
 
-	FasVerAipFascicolo verAipFascicolo = ciafHelper.findById(FasVerAipFascicolo.class,
-		idVerAipFascicolo);
-	long idAmbiente = verAipFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte()
-		.getOrgAmbiente().getIdAmbiente();
+        FasVerAipFascicolo verAipFascicolo = ciafHelper.findById(FasVerAipFascicolo.class,
+                idVerAipFascicolo);
+        long idAmbiente = verAipFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte()
+                .getOrgAmbiente().getIdAmbiente();
 
-	/*
-	 * Determino il modello xsd attivo per l'ambiente di appartenenza della struttura a cui il
-	 * fascicolo appartiene e per la versione del modello xsd corrispondente a quella del
-	 * servizio di versamento fascicolo o a quella forzata (MEV#29589), con il tipo
-	 * "AIP_UNISYNCRO"
-	 */
-	List<DecModelloXsdFascicolo> modelloAttivoList = ciafHelper.retrieveIdModelliDaElaborareV2(
-		idAmbiente, CostantiDB.TiModelloXsd.AIP_UNISYNCRO.name(), UNISINCRO_V2_REF);
+        /*
+         * Determino il modello xsd attivo per l'ambiente di appartenenza della struttura a cui il
+         * fascicolo appartiene e per la versione del modello xsd corrispondente a quella del
+         * servizio di versamento fascicolo o a quella forzata (MEV#29589), con il tipo
+         * "AIP_UNISYNCRO"
+         */
+        List<DecModelloXsdFascicolo> modelloAttivoList = ciafHelper.retrieveIdModelliDaElaborareV2(
+                idAmbiente, CostantiDB.TiModelloXsd.AIP_UNISYNCRO.name(), UNISINCRO_V2_REF);
 
-	log.info(
-		"{} - ambiente id {}: trovati {} modelli xsd attivi di tipo AIP_UNISYNCRO da processare",
-		desJobMessage, idAmbiente, modelloAttivoList.size());
+        log.info(
+                "{} - ambiente id {}: trovati {} modelli xsd attivi di tipo AIP_UNISYNCRO da processare",
+                desJobMessage, idAmbiente, modelloAttivoList.size());
 
-	/* Se per l'ambiente il modello XSD non viene trovato */
-	if (modelloAttivoList.isEmpty()) {
-	    String description = String.format(LOG_ERR_CONF_PROFILO_NOT_STRICT, verAipFascicolo
-		    .getFasFascicolo().getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
-	    throw new ParerInternalError(description);
-	}
+        /* Se per l'ambiente il modello XSD non viene trovato */
+        if (modelloAttivoList.isEmpty()) {
+            String description = String.format(LOG_ERR_CONF_PROFILO_NOT_STRICT, verAipFascicolo
+                    .getFasFascicolo().getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
+            throw new ParerInternalError(description);
+        }
 
-	// TIP: qui mi aspetto sempre un modello e uno soltanto!!!
-	for (DecModelloXsdFascicolo modello : modelloAttivoList) {
-	    manageIndex(idAmbiente, verAipFascicolo, modello, codiceVersione,
-		    codiceVersioneMetadati, sistemaConservazione, creatingApplicationProducer,
-		    cdVersioneXml, backendIndiciAipFascicoli, indiciAipFascicoliBlob);
-	}
+        // TIP: qui mi aspetto sempre un modello e uno soltanto!!!
+        for (DecModelloXsdFascicolo modello : modelloAttivoList) {
+            manageIndex(idAmbiente, verAipFascicolo, modello, codiceVersione,
+                    codiceVersioneMetadati, sistemaConservazione, creatingApplicationProducer,
+                    cdVersioneXml, backendIndiciAipFascicoli, indiciAipFascicoliBlob);
+        }
     }
 
     public void manageIndex(long idAmbiente, FasVerAipFascicolo verAipFascicolo,
-	    DecModelloXsdFascicolo modelloUnisyncro, String codiceVersione,
-	    String codiceVersioneMetadati, String sistemaConservazione,
-	    String creatingApplicationProducer, String cdVersioneXml,
-	    BackendStorage backendIndiciAipFascicoli, Map<String, String> indiciAipFascicoliBlob)
-	    throws Exception {
+            DecModelloXsdFascicolo modelloUnisyncro, String codiceVersione,
+            String codiceVersioneMetadati, String sistemaConservazione,
+            String creatingApplicationProducer, String cdVersioneXml,
+            BackendStorage backendIndiciAipFascicoli, Map<String, String> indiciAipFascicoliBlob)
+            throws Exception {
 
-	String desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
+        String desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
 
-	log.info("{} - Inizio creazione XML indice AIP per la versione fascicolo {}", desJobMessage,
-		verAipFascicolo.getIdVerAipFascicolo());
+        log.info("{} - Inizio creazione XML indice AIP per la versione fascicolo {}", desJobMessage,
+                verAipFascicolo.getIdVerAipFascicolo());
 
-	CSVersatore versatore = new CSVersatore();
-	versatore.setSistemaConservazione(sistemaConservazione);
-	versatore.setAmbiente(verAipFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte()
-		.getOrgAmbiente().getNmAmbiente());
-	versatore.setEnte(verAipFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte().getNmEnte());
-	versatore.setStruttura(verAipFascicolo.getFasFascicolo().getOrgStrut().getNmStrut());
+        CSVersatore versatore = new CSVersatore();
+        versatore.setSistemaConservazione(sistemaConservazione);
+        versatore.setAmbiente(verAipFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte()
+                .getOrgAmbiente().getNmAmbiente());
+        versatore.setEnte(verAipFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte().getNmEnte());
+        versatore.setStruttura(verAipFascicolo.getFasFascicolo().getOrgStrut().getNmStrut());
 
-	CSChiaveFasc chiaveFasc = new CSChiaveFasc();
-	chiaveFasc.setAnno(verAipFascicolo.getFasFascicolo().getAaFascicolo().intValue());
-	chiaveFasc.setNumero(verAipFascicolo.getFasFascicolo().getCdKeyFascicolo());
+        CSChiaveFasc chiaveFasc = new CSChiaveFasc();
+        chiaveFasc.setAnno(verAipFascicolo.getFasFascicolo().getAaFascicolo().intValue());
+        chiaveFasc.setNumero(verAipFascicolo.getFasFascicolo().getCdKeyFascicolo());
 
-	// MEV#26576
-	/**
-	 * Generazione indice aip versione fascicolo
-	 */
-	BigDecimal idAmbienteFas = BigDecimal.valueOf(verAipFascicolo.getFasFascicolo()
-		.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
-	BigDecimal idStrutFas = BigDecimal
-		.valueOf(verAipFascicolo.getFasFascicolo().getOrgStrut().getIdStrut());
-	SIOrgEnteSiam enteSiam = ciafHelper.findById(SIOrgEnteSiam.class,
-		verAipFascicolo.getFasFascicolo().getOrgStrut().getIdEnteConvenz());
-	StringWriter indexFile = null;
+        // MEV#26576
+        /**
+         * Generazione indice aip versione fascicolo
+         */
+        BigDecimal idAmbienteFas = BigDecimal.valueOf(verAipFascicolo.getFasFascicolo()
+                .getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
+        BigDecimal idStrutFas = BigDecimal
+                .valueOf(verAipFascicolo.getFasFascicolo().getOrgStrut().getIdStrut());
+        SIOrgEnteSiam enteSiam = ciafHelper.findById(SIOrgEnteSiam.class,
+                verAipFascicolo.getFasFascicolo().getOrgStrut().getIdEnteConvenz());
+        StringWriter indexFile = null;
 
-	Map<String, String> mappaAgent = confHelper.getParamApplicMapValue(agentParamV2,
-		idAmbienteFas, idStrutFas, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+        Map<String, String> mappaAgent = confHelper.getParamApplicMapValue(agentParamV2,
+                idAmbienteFas, idStrutFas, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
 
-	mappaAgent.putAll(paramIamHelper.getParamApplicMapValue(agentParamIamV2,
-		BigDecimal
-			.valueOf(enteSiam.getSiOrgAmbienteEnteConvenz().getIdAmbienteEnteConvenz()),
-		BigDecimal.valueOf(enteSiam.getIdEnteSiam()),
-		CostantiDB.TipoIamVGetValAppart.ENTECONVENZ));
+        mappaAgent.putAll(paramIamHelper.getParamApplicMapValue(agentParamIamV2,
+                BigDecimal
+                        .valueOf(enteSiam.getSiOrgAmbienteEnteConvenz().getIdAmbienteEnteConvenz()),
+                BigDecimal.valueOf(enteSiam.getIdEnteSiam()),
+                CostantiDB.TipoIamVGetValAppart.ENTECONVENZ));
 
-	CreazioneIndiceAipFascicoliUtilV2 indiceAipFascicoliUtilV2 = new CreazioneIndiceAipFascicoliUtilV2();
-	PIndex pindex = indiceAipFascicoliUtilV2.generaIndiceAIPV2Strict(verAipFascicolo,
-		codiceVersione, codiceVersioneMetadati, mappaAgent, sistemaConservazione,
-		creatingApplicationProducer);
+        CreazioneIndiceAipFascicoliUtilV2 indiceAipFascicoliUtilV2 = new CreazioneIndiceAipFascicoliUtilV2();
+        PIndex pindex = indiceAipFascicoliUtilV2.generaIndiceAIPV2Strict(verAipFascicolo,
+                codiceVersione, codiceVersioneMetadati, mappaAgent, sistemaConservazione,
+                creatingApplicationProducer);
 
-	log.debug("{} - Eseguo il marshalling del pindex", desJobMessage);
-	indexFile = marshallPIndex(pindex);
+        log.debug("{} - Eseguo il marshalling del pindex", desJobMessage);
+        indexFile = marshallPIndex(pindex);
 
-	// Eseguo la validazione dell'xml prodotto con l'xsd recuperato da DEC_MODELLO_XSD_FASCICOLO
-	log.info(
-		"{} - Eseguo validazione dell'xml con l'xsd recuperato da DEC_MODELLO_XSD_FASCICOLO",
-		desJobMessage);
-	try {
-	    String xsd = modelloUnisyncro.getBlXsd();
-	    XmlUtils.validateXml(xsd, indexFile.toString());
-	    log.info("{} - Documento validato con successo", desJobMessage);
-	} catch (SAXException | IOException ex) {
-	    log.error(ex.getMessage(), ex);
-	    throw new ParerInternalError("Il file non rispetta l'XSD previsto per lo scambio");
-	}
+        // Eseguo la validazione dell'xml prodotto con l'xsd recuperato da DEC_MODELLO_XSD_FASCICOLO
+        log.info(
+                "{} - Eseguo validazione dell'xml con l'xsd recuperato da DEC_MODELLO_XSD_FASCICOLO",
+                desJobMessage);
+        try {
+            String xsd = modelloUnisyncro.getBlXsd();
+            XmlUtils.validateXml(xsd, indexFile.toString());
+            log.info("{} - Documento validato con successo", desJobMessage);
+        } catch (SAXException | IOException ex) {
+            log.error(ex.getMessage(), ex);
+            throw new ParerInternalError("Il file non rispetta l'XSD previsto per lo scambio");
+        }
 
-	// Calcolo l'hash SHA-256 del file .xml ed hexBinary
-	log.debug("{} - Calcolo l'hash", desJobMessage);
-	String hashXmlIndice = new HashCalculator()
-		.calculateHashSHAX(indexFile.toString(), TipiHash.SHA_256).toHexBinary();
+        // Calcolo l'hash SHA-256 del file .xml ed hexBinary
+        log.debug("{} - Calcolo l'hash", desJobMessage);
+        String hashXmlIndice = new HashCalculator()
+                .calculateHashSHAX(indexFile.toString(), TipiHash.SHA_256).toHexBinary();
 
-	/*
-	 * Registro un record nella tabella FAS_META_VER_AIP_FASCICOLO definendo l'hash dell'indice,
-	 * l'algoritmo usato per il calcolo hash (=SHA-256) e l'encoding del hash (=hexBinary)
-	 */
-	FasMetaVerAipFascicolo metaVerAipFascicolo = ciafHelper.registraFasMetaVerAipFascicolo(
-		verAipFascicolo, hashXmlIndice, TipiHash.SHA_256.descrivi(),
-		TipiEncBinari.HEX_BINARY.descrivi(), codiceVersione, versatore, chiaveFasc);
+        /*
+         * Registro un record nella tabella FAS_META_VER_AIP_FASCICOLO definendo l'hash dell'indice,
+         * l'algoritmo usato per il calcolo hash (=SHA-256) e l'encoding del hash (=hexBinary)
+         */
+        FasMetaVerAipFascicolo metaVerAipFascicolo = ciafHelper.registraFasMetaVerAipFascicolo(
+                verAipFascicolo, hashXmlIndice, TipiHash.SHA_256.descrivi(),
+                TipiEncBinari.HEX_BINARY.descrivi(), codiceVersione, versatore, chiaveFasc);
 
-	// MEV #30398
-	// Eseguo il salvataggio del clob del file nella tabella FAS_FILE_META_VER_AIP_FASC
-	ciafHelper.registraFasFileMetaVerAipFasc(metaVerAipFascicolo.getIdMetaVerAipFascicolo(),
-		indexFile.toString(), verAipFascicolo.getFasFascicolo().getOrgStrut(), new Date(),
-		backendIndiciAipFascicoli, indiciAipFascicoliBlob);
-	// end MEV #30398
+        // MEV #30398
+        // Eseguo il salvataggio del clob del file nella tabella FAS_FILE_META_VER_AIP_FASC
+        ciafHelper.registraFasFileMetaVerAipFasc(metaVerAipFascicolo.getIdMetaVerAipFascicolo(),
+                indexFile.toString(), verAipFascicolo.getFasFascicolo().getOrgStrut(), new Date(),
+                backendIndiciAipFascicoli, indiciAipFascicoliBlob);
+        // end MEV #30398
 
-	/*
-	 * Inserisco i record nella tabella FAS_XSD_META_VER_AIP_FASC indicando il riferimento al
-	 * modello di xsd utilizzato per la costruzione delle more info self description e
-	 * dell’indice aip
-	 */
-	DecModelloXsdFascicolo modelloSelfD = ciafHelper.retrieveIdModelliDaElaborare(idAmbiente,
-		CostantiDB.TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO.name()).get(0);
-	// DecModelloXsdFascicolo modelloFileG = ciafHelper.retrieveIdModelliDaElaborare(idAmbiente,
-	// CostantiDB.TiModelloXsd.FILE_GROUP_FILE_MORE_INFO.name()).get(0);
-	ciafHelper.registraFasXsdMetaVerAipFasc(metaVerAipFascicolo.getIdMetaVerAipFascicolo(),
-		modelloSelfD.getIdModelloXsdFascicolo(),
-		"SelfDescription-" + modelloSelfD.getCdXsd());
-	// ciafHelper.registraFasXsdMetaVerAipFasc(metaVerAipFascicolo.getIdMetaVerAipFascicolo(),
-	// modelloFileG.getIdModelloXsdFascicolo(), "File-" + modelloFileG.getCdXsd());
-	ciafHelper.registraFasXsdMetaVerAipFasc(metaVerAipFascicolo.getIdMetaVerAipFascicolo(),
-		modelloUnisyncro.getIdModelloXsdFascicolo(), "Unisyncro-UNI_11386_2010");
+        /*
+         * Inserisco i record nella tabella FAS_XSD_META_VER_AIP_FASC indicando il riferimento al
+         * modello di xsd utilizzato per la costruzione delle more info self description e
+         * dell’indice aip
+         */
+        DecModelloXsdFascicolo modelloSelfD = ciafHelper.retrieveIdModelliDaElaborare(idAmbiente,
+                CostantiDB.TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO.name()).get(0);
+        // DecModelloXsdFascicolo modelloFileG = ciafHelper.retrieveIdModelliDaElaborare(idAmbiente,
+        // CostantiDB.TiModelloXsd.FILE_GROUP_FILE_MORE_INFO.name()).get(0);
+        ciafHelper.registraFasXsdMetaVerAipFasc(metaVerAipFascicolo.getIdMetaVerAipFascicolo(),
+                modelloSelfD.getIdModelloXsdFascicolo(),
+                "SelfDescription-" + modelloSelfD.getCdXsd());
+        // ciafHelper.registraFasXsdMetaVerAipFasc(metaVerAipFascicolo.getIdMetaVerAipFascicolo(),
+        // modelloFileG.getIdModelloXsdFascicolo(), "File-" + modelloFileG.getCdXsd());
+        ciafHelper.registraFasXsdMetaVerAipFasc(metaVerAipFascicolo.getIdMetaVerAipFascicolo(),
+                modelloUnisyncro.getIdModelloXsdFascicolo(), "Unisyncro-UNI_11386_2010");
     }
 
     private StringWriter marshallIdC(IdCType idc) throws JAXBException {
-	it.eng.parer.aipFascicoli.xml.usmainResp.ObjectFactory objFct_IdCType = new it.eng.parer.aipFascicoli.xml.usmainResp.ObjectFactory();
-	JAXBElement<IdCType> element_IdCType = objFct_IdCType.createIdC(idc);
+        it.eng.parer.aipFascicoli.xml.usmainResp.ObjectFactory objFct_IdCType = new it.eng.parer.aipFascicoli.xml.usmainResp.ObjectFactory();
+        JAXBElement<IdCType> element_IdCType = objFct_IdCType.createIdC(idc);
 
-	StringWriter tmpWriter = new StringWriter();
-	Marshaller tmpMarshaller = xmlContextCache.getCreaIndiceAipFascicoloCtx()
-		.createMarshaller();
-	tmpMarshaller.setSchema(xmlContextCache.getSchemaOfAipFascUniSincro());
-	tmpMarshaller.marshal(element_IdCType, tmpWriter);
-	return tmpWriter;
+        StringWriter tmpWriter = new StringWriter();
+        Marshaller tmpMarshaller = xmlContextCache.getCreaIndiceAipFascicoloCtx()
+                .createMarshaller();
+        tmpMarshaller.setSchema(xmlContextCache.getSchemaOfAipFascUniSincro());
+        tmpMarshaller.marshal(element_IdCType, tmpWriter);
+        return tmpWriter;
     }
 
     // MEV#26576
     private StringWriter marshallPIndex(PIndex pindex) throws JAXBException {
-	it.eng.parer.aipFascicoli.xml.usmainRespV2.ObjectFactory objFctPIndex = new it.eng.parer.aipFascicoli.xml.usmainRespV2.ObjectFactory();
-	JAXBElement<PIndex> elementPIndex = objFctPIndex.createPIndex(pindex);
+        it.eng.parer.aipFascicoli.xml.usmainRespV2.ObjectFactory objFctPIndex = new it.eng.parer.aipFascicoli.xml.usmainRespV2.ObjectFactory();
+        JAXBElement<PIndex> elementPIndex = objFctPIndex.createPIndex(pindex);
 
-	StringWriter tmpWriter = new StringWriter();
-	Marshaller tmpMarshaller = xmlContextCache.getCreaIndiceAipFascicoloCtxV2()
-		.createMarshaller();
-	tmpMarshaller.setSchema(xmlContextCache.getSchemaOfAipFascUniSincroV2());
-	tmpMarshaller.marshal(elementPIndex, tmpWriter);
-	return tmpWriter;
+        StringWriter tmpWriter = new StringWriter();
+        Marshaller tmpMarshaller = xmlContextCache.getCreaIndiceAipFascicoloCtxV2()
+                .createMarshaller();
+        tmpMarshaller.setSchema(xmlContextCache.getSchemaOfAipFascUniSincroV2());
+        tmpMarshaller.marshal(elementPIndex, tmpWriter);
+        return tmpWriter;
     }
     // end MEV#26576
 }

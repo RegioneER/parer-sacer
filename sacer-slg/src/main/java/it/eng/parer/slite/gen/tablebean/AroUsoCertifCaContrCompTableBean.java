@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class AroUsoCertifCaContrCompTableBean
-	extends AbstractBaseTable<AroUsoCertifCaContrCompRowBean> {
+        extends AbstractBaseTable<AroUsoCertifCaContrCompRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class AroUsoCertifCaContrCompTableBean
     public static AroUsoCertifCaContrCompTableDescriptor TABLE_DESCRIPTOR = new AroUsoCertifCaContrCompTableDescriptor();
 
     public AroUsoCertifCaContrCompTableBean() {
-	super();
+        super();
     }
 
     protected AroUsoCertifCaContrCompRowBean createRow() {
-	return new AroUsoCertifCaContrCompRowBean();
+        return new AroUsoCertifCaContrCompRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroUsoCertifCaContrCompRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

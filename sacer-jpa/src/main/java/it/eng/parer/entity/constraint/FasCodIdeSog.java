@@ -26,6 +26,6 @@ public final class FasCodIdeSog {
      * Tipo codice
      */
     public enum TiCodSog {
-	PREDEFINITO, NON_PREDEFINITO
+        PREDEFINITO, NON_PREDEFINITO
     }
 }

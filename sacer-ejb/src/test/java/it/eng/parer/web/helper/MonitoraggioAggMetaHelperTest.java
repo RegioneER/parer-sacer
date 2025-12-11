@@ -48,238 +48,238 @@ public class MonitoraggioAggMetaHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest
-		.createEnterpriseArchive(MonitoraggioAggMetaHelperTest.class.getSimpleName(),
-			HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-			HelperTest.createSacerJavaArchive(Arrays.asList(""),
-				MonitoraggioAggMetaHelperTest.class,
-				MonitoraggioAggMetaHelper.class));
+        return HelperTest
+                .createEnterpriseArchive(MonitoraggioAggMetaHelperTest.class.getSimpleName(),
+                        HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                        HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                                MonitoraggioAggMetaHelperTest.class,
+                                MonitoraggioAggMetaHelper.class));
     }
 
     @Test
     void getTotali() {
 
-	String tipoEntita = aString();
-	BigDecimal idUser = aBigDecimal();
-	BigDecimal idAmbiente = aBigDecimal();
-	BigDecimal idEnte = aBigDecimal();
-	BigDecimal idStrut = aBigDecimal();
-	BigDecimal aaKeyUnitaDoc = aBigDecimal();
-	BigDecimal aaKeyUnitaDocDa = aBigDecimal();
-	BigDecimal aaKeyUnitaDocA = aBigDecimal();
-	BigDecimal idTipoUnitaDoc = aBigDecimal();
-	BigDecimal idRegistroUnitaDoc = aBigDecimal();
-	BigDecimal idTipoDocPrinc = aBigDecimal();
-	assertNotNull(helper.getTotali(tipoEntita, idUser, idAmbiente, idEnte, idStrut,
-		aaKeyUnitaDoc, aaKeyUnitaDocDa, aaKeyUnitaDocA, idTipoUnitaDoc, idRegistroUnitaDoc,
-		idTipoDocPrinc));
+        String tipoEntita = aString();
+        BigDecimal idUser = aBigDecimal();
+        BigDecimal idAmbiente = aBigDecimal();
+        BigDecimal idEnte = aBigDecimal();
+        BigDecimal idStrut = aBigDecimal();
+        BigDecimal aaKeyUnitaDoc = aBigDecimal();
+        BigDecimal aaKeyUnitaDocDa = aBigDecimal();
+        BigDecimal aaKeyUnitaDocA = aBigDecimal();
+        BigDecimal idTipoUnitaDoc = aBigDecimal();
+        BigDecimal idRegistroUnitaDoc = aBigDecimal();
+        BigDecimal idTipoDocPrinc = aBigDecimal();
+        assertNotNull(helper.getTotali(tipoEntita, idUser, idAmbiente, idEnte, idStrut,
+                aaKeyUnitaDoc, aaKeyUnitaDocDa, aaKeyUnitaDocA, idTipoUnitaDoc, idRegistroUnitaDoc,
+                idTipoDocPrinc));
     }
 
     @Test
     void getTotaliDataCorrente() {
 
-	String tipoEntita = aString();
-	BigDecimal idUser = aBigDecimal();
-	BigDecimal idAmbiente = aBigDecimal();
-	BigDecimal idEnte = aBigDecimal();
-	BigDecimal idStrut = aBigDecimal();
-	BigDecimal aaKeyUnitaDoc = aBigDecimal();
-	BigDecimal aaKeyUnitaDocDa = aBigDecimal();
-	BigDecimal aaKeyUnitaDocA = aBigDecimal();
-	BigDecimal idTipoUnitaDoc = aBigDecimal();
-	BigDecimal idRegistroUnitaDoc = aBigDecimal();
-	BigDecimal idTipoDocPrinc = aBigDecimal();
-	assertNotNull(helper.getTotaliDataCorrente(tipoEntita, idUser, idAmbiente, idEnte, idStrut,
-		aaKeyUnitaDoc, aaKeyUnitaDocDa, aaKeyUnitaDocA, idTipoUnitaDoc, idRegistroUnitaDoc,
-		idTipoDocPrinc));
+        String tipoEntita = aString();
+        BigDecimal idUser = aBigDecimal();
+        BigDecimal idAmbiente = aBigDecimal();
+        BigDecimal idEnte = aBigDecimal();
+        BigDecimal idStrut = aBigDecimal();
+        BigDecimal aaKeyUnitaDoc = aBigDecimal();
+        BigDecimal aaKeyUnitaDocDa = aBigDecimal();
+        BigDecimal aaKeyUnitaDocA = aBigDecimal();
+        BigDecimal idTipoUnitaDoc = aBigDecimal();
+        BigDecimal idRegistroUnitaDoc = aBigDecimal();
+        BigDecimal idTipoDocPrinc = aBigDecimal();
+        assertNotNull(helper.getTotaliDataCorrente(tipoEntita, idUser, idAmbiente, idEnte, idStrut,
+                aaKeyUnitaDoc, aaKeyUnitaDocDa, aaKeyUnitaDocA, idTipoUnitaDoc, idRegistroUnitaDoc,
+                idTipoDocPrinc));
     }
 
     @Test
     void getTotaliFalliti() {
 
-	String tipoEntita = aString();
-	BigDecimal idUser = aBigDecimal();
-	BigDecimal idAmbiente = aBigDecimal();
-	BigDecimal idEnte = aBigDecimal();
-	BigDecimal idStrut = aBigDecimal();
-	BigDecimal aaKeyUnitaDoc = aBigDecimal();
-	BigDecimal aaKeyUnitaDocDa = aBigDecimal();
-	BigDecimal aaKeyUnitaDocA = aBigDecimal();
-	BigDecimal idTipoUnitaDoc = aBigDecimal();
-	BigDecimal idRegistroUnitaDoc = aBigDecimal();
-	BigDecimal idTipoDocPrinc = aBigDecimal();
-	Map<String, Object> result = helper.getTotaliFalliti(tipoEntita, idUser, idAmbiente, idEnte,
-		idStrut, aaKeyUnitaDoc, aaKeyUnitaDocDa, aaKeyUnitaDocA, idTipoUnitaDoc,
-		idRegistroUnitaDoc, idTipoDocPrinc);
-	assertNotNull(result);
+        String tipoEntita = aString();
+        BigDecimal idUser = aBigDecimal();
+        BigDecimal idAmbiente = aBigDecimal();
+        BigDecimal idEnte = aBigDecimal();
+        BigDecimal idStrut = aBigDecimal();
+        BigDecimal aaKeyUnitaDoc = aBigDecimal();
+        BigDecimal aaKeyUnitaDocDa = aBigDecimal();
+        BigDecimal aaKeyUnitaDocA = aBigDecimal();
+        BigDecimal idTipoUnitaDoc = aBigDecimal();
+        BigDecimal idRegistroUnitaDoc = aBigDecimal();
+        BigDecimal idTipoDocPrinc = aBigDecimal();
+        Map<String, Object> result = helper.getTotaliFalliti(tipoEntita, idUser, idAmbiente, idEnte,
+                idStrut, aaKeyUnitaDoc, aaKeyUnitaDocDa, aaKeyUnitaDocA, idTipoUnitaDoc,
+                idRegistroUnitaDoc, idTipoDocPrinc);
+        assertNotNull(result);
     }
 
     @Test
     void retrieveVLisAggMeta() {
 
-	BigDecimal idUser = aBigDecimal();
-	BigDecimal idAmbiente = aBigDecimal();
-	BigDecimal idEnte = aBigDecimal();
-	BigDecimal idStrut = aBigDecimal();
-	BigDecimal idTipoUnitaDoc = aBigDecimal();
-	BigDecimal idRegistroUnitaDoc = aBigDecimal();
-	BigDecimal idTipoDoc = aBigDecimal();
-	Date[] dateValidate = aDateArray(2);
-	BigDecimal rangeAnnoDa = aBigDecimal();
-	BigDecimal rangeAnnoA = aBigDecimal();
-	String rangeNumeroDa = aString();
-	String rangeNumeroA = aString();
-	Set<String> statoIndiceAip = aSetOfString(3);
-	String flSesUpdKoRisolti = aString();
-	assertNotNull(helper.retrieveVLisAggMeta(idUser, idAmbiente, idEnte, idStrut,
-		idTipoUnitaDoc, idRegistroUnitaDoc, idTipoDoc, dateValidate, rangeAnnoDa,
-		rangeAnnoA, rangeNumeroDa, rangeNumeroA, statoIndiceAip, flSesUpdKoRisolti));
+        BigDecimal idUser = aBigDecimal();
+        BigDecimal idAmbiente = aBigDecimal();
+        BigDecimal idEnte = aBigDecimal();
+        BigDecimal idStrut = aBigDecimal();
+        BigDecimal idTipoUnitaDoc = aBigDecimal();
+        BigDecimal idRegistroUnitaDoc = aBigDecimal();
+        BigDecimal idTipoDoc = aBigDecimal();
+        Date[] dateValidate = aDateArray(2);
+        BigDecimal rangeAnnoDa = aBigDecimal();
+        BigDecimal rangeAnnoA = aBigDecimal();
+        String rangeNumeroDa = aString();
+        String rangeNumeroA = aString();
+        Set<String> statoIndiceAip = aSetOfString(3);
+        String flSesUpdKoRisolti = aString();
+        assertNotNull(helper.retrieveVLisAggMeta(idUser, idAmbiente, idEnte, idStrut,
+                idTipoUnitaDoc, idRegistroUnitaDoc, idTipoDoc, dateValidate, rangeAnnoDa,
+                rangeAnnoA, rangeNumeroDa, rangeNumeroA, statoIndiceAip, flSesUpdKoRisolti));
     }
 
     @Test
     void retrieveVLisAggMetaFalliti() {
 
-	BigDecimal idUser = aBigDecimal();
-	BigDecimal idAmbiente = aBigDecimal();
-	BigDecimal idEnte = aBigDecimal();
-	BigDecimal idStrut = aBigDecimal();
-	BigDecimal idTipoUnitaDoc = aBigDecimal();
-	BigDecimal idRegistroUnitaDoc = aBigDecimal();
-	BigDecimal idTipoDoc = aBigDecimal();
-	Date[] dateValidate = aDateArray(3);
-	BigDecimal rangeAnnoDa = aBigDecimal();
-	BigDecimal rangeAnnoA = aBigDecimal();
-	String rangeNumeroDa = aString();
-	String rangeNumeroA = aString();
-	Set<String> statoSessione = aSetOfString(2);
-	BigDecimal idClasseErr = aBigDecimal();
-	BigDecimal idErr = aBigDecimal();
-	assertNotNull(helper.retrieveVLisAggMetaFalliti(idUser, idAmbiente, idEnte, idStrut,
-		idTipoUnitaDoc, idRegistroUnitaDoc, idTipoDoc, dateValidate, rangeAnnoDa,
-		rangeAnnoA, rangeNumeroDa, rangeNumeroA, statoSessione, idClasseErr, idErr));
+        BigDecimal idUser = aBigDecimal();
+        BigDecimal idAmbiente = aBigDecimal();
+        BigDecimal idEnte = aBigDecimal();
+        BigDecimal idStrut = aBigDecimal();
+        BigDecimal idTipoUnitaDoc = aBigDecimal();
+        BigDecimal idRegistroUnitaDoc = aBigDecimal();
+        BigDecimal idTipoDoc = aBigDecimal();
+        Date[] dateValidate = aDateArray(3);
+        BigDecimal rangeAnnoDa = aBigDecimal();
+        BigDecimal rangeAnnoA = aBigDecimal();
+        String rangeNumeroDa = aString();
+        String rangeNumeroA = aString();
+        Set<String> statoSessione = aSetOfString(2);
+        BigDecimal idClasseErr = aBigDecimal();
+        BigDecimal idErr = aBigDecimal();
+        assertNotNull(helper.retrieveVLisAggMetaFalliti(idUser, idAmbiente, idEnte, idStrut,
+                idTipoUnitaDoc, idRegistroUnitaDoc, idTipoDoc, dateValidate, rangeAnnoDa,
+                rangeAnnoA, rangeNumeroDa, rangeNumeroA, statoSessione, idClasseErr, idErr));
     }
 
     @Test
     void retrieveVLisAggMetaErrati() {
-	Date[] dateValidate = aDateArray(2);
-	Set<String> tiStatoSes = aSetOfString(3);
-	BigDecimal idClasseErr = aBigDecimal();
-	BigDecimal idErr = aBigDecimal();
-	assertNotNull(
-		helper.retrieveVLisAggMetaErrati(dateValidate, tiStatoSes, idClasseErr, idErr));
+        Date[] dateValidate = aDateArray(2);
+        Set<String> tiStatoSes = aSetOfString(3);
+        BigDecimal idClasseErr = aBigDecimal();
+        BigDecimal idErr = aBigDecimal();
+        assertNotNull(
+                helper.retrieveVLisAggMetaErrati(dateValidate, tiStatoSes, idClasseErr, idErr));
     }
 
     @Test
     void retrieveClasseErrSacerByTipiUso() {
-	assertNotNull(helper.retrieveClasseErrSacerByTipiUso(aListOfString(3)));
+        assertNotNull(helper.retrieveClasseErrSacerByTipiUso(aListOfString(3)));
     }
 
     @Test
     void retrieveErrSacerByCodClasse() {
 
-	assertNotNull(helper.retrieveErrSacerByCodClasse(aString()));
+        assertNotNull(helper.retrieveErrSacerByCodClasse(aString()));
     }
 
     @Test
     void retrieveErrSacerByIdClasse() {
 
-	assertNotNull(helper.retrieveErrSacerByIdClasse(aBigDecimal()));
+        assertNotNull(helper.retrieveErrSacerByIdClasse(aBigDecimal()));
     }
 
     @Test
     void getVrsErrSesUpdUnitaDocKoList() {
-	assertNotNull(helper.getVrsErrSesUpdUnitaDocKoList(aBigDecimal()));
+        assertNotNull(helper.getVrsErrSesUpdUnitaDocKoList(aBigDecimal()));
     }
 
     @Test
     void getVrsErrSesUpdUnitaDocErrList() {
-	assertNotNull(helper.getVrsErrSesUpdUnitaDocErrList(aBigDecimal()));
+        assertNotNull(helper.getVrsErrSesUpdUnitaDocErrList(aBigDecimal()));
     }
 
     @Test
     void getAroVLisUpdDocUnitaDocList() {
-	assertNotNull(helper.getAroVLisUpdDocUnitaDocList(aBigDecimal()));
+        assertNotNull(helper.getAroVLisUpdDocUnitaDocList(aBigDecimal()));
     }
 
     @Test
     void getAroVLisUpdCompUnitaDocList() {
-	assertNotNull(helper.getAroVLisUpdCompUnitaDocList(aBigDecimal()));
+        assertNotNull(helper.getAroVLisUpdCompUnitaDocList(aBigDecimal()));
     }
 
     @Test
     void getAroVLisUpdKoRisoltiList() {
-	assertNotNull(helper.getAroVLisUpdKoRisoltiList(aBigDecimal()));
+        assertNotNull(helper.getAroVLisUpdKoRisoltiList(aBigDecimal()));
     }
 
     @Test
     void getAroWarnUpdUnitaDocList() {
-	assertNotNull(helper.getAroWarnUpdUnitaDocList(aBigDecimal()));
+        assertNotNull(helper.getAroWarnUpdUnitaDocList(aBigDecimal()));
     }
 
     @Test
     void retrieveMonContaSesUpdUdKo() {
-	Date dtRifConta = todayTs();
-	long idStrut = aLong();
-	BigDecimal aaKeyUnitaDoc = aBigDecimal();
-	long idRegistroUnitaDoc = aLong();
-	long idTipoUnitaDoc = aLong();
-	long idTipoDoc = aLong();
+        Date dtRifConta = todayTs();
+        long idStrut = aLong();
+        BigDecimal aaKeyUnitaDoc = aBigDecimal();
+        long idRegistroUnitaDoc = aLong();
+        long idTipoUnitaDoc = aLong();
+        long idTipoDoc = aLong();
 
-	String tiStatoUpdUdKo = MonContaSesUpdUdKo.TiStatoUdpUdKoMonContaSesUpdUdKo.RISOLTO.name();
-	assertNotNull(helper.retrieveMonContaSesUpdUdKo(dtRifConta, idStrut, aaKeyUnitaDoc,
-		idRegistroUnitaDoc, idTipoUnitaDoc, idTipoDoc, tiStatoUpdUdKo));
+        String tiStatoUpdUdKo = MonContaSesUpdUdKo.TiStatoUdpUdKoMonContaSesUpdUdKo.RISOLTO.name();
+        assertNotNull(helper.retrieveMonContaSesUpdUdKo(dtRifConta, idStrut, aaKeyUnitaDoc,
+                idRegistroUnitaDoc, idTipoUnitaDoc, idTipoDoc, tiStatoUpdUdKo));
 
-	tiStatoUpdUdKo = MonContaSesUpdUdKo.TiStatoUdpUdKoMonContaSesUpdUdKo.VERIFICATO.name();
-	assertNotNull(helper.retrieveMonContaSesUpdUdKo(dtRifConta, idStrut, aaKeyUnitaDoc,
-		idRegistroUnitaDoc, idTipoUnitaDoc, idTipoDoc, tiStatoUpdUdKo));
+        tiStatoUpdUdKo = MonContaSesUpdUdKo.TiStatoUdpUdKoMonContaSesUpdUdKo.VERIFICATO.name();
+        assertNotNull(helper.retrieveMonContaSesUpdUdKo(dtRifConta, idStrut, aaKeyUnitaDoc,
+                idRegistroUnitaDoc, idTipoUnitaDoc, idTipoDoc, tiStatoUpdUdKo));
 
-	tiStatoUpdUdKo = MonContaSesUpdUdKo.TiStatoUdpUdKoMonContaSesUpdUdKo.NON_RISOLUBILE.name();
-	assertNotNull(helper.retrieveMonContaSesUpdUdKo(dtRifConta, idStrut, aaKeyUnitaDoc,
-		idRegistroUnitaDoc, idTipoUnitaDoc, idTipoDoc, tiStatoUpdUdKo));
+        tiStatoUpdUdKo = MonContaSesUpdUdKo.TiStatoUdpUdKoMonContaSesUpdUdKo.NON_RISOLUBILE.name();
+        assertNotNull(helper.retrieveMonContaSesUpdUdKo(dtRifConta, idStrut, aaKeyUnitaDoc,
+                idRegistroUnitaDoc, idTipoUnitaDoc, idTipoDoc, tiStatoUpdUdKo));
 
-	tiStatoUpdUdKo = MonContaSesUpdUdKo.TiStatoUdpUdKoMonContaSesUpdUdKo.NON_VERIFICATO.name();
-	assertNotNull(helper.retrieveMonContaSesUpdUdKo(dtRifConta, idStrut, aaKeyUnitaDoc,
-		idRegistroUnitaDoc, idTipoUnitaDoc, idTipoDoc, tiStatoUpdUdKo));
+        tiStatoUpdUdKo = MonContaSesUpdUdKo.TiStatoUdpUdKoMonContaSesUpdUdKo.NON_VERIFICATO.name();
+        assertNotNull(helper.retrieveMonContaSesUpdUdKo(dtRifConta, idStrut, aaKeyUnitaDoc,
+                idRegistroUnitaDoc, idTipoUnitaDoc, idTipoDoc, tiStatoUpdUdKo));
     }
 
     @Test
     void getLogVVisLastSched() {
-	assertNotNull(helper.getLogVVisLastSched(aString()));
+        assertNotNull(helper.getLogVVisLastSched(aString()));
     }
 
     @Test
     void getStruttureVersantiPerAggMeta() {
-	assertNotNull(helper.getStruttureVersantiPerAggMeta());
+        assertNotNull(helper.getStruttureVersantiPerAggMeta());
     }
 
     @Test
     void getAggMetaPerCalcoloContenuto() {
-	long idStrut = aLong();
-	Date data = todayTs();
-	assertNotNull(helper.getAggMetaPerCalcoloContenuto(idStrut, data));
+        long idStrut = aLong();
+        Date data = todayTs();
+        assertNotNull(helper.getAggMetaPerCalcoloContenuto(idStrut, data));
     }
 
     @Test
     void getAggMetaPerCalcoloContenuto3() {
-	long idStrut = aLong();
-	Date data = todayTs();
-	assertNotNull(helper.getAggMetaPerCalcoloContenuto3(idStrut, data));
+        long idStrut = aLong();
+        Date data = todayTs();
+        assertNotNull(helper.getAggMetaPerCalcoloContenuto3(idStrut, data));
     }
 
     @Test
     void getSesAggMetaPerCalcoloContenuto() {
 
-	long idStrut = aLong();
-	Date data = todayTs();
-	assertNotNull(helper.getSesAggMetaPerCalcoloContenuto(idStrut, data));
+        long idStrut = aLong();
+        Date data = todayTs();
+        assertNotNull(helper.getSesAggMetaPerCalcoloContenuto(idStrut, data));
     }
 
     @Test
     void getSesAggMetaPerCalcoloContenuto3() {
 
-	long idStrut = aLong();
-	Date data = todayTs();
-	assertNotNull(helper.getSesAggMetaPerCalcoloContenuto3(idStrut, data));
+        long idStrut = aLong();
+        Date data = todayTs();
+        assertNotNull(helper.getSesAggMetaPerCalcoloContenuto3(idStrut, data));
     }
 
 }

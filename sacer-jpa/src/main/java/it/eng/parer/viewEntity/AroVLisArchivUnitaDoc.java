@@ -42,66 +42,66 @@ public class AroVLisArchivUnitaDoc implements Serializable {
 
     @Column(name = "CD_FASCIC")
     public String getCdFascic() {
-	return this.cdFascic;
+        return this.cdFascic;
     }
 
     public void setCdFascic(String cdFascic) {
-	this.cdFascic = cdFascic;
+        this.cdFascic = cdFascic;
     }
 
     @Column(name = "CD_SOTTOFASCIC")
     public String getCdSottofascic() {
-	return this.cdSottofascic;
+        return this.cdSottofascic;
     }
 
     public void setCdSottofascic(String cdSottofascic) {
-	this.cdSottofascic = cdSottofascic;
+        this.cdSottofascic = cdSottofascic;
     }
 
     @Column(name = "DS_CLASSIF")
     public String getDsClassif() {
-	return this.dsClassif;
+        return this.dsClassif;
     }
 
     public void setDsClassif(String dsClassif) {
-	this.dsClassif = dsClassif;
+        this.dsClassif = dsClassif;
     }
 
     @Column(name = "DS_OGGETTO_FASCIC")
     public String getDsOggettoFascic() {
-	return this.dsOggettoFascic;
+        return this.dsOggettoFascic;
     }
 
     public void setDsOggettoFascic(String dsOggettoFascic) {
-	this.dsOggettoFascic = dsOggettoFascic;
+        this.dsOggettoFascic = dsOggettoFascic;
     }
 
     @Column(name = "DS_OGGETTO_SOTTOFASCIC")
     public String getDsOggettoSottofascic() {
-	return this.dsOggettoSottofascic;
+        return this.dsOggettoSottofascic;
     }
 
     public void setDsOggettoSottofascic(String dsOggettoSottofascic) {
-	this.dsOggettoSottofascic = dsOggettoSottofascic;
+        this.dsOggettoSottofascic = dsOggettoSottofascic;
     }
 
     @Id
     @Column(name = "ID_ARCHIV_SEC")
     public BigDecimal getIdArchivSec() {
-	return this.idArchivSec;
+        return this.idArchivSec;
     }
 
     public void setIdArchivSec(BigDecimal idArchivSec) {
-	this.idArchivSec = idArchivSec;
+        this.idArchivSec = idArchivSec;
     }
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
 }

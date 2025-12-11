@@ -54,46 +54,46 @@ public class AroVLisCompDocTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NI_ORD_COMP_DOC,
-		new ColumnDescriptor(COL_NI_ORD_COMP_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NM_TIPO_COMP_DOC,
-		new ColumnDescriptor(COL_NM_TIPO_COMP_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_TI_SUPPORTO_COMP,
-		new ColumnDescriptor(COL_TI_SUPPORTO_COMP, Types.VARCHAR, 20, true));
-	map.put(COL_DS_NOME_COMP_VERS,
-		new ColumnDescriptor(COL_DS_NOME_COMP_VERS, Types.VARCHAR, 254, true));
-	map.put(COL_NM_FORMATO_CALC,
-		new ColumnDescriptor(COL_NM_FORMATO_CALC, Types.VARCHAR, 100, true));
-	map.put(COL_NM_FORMATO_VERS,
-		new ColumnDescriptor(COL_NM_FORMATO_VERS, Types.VARCHAR, 100, true));
-	map.put(COL_NI_SIZE_FILE_CALC,
-		new ColumnDescriptor(COL_NI_SIZE_FILE_CALC, Types.DECIMAL, 22, true));
-	map.put(COL_DS_URN_COMP_CALC,
-		new ColumnDescriptor(COL_DS_URN_COMP_CALC, Types.VARCHAR, 254, true));
-	map.put(COL_NI_ORD_COMP_PADRE,
-		new ColumnDescriptor(COL_NI_ORD_COMP_PADRE, Types.DECIMAL, 22, true));
-	map.put(COL_DS_FORMATO_RAPPR_CALC,
-		new ColumnDescriptor(COL_DS_FORMATO_RAPPR_CALC, Types.VARCHAR, 254, true));
-	map.put(COL_TI_ESITO_VERIF_FIRME,
-		new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 20, true));
-	map.put(COL_DS_MSG_ESITO_VERIF_FIRME,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRME, Types.VARCHAR, 254, true));
-	map.put(COL_FL_COMP_FIRMATO,
-		new ColumnDescriptor(COL_FL_COMP_FIRMATO, Types.VARCHAR, 1, true));
+        map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NI_ORD_COMP_DOC,
+                new ColumnDescriptor(COL_NI_ORD_COMP_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NM_TIPO_COMP_DOC,
+                new ColumnDescriptor(COL_NM_TIPO_COMP_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_TI_SUPPORTO_COMP,
+                new ColumnDescriptor(COL_TI_SUPPORTO_COMP, Types.VARCHAR, 20, true));
+        map.put(COL_DS_NOME_COMP_VERS,
+                new ColumnDescriptor(COL_DS_NOME_COMP_VERS, Types.VARCHAR, 254, true));
+        map.put(COL_NM_FORMATO_CALC,
+                new ColumnDescriptor(COL_NM_FORMATO_CALC, Types.VARCHAR, 100, true));
+        map.put(COL_NM_FORMATO_VERS,
+                new ColumnDescriptor(COL_NM_FORMATO_VERS, Types.VARCHAR, 100, true));
+        map.put(COL_NI_SIZE_FILE_CALC,
+                new ColumnDescriptor(COL_NI_SIZE_FILE_CALC, Types.DECIMAL, 22, true));
+        map.put(COL_DS_URN_COMP_CALC,
+                new ColumnDescriptor(COL_DS_URN_COMP_CALC, Types.VARCHAR, 254, true));
+        map.put(COL_NI_ORD_COMP_PADRE,
+                new ColumnDescriptor(COL_NI_ORD_COMP_PADRE, Types.DECIMAL, 22, true));
+        map.put(COL_DS_FORMATO_RAPPR_CALC,
+                new ColumnDescriptor(COL_DS_FORMATO_RAPPR_CALC, Types.VARCHAR, 254, true));
+        map.put(COL_TI_ESITO_VERIF_FIRME,
+                new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 20, true));
+        map.put(COL_DS_MSG_ESITO_VERIF_FIRME,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRME, Types.VARCHAR, 254, true));
+        map.put(COL_FL_COMP_FIRMATO,
+                new ColumnDescriptor(COL_FL_COMP_FIRMATO, Types.VARCHAR, 1, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -25,67 +25,67 @@ public class MonVCntUdEnteB30Id implements Serializable {
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 79 * hash + Objects.hashCode(this.idEnte);
-	hash = 79 * hash + Objects.hashCode(this.idUserIam);
-	hash = 79 * hash + Objects.hashCode(this.tiStatoUd);
-	return hash;
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.idEnte);
+        hash = 79 * hash + Objects.hashCode(this.idUserIam);
+        hash = 79 * hash + Objects.hashCode(this.tiStatoUd);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final MonVCntUdEnteB30Id other = (MonVCntUdEnteB30Id) obj;
-	if (!Objects.equals(this.tiStatoUd, other.tiStatoUd)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idEnte, other.idEnte)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idUserIam, other.idUserIam)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MonVCntUdEnteB30Id other = (MonVCntUdEnteB30Id) obj;
+        if (!Objects.equals(this.tiStatoUd, other.tiStatoUd)) {
+            return false;
+        }
+        if (!Objects.equals(this.idEnte, other.idEnte)) {
+            return false;
+        }
+        if (!Objects.equals(this.idUserIam, other.idUserIam)) {
+            return false;
+        }
+        return true;
     }
 
     private BigDecimal idEnte;
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-	return idEnte;
+        return idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	this.idEnte = idEnte;
+        this.idEnte = idEnte;
     }
 
     private BigDecimal idUserIam;
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return idUserIam;
+        return idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     private String tiStatoUd;
 
     @Column(name = "TI_STATO_UD")
     public String getTiStatoUd() {
-	return tiStatoUd;
+        return tiStatoUd;
     }
 
     public void setTiStatoUd(String tiStatoUd) {
-	this.tiStatoUd = tiStatoUd;
+        this.tiStatoUd = tiStatoUd;
     }
 }

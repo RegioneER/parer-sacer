@@ -35,82 +35,82 @@ public class OrgCategEnteRowBean extends BaseRow implements JEEBaseRowInterface 
     public static OrgCategEnteTableDescriptor TABLE_DESCRIPTOR = new OrgCategEnteTableDescriptor();
 
     public OrgCategEnteRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdCategEnte() {
-	return getBigDecimal("id_categ_ente");
+        return getBigDecimal("id_categ_ente");
     }
 
     public void setIdCategEnte(BigDecimal idCategEnte) {
-	setObject("id_categ_ente", idCategEnte);
+        setObject("id_categ_ente", idCategEnte);
     }
 
     public String getCdCategEnte() {
-	return getString("cd_categ_ente");
+        return getString("cd_categ_ente");
     }
 
     public void setCdCategEnte(String cdCategEnte) {
-	setObject("cd_categ_ente", cdCategEnte);
+        setObject("cd_categ_ente", cdCategEnte);
     }
 
     public String getDsCategEnte() {
-	return getString("ds_categ_ente");
+        return getString("ds_categ_ente");
     }
 
     public void setDsCategEnte(String dsCategEnte) {
-	setObject("ds_categ_ente", dsCategEnte);
+        setObject("ds_categ_ente", dsCategEnte);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	OrgCategEnte entity = (OrgCategEnte) obj;
+        OrgCategEnte entity = (OrgCategEnte) obj;
 
-	this.setIdCategEnte(entity.getIdCategEnte() == null ? null
-		: BigDecimal.valueOf(entity.getIdCategEnte()));
-	this.setCdCategEnte(entity.getCdCategEnte());
-	this.setDsCategEnte(entity.getDsCategEnte());
+        this.setIdCategEnte(entity.getIdCategEnte() == null ? null
+                : BigDecimal.valueOf(entity.getIdCategEnte()));
+        this.setCdCategEnte(entity.getCdCategEnte());
+        this.setDsCategEnte(entity.getDsCategEnte());
     }
 
     @Override
     public OrgCategEnte rowBeanToEntity() {
-	OrgCategEnte entity = new OrgCategEnte();
-	if (this.getIdCategEnte() != null) {
-	    entity.setIdCategEnte(this.getIdCategEnte().longValue());
-	}
-	entity.setCdCategEnte(this.getCdCategEnte());
-	entity.setDsCategEnte(this.getDsCategEnte());
-	return entity;
+        OrgCategEnte entity = new OrgCategEnte();
+        if (this.getIdCategEnte() != null) {
+            entity.setIdCategEnte(this.getIdCategEnte().longValue());
+        }
+        entity.setCdCategEnte(this.getCdCategEnte());
+        entity.setDsCategEnte(this.getDsCategEnte());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

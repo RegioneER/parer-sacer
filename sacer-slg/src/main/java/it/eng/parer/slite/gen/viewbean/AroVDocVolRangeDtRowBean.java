@@ -36,100 +36,100 @@ public class AroVDocVolRangeDtRowBean extends BaseRow implements JEEBaseRowInter
     public static AroVDocVolRangeDtTableDescriptor TABLE_DESCRIPTOR = new AroVDocVolRangeDtTableDescriptor();
 
     public AroVDocVolRangeDtRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getTiDoc() {
-	return getString("ti_doc");
+        return getString("ti_doc");
     }
 
     public void setTiDoc(String tiDoc) {
-	setObject("ti_doc", tiDoc);
+        setObject("ti_doc", tiDoc);
     }
 
     public String getTiStatoDoc() {
-	return getString("ti_stato_doc");
+        return getString("ti_stato_doc");
     }
 
     public void setTiStatoDoc(String tiStatoDoc) {
-	setObject("ti_stato_doc", tiStatoDoc);
+        setObject("ti_stato_doc", tiStatoDoc);
     }
 
     public String getTiStatoVolumeConserv() {
-	return getString("ti_stato_volume_conserv");
+        return getString("ti_stato_volume_conserv");
     }
 
     public void setTiStatoVolumeConserv(String tiStatoVolumeConserv) {
-	setObject("ti_stato_volume_conserv", tiStatoVolumeConserv);
+        setObject("ti_stato_volume_conserv", tiStatoVolumeConserv);
     }
 
     public String getTiDtCreazione() {
-	return getString("ti_dt_creazione");
+        return getString("ti_dt_creazione");
     }
 
     public void setTiDtCreazione(String tiDtCreazione) {
-	setObject("ti_dt_creazione", tiDtCreazione);
+        setObject("ti_dt_creazione", tiDtCreazione);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVDocVolRangeDt entity = (AroVDocVolRangeDt) obj;
-	if (entity.getAroVDocVolRangeDtId() != null) {
-	    this.setIdStrut(entity.getAroVDocVolRangeDtId().getIdStrut());
-	    this.setTiDoc(entity.getAroVDocVolRangeDtId().getTiDoc());
-	    this.setTiStatoDoc(entity.getAroVDocVolRangeDtId().getTiStatoDoc());
-	    this.setTiStatoVolumeConserv(entity.getAroVDocVolRangeDtId().getTiStatoVolumeConserv());
-	    this.setTiDtCreazione(entity.getAroVDocVolRangeDtId().getTiDtCreazione());
-	}
+        AroVDocVolRangeDt entity = (AroVDocVolRangeDt) obj;
+        if (entity.getAroVDocVolRangeDtId() != null) {
+            this.setIdStrut(entity.getAroVDocVolRangeDtId().getIdStrut());
+            this.setTiDoc(entity.getAroVDocVolRangeDtId().getTiDoc());
+            this.setTiStatoDoc(entity.getAroVDocVolRangeDtId().getTiStatoDoc());
+            this.setTiStatoVolumeConserv(entity.getAroVDocVolRangeDtId().getTiStatoVolumeConserv());
+            this.setTiDtCreazione(entity.getAroVDocVolRangeDtId().getTiDtCreazione());
+        }
     }
 
     @Override
     public AroVDocVolRangeDt rowBeanToEntity() {
-	AroVDocVolRangeDt entity = new AroVDocVolRangeDt();
-	entity.setAroVDocVolRangeDtId(new AroVDocVolRangeDtId());
-	entity.getAroVDocVolRangeDtId().setIdStrut(this.getIdStrut());
-	entity.getAroVDocVolRangeDtId().setTiDoc(this.getTiDoc());
-	entity.getAroVDocVolRangeDtId().setTiStatoDoc(this.getTiStatoDoc());
-	entity.getAroVDocVolRangeDtId().setTiStatoVolumeConserv(this.getTiStatoVolumeConserv());
-	entity.getAroVDocVolRangeDtId().setTiDtCreazione(this.getTiDtCreazione());
-	return entity;
+        AroVDocVolRangeDt entity = new AroVDocVolRangeDt();
+        entity.setAroVDocVolRangeDtId(new AroVDocVolRangeDtId());
+        entity.getAroVDocVolRangeDtId().setIdStrut(this.getIdStrut());
+        entity.getAroVDocVolRangeDtId().setTiDoc(this.getTiDoc());
+        entity.getAroVDocVolRangeDtId().setTiStatoDoc(this.getTiStatoDoc());
+        entity.getAroVDocVolRangeDtId().setTiStatoVolumeConserv(this.getTiStatoVolumeConserv());
+        entity.getAroVDocVolRangeDtId().setTiDtCreazione(this.getTiDtCreazione());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

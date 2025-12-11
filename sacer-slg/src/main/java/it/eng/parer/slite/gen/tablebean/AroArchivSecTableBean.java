@@ -33,19 +33,19 @@ public class AroArchivSecTableBean extends AbstractBaseTable<AroArchivSecRowBean
     public static AroArchivSecTableDescriptor TABLE_DESCRIPTOR = new AroArchivSecTableDescriptor();
 
     public AroArchivSecTableBean() {
-	super();
+        super();
     }
 
     protected AroArchivSecRowBean createRow() {
-	return new AroArchivSecRowBean();
+        return new AroArchivSecRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroArchivSecRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

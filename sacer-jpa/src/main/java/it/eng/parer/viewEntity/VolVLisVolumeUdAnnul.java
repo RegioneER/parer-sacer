@@ -38,21 +38,21 @@ public class VolVLisVolumeUdAnnul implements Serializable {
 
     @Column(name = "NT_VOLUME_CHIUSO")
     public String getNtVolumeChiuso() {
-	return this.ntVolumeChiuso;
+        return this.ntVolumeChiuso;
     }
 
     public void setNtVolumeChiuso(String ntVolumeChiuso) {
-	this.ntVolumeChiuso = ntVolumeChiuso;
+        this.ntVolumeChiuso = ntVolumeChiuso;
     }
 
     private VolVLisVolumeUdAnnulId volVLisVolumeUdAnnulId;
 
     @EmbeddedId()
     public VolVLisVolumeUdAnnulId getVolVLisVolumeUdAnnulId() {
-	return volVLisVolumeUdAnnulId;
+        return volVLisVolumeUdAnnulId;
     }
 
     public void setVolVLisVolumeUdAnnulId(VolVLisVolumeUdAnnulId volVLisVolumeUdAnnulId) {
-	this.volVLisVolumeUdAnnulId = volVLisVolumeUdAnnulId;
+        this.volVLisVolumeUdAnnulId = volVLisVolumeUdAnnulId;
     }
 }

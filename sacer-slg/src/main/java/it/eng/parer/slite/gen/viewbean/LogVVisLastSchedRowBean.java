@@ -36,89 +36,89 @@ public class LogVVisLastSchedRowBean extends BaseRow implements JEEBaseRowInterf
     public static LogVVisLastSchedTableDescriptor TABLE_DESCRIPTOR = new LogVVisLastSchedTableDescriptor();
 
     public LogVVisLastSchedRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdLogJob() {
-	return getBigDecimal("id_log_job");
+        return getBigDecimal("id_log_job");
     }
 
     public void setIdLogJob(BigDecimal idLogJob) {
-	setObject("id_log_job", idLogJob);
+        setObject("id_log_job", idLogJob);
     }
 
     public String getNmJob() {
-	return getString("nm_job");
+        return getString("nm_job");
     }
 
     public void setNmJob(String nmJob) {
-	setObject("nm_job", nmJob);
+        setObject("nm_job", nmJob);
     }
 
     public Timestamp getDtRegLogJobIni() {
-	return getTimestamp("dt_reg_log_job_ini");
+        return getTimestamp("dt_reg_log_job_ini");
     }
 
     public void setDtRegLogJobIni(Timestamp dtRegLogJobIni) {
-	setObject("dt_reg_log_job_ini", dtRegLogJobIni);
+        setObject("dt_reg_log_job_ini", dtRegLogJobIni);
     }
 
     public String getFlJobAttivo() {
-	return getString("fl_job_attivo");
+        return getString("fl_job_attivo");
     }
 
     public void setFlJobAttivo(String flJobAttivo) {
-	setObject("fl_job_attivo", flJobAttivo);
+        setObject("fl_job_attivo", flJobAttivo);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	LogVVisLastSched entity = (LogVVisLastSched) obj;
-	this.setIdLogJob(entity.getIdLogJob());
-	this.setNmJob(entity.getNmJob());
-	if (entity.getDtRegLogJobIni() != null) {
-	    this.setDtRegLogJobIni(new Timestamp(entity.getDtRegLogJobIni().getTime()));
-	}
-	this.setFlJobAttivo(entity.getFlJobAttivo());
+        LogVVisLastSched entity = (LogVVisLastSched) obj;
+        this.setIdLogJob(entity.getIdLogJob());
+        this.setNmJob(entity.getNmJob());
+        if (entity.getDtRegLogJobIni() != null) {
+            this.setDtRegLogJobIni(new Timestamp(entity.getDtRegLogJobIni().getTime()));
+        }
+        this.setFlJobAttivo(entity.getFlJobAttivo());
     }
 
     @Override
     public LogVVisLastSched rowBeanToEntity() {
-	LogVVisLastSched entity = new LogVVisLastSched();
-	entity.setIdLogJob(this.getIdLogJob());
-	entity.setNmJob(this.getNmJob());
-	entity.setDtRegLogJobIni(this.getDtRegLogJobIni());
-	entity.setFlJobAttivo(this.getFlJobAttivo());
-	return entity;
+        LogVVisLastSched entity = new LogVVisLastSched();
+        entity.setIdLogJob(this.getIdLogJob());
+        entity.setNmJob(this.getNmJob());
+        entity.setDtRegLogJobIni(this.getDtRegLogJobIni());
+        entity.setFlJobAttivo(this.getFlJobAttivo());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

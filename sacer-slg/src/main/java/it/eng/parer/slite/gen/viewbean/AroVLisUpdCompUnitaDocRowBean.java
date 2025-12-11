@@ -35,167 +35,167 @@ public class AroVLisUpdCompUnitaDocRowBean extends BaseRow implements JEEBaseRow
     public static AroVLisUpdCompUnitaDocTableDescriptor TABLE_DESCRIPTOR = new AroVLisUpdCompUnitaDocTableDescriptor();
 
     public AroVLisUpdCompUnitaDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdUpdCompUnitaDoc() {
-	return getBigDecimal("id_upd_comp_unita_doc");
+        return getBigDecimal("id_upd_comp_unita_doc");
     }
 
     public void setIdUpdCompUnitaDoc(BigDecimal idUpdCompUnitaDoc) {
-	setObject("id_upd_comp_unita_doc", idUpdCompUnitaDoc);
+        setObject("id_upd_comp_unita_doc", idUpdCompUnitaDoc);
     }
 
     public BigDecimal getIdUpdDocUnitaDoc() {
-	return getBigDecimal("id_upd_doc_unita_doc");
+        return getBigDecimal("id_upd_doc_unita_doc");
     }
 
     public void setIdUpdDocUnitaDoc(BigDecimal idUpdDocUnitaDoc) {
-	setObject("id_upd_doc_unita_doc", idUpdDocUnitaDoc);
+        setObject("id_upd_doc_unita_doc", idUpdDocUnitaDoc);
     }
 
     public BigDecimal getIdUpdUnitaDoc() {
-	return getBigDecimal("id_upd_unita_doc");
+        return getBigDecimal("id_upd_unita_doc");
     }
 
     public void setIdUpdUnitaDoc(BigDecimal idUpdUnitaDoc) {
-	setObject("id_upd_unita_doc", idUpdUnitaDoc);
+        setObject("id_upd_unita_doc", idUpdUnitaDoc);
     }
 
     public BigDecimal getIdDoc() {
-	return getBigDecimal("id_doc");
+        return getBigDecimal("id_doc");
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	setObject("id_doc", idDoc);
+        setObject("id_doc", idDoc);
     }
 
     public String getDsElemento() {
-	return getString("ds_elemento");
+        return getString("ds_elemento");
     }
 
     public void setDsElemento(String dsElemento) {
-	setObject("ds_elemento", dsElemento);
+        setObject("ds_elemento", dsElemento);
     }
 
     public String getNmTipoDoc() {
-	return getString("nm_tipo_doc");
+        return getString("nm_tipo_doc");
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	setObject("nm_tipo_doc", nmTipoDoc);
+        setObject("nm_tipo_doc", nmTipoDoc);
     }
 
     public BigDecimal getNiOrdCompDoc() {
-	return getBigDecimal("ni_ord_comp_doc");
+        return getBigDecimal("ni_ord_comp_doc");
     }
 
     public void setNiOrdCompDoc(BigDecimal niOrdCompDoc) {
-	setObject("ni_ord_comp_doc", niOrdCompDoc);
+        setObject("ni_ord_comp_doc", niOrdCompDoc);
     }
 
     public String getFlUpdInfoVers() {
-	return getString("fl_upd_info_vers");
+        return getString("fl_upd_info_vers");
     }
 
     public void setFlUpdInfoVers(String flUpdInfoVers) {
-	setObject("fl_upd_info_vers", flUpdInfoVers);
+        setObject("fl_upd_info_vers", flUpdInfoVers);
     }
 
     public String getFlUpdDatiSpec() {
-	return getString("fl_upd_dati_spec");
+        return getString("fl_upd_dati_spec");
     }
 
     public void setFlUpdDatiSpec(String flUpdDatiSpec) {
-	setObject("fl_upd_dati_spec", flUpdDatiSpec);
+        setObject("fl_upd_dati_spec", flUpdDatiSpec);
     }
 
     public String getFlUpdDatiSpecMigraz() {
-	return getString("fl_upd_dati_spec_migraz");
+        return getString("fl_upd_dati_spec_migraz");
     }
 
     public void setFlUpdDatiSpecMigraz(String flUpdDatiSpecMigraz) {
-	setObject("fl_upd_dati_spec_migraz", flUpdDatiSpecMigraz);
+        setObject("fl_upd_dati_spec_migraz", flUpdDatiSpecMigraz);
     }
 
     public BigDecimal getTiDocOrd() {
-	return getBigDecimal("ti_doc_ord");
+        return getBigDecimal("ti_doc_ord");
     }
 
     public void setTiDocOrd(BigDecimal tiDocOrd) {
-	setObject("ti_doc_ord", tiDocOrd);
+        setObject("ti_doc_ord", tiDocOrd);
     }
 
     public BigDecimal getPgDoc() {
-	return getBigDecimal("pg_doc");
+        return getBigDecimal("pg_doc");
     }
 
     public void setPgDoc(BigDecimal pgDoc) {
-	setObject("pg_doc", pgDoc);
+        setObject("pg_doc", pgDoc);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVLisUpdCompUnitaDoc entity = (AroVLisUpdCompUnitaDoc) obj;
-	this.setIdUpdCompUnitaDoc(entity.getIdUpdCompUnitaDoc());
-	this.setIdUpdDocUnitaDoc(entity.getIdUpdDocUnitaDoc());
-	this.setIdUpdUnitaDoc(entity.getIdUpdUnitaDoc());
-	this.setIdDoc(entity.getIdDoc());
-	this.setDsElemento(entity.getDsElemento());
-	this.setNmTipoDoc(entity.getNmTipoDoc());
-	this.setNiOrdCompDoc(entity.getNiOrdCompDoc());
-	this.setFlUpdInfoVers(entity.getFlUpdInfoVers());
-	this.setFlUpdDatiSpec(entity.getFlUpdDatiSpec());
-	this.setFlUpdDatiSpecMigraz(entity.getFlUpdDatiSpecMigraz());
-	this.setTiDocOrd(entity.getTiDocOrd());
-	this.setPgDoc(entity.getPgDoc());
+        AroVLisUpdCompUnitaDoc entity = (AroVLisUpdCompUnitaDoc) obj;
+        this.setIdUpdCompUnitaDoc(entity.getIdUpdCompUnitaDoc());
+        this.setIdUpdDocUnitaDoc(entity.getIdUpdDocUnitaDoc());
+        this.setIdUpdUnitaDoc(entity.getIdUpdUnitaDoc());
+        this.setIdDoc(entity.getIdDoc());
+        this.setDsElemento(entity.getDsElemento());
+        this.setNmTipoDoc(entity.getNmTipoDoc());
+        this.setNiOrdCompDoc(entity.getNiOrdCompDoc());
+        this.setFlUpdInfoVers(entity.getFlUpdInfoVers());
+        this.setFlUpdDatiSpec(entity.getFlUpdDatiSpec());
+        this.setFlUpdDatiSpecMigraz(entity.getFlUpdDatiSpecMigraz());
+        this.setTiDocOrd(entity.getTiDocOrd());
+        this.setPgDoc(entity.getPgDoc());
     }
 
     @Override
     public AroVLisUpdCompUnitaDoc rowBeanToEntity() {
-	AroVLisUpdCompUnitaDoc entity = new AroVLisUpdCompUnitaDoc();
-	entity.setIdUpdCompUnitaDoc(this.getIdUpdCompUnitaDoc());
-	entity.setIdUpdDocUnitaDoc(this.getIdUpdDocUnitaDoc());
-	entity.setIdUpdUnitaDoc(this.getIdUpdUnitaDoc());
-	entity.setIdDoc(this.getIdDoc());
-	entity.setDsElemento(this.getDsElemento());
-	entity.setNmTipoDoc(this.getNmTipoDoc());
-	entity.setNiOrdCompDoc(this.getNiOrdCompDoc());
-	entity.setFlUpdInfoVers(this.getFlUpdInfoVers());
-	entity.setFlUpdDatiSpec(this.getFlUpdDatiSpec());
-	entity.setFlUpdDatiSpecMigraz(this.getFlUpdDatiSpecMigraz());
-	entity.setTiDocOrd(this.getTiDocOrd());
-	entity.setPgDoc(this.getPgDoc());
-	return entity;
+        AroVLisUpdCompUnitaDoc entity = new AroVLisUpdCompUnitaDoc();
+        entity.setIdUpdCompUnitaDoc(this.getIdUpdCompUnitaDoc());
+        entity.setIdUpdDocUnitaDoc(this.getIdUpdDocUnitaDoc());
+        entity.setIdUpdUnitaDoc(this.getIdUpdUnitaDoc());
+        entity.setIdDoc(this.getIdDoc());
+        entity.setDsElemento(this.getDsElemento());
+        entity.setNmTipoDoc(this.getNmTipoDoc());
+        entity.setNiOrdCompDoc(this.getNiOrdCompDoc());
+        entity.setFlUpdInfoVers(this.getFlUpdInfoVers());
+        entity.setFlUpdDatiSpec(this.getFlUpdDatiSpec());
+        entity.setFlUpdDatiSpecMigraz(this.getFlUpdDatiSpecMigraz());
+        entity.setTiDocOrd(this.getTiDocOrd());
+        entity.setPgDoc(this.getPgDoc());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

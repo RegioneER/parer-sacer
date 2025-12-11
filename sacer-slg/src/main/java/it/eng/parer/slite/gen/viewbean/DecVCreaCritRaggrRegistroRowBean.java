@@ -35,217 +35,217 @@ public class DecVCreaCritRaggrRegistroRowBean extends BaseRow implements JEEBase
     public static DecVCreaCritRaggrRegistroTableDescriptor TABLE_DESCRIPTOR = new DecVCreaCritRaggrRegistroTableDescriptor();
 
     public DecVCreaCritRaggrRegistroRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdRegistroUnitaDoc() {
-	return getBigDecimal("id_registro_unita_doc");
+        return getBigDecimal("id_registro_unita_doc");
     }
 
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-	setObject("id_registro_unita_doc", idRegistroUnitaDoc);
+        setObject("id_registro_unita_doc", idRegistroUnitaDoc);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getNmCriterioRaggr() {
-	return getString("nm_criterio_raggr");
+        return getString("nm_criterio_raggr");
     }
 
     public void setNmCriterioRaggr(String nmCriterioRaggr) {
-	setObject("nm_criterio_raggr", nmCriterioRaggr);
+        setObject("nm_criterio_raggr", nmCriterioRaggr);
     }
 
     public String getDsCriterioRaggr() {
-	return getString("ds_criterio_raggr");
+        return getString("ds_criterio_raggr");
     }
 
     public void setDsCriterioRaggr(String dsCriterioRaggr) {
-	setObject("ds_criterio_raggr", dsCriterioRaggr);
+        setObject("ds_criterio_raggr", dsCriterioRaggr);
     }
 
     public BigDecimal getNiMaxComp() {
-	return getBigDecimal("ni_max_comp");
+        return getBigDecimal("ni_max_comp");
     }
 
     public void setNiMaxComp(BigDecimal niMaxComp) {
-	setObject("ni_max_comp", niMaxComp);
+        setObject("ni_max_comp", niMaxComp);
     }
 
     public String getTiTempoScadChius() {
-	return getString("ti_tempo_scad_chius");
+        return getString("ti_tempo_scad_chius");
     }
 
     public void setTiTempoScadChius(String tiTempoScadChius) {
-	setObject("ti_tempo_scad_chius", tiTempoScadChius);
+        setObject("ti_tempo_scad_chius", tiTempoScadChius);
     }
 
     public BigDecimal getNiTempoScadChius() {
-	return getBigDecimal("ni_tempo_scad_chius");
+        return getBigDecimal("ni_tempo_scad_chius");
     }
 
     public void setNiTempoScadChius(BigDecimal niTempoScadChius) {
-	setObject("ni_tempo_scad_chius", niTempoScadChius);
+        setObject("ni_tempo_scad_chius", niTempoScadChius);
     }
 
     public String getTiTempoScadChiusFirme() {
-	return getString("ti_tempo_scad_chius_firme");
+        return getString("ti_tempo_scad_chius_firme");
     }
 
     public void setTiTempoScadChiusFirme(String tiTempoScadChiusFirme) {
-	setObject("ti_tempo_scad_chius_firme", tiTempoScadChiusFirme);
+        setObject("ti_tempo_scad_chius_firme", tiTempoScadChiusFirme);
     }
 
     public BigDecimal getNiTempoScadChiusFirme() {
-	return getBigDecimal("ni_tempo_scad_chius_firme");
+        return getBigDecimal("ni_tempo_scad_chius_firme");
     }
 
     public void setNiTempoScadChiusFirme(BigDecimal niTempoScadChiusFirme) {
-	setObject("ni_tempo_scad_chius_firme", niTempoScadChiusFirme);
+        setObject("ni_tempo_scad_chius_firme", niTempoScadChiusFirme);
     }
 
     public String getFlFiltroTipoUnitaDoc() {
-	return getString("fl_filtro_tipo_unita_doc");
+        return getString("fl_filtro_tipo_unita_doc");
     }
 
     public void setFlFiltroTipoUnitaDoc(String flFiltroTipoUnitaDoc) {
-	setObject("fl_filtro_tipo_unita_doc", flFiltroTipoUnitaDoc);
+        setObject("fl_filtro_tipo_unita_doc", flFiltroTipoUnitaDoc);
     }
 
     public String getFlFiltroRegistroKey() {
-	return getString("fl_filtro_registro_key");
+        return getString("fl_filtro_registro_key");
     }
 
     public void setFlFiltroRegistroKey(String flFiltroRegistroKey) {
-	setObject("fl_filtro_registro_key", flFiltroRegistroKey);
+        setObject("fl_filtro_registro_key", flFiltroRegistroKey);
     }
 
     public String getFlFiltroRangeRegistroKey() {
-	return getString("fl_filtro_range_registro_key");
+        return getString("fl_filtro_range_registro_key");
     }
 
     public void setFlFiltroRangeRegistroKey(String flFiltroRangeRegistroKey) {
-	setObject("fl_filtro_range_registro_key", flFiltroRangeRegistroKey);
+        setObject("fl_filtro_range_registro_key", flFiltroRangeRegistroKey);
     }
 
     public String getFlFiltroTiEsitoVerifFirme() {
-	return getString("fl_filtro_ti_esito_verif_firme");
+        return getString("fl_filtro_ti_esito_verif_firme");
     }
 
     public void setFlFiltroTiEsitoVerifFirme(String flFiltroTiEsitoVerifFirme) {
-	setObject("fl_filtro_ti_esito_verif_firme", flFiltroTiEsitoVerifFirme);
+        setObject("fl_filtro_ti_esito_verif_firme", flFiltroTiEsitoVerifFirme);
     }
 
     public String getFlFiltroTipoDoc() {
-	return getString("fl_filtro_tipo_doc");
+        return getString("fl_filtro_tipo_doc");
     }
 
     public void setFlFiltroTipoDoc(String flFiltroTipoDoc) {
-	setObject("fl_filtro_tipo_doc", flFiltroTipoDoc);
+        setObject("fl_filtro_tipo_doc", flFiltroTipoDoc);
     }
 
     public String getFlFiltroSistemaMigraz() {
-	return getString("fl_filtro_sistema_migraz");
+        return getString("fl_filtro_sistema_migraz");
     }
 
     public void setFlFiltroSistemaMigraz(String flFiltroSistemaMigraz) {
-	setObject("fl_filtro_sistema_migraz", flFiltroSistemaMigraz);
+        setObject("fl_filtro_sistema_migraz", flFiltroSistemaMigraz);
     }
 
     public String getTiValidElenco() {
-	return getString("ti_valid_elenco");
+        return getString("ti_valid_elenco");
     }
 
     public void setTiValidElenco(String tiValidElenco) {
-	setObject("ti_valid_elenco", tiValidElenco);
+        setObject("ti_valid_elenco", tiValidElenco);
     }
 
     public String getTiModValidElenco() {
-	return getString("ti_mod_valid_elenco");
+        return getString("ti_mod_valid_elenco");
     }
 
     public void setTiModValidElenco(String tiModValidElenco) {
-	setObject("ti_mod_valid_elenco", tiModValidElenco);
+        setObject("ti_mod_valid_elenco", tiModValidElenco);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecVCreaCritRaggrRegistro entity = (DecVCreaCritRaggrRegistro) obj;
-	this.setIdRegistroUnitaDoc(entity.getIdRegistroUnitaDoc());
-	this.setIdStrut(entity.getIdStrut());
-	this.setNmCriterioRaggr(entity.getNmCriterioRaggr());
-	this.setDsCriterioRaggr(entity.getDsCriterioRaggr());
-	this.setNiMaxComp(entity.getNiMaxComp());
-	this.setTiTempoScadChius(entity.getTiTempoScadChius());
-	this.setNiTempoScadChius(entity.getNiTempoScadChius());
-	this.setTiTempoScadChiusFirme(entity.getTiTempoScadChiusFirme());
-	this.setNiTempoScadChiusFirme(entity.getNiTempoScadChiusFirme());
-	this.setFlFiltroTipoUnitaDoc(entity.getFlFiltroTipoUnitaDoc());
-	this.setFlFiltroRegistroKey(entity.getFlFiltroRegistroKey());
-	this.setFlFiltroRangeRegistroKey(entity.getFlFiltroRangeRegistroKey());
-	this.setFlFiltroTiEsitoVerifFirme(entity.getFlFiltroTiEsitoVerifFirme());
-	this.setFlFiltroTipoDoc(entity.getFlFiltroTipoDoc());
-	this.setFlFiltroSistemaMigraz(entity.getFlFiltroSistemaMigraz());
-	this.setTiValidElenco(entity.getTiValidElenco());
-	this.setTiModValidElenco(entity.getTiModValidElenco());
+        DecVCreaCritRaggrRegistro entity = (DecVCreaCritRaggrRegistro) obj;
+        this.setIdRegistroUnitaDoc(entity.getIdRegistroUnitaDoc());
+        this.setIdStrut(entity.getIdStrut());
+        this.setNmCriterioRaggr(entity.getNmCriterioRaggr());
+        this.setDsCriterioRaggr(entity.getDsCriterioRaggr());
+        this.setNiMaxComp(entity.getNiMaxComp());
+        this.setTiTempoScadChius(entity.getTiTempoScadChius());
+        this.setNiTempoScadChius(entity.getNiTempoScadChius());
+        this.setTiTempoScadChiusFirme(entity.getTiTempoScadChiusFirme());
+        this.setNiTempoScadChiusFirme(entity.getNiTempoScadChiusFirme());
+        this.setFlFiltroTipoUnitaDoc(entity.getFlFiltroTipoUnitaDoc());
+        this.setFlFiltroRegistroKey(entity.getFlFiltroRegistroKey());
+        this.setFlFiltroRangeRegistroKey(entity.getFlFiltroRangeRegistroKey());
+        this.setFlFiltroTiEsitoVerifFirme(entity.getFlFiltroTiEsitoVerifFirme());
+        this.setFlFiltroTipoDoc(entity.getFlFiltroTipoDoc());
+        this.setFlFiltroSistemaMigraz(entity.getFlFiltroSistemaMigraz());
+        this.setTiValidElenco(entity.getTiValidElenco());
+        this.setTiModValidElenco(entity.getTiModValidElenco());
     }
 
     @Override
     public DecVCreaCritRaggrRegistro rowBeanToEntity() {
-	DecVCreaCritRaggrRegistro entity = new DecVCreaCritRaggrRegistro();
-	entity.setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setNmCriterioRaggr(this.getNmCriterioRaggr());
-	entity.setDsCriterioRaggr(this.getDsCriterioRaggr());
-	entity.setNiMaxComp(this.getNiMaxComp());
-	entity.setTiTempoScadChius(this.getTiTempoScadChius());
-	entity.setNiTempoScadChius(this.getNiTempoScadChius());
-	entity.setTiTempoScadChiusFirme(this.getTiTempoScadChiusFirme());
-	entity.setNiTempoScadChiusFirme(this.getNiTempoScadChiusFirme());
-	entity.setFlFiltroTipoUnitaDoc(this.getFlFiltroTipoUnitaDoc());
-	entity.setFlFiltroRegistroKey(this.getFlFiltroRegistroKey());
-	entity.setFlFiltroRangeRegistroKey(this.getFlFiltroRangeRegistroKey());
-	entity.setFlFiltroTiEsitoVerifFirme(this.getFlFiltroTiEsitoVerifFirme());
-	entity.setFlFiltroTipoDoc(this.getFlFiltroTipoDoc());
-	entity.setFlFiltroSistemaMigraz(this.getFlFiltroSistemaMigraz());
-	entity.setTiValidElenco(this.getTiValidElenco());
-	entity.setTiModValidElenco(this.getTiModValidElenco());
-	return entity;
+        DecVCreaCritRaggrRegistro entity = new DecVCreaCritRaggrRegistro();
+        entity.setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setNmCriterioRaggr(this.getNmCriterioRaggr());
+        entity.setDsCriterioRaggr(this.getDsCriterioRaggr());
+        entity.setNiMaxComp(this.getNiMaxComp());
+        entity.setTiTempoScadChius(this.getTiTempoScadChius());
+        entity.setNiTempoScadChius(this.getNiTempoScadChius());
+        entity.setTiTempoScadChiusFirme(this.getTiTempoScadChiusFirme());
+        entity.setNiTempoScadChiusFirme(this.getNiTempoScadChiusFirme());
+        entity.setFlFiltroTipoUnitaDoc(this.getFlFiltroTipoUnitaDoc());
+        entity.setFlFiltroRegistroKey(this.getFlFiltroRegistroKey());
+        entity.setFlFiltroRangeRegistroKey(this.getFlFiltroRangeRegistroKey());
+        entity.setFlFiltroTiEsitoVerifFirme(this.getFlFiltroTiEsitoVerifFirme());
+        entity.setFlFiltroTipoDoc(this.getFlFiltroTipoDoc());
+        entity.setFlFiltroSistemaMigraz(this.getFlFiltroSistemaMigraz());
+        entity.setTiValidElenco(this.getTiValidElenco());
+        entity.setTiModValidElenco(this.getTiModValidElenco());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

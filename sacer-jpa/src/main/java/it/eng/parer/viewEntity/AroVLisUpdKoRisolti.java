@@ -56,156 +56,156 @@ public class AroVLisUpdKoRisolti implements Serializable {
 
     @Column(name = "CD_CONTROLLO_WS")
     public String getCdControlloWs() {
-	return this.cdControlloWs;
+        return this.cdControlloWs;
     }
 
     public void setCdControlloWs(String cdControlloWs) {
-	this.cdControlloWs = cdControlloWs;
+        this.cdControlloWs = cdControlloWs;
     }
 
     @Column(name = "CD_ERR_PRINC")
     public String getCdErrPrinc() {
-	return this.cdErrPrinc;
+        return this.cdErrPrinc;
     }
 
     public void setCdErrPrinc(String cdErrPrinc) {
-	this.cdErrPrinc = cdErrPrinc;
+        this.cdErrPrinc = cdErrPrinc;
     }
 
     @Column(name = "CD_REGISTRO_UNITA_DOC")
     public String getCdRegistroUnitaDoc() {
-	return this.cdRegistroUnitaDoc;
+        return this.cdRegistroUnitaDoc;
     }
 
     public void setCdRegistroUnitaDoc(String cdRegistroUnitaDoc) {
-	this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
+        this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
     }
 
     @Column(name = "CD_VERSIONE_WS")
     public String getCdVersioneWs() {
-	return this.cdVersioneWs;
+        return this.cdVersioneWs;
     }
 
     public void setCdVersioneWs(String cdVersioneWs) {
-	this.cdVersioneWs = cdVersioneWs;
+        this.cdVersioneWs = cdVersioneWs;
     }
 
     @Column(name = "DS_ERR_PRINC")
     public String getDsErrPrinc() {
-	return this.dsErrPrinc;
+        return this.dsErrPrinc;
     }
 
     public void setDsErrPrinc(String dsErrPrinc) {
-	this.dsErrPrinc = dsErrPrinc;
+        this.dsErrPrinc = dsErrPrinc;
     }
 
     @Column(name = "ID_CONTROLLO_WS_PRINC")
     public BigDecimal getIdControlloWsPrinc() {
-	return this.idControlloWsPrinc;
+        return this.idControlloWsPrinc;
     }
 
     public void setIdControlloWsPrinc(BigDecimal idControlloWsPrinc) {
-	this.idControlloWsPrinc = idControlloWsPrinc;
+        this.idControlloWsPrinc = idControlloWsPrinc;
     }
 
     @Column(name = "ID_ERR_SACER_PRINC")
     public BigDecimal getIdErrSacerPrinc() {
-	return this.idErrSacerPrinc;
+        return this.idErrSacerPrinc;
     }
 
     public void setIdErrSacerPrinc(BigDecimal idErrSacerPrinc) {
-	this.idErrSacerPrinc = idErrSacerPrinc;
+        this.idErrSacerPrinc = idErrSacerPrinc;
     }
 
     @Column(name = "ID_REGISTRO_UNITA_DOC")
     public BigDecimal getIdRegistroUnitaDoc() {
-	return this.idRegistroUnitaDoc;
+        return this.idRegistroUnitaDoc;
     }
 
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-	this.idRegistroUnitaDoc = idRegistroUnitaDoc;
+        this.idRegistroUnitaDoc = idRegistroUnitaDoc;
     }
 
     @Id
     @Column(name = "ID_SES_UPD_UNITA_DOC_KO")
     public BigDecimal getIdSesUpdUnitaDocKo() {
-	return this.idSesUpdUnitaDocKo;
+        return this.idSesUpdUnitaDocKo;
     }
 
     public void setIdSesUpdUnitaDocKo(BigDecimal idSesUpdUnitaDocKo) {
-	this.idSesUpdUnitaDocKo = idSesUpdUnitaDocKo;
+        this.idSesUpdUnitaDocKo = idSesUpdUnitaDocKo;
     }
 
     @Column(name = "ID_TIPO_DOC_PRINC")
     public BigDecimal getIdTipoDocPrinc() {
-	return this.idTipoDocPrinc;
+        return this.idTipoDocPrinc;
     }
 
     public void setIdTipoDocPrinc(BigDecimal idTipoDocPrinc) {
-	this.idTipoDocPrinc = idTipoDocPrinc;
+        this.idTipoDocPrinc = idTipoDocPrinc;
     }
 
     @Column(name = "ID_TIPO_UNITA_DOC")
     public BigDecimal getIdTipoUnitaDoc() {
-	return this.idTipoUnitaDoc;
+        return this.idTipoUnitaDoc;
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	this.idTipoUnitaDoc = idTipoUnitaDoc;
+        this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
     @Column(name = "ID_UPD_UNITA_DOC")
     public BigDecimal getIdUpdUnitaDoc() {
-	return this.idUpdUnitaDoc;
+        return this.idUpdUnitaDoc;
     }
 
     public void setIdUpdUnitaDoc(BigDecimal idUpdUnitaDoc) {
-	this.idUpdUnitaDoc = idUpdUnitaDoc;
+        this.idUpdUnitaDoc = idUpdUnitaDoc;
     }
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return this.idUserIam;
+        return this.idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     @Column(name = "NM_TIPO_DOC_PRINC")
     public String getNmTipoDocPrinc() {
-	return this.nmTipoDocPrinc;
+        return this.nmTipoDocPrinc;
     }
 
     public void setNmTipoDocPrinc(String nmTipoDocPrinc) {
-	this.nmTipoDocPrinc = nmTipoDocPrinc;
+        this.nmTipoDocPrinc = nmTipoDocPrinc;
     }
 
     @Column(name = "NM_TIPO_UNITA_DOC")
     public String getNmTipoUnitaDoc() {
-	return this.nmTipoUnitaDoc;
+        return this.nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     @Column(name = "NM_USERID")
     public String getNmUserid() {
-	return this.nmUserid;
+        return this.nmUserid;
     }
 
     public void setNmUserid(String nmUserid) {
-	this.nmUserid = nmUserid;
+        this.nmUserid = nmUserid;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_INI_SES")
     public Date getTsIniSes() {
-	return this.tsIniSes;
+        return this.tsIniSes;
     }
 
     public void setTsIniSes(Date tsIniSes) {
-	this.tsIniSes = tsIniSes;
+        this.tsIniSes = tsIniSes;
     }
 }

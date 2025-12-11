@@ -30,42 +30,42 @@ public class FasFascicoloObj {
     private Date tsVersFascicolo;
 
     public FasFascicoloObj(BigDecimal id, TipoEntitaSacer tiEntitaSacer, BigDecimal aaFascicolo,
-	    Date tsVersFascicolo) {
-	this.id = id;
-	this.tiEntitaSacer = tiEntitaSacer;
-	this.aaFascicolo = aaFascicolo;
-	this.tsVersFascicolo = tsVersFascicolo;
+            Date tsVersFascicolo) {
+        this.id = id;
+        this.tiEntitaSacer = tiEntitaSacer;
+        this.aaFascicolo = aaFascicolo;
+        this.tsVersFascicolo = tsVersFascicolo;
     }
 
     public BigDecimal getId() {
-	return id;
+        return id;
     }
 
     public void setId(BigDecimal id) {
-	this.id = id;
+        this.id = id;
     }
 
     public TipoEntitaSacer getTiEntitaSacer() {
-	return tiEntitaSacer;
+        return tiEntitaSacer;
     }
 
     public void setTiEntitaSacer(TipoEntitaSacer tiEntitaSacer) {
-	this.tiEntitaSacer = tiEntitaSacer;
+        this.tiEntitaSacer = tiEntitaSacer;
     }
 
     public BigDecimal getAaFascicolo() {
-	return aaFascicolo;
+        return aaFascicolo;
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-	this.aaFascicolo = aaFascicolo;
+        this.aaFascicolo = aaFascicolo;
     }
 
     public Date getTsVersFascicolo() {
-	return tsVersFascicolo;
+        return tsVersFascicolo;
     }
 
     public void setTsVersFascicolo(Date tsVersFascicolo) {
-	this.tsVersFascicolo = tsVersFascicolo;
+        this.tsVersFascicolo = tsVersFascicolo;
     }
 }

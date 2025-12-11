@@ -69,6 +69,6 @@ public abstract class Signature {
      * The kinds of signature methods
      */
     public enum SistemaFirma {
-	HSM_TEST, HSM_PROD
+        HSM_TEST, HSM_PROD
     }
 }

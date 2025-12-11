@@ -33,19 +33,19 @@ public class VrsPathDtVersTableBean extends AbstractBaseTable<VrsPathDtVersRowBe
     public static VrsPathDtVersTableDescriptor TABLE_DESCRIPTOR = new VrsPathDtVersTableDescriptor();
 
     public VrsPathDtVersTableBean() {
-	super();
+        super();
     }
 
     protected VrsPathDtVersRowBean createRow() {
-	return new VrsPathDtVersRowBean();
+        return new VrsPathDtVersRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VrsPathDtVersRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

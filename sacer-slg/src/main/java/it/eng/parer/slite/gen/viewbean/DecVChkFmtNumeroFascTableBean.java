@@ -37,19 +37,19 @@ public class DecVChkFmtNumeroFascTableBean extends AbstractBaseTable<DecVChkFmtN
     public static DecVChkFmtNumeroFascTableDescriptor TABLE_DESCRIPTOR = new DecVChkFmtNumeroFascTableDescriptor();
 
     public DecVChkFmtNumeroFascTableBean() {
-	super();
+        super();
     }
 
     protected DecVChkFmtNumeroFascRowBean createRow() {
-	return new DecVChkFmtNumeroFascRowBean();
+        return new DecVChkFmtNumeroFascRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecVChkFmtNumeroFascRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

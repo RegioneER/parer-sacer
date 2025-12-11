@@ -60,61 +60,61 @@ public class DecModelloCampoInpUd implements Serializable {
 
     @Column(name = "ID_MODELLO_CAMPO_INP_UD")
     @GenericGenerator(name = "SDEC_MODELLO_CAMPO_INP_UD_ID_MODELLO_CAMPO_INP_UD_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_MODELLO_CAMPO_INP_UD"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_MODELLO_CAMPO_INP_UD"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_MODELLO_CAMPO_INP_UD_ID_MODELLO_CAMPO_INP_UD_GENERATOR")
     public Long getIdModelloCampoInpUd() {
-	return this.idModelloCampoInpUd;
+        return this.idModelloCampoInpUd;
     }
 
     public void setIdModelloCampoInpUd(Long idModelloCampoInpUd) {
-	this.idModelloCampoInpUd = idModelloCampoInpUd;
+        this.idModelloCampoInpUd = idModelloCampoInpUd;
     }
 
     @Column(name = "NM_CAMPO")
     public String getNmCampo() {
-	return this.nmCampo;
+        return this.nmCampo;
     }
 
     public void setNmCampo(String nmCampo) {
-	this.nmCampo = nmCampo;
+        this.nmCampo = nmCampo;
     }
 
     @Column(name = "PG_ORD_CAMPO")
     public BigDecimal getPgOrdCampo() {
-	return this.pgOrdCampo;
+        return this.pgOrdCampo;
     }
 
     public void setPgOrdCampo(BigDecimal pgOrdCampo) {
-	this.pgOrdCampo = pgOrdCampo;
+        this.pgOrdCampo = pgOrdCampo;
     }
 
     @Column(name = "TI_CAMPO")
     public String getTiCampo() {
-	return this.tiCampo;
+        return this.tiCampo;
     }
 
     public void setTiCampo(String tiCampo) {
-	this.tiCampo = tiCampo;
+        this.tiCampo = tiCampo;
     }
 
     @Column(name = "TI_TRASFORM_CAMPO")
     public String getTiTrasformCampo() {
-	return this.tiTrasformCampo;
+        return this.tiTrasformCampo;
     }
 
     public void setTiTrasformCampo(String tiTrasformCampo) {
-	this.tiTrasformCampo = tiTrasformCampo;
+        this.tiTrasformCampo = tiTrasformCampo;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MODELLO_TIPO_SERIE")
     public DecModelloTipoSerie getDecModelloTipoSerie() {
-	return this.decModelloTipoSerie;
+        return this.decModelloTipoSerie;
     }
 
     public void setDecModelloTipoSerie(DecModelloTipoSerie decModelloTipoSerie) {
-	this.decModelloTipoSerie = decModelloTipoSerie;
+        this.decModelloTipoSerie = decModelloTipoSerie;
     }
 
 }

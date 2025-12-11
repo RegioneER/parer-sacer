@@ -45,28 +45,28 @@ public class DecLivelloTitolTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_LIVELLO_TITOL,
-		new ColumnDescriptor(COL_ID_LIVELLO_TITOL, Types.DECIMAL, 22, true));
-	map.put(COL_ID_TITOL, new ColumnDescriptor(COL_ID_TITOL, Types.DECIMAL, 22, false));
-	map.put(COL_NM_LIVELLO_TITOL,
-		new ColumnDescriptor(COL_NM_LIVELLO_TITOL, Types.VARCHAR, 100, false));
-	map.put(COL_TI_FMT_VOCE_TITOL,
-		new ColumnDescriptor(COL_TI_FMT_VOCE_TITOL, Types.VARCHAR, 20, false));
-	map.put(COL_CD_SEP_LIVELLO,
-		new ColumnDescriptor(COL_CD_SEP_LIVELLO, Types.VARCHAR, 1, false));
-	map.put(COL_NI_LIVELLO, new ColumnDescriptor(COL_NI_LIVELLO, Types.DECIMAL, 22, false));
+        map.put(COL_ID_LIVELLO_TITOL,
+                new ColumnDescriptor(COL_ID_LIVELLO_TITOL, Types.DECIMAL, 22, true));
+        map.put(COL_ID_TITOL, new ColumnDescriptor(COL_ID_TITOL, Types.DECIMAL, 22, false));
+        map.put(COL_NM_LIVELLO_TITOL,
+                new ColumnDescriptor(COL_NM_LIVELLO_TITOL, Types.VARCHAR, 100, false));
+        map.put(COL_TI_FMT_VOCE_TITOL,
+                new ColumnDescriptor(COL_TI_FMT_VOCE_TITOL, Types.VARCHAR, 20, false));
+        map.put(COL_CD_SEP_LIVELLO,
+                new ColumnDescriptor(COL_CD_SEP_LIVELLO, Types.VARCHAR, 1, false));
+        map.put(COL_NI_LIVELLO, new ColumnDescriptor(COL_NI_LIVELLO, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

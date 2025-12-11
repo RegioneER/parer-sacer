@@ -31,28 +31,28 @@ public class MonitoraggioVersFalXMLBean {
      * @return the idSessioneVers
      */
     public BigDecimal getIdSessioneVers() {
-	return idSessioneVers;
+        return idSessioneVers;
     }
 
     /**
      * @param idSessioneVers the idSessioneVers to set
      */
     public void setIdSessioneVers(BigDecimal idSessioneVers) {
-	this.idSessioneVers = idSessioneVers;
+        this.idSessioneVers = idSessioneVers;
     }
 
     /**
      * @return the blXml
      */
     public String getBlXml() {
-	return blXml;
+        return blXml;
     }
 
     /**
      * @param blXml the blXml to set
      */
     public void setBlXml(String blXml) {
-	this.blXml = blXml;
+        this.blXml = blXml;
     }
 
 }

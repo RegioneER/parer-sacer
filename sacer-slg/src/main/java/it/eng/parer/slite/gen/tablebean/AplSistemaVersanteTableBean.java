@@ -34,19 +34,19 @@ public class AplSistemaVersanteTableBean extends AbstractBaseTable<AplSistemaVer
     public static AplSistemaVersanteTableDescriptor TABLE_DESCRIPTOR = new AplSistemaVersanteTableDescriptor();
 
     public AplSistemaVersanteTableBean() {
-	super();
+        super();
     }
 
     protected AplSistemaVersanteRowBean createRow() {
-	return new AplSistemaVersanteRowBean();
+        return new AplSistemaVersanteRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AplSistemaVersanteRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

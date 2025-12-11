@@ -30,17 +30,17 @@ public class WSDescRecUDPdf implements IWSDesc {
 
     @Override
     public String getVersione() {
-	throw new UnsupportedOperationException(getNomeWs() + ": supporta la versione su DB !");
+        throw new UnsupportedOperationException(getNomeWs() + ": supporta la versione su DB !");
     }
 
     @Override
     public String getNomeWs() {
-	return Costanti.WS_REC_UD_PDF_NOME;
+        return Costanti.WS_REC_UD_PDF_NOME;
     }
 
     @Override
     public String getVersione(HashMap<String, String> mapWsVersion) {
-	return VerificaVersione.latestVersion(getNomeWs(), mapWsVersion);
+        return VerificaVersione.latestVersion(getNomeWs(), mapWsVersion);
     }
 
     // @Override

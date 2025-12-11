@@ -32,49 +32,49 @@ public class SerVJobVerSerieBloccatoId implements Serializable {
 
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-	return this.idVerSerie;
+        return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	this.idVerSerie = idVerSerie;
+        this.idVerSerie = idVerSerie;
     }
 
     @Column(name = "NM_JOB")
     public String getNmJob() {
-	return this.nmJob;
+        return this.nmJob;
     }
 
     public void setNmJob(String nmJob) {
-	this.nmJob = nmJob;
+        this.nmJob = nmJob;
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 83 * hash + Objects.hashCode(this.idVerSerie);
-	hash = 83 * hash + Objects.hashCode(this.nmJob);
-	return hash;
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(this.idVerSerie);
+        hash = 83 * hash + Objects.hashCode(this.nmJob);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final SerVJobVerSerieBloccatoId other = (SerVJobVerSerieBloccatoId) obj;
-	if (!Objects.equals(this.nmJob, other.nmJob)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idVerSerie, other.idVerSerie)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SerVJobVerSerieBloccatoId other = (SerVJobVerSerieBloccatoId) obj;
+        if (!Objects.equals(this.nmJob, other.nmJob)) {
+            return false;
+        }
+        if (!Objects.equals(this.idVerSerie, other.idVerSerie)) {
+            return false;
+        }
+        return true;
     }
 
 }

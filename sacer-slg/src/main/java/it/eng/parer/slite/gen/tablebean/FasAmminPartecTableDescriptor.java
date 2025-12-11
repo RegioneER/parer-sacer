@@ -44,27 +44,27 @@ public class FasAmminPartecTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_AMMIN_PARTEC,
-		new ColumnDescriptor(COL_ID_AMMIN_PARTEC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_CD_AMMIN_PARTEC,
-		new ColumnDescriptor(COL_CD_AMMIN_PARTEC, Types.VARCHAR, 100, false));
-	map.put(COL_DS_AMMIN_PARTEC,
-		new ColumnDescriptor(COL_DS_AMMIN_PARTEC, Types.VARCHAR, 254, false));
-	map.put(COL_TI_CODICE_AMMIN_PARTEC,
-		new ColumnDescriptor(COL_TI_CODICE_AMMIN_PARTEC, Types.VARCHAR, 20, false));
+        map.put(COL_ID_AMMIN_PARTEC,
+                new ColumnDescriptor(COL_ID_AMMIN_PARTEC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_CD_AMMIN_PARTEC,
+                new ColumnDescriptor(COL_CD_AMMIN_PARTEC, Types.VARCHAR, 100, false));
+        map.put(COL_DS_AMMIN_PARTEC,
+                new ColumnDescriptor(COL_DS_AMMIN_PARTEC, Types.VARCHAR, 254, false));
+        map.put(COL_TI_CODICE_AMMIN_PARTEC,
+                new ColumnDescriptor(COL_TI_CODICE_AMMIN_PARTEC, Types.VARCHAR, 20, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

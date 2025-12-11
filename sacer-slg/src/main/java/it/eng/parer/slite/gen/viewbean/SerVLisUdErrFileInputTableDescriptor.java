@@ -49,34 +49,34 @@ public class SerVLisUdErrFileInputTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_UD_ERR_FILE_INPUT,
-		new ColumnDescriptor(COL_ID_UD_ERR_FILE_INPUT, Types.DECIMAL, 22, true));
-	map.put(COL_ID_ERR_FILE_INPUT,
-		new ColumnDescriptor(COL_ID_ERR_FILE_INPUT, Types.DECIMAL, 22, true));
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_UD_SERIE, new ColumnDescriptor(COL_CD_UD_SERIE, Types.VARCHAR, 254, true));
-	map.put(COL_DT_UD_SERIE, new ColumnDescriptor(COL_DT_UD_SERIE, Types.TIMESTAMP, 7, true));
-	map.put(COL_INFO_UD_SERIE,
-		new ColumnDescriptor(COL_INFO_UD_SERIE, Types.VARCHAR, 4000, true));
-	map.put(COL_DS_KEY_ORD_UD_SERIE,
-		new ColumnDescriptor(COL_DS_KEY_ORD_UD_SERIE, Types.VARCHAR, 254, true));
-	map.put(COL_PG_UD_SERIE, new ColumnDescriptor(COL_PG_UD_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 242, true));
-	map.put(COL_FL_UNITA_DOC_ANNUL,
-		new ColumnDescriptor(COL_FL_UNITA_DOC_ANNUL, Types.VARCHAR, 1, true));
+        map.put(COL_ID_UD_ERR_FILE_INPUT,
+                new ColumnDescriptor(COL_ID_UD_ERR_FILE_INPUT, Types.DECIMAL, 22, true));
+        map.put(COL_ID_ERR_FILE_INPUT,
+                new ColumnDescriptor(COL_ID_ERR_FILE_INPUT, Types.DECIMAL, 22, true));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_UD_SERIE, new ColumnDescriptor(COL_CD_UD_SERIE, Types.VARCHAR, 254, true));
+        map.put(COL_DT_UD_SERIE, new ColumnDescriptor(COL_DT_UD_SERIE, Types.TIMESTAMP, 7, true));
+        map.put(COL_INFO_UD_SERIE,
+                new ColumnDescriptor(COL_INFO_UD_SERIE, Types.VARCHAR, 4000, true));
+        map.put(COL_DS_KEY_ORD_UD_SERIE,
+                new ColumnDescriptor(COL_DS_KEY_ORD_UD_SERIE, Types.VARCHAR, 254, true));
+        map.put(COL_PG_UD_SERIE, new ColumnDescriptor(COL_PG_UD_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 242, true));
+        map.put(COL_FL_UNITA_DOC_ANNUL,
+                new ColumnDescriptor(COL_FL_UNITA_DOC_ANNUL, Types.VARCHAR, 1, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

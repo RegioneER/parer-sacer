@@ -46,28 +46,28 @@ public class SerVLisErrFileSerieUdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_TI_SCOPO_FILE_INPUT_VER_SERIE,
-		new ColumnDescriptor(COL_TI_SCOPO_FILE_INPUT_VER_SERIE, Types.VARCHAR, 20, true));
-	map.put(COL_ID_FILE_INPUT_VER_SERIE,
-		new ColumnDescriptor(COL_ID_FILE_INPUT_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_ERR_FILE_INPUT,
-		new ColumnDescriptor(COL_ID_ERR_FILE_INPUT, Types.DECIMAL, 22, true));
-	map.put(COL_NI_REC_ERR, new ColumnDescriptor(COL_NI_REC_ERR, Types.DECIMAL, 22, true));
-	map.put(COL_TI_ERR_REC, new ColumnDescriptor(COL_TI_ERR_REC, Types.VARCHAR, 30, true));
-	map.put(COL_DS_REC_ERR, new ColumnDescriptor(COL_DS_REC_ERR, Types.VARCHAR, 4000, true));
+        map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_TI_SCOPO_FILE_INPUT_VER_SERIE,
+                new ColumnDescriptor(COL_TI_SCOPO_FILE_INPUT_VER_SERIE, Types.VARCHAR, 20, true));
+        map.put(COL_ID_FILE_INPUT_VER_SERIE,
+                new ColumnDescriptor(COL_ID_FILE_INPUT_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_ERR_FILE_INPUT,
+                new ColumnDescriptor(COL_ID_ERR_FILE_INPUT, Types.DECIMAL, 22, true));
+        map.put(COL_NI_REC_ERR, new ColumnDescriptor(COL_NI_REC_ERR, Types.DECIMAL, 22, true));
+        map.put(COL_TI_ERR_REC, new ColumnDescriptor(COL_TI_ERR_REC, Types.VARCHAR, 30, true));
+        map.put(COL_DS_REC_ERR, new ColumnDescriptor(COL_DS_REC_ERR, Types.VARCHAR, 4000, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

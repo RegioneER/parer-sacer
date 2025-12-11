@@ -47,33 +47,33 @@ public class ElvStatoElencoVerTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_STATO_ELENCO_VERS,
-		new ColumnDescriptor(COL_ID_STATO_ELENCO_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_ID_ELENCO_VERS,
-		new ColumnDescriptor(COL_ID_ELENCO_VERS, Types.DECIMAL, 22, false));
-	map.put(COL_PG_STATO_ELENCO_VERS,
-		new ColumnDescriptor(COL_PG_STATO_ELENCO_VERS, Types.DECIMAL, 22, false));
-	map.put(COL_TS_STATO_ELENCO_VERS,
-		new ColumnDescriptor(COL_TS_STATO_ELENCO_VERS, Types.TIMESTAMP, 11, false));
-	map.put(COL_ID_TI_EVE_STATO_ELENCO_VERS,
-		new ColumnDescriptor(COL_ID_TI_EVE_STATO_ELENCO_VERS, Types.DECIMAL, 22, false));
-	map.put(COL_DS_COND_STATO_ELENCO_VERS,
-		new ColumnDescriptor(COL_DS_COND_STATO_ELENCO_VERS, Types.VARCHAR, 1024, false));
-	map.put(COL_TI_STATO_ELENCO,
-		new ColumnDescriptor(COL_TI_STATO_ELENCO, Types.VARCHAR, 40, false));
-	map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, false));
+        map.put(COL_ID_STATO_ELENCO_VERS,
+                new ColumnDescriptor(COL_ID_STATO_ELENCO_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_ID_ELENCO_VERS,
+                new ColumnDescriptor(COL_ID_ELENCO_VERS, Types.DECIMAL, 22, false));
+        map.put(COL_PG_STATO_ELENCO_VERS,
+                new ColumnDescriptor(COL_PG_STATO_ELENCO_VERS, Types.DECIMAL, 22, false));
+        map.put(COL_TS_STATO_ELENCO_VERS,
+                new ColumnDescriptor(COL_TS_STATO_ELENCO_VERS, Types.TIMESTAMP, 11, false));
+        map.put(COL_ID_TI_EVE_STATO_ELENCO_VERS,
+                new ColumnDescriptor(COL_ID_TI_EVE_STATO_ELENCO_VERS, Types.DECIMAL, 22, false));
+        map.put(COL_DS_COND_STATO_ELENCO_VERS,
+                new ColumnDescriptor(COL_DS_COND_STATO_ELENCO_VERS, Types.VARCHAR, 1024, false));
+        map.put(COL_TI_STATO_ELENCO,
+                new ColumnDescriptor(COL_TI_STATO_ELENCO, Types.VARCHAR, 40, false));
+        map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

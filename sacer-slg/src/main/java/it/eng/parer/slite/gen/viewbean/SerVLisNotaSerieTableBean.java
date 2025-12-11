@@ -37,19 +37,19 @@ public class SerVLisNotaSerieTableBean extends AbstractBaseTable<SerVLisNotaSeri
     public static SerVLisNotaSerieTableDescriptor TABLE_DESCRIPTOR = new SerVLisNotaSerieTableDescriptor();
 
     public SerVLisNotaSerieTableBean() {
-	super();
+        super();
     }
 
     protected SerVLisNotaSerieRowBean createRow() {
-	return new SerVLisNotaSerieRowBean();
+        return new SerVLisNotaSerieRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerVLisNotaSerieRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

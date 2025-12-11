@@ -42,23 +42,23 @@ public class MonVChkCntUdAnnulTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_FL_UD_ANNUL_DAFARE_PING,
-		new ColumnDescriptor(COL_FL_UD_ANNUL_DAFARE_PING, Types.VARCHAR, 1, true));
-	map.put(COL_FL_UD_ANNUL_DAFARE_SACER,
-		new ColumnDescriptor(COL_FL_UD_ANNUL_DAFARE_SACER, Types.VARCHAR, 1, true));
-	map.put(COL_FL_UD_ANNUL, new ColumnDescriptor(COL_FL_UD_ANNUL, Types.VARCHAR, 1, true));
+        map.put(COL_FL_UD_ANNUL_DAFARE_PING,
+                new ColumnDescriptor(COL_FL_UD_ANNUL_DAFARE_PING, Types.VARCHAR, 1, true));
+        map.put(COL_FL_UD_ANNUL_DAFARE_SACER,
+                new ColumnDescriptor(COL_FL_UD_ANNUL_DAFARE_SACER, Types.VARCHAR, 1, true));
+        map.put(COL_FL_UD_ANNUL, new ColumnDescriptor(COL_FL_UD_ANNUL, Types.VARCHAR, 1, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -56,35 +56,35 @@ public class DecTipoSerieCreataAutom implements Serializable {
 
     @Column(name = "ID_TIPO_SERIE_CREATA_AUTOM")
     @GenericGenerator(name = "SDEC_TIPO_SERIE_CREATA_AUTOM_ID_TIPO_SERIE_CREATA_AUTOM_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_SERIE_CREATA_AUTOM"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_SERIE_CREATA_AUTOM"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_SERIE_CREATA_AUTOM_ID_TIPO_SERIE_CREATA_AUTOM_GENERATOR")
     public Long getIdTipoSerieCreataAutom() {
-	return this.idTipoSerieCreataAutom;
+        return this.idTipoSerieCreataAutom;
     }
 
     public void setIdTipoSerieCreataAutom(Long idTipoSerieCreataAutom) {
-	this.idTipoSerieCreataAutom = idTipoSerieCreataAutom;
+        this.idTipoSerieCreataAutom = idTipoSerieCreataAutom;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREA_AUTOM")
     public Date getDtCreaAutom() {
-	return this.dtCreaAutom;
+        return this.dtCreaAutom;
     }
 
     public void setDtCreaAutom(Date dtCreaAutom) {
-	this.dtCreaAutom = dtCreaAutom;
+        this.dtCreaAutom = dtCreaAutom;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_SERIE")
     public DecTipoSerie getDecTipoSerie() {
-	return this.decTipoSerie;
+        return this.decTipoSerie;
     }
 
     public void setDecTipoSerie(DecTipoSerie decTipoSerie) {
-	this.decTipoSerie = decTipoSerie;
+        this.decTipoSerie = decTipoSerie;
     }
 
 }

@@ -37,19 +37,19 @@ public class VolVRicVolumeTableBean extends AbstractBaseTable<VolVRicVolumeRowBe
     public static VolVRicVolumeTableDescriptor TABLE_DESCRIPTOR = new VolVRicVolumeTableDescriptor();
 
     public VolVRicVolumeTableBean() {
-	super();
+        super();
     }
 
     protected VolVRicVolumeRowBean createRow() {
-	return new VolVRicVolumeRowBean();
+        return new VolVRicVolumeRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VolVRicVolumeRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

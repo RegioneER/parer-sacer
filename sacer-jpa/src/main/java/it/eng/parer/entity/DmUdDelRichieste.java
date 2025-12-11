@@ -1,3 +1,16 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.entity;
 
 import java.io.Serializable;
@@ -31,114 +44,114 @@ public class DmUdDelRichieste implements Serializable {
     private List<DmUdDel> dmUdDels;
 
     public DmUdDelRichieste() {
-	/* Hibernate */
+        /* Hibernate */
     }
 
     @Id
     @GenericGenerator(name = "DM_UD_DEL_RICHIESTE_ID_DM_UD_DEL_RICHIESTA_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDM_UD_DEL_RICHIESTE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDM_UD_DEL_RICHIESTE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DM_UD_DEL_RICHIESTE_ID_DM_UD_DEL_RICHIESTA_GENERATOR")
     @Column(name = "ID_UD_DEL_RICHIESTA")
     public Long getIdUdDelRichiesta() {
-	return this.idUdDelRichiesta;
+        return this.idUdDelRichiesta;
     }
 
     public void setIdUdDelRichiesta(Long idUdDelRichiesta) {
-	this.idUdDelRichiesta = idUdDelRichiesta;
+        this.idUdDelRichiesta = idUdDelRichiesta;
     }
 
     @Column(name = "CD_RICHIESTA")
     public String getCdRichiesta() {
-	return this.cdRichiesta;
+        return this.cdRichiesta;
     }
 
     public void setCdRichiesta(String cdRichiesta) {
-	this.cdRichiesta = cdRichiesta;
+        this.cdRichiesta = cdRichiesta;
     }
 
     @Column(name = "DS_MESSAGGIO_ERRORE")
     public String getDsMessaggioErrore() {
-	return this.dsMessaggioErrore;
+        return this.dsMessaggioErrore;
     }
 
     public void setDsMessaggioErrore(String dsMessaggioErrore) {
-	this.dsMessaggioErrore = dsMessaggioErrore;
+        this.dsMessaggioErrore = dsMessaggioErrore;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_CREAZIONE")
     public Date getDtCreazione() {
-	return this.dtCreazione;
+        return this.dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-	this.dtCreazione = dtCreazione;
+        this.dtCreazione = dtCreazione;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_ULTIMO_AGGIORNAMENTO")
     public Date getDtUltimoAggiornamento() {
-	return this.dtUltimoAggiornamento;
+        return this.dtUltimoAggiornamento;
     }
 
     public void setDtUltimoAggiornamento(Date dtUltimoAggiornamento) {
-	this.dtUltimoAggiornamento = dtUltimoAggiornamento;
+        this.dtUltimoAggiornamento = dtUltimoAggiornamento;
     }
 
     @Column(name = "ID_RICHIESTA")
     public BigDecimal getIdRichiesta() {
-	return this.idRichiesta;
+        return this.idRichiesta;
     }
 
     public void setIdRichiesta(BigDecimal idRichiesta) {
-	this.idRichiesta = idRichiesta;
+        this.idRichiesta = idRichiesta;
     }
 
     @Column(name = "TI_MOD_DEL")
     public String getTiModDel() {
-	return this.tiModDel;
+        return this.tiModDel;
     }
 
     public void setTiModDel(String tiModDel) {
-	this.tiModDel = tiModDel;
+        this.tiModDel = tiModDel;
     }
 
     @Column(name = "TI_MOT_CANCELLAZIONE")
     public String getTiMotCancellazione() {
-	return this.tiMotCancellazione;
+        return this.tiMotCancellazione;
     }
 
     public void setTiMotCancellazione(String tiMotCancellazione) {
-	this.tiMotCancellazione = tiMotCancellazione;
+        this.tiMotCancellazione = tiMotCancellazione;
     }
 
     @Column(name = "TI_STATO_INTERNO_RICH")
     public String getTiStatoInternoRich() {
-	return this.tiStatoInternoRich;
+        return this.tiStatoInternoRich;
     }
 
     public void setTiStatoInternoRich(String tiStatoInternoRich) {
-	this.tiStatoInternoRich = tiStatoInternoRich;
+        this.tiStatoInternoRich = tiStatoInternoRich;
     }
 
     @Column(name = "TI_STATO_RICHIESTA")
     public String getTiStatoRichiesta() {
-	return this.tiStatoRichiesta;
+        return this.tiStatoRichiesta;
     }
 
     public void setTiStatoRichiesta(String tiStatoRichiesta) {
-	this.tiStatoRichiesta = tiStatoRichiesta;
+        this.tiStatoRichiesta = tiStatoRichiesta;
     }
 
     // bi-directional many-to-one association to DmUdDel
     @OneToMany(mappedBy = "dmUdDelRichieste")
     public List<DmUdDel> getDmUdDels() {
-	return this.dmUdDels;
+        return this.dmUdDels;
     }
 
     public void setDmUdDels(List<DmUdDel> dmUdDels) {
-	this.dmUdDels = dmUdDels;
+        this.dmUdDels = dmUdDels;
     }
 
 }

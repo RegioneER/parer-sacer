@@ -50,7 +50,7 @@ public class SpringTikaSingleton {
 
     @PostConstruct
     protected void initSingleton() {
-	tika = TikaConfig.getDefaultConfig().getDetector();
+        tika = TikaConfig.getDefaultConfig().getDetector();
     }
 
     /**
@@ -63,15 +63,15 @@ public class SpringTikaSingleton {
      * @throws IOException in caso di errore
      */
     public String detectMimeType(byte[] fileBytes) throws IOException {
-	String text = null;
+        String text = null;
 
-	try (InputStream stream = TikaInputStream.get(fileBytes)) {
-	    Metadata metadata = new Metadata();
-	    metadata.set(RESOURCE_NAME_KEY, null);
-	    MediaType mediaType = tika.detect(stream, metadata);
-	    text = mediaType.toString();
-	}
+        try (InputStream stream = TikaInputStream.get(fileBytes)) {
+            Metadata metadata = new Metadata();
+            metadata.set(RESOURCE_NAME_KEY, null);
+            MediaType mediaType = tika.detect(stream, metadata);
+            text = mediaType.toString();
+        }
 
-	return text;
+        return text;
     }
 }

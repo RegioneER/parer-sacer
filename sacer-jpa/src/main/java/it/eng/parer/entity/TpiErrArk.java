@@ -58,61 +58,61 @@ public class TpiErrArk implements Serializable {
 
     @Column(name = "ID_ERR_ARK")
     @GenericGenerator(name = "STPI_ERR_ARK_ID_ERR_ARK_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "STPI_ERR_ARK"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "STPI_ERR_ARK"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STPI_ERR_ARK_ID_ERR_ARK_GENERATOR")
     public Long getIdErrArk() {
-	return this.idErrArk;
+        return this.idErrArk;
     }
 
     public void setIdErrArk(Long idErrArk) {
-	this.idErrArk = idErrArk;
+        this.idErrArk = idErrArk;
     }
 
     @Column(name = "CD_ERR_ARK")
     public String getCdErrArk() {
-	return this.cdErrArk;
+        return this.cdErrArk;
     }
 
     public void setCdErrArk(String cdErrArk) {
-	this.cdErrArk = cdErrArk;
+        this.cdErrArk = cdErrArk;
     }
 
     @Column(name = "DL_ERR_ARK")
     public String getDlErrArk() {
-	return this.dlErrArk;
+        return this.dlErrArk;
     }
 
     public void setDlErrArk(String dlErrArk) {
-	this.dlErrArk = dlErrArk;
+        this.dlErrArk = dlErrArk;
     }
 
     @Column(name = "NI_ERR_ARK")
     public BigDecimal getNiErrArk() {
-	return this.niErrArk;
+        return this.niErrArk;
     }
 
     public void setNiErrArk(BigDecimal niErrArk) {
-	this.niErrArk = niErrArk;
+        this.niErrArk = niErrArk;
     }
 
     @Column(name = "TI_ERR_ARK")
     public String getTiErrArk() {
-	return this.tiErrArk;
+        return this.tiErrArk;
     }
 
     public void setTiErrArk(String tiErrArk) {
-	this.tiErrArk = tiErrArk;
+        this.tiErrArk = tiErrArk;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SCHED_JOB")
     public TpiSchedJob getTpiSchedJob() {
-	return this.tpiSchedJob;
+        return this.tpiSchedJob;
     }
 
     public void setTpiSchedJob(TpiSchedJob tpiSchedJob) {
-	this.tpiSchedJob = tpiSchedJob;
+        this.tpiSchedJob = tpiSchedJob;
     }
 
 }

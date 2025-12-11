@@ -33,7 +33,7 @@ import it.eng.parer.entity.DecCriterioRaggr;
  * @author DiLorenzo_F
  */
 public class FieldsDocValidator
-	implements ConstraintValidator<ValidateFieldsDoc, CriterioFiltroDoc> {
+        implements ConstraintValidator<ValidateFieldsDoc, CriterioFiltroDoc> {
 
     @Override
     public void initialize(ValidateFieldsDoc constraintAnnotation) {
@@ -42,31 +42,31 @@ public class FieldsDocValidator
     @Override
     public boolean isValid(CriterioFiltroDoc critFiltroDoc, ConstraintValidatorContext context) {
 
-	DecCriterioRaggr criterio = critFiltroDoc.getCriterioRaggr();
-	List<AroDoc> docs = critFiltroDoc.getDocs();
+        DecCriterioRaggr criterio = critFiltroDoc.getCriterioRaggr();
+        List<AroDoc> docs = critFiltroDoc.getDocs();
 
-	boolean ret = true;
+        boolean ret = true;
 
-	// valida filtro su descrizione doc
-	if (criterio.getDlDoc() != null) {
-	    ret = CollectionUtils.exists(docs, new Predicate() {
-		@Override
-		public boolean evaluate(final Object object) {
-		    return (((AroDoc) object).getDlDoc().contains(criterio.getDlDoc()));
-		}
-	    });
-	}
+        // valida filtro su descrizione doc
+        if (criterio.getDlDoc() != null) {
+            ret = CollectionUtils.exists(docs, new Predicate() {
+                @Override
+                public boolean evaluate(final Object object) {
+                    return (((AroDoc) object).getDlDoc().contains(criterio.getDlDoc()));
+                }
+            });
+        }
 
-	// valida filtro su autore doc
-	if (ret && criterio.getDsAutoreDoc() != null) {
-	    ret = CollectionUtils.exists(docs, new Predicate() {
-		@Override
-		public boolean evaluate(final Object object) {
-		    return (((AroDoc) object).getDsAutoreDoc().contains(criterio.getDsAutoreDoc()));
-		}
-	    });
-	}
+        // valida filtro su autore doc
+        if (ret && criterio.getDsAutoreDoc() != null) {
+            ret = CollectionUtils.exists(docs, new Predicate() {
+                @Override
+                public boolean evaluate(final Object object) {
+                    return (((AroDoc) object).getDsAutoreDoc().contains(criterio.getDsAutoreDoc()));
+                }
+            });
+        }
 
-	return ret;
+        return ret;
     }
 }

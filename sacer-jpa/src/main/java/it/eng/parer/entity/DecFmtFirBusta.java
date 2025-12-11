@@ -43,29 +43,29 @@ public class DecFmtFirBusta implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_FMT_FIR_BUSTA")
     public long getIdFmtFirBusta() {
-	return this.idFmtFirBusta;
+        return this.idFmtFirBusta;
     }
 
     public void setIdFmtFirBusta(long idFmtFirBusta) {
-	this.idFmtFirBusta = idFmtFirBusta;
+        this.idFmtFirBusta = idFmtFirBusta;
     }
 
     @Column(name = "DS_FORMATO")
     public String getDsFormato() {
-	return this.dsFormato;
+        return this.dsFormato;
     }
 
     public void setDsFormato(String dsFormato) {
-	this.dsFormato = dsFormato;
+        this.dsFormato = dsFormato;
     }
 
     @Column(name = "TI_FORMATO")
     public String getTiFormato() {
-	return this.tiFormato;
+        return this.tiFormato;
     }
 
     public void setTiFormato(String tiFormato) {
-	this.tiFormato = tiFormato;
+        this.tiFormato = tiFormato;
     }
 
 }

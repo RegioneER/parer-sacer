@@ -49,34 +49,34 @@ public class SerSerieTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_SERIE, new ColumnDescriptor(COL_ID_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_CD_COMPOSITO_SERIE,
-		new ColumnDescriptor(COL_CD_COMPOSITO_SERIE, Types.VARCHAR, 100, false));
-	map.put(COL_CD_SERIE_NORMALIZ,
-		new ColumnDescriptor(COL_CD_SERIE_NORMALIZ, Types.VARCHAR, 100, false));
-	map.put(COL_AA_SERIE, new ColumnDescriptor(COL_AA_SERIE, Types.DECIMAL, 22, false));
-	map.put(COL_DS_SERIE, new ColumnDescriptor(COL_DS_SERIE, Types.VARCHAR, 254, false));
-	map.put(COL_ID_TIPO_SERIE,
-		new ColumnDescriptor(COL_ID_TIPO_SERIE, Types.DECIMAL, 22, false));
-	map.put(COL_NI_ANNI_CONSERV,
-		new ColumnDescriptor(COL_NI_ANNI_CONSERV, Types.DECIMAL, 22, false));
-	map.put(COL_ID_SERIE_PADRE,
-		new ColumnDescriptor(COL_ID_SERIE_PADRE, Types.DECIMAL, 22, false));
-	map.put(COL_DL_NOTA_LINK_DOC,
-		new ColumnDescriptor(COL_DL_NOTA_LINK_DOC, Types.VARCHAR, 1024, false));
+        map.put(COL_ID_SERIE, new ColumnDescriptor(COL_ID_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_CD_COMPOSITO_SERIE,
+                new ColumnDescriptor(COL_CD_COMPOSITO_SERIE, Types.VARCHAR, 100, false));
+        map.put(COL_CD_SERIE_NORMALIZ,
+                new ColumnDescriptor(COL_CD_SERIE_NORMALIZ, Types.VARCHAR, 100, false));
+        map.put(COL_AA_SERIE, new ColumnDescriptor(COL_AA_SERIE, Types.DECIMAL, 22, false));
+        map.put(COL_DS_SERIE, new ColumnDescriptor(COL_DS_SERIE, Types.VARCHAR, 254, false));
+        map.put(COL_ID_TIPO_SERIE,
+                new ColumnDescriptor(COL_ID_TIPO_SERIE, Types.DECIMAL, 22, false));
+        map.put(COL_NI_ANNI_CONSERV,
+                new ColumnDescriptor(COL_NI_ANNI_CONSERV, Types.DECIMAL, 22, false));
+        map.put(COL_ID_SERIE_PADRE,
+                new ColumnDescriptor(COL_ID_SERIE_PADRE, Types.DECIMAL, 22, false));
+        map.put(COL_DL_NOTA_LINK_DOC,
+                new ColumnDescriptor(COL_DL_NOTA_LINK_DOC, Types.VARCHAR, 1024, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -56,51 +56,51 @@ public class AplParamApplicTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_PARAM_APPLIC,
-		new ColumnDescriptor(COL_ID_PARAM_APPLIC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_VERSIONE_APP_INI,
-		new ColumnDescriptor(COL_CD_VERSIONE_APP_INI, Types.VARCHAR, 11, false));
-	map.put(COL_CD_VERSIONE_APP_FINE,
-		new ColumnDescriptor(COL_CD_VERSIONE_APP_FINE, Types.VARCHAR, 11, false));
-	map.put(COL_NM_PARAM_APPLIC,
-		new ColumnDescriptor(COL_NM_PARAM_APPLIC, Types.VARCHAR, 100, false));
-	map.put(COL_DS_PARAM_APPLIC,
-		new ColumnDescriptor(COL_DS_PARAM_APPLIC, Types.VARCHAR, 254, false));
-	map.put(COL_DM_PARAM_APPLIC,
-		new ColumnDescriptor(COL_DM_PARAM_APPLIC, Types.VARCHAR, 100, false));
-	map.put(COL_DS_VALORE_PARAM_APPLIC,
-		new ColumnDescriptor(COL_DS_VALORE_PARAM_APPLIC, Types.VARCHAR, 254, false));
-	map.put(COL_TI_PARAM_APPLIC,
-		new ColumnDescriptor(COL_TI_PARAM_APPLIC, Types.VARCHAR, 50, false));
-	map.put(COL_TI_VALORE_PARAM_APPLIC,
-		new ColumnDescriptor(COL_TI_VALORE_PARAM_APPLIC, Types.VARCHAR, 100, false));
-	map.put(COL_TI_GESTIONE_PARAM,
-		new ColumnDescriptor(COL_TI_GESTIONE_PARAM, Types.VARCHAR, 30, false));
-	map.put(COL_FL_APPART_APPLIC,
-		new ColumnDescriptor(COL_FL_APPART_APPLIC, Types.VARCHAR, 1, false));
-	map.put(COL_FL_APPART_AMBIENTE,
-		new ColumnDescriptor(COL_FL_APPART_AMBIENTE, Types.VARCHAR, 1, false));
-	map.put(COL_FL_APPART_STRUT,
-		new ColumnDescriptor(COL_FL_APPART_STRUT, Types.VARCHAR, 1, false));
-	map.put(COL_FL_APPART_TIPO_UNITA_DOC,
-		new ColumnDescriptor(COL_FL_APPART_TIPO_UNITA_DOC, Types.VARCHAR, 1, false));
-	map.put(COL_FL_APPART_AA_TIPO_FASCICOLO,
-		new ColumnDescriptor(COL_FL_APPART_AA_TIPO_FASCICOLO, Types.VARCHAR, 1, false));
-	map.put(COL_DS_LISTA_VALORI_AMMESSI,
-		new ColumnDescriptor(COL_DS_LISTA_VALORI_AMMESSI, Types.VARCHAR, 4000, false));
-	map.put(COL_FL_MULTI, new ColumnDescriptor(COL_FL_MULTI, Types.VARCHAR, 1, false));
+        map.put(COL_ID_PARAM_APPLIC,
+                new ColumnDescriptor(COL_ID_PARAM_APPLIC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_VERSIONE_APP_INI,
+                new ColumnDescriptor(COL_CD_VERSIONE_APP_INI, Types.VARCHAR, 11, false));
+        map.put(COL_CD_VERSIONE_APP_FINE,
+                new ColumnDescriptor(COL_CD_VERSIONE_APP_FINE, Types.VARCHAR, 11, false));
+        map.put(COL_NM_PARAM_APPLIC,
+                new ColumnDescriptor(COL_NM_PARAM_APPLIC, Types.VARCHAR, 100, false));
+        map.put(COL_DS_PARAM_APPLIC,
+                new ColumnDescriptor(COL_DS_PARAM_APPLIC, Types.VARCHAR, 254, false));
+        map.put(COL_DM_PARAM_APPLIC,
+                new ColumnDescriptor(COL_DM_PARAM_APPLIC, Types.VARCHAR, 100, false));
+        map.put(COL_DS_VALORE_PARAM_APPLIC,
+                new ColumnDescriptor(COL_DS_VALORE_PARAM_APPLIC, Types.VARCHAR, 254, false));
+        map.put(COL_TI_PARAM_APPLIC,
+                new ColumnDescriptor(COL_TI_PARAM_APPLIC, Types.VARCHAR, 50, false));
+        map.put(COL_TI_VALORE_PARAM_APPLIC,
+                new ColumnDescriptor(COL_TI_VALORE_PARAM_APPLIC, Types.VARCHAR, 100, false));
+        map.put(COL_TI_GESTIONE_PARAM,
+                new ColumnDescriptor(COL_TI_GESTIONE_PARAM, Types.VARCHAR, 30, false));
+        map.put(COL_FL_APPART_APPLIC,
+                new ColumnDescriptor(COL_FL_APPART_APPLIC, Types.VARCHAR, 1, false));
+        map.put(COL_FL_APPART_AMBIENTE,
+                new ColumnDescriptor(COL_FL_APPART_AMBIENTE, Types.VARCHAR, 1, false));
+        map.put(COL_FL_APPART_STRUT,
+                new ColumnDescriptor(COL_FL_APPART_STRUT, Types.VARCHAR, 1, false));
+        map.put(COL_FL_APPART_TIPO_UNITA_DOC,
+                new ColumnDescriptor(COL_FL_APPART_TIPO_UNITA_DOC, Types.VARCHAR, 1, false));
+        map.put(COL_FL_APPART_AA_TIPO_FASCICOLO,
+                new ColumnDescriptor(COL_FL_APPART_AA_TIPO_FASCICOLO, Types.VARCHAR, 1, false));
+        map.put(COL_DS_LISTA_VALORI_AMMESSI,
+                new ColumnDescriptor(COL_DS_LISTA_VALORI_AMMESSI, Types.VARCHAR, 4000, false));
+        map.put(COL_FL_MULTI, new ColumnDescriptor(COL_FL_MULTI, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

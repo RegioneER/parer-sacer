@@ -123,12 +123,12 @@ public abstract class SigningHelper extends GenericHelper {
      * @return long time
      */
     protected long getTimeSessionBlock() {
-	// The value's unit is minute
-	String value = confHlp.getValoreParamApplicByApplic(TIME_SESSION_BLOCKED);
-	int min = Integer.parseInt(value);
+        // The value's unit is minute
+        String value = confHlp.getValoreParamApplicByApplic(TIME_SESSION_BLOCKED);
+        int min = Integer.parseInt(value);
 
-	// Converts the value in milliseconds
-	long time = min * 60 * 1000;
-	return time;
+        // Converts the value in milliseconds
+        long time = min * 60 * 1000;
+        return time;
     }
 }

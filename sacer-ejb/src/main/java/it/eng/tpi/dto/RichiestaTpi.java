@@ -28,33 +28,33 @@ public class RichiestaTpi {
 
     public enum TipoRichiesta {
 
-	STATO_ARK_CARTELLA, ELIMINA_CARTELLA_ARK, RETRIEVE_FILE_UNITA_DOC, REGISTRA_CARTELLA_RI_ARK,
-	SCHEDULAZIONI_JOB_TPI;
+        STATO_ARK_CARTELLA, ELIMINA_CARTELLA_ARK, RETRIEVE_FILE_UNITA_DOC, REGISTRA_CARTELLA_RI_ARK,
+        SCHEDULAZIONI_JOB_TPI;
     }
 
     public enum TipoRiArk {
 
-	LOCALE, SECONDARIO, ENTRAMBI;
+        LOCALE, SECONDARIO, ENTRAMBI;
 
-	public static TipoRiArk getTipoRiArk(String tipoRiArk) {
-	    for (TipoRiArk tipo : TipoRiArk.values()) {
-		if (tipo.toString().equals(tipoRiArk)) {
-		    return tipo;
-		}
-	    }
-	    return null;
-	}
+        public static TipoRiArk getTipoRiArk(String tipoRiArk) {
+            for (TipoRiArk tipo : TipoRiArk.values()) {
+                if (tipo.toString().equals(tipoRiArk)) {
+                    return tipo;
+                }
+            }
+            return null;
+        }
     }
 
     public RichiestaTpi(TipoRichiesta tipoRichiesta) {
-	this.tipoRichiesta = tipoRichiesta;
+        this.tipoRichiesta = tipoRichiesta;
     }
 
     public TipoRichiesta getTipoRichiesta() {
-	return tipoRichiesta;
+        return tipoRichiesta;
     }
 
     public void setTipoRichiesta(TipoRichiesta tipoRichiesta) {
-	this.tipoRichiesta = tipoRichiesta;
+        this.tipoRichiesta = tipoRichiesta;
     }
 }

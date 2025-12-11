@@ -52,112 +52,112 @@ public class AroVLisNotaUnitaDoc implements Serializable {
 
     @Column(name = "CD_TIPO_NOTA_UNITA_DOC")
     public String getCdTipoNotaUnitaDoc() {
-	return this.cdTipoNotaUnitaDoc;
+        return this.cdTipoNotaUnitaDoc;
     }
 
     public void setCdTipoNotaUnitaDoc(String cdTipoNotaUnitaDoc) {
-	this.cdTipoNotaUnitaDoc = cdTipoNotaUnitaDoc;
+        this.cdTipoNotaUnitaDoc = cdTipoNotaUnitaDoc;
     }
 
     @Column(name = "DS_NOTA_UNITA_DOC")
     public String getDsNotaUnitaDoc() {
-	return this.dsNotaUnitaDoc;
+        return this.dsNotaUnitaDoc;
     }
 
     public void setDsNotaUnitaDoc(String dsNotaUnitaDoc) {
-	this.dsNotaUnitaDoc = dsNotaUnitaDoc;
+        this.dsNotaUnitaDoc = dsNotaUnitaDoc;
     }
 
     @Column(name = "DS_TIPO_NOTA_UNITA_DOC")
     public String getDsTipoNotaUnitaDoc() {
-	return this.dsTipoNotaUnitaDoc;
+        return this.dsTipoNotaUnitaDoc;
     }
 
     public void setDsTipoNotaUnitaDoc(String dsTipoNotaUnitaDoc) {
-	this.dsTipoNotaUnitaDoc = dsTipoNotaUnitaDoc;
+        this.dsTipoNotaUnitaDoc = dsTipoNotaUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_NOTA_UNITA_DOC")
     public Date getDtNotaUnitaDoc() {
-	return this.dtNotaUnitaDoc;
+        return this.dtNotaUnitaDoc;
     }
 
     public void setDtNotaUnitaDoc(Date dtNotaUnitaDoc) {
-	this.dtNotaUnitaDoc = dtNotaUnitaDoc;
+        this.dtNotaUnitaDoc = dtNotaUnitaDoc;
     }
 
     @Id
     @Column(name = "ID_NOTA_UNITA_DOC")
     public BigDecimal getIdNotaUnitaDoc() {
-	return this.idNotaUnitaDoc;
+        return this.idNotaUnitaDoc;
     }
 
     public void setIdNotaUnitaDoc(BigDecimal idNotaUnitaDoc) {
-	this.idNotaUnitaDoc = idNotaUnitaDoc;
+        this.idNotaUnitaDoc = idNotaUnitaDoc;
     }
 
     @Column(name = "ID_TIPO_NOTA_UNITA_DOC")
     public BigDecimal getIdTipoNotaUnitaDoc() {
-	return this.idTipoNotaUnitaDoc;
+        return this.idTipoNotaUnitaDoc;
     }
 
     public void setIdTipoNotaUnitaDoc(BigDecimal idTipoNotaUnitaDoc) {
-	this.idTipoNotaUnitaDoc = idTipoNotaUnitaDoc;
+        this.idTipoNotaUnitaDoc = idTipoNotaUnitaDoc;
     }
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return this.idUserIam;
+        return this.idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     @Column(name = "ID_VER_INDICE_AIP")
     public BigDecimal getIdVerIndiceAip() {
-	return this.idVerIndiceAip;
+        return this.idVerIndiceAip;
     }
 
     public void setIdVerIndiceAip(BigDecimal idVerIndiceAip) {
-	this.idVerIndiceAip = idVerIndiceAip;
+        this.idVerIndiceAip = idVerIndiceAip;
     }
 
     @Column(name = "NI_ORD")
     public BigDecimal getNiOrd() {
-	return this.niOrd;
+        return this.niOrd;
     }
 
     public void setNiOrd(BigDecimal niOrd) {
-	this.niOrd = niOrd;
+        this.niOrd = niOrd;
     }
 
     @Column(name = "NM_USERID")
     public String getNmUserid() {
-	return this.nmUserid;
+        return this.nmUserid;
     }
 
     public void setNmUserid(String nmUserid) {
-	this.nmUserid = nmUserid;
+        this.nmUserid = nmUserid;
     }
 
     @Column(name = "PG_NOTA_UNITA_DOC")
     public BigDecimal getPgNotaUnitaDoc() {
-	return this.pgNotaUnitaDoc;
+        return this.pgNotaUnitaDoc;
     }
 
     public void setPgNotaUnitaDoc(BigDecimal pgNotaUnitaDoc) {
-	this.pgNotaUnitaDoc = pgNotaUnitaDoc;
+        this.pgNotaUnitaDoc = pgNotaUnitaDoc;
     }
 
 }

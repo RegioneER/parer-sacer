@@ -36,153 +36,153 @@ public class SerLacunaConsistVerSerieRowBean extends BaseRow implements JEEBaseR
     public static SerLacunaConsistVerSerieTableDescriptor TABLE_DESCRIPTOR = new SerLacunaConsistVerSerieTableDescriptor();
 
     public SerLacunaConsistVerSerieRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdLacunaConsistVerSerie() {
-	return getBigDecimal("id_lacuna_consist_ver_serie");
+        return getBigDecimal("id_lacuna_consist_ver_serie");
     }
 
     public void setIdLacunaConsistVerSerie(BigDecimal idLacunaConsistVerSerie) {
-	setObject("id_lacuna_consist_ver_serie", idLacunaConsistVerSerie);
+        setObject("id_lacuna_consist_ver_serie", idLacunaConsistVerSerie);
     }
 
     public BigDecimal getIdConsistVerSerie() {
-	return getBigDecimal("id_consist_ver_serie");
+        return getBigDecimal("id_consist_ver_serie");
     }
 
     public void setIdConsistVerSerie(BigDecimal idConsistVerSerie) {
-	setObject("id_consist_ver_serie", idConsistVerSerie);
+        setObject("id_consist_ver_serie", idConsistVerSerie);
     }
 
     public BigDecimal getPgLacuna() {
-	return getBigDecimal("pg_lacuna");
+        return getBigDecimal("pg_lacuna");
     }
 
     public void setPgLacuna(BigDecimal pgLacuna) {
-	setObject("pg_lacuna", pgLacuna);
+        setObject("pg_lacuna", pgLacuna);
     }
 
     public BigDecimal getNiIniLacuna() {
-	return getBigDecimal("ni_ini_lacuna");
+        return getBigDecimal("ni_ini_lacuna");
     }
 
     public void setNiIniLacuna(BigDecimal niIniLacuna) {
-	setObject("ni_ini_lacuna", niIniLacuna);
+        setObject("ni_ini_lacuna", niIniLacuna);
     }
 
     public BigDecimal getNiFinLacuna() {
-	return getBigDecimal("ni_fin_lacuna");
+        return getBigDecimal("ni_fin_lacuna");
     }
 
     public void setNiFinLacuna(BigDecimal niFinLacuna) {
-	setObject("ni_fin_lacuna", niFinLacuna);
+        setObject("ni_fin_lacuna", niFinLacuna);
     }
 
     public String getDlLacuna() {
-	return getString("dl_lacuna");
+        return getString("dl_lacuna");
     }
 
     public void setDlLacuna(String dlLacuna) {
-	setObject("dl_lacuna", dlLacuna);
+        setObject("dl_lacuna", dlLacuna);
     }
 
     public String getTiLacuna() {
-	return getString("ti_lacuna");
+        return getString("ti_lacuna");
     }
 
     public void setTiLacuna(String tiLacuna) {
-	setObject("ti_lacuna", tiLacuna);
+        setObject("ti_lacuna", tiLacuna);
     }
 
     public String getTiModLacuna() {
-	return getString("ti_mod_lacuna");
+        return getString("ti_mod_lacuna");
     }
 
     public void setTiModLacuna(String tiModLacuna) {
-	setObject("ti_mod_lacuna", tiModLacuna);
+        setObject("ti_mod_lacuna", tiModLacuna);
     }
 
     public String getDlNotaLacuna() {
-	return getString("dl_nota_lacuna");
+        return getString("dl_nota_lacuna");
     }
 
     public void setDlNotaLacuna(String dlNotaLacuna) {
-	setObject("dl_nota_lacuna", dlNotaLacuna);
+        setObject("dl_nota_lacuna", dlNotaLacuna);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SerLacunaConsistVerSerie entity = (SerLacunaConsistVerSerie) obj;
+        SerLacunaConsistVerSerie entity = (SerLacunaConsistVerSerie) obj;
 
-	this.setIdLacunaConsistVerSerie(entity.getIdLacunaConsistVerSerie() == null ? null
-		: BigDecimal.valueOf(entity.getIdLacunaConsistVerSerie()));
+        this.setIdLacunaConsistVerSerie(entity.getIdLacunaConsistVerSerie() == null ? null
+                : BigDecimal.valueOf(entity.getIdLacunaConsistVerSerie()));
 
-	if (entity.getSerConsistVerSerie() != null) {
-	    this.setIdConsistVerSerie(
-		    new BigDecimal(entity.getSerConsistVerSerie().getIdConsistVerSerie()));
-	}
+        if (entity.getSerConsistVerSerie() != null) {
+            this.setIdConsistVerSerie(
+                    new BigDecimal(entity.getSerConsistVerSerie().getIdConsistVerSerie()));
+        }
 
-	this.setPgLacuna(entity.getPgLacuna());
-	this.setNiIniLacuna(entity.getNiIniLacuna());
-	this.setNiFinLacuna(entity.getNiFinLacuna());
-	this.setDlLacuna(entity.getDlLacuna());
-	this.setTiLacuna(entity.getTiLacuna());
-	this.setTiModLacuna(entity.getTiModLacuna());
-	this.setDlNotaLacuna(entity.getDlNotaLacuna());
+        this.setPgLacuna(entity.getPgLacuna());
+        this.setNiIniLacuna(entity.getNiIniLacuna());
+        this.setNiFinLacuna(entity.getNiFinLacuna());
+        this.setDlLacuna(entity.getDlLacuna());
+        this.setTiLacuna(entity.getTiLacuna());
+        this.setTiModLacuna(entity.getTiModLacuna());
+        this.setDlNotaLacuna(entity.getDlNotaLacuna());
     }
 
     @Override
     public SerLacunaConsistVerSerie rowBeanToEntity() {
-	SerLacunaConsistVerSerie entity = new SerLacunaConsistVerSerie();
-	if (this.getIdLacunaConsistVerSerie() != null) {
-	    entity.setIdLacunaConsistVerSerie(this.getIdLacunaConsistVerSerie().longValue());
-	}
-	if (this.getIdConsistVerSerie() != null) {
-	    if (entity.getSerConsistVerSerie() == null) {
-		entity.setSerConsistVerSerie(new SerConsistVerSerie());
-	    }
-	    entity.getSerConsistVerSerie()
-		    .setIdConsistVerSerie(this.getIdConsistVerSerie().longValue());
-	}
-	entity.setPgLacuna(this.getPgLacuna());
-	entity.setNiIniLacuna(this.getNiIniLacuna());
-	entity.setNiFinLacuna(this.getNiFinLacuna());
-	entity.setDlLacuna(this.getDlLacuna());
-	entity.setTiLacuna(this.getTiLacuna());
-	entity.setTiModLacuna(this.getTiModLacuna());
-	entity.setDlNotaLacuna(this.getDlNotaLacuna());
-	return entity;
+        SerLacunaConsistVerSerie entity = new SerLacunaConsistVerSerie();
+        if (this.getIdLacunaConsistVerSerie() != null) {
+            entity.setIdLacunaConsistVerSerie(this.getIdLacunaConsistVerSerie().longValue());
+        }
+        if (this.getIdConsistVerSerie() != null) {
+            if (entity.getSerConsistVerSerie() == null) {
+                entity.setSerConsistVerSerie(new SerConsistVerSerie());
+            }
+            entity.getSerConsistVerSerie()
+                    .setIdConsistVerSerie(this.getIdConsistVerSerie().longValue());
+        }
+        entity.setPgLacuna(this.getPgLacuna());
+        entity.setNiIniLacuna(this.getNiIniLacuna());
+        entity.setNiFinLacuna(this.getNiFinLacuna());
+        entity.setDlLacuna(this.getDlLacuna());
+        entity.setTiLacuna(this.getTiLacuna());
+        entity.setTiModLacuna(this.getTiModLacuna());
+        entity.setDlNotaLacuna(this.getDlNotaLacuna());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

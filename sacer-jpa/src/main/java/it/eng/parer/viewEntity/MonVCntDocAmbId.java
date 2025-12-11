@@ -27,80 +27,80 @@ public class MonVCntDocAmbId implements Serializable {
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-	return idAmbiente;
+        return idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	this.idAmbiente = idAmbiente;
+        this.idAmbiente = idAmbiente;
     }
 
     private BigDecimal idUserIam;
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return idUserIam;
+        return idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     private String tiDtCreazione;
 
     @Column(name = "TI_DT_CREAZIONE", columnDefinition = "char")
     public String getTiDtCreazione() {
-	return tiDtCreazione;
+        return tiDtCreazione;
     }
 
     public void setTiDtCreazione(String tiDtCreazione) {
-	this.tiDtCreazione = tiDtCreazione;
+        this.tiDtCreazione = tiDtCreazione;
     }
 
     private String tiStatoDoc;
 
     @Column(name = "TI_STATO_DOC")
     public String getTiStatoDoc() {
-	return tiStatoDoc;
+        return tiStatoDoc;
     }
 
     public void setTiStatoDoc(String tiStatoDoc) {
-	this.tiStatoDoc = tiStatoDoc;
+        this.tiStatoDoc = tiStatoDoc;
     }
 
     @Override
     public int hashCode() {
-	int hash = 3;
-	hash = 97 * hash + Objects.hashCode(this.idAmbiente);
-	hash = 97 * hash + Objects.hashCode(this.idUserIam);
-	hash = 97 * hash + Objects.hashCode(this.tiDtCreazione);
-	hash = 97 * hash + Objects.hashCode(this.tiStatoDoc);
-	return hash;
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.idAmbiente);
+        hash = 97 * hash + Objects.hashCode(this.idUserIam);
+        hash = 97 * hash + Objects.hashCode(this.tiDtCreazione);
+        hash = 97 * hash + Objects.hashCode(this.tiStatoDoc);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final MonVCntDocAmbId other = (MonVCntDocAmbId) obj;
-	if (!Objects.equals(this.tiDtCreazione, other.tiDtCreazione)) {
-	    return false;
-	}
-	if (!Objects.equals(this.tiStatoDoc, other.tiStatoDoc)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idAmbiente, other.idAmbiente)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idUserIam, other.idUserIam)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MonVCntDocAmbId other = (MonVCntDocAmbId) obj;
+        if (!Objects.equals(this.tiDtCreazione, other.tiDtCreazione)) {
+            return false;
+        }
+        if (!Objects.equals(this.tiStatoDoc, other.tiStatoDoc)) {
+            return false;
+        }
+        if (!Objects.equals(this.idAmbiente, other.idAmbiente)) {
+            return false;
+        }
+        if (!Objects.equals(this.idUserIam, other.idUserIam)) {
+            return false;
+        }
+        return true;
     }
 }

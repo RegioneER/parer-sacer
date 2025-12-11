@@ -48,110 +48,110 @@ public class AroVLisUpdCompUnitaDoc implements Serializable {
 
     @Column(name = "DS_ELEMENTO")
     public String getDsElemento() {
-	return this.dsElemento;
+        return this.dsElemento;
     }
 
     public void setDsElemento(String dsElemento) {
-	this.dsElemento = dsElemento;
+        this.dsElemento = dsElemento;
     }
 
     @Column(name = "FL_UPD_DATI_SPEC", columnDefinition = "char(1)")
     public String getFlUpdDatiSpec() {
-	return this.flUpdDatiSpec;
+        return this.flUpdDatiSpec;
     }
 
     public void setFlUpdDatiSpec(String flUpdDatiSpec) {
-	this.flUpdDatiSpec = flUpdDatiSpec;
+        this.flUpdDatiSpec = flUpdDatiSpec;
     }
 
     @Column(name = "FL_UPD_DATI_SPEC_MIGRAZ", columnDefinition = "char(1)")
     public String getFlUpdDatiSpecMigraz() {
-	return this.flUpdDatiSpecMigraz;
+        return this.flUpdDatiSpecMigraz;
     }
 
     public void setFlUpdDatiSpecMigraz(String flUpdDatiSpecMigraz) {
-	this.flUpdDatiSpecMigraz = flUpdDatiSpecMigraz;
+        this.flUpdDatiSpecMigraz = flUpdDatiSpecMigraz;
     }
 
     @Column(name = "FL_UPD_INFO_VERS", columnDefinition = "char(1)")
     public String getFlUpdInfoVers() {
-	return this.flUpdInfoVers;
+        return this.flUpdInfoVers;
     }
 
     public void setFlUpdInfoVers(String flUpdInfoVers) {
-	this.flUpdInfoVers = flUpdInfoVers;
+        this.flUpdInfoVers = flUpdInfoVers;
     }
 
     @Column(name = "ID_DOC")
     public BigDecimal getIdDoc() {
-	return this.idDoc;
+        return this.idDoc;
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	this.idDoc = idDoc;
+        this.idDoc = idDoc;
     }
 
     @Id
     @Column(name = "ID_UPD_COMP_UNITA_DOC")
     public BigDecimal getIdUpdCompUnitaDoc() {
-	return this.idUpdCompUnitaDoc;
+        return this.idUpdCompUnitaDoc;
     }
 
     public void setIdUpdCompUnitaDoc(BigDecimal idUpdCompUnitaDoc) {
-	this.idUpdCompUnitaDoc = idUpdCompUnitaDoc;
+        this.idUpdCompUnitaDoc = idUpdCompUnitaDoc;
     }
 
     @Column(name = "ID_UPD_DOC_UNITA_DOC")
     public BigDecimal getIdUpdDocUnitaDoc() {
-	return this.idUpdDocUnitaDoc;
+        return this.idUpdDocUnitaDoc;
     }
 
     public void setIdUpdDocUnitaDoc(BigDecimal idUpdDocUnitaDoc) {
-	this.idUpdDocUnitaDoc = idUpdDocUnitaDoc;
+        this.idUpdDocUnitaDoc = idUpdDocUnitaDoc;
     }
 
     @Column(name = "ID_UPD_UNITA_DOC")
     public BigDecimal getIdUpdUnitaDoc() {
-	return this.idUpdUnitaDoc;
+        return this.idUpdUnitaDoc;
     }
 
     public void setIdUpdUnitaDoc(BigDecimal idUpdUnitaDoc) {
-	this.idUpdUnitaDoc = idUpdUnitaDoc;
+        this.idUpdUnitaDoc = idUpdUnitaDoc;
     }
 
     @Column(name = "NI_ORD_COMP_DOC")
     public BigDecimal getNiOrdCompDoc() {
-	return this.niOrdCompDoc;
+        return this.niOrdCompDoc;
     }
 
     public void setNiOrdCompDoc(BigDecimal niOrdCompDoc) {
-	this.niOrdCompDoc = niOrdCompDoc;
+        this.niOrdCompDoc = niOrdCompDoc;
     }
 
     @Column(name = "NM_TIPO_DOC")
     public String getNmTipoDoc() {
-	return this.nmTipoDoc;
+        return this.nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	this.nmTipoDoc = nmTipoDoc;
+        this.nmTipoDoc = nmTipoDoc;
     }
 
     @Column(name = "PG_DOC")
     public BigDecimal getPgDoc() {
-	return this.pgDoc;
+        return this.pgDoc;
     }
 
     public void setPgDoc(BigDecimal pgDoc) {
-	this.pgDoc = pgDoc;
+        this.pgDoc = pgDoc;
     }
 
     @Column(name = "TI_DOC_ORD")
     public BigDecimal getTiDocOrd() {
-	return this.tiDocOrd;
+        return this.tiDocOrd;
     }
 
     public void setTiDocOrd(BigDecimal tiDocOrd) {
-	this.tiDocOrd = tiDocOrd;
+        this.tiDocOrd = tiDocOrd;
     }
 }

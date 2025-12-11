@@ -37,555 +37,555 @@ public class AroVRicCompRowBean extends BaseRow implements JEEBaseRowInterface {
     public static AroVRicCompTableDescriptor TABLE_DESCRIPTOR = new AroVRicCompTableDescriptor();
 
     public AroVRicCompRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public BigDecimal getIdStrutUnitaDoc() {
-	return getBigDecimal("id_strut_unita_doc");
+        return getBigDecimal("id_strut_unita_doc");
     }
 
     public void setIdStrutUnitaDoc(BigDecimal idStrutUnitaDoc) {
-	setObject("id_strut_unita_doc", idStrutUnitaDoc);
+        setObject("id_strut_unita_doc", idStrutUnitaDoc);
     }
 
     public String getCdRegistroKeyUnitaDoc() {
-	return getString("cd_registro_key_unita_doc");
+        return getString("cd_registro_key_unita_doc");
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
+        setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return getBigDecimal("aa_key_unita_doc");
+        return getBigDecimal("aa_key_unita_doc");
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	setObject("aa_key_unita_doc", aaKeyUnitaDoc);
+        setObject("aa_key_unita_doc", aaKeyUnitaDoc);
     }
 
     public String getCdKeyUnitaDoc() {
-	return getString("cd_key_unita_doc");
+        return getString("cd_key_unita_doc");
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	setObject("cd_key_unita_doc", cdKeyUnitaDoc);
+        setObject("cd_key_unita_doc", cdKeyUnitaDoc);
     }
 
     public BigDecimal getIdSubStrut() {
-	return getBigDecimal("id_sub_strut");
+        return getBigDecimal("id_sub_strut");
     }
 
     public void setIdSubStrut(BigDecimal idSubStrut) {
-	setObject("id_sub_strut", idSubStrut);
+        setObject("id_sub_strut", idSubStrut);
     }
 
     public BigDecimal getIdRegistroUnitaDoc() {
-	return getBigDecimal("id_registro_unita_doc");
+        return getBigDecimal("id_registro_unita_doc");
     }
 
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-	setObject("id_registro_unita_doc", idRegistroUnitaDoc);
+        setObject("id_registro_unita_doc", idRegistroUnitaDoc);
     }
 
     public BigDecimal getIdTipoUnitaDoc() {
-	return getBigDecimal("id_tipo_unita_doc");
+        return getBigDecimal("id_tipo_unita_doc");
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	setObject("id_tipo_unita_doc", idTipoUnitaDoc);
+        setObject("id_tipo_unita_doc", idTipoUnitaDoc);
     }
 
     public BigDecimal getIdDoc() {
-	return getBigDecimal("id_doc");
+        return getBigDecimal("id_doc");
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	setObject("id_doc", idDoc);
+        setObject("id_doc", idDoc);
     }
 
     public BigDecimal getIdStrutDoc() {
-	return getBigDecimal("id_strut_doc");
+        return getBigDecimal("id_strut_doc");
     }
 
     public void setIdStrutDoc(BigDecimal idStrutDoc) {
-	setObject("id_strut_doc", idStrutDoc);
+        setObject("id_strut_doc", idStrutDoc);
     }
 
     public Timestamp getDtCreazioneDoc() {
-	return getTimestamp("dt_creazione_doc");
+        return getTimestamp("dt_creazione_doc");
     }
 
     public void setDtCreazioneDoc(Timestamp dtCreazioneDoc) {
-	setObject("dt_creazione_doc", dtCreazioneDoc);
+        setObject("dt_creazione_doc", dtCreazioneDoc);
     }
 
     public String getFlForzaAccettazione() {
-	return getString("fl_forza_accettazione");
+        return getString("fl_forza_accettazione");
     }
 
     public void setFlForzaAccettazione(String flForzaAccettazione) {
-	setObject("fl_forza_accettazione", flForzaAccettazione);
+        setObject("fl_forza_accettazione", flForzaAccettazione);
     }
 
     public String getFlForzaConservazione() {
-	return getString("fl_forza_conservazione");
+        return getString("fl_forza_conservazione");
     }
 
     public void setFlForzaConservazione(String flForzaConservazione) {
-	setObject("fl_forza_conservazione", flForzaConservazione);
+        setObject("fl_forza_conservazione", flForzaConservazione);
     }
 
     public BigDecimal getIdTipoDoc() {
-	return getBigDecimal("id_tipo_doc");
+        return getBigDecimal("id_tipo_doc");
     }
 
     public void setIdTipoDoc(BigDecimal idTipoDoc) {
-	setObject("id_tipo_doc", idTipoDoc);
+        setObject("id_tipo_doc", idTipoDoc);
     }
 
     public BigDecimal getIdCompDoc() {
-	return getBigDecimal("id_comp_doc");
+        return getBigDecimal("id_comp_doc");
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	setObject("id_comp_doc", idCompDoc);
+        setObject("id_comp_doc", idCompDoc);
     }
 
     public BigDecimal getNiSizeFileCalc() {
-	return getBigDecimal("ni_size_file_calc");
+        return getBigDecimal("ni_size_file_calc");
     }
 
     public void setNiSizeFileCalc(BigDecimal niSizeFileCalc) {
-	setObject("ni_size_file_calc", niSizeFileCalc);
+        setObject("ni_size_file_calc", niSizeFileCalc);
     }
 
     public String getFlCompFirmato() {
-	return getString("fl_comp_firmato");
+        return getString("fl_comp_firmato");
     }
 
     public void setFlCompFirmato(String flCompFirmato) {
-	setObject("fl_comp_firmato", flCompFirmato);
+        setObject("fl_comp_firmato", flCompFirmato);
     }
 
     public String getTiEsitoVerifFirmeVers() {
-	return getString("ti_esito_verif_firme_vers");
+        return getString("ti_esito_verif_firme_vers");
     }
 
     public void setTiEsitoVerifFirmeVers(String tiEsitoVerifFirmeVers) {
-	setObject("ti_esito_verif_firme_vers", tiEsitoVerifFirmeVers);
+        setObject("ti_esito_verif_firme_vers", tiEsitoVerifFirmeVers);
     }
 
     public String getDsUrnCompCalc() {
-	return getString("ds_urn_comp_calc");
+        return getString("ds_urn_comp_calc");
     }
 
     public void setDsUrnCompCalc(String dsUrnCompCalc) {
-	setObject("ds_urn_comp_calc", dsUrnCompCalc);
+        setObject("ds_urn_comp_calc", dsUrnCompCalc);
     }
 
     public String getDsUrnCompCalcShort() {
-	return getString("ds_urn_comp_calc_short");
+        return getString("ds_urn_comp_calc_short");
     }
 
     public void setDsUrnCompCalcShort(String dsUrnCompCalcShort) {
-	setObject("ds_urn_comp_calc_short", dsUrnCompCalcShort);
+        setObject("ds_urn_comp_calc_short", dsUrnCompCalcShort);
     }
 
     public String getDsNomeCompVers() {
-	return getString("ds_nome_comp_vers");
+        return getString("ds_nome_comp_vers");
     }
 
     public void setDsNomeCompVers(String dsNomeCompVers) {
-	setObject("ds_nome_comp_vers", dsNomeCompVers);
+        setObject("ds_nome_comp_vers", dsNomeCompVers);
     }
 
     public String getDsIdCompVers() {
-	return getString("ds_id_comp_vers");
+        return getString("ds_id_comp_vers");
     }
 
     public void setDsIdCompVers(String dsIdCompVers) {
-	setObject("ds_id_comp_vers", dsIdCompVers);
+        setObject("ds_id_comp_vers", dsIdCompVers);
     }
 
     public String getTiSupportoComp() {
-	return getString("ti_supporto_comp");
+        return getString("ti_supporto_comp");
     }
 
     public void setTiSupportoComp(String tiSupportoComp) {
-	setObject("ti_supporto_comp", tiSupportoComp);
+        setObject("ti_supporto_comp", tiSupportoComp);
     }
 
     public String getFlRifTempVers() {
-	return getString("fl_rif_temp_vers");
+        return getString("fl_rif_temp_vers");
     }
 
     public void setFlRifTempVers(String flRifTempVers) {
-	setObject("fl_rif_temp_vers", flRifTempVers);
+        setObject("fl_rif_temp_vers", flRifTempVers);
     }
 
     public String getDsRifTempVers() {
-	return getString("ds_rif_temp_vers");
+        return getString("ds_rif_temp_vers");
     }
 
     public void setDsRifTempVers(String dsRifTempVers) {
-	setObject("ds_rif_temp_vers", dsRifTempVers);
+        setObject("ds_rif_temp_vers", dsRifTempVers);
     }
 
     public String getFlHashVers() {
-	return getString("fl_hash_vers");
+        return getString("fl_hash_vers");
     }
 
     public void setFlHashVers(String flHashVers) {
-	setObject("fl_hash_vers", flHashVers);
+        setObject("fl_hash_vers", flHashVers);
     }
 
     public String getDsHashFileVers() {
-	return getString("ds_hash_file_vers");
+        return getString("ds_hash_file_vers");
     }
 
     public void setDsHashFileVers(String dsHashFileVers) {
-	setObject("ds_hash_file_vers", dsHashFileVers);
+        setObject("ds_hash_file_vers", dsHashFileVers);
     }
 
     public String getDlUrnCompVers() {
-	return getString("dl_urn_comp_vers");
+        return getString("dl_urn_comp_vers");
     }
 
     public void setDlUrnCompVers(String dlUrnCompVers) {
-	setObject("dl_urn_comp_vers", dlUrnCompVers);
+        setObject("dl_urn_comp_vers", dlUrnCompVers);
     }
 
     public String getTiEsitoContrFormatoFile() {
-	return getString("ti_esito_contr_formato_file");
+        return getString("ti_esito_contr_formato_file");
     }
 
     public void setTiEsitoContrFormatoFile(String tiEsitoContrFormatoFile) {
-	setObject("ti_esito_contr_formato_file", tiEsitoContrFormatoFile);
+        setObject("ti_esito_contr_formato_file", tiEsitoContrFormatoFile);
     }
 
     public String getDsFormatoRapprCalc() {
-	return getString("ds_formato_rappr_calc");
+        return getString("ds_formato_rappr_calc");
     }
 
     public void setDsFormatoRapprCalc(String dsFormatoRapprCalc) {
-	setObject("ds_formato_rappr_calc", dsFormatoRapprCalc);
+        setObject("ds_formato_rappr_calc", dsFormatoRapprCalc);
     }
 
     public String getDsFormatoRapprEstesoCalc() {
-	return getString("ds_formato_rappr_esteso_calc");
+        return getString("ds_formato_rappr_esteso_calc");
     }
 
     public void setDsFormatoRapprEstesoCalc(String dsFormatoRapprEstesoCalc) {
-	setObject("ds_formato_rappr_esteso_calc", dsFormatoRapprEstesoCalc);
+        setObject("ds_formato_rappr_esteso_calc", dsFormatoRapprEstesoCalc);
     }
 
     public String getDsHashFileCalc() {
-	return getString("ds_hash_file_calc");
+        return getString("ds_hash_file_calc");
     }
 
     public void setDsHashFileCalc(String dsHashFileCalc) {
-	setObject("ds_hash_file_calc", dsHashFileCalc);
+        setObject("ds_hash_file_calc", dsHashFileCalc);
     }
 
     public String getDsAlgoHashFileCalc() {
-	return getString("ds_algo_hash_file_calc");
+        return getString("ds_algo_hash_file_calc");
     }
 
     public void setDsAlgoHashFileCalc(String dsAlgoHashFileCalc) {
-	setObject("ds_algo_hash_file_calc", dsAlgoHashFileCalc);
+        setObject("ds_algo_hash_file_calc", dsAlgoHashFileCalc);
     }
 
     public String getCdEncodingHashFileCalc() {
-	return getString("cd_encoding_hash_file_calc");
+        return getString("cd_encoding_hash_file_calc");
     }
 
     public void setCdEncodingHashFileCalc(String cdEncodingHashFileCalc) {
-	setObject("cd_encoding_hash_file_calc", cdEncodingHashFileCalc);
+        setObject("cd_encoding_hash_file_calc", cdEncodingHashFileCalc);
     }
 
     public BigDecimal getIdTipoStrutDoc() {
-	return getBigDecimal("id_tipo_strut_doc");
+        return getBigDecimal("id_tipo_strut_doc");
     }
 
     public void setIdTipoStrutDoc(BigDecimal idTipoStrutDoc) {
-	setObject("id_tipo_strut_doc", idTipoStrutDoc);
+        setObject("id_tipo_strut_doc", idTipoStrutDoc);
     }
 
     public BigDecimal getIdStrutTipoStrut() {
-	return getBigDecimal("id_strut_tipo_strut");
+        return getBigDecimal("id_strut_tipo_strut");
     }
 
     public void setIdStrutTipoStrut(BigDecimal idStrutTipoStrut) {
-	setObject("id_strut_tipo_strut", idStrutTipoStrut);
+        setObject("id_strut_tipo_strut", idStrutTipoStrut);
     }
 
     public String getNmTipoStrutDoc() {
-	return getString("nm_tipo_strut_doc");
+        return getString("nm_tipo_strut_doc");
     }
 
     public void setNmTipoStrutDoc(String nmTipoStrutDoc) {
-	setObject("nm_tipo_strut_doc", nmTipoStrutDoc);
+        setObject("nm_tipo_strut_doc", nmTipoStrutDoc);
     }
 
     public BigDecimal getIdTipoCompDoc() {
-	return getBigDecimal("id_tipo_comp_doc");
+        return getBigDecimal("id_tipo_comp_doc");
     }
 
     public void setIdTipoCompDoc(BigDecimal idTipoCompDoc) {
-	setObject("id_tipo_comp_doc", idTipoCompDoc);
+        setObject("id_tipo_comp_doc", idTipoCompDoc);
     }
 
     public String getNmTipoCompDoc() {
-	return getString("nm_tipo_comp_doc");
+        return getString("nm_tipo_comp_doc");
     }
 
     public void setNmTipoCompDoc(String nmTipoCompDoc) {
-	setObject("nm_tipo_comp_doc", nmTipoCompDoc);
+        setObject("nm_tipo_comp_doc", nmTipoCompDoc);
     }
 
     public BigDecimal getIdFormatoFileDocVers() {
-	return getBigDecimal("id_formato_file_doc_vers");
+        return getBigDecimal("id_formato_file_doc_vers");
     }
 
     public void setIdFormatoFileDocVers(BigDecimal idFormatoFileDocVers) {
-	setObject("id_formato_file_doc_vers", idFormatoFileDocVers);
+        setObject("id_formato_file_doc_vers", idFormatoFileDocVers);
     }
 
     public BigDecimal getIdStrutFormatoFileVers() {
-	return getBigDecimal("id_strut_formato_file_vers");
+        return getBigDecimal("id_strut_formato_file_vers");
     }
 
     public void setIdStrutFormatoFileVers(BigDecimal idStrutFormatoFileVers) {
-	setObject("id_strut_formato_file_vers", idStrutFormatoFileVers);
+        setObject("id_strut_formato_file_vers", idStrutFormatoFileVers);
     }
 
     public String getNmFormatoFileDocVers() {
-	return getString("nm_formato_file_doc_vers");
+        return getString("nm_formato_file_doc_vers");
     }
 
     public void setNmFormatoFileDocVers(String nmFormatoFileDocVers) {
-	setObject("nm_formato_file_doc_vers", nmFormatoFileDocVers);
+        setObject("nm_formato_file_doc_vers", nmFormatoFileDocVers);
     }
 
     public String getNmMimetypeFile() {
-	return getString("nm_mimetype_file");
+        return getString("nm_mimetype_file");
     }
 
     public void setNmMimetypeFile(String nmMimetypeFile) {
-	setObject("nm_mimetype_file", nmMimetypeFile);
+        setObject("nm_mimetype_file", nmMimetypeFile);
     }
 
     public String getNmTipoRapprComp() {
-	return getString("nm_tipo_rappr_comp");
+        return getString("nm_tipo_rappr_comp");
     }
 
     public void setNmTipoRapprComp(String nmTipoRapprComp) {
-	setObject("nm_tipo_rappr_comp", nmTipoRapprComp);
+        setObject("nm_tipo_rappr_comp", nmTipoRapprComp);
     }
 
     public BigDecimal getIdFirmaComp() {
-	return getBigDecimal("id_firma_comp");
+        return getBigDecimal("id_firma_comp");
     }
 
     public void setIdFirmaComp(BigDecimal idFirmaComp) {
-	setObject("id_firma_comp", idFirmaComp);
+        setObject("id_firma_comp", idFirmaComp);
     }
 
     public String getTiEsitoContrConforme() {
-	return getString("ti_esito_contr_conforme");
+        return getString("ti_esito_contr_conforme");
     }
 
     public void setTiEsitoContrConforme(String tiEsitoContrConforme) {
-	setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
+        setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
     }
 
     public Timestamp getDtScadCertifFirmatario() {
-	return getTimestamp("dt_scad_certif_firmatario");
+        return getTimestamp("dt_scad_certif_firmatario");
     }
 
     public void setDtScadCertifFirmatario(Timestamp dtScadCertifFirmatario) {
-	setObject("dt_scad_certif_firmatario", dtScadCertifFirmatario);
+        setObject("dt_scad_certif_firmatario", dtScadCertifFirmatario);
     }
 
     public String getDsOrdComp() {
-	return getString("ds_ord_comp");
+        return getString("ds_ord_comp");
     }
 
     public void setDsOrdComp(String dsOrdComp) {
-	setObject("ds_ord_comp", dsOrdComp);
+        setObject("ds_ord_comp", dsOrdComp);
     }
 
     public String getTiStatoElencoVers() {
-	return getString("ti_stato_elenco_vers");
+        return getString("ti_stato_elenco_vers");
     }
 
     public void setTiStatoElencoVers(String tiStatoElencoVers) {
-	setObject("ti_stato_elenco_vers", tiStatoElencoVers);
+        setObject("ti_stato_elenco_vers", tiStatoElencoVers);
     }
 
     public String getTiStatoConservazione() {
-	return getString("ti_stato_conservazione");
+        return getString("ti_stato_conservazione");
     }
 
     public void setTiStatoConservazione(String tiStatoConservazione) {
-	setObject("ti_stato_conservazione", tiStatoConservazione);
+        setObject("ti_stato_conservazione", tiStatoConservazione);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVRicComp entity = (AroVRicComp) obj;
-	if (entity.getAroVRicCompId() != null) {
-	    this.setIdCompDoc(entity.getAroVRicCompId().getIdCompDoc());
-	    this.setIdFirmaComp(entity.getAroVRicCompId().getIdFirmaComp());
-	}
-	this.setIdUnitaDoc(entity.getIdUnitaDoc());
-	this.setIdStrutUnitaDoc(entity.getIdStrutUnitaDoc());
-	this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
-	this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
-	this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
-	this.setIdSubStrut(entity.getIdSubStrut());
-	this.setIdRegistroUnitaDoc(entity.getIdRegistroUnitaDoc());
-	this.setIdTipoUnitaDoc(entity.getIdTipoUnitaDoc());
-	this.setIdDoc(entity.getIdDoc());
-	this.setIdStrutDoc(entity.getIdStrutDoc());
-	if (entity.getDtCreazioneDoc() != null) {
-	    this.setDtCreazioneDoc(new Timestamp(entity.getDtCreazioneDoc().getTime()));
-	}
-	this.setFlForzaAccettazione(entity.getFlForzaAccettazione());
-	this.setFlForzaConservazione(entity.getFlForzaConservazione());
-	this.setIdTipoDoc(entity.getIdTipoDoc());
-	this.setNiSizeFileCalc(entity.getNiSizeFileCalc());
-	this.setFlCompFirmato(entity.getFlCompFirmato());
-	this.setTiEsitoVerifFirmeVers(entity.getTiEsitoVerifFirmeVers());
-	this.setDsUrnCompCalc(entity.getDsUrnCompCalc());
-	this.setDsUrnCompCalcShort(entity.getDsUrnCompCalcShort());
-	this.setDsNomeCompVers(entity.getDsNomeCompVers());
-	this.setDsIdCompVers(entity.getDsIdCompVers());
-	this.setTiSupportoComp(entity.getTiSupportoComp());
-	this.setFlRifTempVers(entity.getFlRifTempVers());
-	this.setDsRifTempVers(entity.getDsRifTempVers());
-	this.setFlHashVers(entity.getFlHashVers());
-	this.setDsHashFileVers(entity.getDsHashFileVers());
-	this.setDlUrnCompVers(entity.getDlUrnCompVers());
-	this.setTiEsitoContrFormatoFile(entity.getTiEsitoContrFormatoFile());
-	this.setDsFormatoRapprCalc(entity.getDsFormatoRapprCalc());
-	this.setDsFormatoRapprEstesoCalc(entity.getDsFormatoRapprEstesoCalc());
-	this.setDsHashFileCalc(entity.getDsHashFileCalc());
-	this.setDsAlgoHashFileCalc(entity.getDsAlgoHashFileCalc());
-	this.setCdEncodingHashFileCalc(entity.getCdEncodingHashFileCalc());
-	this.setIdTipoStrutDoc(entity.getIdTipoStrutDoc());
-	this.setIdStrutTipoStrut(entity.getIdStrutTipoStrut());
-	this.setNmTipoStrutDoc(entity.getNmTipoStrutDoc());
-	this.setIdTipoCompDoc(entity.getIdTipoCompDoc());
-	this.setNmTipoCompDoc(entity.getNmTipoCompDoc());
-	this.setIdFormatoFileDocVers(entity.getIdFormatoFileDocVers());
-	this.setIdStrutFormatoFileVers(entity.getIdStrutFormatoFileVers());
-	this.setNmFormatoFileDocVers(entity.getNmFormatoFileDocVers());
-	this.setNmMimetypeFile(entity.getNmMimetypeFile());
-	this.setNmTipoRapprComp(entity.getNmTipoRapprComp());
-	this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
-	if (entity.getDtScadCertifFirmatario() != null) {
-	    this.setDtScadCertifFirmatario(
-		    new Timestamp(entity.getDtScadCertifFirmatario().getTime()));
-	}
-	this.setDsOrdComp(entity.getDsOrdComp());
-	this.setTiStatoElencoVers(entity.getTiStatoElencoVers());
-	this.setTiStatoConservazione(entity.getTiStatoConservazione());
+        AroVRicComp entity = (AroVRicComp) obj;
+        if (entity.getAroVRicCompId() != null) {
+            this.setIdCompDoc(entity.getAroVRicCompId().getIdCompDoc());
+            this.setIdFirmaComp(entity.getAroVRicCompId().getIdFirmaComp());
+        }
+        this.setIdUnitaDoc(entity.getIdUnitaDoc());
+        this.setIdStrutUnitaDoc(entity.getIdStrutUnitaDoc());
+        this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
+        this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
+        this.setIdSubStrut(entity.getIdSubStrut());
+        this.setIdRegistroUnitaDoc(entity.getIdRegistroUnitaDoc());
+        this.setIdTipoUnitaDoc(entity.getIdTipoUnitaDoc());
+        this.setIdDoc(entity.getIdDoc());
+        this.setIdStrutDoc(entity.getIdStrutDoc());
+        if (entity.getDtCreazioneDoc() != null) {
+            this.setDtCreazioneDoc(new Timestamp(entity.getDtCreazioneDoc().getTime()));
+        }
+        this.setFlForzaAccettazione(entity.getFlForzaAccettazione());
+        this.setFlForzaConservazione(entity.getFlForzaConservazione());
+        this.setIdTipoDoc(entity.getIdTipoDoc());
+        this.setNiSizeFileCalc(entity.getNiSizeFileCalc());
+        this.setFlCompFirmato(entity.getFlCompFirmato());
+        this.setTiEsitoVerifFirmeVers(entity.getTiEsitoVerifFirmeVers());
+        this.setDsUrnCompCalc(entity.getDsUrnCompCalc());
+        this.setDsUrnCompCalcShort(entity.getDsUrnCompCalcShort());
+        this.setDsNomeCompVers(entity.getDsNomeCompVers());
+        this.setDsIdCompVers(entity.getDsIdCompVers());
+        this.setTiSupportoComp(entity.getTiSupportoComp());
+        this.setFlRifTempVers(entity.getFlRifTempVers());
+        this.setDsRifTempVers(entity.getDsRifTempVers());
+        this.setFlHashVers(entity.getFlHashVers());
+        this.setDsHashFileVers(entity.getDsHashFileVers());
+        this.setDlUrnCompVers(entity.getDlUrnCompVers());
+        this.setTiEsitoContrFormatoFile(entity.getTiEsitoContrFormatoFile());
+        this.setDsFormatoRapprCalc(entity.getDsFormatoRapprCalc());
+        this.setDsFormatoRapprEstesoCalc(entity.getDsFormatoRapprEstesoCalc());
+        this.setDsHashFileCalc(entity.getDsHashFileCalc());
+        this.setDsAlgoHashFileCalc(entity.getDsAlgoHashFileCalc());
+        this.setCdEncodingHashFileCalc(entity.getCdEncodingHashFileCalc());
+        this.setIdTipoStrutDoc(entity.getIdTipoStrutDoc());
+        this.setIdStrutTipoStrut(entity.getIdStrutTipoStrut());
+        this.setNmTipoStrutDoc(entity.getNmTipoStrutDoc());
+        this.setIdTipoCompDoc(entity.getIdTipoCompDoc());
+        this.setNmTipoCompDoc(entity.getNmTipoCompDoc());
+        this.setIdFormatoFileDocVers(entity.getIdFormatoFileDocVers());
+        this.setIdStrutFormatoFileVers(entity.getIdStrutFormatoFileVers());
+        this.setNmFormatoFileDocVers(entity.getNmFormatoFileDocVers());
+        this.setNmMimetypeFile(entity.getNmMimetypeFile());
+        this.setNmTipoRapprComp(entity.getNmTipoRapprComp());
+        this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
+        if (entity.getDtScadCertifFirmatario() != null) {
+            this.setDtScadCertifFirmatario(
+                    new Timestamp(entity.getDtScadCertifFirmatario().getTime()));
+        }
+        this.setDsOrdComp(entity.getDsOrdComp());
+        this.setTiStatoElencoVers(entity.getTiStatoElencoVers());
+        this.setTiStatoConservazione(entity.getTiStatoConservazione());
     }
 
     @Override
     public AroVRicComp rowBeanToEntity() {
-	AroVRicComp entity = new AroVRicComp();
-	entity.setAroVRicCompId(new AroVRicCompId());
-	entity.getAroVRicCompId().setIdFirmaComp(this.getIdFirmaComp());
-	entity.getAroVRicCompId().setIdCompDoc(this.getIdCompDoc());
-	entity.setIdUnitaDoc(this.getIdUnitaDoc());
-	entity.setIdStrutUnitaDoc(this.getIdStrutUnitaDoc());
-	entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
-	entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
-	entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
-	entity.setIdSubStrut(this.getIdSubStrut());
-	entity.setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc());
-	entity.setIdTipoUnitaDoc(this.getIdTipoUnitaDoc());
-	entity.setIdDoc(this.getIdDoc());
-	entity.setIdStrutDoc(this.getIdStrutDoc());
-	entity.setDtCreazioneDoc(this.getDtCreazioneDoc());
-	entity.setFlForzaAccettazione(this.getFlForzaAccettazione());
-	entity.setFlForzaConservazione(this.getFlForzaConservazione());
-	entity.setIdTipoDoc(this.getIdTipoDoc());
-	entity.setNiSizeFileCalc(this.getNiSizeFileCalc());
-	entity.setFlCompFirmato(this.getFlCompFirmato());
-	entity.setTiEsitoVerifFirmeVers(this.getTiEsitoVerifFirmeVers());
-	entity.setDsUrnCompCalc(this.getDsUrnCompCalc());
-	entity.setDsUrnCompCalcShort(this.getDsUrnCompCalcShort());
-	entity.setDsNomeCompVers(this.getDsNomeCompVers());
-	entity.setDsIdCompVers(this.getDsIdCompVers());
-	entity.setTiSupportoComp(this.getTiSupportoComp());
-	entity.setFlRifTempVers(this.getFlRifTempVers());
-	entity.setDsRifTempVers(this.getDsRifTempVers());
-	entity.setFlHashVers(this.getFlHashVers());
-	entity.setDsHashFileVers(this.getDsHashFileVers());
-	entity.setDlUrnCompVers(this.getDlUrnCompVers());
-	entity.setTiEsitoContrFormatoFile(this.getTiEsitoContrFormatoFile());
-	entity.setDsFormatoRapprCalc(this.getDsFormatoRapprCalc());
-	entity.setDsFormatoRapprEstesoCalc(this.getDsFormatoRapprEstesoCalc());
-	entity.setDsHashFileCalc(this.getDsHashFileCalc());
-	entity.setDsAlgoHashFileCalc(this.getDsAlgoHashFileCalc());
-	entity.setCdEncodingHashFileCalc(this.getCdEncodingHashFileCalc());
-	entity.setIdTipoStrutDoc(this.getIdTipoStrutDoc());
-	entity.setIdStrutTipoStrut(this.getIdStrutTipoStrut());
-	entity.setNmTipoStrutDoc(this.getNmTipoStrutDoc());
-	entity.setIdTipoCompDoc(this.getIdTipoCompDoc());
-	entity.setNmTipoCompDoc(this.getNmTipoCompDoc());
-	entity.setIdFormatoFileDocVers(this.getIdFormatoFileDocVers());
-	entity.setIdStrutFormatoFileVers(this.getIdStrutFormatoFileVers());
-	entity.setNmFormatoFileDocVers(this.getNmFormatoFileDocVers());
-	entity.setNmMimetypeFile(this.getNmMimetypeFile());
-	entity.setNmTipoRapprComp(this.getNmTipoRapprComp());
-	entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
-	entity.setDtScadCertifFirmatario(this.getDtScadCertifFirmatario());
-	entity.setDsOrdComp(this.getDsOrdComp());
-	entity.setTiStatoElencoVers(this.getTiStatoElencoVers());
-	entity.setTiStatoConservazione(this.getTiStatoConservazione());
-	return entity;
+        AroVRicComp entity = new AroVRicComp();
+        entity.setAroVRicCompId(new AroVRicCompId());
+        entity.getAroVRicCompId().setIdFirmaComp(this.getIdFirmaComp());
+        entity.getAroVRicCompId().setIdCompDoc(this.getIdCompDoc());
+        entity.setIdUnitaDoc(this.getIdUnitaDoc());
+        entity.setIdStrutUnitaDoc(this.getIdStrutUnitaDoc());
+        entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
+        entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
+        entity.setIdSubStrut(this.getIdSubStrut());
+        entity.setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc());
+        entity.setIdTipoUnitaDoc(this.getIdTipoUnitaDoc());
+        entity.setIdDoc(this.getIdDoc());
+        entity.setIdStrutDoc(this.getIdStrutDoc());
+        entity.setDtCreazioneDoc(this.getDtCreazioneDoc());
+        entity.setFlForzaAccettazione(this.getFlForzaAccettazione());
+        entity.setFlForzaConservazione(this.getFlForzaConservazione());
+        entity.setIdTipoDoc(this.getIdTipoDoc());
+        entity.setNiSizeFileCalc(this.getNiSizeFileCalc());
+        entity.setFlCompFirmato(this.getFlCompFirmato());
+        entity.setTiEsitoVerifFirmeVers(this.getTiEsitoVerifFirmeVers());
+        entity.setDsUrnCompCalc(this.getDsUrnCompCalc());
+        entity.setDsUrnCompCalcShort(this.getDsUrnCompCalcShort());
+        entity.setDsNomeCompVers(this.getDsNomeCompVers());
+        entity.setDsIdCompVers(this.getDsIdCompVers());
+        entity.setTiSupportoComp(this.getTiSupportoComp());
+        entity.setFlRifTempVers(this.getFlRifTempVers());
+        entity.setDsRifTempVers(this.getDsRifTempVers());
+        entity.setFlHashVers(this.getFlHashVers());
+        entity.setDsHashFileVers(this.getDsHashFileVers());
+        entity.setDlUrnCompVers(this.getDlUrnCompVers());
+        entity.setTiEsitoContrFormatoFile(this.getTiEsitoContrFormatoFile());
+        entity.setDsFormatoRapprCalc(this.getDsFormatoRapprCalc());
+        entity.setDsFormatoRapprEstesoCalc(this.getDsFormatoRapprEstesoCalc());
+        entity.setDsHashFileCalc(this.getDsHashFileCalc());
+        entity.setDsAlgoHashFileCalc(this.getDsAlgoHashFileCalc());
+        entity.setCdEncodingHashFileCalc(this.getCdEncodingHashFileCalc());
+        entity.setIdTipoStrutDoc(this.getIdTipoStrutDoc());
+        entity.setIdStrutTipoStrut(this.getIdStrutTipoStrut());
+        entity.setNmTipoStrutDoc(this.getNmTipoStrutDoc());
+        entity.setIdTipoCompDoc(this.getIdTipoCompDoc());
+        entity.setNmTipoCompDoc(this.getNmTipoCompDoc());
+        entity.setIdFormatoFileDocVers(this.getIdFormatoFileDocVers());
+        entity.setIdStrutFormatoFileVers(this.getIdStrutFormatoFileVers());
+        entity.setNmFormatoFileDocVers(this.getNmFormatoFileDocVers());
+        entity.setNmMimetypeFile(this.getNmMimetypeFile());
+        entity.setNmTipoRapprComp(this.getNmTipoRapprComp());
+        entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
+        entity.setDtScadCertifFirmatario(this.getDtScadCertifFirmatario());
+        entity.setDsOrdComp(this.getDsOrdComp());
+        entity.setTiStatoElencoVers(this.getTiStatoElencoVers());
+        entity.setTiStatoConservazione(this.getTiStatoConservazione());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }
