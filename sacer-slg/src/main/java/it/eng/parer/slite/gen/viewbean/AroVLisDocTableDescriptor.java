@@ -52,36 +52,36 @@ public class AroVLisDocTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, true));
-	map.put(COL_TI_DOC_ORD, new ColumnDescriptor(COL_TI_DOC_ORD, Types.DECIMAL, 22, true));
-	map.put(COL_PG_DOC, new ColumnDescriptor(COL_PG_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_DOC_VERS,
-		new ColumnDescriptor(COL_CD_KEY_DOC_VERS, Types.VARCHAR, 100, true));
-	map.put(COL_NM_TIPO_DOC, new ColumnDescriptor(COL_NM_TIPO_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_DL_DOC, new ColumnDescriptor(COL_DL_DOC, Types.VARCHAR, 4000, true));
-	map.put(COL_DS_AUTORE_DOC,
-		new ColumnDescriptor(COL_DS_AUTORE_DOC, Types.VARCHAR, 4000, true));
-	map.put(COL_FL_DOC_FIRMATO,
-		new ColumnDescriptor(COL_FL_DOC_FIRMATO, Types.VARCHAR, 1, true));
-	map.put(COL_TI_ESITO_VERIF_FIRME,
-		new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 20, true));
-	map.put(COL_DT_CREAZIONE, new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_STATO_ELENCO_VERS,
-		new ColumnDescriptor(COL_TI_STATO_ELENCO_VERS, Types.VARCHAR, 50, true));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, true));
+        map.put(COL_TI_DOC_ORD, new ColumnDescriptor(COL_TI_DOC_ORD, Types.DECIMAL, 22, true));
+        map.put(COL_PG_DOC, new ColumnDescriptor(COL_PG_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_DOC_VERS,
+                new ColumnDescriptor(COL_CD_KEY_DOC_VERS, Types.VARCHAR, 100, true));
+        map.put(COL_NM_TIPO_DOC, new ColumnDescriptor(COL_NM_TIPO_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_DL_DOC, new ColumnDescriptor(COL_DL_DOC, Types.VARCHAR, 4000, true));
+        map.put(COL_DS_AUTORE_DOC,
+                new ColumnDescriptor(COL_DS_AUTORE_DOC, Types.VARCHAR, 4000, true));
+        map.put(COL_FL_DOC_FIRMATO,
+                new ColumnDescriptor(COL_FL_DOC_FIRMATO, Types.VARCHAR, 1, true));
+        map.put(COL_TI_ESITO_VERIF_FIRME,
+                new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 20, true));
+        map.put(COL_DT_CREAZIONE, new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_STATO_ELENCO_VERS,
+                new ColumnDescriptor(COL_TI_STATO_ELENCO_VERS, Types.VARCHAR, 50, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

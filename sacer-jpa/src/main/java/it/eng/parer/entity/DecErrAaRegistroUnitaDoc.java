@@ -58,52 +58,52 @@ public class DecErrAaRegistroUnitaDoc implements Serializable {
 
     @Column(name = "ID_ERR_AA_REGISTRO_UNITA_DOC")
     @GenericGenerator(name = "SDEC_ERR_AA_REGISTRO_UNITA_DOC_ID_ERR_AA_REGISTRO_UNITA_DOC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_ERR_AA_REGISTRO_UNITA_DOC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_ERR_AA_REGISTRO_UNITA_DOC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_ERR_AA_REGISTRO_UNITA_DOC_ID_ERR_AA_REGISTRO_UNITA_DOC_GENERATOR")
     public Long getIdErrAaRegistroUnitaDoc() {
-	return this.idErrAaRegistroUnitaDoc;
+        return this.idErrAaRegistroUnitaDoc;
     }
 
     public void setIdErrAaRegistroUnitaDoc(Long idErrAaRegistroUnitaDoc) {
-	this.idErrAaRegistroUnitaDoc = idErrAaRegistroUnitaDoc;
+        this.idErrAaRegistroUnitaDoc = idErrAaRegistroUnitaDoc;
     }
 
     @Column(name = "AA_REGISTRO_UNITA_DOC")
     public BigDecimal getAaRegistroUnitaDoc() {
-	return this.aaRegistroUnitaDoc;
+        return this.aaRegistroUnitaDoc;
     }
 
     public void setAaRegistroUnitaDoc(BigDecimal aaRegistroUnitaDoc) {
-	this.aaRegistroUnitaDoc = aaRegistroUnitaDoc;
+        this.aaRegistroUnitaDoc = aaRegistroUnitaDoc;
     }
 
     @Column(name = "DS_ERR_FMT_NUMERO")
     public String getDsErrFmtNumero() {
-	return this.dsErrFmtNumero;
+        return this.dsErrFmtNumero;
     }
 
     public void setDsErrFmtNumero(String dsErrFmtNumero) {
-	this.dsErrFmtNumero = dsErrFmtNumero;
+        this.dsErrFmtNumero = dsErrFmtNumero;
     }
 
     @Column(name = "ID_UNITA_DOC_ERR_FMT_NUMERO")
     public BigDecimal getIdUnitaDocErrFmtNumero() {
-	return this.idUnitaDocErrFmtNumero;
+        return this.idUnitaDocErrFmtNumero;
     }
 
     public void setIdUnitaDocErrFmtNumero(BigDecimal idUnitaDocErrFmtNumero) {
-	this.idUnitaDocErrFmtNumero = idUnitaDocErrFmtNumero;
+        this.idUnitaDocErrFmtNumero = idUnitaDocErrFmtNumero;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_AA_REGISTRO_UNITA_DOC")
     public DecAaRegistroUnitaDoc getDecAaRegistroUnitaDoc() {
-	return this.decAaRegistroUnitaDoc;
+        return this.decAaRegistroUnitaDoc;
     }
 
     public void setDecAaRegistroUnitaDoc(DecAaRegistroUnitaDoc decAaRegistroUnitaDoc) {
-	this.decAaRegistroUnitaDoc = decAaRegistroUnitaDoc;
+        this.decAaRegistroUnitaDoc = decAaRegistroUnitaDoc;
     }
 
 }

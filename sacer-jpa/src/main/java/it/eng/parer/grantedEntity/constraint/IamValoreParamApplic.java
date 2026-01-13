@@ -23,7 +23,7 @@ public final class IamValoreParamApplic {
     }
 
     public enum TiAppart {
-	AMBIENTE, ENTE, APPLIC
+        AMBIENTE, ENTE, APPLIC
     }
 
 }

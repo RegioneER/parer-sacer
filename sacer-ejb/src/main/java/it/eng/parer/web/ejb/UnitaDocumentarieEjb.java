@@ -53,7 +53,7 @@ public class UnitaDocumentarieEjb {
     private ConfigurationHelper configurationHelper;
 
     public UnitaDocumentarieEjb() {
-	//
+        //
     }
 
     private static final Logger log = LoggerFactory.getLogger(UnitaDocumentarieEjb.class);
@@ -72,39 +72,39 @@ public class UnitaDocumentarieEjb {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void insertLogStatoConservUd(long idUnitaDoc, String nmAgente, String tiEvento,
-	    String tiStatoConservazione, String tiMod) {
-	AroUnitaDoc unitaDoc = unitaDocumentarieHelper.findById(AroUnitaDoc.class, idUnitaDoc);
-	BigDecimal idAmbiente = BigDecimal
-		.valueOf(unitaDoc.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
-	BigDecimal idStrut = BigDecimal.valueOf(unitaDoc.getOrgStrut().getIdStrut());
-	BigDecimal idTipoUnitaDoc = BigDecimal
-		.valueOf(unitaDoc.getDecTipoUnitaDoc().getIdTipoUnitaDoc());
-	// Recupero il parametro per verificare se procedere o meno al log
-	boolean flAbilitaLogStatoConserv = Boolean.parseBoolean(
-		configurationHelper.getValoreParamApplicByTipoUd("FL_ABILITA_LOG_STATO_CONSERV",
-			idAmbiente, idStrut, idTipoUnitaDoc));
-	if (flAbilitaLogStatoConserv) {
-	    AroLogStatoConservUd logStatoConservUd = new AroLogStatoConservUd();
-	    logStatoConservUd.setAroUnitaDoc(unitaDoc);
-	    logStatoConservUd.setOrgSubStrut(unitaDoc.getOrgSubStrut());
-	    // Ottieni l'istante corrente
-	    Instant now = Instant.now();
-	    // Crea un Timestamp dall'Instant
-	    Timestamp istante = Timestamp.from(now);
-	    logStatoConservUd.setDtStato(istante);
-	    logStatoConservUd.setAaKeyUnitaDoc(unitaDoc.getAaKeyUnitaDoc());
-	    logStatoConservUd.setNmAgente(nmAgente);
-	    logStatoConservUd.setTiEvento(tiEvento);
-	    logStatoConservUd.setTiMod(tiMod);
-	    logStatoConservUd.setAaKeyUnitaDoc(unitaDoc.getAaKeyUnitaDoc());
-	    logStatoConservUd.setTiStatoConservazione(tiStatoConservazione);
-	    if (unitaDoc.getAroLogStatoConservUds() == null) {
-		unitaDoc.setAroLogStatoConservUds(new ArrayList<>());
-	    }
-	    unitaDoc.getAroLogStatoConservUds().add(logStatoConservUd);
-	    unitaDocumentarieHelper.getEntityManager().persist(logStatoConservUd);
-	    unitaDocumentarieHelper.getEntityManager().flush();
-	}
+            String tiStatoConservazione, String tiMod) {
+        AroUnitaDoc unitaDoc = unitaDocumentarieHelper.findById(AroUnitaDoc.class, idUnitaDoc);
+        BigDecimal idAmbiente = BigDecimal
+                .valueOf(unitaDoc.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
+        BigDecimal idStrut = BigDecimal.valueOf(unitaDoc.getOrgStrut().getIdStrut());
+        BigDecimal idTipoUnitaDoc = BigDecimal
+                .valueOf(unitaDoc.getDecTipoUnitaDoc().getIdTipoUnitaDoc());
+        // Recupero il parametro per verificare se procedere o meno al log
+        boolean flAbilitaLogStatoConserv = Boolean.parseBoolean(
+                configurationHelper.getValoreParamApplicByTipoUd("FL_ABILITA_LOG_STATO_CONSERV",
+                        idAmbiente, idStrut, idTipoUnitaDoc));
+        if (flAbilitaLogStatoConserv) {
+            AroLogStatoConservUd logStatoConservUd = new AroLogStatoConservUd();
+            logStatoConservUd.setAroUnitaDoc(unitaDoc);
+            logStatoConservUd.setOrgSubStrut(unitaDoc.getOrgSubStrut());
+            // Ottieni l'istante corrente
+            Instant now = Instant.now();
+            // Crea un Timestamp dall'Instant
+            Timestamp istante = Timestamp.from(now);
+            logStatoConservUd.setDtStato(istante);
+            logStatoConservUd.setAaKeyUnitaDoc(unitaDoc.getAaKeyUnitaDoc());
+            logStatoConservUd.setNmAgente(nmAgente);
+            logStatoConservUd.setTiEvento(tiEvento);
+            logStatoConservUd.setTiMod(tiMod);
+            logStatoConservUd.setAaKeyUnitaDoc(unitaDoc.getAaKeyUnitaDoc());
+            logStatoConservUd.setTiStatoConservazione(tiStatoConservazione);
+            if (unitaDoc.getAroLogStatoConservUds() == null) {
+                unitaDoc.setAroLogStatoConservUds(new ArrayList<>());
+            }
+            unitaDoc.getAroLogStatoConservUds().add(logStatoConservUd);
+            unitaDocumentarieHelper.getEntityManager().persist(logStatoConservUd);
+            unitaDocumentarieHelper.getEntityManager().flush();
+        }
     }
     // end MEV #31162
 

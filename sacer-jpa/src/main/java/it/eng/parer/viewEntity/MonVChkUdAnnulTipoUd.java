@@ -41,39 +41,39 @@ public class MonVChkUdAnnulTipoUd implements Serializable {
 
     @Column(name = "FL_UD_ANNUL", columnDefinition = "char(1)")
     public String getFlUdAnnul() {
-	return this.flUdAnnul;
+        return this.flUdAnnul;
     }
 
     public void setFlUdAnnul(String flUdAnnul) {
-	this.flUdAnnul = flUdAnnul;
+        this.flUdAnnul = flUdAnnul;
     }
 
     @Column(name = "FL_UD_ANNUL_DAFARE_PING", columnDefinition = "char(1)")
     public String getFlUdAnnulDafarePing() {
-	return this.flUdAnnulDafarePing;
+        return this.flUdAnnulDafarePing;
     }
 
     public void setFlUdAnnulDafarePing(String flUdAnnulDafarePing) {
-	this.flUdAnnulDafarePing = flUdAnnulDafarePing;
+        this.flUdAnnulDafarePing = flUdAnnulDafarePing;
     }
 
     @Column(name = "FL_UD_ANNUL_DAFARE_SACER", columnDefinition = "char(1)")
     public String getFlUdAnnulDafareSacer() {
-	return this.flUdAnnulDafareSacer;
+        return this.flUdAnnulDafareSacer;
     }
 
     public void setFlUdAnnulDafareSacer(String flUdAnnulDafareSacer) {
-	this.flUdAnnulDafareSacer = flUdAnnulDafareSacer;
+        this.flUdAnnulDafareSacer = flUdAnnulDafareSacer;
     }
 
     @Id
     @Column(name = "ID_TIPO_UNITA_DOC")
     public BigDecimal getIdTipoUnitaDoc() {
-	return this.idTipoUnitaDoc;
+        return this.idTipoUnitaDoc;
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	this.idTipoUnitaDoc = idTipoUnitaDoc;
+        this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
 }

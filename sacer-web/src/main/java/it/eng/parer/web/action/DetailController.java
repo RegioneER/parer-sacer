@@ -70,134 +70,134 @@ public class DetailController {
 
     @PostConstruct
     public void init() {
-	try {
-	    configurationHelper = (ConfigurationHelper) new InitialContext()
-		    .lookup("java:app/Parer-ejb/ConfigurationHelper");
-	    calcoloMonHelper = (CalcoloMonitoraggioHelper) new InitialContext()
-		    .lookup("java:app/Parer-ejb/CalcoloMonitoraggioHelper");
-	    udHelper = (UnitaDocumentarieHelper) new InitialContext()
-		    .lookup("java:app/Parer-ejb/UnitaDocumentarieHelper");
-	    struttureEjb = (StruttureEjb) new InitialContext()
-		    .lookup("java:app/Parer-ejb/StruttureEjb");
-	} catch (NamingException ex) {
-	    logger.error("Errore nel recupero dell'EJB ConfigurationHelper ", ex);
-	    throw new IllegalStateException(ex);
-	}
+        try {
+            configurationHelper = (ConfigurationHelper) new InitialContext()
+                    .lookup("java:app/Parer-ejb/ConfigurationHelper");
+            calcoloMonHelper = (CalcoloMonitoraggioHelper) new InitialContext()
+                    .lookup("java:app/Parer-ejb/CalcoloMonitoraggioHelper");
+            udHelper = (UnitaDocumentarieHelper) new InitialContext()
+                    .lookup("java:app/Parer-ejb/UnitaDocumentarieHelper");
+            struttureEjb = (StruttureEjb) new InitialContext()
+                    .lookup("java:app/Parer-ejb/StruttureEjb");
+        } catch (NamingException ex) {
+            logger.error("Errore nel recupero dell'EJB ConfigurationHelper ", ex);
+            throw new IllegalStateException(ex);
+        }
     }
 
     // MAC#38921 - Risoluzione dell'Errore 404 che si presenta nel tentativo di
     // accedere al dettaglio dell'organizzazione dal dettaglio dell'ente convenzionato di SIAM
     @GetMapping(value = "/detail/strut/{id}")
     public @ResponseBody void detailStrut(final HttpServletRequest request,
-	    final HttpServletResponse res, @PathVariable BigDecimal id, Model model) {
-	model.addAttribute("id", id);
+            final HttpServletResponse res, @PathVariable BigDecimal id, Model model) {
+        model.addAttribute("id", id);
 
-	OrgStrutRowBean row = struttureEjb.getOrgStrutRowBean(id);
-	OrgStrutTableBean table = new OrgStrutTableBean();
-	table.add(row);
-	StruttureForm form = new StruttureForm();
-	form.getStruttureList().setTable(table);
-	StruttureAction action = new StruttureAction();
+        OrgStrutRowBean row = struttureEjb.getOrgStrutRowBean(id);
+        OrgStrutTableBean table = new OrgStrutTableBean();
+        table.add(row);
+        StruttureForm form = new StruttureForm();
+        form.getStruttureList().setTable(table);
+        StruttureAction action = new StruttureAction();
 
-	SessionManager.clearActionHistory(request.getSession());
-	SessionCoreManager.setLastPublisher(request.getSession(), "");
-	SessionManager.setForm(request.getSession(), form);
-	SessionManager.setCurrentAction(request.getSession(), action.getControllerName());
-	SessionManager.initMessageBox(request.getSession());
-	SessionManager.addPrevExecutionToHistory(request.getSession(), true, false, null);
-	User user = checkUser(request.getSession());
-	if (user != null) {
-	    user.setIdOrganizzazioneFoglia(id);
-	    Map<String, String> organizzazione = new LinkedHashMap<>();
-	    organizzazione.put(WebConstants.Organizzazione.AMBIENTE.name(),
-		    row.getString("nm_ambiente"));
-	    organizzazione.put(WebConstants.Organizzazione.ENTE.name(), row.getString("nm_ente"));
-	    organizzazione.put(WebConstants.Organizzazione.STRUTTURA.name(), row.getNmStrut());
-	    user.setOrganizzazioneMap(organizzazione);
-	    user.setConfigurazione(configurationHelper.getConfiguration());
-	    try {
-		authenticator.recuperoAutorizzazioni(request.getSession());
-		// ?operation=listNavigationOnClick&table=StruttureList&navigationEvent=dettaglioView&riga=0
-		res.sendRedirect(request.getServletContext().getContextPath() + "/"
-			+ action.getControllerName() + "?operation=listNavigationOnClick&table="
-			+ form.getStruttureList().getName() + "&navigationEvent="
-			+ StruttureAction.NE_DETTAGLIO_VIEW + "&riga=0");
-	    } catch (WebServiceException ex) {
-		logger.error("Eccezione", ex);
-		// TODO : Inviare a una pagina che indica l'impossibilità di caricare la pagina?
-		// Direi di si
-	    } catch (IOException ex) {
-		logger.error("Errore nel caricamento del dettaglio struttura", ex);
-	    }
-	} else {
-	    logger.error("Utente non autenticato: impossibile valorizzare i dati utente.");
-	}
+        SessionManager.clearActionHistory(request.getSession());
+        SessionCoreManager.setLastPublisher(request.getSession(), "");
+        SessionManager.setForm(request.getSession(), form);
+        SessionManager.setCurrentAction(request.getSession(), action.getControllerName());
+        SessionManager.initMessageBox(request.getSession());
+        SessionManager.addPrevExecutionToHistory(request.getSession(), true, false, null);
+        User user = checkUser(request.getSession());
+        if (user != null) {
+            user.setIdOrganizzazioneFoglia(id);
+            Map<String, String> organizzazione = new LinkedHashMap<>();
+            organizzazione.put(WebConstants.Organizzazione.AMBIENTE.name(),
+                    row.getString("nm_ambiente"));
+            organizzazione.put(WebConstants.Organizzazione.ENTE.name(), row.getString("nm_ente"));
+            organizzazione.put(WebConstants.Organizzazione.STRUTTURA.name(), row.getNmStrut());
+            user.setOrganizzazioneMap(organizzazione);
+            user.setConfigurazione(configurationHelper.getConfiguration());
+            try {
+                authenticator.recuperoAutorizzazioni(request.getSession());
+                // ?operation=listNavigationOnClick&table=StruttureList&navigationEvent=dettaglioView&riga=0
+                res.sendRedirect(request.getServletContext().getContextPath() + "/"
+                        + action.getControllerName() + "?operation=listNavigationOnClick&table="
+                        + form.getStruttureList().getName() + "&navigationEvent="
+                        + StruttureAction.NE_DETTAGLIO_VIEW + "&riga=0");
+            } catch (WebServiceException ex) {
+                logger.error("Eccezione", ex);
+                // TODO : Inviare a una pagina che indica l'impossibilità di caricare la pagina?
+                // Direi di si
+            } catch (IOException ex) {
+                logger.error("Errore nel caricamento del dettaglio struttura", ex);
+            }
+        } else {
+            logger.error("Utente non autenticato: impossibile valorizzare i dati utente.");
+        }
     }
 
     @GetMapping(value = "/ud/{idStrut}/{registro}/{anno}/{numero}")
     public @ResponseBody void detailUd(final HttpServletRequest request,
-	    final HttpServletResponse res, @PathVariable BigDecimal idStrut,
-	    @PathVariable String registro, @PathVariable BigDecimal anno,
-	    @PathVariable String numero, Model model) {
-	model.addAttribute("idStrut", idStrut);
-	model.addAttribute("registro", registro);
-	model.addAttribute("anno", anno);
-	model.addAttribute("numero", numero);
+            final HttpServletResponse res, @PathVariable BigDecimal idStrut,
+            @PathVariable String registro, @PathVariable BigDecimal anno,
+            @PathVariable String numero, Model model) {
+        model.addAttribute("idStrut", idStrut);
+        model.addAttribute("registro", registro);
+        model.addAttribute("anno", anno);
+        model.addAttribute("numero", numero);
 
-	AroUnitaDoc ud = calcoloMonHelper.getUnitaDocIfExists(idStrut.longValue(), numero, anno,
-		registro);
-	AroVRicUnitaDocRowBean row = udHelper
-		.getAroVRicUnitaDocRowBean(BigDecimal.valueOf(ud.getIdUnitaDoc()), null, null);
-	AroVRicUnitaDocTableBean table = new AroVRicUnitaDocTableBean();
-	table.add(row);
+        AroUnitaDoc ud = calcoloMonHelper.getUnitaDocIfExists(idStrut.longValue(), numero, anno,
+                registro);
+        AroVRicUnitaDocRowBean row = udHelper
+                .getAroVRicUnitaDocRowBean(BigDecimal.valueOf(ud.getIdUnitaDoc()), null, null);
+        AroVRicUnitaDocTableBean table = new AroVRicUnitaDocTableBean();
+        table.add(row);
 
-	OrgStrutRowBean strut = struttureEjb.getOrgStrutRowBean(row.getIdStrutUnitaDoc());
-	UnitaDocumentarieForm form = new UnitaDocumentarieForm();
-	form.getUnitaDocumentarieList().setTable(table);
-	UnitaDocumentarieAction action = new UnitaDocumentarieAction();
+        OrgStrutRowBean strut = struttureEjb.getOrgStrutRowBean(row.getIdStrutUnitaDoc());
+        UnitaDocumentarieForm form = new UnitaDocumentarieForm();
+        form.getUnitaDocumentarieList().setTable(table);
+        UnitaDocumentarieAction action = new UnitaDocumentarieAction();
 
-	SessionManager.clearActionHistory(request.getSession());
-	SessionCoreManager.setLastPublisher(request.getSession(), "");
-	SessionManager.setForm(request.getSession(), form);
-	SessionManager.setCurrentAction(request.getSession(), action.getControllerName());
-	SessionManager.initMessageBox(request.getSession());
-	SessionManager.addPrevExecutionToHistory(request.getSession(), true, false, null);
-	User user = checkUser(request.getSession());
-	user.setIdOrganizzazioneFoglia(row.getIdStrutUnitaDoc());
-	Map<String, String> organizzazione = new LinkedHashMap<String, String>();
-	organizzazione.put(WebConstants.Organizzazione.AMBIENTE.name(),
-		strut.getString("nm_ambiente"));
-	organizzazione.put(WebConstants.Organizzazione.ENTE.name(), strut.getString("nm_ente"));
-	organizzazione.put(WebConstants.Organizzazione.STRUTTURA.name(), strut.getNmStrut());
-	user.setOrganizzazioneMap(organizzazione);
-	user.setConfigurazione(configurationHelper.getConfiguration());
-	SessionManager.setUser(request.getSession(), user);
-	try {
-	    authenticator.recuperoAutorizzazioni(request.getSession());
-	    res.sendRedirect(request.getServletContext().getContextPath() + "/"
-		    + action.getControllerName() + "?operation=listNavigationOnClick&table="
-		    + form.getUnitaDocumentarieList().getName() + "&navigationEvent="
-		    + UnitaDocumentarieAction.NE_DETTAGLIO_VIEW + "&riga=0");
-	} catch (WebServiceException ex) {
-	    logger.error("Eccezione", ex);
-	    // TODO : Inviare a una pagina che indica l'impossibilità di caricare la pagina? Direi
-	    // di si
-	} catch (IOException ex) {
-	    logger.error("Errore nel caricamento del dettaglio unit\u00E0 documentaria", ex);
-	}
+        SessionManager.clearActionHistory(request.getSession());
+        SessionCoreManager.setLastPublisher(request.getSession(), "");
+        SessionManager.setForm(request.getSession(), form);
+        SessionManager.setCurrentAction(request.getSession(), action.getControllerName());
+        SessionManager.initMessageBox(request.getSession());
+        SessionManager.addPrevExecutionToHistory(request.getSession(), true, false, null);
+        User user = checkUser(request.getSession());
+        user.setIdOrganizzazioneFoglia(row.getIdStrutUnitaDoc());
+        Map<String, String> organizzazione = new LinkedHashMap<String, String>();
+        organizzazione.put(WebConstants.Organizzazione.AMBIENTE.name(),
+                strut.getString("nm_ambiente"));
+        organizzazione.put(WebConstants.Organizzazione.ENTE.name(), strut.getString("nm_ente"));
+        organizzazione.put(WebConstants.Organizzazione.STRUTTURA.name(), strut.getNmStrut());
+        user.setOrganizzazioneMap(organizzazione);
+        user.setConfigurazione(configurationHelper.getConfiguration());
+        SessionManager.setUser(request.getSession(), user);
+        try {
+            authenticator.recuperoAutorizzazioni(request.getSession());
+            res.sendRedirect(request.getServletContext().getContextPath() + "/"
+                    + action.getControllerName() + "?operation=listNavigationOnClick&table="
+                    + form.getUnitaDocumentarieList().getName() + "&navigationEvent="
+                    + UnitaDocumentarieAction.NE_DETTAGLIO_VIEW + "&riga=0");
+        } catch (WebServiceException ex) {
+            logger.error("Eccezione", ex);
+            // TODO : Inviare a una pagina che indica l'impossibilità di caricare la pagina? Direi
+            // di si
+        } catch (IOException ex) {
+            logger.error("Errore nel caricamento del dettaglio unit\u00E0 documentaria", ex);
+        }
     }
 
     private User checkUser(HttpSession session) {
-	User user = (User) SessionManager.getUser(session);
-	if (user != null) {
-	    logger.info("Login gi\u00E0 effettuato per l'utente " + user.getUsername());
-	} else {
-	    try {
-		user = authenticator.doLogin(session);
-	    } catch (SOAPFaultException ex) {
-		throw new IllegalStateException("Errore SOAP durante il login dell'utente", ex);
-	    }
-	}
-	return user;
+        User user = (User) SessionManager.getUser(session);
+        if (user != null) {
+            logger.info("Login gi\u00E0 effettuato per l'utente " + user.getUsername());
+        } else {
+            try {
+                user = authenticator.doLogin(session);
+            } catch (SOAPFaultException ex) {
+                throw new IllegalStateException("Errore SOAP durante il login dell'utente", ex);
+            }
+        }
+        return user;
     }
 }

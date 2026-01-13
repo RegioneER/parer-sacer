@@ -71,72 +71,72 @@ public class ElvVLisElencoVersStatoTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_ELENCO_VERS,
-		new ColumnDescriptor(COL_ID_ELENCO_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
-	map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
-	map.put(COL_NM_ELENCO, new ColumnDescriptor(COL_NM_ELENCO, Types.VARCHAR, 100, true));
-	map.put(COL_DS_ELENCO, new ColumnDescriptor(COL_DS_ELENCO, Types.VARCHAR, 254, true));
-	map.put(COL_TI_STATO_ELENCO,
-		new ColumnDescriptor(COL_TI_STATO_ELENCO, Types.VARCHAR, 30, true));
-	map.put(COL_TI_VALID_ELENCO,
-		new ColumnDescriptor(COL_TI_VALID_ELENCO, Types.VARCHAR, 30, true));
-	map.put(COL_TI_MOD_VALID_ELENCO,
-		new ColumnDescriptor(COL_TI_MOD_VALID_ELENCO, Types.VARCHAR, 30, true));
-	map.put(COL_DT_CREAZIONE_ELENCO,
-		new ColumnDescriptor(COL_DT_CREAZIONE_ELENCO, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_CHIUS, new ColumnDescriptor(COL_DT_CHIUS, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_FIRMA_INDICE,
-		new ColumnDescriptor(COL_DT_FIRMA_INDICE, Types.TIMESTAMP, 7, true));
-	map.put(COL_NI_COMP_VERS_ELENCO,
-		new ColumnDescriptor(COL_NI_COMP_VERS_ELENCO, Types.DECIMAL, 22, true));
-	map.put(COL_NI_COMP_AGG_ELENCO,
-		new ColumnDescriptor(COL_NI_COMP_AGG_ELENCO, Types.DECIMAL, 22, true));
-	map.put(COL_NI_SIZE_VERS_ELENCO,
-		new ColumnDescriptor(COL_NI_SIZE_VERS_ELENCO, Types.DECIMAL, 22, true));
-	map.put(COL_NI_SIZE_AGG_ELENCO,
-		new ColumnDescriptor(COL_NI_SIZE_AGG_ELENCO, Types.DECIMAL, 22, true));
-	map.put(COL_NT_INDICE_ELENCO,
-		new ColumnDescriptor(COL_NT_INDICE_ELENCO, Types.VARCHAR, 2000, true));
-	map.put(COL_NT_ELENCO_CHIUSO,
-		new ColumnDescriptor(COL_NT_ELENCO_CHIUSO, Types.VARCHAR, 2000, true));
-	map.put(COL_NI_UNITA_DOC_VERS_ELENCO,
-		new ColumnDescriptor(COL_NI_UNITA_DOC_VERS_ELENCO, Types.DECIMAL, 22, true));
-	map.put(COL_NI_DOC_AGG_ELENCO,
-		new ColumnDescriptor(COL_NI_DOC_AGG_ELENCO, Types.DECIMAL, 22, true));
-	map.put(COL_FL_NOTE_ELENCO,
-		new ColumnDescriptor(COL_FL_NOTE_ELENCO, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ELENCO_FISC,
-		new ColumnDescriptor(COL_FL_ELENCO_FISC, Types.VARCHAR, 1, true));
-	map.put(COL_ID_CRITERIO_RAGGR,
-		new ColumnDescriptor(COL_ID_CRITERIO_RAGGR, Types.DECIMAL, 22, true));
-	map.put(COL_NM_CRITERIO_RAGGR,
-		new ColumnDescriptor(COL_NM_CRITERIO_RAGGR, Types.VARCHAR, 100, true));
-	map.put(COL_DT_CREAZIONE_ELENCO_IX_AIP,
-		new ColumnDescriptor(COL_DT_CREAZIONE_ELENCO_IX_AIP, Types.TIMESTAMP, 7, true));
-	map.put(COL_NI_INDICI_AIP,
-		new ColumnDescriptor(COL_NI_INDICI_AIP, Types.DECIMAL, 22, true));
-	map.put(COL_TI_GEST_ELENCO,
-		new ColumnDescriptor(COL_TI_GEST_ELENCO, Types.VARCHAR, 30, true));
-	map.put(COL_NI_UPD_UNITA_DOC,
-		new ColumnDescriptor(COL_NI_UPD_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_ELENCO_VERS,
+                new ColumnDescriptor(COL_ID_ELENCO_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
+        map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
+        map.put(COL_NM_ELENCO, new ColumnDescriptor(COL_NM_ELENCO, Types.VARCHAR, 100, true));
+        map.put(COL_DS_ELENCO, new ColumnDescriptor(COL_DS_ELENCO, Types.VARCHAR, 254, true));
+        map.put(COL_TI_STATO_ELENCO,
+                new ColumnDescriptor(COL_TI_STATO_ELENCO, Types.VARCHAR, 30, true));
+        map.put(COL_TI_VALID_ELENCO,
+                new ColumnDescriptor(COL_TI_VALID_ELENCO, Types.VARCHAR, 30, true));
+        map.put(COL_TI_MOD_VALID_ELENCO,
+                new ColumnDescriptor(COL_TI_MOD_VALID_ELENCO, Types.VARCHAR, 30, true));
+        map.put(COL_DT_CREAZIONE_ELENCO,
+                new ColumnDescriptor(COL_DT_CREAZIONE_ELENCO, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_CHIUS, new ColumnDescriptor(COL_DT_CHIUS, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_FIRMA_INDICE,
+                new ColumnDescriptor(COL_DT_FIRMA_INDICE, Types.TIMESTAMP, 7, true));
+        map.put(COL_NI_COMP_VERS_ELENCO,
+                new ColumnDescriptor(COL_NI_COMP_VERS_ELENCO, Types.DECIMAL, 22, true));
+        map.put(COL_NI_COMP_AGG_ELENCO,
+                new ColumnDescriptor(COL_NI_COMP_AGG_ELENCO, Types.DECIMAL, 22, true));
+        map.put(COL_NI_SIZE_VERS_ELENCO,
+                new ColumnDescriptor(COL_NI_SIZE_VERS_ELENCO, Types.DECIMAL, 22, true));
+        map.put(COL_NI_SIZE_AGG_ELENCO,
+                new ColumnDescriptor(COL_NI_SIZE_AGG_ELENCO, Types.DECIMAL, 22, true));
+        map.put(COL_NT_INDICE_ELENCO,
+                new ColumnDescriptor(COL_NT_INDICE_ELENCO, Types.VARCHAR, 2000, true));
+        map.put(COL_NT_ELENCO_CHIUSO,
+                new ColumnDescriptor(COL_NT_ELENCO_CHIUSO, Types.VARCHAR, 2000, true));
+        map.put(COL_NI_UNITA_DOC_VERS_ELENCO,
+                new ColumnDescriptor(COL_NI_UNITA_DOC_VERS_ELENCO, Types.DECIMAL, 22, true));
+        map.put(COL_NI_DOC_AGG_ELENCO,
+                new ColumnDescriptor(COL_NI_DOC_AGG_ELENCO, Types.DECIMAL, 22, true));
+        map.put(COL_FL_NOTE_ELENCO,
+                new ColumnDescriptor(COL_FL_NOTE_ELENCO, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ELENCO_FISC,
+                new ColumnDescriptor(COL_FL_ELENCO_FISC, Types.VARCHAR, 1, true));
+        map.put(COL_ID_CRITERIO_RAGGR,
+                new ColumnDescriptor(COL_ID_CRITERIO_RAGGR, Types.DECIMAL, 22, true));
+        map.put(COL_NM_CRITERIO_RAGGR,
+                new ColumnDescriptor(COL_NM_CRITERIO_RAGGR, Types.VARCHAR, 100, true));
+        map.put(COL_DT_CREAZIONE_ELENCO_IX_AIP,
+                new ColumnDescriptor(COL_DT_CREAZIONE_ELENCO_IX_AIP, Types.TIMESTAMP, 7, true));
+        map.put(COL_NI_INDICI_AIP,
+                new ColumnDescriptor(COL_NI_INDICI_AIP, Types.DECIMAL, 22, true));
+        map.put(COL_TI_GEST_ELENCO,
+                new ColumnDescriptor(COL_TI_GEST_ELENCO, Types.VARCHAR, 30, true));
+        map.put(COL_NI_UPD_UNITA_DOC,
+                new ColumnDescriptor(COL_NI_UPD_UNITA_DOC, Types.DECIMAL, 22, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

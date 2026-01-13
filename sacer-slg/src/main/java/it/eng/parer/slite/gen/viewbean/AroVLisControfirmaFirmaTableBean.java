@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class AroVLisControfirmaFirmaTableBean
-	extends AbstractBaseTable<AroVLisControfirmaFirmaRowBean> {
+        extends AbstractBaseTable<AroVLisControfirmaFirmaRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class AroVLisControfirmaFirmaTableBean
     public static AroVLisControfirmaFirmaTableDescriptor TABLE_DESCRIPTOR = new AroVLisControfirmaFirmaTableDescriptor();
 
     public AroVLisControfirmaFirmaTableBean() {
-	super();
+        super();
     }
 
     protected AroVLisControfirmaFirmaRowBean createRow() {
-	return new AroVLisControfirmaFirmaRowBean();
+        return new AroVLisControfirmaFirmaRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVLisControfirmaFirmaRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

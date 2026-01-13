@@ -57,52 +57,52 @@ public class DecModelloCampoOutSelUd implements Serializable {
 
     @Column(name = "ID_MODELLO_CAMPO_OUT_SEL_UD")
     @GenericGenerator(name = "SDEC_MODELLO_CAMPO_OUT_SEL_UD_ID_MODELLO_CAMPO_OUT_SEL_UD_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_MODELLO_CAMPO_OUT_SEL_UD"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_MODELLO_CAMPO_OUT_SEL_UD"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_MODELLO_CAMPO_OUT_SEL_UD_ID_MODELLO_CAMPO_OUT_SEL_UD_GENERATOR")
     public Long getIdModelloCampoOutSelUd() {
-	return this.idModelloCampoOutSelUd;
+        return this.idModelloCampoOutSelUd;
     }
 
     public void setIdModelloCampoOutSelUd(Long idModelloCampoOutSelUd) {
-	this.idModelloCampoOutSelUd = idModelloCampoOutSelUd;
+        this.idModelloCampoOutSelUd = idModelloCampoOutSelUd;
     }
 
     @Column(name = "NM_CAMPO")
     public String getNmCampo() {
-	return this.nmCampo;
+        return this.nmCampo;
     }
 
     public void setNmCampo(String nmCampo) {
-	this.nmCampo = nmCampo;
+        this.nmCampo = nmCampo;
     }
 
     @Column(name = "TI_CAMPO")
     public String getTiCampo() {
-	return this.tiCampo;
+        return this.tiCampo;
     }
 
     public void setTiCampo(String tiCampo) {
-	this.tiCampo = tiCampo;
+        this.tiCampo = tiCampo;
     }
 
     @Column(name = "TI_TRASFORM_CAMPO")
     public String getTiTrasformCampo() {
-	return this.tiTrasformCampo;
+        return this.tiTrasformCampo;
     }
 
     public void setTiTrasformCampo(String tiTrasformCampo) {
-	this.tiTrasformCampo = tiTrasformCampo;
+        this.tiTrasformCampo = tiTrasformCampo;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MODELLO_OUT_SEL_UD")
     public DecModelloOutSelUd getDecModelloOutSelUd() {
-	return this.decModelloOutSelUd;
+        return this.decModelloOutSelUd;
     }
 
     public void setDecModelloOutSelUd(DecModelloOutSelUd decModelloOutSelUd) {
-	this.decModelloOutSelUd = decModelloOutSelUd;
+        this.decModelloOutSelUd = decModelloOutSelUd;
     }
 
 }

@@ -38,279 +38,279 @@ public class DecRegistroUnitaDocRowBean extends BaseRow implements JEEBaseRowInt
     public static DecRegistroUnitaDocTableDescriptor TABLE_DESCRIPTOR = new DecRegistroUnitaDocTableDescriptor();
 
     public DecRegistroUnitaDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdRegistroUnitaDoc() {
-	return getBigDecimal("id_registro_unita_doc");
+        return getBigDecimal("id_registro_unita_doc");
     }
 
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-	setObject("id_registro_unita_doc", idRegistroUnitaDoc);
+        setObject("id_registro_unita_doc", idRegistroUnitaDoc);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getCdRegistroUnitaDoc() {
-	return getString("cd_registro_unita_doc");
+        return getString("cd_registro_unita_doc");
     }
 
     public void setCdRegistroUnitaDoc(String cdRegistroUnitaDoc) {
-	setObject("cd_registro_unita_doc", cdRegistroUnitaDoc);
+        setObject("cd_registro_unita_doc", cdRegistroUnitaDoc);
     }
 
     public String getCdRegistroNormaliz() {
-	return getString("cd_registro_normaliz");
+        return getString("cd_registro_normaliz");
     }
 
     public void setCdRegistroNormaliz(String cdRegistroNormaliz) {
-	setObject("cd_registro_normaliz", cdRegistroNormaliz);
+        setObject("cd_registro_normaliz", cdRegistroNormaliz);
     }
 
     public String getDsRegistroUnitaDoc() {
-	return getString("ds_registro_unita_doc");
+        return getString("ds_registro_unita_doc");
     }
 
     public void setDsRegistroUnitaDoc(String dsRegistroUnitaDoc) {
-	setObject("ds_registro_unita_doc", dsRegistroUnitaDoc);
+        setObject("ds_registro_unita_doc", dsRegistroUnitaDoc);
     }
 
     public Timestamp getDtIstituz() {
-	return getTimestamp("dt_istituz");
+        return getTimestamp("dt_istituz");
     }
 
     public void setDtIstituz(Timestamp dtIstituz) {
-	setObject("dt_istituz", dtIstituz);
+        setObject("dt_istituz", dtIstituz);
     }
 
     public Timestamp getDtSoppres() {
-	return getTimestamp("dt_soppres");
+        return getTimestamp("dt_soppres");
     }
 
     public void setDtSoppres(Timestamp dtSoppres) {
-	setObject("dt_soppres", dtSoppres);
+        setObject("dt_soppres", dtSoppres);
     }
 
     public String getFlRegistroFisc() {
-	return getString("fl_registro_fisc");
+        return getString("fl_registro_fisc");
     }
 
     public void setFlRegistroFisc(String flRegistroFisc) {
-	setObject("fl_registro_fisc", flRegistroFisc);
+        setObject("fl_registro_fisc", flRegistroFisc);
     }
 
     public String getFlCreaSerie() {
-	return getString("fl_crea_serie");
+        return getString("fl_crea_serie");
     }
 
     public void setFlCreaSerie(String flCreaSerie) {
-	setObject("fl_crea_serie", flCreaSerie);
+        setObject("fl_crea_serie", flCreaSerie);
     }
 
     //////
     public BigDecimal getNiAnniConserv() {
-	return getBigDecimal("ni_anni_conserv");
+        return getBigDecimal("ni_anni_conserv");
     }
 
     public void setNiAnniConserv(BigDecimal niAnniConserv) {
-	setObject("ni_anni_conserv", niAnniConserv);
+        setObject("ni_anni_conserv", niAnniConserv);
     }
 
     public String getFlCreaTipoSerieStandard() {
-	return getString("fl_crea_tipo_serie_standard");
+        return getString("fl_crea_tipo_serie_standard");
     }
 
     public void setFlCreaTipoSerieStandard(String flCreaTipoSerieStandard) {
-	setObject("fl_crea_tipo_serie_standard", flCreaTipoSerieStandard);
+        setObject("fl_crea_tipo_serie_standard", flCreaTipoSerieStandard);
     }
 
     public String getNmTipoSerieDaCreare() {
-	return getString("nm_tipo_serie_da_creare");
+        return getString("nm_tipo_serie_da_creare");
     }
 
     public void setNmTipoSerieDaCreare(String nmTipoSerieDaCreare) {
-	setObject("nm_tipo_serie_da_creare", nmTipoSerieDaCreare);
+        setObject("nm_tipo_serie_da_creare", nmTipoSerieDaCreare);
     }
 
     public String getDsTipoSerieDaCreare() {
-	return getString("ds_tipo_serie_da_creare");
+        return getString("ds_tipo_serie_da_creare");
     }
 
     public void setDsTipoSerieDaCreare(String dsTipoSerieDaCreare) {
-	setObject("ds_tipo_serie_da_creare", dsTipoSerieDaCreare);
+        setObject("ds_tipo_serie_da_creare", dsTipoSerieDaCreare);
     }
 
     public String getCdSerieDaCreare() {
-	return getString("cd_serie_da_creare");
+        return getString("cd_serie_da_creare");
     }
 
     public void setCdSerieDaCreare(String cdSerieDaCreare) {
-	setObject("cd_serie_da_creare", cdSerieDaCreare);
+        setObject("cd_serie_da_creare", cdSerieDaCreare);
     }
 
     public String getDsSerieDaCreare() {
-	return getString("ds_serie_da_creare");
+        return getString("ds_serie_da_creare");
     }
 
     public void setDsSerieDaCreare(String dsSerieDaCreare) {
-	setObject("ds_serie_da_creare", dsSerieDaCreare);
+        setObject("ds_serie_da_creare", dsSerieDaCreare);
     }
 
     public BigDecimal getIdModelloTipoSerie() {
-	return getBigDecimal("id_modello_tipo_serie");
+        return getBigDecimal("id_modello_tipo_serie");
     }
 
     public void setIdModelloTipoSerie(BigDecimal idModelloTipoSerie) {
-	setObject("id_modello_tipo_serie", idModelloTipoSerie);
+        setObject("id_modello_tipo_serie", idModelloTipoSerie);
     }
 
     public String getFlTipoSerieMult() {
-	return getString("fl_tipo_serie_mult");
+        return getString("fl_tipo_serie_mult");
     }
 
     public void setFlTipoSerieMult(String flTipoSerieMult) {
-	setObject("fl_tipo_serie_mult", flTipoSerieMult);
+        setObject("fl_tipo_serie_mult", flTipoSerieMult);
     }
 
     //
     public BigDecimal getNiAaConserv() {
-	return getBigDecimal("ni_aa_conserv");
+        return getBigDecimal("ni_aa_conserv");
     }
 
     public void setNiAaConserv(BigDecimal niAaConserv) {
-	setObject("ni_aa_conserv", niAaConserv);
+        setObject("ni_aa_conserv", niAaConserv);
     }
     //
 
     public String getFlConservIllimitata() {
-	return getString("fl_conserv_illimitata");
+        return getString("fl_conserv_illimitata");
     }
 
     public void setFlConservIllimitata(String flConservIllimitata) {
-	setObject("fl_conserv_illimitata", flConservIllimitata);
+        setObject("fl_conserv_illimitata", flConservIllimitata);
     }
 
     public String getFlConservUniforme() {
-	return getString("fl_conserv_uniforme");
+        return getString("fl_conserv_uniforme");
     }
 
     public void setFlConservUniforme(String flConservUniforme) {
-	setObject("fl_conserv_uniforme", flConservUniforme);
+        setObject("fl_conserv_uniforme", flConservUniforme);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecRegistroUnitaDoc entity = (DecRegistroUnitaDoc) obj;
+        DecRegistroUnitaDoc entity = (DecRegistroUnitaDoc) obj;
 
-	this.setIdRegistroUnitaDoc(entity.getIdRegistroUnitaDoc() == null ? null
-		: BigDecimal.valueOf(entity.getIdRegistroUnitaDoc()));
+        this.setIdRegistroUnitaDoc(entity.getIdRegistroUnitaDoc() == null ? null
+                : BigDecimal.valueOf(entity.getIdRegistroUnitaDoc()));
 
-	if (entity.getOrgStrut() != null) {
-	    this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
-	}
+        if (entity.getOrgStrut() != null) {
+            this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
+        }
 
-	this.setCdRegistroUnitaDoc(entity.getCdRegistroUnitaDoc());
-	this.setCdRegistroNormaliz(entity.getCdRegistroNormaliz());
-	this.setDsRegistroUnitaDoc(entity.getDsRegistroUnitaDoc());
-	if (entity.getDtIstituz() != null) {
-	    this.setDtIstituz(new Timestamp(entity.getDtIstituz().getTime()));
-	}
-	if (entity.getDtSoppres() != null) {
-	    this.setDtSoppres(new Timestamp(entity.getDtSoppres().getTime()));
-	}
-	this.setFlRegistroFisc(entity.getFlRegistroFisc());
-	this.setFlCreaSerie(entity.getFlCreaSerie());
-	this.setNiAnniConserv(entity.getNiAnniConserv());
-	this.setFlCreaTipoSerieStandard(entity.getFlCreaTipoSerieStandard());
-	this.setNmTipoSerieDaCreare(entity.getNmTipoSerieDaCreare());
-	this.setDsTipoSerieDaCreare(entity.getDsTipoSerieDaCreare());
-	this.setCdSerieDaCreare(entity.getCdSerieDaCreare());
-	this.setDsSerieDaCreare(entity.getDsSerieDaCreare());
-	this.setNiAaConserv(entity.getNiAaConserv());
-	this.setFlConservIllimitata(entity.getFlConservIllimitata());
-	this.setFlConservUniforme(entity.getFlConservUniforme());
+        this.setCdRegistroUnitaDoc(entity.getCdRegistroUnitaDoc());
+        this.setCdRegistroNormaliz(entity.getCdRegistroNormaliz());
+        this.setDsRegistroUnitaDoc(entity.getDsRegistroUnitaDoc());
+        if (entity.getDtIstituz() != null) {
+            this.setDtIstituz(new Timestamp(entity.getDtIstituz().getTime()));
+        }
+        if (entity.getDtSoppres() != null) {
+            this.setDtSoppres(new Timestamp(entity.getDtSoppres().getTime()));
+        }
+        this.setFlRegistroFisc(entity.getFlRegistroFisc());
+        this.setFlCreaSerie(entity.getFlCreaSerie());
+        this.setNiAnniConserv(entity.getNiAnniConserv());
+        this.setFlCreaTipoSerieStandard(entity.getFlCreaTipoSerieStandard());
+        this.setNmTipoSerieDaCreare(entity.getNmTipoSerieDaCreare());
+        this.setDsTipoSerieDaCreare(entity.getDsTipoSerieDaCreare());
+        this.setCdSerieDaCreare(entity.getCdSerieDaCreare());
+        this.setDsSerieDaCreare(entity.getDsSerieDaCreare());
+        this.setNiAaConserv(entity.getNiAaConserv());
+        this.setFlConservIllimitata(entity.getFlConservIllimitata());
+        this.setFlConservUniforme(entity.getFlConservUniforme());
 
-	if (entity.getDecModelloTipoSerie() != null) {
-	    this.setIdModelloTipoSerie(
-		    new BigDecimal(entity.getDecModelloTipoSerie().getIdModelloTipoSerie()));
-	}
+        if (entity.getDecModelloTipoSerie() != null) {
+            this.setIdModelloTipoSerie(
+                    new BigDecimal(entity.getDecModelloTipoSerie().getIdModelloTipoSerie()));
+        }
 
-	this.setFlTipoSerieMult(entity.getFlTipoSerieMult());
+        this.setFlTipoSerieMult(entity.getFlTipoSerieMult());
     }
 
     @Override
     public DecRegistroUnitaDoc rowBeanToEntity() {
-	DecRegistroUnitaDoc entity = new DecRegistroUnitaDoc();
-	if (this.getIdRegistroUnitaDoc() != null) {
-	    entity.setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc().longValue());
-	}
-	if (this.getIdStrut() != null) {
-	    if (entity.getOrgStrut() == null) {
-		entity.setOrgStrut(new OrgStrut());
-	    }
-	    entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
-	}
-	entity.setCdRegistroUnitaDoc(this.getCdRegistroUnitaDoc());
-	entity.setCdRegistroNormaliz(this.getCdRegistroNormaliz());
-	entity.setDsRegistroUnitaDoc(this.getDsRegistroUnitaDoc());
-	entity.setDtIstituz(this.getDtIstituz());
-	entity.setDtSoppres(this.getDtSoppres());
-	entity.setFlRegistroFisc(this.getFlRegistroFisc());
-	entity.setFlCreaSerie(this.getFlCreaSerie());
-	entity.setNiAnniConserv(this.getNiAnniConserv());
-	entity.setFlCreaTipoSerieStandard(this.getFlCreaTipoSerieStandard());
-	entity.setNmTipoSerieDaCreare(this.getNmTipoSerieDaCreare());
-	entity.setDsTipoSerieDaCreare(this.getDsTipoSerieDaCreare());
-	entity.setCdSerieDaCreare(this.getCdSerieDaCreare());
-	entity.setDsSerieDaCreare(this.getDsSerieDaCreare());
-	entity.setNiAaConserv(this.getNiAaConserv());
-	entity.setFlConservIllimitata(this.getFlConservIllimitata());
-	entity.setFlConservUniforme(this.getFlConservUniforme());
-	if (this.getIdModelloTipoSerie() != null) {
-	    if (entity.getDecModelloTipoSerie() == null) {
-		entity.setDecModelloTipoSerie(new DecModelloTipoSerie());
-	    }
-	    entity.getDecModelloTipoSerie()
-		    .setIdModelloTipoSerie(this.getIdModelloTipoSerie().longValue());
-	}
-	entity.setFlTipoSerieMult(this.getFlTipoSerieMult());
-	return entity;
+        DecRegistroUnitaDoc entity = new DecRegistroUnitaDoc();
+        if (this.getIdRegistroUnitaDoc() != null) {
+            entity.setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc().longValue());
+        }
+        if (this.getIdStrut() != null) {
+            if (entity.getOrgStrut() == null) {
+                entity.setOrgStrut(new OrgStrut());
+            }
+            entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
+        }
+        entity.setCdRegistroUnitaDoc(this.getCdRegistroUnitaDoc());
+        entity.setCdRegistroNormaliz(this.getCdRegistroNormaliz());
+        entity.setDsRegistroUnitaDoc(this.getDsRegistroUnitaDoc());
+        entity.setDtIstituz(this.getDtIstituz());
+        entity.setDtSoppres(this.getDtSoppres());
+        entity.setFlRegistroFisc(this.getFlRegistroFisc());
+        entity.setFlCreaSerie(this.getFlCreaSerie());
+        entity.setNiAnniConserv(this.getNiAnniConserv());
+        entity.setFlCreaTipoSerieStandard(this.getFlCreaTipoSerieStandard());
+        entity.setNmTipoSerieDaCreare(this.getNmTipoSerieDaCreare());
+        entity.setDsTipoSerieDaCreare(this.getDsTipoSerieDaCreare());
+        entity.setCdSerieDaCreare(this.getCdSerieDaCreare());
+        entity.setDsSerieDaCreare(this.getDsSerieDaCreare());
+        entity.setNiAaConserv(this.getNiAaConserv());
+        entity.setFlConservIllimitata(this.getFlConservIllimitata());
+        entity.setFlConservUniforme(this.getFlConservUniforme());
+        if (this.getIdModelloTipoSerie() != null) {
+            if (entity.getDecModelloTipoSerie() == null) {
+                entity.setDecModelloTipoSerie(new DecModelloTipoSerie());
+            }
+            entity.getDecModelloTipoSerie()
+                    .setIdModelloTipoSerie(this.getIdModelloTipoSerie().longValue());
+        }
+        entity.setFlTipoSerieMult(this.getFlTipoSerieMult());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

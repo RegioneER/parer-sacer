@@ -37,19 +37,19 @@ public class FasVLisUdInFascTableBean extends AbstractBaseTable<FasVLisUdInFascR
     public static FasVLisUdInFascTableDescriptor TABLE_DESCRIPTOR = new FasVLisUdInFascTableDescriptor();
 
     public FasVLisUdInFascTableBean() {
-	super();
+        super();
     }
 
     protected FasVLisUdInFascRowBean createRow() {
-	return new FasVLisUdInFascRowBean();
+        return new FasVLisUdInFascRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<FasVLisUdInFascRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

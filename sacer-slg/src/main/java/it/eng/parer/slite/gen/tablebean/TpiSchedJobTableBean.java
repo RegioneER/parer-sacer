@@ -33,19 +33,19 @@ public class TpiSchedJobTableBean extends AbstractBaseTable<TpiSchedJobRowBean> 
     public static TpiSchedJobTableDescriptor TABLE_DESCRIPTOR = new TpiSchedJobTableDescriptor();
 
     public TpiSchedJobTableBean() {
-	super();
+        super();
     }
 
     protected TpiSchedJobRowBean createRow() {
-	return new TpiSchedJobRowBean();
+        return new TpiSchedJobRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<TpiSchedJobRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

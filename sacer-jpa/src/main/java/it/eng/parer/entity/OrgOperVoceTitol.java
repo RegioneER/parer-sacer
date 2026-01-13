@@ -63,72 +63,72 @@ public class OrgOperVoceTitol implements Serializable {
 
     @Column(name = "ID_OPER_VOCE_TITOL")
     @GenericGenerator(name = "SORG_OPER_VOCE_TITOL_ID_OPER_VOCE_TITOL_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_OPER_VOCE_TITOL"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_OPER_VOCE_TITOL"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SORG_OPER_VOCE_TITOL_ID_OPER_VOCE_TITOL_GENERATOR")
     public Long getIdOperVoceTitol() {
-	return this.idOperVoceTitol;
+        return this.idOperVoceTitol;
     }
 
     public void setIdOperVoceTitol(Long idOperVoceTitol) {
-	this.idOperVoceTitol = idOperVoceTitol;
+        this.idOperVoceTitol = idOperVoceTitol;
     }
 
     @Column(name = "DL_NOTE")
     public String getDlNote() {
-	return this.dlNote;
+        return this.dlNote;
     }
 
     public void setDlNote(String dlNote) {
-	this.dlNote = dlNote;
+        this.dlNote = dlNote;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VAL_OPER_VOCE_TITOL")
     public Date getDtValOperVoceTitol() {
-	return this.dtValOperVoceTitol;
+        return this.dtValOperVoceTitol;
     }
 
     public void setDtValOperVoceTitol(Date dtValOperVoceTitol) {
-	this.dtValOperVoceTitol = dtValOperVoceTitol;
+        this.dtValOperVoceTitol = dtValOperVoceTitol;
     }
 
     @Column(name = "PG_OPER_VOCE_TITOL")
     public BigDecimal getPgOperVoceTitol() {
-	return this.pgOperVoceTitol;
+        return this.pgOperVoceTitol;
     }
 
     public void setPgOperVoceTitol(BigDecimal pgOperVoceTitol) {
-	this.pgOperVoceTitol = pgOperVoceTitol;
+        this.pgOperVoceTitol = pgOperVoceTitol;
     }
 
     @Column(name = "TI_OPER_VOCE_TITOL")
     public String getTiOperVoceTitol() {
-	return this.tiOperVoceTitol;
+        return this.tiOperVoceTitol;
     }
 
     public void setTiOperVoceTitol(String tiOperVoceTitol) {
-	this.tiOperVoceTitol = tiOperVoceTitol;
+        this.tiOperVoceTitol = tiOperVoceTitol;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VOCE_TITOL")
     public DecVoceTitol getDecVoceTitol() {
-	return this.decVoceTitol;
+        return this.decVoceTitol;
     }
 
     public void setDecVoceTitol(DecVoceTitol decVoceTitol) {
-	this.decVoceTitol = decVoceTitol;
+        this.decVoceTitol = decVoceTitol;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_OPER_TITOL", nullable = false)
     public OrgOperTitol getOrgOperTitol() {
-	return this.orgOperTitol;
+        return this.orgOperTitol;
     }
 
     public void setOrgOperTitol(OrgOperTitol orgOperTitol) {
-	this.orgOperTitol = orgOperTitol;
+        this.orgOperTitol = orgOperTitol;
     }
 
 }

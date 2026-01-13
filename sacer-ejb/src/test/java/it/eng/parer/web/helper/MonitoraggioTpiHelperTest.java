@@ -37,84 +37,84 @@ public class MonitoraggioTpiHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(MonitoraggioTpiHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			MonitoraggioTpiHelperTest.class, MonitoraggioTpiHelper.class,
-			Transform.class));
+        return HelperTest.createEnterpriseArchive(MonitoraggioTpiHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        MonitoraggioTpiHelperTest.class, MonitoraggioTpiHelper.class,
+                        Transform.class));
     }
 
     @Test
     void getDateVersamentoArk_queryIsOk() {
 
-	Date dateVersDa = new Date();
-	Date dateVersA = new Date();
-	String flMigraz = aString();
-	String statoDtVers = aString();
-	helper.getDateVersamentoArk(dateVersDa, dateVersA, flMigraz, statoDtVers);
-	assertTrue(true);
+        Date dateVersDa = new Date();
+        Date dateVersA = new Date();
+        String flMigraz = aString();
+        String statoDtVers = aString();
+        helper.getDateVersamentoArk(dateVersDa, dateVersA, flMigraz, statoDtVers);
+        assertTrue(true);
     }
 
     @Test
     void getPathsDateVersamentoArk_queryIsOk() {
 
-	BigDecimal idVrsDtVers = aBigDecimal();
-	helper.getPathsDateVersamentoArk(idVrsDtVers);
-	assertTrue(true);
+        BigDecimal idVrsDtVers = aBigDecimal();
+        helper.getPathsDateVersamentoArk(idVrsDtVers);
+        assertTrue(true);
     }
 
     @Test
     void getFilesNoArkPath_queryIsOk() {
 
-	BigDecimal idPathDtVers = aBigDecimal();
-	String tiArkFileNoArk = aString();
-	helper.getFilesNoArkPath(idPathDtVers, tiArkFileNoArk);
-	assertTrue(true);
+        BigDecimal idPathDtVers = aBigDecimal();
+        String tiArkFileNoArk = aString();
+        helper.getFilesNoArkPath(idPathDtVers, tiArkFileNoArk);
+        assertTrue(true);
     }
 
     @Test
     void getDateSchedulazioniTpi_queryIsOk() {
 
-	Date dateSchedDa = new Date();
-	Date dateSchedA = new Date();
-	String flAnomalie = aString();
-	String statoDtSched = aString();
-	helper.getDateSchedulazioniTpi(dateSchedDa, dateSchedA, flAnomalie, statoDtSched);
-	assertTrue(true);
+        Date dateSchedDa = new Date();
+        Date dateSchedA = new Date();
+        String flAnomalie = aString();
+        String statoDtSched = aString();
+        helper.getDateSchedulazioniTpi(dateSchedDa, dateSchedA, flAnomalie, statoDtSched);
+        assertTrue(true);
     }
 
     @Test
     void getDataSchedulazioneTpi_queryIsOk() {
 
-	BigDecimal idTpiDtSched = aBigDecimal();
-	helper.getDataSchedulazioneTpi(idTpiDtSched);
-	assertTrue(true);
+        BigDecimal idTpiDtSched = aBigDecimal();
+        helper.getDataSchedulazioneTpi(idTpiDtSched);
+        assertTrue(true);
     }
 
     @Test
     void getJobList_queryIsOk() {
 
-	BigDecimal idTpiDtSched = aBigDecimal();
-	String flMigraz = aString();
-	String tiTpiSchedJob = aString();
-	helper.getJobList(idTpiDtSched, flMigraz, tiTpiSchedJob);
-	assertTrue(true);
+        BigDecimal idTpiDtSched = aBigDecimal();
+        String flMigraz = aString();
+        String tiTpiSchedJob = aString();
+        helper.getJobList(idTpiDtSched, flMigraz, tiTpiSchedJob);
+        assertTrue(true);
     }
 
     @Test
     void getErrArkJobList_queryIsOk() {
 
-	BigDecimal idTpiSchedJob = aBigDecimal();
-	helper.getErrArkJobList(idTpiSchedJob);
-	assertTrue(true);
+        BigDecimal idTpiSchedJob = aBigDecimal();
+        helper.getErrArkJobList(idTpiSchedJob);
+        assertTrue(true);
     }
 
     @Test
     void getPathElabJobList_queryIsOk() {
 
-	BigDecimal idTpiSchedJob = aBigDecimal();
-	helper.getPathElabJobList(idTpiSchedJob);
-	assertTrue(true);
+        BigDecimal idTpiSchedJob = aBigDecimal();
+        helper.getPathElabJobList(idTpiSchedJob);
+        assertTrue(true);
     }
 
 }

@@ -37,19 +37,19 @@ public class MonVChkCntVersTableBean extends AbstractBaseTable<MonVChkCntVersRow
     public static MonVChkCntVersTableDescriptor TABLE_DESCRIPTOR = new MonVChkCntVersTableDescriptor();
 
     public MonVChkCntVersTableBean() {
-	super();
+        super();
     }
 
     protected MonVChkCntVersRowBean createRow() {
-	return new MonVChkCntVersRowBean();
+        return new MonVChkCntVersRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVChkCntVersRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

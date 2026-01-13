@@ -39,21 +39,21 @@ public class MonVCntDocTipoUd implements Serializable {
 
     @Column(name = "NI_DOC")
     public BigDecimal getNiDoc() {
-	return this.niDoc;
+        return this.niDoc;
     }
 
     public void setNiDoc(BigDecimal niDoc) {
-	this.niDoc = niDoc;
+        this.niDoc = niDoc;
     }
 
     private MonVCntDocTipoUdId monVCntDocTipoUdId;
 
     @EmbeddedId()
     public MonVCntDocTipoUdId getMonVCntDocTipoUdId() {
-	return monVCntDocTipoUdId;
+        return monVCntDocTipoUdId;
     }
 
     public void setMonVCntDocTipoUdId(MonVCntDocTipoUdId monVCntDocTipoUdId) {
-	this.monVCntDocTipoUdId = monVCntDocTipoUdId;
+        this.monVCntDocTipoUdId = monVCntDocTipoUdId;
     }
 }

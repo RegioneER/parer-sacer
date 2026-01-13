@@ -41,19 +41,19 @@ public abstract class AbsRequestPrsr {
      * @return paramentro letto da request
      */
     public String leggiIpVersante(HttpServletRequest request) {
-	String ipVers = request.getHeader("RERFwFor");
-	// cerco l'header custom della RER
-	if (ipVers == null || ipVers.isEmpty()) {
-	    ipVers = request.getHeader("X-FORWARDED-FOR");
-	    // se non c'e`, uso l'header standard
-	}
-	if (ipVers == null || ipVers.isEmpty()) {
-	    ipVers = request.getRemoteAddr();
-	    // se non c'e` perche' la macchina e' esposta direttamente,
-	    // leggo l'IP fisico del chiamante
-	}
-	log.info("Request, indirizzo di provenienza - IP:  " + ipVers);
-	return ipVers;
+        String ipVers = request.getHeader("RERFwFor");
+        // cerco l'header custom della RER
+        if (ipVers == null || ipVers.isEmpty()) {
+            ipVers = request.getHeader("X-FORWARDED-FOR");
+            // se non c'e`, uso l'header standard
+        }
+        if (ipVers == null || ipVers.isEmpty()) {
+            ipVers = request.getRemoteAddr();
+            // se non c'e` perche' la macchina e' esposta direttamente,
+            // leggo l'IP fisico del chiamante
+        }
+        log.info("Request, indirizzo di provenienza - IP:  " + ipVers);
+        return ipVers;
     }
 
     /*
@@ -62,17 +62,17 @@ public abstract class AbsRequestPrsr {
      * autenticazione con certificato estrae dal certificato il Common Name e lo mette nell'header.
      */
     public String leggiCertCommonName(HttpServletRequest request) {
-	// cerco l'header custom della RERCommonNameCer
-	String valoreHeaderCertificato = request.getHeader(NOME_HEADER_CERTIFICATO);
-	// MAC#34747 - Introduzione log su parametro header per servizi di recupero con certificato
-	if (valoreHeaderCertificato == null) {
-	    log.info("Il parametro [{}] NON è presente nell'header della richiesta.",
-		    NOME_HEADER_CERTIFICATO);
-	} else {
-	    log.info("Il parametro [{}] è presente nell'header della richiesta con valore [{}].",
-		    NOME_HEADER_CERTIFICATO, valoreHeaderCertificato);
-	}
-	return valoreHeaderCertificato;
+        // cerco l'header custom della RERCommonNameCer
+        String valoreHeaderCertificato = request.getHeader(NOME_HEADER_CERTIFICATO);
+        // MAC#34747 - Introduzione log su parametro header per servizi di recupero con certificato
+        if (valoreHeaderCertificato == null) {
+            log.info("Il parametro [{}] NON è presente nell'header della richiesta.",
+                    NOME_HEADER_CERTIFICATO);
+        } else {
+            log.info("Il parametro [{}] è presente nell'header della richiesta con valore [{}].",
+                    NOME_HEADER_CERTIFICATO, valoreHeaderCertificato);
+        }
+        return valoreHeaderCertificato;
     }
 
 }

@@ -30,7 +30,7 @@ import javax.validation.Payload;
  * @author DiLorenzo_F
  */
 @Target({
-	ElementType.TYPE, ElementType.ANNOTATION_TYPE })
+        ElementType.TYPE, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CdKeyUnitaDocValidator.class)
 @Documented

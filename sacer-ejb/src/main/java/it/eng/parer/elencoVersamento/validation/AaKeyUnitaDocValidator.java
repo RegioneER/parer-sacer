@@ -26,7 +26,7 @@ import javax.validation.ConstraintValidatorContext;
 
 @SuppressWarnings("rawtypes")
 public class AaKeyUnitaDocValidator
-	implements ConstraintValidator<ValidateAaKeyUnitaDoc, CriterioRaggrValidation> {
+        implements ConstraintValidator<ValidateAaKeyUnitaDoc, CriterioRaggrValidation> {
 
     @Override
     public void initialize(ValidateAaKeyUnitaDoc constraintAnnotation) {
@@ -34,35 +34,35 @@ public class AaKeyUnitaDocValidator
 
     @Override
     public boolean isValid(CriterioRaggrValidation criterioRaggr,
-	    ConstraintValidatorContext context) {
+            ConstraintValidatorContext context) {
 
-	DecCriterioRaggr criterio = criterioRaggr.getCriterioRaggr();
-	BigDecimal aaKeyUnitaDoc = criterioRaggr.getAaKeyUnitaDoc(); // TODO: verificare se va bene
-								     // per ud, doc e upd
+        DecCriterioRaggr criterio = criterioRaggr.getCriterioRaggr();
+        BigDecimal aaKeyUnitaDoc = criterioRaggr.getAaKeyUnitaDoc(); // TODO: verificare se va bene
+        // per ud, doc e upd
 
-	LocalDate currentDate = LocalDate.now();
+        LocalDate currentDate = LocalDate.now();
 
-	// valido filtro su range anno chiave
-	if (criterio.getAaKeyUnitaDoc() != null
-		&& !criterio.getAaKeyUnitaDoc().equals(aaKeyUnitaDoc)) {
-	    return false;
-	}
-	if (criterio.getAaKeyUnitaDocDa() != null && criterio.getAaKeyUnitaDocA() != null
-		&& criterio.getAaKeyUnitaDocDa().compareTo(aaKeyUnitaDoc) > 0
-		&& criterio.getAaKeyUnitaDocA().compareTo(aaKeyUnitaDoc) < 0) {
-	    return false;
-	}
-	if (criterio.getAaKeyUnitaDocDa() != null && criterio.getAaKeyUnitaDocA() == null
-		&& criterio.getAaKeyUnitaDocDa().compareTo(aaKeyUnitaDoc) > 0
-		&& currentDate.getYear() < aaKeyUnitaDoc.intValue()) {
-	    return false;
-	}
-	if (criterio.getAaKeyUnitaDocDa() == null && criterio.getAaKeyUnitaDocA() != null
-		&& new BigDecimal(Constants.START_MILLENNIUM_YYYY).compareTo(aaKeyUnitaDoc) > 0
-		&& criterio.getAaKeyUnitaDocA().compareTo(aaKeyUnitaDoc) < 0) {
-	    return false;
-	}
+        // valido filtro su range anno chiave
+        if (criterio.getAaKeyUnitaDoc() != null
+                && !criterio.getAaKeyUnitaDoc().equals(aaKeyUnitaDoc)) {
+            return false;
+        }
+        if (criterio.getAaKeyUnitaDocDa() != null && criterio.getAaKeyUnitaDocA() != null
+                && criterio.getAaKeyUnitaDocDa().compareTo(aaKeyUnitaDoc) > 0
+                && criterio.getAaKeyUnitaDocA().compareTo(aaKeyUnitaDoc) < 0) {
+            return false;
+        }
+        if (criterio.getAaKeyUnitaDocDa() != null && criterio.getAaKeyUnitaDocA() == null
+                && criterio.getAaKeyUnitaDocDa().compareTo(aaKeyUnitaDoc) > 0
+                && currentDate.getYear() < aaKeyUnitaDoc.intValue()) {
+            return false;
+        }
+        if (criterio.getAaKeyUnitaDocDa() == null && criterio.getAaKeyUnitaDocA() != null
+                && new BigDecimal(Constants.START_MILLENNIUM_YYYY).compareTo(aaKeyUnitaDoc) > 0
+                && criterio.getAaKeyUnitaDocA().compareTo(aaKeyUnitaDoc) < 0) {
+            return false;
+        }
 
-	return true;
+        return true;
     }
 }

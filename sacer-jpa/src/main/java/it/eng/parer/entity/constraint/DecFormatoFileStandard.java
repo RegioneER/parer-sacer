@@ -27,7 +27,7 @@ public final class DecFormatoFileStandard {
      * ti_esito_contr_formato IN ('GESTITO', 'IDONEO', 'DEPRECATO')
      */
     public enum TiEsitoControFormato {
-	GESTITO, IDONEO, DEPRECATO
+        GESTITO, IDONEO, DEPRECATO
     }
 
 }

@@ -33,19 +33,19 @@ public class DecModelloXsdUdTableBean extends AbstractBaseTable<DecModelloXsdUdR
     public static DecModelloXsdUdTableDescriptor TABLE_DESCRIPTOR = new DecModelloXsdUdTableDescriptor();
 
     public DecModelloXsdUdTableBean() {
-	super();
+        super();
     }
 
     protected DecModelloXsdUdRowBean createRow() {
-	return new DecModelloXsdUdRowBean();
+        return new DecModelloXsdUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecModelloXsdUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

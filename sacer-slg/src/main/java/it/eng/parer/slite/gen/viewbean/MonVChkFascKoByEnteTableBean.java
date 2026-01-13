@@ -37,19 +37,19 @@ public class MonVChkFascKoByEnteTableBean extends AbstractBaseTable<MonVChkFascK
     public static MonVChkFascKoByEnteTableDescriptor TABLE_DESCRIPTOR = new MonVChkFascKoByEnteTableDescriptor();
 
     public MonVChkFascKoByEnteTableBean() {
-	super();
+        super();
     }
 
     protected MonVChkFascKoByEnteRowBean createRow() {
-	return new MonVChkFascKoByEnteRowBean();
+        return new MonVChkFascKoByEnteRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVChkFascKoByEnteRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

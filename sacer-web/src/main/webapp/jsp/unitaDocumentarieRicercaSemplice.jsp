@@ -1,4 +1,4 @@
-<!--
+<%--
  Engineering Ingegneria Informatica S.p.A.
 
  Copyright (C) 2023 Regione Emilia-Romagna
@@ -13,7 +13,7 @@
  <p/>
  You should have received a copy of the GNU Affero General Public License along with this program.
  If not, see <https://www.gnu.org/licenses/>.
--->
+ --%>
 
 <%@ page import="it.eng.parer.slite.gen.form.UnitaDocumentarieForm" pageEncoding="UTF-8"%>
 <%@ include file="../include.jsp"%>
@@ -53,60 +53,33 @@
             <sl:newLine skipLine="true"/>
             <slf:fieldSet  borderHidden="false">
                 <!-- piazzo i campi del filtro di ricerca -->
-                <slf:section name="<%=UnitaDocumentarieForm.UDRicercaSection.NAME%>" styleClass="importantContainer">
-                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_REGISTRO_KEY_UNITA_DOC%>" />
-                    <slf:lblField colSpan="1" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.AA_KEY_UNITA_DOC%>"  />
-                    <slf:lblField colSpan="1" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_KEY_UNITA_DOC%>"  />
+                <slf:section name="<%=UnitaDocumentarieForm.UnitaDocumentarieChiaveSection.NAME%>" styleClass="importantContainer">
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_REGISTRO_KEY_UNITA_DOC%>" colSpan="2" />
                     <sl:newLine />
-                    <div class="slLabel wlbl" >&nbsp;</div>
-                    <div class="containerLeft w2ctr">&nbsp;</div>
+                    <label class="slLabel wlbl">&nbsp;</label>
+                    <div class="containerLeft w2ctr">Per effettuare la ricerca è obbligatorio inserire l'anno o un range di anni</div>
+                    <sl:newLine />
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.AA_KEY_UNITA_DOC%>" colSpan="1" />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.AA_KEY_UNITA_DOC_DA%>" colSpan="1"/>
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.AA_KEY_UNITA_DOC_A%>" colSpan="1"/>
                     <sl:newLine />
-                    <div class="slLabel wlbl" >&nbsp;</div>
-                    <div class="containerLeft w2ctr">&nbsp;</div>
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_KEY_UNITA_DOC%>" colSpan="1"  />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_KEY_UNITA_DOC_DA%>" colSpan="1"/>
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_KEY_UNITA_DOC_A%>" colSpan="1"/>
-                    <sl:newLine />
-                    <div class="slLabel wlbl" >&nbsp;</div>
-                    <div class="containerLeft w2ctr">&nbsp;</div>
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_KEY_UNITA_DOC_CONTIENE%>" colSpan="1"/>
-                    <sl:newLine />
+                </slf:section>
+                <sl:newLine />
+                <slf:section name="<%=UnitaDocumentarieForm.UDRicercaSection.NAME%>" styleClass="importantContainer">
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.NM_TIPO_UNITA_DOC%>"  colSpan="2" />
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_VERSIONE_XSD_UD%>" colSpan="2"/>
-                    <sl:newLine />
-                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.DL_OGGETTO_UNITA_DOC%>" />
                     <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_PROFILO_NORMATIVO%>" />
                     <sl:newLine />
                     <slf:lblField colSpan="2" controlWidth="w30" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.DT_REG_UNITA_DOC_DA%>" />
                     <slf:lblField colSpan="2" controlWidth="w30" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.DT_REG_UNITA_DOC_A%>"  />
                     <sl:newLine />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.NM_TIPO_DOC%>" colSpan="2" controlWidth="w100"/>
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_VERSIONE_XSD_DOC%>" colSpan="2"/>
-                    <sl:newLine />
-                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.DL_DOC%>" controlWidth="w100"/>
-                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.DS_AUTORE_DOC%>" controlWidth="w100" />
                     <sl:newLine />
                     <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.TI_DOC%>" />
                     <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_KEY_DOC_VERS%>" />
-                </slf:section>
-                <sl:newLine />
-                <slf:section name="<%=UnitaDocumentarieForm.ParamVersRicercaSection.NAME%>" styleClass="importantContainer">
-                    <slf:lblField colSpan="4" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.TI_CONSERVAZIONE%>"  />
-                    <sl:newLine />
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_ACCETTAZIONE%>" colSpan="1"/>
-                    <sl:newLine />
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_CONSERVAZIONE%>" colSpan="1"/>
-                    <sl:newLine />
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_COLLEGAMENTO%>" colSpan="1"/>                    
-                    <sl:newLine />
-                    <%--<slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_HASH%>" colSpan="1"/>
-                    <sl:newLine />
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_FMT_NUMERO%>" colSpan="1"/>
-                    <sl:newLine />
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_FMT_FILE%>" colSpan="1"/>
-                    <sl:newLine />--%>
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_VERSIONE_WS%>" colSpan="1"/>
                 </slf:section>
                 <sl:newLine />
                 <slf:section name="<%=UnitaDocumentarieForm.ContrConservRicercaSection.NAME%>" styleClass="importantContainer">
@@ -125,13 +98,7 @@
                     <sl:newLine />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.TI_ESITO_VERIF_FIRME%>" colSpan="2"/>
                     <sl:newLine />
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_HASH_VERS%>" colSpan="2"/>
-                    <sl:newLine />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.TI_STATO_CONSERVAZIONE%>" colSpan="2"/>
-                    <sl:newLine />
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.TI_STATO_UD_ELENCO_VERS%>" colSpan="2"/>
-                    <sl:newLine />
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.NM_SUB_STRUT%>" colSpan="2"/>
                 </slf:section>
                 <sl:newLine />
                 <%--<c:if test="${!empty volCorrente}">

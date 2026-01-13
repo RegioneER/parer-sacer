@@ -37,19 +37,19 @@ public class MonVLisDocAggDaElabTableBean extends AbstractBaseTable<MonVLisDocAg
     public static MonVLisDocAggDaElabTableDescriptor TABLE_DESCRIPTOR = new MonVLisDocAggDaElabTableDescriptor();
 
     public MonVLisDocAggDaElabTableBean() {
-	super();
+        super();
     }
 
     protected MonVLisDocAggDaElabRowBean createRow() {
-	return new MonVLisDocAggDaElabRowBean();
+        return new MonVLisDocAggDaElabRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVLisDocAggDaElabRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

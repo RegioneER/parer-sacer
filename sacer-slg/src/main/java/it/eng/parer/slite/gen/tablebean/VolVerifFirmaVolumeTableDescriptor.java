@@ -44,27 +44,27 @@ public class VolVerifFirmaVolumeTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_VERIF_FIRMA_VOLUME,
-		new ColumnDescriptor(COL_ID_VERIF_FIRMA_VOLUME, Types.DECIMAL, 22, true));
-	map.put(COL_ID_APPART_FIRMA_VOLUME,
-		new ColumnDescriptor(COL_ID_APPART_FIRMA_VOLUME, Types.DECIMAL, 22, false));
-	map.put(COL_TI_VERIF, new ColumnDescriptor(COL_TI_VERIF, Types.VARCHAR, 20, false));
-	map.put(COL_TI_ESITO_VERIF_FIRMA,
-		new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRMA, Types.VARCHAR, 20, false));
-	map.put(COL_DS_MSG_ESITO_VERIF_FIRMA,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRMA, Types.VARCHAR, 254, false));
+        map.put(COL_ID_VERIF_FIRMA_VOLUME,
+                new ColumnDescriptor(COL_ID_VERIF_FIRMA_VOLUME, Types.DECIMAL, 22, true));
+        map.put(COL_ID_APPART_FIRMA_VOLUME,
+                new ColumnDescriptor(COL_ID_APPART_FIRMA_VOLUME, Types.DECIMAL, 22, false));
+        map.put(COL_TI_VERIF, new ColumnDescriptor(COL_TI_VERIF, Types.VARCHAR, 20, false));
+        map.put(COL_TI_ESITO_VERIF_FIRMA,
+                new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRMA, Types.VARCHAR, 20, false));
+        map.put(COL_DS_MSG_ESITO_VERIF_FIRMA,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRMA, Types.VARCHAR, 254, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

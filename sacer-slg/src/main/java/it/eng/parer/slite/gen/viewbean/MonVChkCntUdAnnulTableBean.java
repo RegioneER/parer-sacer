@@ -37,19 +37,19 @@ public class MonVChkCntUdAnnulTableBean extends AbstractBaseTable<MonVChkCntUdAn
     public static MonVChkCntUdAnnulTableDescriptor TABLE_DESCRIPTOR = new MonVChkCntUdAnnulTableDescriptor();
 
     public MonVChkCntUdAnnulTableBean() {
-	super();
+        super();
     }
 
     protected MonVChkCntUdAnnulRowBean createRow() {
-	return new MonVChkCntUdAnnulRowBean();
+        return new MonVChkCntUdAnnulRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVChkCntUdAnnulRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

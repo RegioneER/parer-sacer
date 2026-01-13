@@ -44,31 +44,31 @@ public class ElvVSelFascVers implements Serializable {
 
     @Column(name = "AA_FASCICOLO")
     public BigDecimal getAaFascicolo() {
-	return this.aaFascicolo;
+        return this.aaFascicolo;
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-	this.aaFascicolo = aaFascicolo;
+        this.aaFascicolo = aaFascicolo;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_VERS_FASCICOLO")
     public Date getTsVersFascicolo() {
-	return this.tsVersFascicolo;
+        return this.tsVersFascicolo;
     }
 
     public void setTsVersFascicolo(Date tsVersFascicolo) {
-	this.tsVersFascicolo = tsVersFascicolo;
+        this.tsVersFascicolo = tsVersFascicolo;
     }
 
     private ElvVSelFascVersId elvVSelFascVersId;
 
     @EmbeddedId()
     public ElvVSelFascVersId getElvVSelFascVersId() {
-	return elvVSelFascVersId;
+        return elvVSelFascVersId;
     }
 
     public void setElvVSelFascVersId(ElvVSelFascVersId elvVSelFascVersId) {
-	this.elvVSelFascVersId = elvVSelFascVersId;
+        this.elvVSelFascVersId = elvVSelFascVersId;
     }
 }

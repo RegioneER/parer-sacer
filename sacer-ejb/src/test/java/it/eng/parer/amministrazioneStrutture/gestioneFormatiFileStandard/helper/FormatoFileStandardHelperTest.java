@@ -39,128 +39,128 @@ import it.eng.spagoLite.form.base.BaseElements;
 public class FormatoFileStandardHelperTest extends HelperTest<FormatoFileStandardHelper> {
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest
-		.createEnterpriseArchive(FormatoFileStandardHelperTest.class.getSimpleName(),
-			HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-			HelperTest.createSacerJavaArchive(Arrays.asList(""),
-				FormatoFileStandardHelperTest.class,
-				FormatoFileStandardHelper.class));
+        return HelperTest
+                .createEnterpriseArchive(FormatoFileStandardHelperTest.class.getSimpleName(),
+                        HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                        HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                                FormatoFileStandardHelperTest.class,
+                                FormatoFileStandardHelper.class));
     }
 
     @Test
     void getDecFormatoFileStandardInListQueryIsOk() {
-	Set<String> formati = aSetOfString(2);
-	BigDecimal idStrut = aBigDecimal();
-	for (BaseElements.Status status : BaseElements.Status.values()) {
-	    helper.getDecFormatoFileStandardInList(formati, status, idStrut);
-	    assertTrue(true);
-	}
+        Set<String> formati = aSetOfString(2);
+        BigDecimal idStrut = aBigDecimal();
+        for (BaseElements.Status status : BaseElements.Status.values()) {
+            helper.getDecFormatoFileStandardInList(formati, status, idStrut);
+            assertTrue(true);
+        }
     }
 
     @Test
     void getDecFormatoFileStandardInListByNameQueryIsOk() {
-	Collection<String> formati = aListOfString(2);
-	helper.getDecFormatoFileStandardInListByName(formati);
-	assertTrue(true);
+        Collection<String> formati = aListOfString(2);
+        helper.getDecFormatoFileStandardInListByName(formati);
+        assertTrue(true);
     }
 
     @Test
     void getDecFormatoFileStandardNotInListQueryIsOk() {
-	Collection<String> formati = aListOfString(2);
-	for (BaseElements.Status status : BaseElements.Status.values()) {
-	    helper.getDecFormatoFileStandardNotInList(formati, status);
-	    assertTrue(true);
-	}
+        Collection<String> formati = aListOfString(2);
+        for (BaseElements.Status status : BaseElements.Status.values()) {
+            helper.getDecFormatoFileStandardNotInList(formati, status);
+            assertTrue(true);
+        }
     }
 
     @Test
     void getDecFormatoFileStandardByNameQueryIsOk() {
-	String nmFormato = aString();
-	helper.getDecFormatoFileStandardByName(nmFormato);
-	assertTrue(true);
+        String nmFormato = aString();
+        helper.getDecFormatoFileStandardByName(nmFormato);
+        assertTrue(true);
     }
 
     @Test
     void getDecFormatoFileStandardNameFromEstensioneFileQueryIsOk() {
-	String cdEstensioneFile = aString();
-	try {
-	    helper.getDecFormatoFileStandardNameFromEstensioneFile(cdEstensioneFile);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        String cdEstensioneFile = aString();
+        try {
+            helper.getDecFormatoFileStandardNameFromEstensioneFile(cdEstensioneFile);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void getDecEstensioneFileByNameQueryIsOk() {
-	String cdEstensioneFile = aString();
-	BigDecimal idFormatoFileStandard = aBigDecimal();
-	helper.getDecEstensioneFileByName(cdEstensioneFile, idFormatoFileStandard);
-	assertTrue(true);
+        String cdEstensioneFile = aString();
+        BigDecimal idFormatoFileStandard = aBigDecimal();
+        helper.getDecEstensioneFileByName(cdEstensioneFile, idFormatoFileStandard);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecFormatoFileStandardListQueryIsOk() {
-	String nmFormatoFileStandard = aString();
-	final String nmMimetypeFile = aString();
-	helper.retrieveDecFormatoFileStandardList(nmFormatoFileStandard, nmMimetypeFile);
-	assertTrue(true);
+        String nmFormatoFileStandard = aString();
+        final String nmMimetypeFile = aString();
+        helper.retrieveDecFormatoFileStandardList(nmFormatoFileStandard, nmMimetypeFile);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecEstensioneFileListQueryIsOk() {
-	BigDecimal idFormatoFileStandard = aBigDecimal();
-	helper.retrieveDecEstensioneFileList(idFormatoFileStandard);
-	assertTrue(true);
+        BigDecimal idFormatoFileStandard = aBigDecimal();
+        helper.retrieveDecEstensioneFileList(idFormatoFileStandard);
+        assertTrue(true);
     }
 
     @Test
     void getDecFormatoFileBustaByNameQueryIsOk() {
-	String tiFormatoFirmaMarca = aString();
-	BigDecimal idFormatoFileStandard = aBigDecimal();
-	helper.getDecFormatoFileBustaByName(tiFormatoFirmaMarca, idFormatoFileStandard);
-	assertTrue(true);
+        String tiFormatoFirmaMarca = aString();
+        BigDecimal idFormatoFileStandard = aBigDecimal();
+        helper.getDecFormatoFileBustaByName(tiFormatoFirmaMarca, idFormatoFileStandard);
+        assertTrue(true);
     }
 
     @Test
     void getDecFormatoFileBustaListQueryIsOk() {
-	BigDecimal idFormatoFileStandard = aBigDecimal();
-	helper.getDecFormatoFileBustaList(idFormatoFileStandard);
-	assertTrue(true);
+        BigDecimal idFormatoFileStandard = aBigDecimal();
+        helper.getDecFormatoFileBustaList(idFormatoFileStandard);
+        assertTrue(true);
     }
 
     @Test
     void getAllDecFormatoGruppoProprietaQueryIsOk() {
-	helper.getAllDecFormatoGruppoProprieta();
-	assertTrue(true);
+        helper.getAllDecFormatoGruppoProprieta();
+        assertTrue(true);
     }
 
     @Test
     void getValutazioniPerFormatoQueryIsOk() {
-	Long idFormato = -9L;
-	final List<DecFormatoValutazione> valutazioniPerFormato = helper
-		.getValutazioniPerFormato(idFormato);
-	assertEquals(0, valutazioniPerFormato.size());
+        Long idFormato = -9L;
+        final List<DecFormatoValutazione> valutazioniPerFormato = helper
+                .getValutazioniPerFormato(idFormato);
+        assertEquals(0, valutazioniPerFormato.size());
     }
 
     @Test
     void getDecFormatoProprietaByGruppoQueryIsOk() {
-	Long idGruppoProprieta = -9L;
-	final List<DecFormatoProprieta> decFormatoProprietaByGruppo = helper
-		.getDecFormatoProprietaByGruppo(idGruppoProprieta);
-	assertEquals(0, decFormatoProprietaByGruppo.size());
+        Long idGruppoProprieta = -9L;
+        final List<DecFormatoProprieta> decFormatoProprietaByGruppo = helper
+                .getDecFormatoProprietaByGruppo(idGruppoProprieta);
+        assertEquals(0, decFormatoProprietaByGruppo.size());
     }
 
     @Test
     void calcolaValutazioneQueryIsOk() {
-	DecFormatoFileStandard formatoFileStandard = new DecFormatoFileStandard();
-	formatoFileStandard.setIdFormatoFileStandard(-9L);
-	final BigDecimal valutazione = helper.calcolaValutazione(formatoFileStandard);
-	assertNull(valutazione);
+        DecFormatoFileStandard formatoFileStandard = new DecFormatoFileStandard();
+        formatoFileStandard.setIdFormatoFileStandard(-9L);
+        final BigDecimal valutazione = helper.calcolaValutazione(formatoFileStandard);
+        assertNull(valutazione);
     }
 
     @Test
     void getMimetypeListQuerySyntaxOk() {
-	assertFalse(helper.getMimetypeList().isEmpty());
+        assertFalse(helper.getMimetypeList().isEmpty());
     }
 }

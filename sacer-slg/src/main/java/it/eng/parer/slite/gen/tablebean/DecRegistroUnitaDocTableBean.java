@@ -33,19 +33,19 @@ public class DecRegistroUnitaDocTableBean extends AbstractBaseTable<DecRegistroU
     public static DecRegistroUnitaDocTableDescriptor TABLE_DESCRIPTOR = new DecRegistroUnitaDocTableDescriptor();
 
     public DecRegistroUnitaDocTableBean() {
-	super();
+        super();
     }
 
     protected DecRegistroUnitaDocRowBean createRow() {
-	return new DecRegistroUnitaDocRowBean();
+        return new DecRegistroUnitaDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecRegistroUnitaDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

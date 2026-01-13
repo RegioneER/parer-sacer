@@ -33,19 +33,19 @@ public class FirCertifFirmatarioTableBean extends AbstractBaseTable<FirCertifFir
     public static FirCertifFirmatarioTableDescriptor TABLE_DESCRIPTOR = new FirCertifFirmatarioTableDescriptor();
 
     public FirCertifFirmatarioTableBean() {
-	super();
+        super();
     }
 
     protected FirCertifFirmatarioRowBean createRow() {
-	return new FirCertifFirmatarioRowBean();
+        return new FirCertifFirmatarioRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<FirCertifFirmatarioRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

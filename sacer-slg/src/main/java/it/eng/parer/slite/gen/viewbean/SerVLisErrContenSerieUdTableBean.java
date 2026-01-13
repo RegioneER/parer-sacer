@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class SerVLisErrContenSerieUdTableBean
-	extends AbstractBaseTable<SerVLisErrContenSerieUdRowBean> {
+        extends AbstractBaseTable<SerVLisErrContenSerieUdRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class SerVLisErrContenSerieUdTableBean
     public static SerVLisErrContenSerieUdTableDescriptor TABLE_DESCRIPTOR = new SerVLisErrContenSerieUdTableDescriptor();
 
     public SerVLisErrContenSerieUdTableBean() {
-	super();
+        super();
     }
 
     protected SerVLisErrContenSerieUdRowBean createRow() {
-	return new SerVLisErrContenSerieUdRowBean();
+        return new SerVLisErrContenSerieUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerVLisErrContenSerieUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

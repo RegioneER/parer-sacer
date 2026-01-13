@@ -32,19 +32,19 @@ public class FasEventoFascicoloTableBean extends AbstractBaseTable<FasEventoFasc
     public static FasEventoFascicoloTableDescriptor TABLE_DESCRIPTOR = new FasEventoFascicoloTableDescriptor();
 
     public FasEventoFascicoloTableBean() {
-	super();
+        super();
     }
 
     protected FasEventoFascicoloRowBean createRow() {
-	return new FasEventoFascicoloRowBean();
+        return new FasEventoFascicoloRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<FasEventoFascicoloRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

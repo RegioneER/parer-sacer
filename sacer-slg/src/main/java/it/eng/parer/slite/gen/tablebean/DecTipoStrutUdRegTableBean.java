@@ -33,19 +33,19 @@ public class DecTipoStrutUdRegTableBean extends AbstractBaseTable<DecTipoStrutUd
     public static DecTipoStrutUdRegTableDescriptor TABLE_DESCRIPTOR = new DecTipoStrutUdRegTableDescriptor();
 
     public DecTipoStrutUdRegTableBean() {
-	super();
+        super();
     }
 
     protected DecTipoStrutUdRegRowBean createRow() {
-	return new DecTipoStrutUdRegRowBean();
+        return new DecTipoStrutUdRegRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecTipoStrutUdRegRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

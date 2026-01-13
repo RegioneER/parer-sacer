@@ -53,125 +53,125 @@ public class IamParamApplic implements Serializable {
     @Id
     @Column(name = "ID_PARAM_APPLIC")
     public Long getIdParamApplic() {
-	return this.idParamApplic;
+        return this.idParamApplic;
     }
 
     public void setIdParamApplic(Long idParamApplic) {
-	this.idParamApplic = idParamApplic;
+        this.idParamApplic = idParamApplic;
     }
 
     @Column(name = "CD_VERSIONE_APP_INI")
     public String getCdVersioneAppIni() {
-	return this.cdVersioneAppIni;
+        return this.cdVersioneAppIni;
     }
 
     public void setCdVersioneAppIni(String cdVersioneAppIni) {
-	this.cdVersioneAppIni = cdVersioneAppIni;
+        this.cdVersioneAppIni = cdVersioneAppIni;
     }
 
     @Column(name = "CD_VERSIONE_APP_FINE")
     public String getCdVersioneAppFine() {
-	return this.cdVersioneAppFine;
+        return this.cdVersioneAppFine;
     }
 
     public void setCdVersioneAppFine(String cdVersioneAppFine) {
-	this.cdVersioneAppFine = cdVersioneAppFine;
+        this.cdVersioneAppFine = cdVersioneAppFine;
     }
 
     @Column(name = "DS_PARAM_APPLIC")
     public String getDsParamApplic() {
-	return this.dsParamApplic;
+        return this.dsParamApplic;
     }
 
     public void setDsParamApplic(String dsParamApplic) {
-	this.dsParamApplic = dsParamApplic;
+        this.dsParamApplic = dsParamApplic;
     }
 
     @Column(name = "DS_LISTA_VALORI_AMMESSI")
     public String getDsListaValoriAmmessi() {
-	return this.dsListaValoriAmmessi;
+        return this.dsListaValoriAmmessi;
     }
 
     public void setDsListaValoriAmmessi(String dsListaValoriAmmessi) {
-	this.dsListaValoriAmmessi = dsListaValoriAmmessi;
+        this.dsListaValoriAmmessi = dsListaValoriAmmessi;
     }
 
     @Column(name = "FL_APPART_AMBIENTE", columnDefinition = "char(1)")
     public String getFlAppartAmbiente() {
-	return this.flAppartAmbiente;
+        return this.flAppartAmbiente;
     }
 
     public void setFlAppartAmbiente(String flAppartAmbiente) {
-	this.flAppartAmbiente = flAppartAmbiente;
+        this.flAppartAmbiente = flAppartAmbiente;
     }
 
     @Column(name = "FL_APPART_APPLIC", columnDefinition = "char(1)")
     public String getFlAppartApplic() {
-	return this.flAppartApplic;
+        return this.flAppartApplic;
     }
 
     public void setFlAppartApplic(String flAppartApplic) {
-	this.flAppartApplic = flAppartApplic;
+        this.flAppartApplic = flAppartApplic;
     }
 
     @Column(name = "FL_APPARTE_ENTE", columnDefinition = "char(1)")
     public String getFlApparteEnte() {
-	return this.flApparteEnte;
+        return this.flApparteEnte;
     }
 
     public void setFlApparteEnte(String flApparteEnte) {
-	this.flApparteEnte = flApparteEnte;
+        this.flApparteEnte = flApparteEnte;
     }
 
     @Column(name = "NM_PARAM_APPLIC")
     public String getNmParamApplic() {
-	return this.nmParamApplic;
+        return this.nmParamApplic;
     }
 
     public void setNmParamApplic(String nmParamApplic) {
-	this.nmParamApplic = nmParamApplic;
+        this.nmParamApplic = nmParamApplic;
     }
 
     @Column(name = "TI_GESTIONE_PARAM")
     public String getTiGestioneParam() {
-	return this.tiGestioneParam;
+        return this.tiGestioneParam;
     }
 
     public void setTiGestioneParam(String tiGestioneParam) {
-	this.tiGestioneParam = tiGestioneParam;
+        this.tiGestioneParam = tiGestioneParam;
     }
 
     @Column(name = "TI_PARAM_APPLIC")
     public String getTiParamApplic() {
-	return this.tiParamApplic;
+        return this.tiParamApplic;
     }
 
     public void setTiParamApplic(String tiParamApplic) {
-	this.tiParamApplic = tiParamApplic;
+        this.tiParamApplic = tiParamApplic;
     }
 
     @OneToMany(mappedBy = "iamParamApplic")
     public List<IamValoreParamApplic> getIamValoreParamApplics() {
-	return this.iamValoreParamApplics;
+        return this.iamValoreParamApplics;
     }
 
     public void setIamValoreParamApplics(List<IamValoreParamApplic> iamValoreParamApplics) {
-	this.iamValoreParamApplics = iamValoreParamApplics;
+        this.iamValoreParamApplics = iamValoreParamApplics;
     }
 
     public IamValoreParamApplic addIamValoreParamApplic(IamValoreParamApplic iamValoreParamApplic) {
-	getIamValoreParamApplics().add(iamValoreParamApplic);
-	iamValoreParamApplic.setIamParamApplic(this);
+        getIamValoreParamApplics().add(iamValoreParamApplic);
+        iamValoreParamApplic.setIamParamApplic(this);
 
-	return iamValoreParamApplic;
+        return iamValoreParamApplic;
     }
 
     public IamValoreParamApplic removeIamValoreParamApplic(
-	    IamValoreParamApplic iamValoreParamApplic) {
-	getIamValoreParamApplics().remove(iamValoreParamApplic);
-	iamValoreParamApplic.setIamParamApplic(null);
+            IamValoreParamApplic iamValoreParamApplic) {
+        getIamValoreParamApplics().remove(iamValoreParamApplic);
+        iamValoreParamApplic.setIamParamApplic(null);
 
-	return iamValoreParamApplic;
+        return iamValoreParamApplic;
     }
 
 }

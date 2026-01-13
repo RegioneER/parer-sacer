@@ -40,97 +40,97 @@ import it.eng.parer.ws.utils.Costanti;
  * @author manuel.bertuzzi@eng.it
  */
 public class AggiornaStatoArchiviazioneHelperTest
-	extends HelperTest<AggiornaStatoArchiviazioneHelper> {
+        extends HelperTest<AggiornaStatoArchiviazioneHelper> {
     @Deployment
     public static Archive<?> createTestArchive() {
-	final JavaArchive sacerJavaArchive = HelperTest.createSacerJavaArchive(
-		Arrays.asList("it.eng.parer.ws.dto", "it.eng.tpi.bean",
-			"it.eng.parer.ws.versamento.dto", "com.fasterxml.jackson.core"),
-		JobHelper.class, AggiornaStatoArchiviazioneHelper.class, AppServerInstance.class,
-		ControlliSemantici.class, ControlliTpi.class, ConfigurationHelper.class,
-		Costanti.class, AggiornaStatoArchiviazioneHelperTest.class,
-		JmsProducerUtilEjb.class);
-	sacerJavaArchive.addAsResource(
-		HelperTest.class.getClassLoader().getResource("jboss-ejb3.xml"),
-		"META-INF/jboss-ejb3.xml");
-	return HelperTest.createEnterpriseArchive(
-		AggiornaStatoArchiviazioneHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		sacerJavaArchive);
+        final JavaArchive sacerJavaArchive = HelperTest.createSacerJavaArchive(
+                Arrays.asList("it.eng.parer.ws.dto", "it.eng.tpi.bean",
+                        "it.eng.parer.ws.versamento.dto", "com.fasterxml.jackson.core"),
+                JobHelper.class, AggiornaStatoArchiviazioneHelper.class, AppServerInstance.class,
+                ControlliSemantici.class, ControlliTpi.class, ConfigurationHelper.class,
+                Costanti.class, AggiornaStatoArchiviazioneHelperTest.class,
+                JmsProducerUtilEjb.class);
+        sacerJavaArchive.addAsResource(
+                HelperTest.class.getClassLoader().getResource("jboss-ejb3.xml"),
+                "META-INF/jboss-ejb3.xml");
+        return HelperTest.createEnterpriseArchive(
+                AggiornaStatoArchiviazioneHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                sacerJavaArchive);
     }
 
     void findArkDatesByStatus_queryIsOk() {
-	String[] tiStatoDtVers = aStringArray(2);
-	helper.findArkDatesByStatus(tiStatoDtVers);
-	assertTrue(true);
+        String[] tiStatoDtVers = aStringArray(2);
+        helper.findArkDatesByStatus(tiStatoDtVers);
+        assertTrue(true);
     }
 
     @Test
     void getIdStrutList_queryIsOk() {
-	helper.getIdStrutList();
-	assertTrue(true);
+        helper.getIdStrutList();
+        assertTrue(true);
     }
 
     @Test
     void getPathDtVers_queryIsOk() {
-	Long idDtVers = aLong();
-	String path = aString();
-	helper.getPathDtVers(idDtVers, path);
-	assertTrue(true);
+        Long idDtVers = aLong();
+        String path = aString();
+        helper.getPathDtVers(idDtVers, path);
+        assertTrue(true);
     }
 
     @Test
     void getPathString_queryIsOk() {
-	Long idStrut = aLong();
-	try {
-	    helper.getPathString(idStrut);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        Long idStrut = aLong();
+        try {
+            helper.getPathString(idStrut);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void checkNiFilePath_queryIsOk() {
-	Long idDtVers = aLong();
-	helper.checkNiFilePath(idDtVers);
-	assertTrue(true);
+        Long idDtVers = aLong();
+        helper.checkNiFilePath(idDtVers);
+        assertTrue(true);
     }
 
     @Test
     void getComponentCount_queryIsOk() {
-	Long idStrut = aLong();
-	Date from = todayTs();
-	Date to = tomorrowTs();
-	helper.getComponentCount(idStrut, from, to);
-	assertTrue(true);
+        Long idStrut = aLong();
+        Date from = todayTs();
+        Date to = tomorrowTs();
+        helper.getComponentCount(idStrut, from, to);
+        assertTrue(true);
     }
 
     @Test
     // @Ignore("è private, va cambiato in public per lanciare il test")
     void updateDocDaElabElenco_queryIsOk() {
-	helper.updateDocDaElabElenco(todayTs(), tomorrowTs(), aListOfLong(2));
-	assertTrue(true);
+        helper.updateDocDaElabElenco(todayTs(), tomorrowTs(), aListOfLong(2));
+        assertTrue(true);
     }
 
     @Test
     // @Ignore("è private, va cambiato in public per lanciare il test")
     void updateUdDaElabElenco_queryIsOk() {
-	helper.updateUdDaElabElenco(todayTs(), tomorrowTs(), aListOfLong(2));
-	assertTrue(true);
+        helper.updateUdDaElabElenco(todayTs(), tomorrowTs(), aListOfLong(2));
+        assertTrue(true);
     }
 
     @Test
     void updateFlCancVrsPaths_queryIsOk() {
-	helper.updateFlCancVrsPaths(0L);
-	assertTrue(true);
+        helper.updateFlCancVrsPaths(0L);
+        assertTrue(true);
     }
 
     @Test
     // @Ignore("è private, va cambiato in public per lanciare il test")
     void deleteArkPath_queryIsOk() {
-	helper.deleteArkPath("VrsArkPathDtVers", 0L);
-	assertTrue(true);
+        helper.deleteArkPath("VrsArkPathDtVers", 0L);
+        assertTrue(true);
     }
 
     void handleResponse_queryIsOk() {

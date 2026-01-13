@@ -34,7 +34,7 @@ import it.eng.parer.entity.DecCriterioRaggr;
  * @author DiLorenzo_F
  */
 public class FiltroMultiploUnitaDocValidator
-	implements ConstraintValidator<ValidateFiltroMultiploUnitaDoc, CriterioFiltroUnitaDoc> {
+        implements ConstraintValidator<ValidateFiltroMultiploUnitaDoc, CriterioFiltroUnitaDoc> {
 
     @Override
     public void initialize(ValidateFiltroMultiploUnitaDoc constraintAnnotation) {
@@ -43,100 +43,100 @@ public class FiltroMultiploUnitaDocValidator
     @SuppressWarnings("unchecked")
     @Override
     public boolean isValid(CriterioFiltroUnitaDoc critFiltroMultUnitaDoc,
-	    ConstraintValidatorContext context) {
+            ConstraintValidatorContext context) {
 
-	DecCriterioRaggr criterio = critFiltroMultUnitaDoc.getCriterioRaggr();
-	AroUnitaDoc unitaDoc = critFiltroMultUnitaDoc.getUnitaDoc();
-	List<DecCriterioFiltroMultiplo> critFiltroMultiploList = criterio
-		.getDecCriterioFiltroMultiplos();
+        DecCriterioRaggr criterio = critFiltroMultUnitaDoc.getCriterioRaggr();
+        AroUnitaDoc unitaDoc = critFiltroMultUnitaDoc.getUnitaDoc();
+        List<DecCriterioFiltroMultiplo> critFiltroMultiploList = criterio
+                .getDecCriterioFiltroMultiplos();
 
-	// Raggruppo i filtri multipli sull'Unita Documentaria che sono attivi sul criterio corrente
+        // Raggruppo i filtri multipli sull'Unita Documentaria che sono attivi sul criterio corrente
 
-	// presenza filtro sul tipo unita doc
-	List<DecCriterioFiltroMultiplo> filtriUnitaDocList = (List<DecCriterioFiltroMultiplo>) CollectionUtils
-		.select(critFiltroMultiploList, new Predicate() {
-		    @Override
-		    public boolean evaluate(final Object object) {
-			return ("1".equals(criterio.getFlFiltroTipoUnitaDoc())
-				&& "TIPO_UNI_DOC".equals(((DecCriterioFiltroMultiplo) object)
-					.getTiFiltroMultiplo()));
-		    }
-		});
-	// presenza filtro su registro chiave
-	CollectionUtils.select(critFiltroMultiploList, new Predicate() {
-	    @Override
-	    public boolean evaluate(final Object object) {
-		return ("1".equals(criterio.getFlFiltroRegistroKey()) && "REGISTRO_UNI_DOC"
-			.equals(((DecCriterioFiltroMultiplo) object).getTiFiltroMultiplo()));
-	    }
-	}, filtriUnitaDocList);
-	// presenza filtro su range registro chiave
-	CollectionUtils.select(critFiltroMultiploList, new Predicate() {
-	    @Override
-	    public boolean evaluate(final Object object) {
-		return ("1".equals(criterio.getFlFiltroRangeRegistroKey())
-			&& "RANGE_REGISTRO_UNI_DOC".equals(
-				((DecCriterioFiltroMultiplo) object).getTiFiltroMultiplo()));
-	    }
-	}, filtriUnitaDocList);
-	// presenza filtro su esito verifica firme
-	CollectionUtils.select(critFiltroMultiploList, new Predicate() {
-	    @Override
-	    public boolean evaluate(final Object object) {
-		return ("1".equals(criterio.getFlFiltroTiEsitoVerifFirme())
-			&& "TIPO_ESITO_VERIF_FIRME".equals(
-				((DecCriterioFiltroMultiplo) object).getTiFiltroMultiplo()));
-	    }
-	}, filtriUnitaDocList);
-	// presenza filtro su sistema di migrazione
-	CollectionUtils.select(critFiltroMultiploList, new Predicate() {
-	    @Override
-	    public boolean evaluate(final Object object) {
-		return ("1".equals(criterio.getFlFiltroSistemaMigraz()) && "SISTEMA_MIGRAZ"
-			.equals(((DecCriterioFiltroMultiplo) object).getTiFiltroMultiplo()));
-	    }
-	}, filtriUnitaDocList);
+        // presenza filtro sul tipo unita doc
+        List<DecCriterioFiltroMultiplo> filtriUnitaDocList = (List<DecCriterioFiltroMultiplo>) CollectionUtils
+                .select(critFiltroMultiploList, new Predicate() {
+                    @Override
+                    public boolean evaluate(final Object object) {
+                        return ("1".equals(criterio.getFlFiltroTipoUnitaDoc())
+                                && "TIPO_UNI_DOC".equals(((DecCriterioFiltroMultiplo) object)
+                                        .getTiFiltroMultiplo()));
+                    }
+                });
+        // presenza filtro su registro chiave
+        CollectionUtils.select(critFiltroMultiploList, new Predicate() {
+            @Override
+            public boolean evaluate(final Object object) {
+                return ("1".equals(criterio.getFlFiltroRegistroKey()) && "REGISTRO_UNI_DOC"
+                        .equals(((DecCriterioFiltroMultiplo) object).getTiFiltroMultiplo()));
+            }
+        }, filtriUnitaDocList);
+        // presenza filtro su range registro chiave
+        CollectionUtils.select(critFiltroMultiploList, new Predicate() {
+            @Override
+            public boolean evaluate(final Object object) {
+                return ("1".equals(criterio.getFlFiltroRangeRegistroKey())
+                        && "RANGE_REGISTRO_UNI_DOC".equals(
+                                ((DecCriterioFiltroMultiplo) object).getTiFiltroMultiplo()));
+            }
+        }, filtriUnitaDocList);
+        // presenza filtro su esito verifica firme
+        CollectionUtils.select(critFiltroMultiploList, new Predicate() {
+            @Override
+            public boolean evaluate(final Object object) {
+                return ("1".equals(criterio.getFlFiltroTiEsitoVerifFirme())
+                        && "TIPO_ESITO_VERIF_FIRME".equals(
+                                ((DecCriterioFiltroMultiplo) object).getTiFiltroMultiplo()));
+            }
+        }, filtriUnitaDocList);
+        // presenza filtro su sistema di migrazione
+        CollectionUtils.select(critFiltroMultiploList, new Predicate() {
+            @Override
+            public boolean evaluate(final Object object) {
+                return ("1".equals(criterio.getFlFiltroSistemaMigraz()) && "SISTEMA_MIGRAZ"
+                        .equals(((DecCriterioFiltroMultiplo) object).getTiFiltroMultiplo()));
+            }
+        }, filtriUnitaDocList);
 
-	// Controllo il criterio corrente in base ai filtri multipli attivi sull'Unità Documentaria
-	for (DecCriterioFiltroMultiplo filtroUnitaDoc : filtriUnitaDocList) {
-	    switch (filtroUnitaDoc.getTiFiltroMultiplo()) {
-	    case "TIPO_UNI_DOC":
-		if (filtroUnitaDoc.getDecTipoUnitaDoc().getIdTipoUnitaDoc()
-			.compareTo(unitaDoc.getDecTipoUnitaDoc().getIdTipoUnitaDoc()) != 0) {
-		    return false;
-		}
-		break;
-	    case "REGISTRO_UNI_DOC":
-		if (filtroUnitaDoc.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc().compareTo(
-			unitaDoc.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc()) != 0) {
-		    return false;
-		}
-		break;
-	    case "RANGE_REGISTRO_UNI_DOC":
-		if (filtroUnitaDoc.getDecRegistroRangeUnitaDoc().getIdRegistroUnitaDoc().compareTo(
-			unitaDoc.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc()) != 0) {
-		    return false;
+        // Controllo il criterio corrente in base ai filtri multipli attivi sull'Unità Documentaria
+        for (DecCriterioFiltroMultiplo filtroUnitaDoc : filtriUnitaDocList) {
+            switch (filtroUnitaDoc.getTiFiltroMultiplo()) {
+            case "TIPO_UNI_DOC":
+                if (filtroUnitaDoc.getDecTipoUnitaDoc().getIdTipoUnitaDoc()
+                        .compareTo(unitaDoc.getDecTipoUnitaDoc().getIdTipoUnitaDoc()) != 0) {
+                    return false;
+                }
+                break;
+            case "REGISTRO_UNI_DOC":
+                if (filtroUnitaDoc.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc().compareTo(
+                        unitaDoc.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc()) != 0) {
+                    return false;
+                }
+                break;
+            case "RANGE_REGISTRO_UNI_DOC":
+                if (filtroUnitaDoc.getDecRegistroRangeUnitaDoc().getIdRegistroUnitaDoc().compareTo(
+                        unitaDoc.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc()) != 0) {
+                    return false;
 
-		}
-		break;
-	    case "TIPO_ESITO_VERIF_FIRME":
-		if (!filtroUnitaDoc.getTiEsitoVerifFirme()
-			.equals(unitaDoc.getTiEsitoVerifFirme())) {
-		    return false;
+                }
+                break;
+            case "TIPO_ESITO_VERIF_FIRME":
+                if (!filtroUnitaDoc.getTiEsitoVerifFirme()
+                        .equals(unitaDoc.getTiEsitoVerifFirme())) {
+                    return false;
 
-		}
-		break;
-	    case "SISTEMA_MIGRAZ":
-		if (!filtroUnitaDoc.getNmSistemaMigraz().equals(unitaDoc.getNmSistemaMigraz())) {
-		    return false;
+                }
+                break;
+            case "SISTEMA_MIGRAZ":
+                if (!filtroUnitaDoc.getNmSistemaMigraz().equals(unitaDoc.getNmSistemaMigraz())) {
+                    return false;
 
-		}
-		break;
-	    default:
-		break;
-	    }
-	}
+                }
+                break;
+            default:
+                break;
+            }
+        }
 
-	return true;
+        return true;
     }
 }

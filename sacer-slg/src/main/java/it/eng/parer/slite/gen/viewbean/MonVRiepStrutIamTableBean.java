@@ -37,19 +37,19 @@ public class MonVRiepStrutIamTableBean extends AbstractBaseTable<MonVRiepStrutIa
     public static MonVRiepStrutIamTableDescriptor TABLE_DESCRIPTOR = new MonVRiepStrutIamTableDescriptor();
 
     public MonVRiepStrutIamTableBean() {
-	super();
+        super();
     }
 
     protected MonVRiepStrutIamRowBean createRow() {
-	return new MonVRiepStrutIamRowBean();
+        return new MonVRiepStrutIamRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVRiepStrutIamRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

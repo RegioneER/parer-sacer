@@ -45,30 +45,30 @@ public class OrgTipoServizioTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_TIPO_SERVIZIO,
-		new ColumnDescriptor(COL_ID_TIPO_SERVIZIO, Types.DECIMAL, 22, true));
-	map.put(COL_CD_TIPO_SERVIZIO,
-		new ColumnDescriptor(COL_CD_TIPO_SERVIZIO, Types.VARCHAR, 100, false));
-	map.put(COL_DS_TIPO_SERVIZIO,
-		new ColumnDescriptor(COL_DS_TIPO_SERVIZIO, Types.VARCHAR, 254, false));
-	map.put(COL_TI_CLASSE_TIPO_SERVIZIO,
-		new ColumnDescriptor(COL_TI_CLASSE_TIPO_SERVIZIO, Types.VARCHAR, 30, false));
-	map.put(COL_TIPO_FATTURAZIONE,
-		new ColumnDescriptor(COL_TIPO_FATTURAZIONE, Types.VARCHAR, 30, false));
-	map.put(COL_GG_FATTURAZIONE,
-		new ColumnDescriptor(COL_GG_FATTURAZIONE, Types.VARCHAR, 5, false));
+        map.put(COL_ID_TIPO_SERVIZIO,
+                new ColumnDescriptor(COL_ID_TIPO_SERVIZIO, Types.DECIMAL, 22, true));
+        map.put(COL_CD_TIPO_SERVIZIO,
+                new ColumnDescriptor(COL_CD_TIPO_SERVIZIO, Types.VARCHAR, 100, false));
+        map.put(COL_DS_TIPO_SERVIZIO,
+                new ColumnDescriptor(COL_DS_TIPO_SERVIZIO, Types.VARCHAR, 254, false));
+        map.put(COL_TI_CLASSE_TIPO_SERVIZIO,
+                new ColumnDescriptor(COL_TI_CLASSE_TIPO_SERVIZIO, Types.VARCHAR, 30, false));
+        map.put(COL_TIPO_FATTURAZIONE,
+                new ColumnDescriptor(COL_TIPO_FATTURAZIONE, Types.VARCHAR, 30, false));
+        map.put(COL_GG_FATTURAZIONE,
+                new ColumnDescriptor(COL_GG_FATTURAZIONE, Types.VARCHAR, 5, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

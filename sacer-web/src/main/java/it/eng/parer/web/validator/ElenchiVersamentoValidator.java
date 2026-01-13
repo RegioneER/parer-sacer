@@ -28,13 +28,13 @@ import java.util.List;
 public class ElenchiVersamentoValidator extends TypeValidator {
 
     public ElenchiVersamentoValidator(MessageBox messageBox) {
-	super(messageBox);
+        super(messageBox);
     }
 
     public void validaTipoValidazione(List<String> tiValidElenco) {
-	if (tiValidElenco == null || tiValidElenco.isEmpty()) {
-	    getMessageBox()
-		    .addMessage(new Message(MessageLevel.ERR, "Indicare il \"Tipo validazione\""));
-	}
+        if (tiValidElenco == null || tiValidElenco.isEmpty()) {
+            getMessageBox()
+                    .addMessage(new Message(MessageLevel.ERR, "Indicare il \"Tipo validazione\""));
+        }
     }
 }

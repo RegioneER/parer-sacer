@@ -29,10 +29,10 @@ public final class ElvStatoElencoVersFasc {
      * 'FIRMATO', 'FIRMA_IN_CORSO', 'IN_CODA_CREAZIONE_AIP')
      */
     public enum TiStatoElencoFasc {
-	AIP_CREATI, APERTO, CHIUSO, COMPLETATO, DA_CHIUDERE, ELENCO_INDICI_AIP_CREATO,
-	ELENCO_INDICI_AIP_FIRMA_IN_CORSO, FIRMATO, FIRMA_IN_CORSO, IN_CODA_CREAZIONE_AIP,
-	// MEV#31922 - Introduzione modalità NO FIRMA nella validazione degli elenchi di versamento
-	// dei fascicoli
-	VALIDATO
+        AIP_CREATI, APERTO, CHIUSO, COMPLETATO, DA_CHIUDERE, ELENCO_INDICI_AIP_CREATO,
+        ELENCO_INDICI_AIP_FIRMA_IN_CORSO, FIRMATO, FIRMA_IN_CORSO, IN_CODA_CREAZIONE_AIP,
+        // MEV#31922 - Introduzione modalità NO FIRMA nella validazione degli elenchi di versamento
+        // dei fascicoli
+        VALIDATO
     }
 }

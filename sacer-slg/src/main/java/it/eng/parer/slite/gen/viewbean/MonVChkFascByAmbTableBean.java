@@ -37,19 +37,19 @@ public class MonVChkFascByAmbTableBean extends AbstractBaseTable<MonVChkFascByAm
     public static MonVChkFascByAmbTableDescriptor TABLE_DESCRIPTOR = new MonVChkFascByAmbTableDescriptor();
 
     public MonVChkFascByAmbTableBean() {
-	super();
+        super();
     }
 
     protected MonVChkFascByAmbRowBean createRow() {
-	return new MonVChkFascByAmbRowBean();
+        return new MonVChkFascByAmbRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVChkFascByAmbRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -84,156 +84,156 @@ public class OstMigrazFile implements Serializable {
 
     @Column(name = "ID_MIGRAZ_FILE")
     @GenericGenerator(name = "SOST_MIGRAZ_FILE_ID_MIGRAZ_FILE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SOST_MIGRAZ_FILE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SOST_MIGRAZ_FILE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SOST_MIGRAZ_FILE_ID_MIGRAZ_FILE_GENERATOR")
     public Long getIdMigrazFile() {
-	return this.idMigrazFile;
+        return this.idMigrazFile;
     }
 
     public void setIdMigrazFile(Long idMigrazFile) {
-	this.idMigrazFile = idMigrazFile;
+        this.idMigrazFile = idMigrazFile;
     }
 
     @Column(name = "CD_KEY_FILE")
     public String getCdKeyFile() {
-	return this.cdKeyFile;
+        return this.cdKeyFile;
     }
 
     public void setCdKeyFile(String cdKeyFile) {
-	this.cdKeyFile = cdKeyFile;
+        this.cdKeyFile = cdKeyFile;
     }
 
     @Column(name = "ID_OGGETTO")
     public BigDecimal getIdOggetto() {
-	return this.idOggetto;
+        return this.idOggetto;
     }
 
     public void setIdOggetto(BigDecimal idOggetto) {
-	this.idOggetto = idOggetto;
+        this.idOggetto = idOggetto;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "MM_FILE")
     public BigDecimal getMmFile() {
-	return this.mmFile;
+        return this.mmFile;
     }
 
     public void setMmFile(BigDecimal mmFile) {
-	this.mmFile = mmFile;
+        this.mmFile = mmFile;
     }
 
     @Column(name = "NI_MIGRAZ_ERR")
     public BigDecimal getNiMigrazErr() {
-	return this.niMigrazErr;
+        return this.niMigrazErr;
     }
 
     public void setNiMigrazErr(BigDecimal niMigrazErr) {
-	this.niMigrazErr = niMigrazErr;
+        this.niMigrazErr = niMigrazErr;
     }
 
     @Column(name = "NM_BUCKET")
     public String getNmBucket() {
-	return this.nmBucket;
+        return this.nmBucket;
     }
 
     public void setNmBucket(String nmBucket) {
-	this.nmBucket = nmBucket;
+        this.nmBucket = nmBucket;
     }
 
     @Column(name = "NM_TABELLA_ID_OGGETTO")
     public String getNmTabellaIdOggetto() {
-	return this.nmTabellaIdOggetto;
+        return this.nmTabellaIdOggetto;
     }
 
     public void setNmTabellaIdOggetto(String nmTabellaIdOggetto) {
-	this.nmTabellaIdOggetto = nmTabellaIdOggetto;
+        this.nmTabellaIdOggetto = nmTabellaIdOggetto;
     }
 
     @Column(name = "NM_TENANT")
     public String getNmTenant() {
-	return this.nmTenant;
+        return this.nmTenant;
     }
 
     public void setNmTenant(String nmTenant) {
-	this.nmTenant = nmTenant;
+        this.nmTenant = nmTenant;
     }
 
     @Column(name = "TI_STATO_COR")
     public String getTiStatoCor() {
-	return this.tiStatoCor;
+        return this.tiStatoCor;
     }
 
     public void setTiStatoCor(String tiStatoCor) {
-	this.tiStatoCor = tiStatoCor;
+        this.tiStatoCor = tiStatoCor;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_MIGRATO")
     public Date getTsMigrato() {
-	return this.tsMigrato;
+        return this.tsMigrato;
     }
 
     public void setTsMigrato(Date tsMigrato) {
-	this.tsMigrato = tsMigrato;
+        this.tsMigrato = tsMigrato;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_REG_STATO_COR")
     public Date getTsRegStatoCor() {
-	return this.tsRegStatoCor;
+        return this.tsRegStatoCor;
     }
 
     public void setTsRegStatoCor(Date tsRegStatoCor) {
-	this.tsRegStatoCor = tsRegStatoCor;
+        this.tsRegStatoCor = tsRegStatoCor;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_VERIFICATO")
     public Date getTsVerificato() {
-	return this.tsVerificato;
+        return this.tsVerificato;
     }
 
     public void setTsVerificato(Date tsVerificato) {
-	this.tsVerificato = tsVerificato;
+        this.tsVerificato = tsVerificato;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MIGRAZ_SUB_PART")
     public OstMigrazSubPart getOstMigrazSubPart() {
-	return this.ostMigrazSubPart;
+        return this.ostMigrazSubPart;
     }
 
     public void setOstMigrazSubPart(OstMigrazSubPart ostMigrazSubPart) {
-	this.ostMigrazSubPart = ostMigrazSubPart;
+        this.ostMigrazSubPart = ostMigrazSubPart;
     }
 
     @OneToMany(mappedBy = "ostMigrazFile")
     public List<OstMigrazFileErr> getOstMigrazFileErrs() {
-	return this.ostMigrazFileErrs;
+        return this.ostMigrazFileErrs;
     }
 
     public void setOstMigrazFileErrs(List<OstMigrazFileErr> ostMigrazFileErrs) {
-	this.ostMigrazFileErrs = ostMigrazFileErrs;
+        this.ostMigrazFileErrs = ostMigrazFileErrs;
     }
 
     public OstMigrazFileErr addOstMigrazFileErr(OstMigrazFileErr ostMigrazFileErr) {
-	getOstMigrazFileErrs().add(ostMigrazFileErr);
-	ostMigrazFileErr.setOstMigrazFile(this);
-	return ostMigrazFileErr;
+        getOstMigrazFileErrs().add(ostMigrazFileErr);
+        ostMigrazFileErr.setOstMigrazFile(this);
+        return ostMigrazFileErr;
     }
 
     public OstMigrazFileErr removeOstMigrazFileErr(OstMigrazFileErr ostMigrazFileErr) {
-	getOstMigrazFileErrs().remove(ostMigrazFileErr);
-	ostMigrazFileErr.setOstMigrazFile(null);
-	return ostMigrazFileErr;
+        getOstMigrazFileErrs().remove(ostMigrazFileErr);
+        ostMigrazFileErr.setOstMigrazFile(null);
+        return ostMigrazFileErr;
     }
 }

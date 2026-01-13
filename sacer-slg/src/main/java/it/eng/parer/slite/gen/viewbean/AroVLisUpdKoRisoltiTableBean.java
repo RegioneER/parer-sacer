@@ -37,19 +37,19 @@ public class AroVLisUpdKoRisoltiTableBean extends AbstractBaseTable<AroVLisUpdKo
     public static AroVLisUpdKoRisoltiTableDescriptor TABLE_DESCRIPTOR = new AroVLisUpdKoRisoltiTableDescriptor();
 
     public AroVLisUpdKoRisoltiTableBean() {
-	super();
+        super();
     }
 
     protected AroVLisUpdKoRisoltiRowBean createRow() {
-	return new AroVLisUpdKoRisoltiRowBean();
+        return new AroVLisUpdKoRisoltiRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVLisUpdKoRisoltiRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

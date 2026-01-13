@@ -60,65 +60,65 @@ public class VrsSessioneVersKoEliminate {
     @Column(name = "ID_SESSIONE_VERS_KO_ELIMINATE")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getIdSessioneVersKoEliminata() {
-	return this.idSessioneVersKoEliminata;
+        return this.idSessioneVersKoEliminata;
     }
 
     public void setIdSessioneVersKoEliminata(Long idSessioneVersKoEliminata) {
-	this.idSessioneVersKoEliminata = idSessioneVersKoEliminata;
+        this.idSessioneVersKoEliminata = idSessioneVersKoEliminata;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     public OrgStrut getOrgStrut() {
-	return this.orgStrut;
+        return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-	this.orgStrut = orgStrut;
+        this.orgStrut = orgStrut;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-	return this.nmStrut;
+        return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
     @Column(name = "DS_STRUT")
     public String getDsStrut() {
-	return this.dsStrut;
+        return this.dsStrut;
     }
 
     public void setDsStrut(String dsStrut) {
-	this.dsStrut = dsStrut;
+        this.dsStrut = dsStrut;
     }
 
     @Column(name = "NI_SES_ELIMINATE")
     public BigDecimal getNiSesEliminate() {
-	return this.niSesEliminate;
+        return this.niSesEliminate;
     }
 
     public void setNiSesEliminate(BigDecimal niSesEliminate) {
-	this.niSesEliminate = niSesEliminate;
+        this.niSesEliminate = niSesEliminate;
     }
 
     @Column(name = "DT_ELAB")
     public Date getDtElab() {
-	return this.dtElab;
+        return this.dtElab;
     }
 
     public void setDtElab(Date dtElab) {
-	this.dtElab = dtElab;
+        this.dtElab = dtElab;
     }
 
     @Column(name = "DT_RIF")
     public Date getDtRif() {
-	return this.dtRif;
+        return this.dtRif;
     }
 
     public void setDtRif(Date dtRif) {
-	this.dtRif = dtRif;
+        this.dtRif = dtRif;
     }
 }

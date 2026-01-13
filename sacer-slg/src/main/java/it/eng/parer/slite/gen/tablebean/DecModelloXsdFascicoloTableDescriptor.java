@@ -50,33 +50,33 @@ public class DecModelloXsdFascicoloTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_MODELLO_XSD_FASCICOLO,
-		new ColumnDescriptor(COL_ID_MODELLO_XSD_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, false));
-	map.put(COL_TI_MODELLO_XSD,
-		new ColumnDescriptor(COL_TI_MODELLO_XSD, Types.VARCHAR, 30, false));
-	map.put(COL_TI_USO_MODELLO_XSD,
-		new ColumnDescriptor(COL_TI_USO_MODELLO_XSD, Types.VARCHAR, 20, false));
-	map.put(COL_CD_XSD, new ColumnDescriptor(COL_CD_XSD, Types.VARCHAR, 100, false));
-	map.put(COL_DS_XSD, new ColumnDescriptor(COL_DS_XSD, Types.VARCHAR, 254, false));
-	map.put(COL_BL_XSD, new ColumnDescriptor(COL_BL_XSD, Types.CLOB, 4000, false));
-	map.put(COL_DT_ISTITUZ, new ColumnDescriptor(COL_DT_ISTITUZ, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_SOPPRES, new ColumnDescriptor(COL_DT_SOPPRES, Types.TIMESTAMP, 7, false));
-	map.put(COL_ID_SISTEMA_MIGRAZ,
-		new ColumnDescriptor(COL_ID_SISTEMA_MIGRAZ, Types.DECIMAL, 22, false));
-	map.put(COL_FL_DEFAULT, new ColumnDescriptor(COL_FL_DEFAULT, Types.VARCHAR, 1, false));
+        map.put(COL_ID_MODELLO_XSD_FASCICOLO,
+                new ColumnDescriptor(COL_ID_MODELLO_XSD_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, false));
+        map.put(COL_TI_MODELLO_XSD,
+                new ColumnDescriptor(COL_TI_MODELLO_XSD, Types.VARCHAR, 30, false));
+        map.put(COL_TI_USO_MODELLO_XSD,
+                new ColumnDescriptor(COL_TI_USO_MODELLO_XSD, Types.VARCHAR, 20, false));
+        map.put(COL_CD_XSD, new ColumnDescriptor(COL_CD_XSD, Types.VARCHAR, 100, false));
+        map.put(COL_DS_XSD, new ColumnDescriptor(COL_DS_XSD, Types.VARCHAR, 254, false));
+        map.put(COL_BL_XSD, new ColumnDescriptor(COL_BL_XSD, Types.CLOB, 4000, false));
+        map.put(COL_DT_ISTITUZ, new ColumnDescriptor(COL_DT_ISTITUZ, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_SOPPRES, new ColumnDescriptor(COL_DT_SOPPRES, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_SISTEMA_MIGRAZ,
+                new ColumnDescriptor(COL_ID_SISTEMA_MIGRAZ, Types.DECIMAL, 22, false));
+        map.put(COL_FL_DEFAULT, new ColumnDescriptor(COL_FL_DEFAULT, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

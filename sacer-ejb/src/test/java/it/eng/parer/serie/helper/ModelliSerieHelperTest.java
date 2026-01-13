@@ -38,135 +38,135 @@ public class ModelliSerieHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(ModelliSerieHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), ModelliSerieHelperTest.class,
-			ModelliSerieHelper.class, Constants.class));
+        return HelperTest.createEnterpriseArchive(ModelliSerieHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), ModelliSerieHelperTest.class,
+                        ModelliSerieHelper.class, Constants.class));
     }
 
     @Test
     void retrieveDecModelloTipoSerie_queryIsOk() {
-	Long idAmbiente = aLong();
-	Long idStrut = aLong();
-	boolean filterValid = false;
-	helper.retrieveDecModelloTipoSerie(idAmbiente, idStrut, filterValid);
-	assertTrue(true);
+        Long idAmbiente = aLong();
+        Long idStrut = aLong();
+        boolean filterValid = false;
+        helper.retrieveDecModelloTipoSerie(idAmbiente, idStrut, filterValid);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecModelloTipoSerieFromDecUsoModello_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	boolean filterValid = false;
-	helper.retrieveDecModelloTipoSerieFromDecUsoModello(idStrut, filterValid);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        boolean filterValid = false;
+        helper.retrieveDecModelloTipoSerieFromDecUsoModello(idStrut, filterValid);
+        assertTrue(true);
     }
 
     @Test
     void getDecModelloTipoSerie_queryIsOk() {
-	String nmModelloTipoSerie = aString();
-	BigDecimal idAmbiente = aBigDecimal();
-	helper.getDecModelloTipoSerie(nmModelloTipoSerie, idAmbiente);
-	assertTrue(true);
+        String nmModelloTipoSerie = aString();
+        BigDecimal idAmbiente = aBigDecimal();
+        helper.getDecModelloTipoSerie(nmModelloTipoSerie, idAmbiente);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecNotaModelloTipoSerie_queryIsOk() {
-	BigDecimal idModelloTipoSerie = aBigDecimal();
-	helper.retrieveDecNotaModelloTipoSerie(idModelloTipoSerie);
-	assertTrue(true);
+        BigDecimal idModelloTipoSerie = aBigDecimal();
+        helper.retrieveDecNotaModelloTipoSerie(idModelloTipoSerie);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecModelloCampoInpUd_BigDecimal_queryIsOk() {
-	BigDecimal idModelloTipoSerie = aBigDecimal();
-	helper.retrieveDecModelloCampoInpUd(idModelloTipoSerie);
-	assertTrue(true);
+        BigDecimal idModelloTipoSerie = aBigDecimal();
+        helper.retrieveDecModelloCampoInpUd(idModelloTipoSerie);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecModelloCampoInpUd_BigDecimal_String_queryIsOk() {
-	BigDecimal idModelloTipoSerie = aBigDecimal();
-	String tiCampo = aString();
-	helper.retrieveDecModelloCampoInpUd(idModelloTipoSerie, tiCampo);
-	assertTrue(true);
+        BigDecimal idModelloTipoSerie = aBigDecimal();
+        String tiCampo = aString();
+        helper.retrieveDecModelloCampoInpUd(idModelloTipoSerie, tiCampo);
+        assertTrue(true);
     }
 
     @Test
     void getDecModelloCampoInpUd_queryIsOk() {
-	BigDecimal idModelloTipoSerie = aBigDecimal();
-	String tiCampo = aString();
-	String nmCampo = aString();
-	helper.getDecModelloCampoInpUd(idModelloTipoSerie, tiCampo, nmCampo);
-	assertTrue(true);
+        BigDecimal idModelloTipoSerie = aBigDecimal();
+        String tiCampo = aString();
+        String nmCampo = aString();
+        helper.getDecModelloCampoInpUd(idModelloTipoSerie, tiCampo, nmCampo);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecModelloOutSelUd_queryIsOk() {
-	BigDecimal idModelloTipoSerie = aBigDecimal();
-	helper.retrieveDecModelloOutSelUd(idModelloTipoSerie);
-	assertTrue(true);
+        BigDecimal idModelloTipoSerie = aBigDecimal();
+        helper.retrieveDecModelloOutSelUd(idModelloTipoSerie);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecModelloCampoOutSelUd_queryIsOk() {
-	BigDecimal idModelloOutSelUd = aBigDecimal();
-	String tiCampo = aString();
-	helper.retrieveDecModelloCampoOutSelUd(idModelloOutSelUd, tiCampo);
-	assertTrue(true);
+        BigDecimal idModelloOutSelUd = aBigDecimal();
+        String tiCampo = aString();
+        helper.retrieveDecModelloCampoOutSelUd(idModelloOutSelUd, tiCampo);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecModelloFiltroTiDoc_queryIsOk() {
-	BigDecimal idModelloTipoSerie = aBigDecimal();
-	helper.retrieveDecModelloFiltroTiDoc(idModelloTipoSerie);
-	assertTrue(true);
+        BigDecimal idModelloTipoSerie = aBigDecimal();
+        helper.retrieveDecModelloFiltroTiDoc(idModelloTipoSerie);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecModelloFiltroSelUdattb_queryIsOk() {
-	BigDecimal idModelloTipoSerie = aBigDecimal();
-	helper.retrieveDecModelloFiltroSelUdattb(idModelloTipoSerie);
-	assertTrue(true);
+        BigDecimal idModelloTipoSerie = aBigDecimal();
+        helper.retrieveDecModelloFiltroSelUdattb(idModelloTipoSerie);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecUsoModelloTipoSerie_queryIsOk() {
-	BigDecimal idModelloTipoSerie = aBigDecimal();
-	helper.retrieveDecUsoModelloTipoSerie(idModelloTipoSerie);
-	assertTrue(true);
+        BigDecimal idModelloTipoSerie = aBigDecimal();
+        helper.retrieveDecUsoModelloTipoSerie(idModelloTipoSerie);
+        assertTrue(true);
     }
 
     @Test
     void getMaxPgDecNotaModelloSerie_queryIsOk() {
-	BigDecimal idModelloTipoSerie = aBigDecimal();
-	BigDecimal idTipoNotaSerie = aBigDecimal();
-	helper.getMaxPgDecNotaModelloSerie(idModelloTipoSerie, idTipoNotaSerie);
-	assertTrue(true);
+        BigDecimal idModelloTipoSerie = aBigDecimal();
+        BigDecimal idTipoNotaSerie = aBigDecimal();
+        helper.getMaxPgDecNotaModelloSerie(idModelloTipoSerie, idTipoNotaSerie);
+        assertTrue(true);
     }
 
     @Test
     void existDecUsoModelloTipoSerie_queryIsOk() {
-	BigDecimal idModelloTipoSerie = aBigDecimal();
-	BigDecimal idStrut = aBigDecimal();
-	helper.existDecUsoModelloTipoSerie(idModelloTipoSerie, idStrut);
-	assertTrue(true);
+        BigDecimal idModelloTipoSerie = aBigDecimal();
+        BigDecimal idStrut = aBigDecimal();
+        helper.existDecUsoModelloTipoSerie(idModelloTipoSerie, idStrut);
+        assertTrue(true);
     }
 
     @Test
     void existsRelationsWithModello_queryIsOk() {
-	long idTipoDato = 0L;
-	Constants.TipoDato tipoDato = Constants.TipoDato.TIPO_UNITA_DOC;
-	helper.existsRelationsWithModello(idTipoDato, tipoDato);
-	assertTrue(true);
-	tipoDato = Constants.TipoDato.TIPO_DOC;
-	helper.existsRelationsWithModello(idTipoDato, tipoDato);
-	assertTrue(true);
+        long idTipoDato = 0L;
+        Constants.TipoDato tipoDato = Constants.TipoDato.TIPO_UNITA_DOC;
+        helper.existsRelationsWithModello(idTipoDato, tipoDato);
+        assertTrue(true);
+        tipoDato = Constants.TipoDato.TIPO_DOC;
+        helper.existsRelationsWithModello(idTipoDato, tipoDato);
+        assertTrue(true);
     }
 
     @Test
     void getDecModelloFiltroTiDoc_queryIsOk() {
-	BigDecimal idModelloTipoSerie = aBigDecimal();
-	helper.getDecModelloFiltroTiDoc(idModelloTipoSerie);
-	assertTrue(true);
+        BigDecimal idModelloTipoSerie = aBigDecimal();
+        helper.getDecModelloFiltroTiDoc(idModelloTipoSerie);
+        assertTrue(true);
     }
 }

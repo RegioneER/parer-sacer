@@ -40,30 +40,30 @@ public class SerVChkDefUdNoversBuco implements Serializable {
 
     @Column(name = "FL_DEF_UD_NON_VERS", columnDefinition = "char(1)")
     public String getFlDefUdNonVers() {
-	return this.flDefUdNonVers;
+        return this.flDefUdNonVers;
     }
 
     public void setFlDefUdNonVers(String flDefUdNonVers) {
-	this.flDefUdNonVers = flDefUdNonVers;
+        this.flDefUdNonVers = flDefUdNonVers;
     }
 
     @Column(name = "ID_SERIE")
     public BigDecimal getIdSerie() {
-	return this.idSerie;
+        return this.idSerie;
     }
 
     public void setIdSerie(BigDecimal idSerie) {
-	this.idSerie = idSerie;
+        this.idSerie = idSerie;
     }
 
     @Id
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-	return this.idVerSerie;
+        return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	this.idVerSerie = idVerSerie;
+        this.idVerSerie = idVerSerie;
     }
 
 }

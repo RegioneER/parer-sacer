@@ -46,10 +46,10 @@ public class UserHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive_queryIsOk() {
-	return HelperTest.createEnterpriseArchive(UserHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Collections.singletonList(""),
-			UserHelperTest.class, UserHelper.class));
+        return HelperTest.createEnterpriseArchive(UserHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Collections.singletonList(""),
+                        UserHelperTest.class, UserHelper.class));
     }
 
     private final Long noUserId = -1L;
@@ -57,121 +57,121 @@ public class UserHelperTest {
 
     @Test
     void findUsrUser_queryIsOk() {
-	try {
-	    helper.findUsrUser(noUsername);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        try {
+            helper.findUsrUser(noUsername);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void findIamUser_queryIsOk() {
-	try {
-	    helper.findIamUser(noUsername);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        try {
+            helper.findIamUser(noUsername);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void findIamUserList_queryIsOk() {
-	try {
-	    helper.findIamUserList(noUsername);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        try {
+            helper.findIamUserList(noUsername);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void findUserById_queryIsOk() {
-	try {
-	    helper.findUserById(noUserId);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        try {
+            helper.findUserById(noUserId);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void getOrgAmbienteById_queryIsOk() {
-	BigDecimal idAmbiente = aBigDecimal();
-	helper.getOrgAmbienteById(idAmbiente);
-	assertTrue(true);
+        BigDecimal idAmbiente = aBigDecimal();
+        helper.getOrgAmbienteById(idAmbiente);
+        assertTrue(true);
     }
 
     @Test
     void getOrgEnteById_queryIsOk() {
-	BigDecimal idEnte = aBigDecimal();
-	helper.getOrgEnteById(idEnte);
-	assertTrue(true);
+        BigDecimal idEnte = aBigDecimal();
+        helper.getOrgEnteById(idEnte);
+        assertTrue(true);
     }
 
     @Test
     void getOrgStrutById_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	helper.getOrgStrutById(idStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        helper.getOrgStrutById(idStrut);
+        assertTrue(true);
     }
 
     @Test
     void getTipoUnitaDocById_queryIsOk() {
-	BigDecimal idTipoUd = aBigDecimal();
-	helper.getTipoUnitaDocById(idTipoUd);
-	assertTrue(true);
+        BigDecimal idTipoUd = aBigDecimal();
+        helper.getTipoUnitaDocById(idTipoUd);
+        assertTrue(true);
     }
 
     @Test
     void getRegUnitaDocById_queryIsOk() {
-	BigDecimal idRegUd = aBigDecimal();
-	helper.getRegUnitaDocById(idRegUd);
-	assertTrue(true);
+        BigDecimal idRegUd = aBigDecimal();
+        helper.getRegUnitaDocById(idRegUd);
+        assertTrue(true);
     }
 
     @Test
     @Disabled("modifica i dati su db, rischioso")
     void resetPwd_3args_queryIsOk() {
-	long idUtente = noUserId;
-	String randomPwd = aString();
-	Date scad = tomorrowTs();
-	try {
-	    helper.resetPwd(idUtente, randomPwd, scad);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        long idUtente = noUserId;
+        String randomPwd = aString();
+        Date scad = tomorrowTs();
+        try {
+            helper.resetPwd(idUtente, randomPwd, scad);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     @Disabled("modifica i dati su db, rischioso")
     void resetPwd_long_String_queryIsOk() {
-	long idUtente = noUserId;
-	String randomPwd = aString();
-	try {
-	    helper.resetPwd(idUtente, randomPwd);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        long idUtente = noUserId;
+        String randomPwd = aString();
+        try {
+            helper.resetPwd(idUtente, randomPwd);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void getAmbienti_queryIsOk() {
-	helper.getAmbienti();
-	assertTrue(true);
+        helper.getAmbienti();
+        assertTrue(true);
     }
 
     @Test
     void checkEnteConvenzionatoAppart_queryIsOk() {
-	helper.checkEnteConvenzionatoAppart(noUserId);
-	assertTrue(true);
+        helper.checkEnteConvenzionatoAppart(noUserId);
+        assertTrue(true);
     }
 
     @Test
     void findUtentiPerUsernameCaseInsensitive() {
-	final List<UsrUser> users = helper.findUtentiPerUsernameCaseInsensitive("admin_generale");
-	assertEquals(1, users.size());
+        final List<UsrUser> users = helper.findUtentiPerUsernameCaseInsensitive("admin_generale");
+        assertEquals(1, users.size());
     }
 }

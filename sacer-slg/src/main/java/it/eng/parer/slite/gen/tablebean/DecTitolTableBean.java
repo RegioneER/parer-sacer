@@ -33,19 +33,19 @@ public class DecTitolTableBean extends AbstractBaseTable<DecTitolRowBean> {
     public static DecTitolTableDescriptor TABLE_DESCRIPTOR = new DecTitolTableDescriptor();
 
     public DecTitolTableBean() {
-	super();
+        super();
     }
 
     protected DecTitolRowBean createRow() {
-	return new DecTitolRowBean();
+        return new DecTitolRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecTitolRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

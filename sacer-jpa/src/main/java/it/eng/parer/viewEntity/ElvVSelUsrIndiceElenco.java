@@ -37,10 +37,10 @@ public class ElvVSelUsrIndiceElenco implements Serializable {
 
     @EmbeddedId()
     public ElvVSelUsrIndiceElencoId getElvVSelUsrIndiceElencoId() {
-	return elvVSelUsrIndiceElencoId;
+        return elvVSelUsrIndiceElencoId;
     }
 
     public void setElvVSelUsrIndiceElencoId(ElvVSelUsrIndiceElencoId elvVSelUsrIndiceElencoId) {
-	this.elvVSelUsrIndiceElencoId = elvVSelUsrIndiceElencoId;
+        this.elvVSelUsrIndiceElencoId = elvVSelUsrIndiceElencoId;
     }
 }

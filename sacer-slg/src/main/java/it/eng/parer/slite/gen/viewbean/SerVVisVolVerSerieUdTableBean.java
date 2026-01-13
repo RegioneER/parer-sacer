@@ -37,19 +37,19 @@ public class SerVVisVolVerSerieUdTableBean extends AbstractBaseTable<SerVVisVolV
     public static SerVVisVolVerSerieUdTableDescriptor TABLE_DESCRIPTOR = new SerVVisVolVerSerieUdTableDescriptor();
 
     public SerVVisVolVerSerieUdTableBean() {
-	super();
+        super();
     }
 
     protected SerVVisVolVerSerieUdRowBean createRow() {
-	return new SerVVisVolVerSerieUdRowBean();
+        return new SerVVisVolVerSerieUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerVVisVolVerSerieUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

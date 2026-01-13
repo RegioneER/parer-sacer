@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class DecUsoFormatoFileStandardTableBean
-	extends AbstractBaseTable<DecUsoFormatoFileStandardRowBean> {
+        extends AbstractBaseTable<DecUsoFormatoFileStandardRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class DecUsoFormatoFileStandardTableBean
     public static DecUsoFormatoFileStandardTableDescriptor TABLE_DESCRIPTOR = new DecUsoFormatoFileStandardTableDescriptor();
 
     public DecUsoFormatoFileStandardTableBean() {
-	super();
+        super();
     }
 
     protected DecUsoFormatoFileStandardRowBean createRow() {
-	return new DecUsoFormatoFileStandardRowBean();
+        return new DecUsoFormatoFileStandardRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecUsoFormatoFileStandardRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

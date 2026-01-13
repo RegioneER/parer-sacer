@@ -46,16 +46,16 @@ public abstract class JobTimer implements JbossJobTimer {
      * @param jobName Job name
      */
     protected JobTimer(String jobName) {
-	if (jobName == null || jobName.isEmpty()) {
-	    throw new IllegalArgumentException();
-	}
+        if (jobName == null || jobName.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
 
-	this.jobName = jobName;
+        this.jobName = jobName;
     }
 
     @Override
     public String getJobName() {
-	return jobName;
+        return jobName;
     }
 
     /**
@@ -65,16 +65,16 @@ public abstract class JobTimer implements JbossJobTimer {
      */
     @Override
     public Date getNextElaboration(String applicationName) {
-	for (Object obj : timerService.getTimers()) {
-	    Timer timer = (Timer) obj;
-	    String scheduled = (String) timer.getInfo();
+        for (Object obj : timerService.getTimers()) {
+            Timer timer = (Timer) obj;
+            String scheduled = (String) timer.getInfo();
 
-	    if (scheduled.equals(jobName)) {
-		return timer.getNextTimeout();
-	    }
-	}
+            if (scheduled.equals(jobName)) {
+                return timer.getNextTimeout();
+            }
+        }
 
-	return null;
+        return null;
     }
 
     /**

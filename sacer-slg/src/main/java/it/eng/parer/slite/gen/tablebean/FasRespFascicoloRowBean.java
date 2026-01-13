@@ -39,140 +39,140 @@ public class FasRespFascicoloRowBean extends BaseRow implements JEEBaseRowInterf
     public static FasRespFascicoloTableDescriptor TABLE_DESCRIPTOR = new FasRespFascicoloTableDescriptor();
 
     public FasRespFascicoloRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdRespFascicolo() {
-	return getBigDecimal("id_resp_fascicolo");
+        return getBigDecimal("id_resp_fascicolo");
     }
 
     public void setIdRespFascicolo(BigDecimal idRespFascicolo) {
-	setObject("id_resp_fascicolo", idRespFascicolo);
+        setObject("id_resp_fascicolo", idRespFascicolo);
     }
 
     public BigDecimal getIdFascicolo() {
-	return getBigDecimal("id_fascicolo");
+        return getBigDecimal("id_fascicolo");
     }
 
     public void setIdFascicolo(BigDecimal idFascicolo) {
-	setObject("id_fascicolo", idFascicolo);
+        setObject("id_fascicolo", idFascicolo);
     }
 
     public String getTiOggResp() {
-	return getString("ti_ogg_resp");
+        return getString("ti_ogg_resp");
     }
 
     public void setTiOggResp(String tiOggResp) {
-	setObject("ti_ogg_resp", tiOggResp);
+        setObject("ti_ogg_resp", tiOggResp);
     }
 
     public String getTiResp() {
-	return getString("ti_resp");
+        return getString("ti_resp");
     }
 
     public void setTiResp(String tiResp) {
-	setObject("ti_resp", tiResp);
+        setObject("ti_resp", tiResp);
     }
 
     public String getNmNomeResp() {
-	return getString("nm_nome_resp");
+        return getString("nm_nome_resp");
     }
 
     public void setNmNomeResp(String nmNomeResp) {
-	setObject("nm_nome_resp", nmNomeResp);
+        setObject("nm_nome_resp", nmNomeResp);
     }
 
     public String getNmCognResp() {
-	return getString("nm_cogn_resp");
+        return getString("nm_cogn_resp");
     }
 
     public void setNmCognResp(String nmCognResp) {
-	setObject("nm_cogn_resp", nmCognResp);
+        setObject("nm_cogn_resp", nmCognResp);
     }
 
     public String getCdResp() {
-	return getString("cd_resp");
+        return getString("cd_resp");
     }
 
     public void setCdResp(String cdResp) {
-	setObject("cd_resp", cdResp);
+        setObject("cd_resp", cdResp);
     }
 
     public String getTiCdResp() {
-	return getString("ti_cd_resp");
+        return getString("ti_cd_resp");
     }
 
     public void setTiCdResp(String tiCdResp) {
-	setObject("ti_cd_resp", tiCdResp);
+        setObject("ti_cd_resp", tiCdResp);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	FasRespFascicolo entity = (FasRespFascicolo) obj;
+        FasRespFascicolo entity = (FasRespFascicolo) obj;
 
-	this.setIdRespFascicolo(entity.getIdRespFascicolo() == null ? null
-		: BigDecimal.valueOf(entity.getIdRespFascicolo()));
+        this.setIdRespFascicolo(entity.getIdRespFascicolo() == null ? null
+                : BigDecimal.valueOf(entity.getIdRespFascicolo()));
 
-	if (entity.getFasFascicolo() != null) {
-	    this.setIdFascicolo(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
-	}
+        if (entity.getFasFascicolo() != null) {
+            this.setIdFascicolo(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
+        }
 
-	this.setTiOggResp(entity.getTiOggResp().name());
-	this.setTiResp(entity.getTiResp());
-	this.setNmNomeResp(entity.getNmNomeResp());
-	this.setNmCognResp(entity.getNmCognResp());
-	this.setCdResp(entity.getCdResp());
-	this.setTiCdResp(entity.getTiCdResp());
+        this.setTiOggResp(entity.getTiOggResp().name());
+        this.setTiResp(entity.getTiResp());
+        this.setNmNomeResp(entity.getNmNomeResp());
+        this.setNmCognResp(entity.getNmCognResp());
+        this.setCdResp(entity.getCdResp());
+        this.setTiCdResp(entity.getTiCdResp());
     }
 
     @Override
     public FasRespFascicolo rowBeanToEntity() {
-	FasRespFascicolo entity = new FasRespFascicolo();
-	if (this.getIdRespFascicolo() != null) {
-	    entity.setIdRespFascicolo(this.getIdRespFascicolo().longValue());
-	}
-	if (this.getIdFascicolo() != null) {
-	    if (entity.getFasFascicolo() == null) {
-		entity.setFasFascicolo(new FasFascicolo());
-	    }
-	    entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
-	}
-	entity.setTiOggResp(TiOggResp.valueOf(this.getTiOggResp()));
-	entity.setTiResp(this.getTiResp());
-	entity.setNmNomeResp(this.getNmNomeResp());
-	entity.setNmCognResp(this.getNmCognResp());
-	entity.setCdResp(this.getCdResp());
-	entity.setTiCdResp(this.getTiCdResp());
-	return entity;
+        FasRespFascicolo entity = new FasRespFascicolo();
+        if (this.getIdRespFascicolo() != null) {
+            entity.setIdRespFascicolo(this.getIdRespFascicolo().longValue());
+        }
+        if (this.getIdFascicolo() != null) {
+            if (entity.getFasFascicolo() == null) {
+                entity.setFasFascicolo(new FasFascicolo());
+            }
+            entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
+        }
+        entity.setTiOggResp(TiOggResp.valueOf(this.getTiOggResp()));
+        entity.setTiResp(this.getTiResp());
+        entity.setNmNomeResp(this.getNmNomeResp());
+        entity.setNmCognResp(this.getNmCognResp());
+        entity.setCdResp(this.getCdResp());
+        entity.setTiCdResp(this.getTiCdResp());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 }

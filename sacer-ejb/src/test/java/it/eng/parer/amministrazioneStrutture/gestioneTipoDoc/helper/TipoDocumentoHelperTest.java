@@ -41,116 +41,116 @@ public class TipoDocumentoHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(TipoDocumentoHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), TipoDocumentoHelperTest.class,
-			TipoDocumentoHelper.class));
+        return HelperTest.createEnterpriseArchive(TipoDocumentoHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), TipoDocumentoHelperTest.class,
+                        TipoDocumentoHelper.class));
     }
 
     @Test
     void getDecTipoDocByName_String_BigDecimal_queryIsOk() {
-	String nmTipoDoc = aString();
-	BigDecimal idStrut = aBigDecimal();
-	helper.getDecTipoDocByName(nmTipoDoc, idStrut);
-	assertTrue(true);
+        String nmTipoDoc = aString();
+        BigDecimal idStrut = aBigDecimal();
+        helper.getDecTipoDocByName(nmTipoDoc, idStrut);
+        assertTrue(true);
     }
 
     @Test
     void getDecTipoDocByName_String_long_queryIsOk() {
-	String nmTipoDoc = aString();
-	long idStrut = aLong();
-	helper.getDecTipoDocByName(nmTipoDoc, idStrut);
-	assertTrue(true);
+        String nmTipoDoc = aString();
+        long idStrut = aLong();
+        helper.getDecTipoDocByName(nmTipoDoc, idStrut);
+        assertTrue(true);
     }
 
     @Test
     void getTipiDocAbilitati_queryIsOk() {
-	long idUtente = aLong();
-	BigDecimal idStruttura = aBigDecimal();
-	helper.getTipiDocAbilitati(idUtente, idStruttura);
-	assertTrue(true);
+        long idUtente = aLong();
+        BigDecimal idStruttura = aBigDecimal();
+        helper.getTipiDocAbilitati(idUtente, idStruttura);
+        assertTrue(true);
     }
 
     @Test
     void getTipiDocPrincipaliAbilitati_queryIsOk() {
-	long idUtente = aLong();
-	BigDecimal idStruttura = aBigDecimal();
-	helper.getTipiDocPrincipaliAbilitati(idUtente, idStruttura);
-	assertTrue(true);
+        long idUtente = aLong();
+        BigDecimal idStruttura = aBigDecimal();
+        helper.getTipiDocPrincipaliAbilitati(idUtente, idStruttura);
+        assertTrue(true);
     }
 
     @Test
     void getTipiDocAbilitatiDaStrutturaList_queryIsOk() {
-	long idUtente = aLong();
-	List<BigDecimal> idStrutturaList = aListOfBigDecimal(2);
-	boolean docPrincipale = false;
-	helper.getTipiDocAbilitatiDaStrutturaList(idUtente, idStrutturaList, docPrincipale);
-	assertTrue(true);
+        long idUtente = aLong();
+        List<BigDecimal> idStrutturaList = aListOfBigDecimal(2);
+        boolean docPrincipale = false;
+        helper.getTipiDocAbilitatiDaStrutturaList(idUtente, idStrutturaList, docPrincipale);
+        assertTrue(true);
     }
 
     @Test
     void countDecTipoDocPrincipalePerTipoUnitaDoc_queryIsOk() {
-	long idTipoUnitaDoc = aLong();
-	long idTipoDoc = aLong();
-	helper.countDecTipoDocPrincipalePerTipoUnitaDoc(idTipoUnitaDoc, idTipoDoc);
-	assertTrue(true);
+        long idTipoUnitaDoc = aLong();
+        long idTipoDoc = aLong();
+        helper.countDecTipoDocPrincipalePerTipoUnitaDoc(idTipoUnitaDoc, idTipoDoc);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecTipoDocList_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	boolean flPrinc = false;
-	Date dtSoppressione = todayTs();
-	boolean filterValid = false;
-	helper.retrieveDecTipoDocList(idStrut, flPrinc, dtSoppressione, filterValid);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        boolean flPrinc = false;
+        Date dtSoppressione = todayTs();
+        boolean filterValid = false;
+        helper.retrieveDecTipoDocList(idStrut, flPrinc, dtSoppressione, filterValid);
+        assertTrue(true);
     }
 
     @Test
     void getDecTipoStrutDocAmmessoListByIdTipoDoc_queryIsOk() {
-	Long idTipoDoc = aLong();
-	helper.getDecTipoStrutDocAmmessoListByIdTipoDoc(idTipoDoc);
-	assertTrue(true);
+        Long idTipoDoc = aLong();
+        helper.getDecTipoStrutDocAmmessoListByIdTipoDoc(idTipoDoc);
+        assertTrue(true);
     }
 
     @Test
     void getDecTipoStrutDocAmmessoListByIdTipoStrutDoc_queryIsOk() {
-	Long idTipoStrutDoc = aLong();
-	helper.getDecTipoStrutDocAmmessoListByIdTipoStrutDoc(idTipoStrutDoc);
-	assertTrue(true);
+        Long idTipoStrutDoc = aLong();
+        helper.getDecTipoStrutDocAmmessoListByIdTipoStrutDoc(idTipoStrutDoc);
+        assertTrue(true);
     }
 
     @Test
     void getDecTipoStrutDocListByIdStrut_queryIsOk() {
-	Long idStrut = aLong();
-	Date data = todayTs();
-	helper.getDecTipoStrutDocListByIdStrut(idStrut, data);
-	assertTrue(true);
+        Long idStrut = aLong();
+        Date data = todayTs();
+        helper.getDecTipoStrutDocListByIdStrut(idStrut, data);
+        assertTrue(true);
     }
 
     @Test
     void getDecTipoStrutDocAmmessoByName_queryIsOk() {
-	BigDecimal idStrutCorrente = aBigDecimal();
-	String nmTipoStrutDoc = aString();
-	String nmTipoDoc = aString();
-	helper.getDecTipoStrutDocAmmessoByName(idStrutCorrente, nmTipoStrutDoc, nmTipoDoc);
-	assertTrue(true);
+        BigDecimal idStrutCorrente = aBigDecimal();
+        String nmTipoStrutDoc = aString();
+        String nmTipoDoc = aString();
+        helper.getDecTipoStrutDocAmmessoByName(idStrutCorrente, nmTipoStrutDoc, nmTipoDoc);
+        assertTrue(true);
     }
 
     @Test
     void getDecTipoStrutDocAmmessoByParentId_queryIsOk() {
-	Long idTipoDoc = aLong();
-	Long idTipoStrutDoc = aLong();
-	helper.getDecTipoStrutDocAmmessoByParentId(idTipoDoc, idTipoStrutDoc);
-	assertTrue(true);
+        Long idTipoDoc = aLong();
+        Long idTipoStrutDoc = aLong();
+        helper.getDecTipoStrutDocAmmessoByParentId(idTipoDoc, idTipoStrutDoc);
+        assertTrue(true);
     }
 
     @Test
     void getDecTipoStrutUdXsdByName_queryIsOk() {
-	BigDecimal idStrutCorrente = aBigDecimal();
-	String nmTipoUnitaDoc = aString();
-	String nmTipoStrutUnitaDoc = aString();
-	helper.getDecTipoStrutUdXsdByName(idStrutCorrente, nmTipoUnitaDoc, nmTipoStrutUnitaDoc);
-	assertTrue(true);
+        BigDecimal idStrutCorrente = aBigDecimal();
+        String nmTipoUnitaDoc = aString();
+        String nmTipoStrutUnitaDoc = aString();
+        helper.getDecTipoStrutUdXsdByName(idStrutCorrente, nmTipoUnitaDoc, nmTipoStrutUnitaDoc);
+        assertTrue(true);
     }
 }

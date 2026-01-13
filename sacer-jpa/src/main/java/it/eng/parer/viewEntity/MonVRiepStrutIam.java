@@ -53,102 +53,102 @@ public class MonVRiepStrutIam implements Serializable {
 
     @Column(name = "FL_DOC_SENZA_ELENCO", columnDefinition = "char(1)")
     public String getFlDocSenzaElenco() {
-	return this.flDocSenzaElenco;
+        return this.flDocSenzaElenco;
     }
 
     public void setFlDocSenzaElenco(String flDocSenzaElenco) {
-	this.flDocSenzaElenco = flDocSenzaElenco;
+        this.flDocSenzaElenco = flDocSenzaElenco;
     }
 
     @Column(name = "FL_ELENCO_CHIUSO", columnDefinition = "char(1)")
     public String getFlElencoChiuso() {
-	return this.flElencoChiuso;
+        return this.flElencoChiuso;
     }
 
     public void setFlElencoChiuso(String flElencoChiuso) {
-	this.flElencoChiuso = flElencoChiuso;
+        this.flElencoChiuso = flElencoChiuso;
     }
 
     @Column(name = "FL_ERR_FMT_NUMERO", columnDefinition = "char(1)")
     public String getFlErrFmtNumero() {
-	return this.flErrFmtNumero;
+        return this.flErrFmtNumero;
     }
 
     public void setFlErrFmtNumero(String flErrFmtNumero) {
-	this.flErrFmtNumero = flErrFmtNumero;
+        this.flErrFmtNumero = flErrFmtNumero;
     }
 
     @Column(name = "FL_RICH_ANNUL_VERS_APERTA", columnDefinition = "char(1)")
     public String getFlRichAnnulVersAperta() {
-	return flRichAnnulVersAperta;
+        return flRichAnnulVersAperta;
     }
 
     public void setFlRichAnnulVersAperta(String flRichAnnulVersAperta) {
-	this.flRichAnnulVersAperta = flRichAnnulVersAperta;
+        this.flRichAnnulVersAperta = flRichAnnulVersAperta;
     }
 
     @Column(name = "FL_SESSIONI_FALLITE_NO_RIS", columnDefinition = "char(1)")
     public String getFlSessioniFalliteNoRis() {
-	return this.flSessioniFalliteNoRis;
+        return this.flSessioniFalliteNoRis;
     }
 
     public void setFlSessioniFalliteNoRis(String flSessioniFalliteNoRis) {
-	this.flSessioniFalliteNoRis = flSessioniFalliteNoRis;
+        this.flSessioniFalliteNoRis = flSessioniFalliteNoRis;
     }
 
     @Id
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-	return this.idAmbiente;
+        return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	this.idAmbiente = idAmbiente;
+        this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return this.idUserIam;
+        return this.idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-	return this.nmAmbiente;
+        return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	this.nmAmbiente = nmAmbiente;
+        this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-	return this.nmEnte;
+        return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-	return this.nmStrut;
+        return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
 }

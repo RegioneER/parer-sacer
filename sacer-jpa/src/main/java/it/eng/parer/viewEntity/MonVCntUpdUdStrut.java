@@ -37,21 +37,21 @@ public class MonVCntUpdUdStrut implements Serializable {
 
     @Column(name = "NI_UPD_UD")
     public BigDecimal getNiUpdUd() {
-	return this.niUpdUd;
+        return this.niUpdUd;
     }
 
     public void setNiUpdUd(BigDecimal niUpdUd) {
-	this.niUpdUd = niUpdUd;
+        this.niUpdUd = niUpdUd;
     }
 
     private MonVCntUpdUdStrutId monVCntUpdUdStrutId;
 
     @EmbeddedId()
     public MonVCntUpdUdStrutId getMonVCntUpdUdStrutId() {
-	return monVCntUpdUdStrutId;
+        return monVCntUpdUdStrutId;
     }
 
     public void setMonVCntUpdUdStrutId(MonVCntUpdUdStrutId monVCntUpdUdStrutId) {
-	this.monVCntUpdUdStrutId = monVCntUpdUdStrutId;
+        this.monVCntUpdUdStrutId = monVCntUpdUdStrutId;
     }
 }

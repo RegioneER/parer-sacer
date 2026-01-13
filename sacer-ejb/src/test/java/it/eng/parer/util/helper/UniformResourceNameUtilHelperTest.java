@@ -32,82 +32,82 @@ public class UniformResourceNameUtilHelperTest extends HelperTest<UniformResourc
 
     @Test
     void existsCdKeyNormalizedQueryIsOk() {
-	long idRegistro = 0L;
-	BigDecimal aaKeyUnitaDoc = BigDecimal.valueOf(1900);
-	String cdKeyUnitaDoc = "KEY";
-	String cdKeyUnitaDocNormaliz = "KEYNORMALIZ";
-	helper.existsCdKeyNormalized(idRegistro, aaKeyUnitaDoc, cdKeyUnitaDoc,
-		cdKeyUnitaDocNormaliz);
-	assertTrue(true);
+        long idRegistro = 0L;
+        BigDecimal aaKeyUnitaDoc = BigDecimal.valueOf(1900);
+        String cdKeyUnitaDoc = "KEY";
+        String cdKeyUnitaDocNormaliz = "KEYNORMALIZ";
+        helper.existsCdKeyNormalized(idRegistro, aaKeyUnitaDoc, cdKeyUnitaDoc,
+                cdKeyUnitaDocNormaliz);
+        assertTrue(true);
     }
 
     @Test
     void retrieveVrsVLisXmlUpdUrnDaCalcByUpdQueryIsOk(String methodName) throws Throwable {
-	Class[] paramsType = {
-		long.class };
-	Object[] paramsValue = {
-		0L };
-	assertTrueByReflection(paramsType, paramsValue, "retrieveVrsVLisXmlUpdUrnDaCalcByUpd");
+        Class[] paramsType = {
+                long.class };
+        Object[] paramsValue = {
+                0L };
+        assertTrueByReflection(paramsType, paramsValue, "retrieveVrsVLisXmlUpdUrnDaCalcByUpd");
     }
 
     @Test
     void retrieveAroUpdUnitaDocByUdQueryIsOk() throws Throwable {
-	Class[] paramsType = {
-		long.class };
-	Object[] paramsValue = {
-		0L };
-	String methodName = "retrieveAroUpdUnitaDocByUd";
-	assertTrueByReflection(paramsType, paramsValue, methodName);
+        Class[] paramsType = {
+                long.class };
+        Object[] paramsValue = {
+                0L };
+        String methodName = "retrieveAroUpdUnitaDocByUd";
+        assertTrueByReflection(paramsType, paramsValue, methodName);
     }
 
     @Test
     void retrieveAroVLisaipudUrndacalcByudQueryIsOk() throws Throwable {
-	Class[] paramsType = {
-		long.class };
-	Object[] paramsValue = {
-		0L };
-	String methodName = "retrieveAroVLisaipudUrndacalcByud";
-	assertTrueByReflection(paramsType, paramsValue, methodName);
+        Class[] paramsType = {
+                long.class };
+        Object[] paramsValue = {
+                0L };
+        String methodName = "retrieveAroVLisaipudUrndacalcByud";
+        assertTrueByReflection(paramsType, paramsValue, methodName);
     }
 
     @Test
     void retrieveVrsVLisXmlDocUrnDaCalcByDocQueryIsOk() throws Throwable {
-	Class[] paramsType = {
-		long.class };
-	Object[] paramsValue = {
-		0L };
-	String methodName = "retrieveVrsVLisXmlDocUrnDaCalcByDoc";
-	assertTrueByReflection(paramsType, paramsValue, methodName);
+        Class[] paramsType = {
+                long.class };
+        Object[] paramsValue = {
+                0L };
+        String methodName = "retrieveVrsVLisXmlDocUrnDaCalcByDoc";
+        assertTrueByReflection(paramsType, paramsValue, methodName);
     }
 
     @Test
     void retrieveVrsVLisXmlUdUrnDaCalcByUdQueryIsOk() throws Throwable {
-	Class[] paramsType = {
-		long.class };
-	Object[] paramsValue = {
-		0L };
-	String methodName = "retrieveVrsVLisXmlUdUrnDaCalcByUd";
-	assertTrueByReflection(paramsType, paramsValue, methodName);
+        Class[] paramsType = {
+                long.class };
+        Object[] paramsValue = {
+                0L };
+        String methodName = "retrieveVrsVLisXmlUdUrnDaCalcByUd";
+        assertTrueByReflection(paramsType, paramsValue, methodName);
     }
 
     private void assertTrueByReflection(Class[] paramsType, Object[] paramsValue, String methodName)
-	    throws Throwable {
-	Method mthd = UniformResourceNameUtilHelper.class.getDeclaredMethod(methodName, paramsType);
-	mthd.setAccessible(true);
-	try {
-	    mthd.invoke(helper, paramsValue);
-	    assertTrue(true);
-	} catch (InvocationTargetException e) {
-	    throw e.getTargetException();
-	}
+            throws Throwable {
+        Method mthd = UniformResourceNameUtilHelper.class.getDeclaredMethod(methodName, paramsType);
+        mthd.setAccessible(true);
+        try {
+            mthd.invoke(helper, paramsValue);
+            assertTrue(true);
+        } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+        }
     }
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	final JavaArchive sacerJavaArchive = createSacerJavaArchive(
-		Arrays.asList("it.eng.parer.ws.dto"), UniformResourceNameUtilHelperTest.class,
-		UniformResourceNameUtilHelper.class);
-	return createEnterpriseArchive(SerieHelperTest.class.getSimpleName(), sacerJavaArchive,
-		createPaginatorJavaArchive(), createSacerLogJar());
+        final JavaArchive sacerJavaArchive = createSacerJavaArchive(
+                Arrays.asList("it.eng.parer.ws.dto"), UniformResourceNameUtilHelperTest.class,
+                UniformResourceNameUtilHelper.class);
+        return createEnterpriseArchive(SerieHelperTest.class.getSimpleName(), sacerJavaArchive,
+                createPaginatorJavaArchive(), createSacerLogJar());
     }
 }

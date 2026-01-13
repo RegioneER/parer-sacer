@@ -112,271 +112,271 @@ public class DecCriterioRaggrFasc implements Serializable {
 
     @Column(name = "ID_CRITERIO_RAGGR_FASC")
     @GenericGenerator(name = "SDEC_CRITERIO_RAGGR_FASC_ID_CRITERIO_RAGGR_FASC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_CRITERIO_RAGGR_FASC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_CRITERIO_RAGGR_FASC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_CRITERIO_RAGGR_FASC_ID_CRITERIO_RAGGR_FASC_GENERATOR")
     public Long getIdCriterioRaggrFasc() {
-	return this.idCriterioRaggrFasc;
+        return this.idCriterioRaggrFasc;
     }
 
     public void setIdCriterioRaggrFasc(Long idCriterioRaggrFasc) {
-	this.idCriterioRaggrFasc = idCriterioRaggrFasc;
+        this.idCriterioRaggrFasc = idCriterioRaggrFasc;
     }
 
     @Column(name = "AA_FASCICOLO")
     public BigDecimal getAaFascicolo() {
-	return this.aaFascicolo;
+        return this.aaFascicolo;
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-	this.aaFascicolo = aaFascicolo;
+        this.aaFascicolo = aaFascicolo;
     }
 
     @Column(name = "AA_FASCICOLO_A")
     public BigDecimal getAaFascicoloA() {
-	return this.aaFascicoloA;
+        return this.aaFascicoloA;
     }
 
     public void setAaFascicoloA(BigDecimal aaFascicoloA) {
-	this.aaFascicoloA = aaFascicoloA;
+        this.aaFascicoloA = aaFascicoloA;
     }
 
     @Column(name = "AA_FASCICOLO_DA")
     public BigDecimal getAaFascicoloDa() {
-	return this.aaFascicoloDa;
+        return this.aaFascicoloDa;
     }
 
     public void setAaFascicoloDa(BigDecimal aaFascicoloDa) {
-	this.aaFascicoloDa = aaFascicoloDa;
+        this.aaFascicoloDa = aaFascicoloDa;
     }
 
     @Column(name = "DS_CRITERIO_RAGGR")
     public String getDsCriterioRaggr() {
-	return this.dsCriterioRaggr;
+        return this.dsCriterioRaggr;
     }
 
     public void setDsCriterioRaggr(String dsCriterioRaggr) {
-	this.dsCriterioRaggr = dsCriterioRaggr;
+        this.dsCriterioRaggr = dsCriterioRaggr;
     }
 
     @Column(name = "DS_OGGETTO_FASCICOLO")
     public String getDsOggettoFascicolo() {
-	return this.dsOggettoFascicolo;
+        return this.dsOggettoFascicolo;
     }
 
     public void setDsOggettoFascicolo(String dsOggettoFascicolo) {
-	this.dsOggettoFascicolo = dsOggettoFascicolo;
+        this.dsOggettoFascicolo = dsOggettoFascicolo;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_APE_FASCICOLO_A")
     public Date getDtApeFascicoloA() {
-	return this.dtApeFascicoloA;
+        return this.dtApeFascicoloA;
     }
 
     public void setDtApeFascicoloA(Date dtApeFascicoloA) {
-	this.dtApeFascicoloA = dtApeFascicoloA;
+        this.dtApeFascicoloA = dtApeFascicoloA;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_APE_FASCICOLO_DA")
     public Date getDtApeFascicoloDa() {
-	return this.dtApeFascicoloDa;
+        return this.dtApeFascicoloDa;
     }
 
     public void setDtApeFascicoloDa(Date dtApeFascicoloDa) {
-	this.dtApeFascicoloDa = dtApeFascicoloDa;
+        this.dtApeFascicoloDa = dtApeFascicoloDa;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CHIU_FASCICOLO_A")
     public Date getDtChiuFascicoloA() {
-	return this.dtChiuFascicoloA;
+        return this.dtChiuFascicoloA;
     }
 
     public void setDtChiuFascicoloA(Date dtChiuFascicoloA) {
-	this.dtChiuFascicoloA = dtChiuFascicoloA;
+        this.dtChiuFascicoloA = dtChiuFascicoloA;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CHIU_FASCICOLO_DA")
     public Date getDtChiuFascicoloDa() {
-	return this.dtChiuFascicoloDa;
+        return this.dtChiuFascicoloDa;
     }
 
     public void setDtChiuFascicoloDa(Date dtChiuFascicoloDa) {
-	this.dtChiuFascicoloDa = dtChiuFascicoloDa;
+        this.dtChiuFascicoloDa = dtChiuFascicoloDa;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ISTITUZ")
     public Date getDtIstituz() {
-	return this.dtIstituz;
+        return this.dtIstituz;
     }
 
     public void setDtIstituz(Date dtIstituz) {
-	this.dtIstituz = dtIstituz;
+        this.dtIstituz = dtIstituz;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SOPPRES")
     public Date getDtSoppres() {
-	return this.dtSoppres;
+        return this.dtSoppres;
     }
 
     public void setDtSoppres(Date dtSoppres) {
-	this.dtSoppres = dtSoppres;
+        this.dtSoppres = dtSoppres;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VERS_A")
     public Date getDtVersA() {
-	return this.dtVersA;
+        return this.dtVersA;
     }
 
     public void setDtVersA(Date dtVersA) {
-	this.dtVersA = dtVersA;
+        this.dtVersA = dtVersA;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VERS_DA")
     public Date getDtVersDa() {
-	return this.dtVersDa;
+        return this.dtVersDa;
     }
 
     public void setDtVersDa(Date dtVersDa) {
-	this.dtVersDa = dtVersDa;
+        this.dtVersDa = dtVersDa;
     }
 
     @Column(name = "FL_CRITERIO_RAGGR_STANDARD", columnDefinition = "char(1)")
     public String getFlCriterioRaggrStandard() {
-	return this.flCriterioRaggrStandard;
+        return this.flCriterioRaggrStandard;
     }
 
     public void setFlCriterioRaggrStandard(String flCriterioRaggrStandard) {
-	this.flCriterioRaggrStandard = flCriterioRaggrStandard;
+        this.flCriterioRaggrStandard = flCriterioRaggrStandard;
     }
 
     @Column(name = "FL_FILTRO_SISTEMA_MIGRAZ", columnDefinition = "char(1)")
     public String getFlFiltroSistemaMigraz() {
-	return this.flFiltroSistemaMigraz;
+        return this.flFiltroSistemaMigraz;
     }
 
     public void setFlFiltroSistemaMigraz(String flFiltroSistemaMigraz) {
-	this.flFiltroSistemaMigraz = flFiltroSistemaMigraz;
+        this.flFiltroSistemaMigraz = flFiltroSistemaMigraz;
     }
 
     @Column(name = "FL_FILTRO_TIPO_FASCICOLO", columnDefinition = "char(1)")
     public String getFlFiltroTipoFascicolo() {
-	return this.flFiltroTipoFascicolo;
+        return this.flFiltroTipoFascicolo;
     }
 
     public void setFlFiltroTipoFascicolo(String flFiltroTipoFascicolo) {
-	this.flFiltroTipoFascicolo = flFiltroTipoFascicolo;
+        this.flFiltroTipoFascicolo = flFiltroTipoFascicolo;
     }
 
     @Column(name = "FL_FILTRO_VOCE_TITOL", columnDefinition = "char(1)")
     public String getFlFiltroVoceTitol() {
-	return this.flFiltroVoceTitol;
+        return this.flFiltroVoceTitol;
     }
 
     public void setFlFiltroVoceTitol(String flFiltroVoceTitol) {
-	this.flFiltroVoceTitol = flFiltroVoceTitol;
+        this.flFiltroVoceTitol = flFiltroVoceTitol;
     }
 
     @Column(name = "NI_MAX_FASC")
     public BigDecimal getNiMaxFasc() {
-	return this.niMaxFasc;
+        return this.niMaxFasc;
     }
 
     public void setNiMaxFasc(BigDecimal niMaxFasc) {
-	this.niMaxFasc = niMaxFasc;
+        this.niMaxFasc = niMaxFasc;
     }
 
     @Column(name = "NI_TEMPO_SCAD_CHIUS")
     public BigDecimal getNiTempoScadChius() {
-	return this.niTempoScadChius;
+        return this.niTempoScadChius;
     }
 
     public void setNiTempoScadChius(BigDecimal niTempoScadChius) {
-	this.niTempoScadChius = niTempoScadChius;
+        this.niTempoScadChius = niTempoScadChius;
     }
 
     @Column(name = "NM_CRITERIO_RAGGR")
     public String getNmCriterioRaggr() {
-	return this.nmCriterioRaggr;
+        return this.nmCriterioRaggr;
     }
 
     public void setNmCriterioRaggr(String nmCriterioRaggr) {
-	this.nmCriterioRaggr = nmCriterioRaggr;
+        this.nmCriterioRaggr = nmCriterioRaggr;
     }
 
     @Column(name = "NT_CRITERIO_RAGGR")
     public String getNtCriterioRaggr() {
-	return this.ntCriterioRaggr;
+        return this.ntCriterioRaggr;
     }
 
     public void setNtCriterioRaggr(String ntCriterioRaggr) {
-	this.ntCriterioRaggr = ntCriterioRaggr;
+        this.ntCriterioRaggr = ntCriterioRaggr;
     }
 
     @Column(name = "TI_CONSERVAZIONE")
     public String getTiConservazione() {
-	return this.tiConservazione;
+        return this.tiConservazione;
     }
 
     public void setTiConservazione(String tiConservazione) {
-	this.tiConservazione = tiConservazione;
+        this.tiConservazione = tiConservazione;
     }
 
     @Column(name = "TI_SCAD_CHIUS")
     public String getTiScadChius() {
-	return this.tiScadChius;
+        return this.tiScadChius;
     }
 
     public void setTiScadChius(String tiScadChius) {
-	this.tiScadChius = tiScadChius;
+        this.tiScadChius = tiScadChius;
     }
 
     @Column(name = "TI_TEMPO_SCAD_CHIUS")
     public String getTiTempoScadChius() {
-	return this.tiTempoScadChius;
+        return this.tiTempoScadChius;
     }
 
     public void setTiTempoScadChius(String tiTempoScadChius) {
-	this.tiTempoScadChius = tiTempoScadChius;
+        this.tiTempoScadChius = tiTempoScadChius;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     @XmlTransient
     public OrgStrut getOrgStrut() {
-	return this.orgStrut;
+        return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-	this.orgStrut = orgStrut;
+        this.orgStrut = orgStrut;
     }
 
     @OneToMany(mappedBy = "decCriterioRaggrFasc", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     @XmlTransient
     public List<DecSelCriterioRaggrFasc> getDecSelCriterioRaggrFascicoli() {
-	return this.decSelCriterioRaggrFascicoli;
+        return this.decSelCriterioRaggrFascicoli;
     }
 
     public void setDecSelCriterioRaggrFascicoli(
-	    List<DecSelCriterioRaggrFasc> decSelCriterioRaggrFascicoli) {
-	this.decSelCriterioRaggrFascicoli = decSelCriterioRaggrFascicoli;
+            List<DecSelCriterioRaggrFasc> decSelCriterioRaggrFascicoli) {
+        this.decSelCriterioRaggrFascicoli = decSelCriterioRaggrFascicoli;
     }
 
     @OneToMany(mappedBy = "decCriterioRaggrFasc")
     @XmlTransient
     public List<ElvElencoVersFasc> getElvElencoVersFasc() {
-	return this.elvElencoVersFasc;
+        return this.elvElencoVersFasc;
     }
 
     public void setElvElencoVersFasc(List<ElvElencoVersFasc> elvElencoVersFasc) {
-	this.elvElencoVersFasc = elvElencoVersFasc;
+        this.elvElencoVersFasc = elvElencoVersFasc;
     }
 }

@@ -47,32 +47,32 @@ public class MonVChkCntDocTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_FL_DOC_CORR, new ColumnDescriptor(COL_FL_DOC_CORR, Types.VARCHAR, 1, true));
-	map.put(COL_FL_DOC_30GG, new ColumnDescriptor(COL_FL_DOC_30GG, Types.VARCHAR, 1, true));
-	map.put(COL_FL_DOC_ATTESA_MEM_CORR,
-		new ColumnDescriptor(COL_FL_DOC_ATTESA_MEM_CORR, Types.VARCHAR, 1, true));
-	map.put(COL_FL_DOC_ATTESA_MEM_30GG,
-		new ColumnDescriptor(COL_FL_DOC_ATTESA_MEM_30GG, Types.VARCHAR, 1, true));
-	map.put(COL_FL_DOC_ATTESA_SCHED_CORR,
-		new ColumnDescriptor(COL_FL_DOC_ATTESA_SCHED_CORR, Types.VARCHAR, 1, true));
-	map.put(COL_FL_DOC_ATTESA_SCHED_30GG,
-		new ColumnDescriptor(COL_FL_DOC_ATTESA_SCHED_30GG, Types.VARCHAR, 1, true));
-	map.put(COL_FL_DOC_NOSEL_SCHED_CORR,
-		new ColumnDescriptor(COL_FL_DOC_NOSEL_SCHED_CORR, Types.VARCHAR, 1, true));
-	map.put(COL_FL_DOC_NOSEL_SCHED_30GG,
-		new ColumnDescriptor(COL_FL_DOC_NOSEL_SCHED_30GG, Types.VARCHAR, 1, true));
+        map.put(COL_FL_DOC_CORR, new ColumnDescriptor(COL_FL_DOC_CORR, Types.VARCHAR, 1, true));
+        map.put(COL_FL_DOC_30GG, new ColumnDescriptor(COL_FL_DOC_30GG, Types.VARCHAR, 1, true));
+        map.put(COL_FL_DOC_ATTESA_MEM_CORR,
+                new ColumnDescriptor(COL_FL_DOC_ATTESA_MEM_CORR, Types.VARCHAR, 1, true));
+        map.put(COL_FL_DOC_ATTESA_MEM_30GG,
+                new ColumnDescriptor(COL_FL_DOC_ATTESA_MEM_30GG, Types.VARCHAR, 1, true));
+        map.put(COL_FL_DOC_ATTESA_SCHED_CORR,
+                new ColumnDescriptor(COL_FL_DOC_ATTESA_SCHED_CORR, Types.VARCHAR, 1, true));
+        map.put(COL_FL_DOC_ATTESA_SCHED_30GG,
+                new ColumnDescriptor(COL_FL_DOC_ATTESA_SCHED_30GG, Types.VARCHAR, 1, true));
+        map.put(COL_FL_DOC_NOSEL_SCHED_CORR,
+                new ColumnDescriptor(COL_FL_DOC_NOSEL_SCHED_CORR, Types.VARCHAR, 1, true));
+        map.put(COL_FL_DOC_NOSEL_SCHED_30GG,
+                new ColumnDescriptor(COL_FL_DOC_NOSEL_SCHED_30GG, Types.VARCHAR, 1, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

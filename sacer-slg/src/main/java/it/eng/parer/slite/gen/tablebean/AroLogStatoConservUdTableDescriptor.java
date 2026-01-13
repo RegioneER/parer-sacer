@@ -48,30 +48,30 @@ public class AroLogStatoConservUdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_LOG_STATO_CONSERV_UD,
-		new ColumnDescriptor(COL_ID_LOG_STATO_CONSERV_UD, Types.DECIMAL, 22, true));
-	map.put(COL_AA_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_SUB_STRUT, new ColumnDescriptor(COL_ID_SUB_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_DT_STATO, new ColumnDescriptor(COL_DT_STATO, Types.TIMESTAMP, 7, false));
-	map.put(COL_TI_EVENTO, new ColumnDescriptor(COL_TI_EVENTO, Types.VARCHAR, 256, false));
-	map.put(COL_TI_STATO_CONSERVAZIONE,
-		new ColumnDescriptor(COL_TI_STATO_CONSERVAZIONE, Types.VARCHAR, 30, false));
-	map.put(COL_NM_AGENTE, new ColumnDescriptor(COL_NM_AGENTE, Types.VARCHAR, 256, false));
-	map.put(COL_TI_MOD, new ColumnDescriptor(COL_TI_MOD, Types.VARCHAR, 256, false));
+        map.put(COL_ID_LOG_STATO_CONSERV_UD,
+                new ColumnDescriptor(COL_ID_LOG_STATO_CONSERV_UD, Types.DECIMAL, 22, true));
+        map.put(COL_AA_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_SUB_STRUT, new ColumnDescriptor(COL_ID_SUB_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_DT_STATO, new ColumnDescriptor(COL_DT_STATO, Types.TIMESTAMP, 7, false));
+        map.put(COL_TI_EVENTO, new ColumnDescriptor(COL_TI_EVENTO, Types.VARCHAR, 256, false));
+        map.put(COL_TI_STATO_CONSERVAZIONE,
+                new ColumnDescriptor(COL_TI_STATO_CONSERVAZIONE, Types.VARCHAR, 30, false));
+        map.put(COL_NM_AGENTE, new ColumnDescriptor(COL_NM_AGENTE, Types.VARCHAR, 256, false));
+        map.put(COL_TI_MOD, new ColumnDescriptor(COL_TI_MOD, Types.VARCHAR, 256, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

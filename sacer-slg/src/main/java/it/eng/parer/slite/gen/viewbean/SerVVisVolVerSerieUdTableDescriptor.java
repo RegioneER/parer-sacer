@@ -70,67 +70,67 @@ public class SerVVisVolVerSerieUdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_SERIE, new ColumnDescriptor(COL_ID_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_CD_COMPOSITO_SERIE,
-		new ColumnDescriptor(COL_CD_COMPOSITO_SERIE, Types.VARCHAR, 100, true));
-	map.put(COL_AA_SERIE, new ColumnDescriptor(COL_AA_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_DS_SERIE, new ColumnDescriptor(COL_DS_SERIE, Types.VARCHAR, 254, true));
-	map.put(COL_ID_TIPO_SERIE,
-		new ColumnDescriptor(COL_ID_TIPO_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
-	map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_TIPO_SERIE,
-		new ColumnDescriptor(COL_NM_TIPO_SERIE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_CD_VER_SERIE, new ColumnDescriptor(COL_CD_VER_SERIE, Types.VARCHAR, 100, true));
-	map.put(COL_DT_INIZIO_SEL_SERIE,
-		new ColumnDescriptor(COL_DT_INIZIO_SEL_SERIE, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_FINE_SEL_SERIE,
-		new ColumnDescriptor(COL_DT_FINE_SEL_SERIE, Types.TIMESTAMP, 7, true));
-	map.put(COL_ID_STATO_VER_SERIE_COR,
-		new ColumnDescriptor(COL_ID_STATO_VER_SERIE_COR, Types.DECIMAL, 22, true));
-	map.put(COL_TI_STATO_VER_SERIE,
-		new ColumnDescriptor(COL_TI_STATO_VER_SERIE, Types.VARCHAR, 20, true));
-	map.put(COL_ID_VOL_VER_SERIE,
-		new ColumnDescriptor(COL_ID_VOL_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_NI_UNITA_DOC_VOL,
-		new ColumnDescriptor(COL_NI_UNITA_DOC_VOL, Types.DECIMAL, 22, true));
-	map.put(COL_CD_FIRST_UNITA_DOC_VOL,
-		new ColumnDescriptor(COL_CD_FIRST_UNITA_DOC_VOL, Types.VARCHAR, 254, true));
-	map.put(COL_DT_FIRST_UNITA_DOC_VOL,
-		new ColumnDescriptor(COL_DT_FIRST_UNITA_DOC_VOL, Types.TIMESTAMP, 7, true));
-	map.put(COL_CD_LAST_UNITA_DOC_VOL,
-		new ColumnDescriptor(COL_CD_LAST_UNITA_DOC_VOL, Types.VARCHAR, 254, true));
-	map.put(COL_DT_LAST_UNITA_DOC_VOL,
-		new ColumnDescriptor(COL_DT_LAST_UNITA_DOC_VOL, Types.TIMESTAMP, 7, true));
-	map.put(COL_BL_IX_VOL, new ColumnDescriptor(COL_BL_IX_VOL, Types.CLOB, 4000, true));
-	map.put(COL_CD_VER_XSD_IX_VOL,
-		new ColumnDescriptor(COL_CD_VER_XSD_IX_VOL, Types.VARCHAR, 100, true));
-	map.put(COL_DS_HASH_IX_VOL,
-		new ColumnDescriptor(COL_DS_HASH_IX_VOL, Types.VARCHAR, 50, true));
-	map.put(COL_DS_ALGO_HASH_IX_VOL,
-		new ColumnDescriptor(COL_DS_ALGO_HASH_IX_VOL, Types.VARCHAR, 254, true));
-	map.put(COL_CD_ENCODING_HASH_IX_VOL,
-		new ColumnDescriptor(COL_CD_ENCODING_HASH_IX_VOL, Types.VARCHAR, 20, true));
-	map.put(COL_DT_CREAZIONE, new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, true));
-	map.put(COL_CRITERIO_ORD,
-		new ColumnDescriptor(COL_CRITERIO_ORD, Types.VARCHAR, 1024, true));
+        map.put(COL_ID_SERIE, new ColumnDescriptor(COL_ID_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_CD_COMPOSITO_SERIE,
+                new ColumnDescriptor(COL_CD_COMPOSITO_SERIE, Types.VARCHAR, 100, true));
+        map.put(COL_AA_SERIE, new ColumnDescriptor(COL_AA_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_DS_SERIE, new ColumnDescriptor(COL_DS_SERIE, Types.VARCHAR, 254, true));
+        map.put(COL_ID_TIPO_SERIE,
+                new ColumnDescriptor(COL_ID_TIPO_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
+        map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_TIPO_SERIE,
+                new ColumnDescriptor(COL_NM_TIPO_SERIE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_CD_VER_SERIE, new ColumnDescriptor(COL_CD_VER_SERIE, Types.VARCHAR, 100, true));
+        map.put(COL_DT_INIZIO_SEL_SERIE,
+                new ColumnDescriptor(COL_DT_INIZIO_SEL_SERIE, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_FINE_SEL_SERIE,
+                new ColumnDescriptor(COL_DT_FINE_SEL_SERIE, Types.TIMESTAMP, 7, true));
+        map.put(COL_ID_STATO_VER_SERIE_COR,
+                new ColumnDescriptor(COL_ID_STATO_VER_SERIE_COR, Types.DECIMAL, 22, true));
+        map.put(COL_TI_STATO_VER_SERIE,
+                new ColumnDescriptor(COL_TI_STATO_VER_SERIE, Types.VARCHAR, 20, true));
+        map.put(COL_ID_VOL_VER_SERIE,
+                new ColumnDescriptor(COL_ID_VOL_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_NI_UNITA_DOC_VOL,
+                new ColumnDescriptor(COL_NI_UNITA_DOC_VOL, Types.DECIMAL, 22, true));
+        map.put(COL_CD_FIRST_UNITA_DOC_VOL,
+                new ColumnDescriptor(COL_CD_FIRST_UNITA_DOC_VOL, Types.VARCHAR, 254, true));
+        map.put(COL_DT_FIRST_UNITA_DOC_VOL,
+                new ColumnDescriptor(COL_DT_FIRST_UNITA_DOC_VOL, Types.TIMESTAMP, 7, true));
+        map.put(COL_CD_LAST_UNITA_DOC_VOL,
+                new ColumnDescriptor(COL_CD_LAST_UNITA_DOC_VOL, Types.VARCHAR, 254, true));
+        map.put(COL_DT_LAST_UNITA_DOC_VOL,
+                new ColumnDescriptor(COL_DT_LAST_UNITA_DOC_VOL, Types.TIMESTAMP, 7, true));
+        map.put(COL_BL_IX_VOL, new ColumnDescriptor(COL_BL_IX_VOL, Types.CLOB, 4000, true));
+        map.put(COL_CD_VER_XSD_IX_VOL,
+                new ColumnDescriptor(COL_CD_VER_XSD_IX_VOL, Types.VARCHAR, 100, true));
+        map.put(COL_DS_HASH_IX_VOL,
+                new ColumnDescriptor(COL_DS_HASH_IX_VOL, Types.VARCHAR, 50, true));
+        map.put(COL_DS_ALGO_HASH_IX_VOL,
+                new ColumnDescriptor(COL_DS_ALGO_HASH_IX_VOL, Types.VARCHAR, 254, true));
+        map.put(COL_CD_ENCODING_HASH_IX_VOL,
+                new ColumnDescriptor(COL_CD_ENCODING_HASH_IX_VOL, Types.VARCHAR, 20, true));
+        map.put(COL_DT_CREAZIONE, new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, true));
+        map.put(COL_CRITERIO_ORD,
+                new ColumnDescriptor(COL_CRITERIO_ORD, Types.VARCHAR, 1024, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

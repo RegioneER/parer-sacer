@@ -24,7 +24,7 @@ public enum SigningResponse {
     OTP_WRONG("Errore di credenziali - Codice OTP errato"),
     OTP_EXPIRED("Errore di credenziali - Codice OTP scaduto"),
     HSM_ERROR(
-	    "Errore con l'applicativo HSM - L'applicativo non risponde o non permette la creazione di una sessione di firma"),
+            "Errore con l'applicativo HSM - L'applicativo non risponde o non permette la creazione di una sessione di firma"),
     UNKNOWN_ERROR("Errore sconosciuto nella procedura di firma"),
     ERROR_COMPLETAMENTO_FIRMA("Errore nel completamento nella procedura di firma"),
     WARNING("Sessione di firma terminata con warning - Non \u00E8 stato possibile firmare alcuni file"),
@@ -36,10 +36,10 @@ public enum SigningResponse {
     private final String description;
 
     private SigningResponse(String description) {
-	this.description = description;
+        this.description = description;
     }
 
     public String getDescription() {
-	return this.description;
+        return this.description;
     }
 }

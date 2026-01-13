@@ -35,21 +35,21 @@ public class StringPadding {
      * @return str, la stringa "paddata"
      */
     public static String padString(String str, String paddingChar, int lngth, int paddingSide) {
-	if (str == null) {
-	    str = "";
-	}
+        if (str == null) {
+            str = "";
+        }
 
-	if (str.length() < lngth) {
-	    for (int k = str.length(); k < lngth; k++) {
-		if (paddingSide == PADDING_LEFT) {
-		    str = paddingChar + str;
-		} else if (paddingSide == PADDING_RIGHT) {
-		    str = str + paddingChar;
-		} else {
-		    throw new IllegalArgumentException("Direzione padding errata!");
-		}
-	    }
-	}
-	return str;
+        if (str.length() < lngth) {
+            for (int k = str.length(); k < lngth; k++) {
+                if (paddingSide == PADDING_LEFT) {
+                    str = paddingChar + str;
+                } else if (paddingSide == PADDING_RIGHT) {
+                    str = str + paddingChar;
+                } else {
+                    throw new IllegalArgumentException("Direzione padding errata!");
+                }
+            }
+        }
+        return str;
     }
 }

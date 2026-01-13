@@ -38,57 +38,57 @@ public class DecTrasformTipoRapprRowBean extends BaseRow implements JEEBaseRowIn
     public static DecTrasformTipoRapprTableDescriptor TABLE_DESCRIPTOR = new DecTrasformTipoRapprTableDescriptor();
 
     public DecTrasformTipoRapprRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdTrasformTipoRappr() {
-	return getBigDecimal("id_trasform_tipo_rappr");
+        return getBigDecimal("id_trasform_tipo_rappr");
     }
 
     public void setIdTrasformTipoRappr(BigDecimal idTrasformTipoRappr) {
-	setObject("id_trasform_tipo_rappr", idTrasformTipoRappr);
+        setObject("id_trasform_tipo_rappr", idTrasformTipoRappr);
     }
 
     public BigDecimal getIdTipoRapprComp() {
-	return getBigDecimal("id_tipo_rappr_comp");
+        return getBigDecimal("id_tipo_rappr_comp");
     }
 
     public void setIdTipoRapprComp(BigDecimal idTipoRapprComp) {
-	setObject("id_tipo_rappr_comp", idTipoRapprComp);
+        setObject("id_tipo_rappr_comp", idTipoRapprComp);
     }
 
     public String getDsHashFileTrasform() {
-	return getString("ds_hash_file_trasform");
+        return getString("ds_hash_file_trasform");
     }
 
     public void setDsHashFileTrasform(String dsHashFileTrasform) {
-	setObject("ds_hash_file_trasform", dsHashFileTrasform);
+        setObject("ds_hash_file_trasform", dsHashFileTrasform);
     }
 
     /* st_file_trasform */
     public byte[] getBlFileTrasform() {
-	return (byte[]) getObject("bl_file_trasform");
+        return (byte[]) getObject("bl_file_trasform");
     }
 
     public void setBlFileTrasform(byte[] blFileTrasform) {
-	setObject("bl_file_trasform", blFileTrasform);
+        setObject("bl_file_trasform", blFileTrasform);
     }
 
     public String getTiStatoFileTrasform() {
-	return getString("ti_stato_file_trasform");
+        return getString("ti_stato_file_trasform");
     }
 
     public void setTiStatoFileTrasform(String tiStatoFileTrasform) {
-	setObject("ti_stato_file_trasform", tiStatoFileTrasform);
+        setObject("ti_stato_file_trasform", tiStatoFileTrasform);
     }
 
     public String getTiStatoTrasform() {
-	return "Pippo";
+        return "Pippo";
     }
 
     public void setTiStatoTrasform(String tiStatoTrasform) {
@@ -96,162 +96,162 @@ public class DecTrasformTipoRapprRowBean extends BaseRow implements JEEBaseRowIn
     }
 
     public String getNmTrasform() {
-	return getString("nm_trasform");
+        return getString("nm_trasform");
     }
 
     public void setNmTrasform(String nmTrasform) {
-	setObject("nm_trasform", nmTrasform);
+        setObject("nm_trasform", nmTrasform);
     }
 
     public String getCdVersioneTrasform() {
-	return getString("cd_versione_trasform");
+        return getString("cd_versione_trasform");
     }
 
     public void setCdVersioneTrasform(String cdVersioneTrasform) {
-	setObject("cd_versione_trasform", cdVersioneTrasform);
+        setObject("cd_versione_trasform", cdVersioneTrasform);
     }
 
     public Timestamp getDtInsTrasform() {
-	return getTimestamp("dt_ins_trasform");
+        return getTimestamp("dt_ins_trasform");
     }
 
     public void setDtInsTrasform(Timestamp dtInsTrasform) {
-	setObject("dt_ins_trasform", dtInsTrasform);
+        setObject("dt_ins_trasform", dtInsTrasform);
     }
 
     public Timestamp getDtLastModTrasform() {
-	return getTimestamp("dt_last_mod_trasform");
+        return getTimestamp("dt_last_mod_trasform");
     }
 
     public void setDtLastModTrasform(Timestamp dtLastModTrasform) {
-	setObject("dt_last_mod_trasform", dtLastModTrasform);
+        setObject("dt_last_mod_trasform", dtLastModTrasform);
     }
 
     public BigDecimal getIdCompDocTest() {
-	return getBigDecimal("id_comp_doc_test");
+        return getBigDecimal("id_comp_doc_test");
     }
 
     public void setIdCompDocTest(BigDecimal idCompDocTest) {
-	setObject("id_comp_doc_test", idCompDocTest);
+        setObject("id_comp_doc_test", idCompDocTest);
     }
 
     public String getStFileTrasform() {
-	byte[] blob = getBlFileTrasform();
-	String st_file_trasform = null;
-	if (blob != null) {
+        byte[] blob = getBlFileTrasform();
+        String st_file_trasform = null;
+        if (blob != null) {
 
-	    try {
-		st_file_trasform = new String(blob, 0, 150000, "UTF-8");
-	    } catch (UnsupportedEncodingException ex) {
-		st_file_trasform = "Tipo file non visualizzabile come testo";
-	    }
+            try {
+                st_file_trasform = new String(blob, 0, 150000, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                st_file_trasform = "Tipo file non visualizzabile come testo";
+            }
 
-	}
-	return st_file_trasform;
+        }
+        return st_file_trasform;
     }
 
     public void setStFileTrasform(String stFileTrasform) {
-	setObject("st_file_trasform", stFileTrasform);
+        setObject("st_file_trasform", stFileTrasform);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecTrasformTipoRappr entity = (DecTrasformTipoRappr) obj;
+        DecTrasformTipoRappr entity = (DecTrasformTipoRappr) obj;
 
-	this.setIdTrasformTipoRappr(entity.getIdTrasformTipoRappr() == null ? null
-		: BigDecimal.valueOf(entity.getIdTrasformTipoRappr()));
+        this.setIdTrasformTipoRappr(entity.getIdTrasformTipoRappr() == null ? null
+                : BigDecimal.valueOf(entity.getIdTrasformTipoRappr()));
 
-	if (entity.getDecTipoRapprComp() != null) {
-	    this.setIdTipoRapprComp(
-		    new BigDecimal(entity.getDecTipoRapprComp().getIdTipoRapprComp()));
-	}
+        if (entity.getDecTipoRapprComp() != null) {
+            this.setIdTipoRapprComp(
+                    new BigDecimal(entity.getDecTipoRapprComp().getIdTipoRapprComp()));
+        }
 
-	this.setDsHashFileTrasform(entity.getDsHashFileTrasform());
+        this.setDsHashFileTrasform(entity.getDsHashFileTrasform());
 
-	byte[] blob = entity.getBlFileTrasform();
-	this.setBlFileTrasform(blob);
-	String st_file_trasform = null;
-	if (blob != null) {
+        byte[] blob = entity.getBlFileTrasform();
+        this.setBlFileTrasform(blob);
+        String st_file_trasform = null;
+        if (blob != null) {
 
-	    try {
-		int maxvalue = blob.length;
-		if (maxvalue > 150000) {
-		    maxvalue = 150000;
-		}
-		st_file_trasform = new String(blob, 0, maxvalue, "UTF-8");
-	    } catch (UnsupportedEncodingException ex) {
-		st_file_trasform = "Tipo file non visualizzabile come testo";
-	    }
-	    this.setStFileTrasform(st_file_trasform);
+            try {
+                int maxvalue = blob.length;
+                if (maxvalue > 150000) {
+                    maxvalue = 150000;
+                }
+                st_file_trasform = new String(blob, 0, maxvalue, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                st_file_trasform = "Tipo file non visualizzabile come testo";
+            }
+            this.setStFileTrasform(st_file_trasform);
 
-	}
+        }
 
-	this.setTiStatoFileTrasform(entity.getTiStatoFileTrasform());
-	this.setNmTrasform(entity.getNmTrasform());
-	this.setCdVersioneTrasform(entity.getCdVersioneTrasform());
-	if (entity.getDtInsTrasform() != null) {
-	    this.setDtInsTrasform(new Timestamp(entity.getDtInsTrasform().getTime()));
-	}
-	if (entity.getDtLastModTrasform() != null) {
-	    this.setDtLastModTrasform(new Timestamp(entity.getDtLastModTrasform().getTime()));
-	}
-	this.setIdCompDocTest(entity.getIdCompDocTest());
+        this.setTiStatoFileTrasform(entity.getTiStatoFileTrasform());
+        this.setNmTrasform(entity.getNmTrasform());
+        this.setCdVersioneTrasform(entity.getCdVersioneTrasform());
+        if (entity.getDtInsTrasform() != null) {
+            this.setDtInsTrasform(new Timestamp(entity.getDtInsTrasform().getTime()));
+        }
+        if (entity.getDtLastModTrasform() != null) {
+            this.setDtLastModTrasform(new Timestamp(entity.getDtLastModTrasform().getTime()));
+        }
+        this.setIdCompDocTest(entity.getIdCompDocTest());
     }
 
     @Override
     public DecTrasformTipoRappr rowBeanToEntity() {
-	DecTrasformTipoRappr entity = new DecTrasformTipoRappr();
-	if (this.getIdTrasformTipoRappr() != null) {
-	    entity.setIdTrasformTipoRappr(this.getIdTrasformTipoRappr().longValue());
-	}
-	if (this.getIdTipoRapprComp() != null) {
-	    if (entity.getDecTipoRapprComp() == null) {
-		entity.setDecTipoRapprComp(new DecTipoRapprComp());
-	    }
-	    entity.getDecTipoRapprComp().setIdTipoRapprComp(this.getIdTipoRapprComp().longValue());
-	}
-	entity.setDsHashFileTrasform(this.getDsHashFileTrasform());
-	entity.setBlFileTrasform(this.getBlFileTrasform());
-	entity.setTiStatoFileTrasform(this.getTiStatoFileTrasform());
-	entity.setNmTrasform(this.getNmTrasform());
-	entity.setCdVersioneTrasform(this.getCdVersioneTrasform());
-	entity.setDtInsTrasform(this.getDtInsTrasform());
-	entity.setDtLastModTrasform(this.getDtLastModTrasform());
-	entity.setIdCompDocTest(this.getIdCompDocTest());
-	return entity;
+        DecTrasformTipoRappr entity = new DecTrasformTipoRappr();
+        if (this.getIdTrasformTipoRappr() != null) {
+            entity.setIdTrasformTipoRappr(this.getIdTrasformTipoRappr().longValue());
+        }
+        if (this.getIdTipoRapprComp() != null) {
+            if (entity.getDecTipoRapprComp() == null) {
+                entity.setDecTipoRapprComp(new DecTipoRapprComp());
+            }
+            entity.getDecTipoRapprComp().setIdTipoRapprComp(this.getIdTipoRapprComp().longValue());
+        }
+        entity.setDsHashFileTrasform(this.getDsHashFileTrasform());
+        entity.setBlFileTrasform(this.getBlFileTrasform());
+        entity.setTiStatoFileTrasform(this.getTiStatoFileTrasform());
+        entity.setNmTrasform(this.getNmTrasform());
+        entity.setCdVersioneTrasform(this.getCdVersioneTrasform());
+        entity.setDtInsTrasform(this.getDtInsTrasform());
+        entity.setDtLastModTrasform(this.getDtLastModTrasform());
+        entity.setIdCompDocTest(this.getIdCompDocTest());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
     public String getRisultatoTestTrasformatore() {
-	return getString("risultato_test_trasformatore");
+        return getString("risultato_test_trasformatore");
     }
 
     public void setRisultatoTestTrasformatore(String successo) {
-	setObject("risultato_test_trasformatore", successo);
+        setObject("risultato_test_trasformatore", successo);
     }
 
 }

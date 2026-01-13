@@ -33,19 +33,19 @@ public class VrsSesFascicoloKoTableBean extends AbstractBaseTable<VrsSesFascicol
     public static VrsSesFascicoloKoTableDescriptor TABLE_DESCRIPTOR = new VrsSesFascicoloKoTableDescriptor();
 
     public VrsSesFascicoloKoTableBean() {
-	super();
+        super();
     }
 
     protected VrsSesFascicoloKoRowBean createRow() {
-	return new VrsSesFascicoloKoRowBean();
+        return new VrsSesFascicoloKoRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VrsSesFascicoloKoRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

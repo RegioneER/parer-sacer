@@ -28,7 +28,7 @@ public class MigObjStorageCompHashCalcMoreThanOneException extends RuntimeExcept
     private static final long serialVersionUID = -9053027977412560684L;
 
     public MigObjStorageCompHashCalcMoreThanOneException(String message) {
-	super(message);
+        super(message);
     }
 
 }

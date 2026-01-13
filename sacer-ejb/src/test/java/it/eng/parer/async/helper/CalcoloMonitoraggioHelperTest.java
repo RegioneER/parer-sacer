@@ -43,86 +43,86 @@ public class CalcoloMonitoraggioHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		CalcoloMonitoraggioHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			CalcoloMonitoraggioHelperTest.class, CalcoloMonitoraggioHelper.class,
-			MonitoraggioFiltriListaVersFallitiBean.class, Constants.class));
+        return HelperTest.createEnterpriseArchive(
+                CalcoloMonitoraggioHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        CalcoloMonitoraggioHelperTest.class, CalcoloMonitoraggioHelper.class,
+                        MonitoraggioFiltriListaVersFallitiBean.class, Constants.class));
     }
 
     @Test
     void getListaSessioniVersByUsr_queryIsOk() {
-	helper.getListaSessioniVersByUsr();
-	assertTrue(true);
+        helper.getListaSessioniVersByUsr();
+        assertTrue(true);
     }
 
     @Test
     void getListaVersFallitiDaVerif_queryIsOk() {
-	Long idStrut = aLong();
-	Date ultimaRegistrazione = todayTs();
-	helper.getListaVersFallitiDaVerif(idStrut, ultimaRegistrazione);
-	assertTrue(true);
+        Long idStrut = aLong();
+        Date ultimaRegistrazione = todayTs();
+        helper.getListaVersFallitiDaVerif(idStrut, ultimaRegistrazione);
+        assertTrue(true);
     }
 
     @Test
     void getListaVersFallitiDaNorisol_queryIsOk() {
-	Long idStrut = aLong();
-	Date ultimaRegistrazione = todayTs();
-	helper.getListaVersFallitiDaNorisol(idStrut, ultimaRegistrazione);
-	assertTrue(true);
+        Long idStrut = aLong();
+        Date ultimaRegistrazione = todayTs();
+        helper.getListaVersFallitiDaNorisol(idStrut, ultimaRegistrazione);
+        assertTrue(true);
     }
 
     @Test
     void getUltimaRegistrazione_String_Long_queryIsOk() {
-	String nmJob = aString();
-	Long idStrut = aLong();
-	helper.getUltimaRegistrazione(nmJob, idStrut);
-	assertTrue(true);
+        String nmJob = aString();
+        Long idStrut = aLong();
+        helper.getUltimaRegistrazione(nmJob, idStrut);
+        assertTrue(true);
     }
 
     @Test
     void getUltimaRegistrazione_String_queryIsOk() {
-	String nmJob = aString();
-	helper.getUltimaRegistrazione(nmJob);
-	assertTrue(true);
+        String nmJob = aString();
+        helper.getUltimaRegistrazione(nmJob);
+        assertTrue(true);
     }
 
     @Test
     void getStruttureVersanti_queryIsOk() {
-	helper.getStruttureVersanti();
-	assertTrue(true);
+        helper.getStruttureVersanti();
+        assertTrue(true);
     }
 
     @Test
     void getUnitaDocIfExists_queryIsOk() {
-	Long idStrut = aLong();
-	String cdKeyUnitaDoc = aString();
-	BigDecimal aaKeyUnitaDoc = aBigDecimal();
-	String cdRegistroKeyUnitaDoc = aString();
-	helper.getUnitaDocIfExists(idStrut, cdKeyUnitaDoc, aaKeyUnitaDoc, cdRegistroKeyUnitaDoc);
-	assertTrue(true);
+        Long idStrut = aLong();
+        String cdKeyUnitaDoc = aString();
+        BigDecimal aaKeyUnitaDoc = aBigDecimal();
+        String cdRegistroKeyUnitaDoc = aString();
+        helper.getUnitaDocIfExists(idStrut, cdKeyUnitaDoc, aaKeyUnitaDoc, cdRegistroKeyUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void getSessioniSenzaChiave_queryIsOk() {
-	MonitoraggioFiltriListaVersFallitiBean filtriSes = new MonitoraggioFiltriListaVersFallitiBean();
-	filtriSes.setIdAmbiente(aBigDecimal());
-	filtriSes.setIdEnte(aBigDecimal());
-	filtriSes.setIdStrut(aBigDecimal());
-	filtriSes.setTipoSes(aString());
-	filtriSes.setRisolto(aFlag());
-	filtriSes.setPeriodoVers("OGGI");
-	filtriSes.setGiornoVersDaValidato(todayTs());
-	filtriSes.setGiornoVersAValidato(tomorrowTs());
-	filtriSes.setVerificato(aFlag());
-	filtriSes.setNonRisolubile(aFlag());
-	filtriSes.setClasseErrore(aString());
-	filtriSes.setSottoClasseErrore(aString());
-	filtriSes.setCodiceErrore(aString());
-	filtriSes.setIdUserIam(aBigDecimal());
-	helper.getSessioniKoSenzaChiave(filtriSes);
-	assertTrue(true);
+        MonitoraggioFiltriListaVersFallitiBean filtriSes = new MonitoraggioFiltriListaVersFallitiBean();
+        filtriSes.setIdAmbiente(aBigDecimal());
+        filtriSes.setIdEnte(aBigDecimal());
+        filtriSes.setIdStrut(aBigDecimal());
+        filtriSes.setTipoSes(aString());
+        filtriSes.setRisolto(aFlag());
+        filtriSes.setPeriodoVers("OGGI");
+        filtriSes.setGiornoVersDaValidato(todayTs());
+        filtriSes.setGiornoVersAValidato(tomorrowTs());
+        filtriSes.setVerificato(aFlag());
+        filtriSes.setNonRisolubile(aFlag());
+        filtriSes.setClasseErrore(aString());
+        filtriSes.setSottoClasseErrore(aString());
+        filtriSes.setCodiceErrore(aString());
+        filtriSes.setIdUserIam(aBigDecimal());
+        helper.getSessioniKoSenzaChiave(filtriSes);
+        assertTrue(true);
     }
 
 }

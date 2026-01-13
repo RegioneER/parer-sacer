@@ -36,130 +36,130 @@ public class FasLinkFascicoloRowBean extends BaseRow implements JEEBaseRowInterf
     public static FasLinkFascicoloTableDescriptor TABLE_DESCRIPTOR = new FasLinkFascicoloTableDescriptor();
 
     public FasLinkFascicoloRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdLinkFascicolo() {
-	return getBigDecimal("id_link_fascicolo");
+        return getBigDecimal("id_link_fascicolo");
     }
 
     public void setIdLinkFascicolo(BigDecimal idLinkFascicolo) {
-	setObject("id_link_fascicolo", idLinkFascicolo);
+        setObject("id_link_fascicolo", idLinkFascicolo);
     }
 
     public BigDecimal getIdFascicolo() {
-	return getBigDecimal("id_fascicolo");
+        return getBigDecimal("id_fascicolo");
     }
 
     public void setIdFascicolo(BigDecimal idFascicolo) {
-	setObject("id_fascicolo", idFascicolo);
+        setObject("id_fascicolo", idFascicolo);
     }
 
     public BigDecimal getAaFascicoloLink() {
-	return getBigDecimal("aa_fascicolo_link");
+        return getBigDecimal("aa_fascicolo_link");
     }
 
     public void setAaFascicoloLink(BigDecimal aaFascicoloLink) {
-	setObject("aa_fascicolo_link", aaFascicoloLink);
+        setObject("aa_fascicolo_link", aaFascicoloLink);
     }
 
     public String getCdKeyFascicoloLink() {
-	return getString("cd_key_fascicolo_link");
+        return getString("cd_key_fascicolo_link");
     }
 
     public void setCdKeyFascicoloLink(String cdKeyFascicoloLink) {
-	setObject("cd_key_fascicolo_link", cdKeyFascicoloLink);
+        setObject("cd_key_fascicolo_link", cdKeyFascicoloLink);
     }
 
     public String getDsLink() {
-	return getString("ds_link");
+        return getString("ds_link");
     }
 
     public void setDsLink(String dsLink) {
-	setObject("ds_link", dsLink);
+        setObject("ds_link", dsLink);
     }
 
     public BigDecimal getIdFascicoloLink() {
-	return getBigDecimal("id_fascicolo_link");
+        return getBigDecimal("id_fascicolo_link");
     }
 
     public void setIdFascicoloLink(BigDecimal idFascicoloLink) {
-	setObject("id_fascicolo_link", idFascicoloLink);
+        setObject("id_fascicolo_link", idFascicoloLink);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	FasLinkFascicolo entity = (FasLinkFascicolo) obj;
+        FasLinkFascicolo entity = (FasLinkFascicolo) obj;
 
-	this.setIdLinkFascicolo(entity.getIdLinkFascicolo() == null ? null
-		: BigDecimal.valueOf(entity.getIdLinkFascicolo()));
+        this.setIdLinkFascicolo(entity.getIdLinkFascicolo() == null ? null
+                : BigDecimal.valueOf(entity.getIdLinkFascicolo()));
 
-	if (entity.getFasFascicolo() != null) {
-	    this.setIdFascicolo(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
-	}
+        if (entity.getFasFascicolo() != null) {
+            this.setIdFascicolo(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
+        }
 
-	this.setAaFascicoloLink(entity.getAaFascicoloLink());
-	this.setCdKeyFascicoloLink(entity.getCdKeyFascicoloLink());
-	this.setDsLink(entity.getDsLink());
+        this.setAaFascicoloLink(entity.getAaFascicoloLink());
+        this.setCdKeyFascicoloLink(entity.getCdKeyFascicoloLink());
+        this.setDsLink(entity.getDsLink());
 
-	if (entity.getFasFascicolo() != null) {
-	    this.setIdFascicoloLink(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
-	}
+        if (entity.getFasFascicolo() != null) {
+            this.setIdFascicoloLink(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
+        }
 
     }
 
     @Override
     public FasLinkFascicolo rowBeanToEntity() {
-	FasLinkFascicolo entity = new FasLinkFascicolo();
-	if (this.getIdLinkFascicolo() != null) {
-	    entity.setIdLinkFascicolo(this.getIdLinkFascicolo().longValue());
-	}
-	if (this.getIdFascicolo() != null) {
-	    if (entity.getFasFascicolo() == null) {
-		entity.setFasFascicolo(new FasFascicolo());
-	    }
-	    entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
-	}
-	entity.setAaFascicoloLink(this.getAaFascicoloLink());
-	entity.setCdKeyFascicoloLink(this.getCdKeyFascicoloLink());
-	entity.setDsLink(this.getDsLink());
-	if (this.getIdFascicoloLink() != null) {
-	    if (entity.getFasFascicolo() == null) {
-		entity.setFasFascicolo(new FasFascicolo());
-	    }
-	    entity.getFasFascicolo().setIdFascicolo(this.getIdFascicoloLink().longValue());
-	}
-	return entity;
+        FasLinkFascicolo entity = new FasLinkFascicolo();
+        if (this.getIdLinkFascicolo() != null) {
+            entity.setIdLinkFascicolo(this.getIdLinkFascicolo().longValue());
+        }
+        if (this.getIdFascicolo() != null) {
+            if (entity.getFasFascicolo() == null) {
+                entity.setFasFascicolo(new FasFascicolo());
+            }
+            entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
+        }
+        entity.setAaFascicoloLink(this.getAaFascicoloLink());
+        entity.setCdKeyFascicoloLink(this.getCdKeyFascicoloLink());
+        entity.setDsLink(this.getDsLink());
+        if (this.getIdFascicoloLink() != null) {
+            if (entity.getFasFascicolo() == null) {
+                entity.setFasFascicolo(new FasFascicolo());
+            }
+            entity.getFasFascicolo().setIdFascicolo(this.getIdFascicoloLink().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

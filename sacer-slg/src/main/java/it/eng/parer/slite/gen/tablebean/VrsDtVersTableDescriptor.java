@@ -53,42 +53,42 @@ public class VrsDtVersTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_DT_VERS, new ColumnDescriptor(COL_ID_DT_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_DT_VERS, new ColumnDescriptor(COL_DT_VERS, Types.TIMESTAMP, 7, false));
-	map.put(COL_TI_STATO_DT_VERS,
-		new ColumnDescriptor(COL_TI_STATO_DT_VERS, Types.VARCHAR, 20, false));
-	map.put(COL_FL_MIGRAZ, new ColumnDescriptor(COL_FL_MIGRAZ, Types.VARCHAR, 1, false));
-	map.put(COL_FL_ARK, new ColumnDescriptor(COL_FL_ARK, Types.VARCHAR, 1, false));
-	map.put(COL_FL_FILE_NO_ARK,
-		new ColumnDescriptor(COL_FL_FILE_NO_ARK, Types.VARCHAR, 1, false));
-	map.put(COL_FL_ARK_SECONDARIO,
-		new ColumnDescriptor(COL_FL_ARK_SECONDARIO, Types.VARCHAR, 1, false));
-	map.put(COL_FL_FILE_NO_ARK_SECONDARIO,
-		new ColumnDescriptor(COL_FL_FILE_NO_ARK_SECONDARIO, Types.VARCHAR, 1, false));
-	map.put(COL_DT_CREAZIONE_DT_VERS,
-		new ColumnDescriptor(COL_DT_CREAZIONE_DT_VERS, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_LAST_ARK_DT_VERS,
-		new ColumnDescriptor(COL_DT_LAST_ARK_DT_VERS, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_LAST_ARK_DT_VERS_SECONDARIO, new ColumnDescriptor(
-		COL_DT_LAST_ARK_DT_VERS_SECONDARIO, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_STATO_DT_VERS,
-		new ColumnDescriptor(COL_DT_STATO_DT_VERS, Types.TIMESTAMP, 7, false));
-	map.put(COL_DL_PATH_DT_VERS,
-		new ColumnDescriptor(COL_DL_PATH_DT_VERS, Types.VARCHAR, 254, false));
-	map.put(COL_FL_PRESENZA_SECONDARIO,
-		new ColumnDescriptor(COL_FL_PRESENZA_SECONDARIO, Types.VARCHAR, 1, false));
+        map.put(COL_ID_DT_VERS, new ColumnDescriptor(COL_ID_DT_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_DT_VERS, new ColumnDescriptor(COL_DT_VERS, Types.TIMESTAMP, 7, false));
+        map.put(COL_TI_STATO_DT_VERS,
+                new ColumnDescriptor(COL_TI_STATO_DT_VERS, Types.VARCHAR, 20, false));
+        map.put(COL_FL_MIGRAZ, new ColumnDescriptor(COL_FL_MIGRAZ, Types.VARCHAR, 1, false));
+        map.put(COL_FL_ARK, new ColumnDescriptor(COL_FL_ARK, Types.VARCHAR, 1, false));
+        map.put(COL_FL_FILE_NO_ARK,
+                new ColumnDescriptor(COL_FL_FILE_NO_ARK, Types.VARCHAR, 1, false));
+        map.put(COL_FL_ARK_SECONDARIO,
+                new ColumnDescriptor(COL_FL_ARK_SECONDARIO, Types.VARCHAR, 1, false));
+        map.put(COL_FL_FILE_NO_ARK_SECONDARIO,
+                new ColumnDescriptor(COL_FL_FILE_NO_ARK_SECONDARIO, Types.VARCHAR, 1, false));
+        map.put(COL_DT_CREAZIONE_DT_VERS,
+                new ColumnDescriptor(COL_DT_CREAZIONE_DT_VERS, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_LAST_ARK_DT_VERS,
+                new ColumnDescriptor(COL_DT_LAST_ARK_DT_VERS, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_LAST_ARK_DT_VERS_SECONDARIO, new ColumnDescriptor(
+                COL_DT_LAST_ARK_DT_VERS_SECONDARIO, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_STATO_DT_VERS,
+                new ColumnDescriptor(COL_DT_STATO_DT_VERS, Types.TIMESTAMP, 7, false));
+        map.put(COL_DL_PATH_DT_VERS,
+                new ColumnDescriptor(COL_DL_PATH_DT_VERS, Types.VARCHAR, 254, false));
+        map.put(COL_FL_PRESENZA_SECONDARIO,
+                new ColumnDescriptor(COL_FL_PRESENZA_SECONDARIO, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

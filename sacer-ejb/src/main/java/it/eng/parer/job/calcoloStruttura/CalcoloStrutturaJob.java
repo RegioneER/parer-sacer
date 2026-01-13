@@ -33,7 +33,7 @@ import it.eng.parer.job.utils.JobConstants;
 @Stateless
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class CalcoloStrutturaJob {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CalcoloStrutturaJob.class);
@@ -43,14 +43,14 @@ public class CalcoloStrutturaJob {
     private CalcoloMonitoraggioAsync calcoloAsync;
 
     public void calcolaStruttura() throws ParerInternalError {
-	boolean success = calcoloAsync.calcolaStruttura();
-	LOGGER.info(
-		JobConstants.JobEnum.CALCOLA_STRUTTURA_JOB.name() + " --- Fine schedulazione job");
-	if (success) {
-	    jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CALCOLA_STRUTTURA_JOB.name(),
-		    JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name());
-	} else {
-	    throw new ParerInternalError("Impossibile acquisire il lock");
-	}
+        boolean success = calcoloAsync.calcolaStruttura();
+        LOGGER.info(
+                JobConstants.JobEnum.CALCOLA_STRUTTURA_JOB.name() + " --- Fine schedulazione job");
+        if (success) {
+            jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CALCOLA_STRUTTURA_JOB.name(),
+                    JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name());
+        } else {
+            throw new ParerInternalError("Impossibile acquisire il lock");
+        }
     }
 }

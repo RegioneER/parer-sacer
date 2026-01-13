@@ -37,131 +37,131 @@ public class TpiPathElabRowBean extends BaseRow implements JEEBaseRowInterface {
     public static TpiPathElabTableDescriptor TABLE_DESCRIPTOR = new TpiPathElabTableDescriptor();
 
     public TpiPathElabRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdPathElab() {
-	return getBigDecimal("id_path_elab");
+        return getBigDecimal("id_path_elab");
     }
 
     public void setIdPathElab(BigDecimal idPathElab) {
-	setObject("id_path_elab", idPathElab);
+        setObject("id_path_elab", idPathElab);
     }
 
     public BigDecimal getIdSchedJob() {
-	return getBigDecimal("id_sched_job");
+        return getBigDecimal("id_sched_job");
     }
 
     public void setIdSchedJob(BigDecimal idSchedJob) {
-	setObject("id_sched_job", idSchedJob);
+        setObject("id_sched_job", idSchedJob);
     }
 
     public Timestamp getDtVersElab() {
-	return getTimestamp("dt_vers_elab");
+        return getTimestamp("dt_vers_elab");
     }
 
     public void setDtVersElab(Timestamp dtVersElab) {
-	setObject("dt_vers_elab", dtVersElab);
+        setObject("dt_vers_elab", dtVersElab);
     }
 
     public String getDlPathElab() {
-	return getString("dl_path_elab");
+        return getString("dl_path_elab");
     }
 
     public void setDlPathElab(String dlPathElab) {
-	setObject("dl_path_elab", dlPathElab);
+        setObject("dl_path_elab", dlPathElab);
     }
 
     public String getFlAnomaliaFileElab() {
-	return getString("fl_anomalia_file_elab");
+        return getString("fl_anomalia_file_elab");
     }
 
     public void setFlAnomaliaFileElab(String flAnomaliaFileElab) {
-	setObject("fl_anomalia_file_elab", flAnomaliaFileElab);
+        setObject("fl_anomalia_file_elab", flAnomaliaFileElab);
     }
 
     public BigDecimal getNiFileDaElab() {
-	return getBigDecimal("ni_file_da_elab");
+        return getBigDecimal("ni_file_da_elab");
     }
 
     public void setNiFileDaElab(BigDecimal niFileDaElab) {
-	setObject("ni_file_da_elab", niFileDaElab);
+        setObject("ni_file_da_elab", niFileDaElab);
     }
 
     public BigDecimal getNiFileElab() {
-	return getBigDecimal("ni_file_elab");
+        return getBigDecimal("ni_file_elab");
     }
 
     public void setNiFileElab(BigDecimal niFileElab) {
-	setObject("ni_file_elab", niFileElab);
+        setObject("ni_file_elab", niFileElab);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	TpiPathElab entity = (TpiPathElab) obj;
+        TpiPathElab entity = (TpiPathElab) obj;
 
-	this.setIdPathElab(
-		entity.getIdPathElab() == null ? null : BigDecimal.valueOf(entity.getIdPathElab()));
+        this.setIdPathElab(
+                entity.getIdPathElab() == null ? null : BigDecimal.valueOf(entity.getIdPathElab()));
 
-	if (entity.getTpiSchedJob() != null) {
-	    this.setIdSchedJob(new BigDecimal(entity.getTpiSchedJob().getIdSchedJob()));
-	}
+        if (entity.getTpiSchedJob() != null) {
+            this.setIdSchedJob(new BigDecimal(entity.getTpiSchedJob().getIdSchedJob()));
+        }
 
-	if (entity.getDtVersElab() != null) {
-	    this.setDtVersElab(new Timestamp(entity.getDtVersElab().getTime()));
-	}
-	this.setDlPathElab(entity.getDlPathElab());
-	this.setNiFileDaElab(entity.getNiFileDaElab());
-	this.setNiFileElab(entity.getNiFileElab());
+        if (entity.getDtVersElab() != null) {
+            this.setDtVersElab(new Timestamp(entity.getDtVersElab().getTime()));
+        }
+        this.setDlPathElab(entity.getDlPathElab());
+        this.setNiFileDaElab(entity.getNiFileDaElab());
+        this.setNiFileElab(entity.getNiFileElab());
     }
 
     @Override
     public TpiPathElab rowBeanToEntity() {
-	TpiPathElab entity = new TpiPathElab();
-	if (this.getIdPathElab() != null) {
-	    entity.setIdPathElab(this.getIdPathElab().longValue());
-	}
-	if (this.getIdSchedJob() != null) {
-	    if (entity.getTpiSchedJob() == null) {
-		entity.setTpiSchedJob(new TpiSchedJob());
-	    }
-	    entity.getTpiSchedJob().setIdSchedJob(this.getIdSchedJob().longValue());
-	}
-	entity.setDtVersElab(this.getDtVersElab());
-	entity.setDlPathElab(this.getDlPathElab());
-	entity.setNiFileDaElab(this.getNiFileDaElab());
-	entity.setNiFileElab(this.getNiFileElab());
-	return entity;
+        TpiPathElab entity = new TpiPathElab();
+        if (this.getIdPathElab() != null) {
+            entity.setIdPathElab(this.getIdPathElab().longValue());
+        }
+        if (this.getIdSchedJob() != null) {
+            if (entity.getTpiSchedJob() == null) {
+                entity.setTpiSchedJob(new TpiSchedJob());
+            }
+            entity.getTpiSchedJob().setIdSchedJob(this.getIdSchedJob().longValue());
+        }
+        entity.setDtVersElab(this.getDtVersElab());
+        entity.setDlPathElab(this.getDlPathElab());
+        entity.setNiFileDaElab(this.getNiFileDaElab());
+        entity.setNiFileElab(this.getNiFileElab());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

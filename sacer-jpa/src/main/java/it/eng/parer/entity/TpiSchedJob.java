@@ -79,127 +79,127 @@ public class TpiSchedJob implements Serializable {
 
     @Column(name = "ID_SCHED_JOB")
     @GenericGenerator(name = "STPI_SCHED_JOB_ID_SCHED_JOB_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "STPI_SCHED_JOB"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "STPI_SCHED_JOB"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STPI_SCHED_JOB_ID_SCHED_JOB_GENERATOR")
     public Long getIdSchedJob() {
-	return this.idSchedJob;
+        return this.idSchedJob;
     }
 
     public void setIdSchedJob(Long idSchedJob) {
-	this.idSchedJob = idSchedJob;
+        this.idSchedJob = idSchedJob;
     }
 
     @Column(name = "DL_ERR_JOB")
     public String getDlErrJob() {
-	return this.dlErrJob;
+        return this.dlErrJob;
     }
 
     public void setDlErrJob(String dlErrJob) {
-	this.dlErrJob = dlErrJob;
+        this.dlErrJob = dlErrJob;
     }
 
     @Column(name = "DS_DURATA_JOB")
     public String getDsDurataJob() {
-	return this.dsDurataJob;
+        return this.dsDurataJob;
     }
 
     public void setDsDurataJob(String dsDurataJob) {
-	this.dsDurataJob = dsDurataJob;
+        this.dsDurataJob = dsDurataJob;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SCHED_JOB")
     public Date getDtSchedJob() {
-	return this.dtSchedJob;
+        return this.dtSchedJob;
     }
 
     public void setDtSchedJob(Date dtSchedJob) {
-	this.dtSchedJob = dtSchedJob;
+        this.dtSchedJob = dtSchedJob;
     }
 
     @Column(name = "FL_FINE_SCHED", columnDefinition = "char(1)")
     public String getFlFineSched() {
-	return this.flFineSched;
+        return this.flFineSched;
     }
 
     public void setFlFineSched(String flFineSched) {
-	this.flFineSched = flFineSched;
+        this.flFineSched = flFineSched;
     }
 
     @Column(name = "FL_JOB_OK", columnDefinition = "char(1)")
     public String getFlJobOk() {
-	return this.flJobOk;
+        return this.flJobOk;
     }
 
     public void setFlJobOk(String flJobOk) {
-	this.flJobOk = flJobOk;
+        this.flJobOk = flJobOk;
     }
 
     @Column(name = "FL_MIGRAZ", columnDefinition = "char(1)")
     public String getFlMigraz() {
-	return this.flMigraz;
+        return this.flMigraz;
     }
 
     public void setFlMigraz(String flMigraz) {
-	this.flMigraz = flMigraz;
+        this.flMigraz = flMigraz;
     }
 
     @Column(name = "NI_ORD_SCHED_JOB")
     public BigDecimal getNiOrdSchedJob() {
-	return this.niOrdSchedJob;
+        return this.niOrdSchedJob;
     }
 
     public void setNiOrdSchedJob(BigDecimal niOrdSchedJob) {
-	this.niOrdSchedJob = niOrdSchedJob;
+        this.niOrdSchedJob = niOrdSchedJob;
     }
 
     @Column(name = "NM_JOB")
     public String getNmJob() {
-	return this.nmJob;
+        return this.nmJob;
     }
 
     public void setNmJob(String nmJob) {
-	this.nmJob = nmJob;
+        this.nmJob = nmJob;
     }
 
     @Column(name = "TI_TPI_SCHED_JOB")
     public String getTiTpiSchedJob() {
-	return this.tiTpiSchedJob;
+        return this.tiTpiSchedJob;
     }
 
     public void setTiTpiSchedJob(String tiTpiSchedJob) {
-	this.tiTpiSchedJob = tiTpiSchedJob;
+        this.tiTpiSchedJob = tiTpiSchedJob;
     }
 
     @OneToMany(cascade = {
-	    CascadeType.PERSIST }, mappedBy = "tpiSchedJob")
+            CascadeType.PERSIST }, mappedBy = "tpiSchedJob")
     public List<TpiErrArk> getTpiErrArks() {
-	return this.tpiErrArks;
+        return this.tpiErrArks;
     }
 
     public void setTpiErrArks(List<TpiErrArk> tpiErrArks) {
-	this.tpiErrArks = tpiErrArks;
+        this.tpiErrArks = tpiErrArks;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_DT_SCHED")
     public TpiDtSched getTpiDtSched() {
-	return this.tpiDtSched;
+        return this.tpiDtSched;
     }
 
     public void setTpiDtSched(TpiDtSched tpiDtSched) {
-	this.tpiDtSched = tpiDtSched;
+        this.tpiDtSched = tpiDtSched;
     }
 
     @OneToMany(cascade = {
-	    CascadeType.PERSIST }, mappedBy = "tpiSchedJob")
+            CascadeType.PERSIST }, mappedBy = "tpiSchedJob")
     public List<TpiPathElab> getTpiPathElabs() {
-	return this.tpiPathElabs;
+        return this.tpiPathElabs;
     }
 
     public void setTpiPathElabs(List<TpiPathElab> tpiPathElabs) {
-	this.tpiPathElabs = tpiPathElabs;
+        this.tpiPathElabs = tpiPathElabs;
     }
 
 }

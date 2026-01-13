@@ -37,155 +37,155 @@ public class DecTitolRowBean extends BaseRow implements JEEBaseRowInterface {
     public static DecTitolTableDescriptor TABLE_DESCRIPTOR = new DecTitolTableDescriptor();
 
     public DecTitolRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdTitol() {
-	return getBigDecimal("id_titol");
+        return getBigDecimal("id_titol");
     }
 
     public void setIdTitol(BigDecimal idTitol) {
-	setObject("id_titol", idTitol);
+        setObject("id_titol", idTitol);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getNmTitol() {
-	return getString("nm_titol");
+        return getString("nm_titol");
     }
 
     public void setNmTitol(String nmTitol) {
-	setObject("nm_titol", nmTitol);
+        setObject("nm_titol", nmTitol);
     }
 
     public Timestamp getDtIstituz() {
-	return getTimestamp("dt_istituz");
+        return getTimestamp("dt_istituz");
     }
 
     public void setDtIstituz(Timestamp dtIstituz) {
-	setObject("dt_istituz", dtIstituz);
+        setObject("dt_istituz", dtIstituz);
     }
 
     public Timestamp getDtSoppres() {
-	return getTimestamp("dt_soppres");
+        return getTimestamp("dt_soppres");
     }
 
     public void setDtSoppres(Timestamp dtSoppres) {
-	setObject("dt_soppres", dtSoppres);
+        setObject("dt_soppres", dtSoppres);
     }
 
     public BigDecimal getNiLivelli() {
-	return getBigDecimal("ni_livelli");
+        return getBigDecimal("ni_livelli");
     }
 
     public void setNiLivelli(BigDecimal niLivelli) {
-	setObject("ni_livelli", niLivelli);
+        setObject("ni_livelli", niLivelli);
     }
 
     public String getCdSepFascicolo() {
-	return getString("cd_sep_fascicolo");
+        return getString("cd_sep_fascicolo");
     }
 
     public void setCdSepFascicolo(String cdSepFascicolo) {
-	setObject("cd_sep_fascicolo", cdSepFascicolo);
+        setObject("cd_sep_fascicolo", cdSepFascicolo);
     }
 
     public String getDlNote() {
-	return getString("dl_note");
+        return getString("dl_note");
     }
 
     public void setDlNote(String dlNote) {
-	setObject("dl_note", dlNote);
+        setObject("dl_note", dlNote);
     }
 
     public String getTiStatoTitol() {
-	return getString("ti_stato_titol");
+        return getString("ti_stato_titol");
     }
 
     public void setTiStatoTitol(String tiStatoTitol) {
-	setObject("ti_stato_titol", tiStatoTitol);
+        setObject("ti_stato_titol", tiStatoTitol);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecTitol entity = (DecTitol) obj;
+        DecTitol entity = (DecTitol) obj;
 
-	this.setIdTitol(
-		entity.getIdTitol() == null ? null : BigDecimal.valueOf(entity.getIdTitol()));
+        this.setIdTitol(
+                entity.getIdTitol() == null ? null : BigDecimal.valueOf(entity.getIdTitol()));
 
-	if (entity.getOrgStrut() != null) {
-	    this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
-	}
+        if (entity.getOrgStrut() != null) {
+            this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
+        }
 
-	this.setNmTitol(entity.getNmTitol());
-	if (entity.getDtIstituz() != null) {
-	    this.setDtIstituz(new Timestamp(entity.getDtIstituz().getTime()));
-	}
-	if (entity.getDtSoppres() != null) {
-	    this.setDtSoppres(new Timestamp(entity.getDtSoppres().getTime()));
-	}
-	this.setNiLivelli(entity.getNiLivelli());
-	this.setCdSepFascicolo(entity.getCdSepFascicolo());
-	this.setDlNote(entity.getDlNote());
-	this.setTiStatoTitol(entity.getTiStatoTitol());
+        this.setNmTitol(entity.getNmTitol());
+        if (entity.getDtIstituz() != null) {
+            this.setDtIstituz(new Timestamp(entity.getDtIstituz().getTime()));
+        }
+        if (entity.getDtSoppres() != null) {
+            this.setDtSoppres(new Timestamp(entity.getDtSoppres().getTime()));
+        }
+        this.setNiLivelli(entity.getNiLivelli());
+        this.setCdSepFascicolo(entity.getCdSepFascicolo());
+        this.setDlNote(entity.getDlNote());
+        this.setTiStatoTitol(entity.getTiStatoTitol());
     }
 
     @Override
     public DecTitol rowBeanToEntity() {
-	DecTitol entity = new DecTitol();
-	if (this.getIdTitol() != null) {
-	    entity.setIdTitol(this.getIdTitol().longValue());
-	}
-	if (this.getIdStrut() != null) {
-	    if (entity.getOrgStrut() == null) {
-		entity.setOrgStrut(new OrgStrut());
-	    }
-	    entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
-	}
-	entity.setNmTitol(this.getNmTitol());
-	entity.setDtIstituz(this.getDtIstituz());
-	entity.setDtSoppres(this.getDtSoppres());
-	entity.setNiLivelli(this.getNiLivelli());
-	entity.setCdSepFascicolo(this.getCdSepFascicolo());
-	entity.setDlNote(this.getDlNote());
-	entity.setTiStatoTitol(this.getTiStatoTitol());
-	return entity;
+        DecTitol entity = new DecTitol();
+        if (this.getIdTitol() != null) {
+            entity.setIdTitol(this.getIdTitol().longValue());
+        }
+        if (this.getIdStrut() != null) {
+            if (entity.getOrgStrut() == null) {
+                entity.setOrgStrut(new OrgStrut());
+            }
+            entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
+        }
+        entity.setNmTitol(this.getNmTitol());
+        entity.setDtIstituz(this.getDtIstituz());
+        entity.setDtSoppres(this.getDtSoppres());
+        entity.setNiLivelli(this.getNiLivelli());
+        entity.setCdSepFascicolo(this.getCdSepFascicolo());
+        entity.setDlNote(this.getDlNote());
+        entity.setTiStatoTitol(this.getTiStatoTitol());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

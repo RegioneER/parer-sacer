@@ -30,7 +30,7 @@ public final class AroAipRestituzioneArchivio {
      *
      */
     public enum TiStatoAroAipRa {
-	DA_ELABORARE, ESTRATTO, ERRORE
+        DA_ELABORARE, ESTRATTO, ERRORE
     }
 
     /**
@@ -40,6 +40,6 @@ public final class AroAipRestituzioneArchivio {
      *
      */
     public enum AroAipRaTipologiaOggetto {
-	FASCICOLO, OGGETTO, SERIE, UD
+        FASCICOLO, OGGETTO, SERIE, UD
     }
 }

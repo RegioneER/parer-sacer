@@ -49,29 +49,29 @@ public class AroVLisItemRaTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_RICHIESTA_RA,
-		new ColumnDescriptor(COL_ID_RICHIESTA_RA, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_ANNO, new ColumnDescriptor(COL_ANNO, Types.DECIMAL, 22, true));
-	map.put(COL_TOT_UD, new ColumnDescriptor(COL_TOT_UD, Types.DECIMAL, 22, true));
-	map.put(COL_NUM_AIP, new ColumnDescriptor(COL_NUM_AIP, Types.DECIMAL, 22, true));
-	map.put(COL_DIMENSIONE, new ColumnDescriptor(COL_DIMENSIONE, Types.DECIMAL, 22, true));
-	map.put(COL_NUM_DOCS, new ColumnDescriptor(COL_NUM_DOCS, Types.DECIMAL, 22, true));
-	map.put(COL_NUM_ERRORI, new ColumnDescriptor(COL_NUM_ERRORI, Types.DECIMAL, 22, true));
-	map.put(COL_NUM_ESTRATTI, new ColumnDescriptor(COL_NUM_ESTRATTI, Types.DECIMAL, 22, true));
-	map.put(COL_AVANZAMENTO, new ColumnDescriptor(COL_AVANZAMENTO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_RICHIESTA_RA,
+                new ColumnDescriptor(COL_ID_RICHIESTA_RA, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_ANNO, new ColumnDescriptor(COL_ANNO, Types.DECIMAL, 22, true));
+        map.put(COL_TOT_UD, new ColumnDescriptor(COL_TOT_UD, Types.DECIMAL, 22, true));
+        map.put(COL_NUM_AIP, new ColumnDescriptor(COL_NUM_AIP, Types.DECIMAL, 22, true));
+        map.put(COL_DIMENSIONE, new ColumnDescriptor(COL_DIMENSIONE, Types.DECIMAL, 22, true));
+        map.put(COL_NUM_DOCS, new ColumnDescriptor(COL_NUM_DOCS, Types.DECIMAL, 22, true));
+        map.put(COL_NUM_ERRORI, new ColumnDescriptor(COL_NUM_ERRORI, Types.DECIMAL, 22, true));
+        map.put(COL_NUM_ESTRATTI, new ColumnDescriptor(COL_NUM_ESTRATTI, Types.DECIMAL, 22, true));
+        map.put(COL_AVANZAMENTO, new ColumnDescriptor(COL_AVANZAMENTO, Types.DECIMAL, 22, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

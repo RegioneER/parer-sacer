@@ -154,16 +154,16 @@ public class ObjectStorageService {
      *         {@link it.eng.parer.objectstorage.dto.BackendStorage.STORAGE_TYPE#OS}
      */
     public BackendStorage lookupBackend(long idTipoUnitaDoc, String paramName) {
-	try {
+        try {
 
-	    String tipoBackend = salvataggioBackendHelper.getBackendByParamName(idTipoUnitaDoc,
-		    paramName);
-	    return salvataggioBackendHelper.getBackend(tipoBackend);
+            String tipoBackend = salvataggioBackendHelper.getBackendByParamName(idTipoUnitaDoc,
+                    paramName);
+            return salvataggioBackendHelper.getBackend(tipoBackend);
 
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     // MEV#30397
@@ -175,16 +175,16 @@ public class ObjectStorageService {
      * @return tipologia di backend.
      */
     public BackendStorage lookupBackendElenchiIndiciAip(long idStrut) {
-	try {
-	    String tipoBackend = salvataggioBackendHelper.getBackendElenchiIndiciAip(idStrut);
+        try {
+            String tipoBackend = salvataggioBackendHelper.getBackendElenchiIndiciAip(idStrut);
 
-	    // tipo backend
-	    return salvataggioBackendHelper.getBackend(tipoBackend);
+            // tipo backend
+            return salvataggioBackendHelper.getBackend(tipoBackend);
 
-	} catch (Exception e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        } catch (Exception e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
     // end MEV#30397
 
@@ -198,16 +198,16 @@ public class ObjectStorageService {
      * @return tipologia di backend.
      */
     public BackendStorage lookupBackendIndiciAipSerieUD(long idStrut) {
-	try {
-	    String tipoBackend = salvataggioBackendHelper.getBackendIndiciAipSerieUD(idStrut);
+        try {
+            String tipoBackend = salvataggioBackendHelper.getBackendIndiciAipSerieUD(idStrut);
 
-	    // tipo backend
-	    return salvataggioBackendHelper.getBackend(tipoBackend);
+            // tipo backend
+            return salvataggioBackendHelper.getBackend(tipoBackend);
 
-	} catch (Exception e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        } catch (Exception e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
     // end MEV#30400
 
@@ -220,23 +220,23 @@ public class ObjectStorageService {
      * @return mappa degli XML
      */
     public Map<String, String> getObjectSipInStaging(long idSessioneVers) {
-	try {
-	    VrsXmlDatiSesObjectStorageKo xmlVersamento = salvataggioBackendHelper
-		    .getLinkXmlDatiSesOs(idSessioneVers);
-	    if (!Objects.isNull(xmlVersamento)) {
-		ObjectStorageBackend config = salvataggioBackendHelper
-			.getObjectStorageConfiguration(xmlVersamento.getDecBackend().getNmBackend(),
-				STAGING_R);
-		ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-			config, xmlVersamento.getNmBucket(), xmlVersamento.getNmKeyFile());
-		return unzip(object);
-	    } else {
-		return Collections.emptyMap();
-	    }
-	} catch (IOException | ObjectStorageException e) {
-	    log.error("Errore recupero idSessioneVers {}", idSessioneVers, e);
-	    return Collections.emptyMap();
-	}
+        try {
+            VrsXmlDatiSesObjectStorageKo xmlVersamento = salvataggioBackendHelper
+                    .getLinkXmlDatiSesOs(idSessioneVers);
+            if (!Objects.isNull(xmlVersamento)) {
+                ObjectStorageBackend config = salvataggioBackendHelper
+                        .getObjectStorageConfiguration(xmlVersamento.getDecBackend().getNmBackend(),
+                                STAGING_R);
+                ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                        config, xmlVersamento.getNmBucket(), xmlVersamento.getNmKeyFile());
+                return unzip(object);
+            } else {
+                return Collections.emptyMap();
+            }
+        } catch (IOException | ObjectStorageException e) {
+            log.error("Errore recupero idSessioneVers {}", idSessioneVers, e);
+            return Collections.emptyMap();
+        }
     }
 
     /**
@@ -248,13 +248,13 @@ public class ObjectStorageService {
      * @return mappa degli XML
      */
     public Map<String, String> getObjectSipUnitaDoc(long idUnitaDoc) {
-	try {
+        try {
 
-	    return getObjectSip(salvataggioBackendHelper.getLinkSipUnitaDocOs(idUnitaDoc));
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+            return getObjectSip(salvataggioBackendHelper.getLinkSipUnitaDocOs(idUnitaDoc));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -266,25 +266,25 @@ public class ObjectStorageService {
      * @return mappa degli XML
      */
     public Map<String, String> getObjectSipDoc(long idDoc) {
-	try {
-	    return getObjectSip(salvataggioBackendHelper.getLinkSipDocOs(idDoc));
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return getObjectSip(salvataggioBackendHelper.getLinkSipDocOs(idDoc));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     private Map<String, String> getObjectSip(AroXmlObjectStorage xmlObjectStorage)
-	    throws ObjectStorageException, IOException {
-	if (!Objects.isNull(xmlObjectStorage)) {
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    xmlObjectStorage.getDecBackend().getNmBackend(), SIP_R);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-		    config, xmlObjectStorage.getNmBucket(), xmlObjectStorage.getCdKeyFile());
-	    return unzip(object);
-	} else {
-	    return Collections.emptyMap();
-	}
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(xmlObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    xmlObjectStorage.getDecBackend().getNmBackend(), SIP_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                    config, xmlObjectStorage.getNmBucket(), xmlObjectStorage.getCdKeyFile());
+            return unzip(object);
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     // MEV#29089
@@ -297,27 +297,27 @@ public class ObjectStorageService {
      * @return mappa degli XML di versamento aggiornamento metadati
      */
     public Map<String, String> getObjectXmlVersAggMd(long idUpdUnitaDoc) {
-	try {
+        try {
 
-	    return getObjectSipAggMd(salvataggioBackendHelper.getLinkSipAggMdOs(idUpdUnitaDoc));
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+            return getObjectSipAggMd(salvataggioBackendHelper.getLinkSipAggMdOs(idUpdUnitaDoc));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     private Map<String, String> getObjectSipAggMd(AroXmlUpdUdObjectStorage xmlUpdUdObjectStorage)
-	    throws ObjectStorageException, IOException {
-	if (!Objects.isNull(xmlUpdUdObjectStorage)) {
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    xmlUpdUdObjectStorage.getDecBackend().getNmBackend(), METADATI_AGG_MD_R);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-		    config, xmlUpdUdObjectStorage.getNmBucket(),
-		    xmlUpdUdObjectStorage.getCdKeyFile());
-	    return unzip(object);
-	} else {
-	    return Collections.emptyMap();
-	}
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(xmlUpdUdObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    xmlUpdUdObjectStorage.getDecBackend().getNmBackend(), METADATI_AGG_MD_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                    config, xmlUpdUdObjectStorage.getNmBucket(),
+                    xmlUpdUdObjectStorage.getCdKeyFile());
+            return unzip(object);
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     /**
@@ -331,30 +331,30 @@ public class ObjectStorageService {
      * @return mappa degli XML dei dati specifici aggiornati
      */
     public Map<String, String> getObjectXmlUpdDatiSpecAggMd(long idEntitaSacerUpd,
-	    TiEntitaAroUpdDatiSpecUnitaDoc tiEntitaSacerUpd) {
-	try {
+            TiEntitaAroUpdDatiSpecUnitaDoc tiEntitaSacerUpd) {
+        try {
 
-	    return getObjectUpdDatiSpecAggMd(salvataggioBackendHelper
-		    .getLinkUpdDatiSpecAggMdOs(idEntitaSacerUpd, tiEntitaSacerUpd));
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+            return getObjectUpdDatiSpecAggMd(salvataggioBackendHelper
+                    .getLinkUpdDatiSpecAggMdOs(idEntitaSacerUpd, tiEntitaSacerUpd));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     private Map<String, String> getObjectUpdDatiSpecAggMd(
-	    AroUpdDatiSpecUdObjectStorage updDatiSpecObjectStorage)
-	    throws ObjectStorageException, IOException {
-	if (!Objects.isNull(updDatiSpecObjectStorage)) {
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    updDatiSpecObjectStorage.getDecBackend().getNmBackend(), METADATI_AGG_MD_R);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-		    config, updDatiSpecObjectStorage.getNmBucket(),
-		    updDatiSpecObjectStorage.getCdKeyFile());
-	    return unzipDatiSpecAggMd(object);
-	} else {
-	    return Collections.emptyMap();
-	}
+            AroUpdDatiSpecUdObjectStorage updDatiSpecObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(updDatiSpecObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    updDatiSpecObjectStorage.getDecBackend().getNmBackend(), METADATI_AGG_MD_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                    config, updDatiSpecObjectStorage.getNmBucket(),
+                    updDatiSpecObjectStorage.getCdKeyFile());
+            return unzipDatiSpecAggMd(object);
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     /**
@@ -368,30 +368,30 @@ public class ObjectStorageService {
      * @return mappa degli XML dei dati specifici relativi ai metadati iniziali
      */
     public Map<String, String> getObjectXmlVersIniDatiSpecAggMd(long idEntitaSacerVersIni,
-	    TiEntitaSacerAroVersIniDatiSpec tiEntitaSacerVersIni) {
-	try {
+            TiEntitaSacerAroVersIniDatiSpec tiEntitaSacerVersIni) {
+        try {
 
-	    return getObjectVersIniDatiSpecAggMd(salvataggioBackendHelper
-		    .getLinkVersIniDatiSpecAggMdOs(idEntitaSacerVersIni, tiEntitaSacerVersIni));
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+            return getObjectVersIniDatiSpecAggMd(salvataggioBackendHelper
+                    .getLinkVersIniDatiSpecAggMdOs(idEntitaSacerVersIni, tiEntitaSacerVersIni));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     private Map<String, String> getObjectVersIniDatiSpecAggMd(
-	    AroVersIniDatiSpecObjectStorage versIniDatiSpecObjectStorage)
-	    throws ObjectStorageException, IOException {
-	if (!Objects.isNull(versIniDatiSpecObjectStorage)) {
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    versIniDatiSpecObjectStorage.getDecBackend().getNmBackend(), METADATI_AGG_MD_R);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-		    config, versIniDatiSpecObjectStorage.getNmBucket(),
-		    versIniDatiSpecObjectStorage.getCdKeyFile());
-	    return unzipDatiSpecAggMd(object);
-	} else {
-	    return Collections.emptyMap();
-	}
+            AroVersIniDatiSpecObjectStorage versIniDatiSpecObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(versIniDatiSpecObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    versIniDatiSpecObjectStorage.getDecBackend().getNmBackend(), METADATI_AGG_MD_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                    config, versIniDatiSpecObjectStorage.getNmBucket(),
+                    versIniDatiSpecObjectStorage.getCdKeyFile());
+            return unzipDatiSpecAggMd(object);
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     /**
@@ -404,23 +404,23 @@ public class ObjectStorageService {
      * @return mappa degli XML
      */
     public Map<String, String> getObjectSipAggMdFallito(long idSesUpdUnitaDocKo) {
-	try {
-	    VrsXmlSesUpdUdKoObjectStorage xmlVersUpdUdKo = salvataggioBackendHelper
-		    .getLinkXmlSesAggMdKoOs(idSesUpdUnitaDocKo);
-	    if (!Objects.isNull(xmlVersUpdUdKo)) {
-		ObjectStorageBackend config = salvataggioBackendHelper
-			.getObjectStorageConfiguration(
-				xmlVersUpdUdKo.getDecBackend().getNmBackend(), SES_AGG_MD_ERR_KO_R);
-		ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-			config, xmlVersUpdUdKo.getNmBucket(), xmlVersUpdUdKo.getCdKeyFile());
-		return unzip(object);
-	    } else {
-		return Collections.emptyMap();
-	    }
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            VrsXmlSesUpdUdKoObjectStorage xmlVersUpdUdKo = salvataggioBackendHelper
+                    .getLinkXmlSesAggMdKoOs(idSesUpdUnitaDocKo);
+            if (!Objects.isNull(xmlVersUpdUdKo)) {
+                ObjectStorageBackend config = salvataggioBackendHelper
+                        .getObjectStorageConfiguration(
+                                xmlVersUpdUdKo.getDecBackend().getNmBackend(), SES_AGG_MD_ERR_KO_R);
+                ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                        config, xmlVersUpdUdKo.getNmBucket(), xmlVersUpdUdKo.getCdKeyFile());
+                return unzip(object);
+            } else {
+                return Collections.emptyMap();
+            }
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -433,49 +433,49 @@ public class ObjectStorageService {
      * @return mappa degli XML
      */
     public Map<String, String> getObjectSipAggMdErrato(long idSesUpdUnitaDocErr) {
-	try {
-	    VrsXmlSesUpdUdErrObjectStorage xmlVersUpdUdErr = salvataggioBackendHelper
-		    .getLinkXmlSesAggMdErrOs(idSesUpdUnitaDocErr);
-	    if (!Objects.isNull(xmlVersUpdUdErr)) {
-		ObjectStorageBackend config = salvataggioBackendHelper
-			.getObjectStorageConfiguration(
-				xmlVersUpdUdErr.getDecBackend().getNmBackend(),
-				SES_AGG_MD_ERR_KO_R);
-		ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-			config, xmlVersUpdUdErr.getNmBucket(), xmlVersUpdUdErr.getCdKeyFile());
-		return unzip(object);
-	    } else {
-		return Collections.emptyMap();
-	    }
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            VrsXmlSesUpdUdErrObjectStorage xmlVersUpdUdErr = salvataggioBackendHelper
+                    .getLinkXmlSesAggMdErrOs(idSesUpdUnitaDocErr);
+            if (!Objects.isNull(xmlVersUpdUdErr)) {
+                ObjectStorageBackend config = salvataggioBackendHelper
+                        .getObjectStorageConfiguration(
+                                xmlVersUpdUdErr.getDecBackend().getNmBackend(),
+                                SES_AGG_MD_ERR_KO_R);
+                ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                        config, xmlVersUpdUdErr.getNmBucket(), xmlVersUpdUdErr.getCdKeyFile());
+                return unzip(object);
+            } else {
+                return Collections.emptyMap();
+            }
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     private Map<String, String> unzipDatiSpecAggMd(
-	    ResponseInputStream<GetObjectResponse> inputStream) throws IOException {
-	// TipiXmlDati
-	final String xml = ".xml";
-	final Map<String, String> xmlDatiSpec = new HashMap<>();
-	try (ZipInputStream zis = new ZipInputStream(inputStream);) {
-	    ZipEntry ze = zis.getNextEntry();
-	    while (ze != null) {
-		String value = IOUtils.toString(zis, StandardCharsets.UTF_8);
-		if (ze.getName().equals(CostantiDB.TipiUsoDatiSpec.VERS.name() + xml)) {
-		    xmlDatiSpec.put(CostantiDB.TipiUsoDatiSpec.VERS.name(), value);
-		} else if (ze.getName().equals(CostantiDB.TipiUsoDatiSpec.MIGRAZ.name() + xml)) {
-		    xmlDatiSpec.put(CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(), value);
-		} else {
-		    log.warn(
-			    "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip dei Dati Specifici dell'aggiornamento metadati",
-			    ze.getName());
-		}
-		zis.closeEntry();
-		ze = zis.getNextEntry();
-	    }
-	}
-	return xmlDatiSpec;
+            ResponseInputStream<GetObjectResponse> inputStream) throws IOException {
+        // TipiXmlDati
+        final String xml = ".xml";
+        final Map<String, String> xmlDatiSpec = new HashMap<>();
+        try (ZipInputStream zis = new ZipInputStream(inputStream);) {
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                String value = IOUtils.toString(zis, StandardCharsets.UTF_8);
+                if (ze.getName().equals(CostantiDB.TipiUsoDatiSpec.VERS.name() + xml)) {
+                    xmlDatiSpec.put(CostantiDB.TipiUsoDatiSpec.VERS.name(), value);
+                } else if (ze.getName().equals(CostantiDB.TipiUsoDatiSpec.MIGRAZ.name() + xml)) {
+                    xmlDatiSpec.put(CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(), value);
+                } else {
+                    log.warn(
+                            "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip dei Dati Specifici dell'aggiornamento metadati",
+                            ze.getName());
+                }
+                zis.closeEntry();
+                ze = zis.getNextEntry();
+            }
+        }
+        return xmlDatiSpec;
     }
     // end MEV#29089
 
@@ -489,28 +489,28 @@ public class ObjectStorageService {
      * @return mappa degli XML di versamento fascicolo
      */
     public Map<String, String> getObjectXmlVersFascicolo(long idFascicolo) {
-	try {
+        try {
 
-	    return getObjectSipFasc(salvataggioBackendHelper.getLinkSipFascicoloOs(idFascicolo));
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+            return getObjectSipFasc(salvataggioBackendHelper.getLinkSipFascicoloOs(idFascicolo));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     private Map<String, String> getObjectSipFasc(
-	    FasXmlVersFascObjectStorage xmlVersFascObjectStorage)
-	    throws ObjectStorageException, IOException {
-	if (!Objects.isNull(xmlVersFascObjectStorage)) {
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    xmlVersFascObjectStorage.getDecBackend().getNmBackend(), METADATI_FASC_R);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-		    config, xmlVersFascObjectStorage.getNmBucket(),
-		    xmlVersFascObjectStorage.getCdKeyFile());
-	    return unzip(object);
-	} else {
-	    return Collections.emptyMap();
-	}
+            FasXmlVersFascObjectStorage xmlVersFascObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(xmlVersFascObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    xmlVersFascObjectStorage.getDecBackend().getNmBackend(), METADATI_FASC_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                    config, xmlVersFascObjectStorage.getNmBucket(),
+                    xmlVersFascObjectStorage.getCdKeyFile());
+            return unzip(object);
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     /**
@@ -522,27 +522,27 @@ public class ObjectStorageService {
      * @return mappa degli XML di profilo fascicolo
      */
     public Map<String, String> getObjectXmlFascicolo(long idFascicolo) {
-	try {
-	    return getObjectMetaProfFasc((FasXmlFascObjectStorage) salvataggioBackendHelper
-		    .getLinkMetaProfFascicoloOs(idFascicolo));
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return getObjectMetaProfFasc((FasXmlFascObjectStorage) salvataggioBackendHelper
+                    .getLinkMetaProfFascicoloOs(idFascicolo));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     private Map<String, String> getObjectMetaProfFasc(FasXmlFascObjectStorage xmlFascObjectStorage)
-	    throws ObjectStorageException, IOException {
-	if (!Objects.isNull(xmlFascObjectStorage)) {
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    xmlFascObjectStorage.getDecBackend().getNmBackend(), METADATI_FASC_R);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-		    config, xmlFascObjectStorage.getNmBucket(),
-		    xmlFascObjectStorage.getCdKeyFile());
-	    return unzipProfiliFascicolo(object);
-	} else {
-	    return Collections.emptyMap();
-	}
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(xmlFascObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    xmlFascObjectStorage.getDecBackend().getNmBackend(), METADATI_FASC_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                    config, xmlFascObjectStorage.getNmBucket(),
+                    xmlFascObjectStorage.getCdKeyFile());
+            return unzipProfiliFascicolo(object);
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     /**
@@ -554,23 +554,23 @@ public class ObjectStorageService {
      * @return mappa degli XML
      */
     public Map<String, String> getObjectSipFascFallito(long idSesFascicoloKo) {
-	try {
-	    VrsXmlSesFascKoObjectStorage xmlVersFascKo = salvataggioBackendHelper
-		    .getLinkXmlSesFascKoOs(idSesFascicoloKo);
-	    if (!Objects.isNull(xmlVersFascKo)) {
-		ObjectStorageBackend config = salvataggioBackendHelper
-			.getObjectStorageConfiguration(xmlVersFascKo.getDecBackend().getNmBackend(),
-				SES_FASC_ERR_KO_R);
-		ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-			config, xmlVersFascKo.getNmBucket(), xmlVersFascKo.getCdKeyFile());
-		return unzip(object);
-	    } else {
-		return Collections.emptyMap();
-	    }
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            VrsXmlSesFascKoObjectStorage xmlVersFascKo = salvataggioBackendHelper
+                    .getLinkXmlSesFascKoOs(idSesFascicoloKo);
+            if (!Objects.isNull(xmlVersFascKo)) {
+                ObjectStorageBackend config = salvataggioBackendHelper
+                        .getObjectStorageConfiguration(xmlVersFascKo.getDecBackend().getNmBackend(),
+                                SES_FASC_ERR_KO_R);
+                ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                        config, xmlVersFascKo.getNmBucket(), xmlVersFascKo.getCdKeyFile());
+                return unzip(object);
+            } else {
+                return Collections.emptyMap();
+            }
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -582,23 +582,23 @@ public class ObjectStorageService {
      * @return mappa degli XML
      */
     public Map<String, String> getObjectSipFascErrato(long idSesFascicoloErr) {
-	try {
-	    VrsXmlSesFascErrObjectStorage xmlVersFascErr = salvataggioBackendHelper
-		    .getLinkXmlSesFascErrOs(idSesFascicoloErr);
-	    if (!Objects.isNull(xmlVersFascErr)) {
-		ObjectStorageBackend config = salvataggioBackendHelper
-			.getObjectStorageConfiguration(
-				xmlVersFascErr.getDecBackend().getNmBackend(), SES_FASC_ERR_KO_R);
-		ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-			config, xmlVersFascErr.getNmBucket(), xmlVersFascErr.getCdKeyFile());
-		return unzip(object);
-	    } else {
-		return Collections.emptyMap();
-	    }
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            VrsXmlSesFascErrObjectStorage xmlVersFascErr = salvataggioBackendHelper
+                    .getLinkXmlSesFascErrOs(idSesFascicoloErr);
+            if (!Objects.isNull(xmlVersFascErr)) {
+                ObjectStorageBackend config = salvataggioBackendHelper
+                        .getObjectStorageConfiguration(
+                                xmlVersFascErr.getDecBackend().getNmBackend(), SES_FASC_ERR_KO_R);
+                ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                        config, xmlVersFascErr.getNmBucket(), xmlVersFascErr.getCdKeyFile());
+                return unzip(object);
+            } else {
+                return Collections.emptyMap();
+            }
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
     // end MEV#29090
 
@@ -610,17 +610,17 @@ public class ObjectStorageService {
      *
      */
     public void getObjectComponente(long idCompDoc, OutputStream outputStream) {
-	try {
-	    AroCompObjectStorage link = salvataggioBackendHelper.getLinkCompDocOs(idCompDoc);
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    link.getDecBackend().getNmBackend(), COMPONENTI_R);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
-		    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
-	    IOUtils.copyLarge(object, outputStream);
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            AroCompObjectStorage link = salvataggioBackendHelper.getLinkCompDocOs(idCompDoc);
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    link.getDecBackend().getNmBackend(), COMPONENTI_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
+                    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
+            IOUtils.copyLarge(object, outputStream);
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -630,18 +630,18 @@ public class ObjectStorageService {
      * @param outputStream Stream su cui scrivere l'oggetto
      */
     public void getObjectReportvf(long idCompDoc, OutputStream outputStream) {
-	try {
-	    FirReport link = salvataggioBackendHelper.getLinkReportVerificaFirma(idCompDoc);
-	    ObjectStorageBackend config = salvataggioBackendHelper
-		    .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), REPORTVF_R);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
-		    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
-	    IOUtils.copyLarge(object, outputStream);
+        try {
+            FirReport link = salvataggioBackendHelper.getLinkReportVerificaFirma(idCompDoc);
+            ObjectStorageBackend config = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), REPORTVF_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
+                    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
+            IOUtils.copyLarge(object, outputStream);
 
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -654,22 +654,22 @@ public class ObjectStorageService {
      *
      */
     public boolean getObjectComponenteInStaging(long idFileSessione, OutputStream outputStream) {
-	boolean result = true;
-	try {
-	    VrsFileSesObjectStorageKo link = salvataggioBackendHelper
-		    .getLinkVersamentoFallito(idFileSessione);
-	    ObjectStorageBackend config = salvataggioBackendHelper
-		    .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), STAGING_R);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
-		    .getObject(config, link.getNmBucket(), link.getNmKeyFile());
-	    IOUtils.copyLarge(object, outputStream);
+        boolean result = true;
+        try {
+            VrsFileSesObjectStorageKo link = salvataggioBackendHelper
+                    .getLinkVersamentoFallito(idFileSessione);
+            ObjectStorageBackend config = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), STAGING_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
+                    .getObject(config, link.getNmBucket(), link.getNmKeyFile());
+            IOUtils.copyLarge(object, outputStream);
 
-	} catch (IOException | ObjectStorageException e) {
-	    log.error("Errore recupero idFileSessione {}", idFileSessione, e);
-	    result = false;
-	}
+        } catch (IOException | ObjectStorageException e) {
+            log.error("Errore recupero idFileSessione {}", idFileSessione, e);
+            result = false;
+        }
 
-	return result;
+        return result;
     }
 
     // MEV#30395
@@ -681,18 +681,18 @@ public class ObjectStorageService {
      *
      */
     public void getObjectIndiceAipUd(long idVerIndiceAip, OutputStream outputStream) {
-	try {
-	    AroVerIndiceAipUdObjectStorage link = salvataggioBackendHelper
-		    .getLinkAroVerIndiceAipUdOs(idVerIndiceAip);
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    link.getDecBackend().getNmBackend(), READ_INDICI_AIP);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
-		    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
-	    IOUtils.copyLarge(object, outputStream);
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            AroVerIndiceAipUdObjectStorage link = salvataggioBackendHelper
+                    .getLinkAroVerIndiceAipUdOs(idVerIndiceAip);
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    link.getDecBackend().getNmBackend(), READ_INDICI_AIP);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
+                    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
+            IOUtils.copyLarge(object, outputStream);
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
     // end MEV#30395
 
@@ -705,18 +705,18 @@ public class ObjectStorageService {
      *
      */
     public void getObjectElencoIndiciAip(long idFileElencoVers, OutputStream outputStream) {
-	try {
-	    ElvFileElencoVersObjectStorage link = salvataggioBackendHelper
-		    .getLinkElvFileElencoVersOs(idFileElencoVers);
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    link.getDecBackend().getNmBackend(), READ_ELV_IX_AIP);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
-		    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
-	    IOUtils.copyLarge(object, outputStream);
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            ElvFileElencoVersObjectStorage link = salvataggioBackendHelper
+                    .getLinkElvFileElencoVersOs(idFileElencoVers);
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    link.getDecBackend().getNmBackend(), READ_ELV_IX_AIP);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
+                    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
+            IOUtils.copyLarge(object, outputStream);
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -727,14 +727,14 @@ public class ObjectStorageService {
      * @return file XML dell'elenco indice
      */
     public byte[] getObjectElencoIndici(long idFileElencoVers) {
-	try {
+        try {
 
-	    return getObjectFileElencoIx(
-		    salvataggioBackendHelper.getLinkElvFileElencoVersOs(idFileElencoVers));
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+            return getObjectFileElencoIx(
+                    salvataggioBackendHelper.getLinkElvFileElencoVersOs(idFileElencoVers));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -746,43 +746,43 @@ public class ObjectStorageService {
      * @return file XML dell'elenco indici aip
      */
     public byte[] getObjectElencoIndiciAip(long idFileElencoVers) {
-	try {
+        try {
 
-	    return getObjectFileElencoIxAip(
-		    salvataggioBackendHelper.getLinkElvFileElencoVersOs(idFileElencoVers));
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+            return getObjectFileElencoIxAip(
+                    salvataggioBackendHelper.getLinkElvFileElencoVersOs(idFileElencoVers));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     private byte[] getObjectFileElencoIxAip(
-	    ElvFileElencoVersObjectStorage fileElencoVersObjectStorage)
-	    throws ObjectStorageException, IOException {
-	if (!Objects.isNull(fileElencoVersObjectStorage)) {
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    fileElencoVersObjectStorage.getDecBackend().getNmBackend(), READ_ELV_IX_AIP);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-		    config, fileElencoVersObjectStorage.getNmBucket(),
-		    fileElencoVersObjectStorage.getCdKeyFile());
-	    return IOUtils.toByteArray(object);
-	} else {
-	    return IOUtils.byteArray();
-	}
+            ElvFileElencoVersObjectStorage fileElencoVersObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(fileElencoVersObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    fileElencoVersObjectStorage.getDecBackend().getNmBackend(), READ_ELV_IX_AIP);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                    config, fileElencoVersObjectStorage.getNmBucket(),
+                    fileElencoVersObjectStorage.getCdKeyFile());
+            return IOUtils.toByteArray(object);
+        } else {
+            return IOUtils.byteArray();
+        }
     }
 
     private byte[] getObjectFileElencoIx(ElvFileElencoVersObjectStorage fileElencoVersObjectStorage)
-	    throws ObjectStorageException, IOException {
-	if (!Objects.isNull(fileElencoVersObjectStorage)) {
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    fileElencoVersObjectStorage.getDecBackend().getNmBackend(), READ_ELV_IX);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-		    config, fileElencoVersObjectStorage.getNmBucket(),
-		    fileElencoVersObjectStorage.getCdKeyFile());
-	    return IOUtils.toByteArray(object);
-	} else {
-	    return IOUtils.byteArray();
-	}
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(fileElencoVersObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    fileElencoVersObjectStorage.getDecBackend().getNmBackend(), READ_ELV_IX);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                    config, fileElencoVersObjectStorage.getNmBucket(),
+                    fileElencoVersObjectStorage.getCdKeyFile());
+            return IOUtils.toByteArray(object);
+        } else {
+            return IOUtils.byteArray();
+        }
     }
 
     // end MEV#30397
@@ -795,12 +795,12 @@ public class ObjectStorageService {
      * @return true se su O.s false altrimenti
      */
     public boolean isComponenteFallitoOnOs(long idFileSessioneKo) {
-	try {
-	    return salvataggioBackendHelper.existFileSesObjectStorage(idFileSessioneKo);
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return salvataggioBackendHelper.existFileSesObjectStorage(idFileSessioneKo);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -812,12 +812,12 @@ public class ObjectStorageService {
      * @return true se su O.s false altrimenti
      */
     public boolean isComponenteOnOs(long idCompDoc) {
-	try {
-	    return salvataggioBackendHelper.existComponenteObjectStorage(idCompDoc);
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return salvataggioBackendHelper.existComponenteObjectStorage(idCompDoc);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -829,80 +829,80 @@ public class ObjectStorageService {
      * @return true se su O.s false altrimenti
      */
     public boolean isReportvfOnOsByIdCompDoc(long idCompDoc) {
-	try {
-	    return salvataggioBackendHelper.existReportvfObjectStorage(idCompDoc);
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return salvataggioBackendHelper.existReportvfObjectStorage(idCompDoc);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     private Map<String, String> unzip(ResponseInputStream<GetObjectResponse> inputStream)
-	    throws IOException {
-	// TipiXmlDati
-	final String xml = ".xml";
-	final Map<String, String> xmlVers = new HashMap<>();
-	try (ZipInputStream zis = new ZipInputStream(inputStream);) {
-	    ZipEntry ze = zis.getNextEntry();
-	    while (ze != null) {
-		String value = IOUtils.toString(zis, StandardCharsets.UTF_8);
-		if (ze.getName().equals(CostantiDB.TipiXmlDati.RICHIESTA + xml)) {
-		    xmlVers.put(CostantiDB.TipiXmlDati.RICHIESTA, value);
-		} else if (ze.getName().equals(CostantiDB.TipiXmlDati.RISPOSTA + xml)) {
-		    xmlVers.put(CostantiDB.TipiXmlDati.RISPOSTA, value);
-		} else if (ze.getName().equals(CostantiDB.TipiXmlDati.RAPP_VERS + xml)) {
-		    xmlVers.put(CostantiDB.TipiXmlDati.RAPP_VERS, value);
-		} else if (ze.getName().equals(CostantiDB.TipiXmlDati.INDICE_FILE + xml)) {
-		    xmlVers.put(CostantiDB.TipiXmlDati.INDICE_FILE, value);
-		} else {
-		    log.warn(
-			    "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip dei SIP di versamento",
-			    ze.getName());
-		}
-		zis.closeEntry();
-		ze = zis.getNextEntry();
-	    }
-	}
-	return xmlVers;
+            throws IOException {
+        // TipiXmlDati
+        final String xml = ".xml";
+        final Map<String, String> xmlVers = new HashMap<>();
+        try (ZipInputStream zis = new ZipInputStream(inputStream);) {
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                String value = IOUtils.toString(zis, StandardCharsets.UTF_8);
+                if (ze.getName().equals(CostantiDB.TipiXmlDati.RICHIESTA + xml)) {
+                    xmlVers.put(CostantiDB.TipiXmlDati.RICHIESTA, value);
+                } else if (ze.getName().equals(CostantiDB.TipiXmlDati.RISPOSTA + xml)) {
+                    xmlVers.put(CostantiDB.TipiXmlDati.RISPOSTA, value);
+                } else if (ze.getName().equals(CostantiDB.TipiXmlDati.RAPP_VERS + xml)) {
+                    xmlVers.put(CostantiDB.TipiXmlDati.RAPP_VERS, value);
+                } else if (ze.getName().equals(CostantiDB.TipiXmlDati.INDICE_FILE + xml)) {
+                    xmlVers.put(CostantiDB.TipiXmlDati.INDICE_FILE, value);
+                } else {
+                    log.warn(
+                            "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip dei SIP di versamento",
+                            ze.getName());
+                }
+                zis.closeEntry();
+                ze = zis.getNextEntry();
+            }
+        }
+        return xmlVers;
     }
 
     private Map<String, String> unzipProfiliFascicolo(
-	    ResponseInputStream<GetObjectResponse> inputStream) throws IOException {
-	// TipiXmlDati
-	final String xml = ".xml";
-	final Map<String, String> xmlProf = new HashMap<>();
-	try (ZipInputStream zis = new ZipInputStream(inputStream);) {
-	    ZipEntry ze = zis.getNextEntry();
-	    while (ze != null) {
-		String value = IOUtils.toString(zis, StandardCharsets.UTF_8);
-		if (ze.getName().equals(
-			CostantiDB.TiModelloXsdProfilo.PROFILO_GENERALE_FASCICOLO.name() + xml)) {
-		    xmlProf.put(CostantiDB.TiModelloXsdProfilo.PROFILO_GENERALE_FASCICOLO.name(),
-			    value);
-		} else if (ze.getName().equals(
-			CostantiDB.TiModelloXsdProfilo.PROFILO_NORMATIVO_FASCICOLO.name() + xml)) {
-		    xmlProf.put(CostantiDB.TiModelloXsdProfilo.PROFILO_NORMATIVO_FASCICOLO.name(),
-			    value);
-		} else if (ze.getName()
-			.equals(CostantiDB.TiModelloXsdProfilo.PROFILO_ARCHIVISTICO_FASCICOLO.name()
-				+ xml)) {
-		    xmlProf.put(
-			    CostantiDB.TiModelloXsdProfilo.PROFILO_ARCHIVISTICO_FASCICOLO.name(),
-			    value);
-		} else if (ze.getName().equals(
-			CostantiDB.TiModelloXsdProfilo.PROFILO_SPECIFICO_FASCICOLO.name() + xml)) {
-		    xmlProf.put(CostantiDB.TiModelloXsdProfilo.PROFILO_SPECIFICO_FASCICOLO.name(),
-			    value);
-		} else {
-		    log.warn(
-			    "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip dei profili del fascicolo",
-			    ze.getName());
-		}
-		zis.closeEntry();
-		ze = zis.getNextEntry();
-	    }
-	}
-	return xmlProf;
+            ResponseInputStream<GetObjectResponse> inputStream) throws IOException {
+        // TipiXmlDati
+        final String xml = ".xml";
+        final Map<String, String> xmlProf = new HashMap<>();
+        try (ZipInputStream zis = new ZipInputStream(inputStream);) {
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                String value = IOUtils.toString(zis, StandardCharsets.UTF_8);
+                if (ze.getName().equals(
+                        CostantiDB.TiModelloXsdProfilo.PROFILO_GENERALE_FASCICOLO.name() + xml)) {
+                    xmlProf.put(CostantiDB.TiModelloXsdProfilo.PROFILO_GENERALE_FASCICOLO.name(),
+                            value);
+                } else if (ze.getName().equals(
+                        CostantiDB.TiModelloXsdProfilo.PROFILO_NORMATIVO_FASCICOLO.name() + xml)) {
+                    xmlProf.put(CostantiDB.TiModelloXsdProfilo.PROFILO_NORMATIVO_FASCICOLO.name(),
+                            value);
+                } else if (ze.getName()
+                        .equals(CostantiDB.TiModelloXsdProfilo.PROFILO_ARCHIVISTICO_FASCICOLO.name()
+                                + xml)) {
+                    xmlProf.put(
+                            CostantiDB.TiModelloXsdProfilo.PROFILO_ARCHIVISTICO_FASCICOLO.name(),
+                            value);
+                } else if (ze.getName().equals(
+                        CostantiDB.TiModelloXsdProfilo.PROFILO_SPECIFICO_FASCICOLO.name() + xml)) {
+                    xmlProf.put(CostantiDB.TiModelloXsdProfilo.PROFILO_SPECIFICO_FASCICOLO.name(),
+                            value);
+                } else {
+                    log.warn(
+                            "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip dei profili del fascicolo",
+                            ze.getName());
+                }
+                zis.closeEntry();
+                ze = zis.getNextEntry();
+            }
+        }
+        return xmlProf;
     }
 
     // MEV#30397
@@ -920,72 +920,72 @@ public class ObjectStorageService {
      *
      */
     public ObjectStorageResource createResourcesInElenchiIndiciAip(final String urn,
-	    String nomeBackend, byte[] contenuto, long idFileElencoVers, BigDecimal idStrut,
-	    ElencoEnums.TipoFirma tipoFirma) {
-	Path tempFile = null;
-	try {
-	    ObjectStorageBackend configuration = salvataggioBackendHelper
-		    .getObjectStorageConfiguration(nomeBackend, WRITE_ELV_IX_AIP);
-	    // generate std tag
-	    Set<Tag> tags = new HashSet<>();
-	    // create key
-	    // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded
-	    // negli elenchi indici aip
-	    // UD
-	    String estensione = "";
-	    switch (tipoFirma) {
-	    case XADES:
-		estensione = ".xml";
-		break;
-	    case CADES:
-		estensione = ".xml.p7m";
-		break;
-	    default:
-		estensione = "";
-		log.warn("Estensione mancante nel file da salvare sull'ObjectStorage!");
-	    }
-	    // MAC #37222
-	    String suffisso = "Indice";
-	    // if (urn.toUpperCase().contains("MARCA")) {
-	    // suffisso = "IndiceMarca";
-	    // } else {
-	    // suffisso = "Indice";
-	    // }
-	    String urnRielaborato = salvataggioBackendHelper
-		    .generateKeyElencoIndiceAip(idFileElencoVers, suffisso);
-	    final String destKey = createRandomKey(urnRielaborato) + estensione;
+            String nomeBackend, byte[] contenuto, long idFileElencoVers, BigDecimal idStrut,
+            ElencoEnums.TipoFirma tipoFirma) {
+        Path tempFile = null;
+        try {
+            ObjectStorageBackend configuration = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(nomeBackend, WRITE_ELV_IX_AIP);
+            // generate std tag
+            Set<Tag> tags = new HashSet<>();
+            // create key
+            // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded
+            // negli elenchi indici aip
+            // UD
+            String estensione = "";
+            switch (tipoFirma) {
+            case XADES:
+                estensione = ".xml";
+                break;
+            case CADES:
+                estensione = ".xml.p7m";
+                break;
+            default:
+                estensione = "";
+                log.warn("Estensione mancante nel file da salvare sull'ObjectStorage!");
+            }
+            // MAC #37222
+            String suffisso = "Indice";
+            // if (urn.toUpperCase().contains("MARCA")) {
+            // suffisso = "IndiceMarca";
+            // } else {
+            // suffisso = "Indice";
+            // }
+            String urnRielaborato = salvataggioBackendHelper
+                    .generateKeyElencoIndiceAip(idFileElencoVers, suffisso);
+            final String destKey = createRandomKey(urnRielaborato) + estensione;
 
-	    tempFile = Files.createTempFile("temp-elenco-indici", ".xml");
-	    // Scrivi il contenuto byte[] nel file temporaneo
-	    Files.write(tempFile, contenuto, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            tempFile = Files.createTempFile("temp-elenco-indici", ".xml");
+            // Scrivi il contenuto byte[] nel file temporaneo
+            Files.write(tempFile, contenuto, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 
-	    // put on O.S. + save link
-	    try (ByteArrayInputStream bais = new ByteArrayInputStream(contenuto)) {
+            // put on O.S. + save link
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(contenuto)) {
 
-		ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais,
-			contenuto.length, destKey, configuration, Optional.empty(),
-			Optional.of(tags), Optional.of(calculateFileCRC32CBase64(tempFile)));
-		log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
-		// link
-		salvataggioBackendHelper.saveObjectStorageLinkElencoIndiceAip(savedFile,
-			nomeBackend, idFileElencoVers, idStrut);
-		return savedFile;
-	    }
+                ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais,
+                        contenuto.length, destKey, configuration, Optional.empty(),
+                        Optional.of(tags), Optional.of(calculateFileCRC32CBase64(tempFile)));
+                log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
+                // link
+                salvataggioBackendHelper.saveObjectStorageLinkElencoIndiceAip(savedFile,
+                        nomeBackend, idFileElencoVers, idStrut);
+                return savedFile;
+            }
 
-	} catch (ObjectStorageException | IOException ex) {
-	    throw new EJBException(ex);
-	} finally {
-	    // Elimina il file temporaneo (anche in caso di eccezione)
-	    if (tempFile != null) {
-		try {
-		    Files.deleteIfExists(tempFile);
-		} catch (IOException e) {
-		    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
-		    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione
-		    // originale.
-		}
-	    }
-	}
+        } catch (ObjectStorageException | IOException ex) {
+            throw new EJBException(ex);
+        } finally {
+            // Elimina il file temporaneo (anche in caso di eccezione)
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException e) {
+                    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
+                    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione
+                    // originale.
+                }
+            }
+        }
     }
 
     /**
@@ -1006,10 +1006,10 @@ public class ObjectStorageService {
      */
     private static String createRandomKey(final String urn) {
 
-	String when = DateTimeFormatter.ofPattern(PATTERN_FORMAT).withZone(ZoneId.systemDefault())
-		.format(Instant.now());
+        String when = DateTimeFormatter.ofPattern(PATTERN_FORMAT).withZone(ZoneId.systemDefault())
+                .format(Instant.now());
 
-	return when + "/" + urn + "/" + UUID.randomUUID().toString();
+        return when + "/" + urn + "/" + UUID.randomUUID().toString();
     }
 
     /**
@@ -1021,12 +1021,12 @@ public class ObjectStorageService {
      * @return true se su O.s false altrimenti
      */
     public boolean isElencoIndiciAipOnOs(long idFileElencoVers) {
-	try {
-	    return salvataggioBackendHelper.existElencoIndiciAipObjectStorage(idFileElencoVers);
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return salvataggioBackendHelper.existElencoIndiciAipObjectStorage(idFileElencoVers);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
     // end MEV#30397
 
@@ -1039,12 +1039,12 @@ public class ObjectStorageService {
      * @return true se su O.s false altrimenti
      */
     public boolean isIndiceElencoOnOs(long idFileElencoVers) {
-	try {
-	    return salvataggioBackendHelper.existIndiceElencoObjectStorage(idFileElencoVers);
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return salvataggioBackendHelper.existIndiceElencoObjectStorage(idFileElencoVers);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     // MEV#30395
@@ -1062,49 +1062,49 @@ public class ObjectStorageService {
      * @throws java.io.IOException eccezione
      */
     public ObjectStorageResource createResourcesInIndiciAipUnitaDoc(String nomeBackend,
-	    String contenuto, long idVerIndiceAip, BigDecimal idSubStrut, BigDecimal aaKeyUnitaDoc)
-	    throws IOException {
-	Path tempFile = Files.createTempFile("temp-indice", ".xml");
-	try {
-	    ObjectStorageBackend configuration = salvataggioBackendHelper
-		    .getObjectStorageConfiguration(nomeBackend, WRITE_INDICI_AIP);
+            String contenuto, long idVerIndiceAip, BigDecimal idSubStrut, BigDecimal aaKeyUnitaDoc)
+            throws IOException {
+        Path tempFile = Files.createTempFile("temp-indice", ".xml");
+        try {
+            ObjectStorageBackend configuration = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(nomeBackend, WRITE_INDICI_AIP);
 
-	    // generate std tag
-	    Set<Tag> tags = new HashSet<>();
+            // generate std tag
+            Set<Tag> tags = new HashSet<>();
 
-	    // MAC #37222
-	    final String estensione = ".xml";
-	    final String destKey = salvataggioBackendHelper.generateKeyIndiceAip(idVerIndiceAip)
-		    + estensione;
+            // MAC #37222
+            final String estensione = ".xml";
+            final String destKey = salvataggioBackendHelper.generateKeyIndiceAip(idVerIndiceAip)
+                    + estensione;
 
-	    // Scrivi il contenuto String nel file temporaneo (usa UTF-8 encoding)
-	    Files.write(tempFile, contenuto.getBytes(StandardCharsets.UTF_8),
-		    StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            // Scrivi il contenuto String nel file temporaneo (usa UTF-8 encoding)
+            Files.write(tempFile, contenuto.getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 
-	    // put on O.S.
-	    ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(contenuto, destKey,
-		    configuration, Optional.empty(), Optional.of(tags),
-		    Optional.of(calculateFileCRC32CBase64(tempFile)));
+            // put on O.S.
+            ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(contenuto, destKey,
+                    configuration, Optional.empty(), Optional.of(tags),
+                    Optional.of(calculateFileCRC32CBase64(tempFile)));
 
-	    log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
-	    // link
-	    salvataggioBackendHelper.saveObjectStorageLinkIndiceAipUd(savedFile, nomeBackend,
-		    idVerIndiceAip, idSubStrut, aaKeyUnitaDoc);
-	    return savedFile;
-	} catch (ObjectStorageException ex) {
-	    throw new EJBException(ex);
-	} finally {
-	    // Elimina il file temporaneo (anche in caso di eccezione)
-	    if (tempFile != null) {
-		try {
-		    Files.deleteIfExists(tempFile);
-		} catch (IOException e) {
-		    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
-		    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione
-		    // originale.
-		}
-	    }
-	}
+            log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
+            // link
+            salvataggioBackendHelper.saveObjectStorageLinkIndiceAipUd(savedFile, nomeBackend,
+                    idVerIndiceAip, idSubStrut, aaKeyUnitaDoc);
+            return savedFile;
+        } catch (ObjectStorageException ex) {
+            throw new EJBException(ex);
+        } finally {
+            // Elimina il file temporaneo (anche in caso di eccezione)
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException e) {
+                    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
+                    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione
+                    // originale.
+                }
+            }
+        }
     }
 
     /**
@@ -1125,7 +1125,7 @@ public class ObjectStorageService {
      */
     @Deprecated(forRemoval = true, since = "10.8.0")
     private String calculateMd5AsBase64(String str) {
-	return Md5Utils.md5AsBase64(str.getBytes(StandardCharsets.UTF_8));
+        return Md5Utils.md5AsBase64(str.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -1137,12 +1137,12 @@ public class ObjectStorageService {
      * @return true se su O.s false altrimenti
      */
     public boolean isIndiceAipOnOs(long idVerIndiceAip) {
-	try {
-	    return salvataggioBackendHelper.existIndiceAipObjectStorage(idVerIndiceAip);
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return salvataggioBackendHelper.existIndiceAipObjectStorage(idVerIndiceAip);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -1155,17 +1155,17 @@ public class ObjectStorageService {
      * @return attributi dell'oggetto su O.s.
      */
     public GetObjectAttributesResponse getObjectAttributesIndiceAipUd(long idVerIndiceAip) {
-	try {
-	    AroVerIndiceAipUdObjectStorage link = salvataggioBackendHelper
-		    .getLinkAroVerIndiceAipUdOs(idVerIndiceAip);
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    link.getDecBackend().getNmBackend(), READ_INDICI_AIP);
-	    return salvataggioBackendHelper.getObjectAttributes(config, link.getNmBucket(),
-		    link.getCdKeyFile());
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            AroVerIndiceAipUdObjectStorage link = salvataggioBackendHelper
+                    .getLinkAroVerIndiceAipUdOs(idVerIndiceAip);
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    link.getDecBackend().getNmBackend(), READ_INDICI_AIP);
+            return salvataggioBackendHelper.getObjectAttributes(config, link.getNmBucket(),
+                    link.getCdKeyFile());
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -1176,17 +1176,17 @@ public class ObjectStorageService {
      * @return attributi dell'oggetto su O.s.
      */
     public HeadObjectResponse getObjectMetadataIndiceAipUd(long idVerIndiceAip) {
-	try {
-	    AroVerIndiceAipUdObjectStorage link = salvataggioBackendHelper
-		    .getLinkAroVerIndiceAipUdOs(idVerIndiceAip);
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    link.getDecBackend().getNmBackend(), READ_INDICI_AIP);
-	    return salvataggioBackendHelper.getObjectMetadata(config, link.getNmBucket(),
-		    link.getCdKeyFile());
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            AroVerIndiceAipUdObjectStorage link = salvataggioBackendHelper
+                    .getLinkAroVerIndiceAipUdOs(idVerIndiceAip);
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    link.getDecBackend().getNmBackend(), READ_INDICI_AIP);
+            return salvataggioBackendHelper.getObjectMetadata(config, link.getNmBucket(),
+                    link.getCdKeyFile());
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
     // end MEV#30395
 
@@ -1203,61 +1203,61 @@ public class ObjectStorageService {
      * @return risorsa su OS che identifica il file caricato
      */
     public ObjectStorageResource createResourcesInIndiciAipFasc(final String urn,
-	    String nomeBackend, Map<String, String> xmlFiles, long idVerAipFascicolo,
-	    BigDecimal idStrut) {
-	try {
-	    ObjectStorageBackend configuration = salvataggioBackendHelper
-		    .getObjectStorageConfiguration(nomeBackend, WRITE_INDICI_AIP_FASCICOLI);
+            String nomeBackend, Map<String, String> xmlFiles, long idVerAipFascicolo,
+            BigDecimal idStrut) {
+        try {
+            ObjectStorageBackend configuration = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(nomeBackend, WRITE_INDICI_AIP_FASCICOLI);
 
-	    String urnKey = salvataggioBackendHelper.generateKeyIndiceAipFasc(idVerAipFascicolo);
+            String urnKey = salvataggioBackendHelper.generateKeyIndiceAipFasc(idVerAipFascicolo);
 
-	    // put on O.S.
-	    ObjectStorageResource savedFile = createSipXmlMapAndPutOnBucket(urnKey, xmlFiles,
-		    configuration, SetUtils.emptySet());
-	    // link
-	    salvataggioBackendHelper.saveObjectStorageLinkIndiceAipFasc(savedFile, nomeBackend,
-		    idVerAipFascicolo, idStrut);
-	    return savedFile;
-	} catch (ObjectStorageException | IOException | NoSuchAlgorithmException ex) {
-	    throw new EJBException(ex);
-	}
+            // put on O.S.
+            ObjectStorageResource savedFile = createSipXmlMapAndPutOnBucket(urnKey, xmlFiles,
+                    configuration, SetUtils.emptySet());
+            // link
+            salvataggioBackendHelper.saveObjectStorageLinkIndiceAipFasc(savedFile, nomeBackend,
+                    idVerAipFascicolo, idStrut);
+            return savedFile;
+        } catch (ObjectStorageException | IOException | NoSuchAlgorithmException ex) {
+            throw new EJBException(ex);
+        }
     }
 
     private ObjectStorageResource createSipXmlMapAndPutOnBucket(final String urn,
-	    Map<String, String> xmlFiles, ObjectStorageBackend configuration, Set<Tag> tags)
-	    throws IOException, ObjectStorageException, NoSuchAlgorithmException {
-	ObjectStorageResource savedFile = null;
-	Path tempZip = Files.createTempFile("aip_fasc-", ".zip");
-	//
-	try (InputStream is = Files.newInputStream(tempZip)) {
-	    // create key
-	    final String key;
-	    if (StringUtils.isBlank(urn)) {
-		key = createRandomKey() + ".zip";
-	    } else {
-		key = createRandomKey(urn) + ".zip";
-	    }
-	    // create zip file
-	    createZipFile(xmlFiles, tempZip);
-	    // put on O.S.
-	    savedFile = salvataggioBackendHelper.putObject(is, Files.size(tempZip), key,
-		    configuration, Optional.empty(), Optional.of(tags),
-		    Optional.of(calculateFileCRC32CBase64(tempZip)));
-	    log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
-	} finally {
-	    // Elimina il file temporaneo (anche in caso di eccezione)
-	    if (tempZip != null) {
-		try {
-		    Files.deleteIfExists(tempZip);
-		} catch (IOException e) {
-		    log.error("Impossibile eliminare il file temporaneo: " + tempZip, e);
-		    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione
-		    // originale.
-		}
-	    }
-	}
+            Map<String, String> xmlFiles, ObjectStorageBackend configuration, Set<Tag> tags)
+            throws IOException, ObjectStorageException, NoSuchAlgorithmException {
+        ObjectStorageResource savedFile = null;
+        Path tempZip = Files.createTempFile("aip_fasc-", ".zip");
+        //
+        try (InputStream is = Files.newInputStream(tempZip)) {
+            // create key
+            final String key;
+            if (StringUtils.isBlank(urn)) {
+                key = createRandomKey() + ".zip";
+            } else {
+                key = createRandomKey(urn) + ".zip";
+            }
+            // create zip file
+            createZipFile(xmlFiles, tempZip);
+            // put on O.S.
+            savedFile = salvataggioBackendHelper.putObject(is, Files.size(tempZip), key,
+                    configuration, Optional.empty(), Optional.of(tags),
+                    Optional.of(calculateFileCRC32CBase64(tempZip)));
+            log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
+        } finally {
+            // Elimina il file temporaneo (anche in caso di eccezione)
+            if (tempZip != null) {
+                try {
+                    Files.deleteIfExists(tempZip);
+                } catch (IOException e) {
+                    log.error("Impossibile eliminare il file temporaneo: " + tempZip, e);
+                    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione
+                    // originale.
+                }
+            }
+        }
 
-	return savedFile;
+        return savedFile;
     }
 
     /**
@@ -1280,10 +1280,10 @@ public class ObjectStorageService {
      */
     private static String createRandomKey() {
 
-	String when = DateTimeFormatter.ofPattern(PATTERN_FORMAT).withZone(ZoneId.systemDefault())
-		.format(Instant.now());
+        String when = DateTimeFormatter.ofPattern(PATTERN_FORMAT).withZone(ZoneId.systemDefault())
+                .format(Instant.now());
 
-	return when + "/" + UUIDMdcLogUtil.getUuid() + "/" + UUID.randomUUID().toString();
+        return when + "/" + UUIDMdcLogUtil.getUuid() + "/" + UUID.randomUUID().toString();
     }
 
     /**
@@ -1300,14 +1300,14 @@ public class ObjectStorageService {
      * @throws IOException in caso di errore
      */
     private void createZipFile(Map<String, String> xmlFiles, Path zipFile) throws IOException {
-	try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(zipFile))) {
-	    for (Map.Entry<String, String> sipBlob : xmlFiles.entrySet()) {
-		ZipEntry entry = new ZipEntry(sipBlob.getKey() + ".xml");
-		out.putNextEntry(entry);
-		out.write(sipBlob.getValue().getBytes(StandardCharsets.UTF_8));
-		out.closeEntry();
-	    }
-	}
+        try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+            for (Map.Entry<String, String> sipBlob : xmlFiles.entrySet()) {
+                ZipEntry entry = new ZipEntry(sipBlob.getKey() + ".xml");
+                out.putNextEntry(entry);
+                out.write(sipBlob.getValue().getBytes(StandardCharsets.UTF_8));
+                out.closeEntry();
+            }
+        }
     }
 
     /**
@@ -1324,15 +1324,15 @@ public class ObjectStorageService {
      * @throws IOException              errore generico
      */
     private String calculateFileBase64(Path resource) throws NoSuchAlgorithmException, IOException {
-	byte[] buffer = new byte[BUFFER_SIZE];
-	int readed;
-	MessageDigest digester = MessageDigest.getInstance(CostantiDB.TipiHash.MD5.descrivi());
-	try (InputStream is = Files.newInputStream(resource)) {
-	    while ((readed = is.read(buffer)) != -1) {
-		digester.update(buffer, 0, readed);
-	    }
-	}
-	return Base64.getEncoder().encodeToString(digester.digest());
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int readed;
+        MessageDigest digester = MessageDigest.getInstance(CostantiDB.TipiHash.MD5.descrivi());
+        try (InputStream is = Files.newInputStream(resource)) {
+            while ((readed = is.read(buffer)) != -1) {
+                digester.update(buffer, 0, readed);
+            }
+        }
+        return Base64.getEncoder().encodeToString(digester.digest());
     }
 
     /**
@@ -1344,29 +1344,29 @@ public class ObjectStorageService {
      * @return mappa degli XML dell'indice AIP fascicolo
      */
     public Map<String, String> getObjectXmlIndiceAipFasc(long idVerAipFascicolo) {
-	try {
-	    return getObjectIndiceAipFasc(
-		    salvataggioBackendHelper.getLinkIndiceAipFascOs(idVerAipFascicolo));
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return getObjectIndiceAipFasc(
+                    salvataggioBackendHelper.getLinkIndiceAipFascOs(idVerAipFascicolo));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     public Map<String, String> getObjectIndiceAipFasc(
-	    FasFileMetaVerAipFascObjectStorage fileMetaVerAipFascObjectStorage)
-	    throws ObjectStorageException, IOException {
-	if (!Objects.isNull(fileMetaVerAipFascObjectStorage)) {
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    fileMetaVerAipFascObjectStorage.getDecBackend().getNmBackend(),
-		    READ_INDICI_AIP_FASCICOLI);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-		    config, fileMetaVerAipFascObjectStorage.getNmBucket(),
-		    fileMetaVerAipFascObjectStorage.getCdKeyFile());
-	    return unzipAipFascicolo(object);
-	} else {
-	    return Collections.emptyMap();
-	}
+            FasFileMetaVerAipFascObjectStorage fileMetaVerAipFascObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(fileMetaVerAipFascObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    fileMetaVerAipFascObjectStorage.getDecBackend().getNmBackend(),
+                    READ_INDICI_AIP_FASCICOLI);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                    config, fileMetaVerAipFascObjectStorage.getNmBucket(),
+                    fileMetaVerAipFascObjectStorage.getCdKeyFile());
+            return unzipAipFascicolo(object);
+        } else {
+            return Collections.emptyMap();
+        }
     }
 
     /**
@@ -1377,18 +1377,18 @@ public class ObjectStorageService {
      *
      */
     public void getObjectIndiceAipFasc(long idVerAipFascicolo, OutputStream outputStream) {
-	try {
-	    FasFileMetaVerAipFascObjectStorage link = salvataggioBackendHelper
-		    .getLinkFasFileMetaVerAipFascOs(idVerAipFascicolo);
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    link.getDecBackend().getNmBackend(), READ_INDICI_AIP_FASCICOLI);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
-		    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
-	    IOUtils.copyLarge(object, outputStream);
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            FasFileMetaVerAipFascObjectStorage link = salvataggioBackendHelper
+                    .getLinkFasFileMetaVerAipFascOs(idVerAipFascicolo);
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    link.getDecBackend().getNmBackend(), READ_INDICI_AIP_FASCICOLI);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
+                    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
+            IOUtils.copyLarge(object, outputStream);
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -1402,16 +1402,16 @@ public class ObjectStorageService {
      *         {@link it.eng.parer.objectstorage.dto.BackendStorage.STORAGE_TYPE#OS}
      */
     public BackendStorage lookupBackendFasc(long idAaTipoFascicolo, String paramName) {
-	try {
+        try {
 
-	    String tipoBackend = salvataggioBackendHelper
-		    .getBackendByParamNameFasc(idAaTipoFascicolo, paramName);
-	    return salvataggioBackendHelper.getBackend(tipoBackend);
+            String tipoBackend = salvataggioBackendHelper
+                    .getBackendByParamNameFasc(idAaTipoFascicolo, paramName);
+            return salvataggioBackendHelper.getBackend(tipoBackend);
 
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -1423,45 +1423,45 @@ public class ObjectStorageService {
      * @return true se su O.s false altrimenti
      */
     public boolean isIndiceAipFascicoloOnOs(long idVerAipFascicolo) {
-	try {
-	    return salvataggioBackendHelper.existIndiceAipFascicoloObjectStorage(idVerAipFascicolo);
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return salvataggioBackendHelper.existIndiceAipFascicoloObjectStorage(idVerAipFascicolo);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     private Map<String, String> unzipAipFascicolo(
-	    ResponseInputStream<GetObjectResponse> inputStream) throws IOException {
-	// TipiXmlDati
-	final String xml = ".xml";
-	final Map<String, String> xmlVers = new HashMap<>();
-	try (ZipInputStream zis = new ZipInputStream(inputStream);) {
-	    ZipEntry ze = zis.getNextEntry();
-	    while (ze != null) {
-		String value = IOUtils.toString(zis, StandardCharsets.UTF_8);
-		if (ze.getName().equals(
-			it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO
-				.name() + xml)) {
-		    xmlVers.put(
-			    it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO
-				    .name(),
-			    value);
-		} else if (ze.getName().equals(
-			it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.INDICE.name()
-				+ xml)) {
-		    xmlVers.put(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.INDICE
-			    .name(), value);
-		} else {
-		    log.warn(
-			    "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip degli AIP fascicolo",
-			    ze.getName());
-		}
-		zis.closeEntry();
-		ze = zis.getNextEntry();
-	    }
-	}
-	return xmlVers;
+            ResponseInputStream<GetObjectResponse> inputStream) throws IOException {
+        // TipiXmlDati
+        final String xml = ".xml";
+        final Map<String, String> xmlVers = new HashMap<>();
+        try (ZipInputStream zis = new ZipInputStream(inputStream);) {
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                String value = IOUtils.toString(zis, StandardCharsets.UTF_8);
+                if (ze.getName().equals(
+                        it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO
+                                .name() + xml)) {
+                    xmlVers.put(
+                            it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO
+                                    .name(),
+                            value);
+                } else if (ze.getName().equals(
+                        it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.INDICE.name()
+                                + xml)) {
+                    xmlVers.put(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.INDICE
+                            .name(), value);
+                } else {
+                    log.warn(
+                            "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip degli AIP fascicolo",
+                            ze.getName());
+                }
+                zis.closeEntry();
+                ze = zis.getNextEntry();
+            }
+        }
+        return xmlVers;
     }
 
     // end MEV #30398
@@ -1478,53 +1478,53 @@ public class ObjectStorageService {
      * @return risorsa su OS che identifica il contenuto caricato
      */
     public ObjectStorageResource createResourcesInElenchiIndiciAipFasc(final String urn,
-	    String nomeBackend, byte[] contenuto, long idFileElencoVersFasc, BigDecimal idStrut) {
-	Path tempFile = null;
-	try {
-	    ObjectStorageBackend configuration = salvataggioBackendHelper
-		    .getObjectStorageConfiguration(nomeBackend, WRITE_ELV_IX_AIP_FASCICOLI);
+            String nomeBackend, byte[] contenuto, long idFileElencoVersFasc, BigDecimal idStrut) {
+        Path tempFile = null;
+        try {
+            ObjectStorageBackend configuration = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(nomeBackend, WRITE_ELV_IX_AIP_FASCICOLI);
 
-	    // generate std tag
-	    Set<Tag> tags = new HashSet<>();
+            // generate std tag
+            Set<Tag> tags = new HashSet<>();
 
-	    // create key
-	    // MAC #37222
-	    final String estensione = urn.toUpperCase().contains("MARCA") ? ".tsr" : ".xml.p7m";
-	    String urnRielaborato = salvataggioBackendHelper
-		    .generateKeyElencoIndiceAipFasc(idFileElencoVersFasc);
-	    final String destKey = createRandomKey(urnRielaborato) + estensione;
+            // create key
+            // MAC #37222
+            final String estensione = urn.toUpperCase().contains("MARCA") ? ".tsr" : ".xml.p7m";
+            String urnRielaborato = salvataggioBackendHelper
+                    .generateKeyElencoIndiceAipFasc(idFileElencoVersFasc);
+            final String destKey = createRandomKey(urnRielaborato) + estensione;
 
-	    tempFile = Files.createTempFile("temp-elenco-indici-fasc", ".xml");
-	    // Scrivi il contenuto byte[] nel file temporaneo
-	    Files.write(tempFile, contenuto, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            tempFile = Files.createTempFile("temp-elenco-indici-fasc", ".xml");
+            // Scrivi il contenuto byte[] nel file temporaneo
+            Files.write(tempFile, contenuto, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 
-	    // put on O.S. + save link
-	    try (ByteArrayInputStream bais = new ByteArrayInputStream(contenuto)) {
+            // put on O.S. + save link
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(contenuto)) {
 
-		ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais,
-			contenuto.length, destKey, configuration, Optional.empty(),
-			Optional.of(tags), Optional.of(calculateFileCRC32CBase64(tempFile)));
-		log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
-		// link
-		salvataggioBackendHelper.saveObjectStorageLinkElencoIndiceAipFasc(savedFile,
-			nomeBackend, idFileElencoVersFasc, idStrut);
-		return savedFile;
-	    }
+                ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais,
+                        contenuto.length, destKey, configuration, Optional.empty(),
+                        Optional.of(tags), Optional.of(calculateFileCRC32CBase64(tempFile)));
+                log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
+                // link
+                salvataggioBackendHelper.saveObjectStorageLinkElencoIndiceAipFasc(savedFile,
+                        nomeBackend, idFileElencoVersFasc, idStrut);
+                return savedFile;
+            }
 
-	} catch (ObjectStorageException | IOException ex) {
-	    throw new EJBException(ex);
-	} finally {
-	    // Elimina il file temporaneo (anche in caso di eccezione)
-	    if (tempFile != null) {
-		try {
-		    Files.deleteIfExists(tempFile);
-		} catch (IOException e) {
-		    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
-		    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione
-		    // originale.
-		}
-	    }
-	}
+        } catch (ObjectStorageException | IOException ex) {
+            throw new EJBException(ex);
+        } finally {
+            // Elimina il file temporaneo (anche in caso di eccezione)
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException e) {
+                    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
+                    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione
+                    // originale.
+                }
+            }
+        }
     }
 
     /**
@@ -1536,13 +1536,13 @@ public class ObjectStorageService {
      * @return true se su O.s false altrimenti
      */
     public boolean isElencoIndiciAipFascOnOs(long idFileElencoVersFasc) {
-	try {
-	    return salvataggioBackendHelper
-		    .existElencoIndiciAipFascObjectStorage(idFileElencoVersFasc);
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return salvataggioBackendHelper
+                    .existElencoIndiciAipFascObjectStorage(idFileElencoVersFasc);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -1554,16 +1554,16 @@ public class ObjectStorageService {
      * @return tipologia di backend.
      */
     public BackendStorage lookupBackendElenchiIndiciAipFasc(long idStrut) {
-	try {
-	    String tipoBackend = salvataggioBackendHelper.getBackendElenchiIndiciAipFasc(idStrut);
+        try {
+            String tipoBackend = salvataggioBackendHelper.getBackendElenchiIndiciAipFasc(idStrut);
 
-	    // tipo backend
-	    return salvataggioBackendHelper.getBackend(tipoBackend);
+            // tipo backend
+            return salvataggioBackendHelper.getBackend(tipoBackend);
 
-	} catch (Exception e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        } catch (Exception e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -1574,18 +1574,18 @@ public class ObjectStorageService {
      *
      */
     public void getObjectElencoIndiciAipFasc(long idFileElencoVersFasc, OutputStream outputStream) {
-	try {
-	    ElvFileElencoVersFascObjectStorage link = salvataggioBackendHelper
-		    .getLinkElvFileElencoVersFascOs(idFileElencoVersFasc);
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    link.getDecBackend().getNmBackend(), READ_ELV_IX_AIP_FASCICOLI);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
-		    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
-	    IOUtils.copyLarge(object, outputStream);
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            ElvFileElencoVersFascObjectStorage link = salvataggioBackendHelper
+                    .getLinkElvFileElencoVersFascOs(idFileElencoVersFasc);
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    link.getDecBackend().getNmBackend(), READ_ELV_IX_AIP_FASCICOLI);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
+                    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
+            IOUtils.copyLarge(object, outputStream);
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -1597,98 +1597,98 @@ public class ObjectStorageService {
      * @return file XML dell'elenco indici aip fascicoli
      */
     public byte[] getObjectElencoIndiciAipFasc(long idFileElencoVersFasc) {
-	try {
+        try {
 
-	    return getObjectFileElencoIxAipFasc(
-		    salvataggioBackendHelper.getLinkElvFileElencoVersFascOs(idFileElencoVersFasc));
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+            return getObjectFileElencoIxAipFasc(
+                    salvataggioBackendHelper.getLinkElvFileElencoVersFascOs(idFileElencoVersFasc));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     private byte[] getObjectFileElencoIxAipFasc(
-	    ElvFileElencoVersFascObjectStorage fileElencoVersFascObjectStorage)
-	    throws ObjectStorageException, IOException {
-	if (!Objects.isNull(fileElencoVersFascObjectStorage)) {
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    fileElencoVersFascObjectStorage.getDecBackend().getNmBackend(),
-		    READ_ELV_IX_AIP_FASCICOLI);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
-		    config, fileElencoVersFascObjectStorage.getNmBucket(),
-		    fileElencoVersFascObjectStorage.getCdKeyFile());
-	    return IOUtils.toByteArray(object);
-	} else {
-	    return IOUtils.byteArray();
-	}
+            ElvFileElencoVersFascObjectStorage fileElencoVersFascObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(fileElencoVersFascObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    fileElencoVersFascObjectStorage.getDecBackend().getNmBackend(),
+                    READ_ELV_IX_AIP_FASCICOLI);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(
+                    config, fileElencoVersFascObjectStorage.getNmBucket(),
+                    fileElencoVersFascObjectStorage.getCdKeyFile());
+            return IOUtils.toByteArray(object);
+        } else {
+            return IOUtils.byteArray();
+        }
     }
 
     // end MEV#30399
 
     // MEV#30400
     public ObjectStorageResource createResourcesInIndiciAipSerieUD(SerFileVerSerie serFileVerSerie,
-	    String nomeBackend, byte[] blob, long idVerSerie, BigDecimal idStrut,
-	    CSVersatore versatore, String codiceSerie, String versioneSerie) throws IOException {
-	Path tempFile = null;
-	try {
-	    ObjectStorageBackend configuration = salvataggioBackendHelper
-		    .getObjectStorageConfiguration(nomeBackend, WRITE_INDICI_AIP_SERIE_UD);
+            String nomeBackend, byte[] blob, long idVerSerie, BigDecimal idStrut,
+            CSVersatore versatore, String codiceSerie, String versioneSerie) throws IOException {
+        Path tempFile = null;
+        try {
+            ObjectStorageBackend configuration = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(nomeBackend, WRITE_INDICI_AIP_SERIE_UD);
 
-	    // generate std tag
-	    Set<Tag> tags = new HashSet<>();
+            // generate std tag
+            Set<Tag> tags = new HashSet<>();
 
-	    final String destKey = salvataggioBackendHelper.generateKeyIndiceAipSerieUD(
-		    serFileVerSerie, versatore, codiceSerie, versioneSerie);
+            final String destKey = salvataggioBackendHelper.generateKeyIndiceAipSerieUD(
+                    serFileVerSerie, versatore, codiceSerie, versioneSerie);
 
-	    // MAC #37222
-	    String estensione = "";
-	    // compliant
-	    if (serFileVerSerie.getTiFileVerSerie().equals("IX_AIP_UNISINCRO")) {
-		estensione = ".xml";
-	    } else {
-		if (serFileVerSerie.getTiFileVerSerie().equals("IX_AIP_UNISINCRO_FIRMATO")) {
-		    estensione = ".xml.p7m";
-		} else {
-		    estensione = ".tsr";
-		}
-	    }
+            // MAC #37222
+            String estensione = "";
+            // compliant
+            if (serFileVerSerie.getTiFileVerSerie().equals("IX_AIP_UNISINCRO")) {
+                estensione = ".xml";
+            } else {
+                if (serFileVerSerie.getTiFileVerSerie().equals("IX_AIP_UNISINCRO_FIRMATO")) {
+                    estensione = ".xml.p7m";
+                } else {
+                    estensione = ".tsr";
+                }
+            }
 
-	    // create key
-	    final String destKeyNewFormat = createRandomKey(destKey) + estensione;
+            // create key
+            final String destKeyNewFormat = createRandomKey(destKey) + estensione;
 
-	    tempFile = Files.createTempFile("temp-blob", ".tmp");
-	    // Scrivi i dati del blob nel file temporaneo
-	    Files.write(tempFile, blob, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            tempFile = Files.createTempFile("temp-blob", ".tmp");
+            // Scrivi i dati del blob nel file temporaneo
+            Files.write(tempFile, blob, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 
-	    // put on O.S.
-	    try (ByteArrayInputStream bais = new ByteArrayInputStream(blob)) {
-		ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais,
-			blob.length, destKeyNewFormat, configuration, Optional.empty(),
-			Optional.of(tags), Optional.of(calculateFileCRC32CBase64(tempFile)));
+            // put on O.S.
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(blob)) {
+                ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais,
+                        blob.length, destKeyNewFormat, configuration, Optional.empty(),
+                        Optional.of(tags), Optional.of(calculateFileCRC32CBase64(tempFile)));
 
-		log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
-		// link
-		if (!salvataggioBackendHelper.existIndiceAipSerieUDObjectStorage(idVerSerie,
-			serFileVerSerie.getTiFileVerSerie())) {
-		    salvataggioBackendHelper.saveObjectStorageLinkIndiceAipSerieUd(savedFile,
-			    nomeBackend, idVerSerie, idStrut, serFileVerSerie.getTiFileVerSerie());
-		}
-		return savedFile;
-	    }
-	} catch (ObjectStorageException | IOException ex) {
-	    throw new EJBException(ex);
-	} finally {
-	    // Elimina il file temporaneo (anche in caso di eccezione)
-	    if (tempFile != null) {
-		try {
-		    Files.deleteIfExists(tempFile);
-		} catch (IOException e) {
-		    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
-		    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione
-		    // originale.
-		}
-	    }
-	}
+                log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
+                // link
+                if (!salvataggioBackendHelper.existIndiceAipSerieUDObjectStorage(idVerSerie,
+                        serFileVerSerie.getTiFileVerSerie())) {
+                    salvataggioBackendHelper.saveObjectStorageLinkIndiceAipSerieUd(savedFile,
+                            nomeBackend, idVerSerie, idStrut, serFileVerSerie.getTiFileVerSerie());
+                }
+                return savedFile;
+            }
+        } catch (ObjectStorageException | IOException ex) {
+            throw new EJBException(ex);
+        } finally {
+            // Elimina il file temporaneo (anche in caso di eccezione)
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException e) {
+                    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
+                    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione
+                    // originale.
+                }
+            }
+        }
     }
 
     /**
@@ -1702,13 +1702,13 @@ public class ObjectStorageService {
      * @return true se su O.s false altrimenti
      */
     public boolean isSerFileVerSerieUDOnOs(long idVerSerie, String tiFileVerSerie) {
-	try {
-	    return salvataggioBackendHelper.existIndiceAipSerieUDObjectStorage(idVerSerie,
-		    tiFileVerSerie);
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        try {
+            return salvataggioBackendHelper.existIndiceAipSerieUDObjectStorage(idVerSerie,
+                    tiFileVerSerie);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     /**
@@ -1720,49 +1720,49 @@ public class ObjectStorageService {
      * @return attributi dell'oggetto su O.s.
      */
     public HeadObjectResponse getObjectMetadataIndiceAipSerieUD(long idVerSerieUd,
-	    String tiFileVerSerie) {
-	try {
-	    SerVerSerieObjectStorage link = salvataggioBackendHelper
-		    .getLinkSerVerSerieOs(idVerSerieUd, tiFileVerSerie);
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    link.getDecBackend().getNmBackend(), READ_INDICI_AIP_SERIE_UD);
-	    return salvataggioBackendHelper.getObjectMetadata(config, link.getNmBucket(),
-		    link.getCdKeyFile());
-	} catch (ObjectStorageException e) {
+            String tiFileVerSerie) {
+        try {
+            SerVerSerieObjectStorage link = salvataggioBackendHelper
+                    .getLinkSerVerSerieOs(idVerSerieUd, tiFileVerSerie);
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    link.getDecBackend().getNmBackend(), READ_INDICI_AIP_SERIE_UD);
+            return salvataggioBackendHelper.getObjectMetadata(config, link.getNmBucket(),
+                    link.getCdKeyFile());
+        } catch (ObjectStorageException e) {
 
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     public void getSerVerSerieObjectStorage(long idVerSerieUd, String tiFileVerSerie,
-	    OutputStream outputStream) throws ObjectStorageException {
-	try {
-	    SerVerSerieObjectStorage link = salvataggioBackendHelper
-		    .getLinkSerVerSerieOs(idVerSerieUd, tiFileVerSerie);
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    link.getDecBackend().getNmBackend(), READ_INDICI_AIP_SERIE_UD);
-	    ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
-		    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
-	    IOUtils.copy(object, outputStream);
-	} catch (IOException | ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+            OutputStream outputStream) throws ObjectStorageException {
+        try {
+            SerVerSerieObjectStorage link = salvataggioBackendHelper
+                    .getLinkSerVerSerieOs(idVerSerieUd, tiFileVerSerie);
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    link.getDecBackend().getNmBackend(), READ_INDICI_AIP_SERIE_UD);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
+                    .getObject(config, link.getNmBucket(), link.getCdKeyFile());
+            IOUtils.copy(object, outputStream);
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     // end MEV#30400
     public URL getPresignedURLComponente(long idCompDoc) {
-	try {
-	    AroCompObjectStorage link = salvataggioBackendHelper.getLinkCompDocOs(idCompDoc);
-	    ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
-		    link.getDecBackend().getNmBackend(), COMPONENTI_R);
-	    return awsPresigner.getPresignedUrl(config, link.getCdKeyFile());
+        try {
+            AroCompObjectStorage link = salvataggioBackendHelper.getLinkCompDocOs(idCompDoc);
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    link.getDecBackend().getNmBackend(), COMPONENTI_R);
+            return awsPresigner.getPresignedUrl(config, link.getCdKeyFile());
 
-	} catch (ObjectStorageException e) {
-	    // EJB spec (14.2.2 in the EJB 3)
-	    throw new EJBException(e);
-	}
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
     }
 
     // MEV 37576
@@ -1779,15 +1779,15 @@ public class ObjectStorageService {
      * @throws IOException errore generico
      */
     private String calculateFileCRC32CBase64(Path resource) throws IOException {
-	byte[] buffer = new byte[BUFFER_SIZE];
-	int readed;
-	CRC32CChecksum crc32c = new CRC32CChecksum();
-	try (InputStream is = Files.newInputStream(resource)) {
-	    while ((readed = is.read(buffer)) != -1) {
-		crc32c.update(buffer, 0, readed);
-	    }
-	}
-	return Base64.getEncoder().encodeToString(crc32c.getValueAsBytes());
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int readed;
+        CRC32CChecksum crc32c = new CRC32CChecksum();
+        try (InputStream is = Files.newInputStream(resource)) {
+            while ((readed = is.read(buffer)) != -1) {
+                crc32c.update(buffer, 0, readed);
+            }
+        }
+        return Base64.getEncoder().encodeToString(crc32c.getValueAsBytes());
     }
     // End MEV 37576
 

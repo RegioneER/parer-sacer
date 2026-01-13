@@ -44,26 +44,26 @@ public class VolAppartUnitaDocVolumeTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_APPART_UNITA_DOC_VOLUME,
-		new ColumnDescriptor(COL_ID_APPART_UNITA_DOC_VOLUME, Types.DECIMAL, 22, true));
-	map.put(COL_ID_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_ID_VOLUME_CONSERV, Types.DECIMAL, 22, false));
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_DT_CREAZIONE,
-		new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_APPART_UNITA_DOC_VOLUME,
+                new ColumnDescriptor(COL_ID_APPART_UNITA_DOC_VOLUME, Types.DECIMAL, 22, true));
+        map.put(COL_ID_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_ID_VOLUME_CONSERV, Types.DECIMAL, 22, false));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_DT_CREAZIONE,
+                new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

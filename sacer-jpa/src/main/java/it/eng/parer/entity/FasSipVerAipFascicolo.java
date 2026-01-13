@@ -57,62 +57,62 @@ public class FasSipVerAipFascicolo implements Serializable {
 
     @Column(name = "ID_SIP_VER_AIP_FASCICOLO")
     @GenericGenerator(name = "SFAS_SIP_VER_AIP_FASCICOLO_ID_SIP_VER_AIP_FASCICOLO_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SFAS_SIP_VER_AIP_FASCICOLO"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SFAS_SIP_VER_AIP_FASCICOLO"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SFAS_SIP_VER_AIP_FASCICOLO_ID_SIP_VER_AIP_FASCICOLO_GENERATOR")
     public Long getIdSipVerAipFascicolo() {
-	return this.idSipVerAipFascicolo;
+        return this.idSipVerAipFascicolo;
     }
 
     public void setIdSipVerAipFascicolo(Long idSipVerAipFascicolo) {
-	this.idSipVerAipFascicolo = idSipVerAipFascicolo;
+        this.idSipVerAipFascicolo = idSipVerAipFascicolo;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VER_AIP_FASCICOLO")
     public FasVerAipFascicolo getFasVerAipFascicolo() {
-	return this.fasVerAipFascicolo;
+        return this.fasVerAipFascicolo;
     }
 
     public void setFasVerAipFascicolo(FasVerAipFascicolo fasVerAipFascicolo) {
-	this.fasVerAipFascicolo = fasVerAipFascicolo;
+        this.fasVerAipFascicolo = fasVerAipFascicolo;
     }
 
     @Column(name = "NM_SIP")
     public String getNmSip() {
-	return this.nmSip;
+        return this.nmSip;
     }
 
     public void setNmSip(String nmSip) {
-	this.nmSip = nmSip;
+        this.nmSip = nmSip;
     }
 
     @Column(name = "TI_SIP")
     public String getTiSip() {
-	return this.tiSip;
+        return this.tiSip;
     }
 
     public void setTiSip(String tiSip) {
-	this.tiSip = tiSip;
+        this.tiSip = tiSip;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_XML_VERS_FASCICOLO_RICH")
     public FasXmlVersFascicolo getFasXmlVersFascicoloRich() {
-	return this.fasXmlVersFascicoloRich;
+        return this.fasXmlVersFascicoloRich;
     }
 
     public void setFasXmlVersFascicoloRich(FasXmlVersFascicolo fasXmlVersFascicoloRich) {
-	this.fasXmlVersFascicoloRich = fasXmlVersFascicoloRich;
+        this.fasXmlVersFascicoloRich = fasXmlVersFascicoloRich;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_XML_VERS_FASCICOLO_RISP")
     public FasXmlVersFascicolo getFasXmlVersFascicoloRisp() {
-	return this.fasXmlVersFascicoloRisp;
+        return this.fasXmlVersFascicoloRisp;
     }
 
     public void setFasXmlVersFascicoloRisp(FasXmlVersFascicolo fasXmlVersFascicoloRisp) {
-	this.fasXmlVersFascicoloRisp = fasXmlVersFascicoloRisp;
+        this.fasXmlVersFascicoloRisp = fasXmlVersFascicoloRisp;
     }
 }

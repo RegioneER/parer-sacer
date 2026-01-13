@@ -39,21 +39,21 @@ public class MonVCntUdNonversEnte implements Serializable {
 
     @Column(name = "NI_UD_NONVERS")
     public BigDecimal getNiUdNonvers() {
-	return this.niUdNonvers;
+        return this.niUdNonvers;
     }
 
     public void setNiUdNonvers(BigDecimal niUdNonvers) {
-	this.niUdNonvers = niUdNonvers;
+        this.niUdNonvers = niUdNonvers;
     }
 
     private MonVCntUdNonversEnteId monVCntUdNonversEnteId;
 
     @EmbeddedId()
     public MonVCntUdNonversEnteId getMonVCntUdNonversEnteId() {
-	return monVCntUdNonversEnteId;
+        return monVCntUdNonversEnteId;
     }
 
     public void setMonVCntUdNonversEnteId(MonVCntUdNonversEnteId monVCntUdNonversEnteId) {
-	this.monVCntUdNonversEnteId = monVCntUdNonversEnteId;
+        this.monVCntUdNonversEnteId = monVCntUdNonversEnteId;
     }
 }

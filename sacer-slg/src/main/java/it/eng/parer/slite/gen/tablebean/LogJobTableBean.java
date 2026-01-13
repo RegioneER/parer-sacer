@@ -34,19 +34,19 @@ public class LogJobTableBean extends AbstractBaseTable<LogJobRowBean> {
     public static LogJobTableDescriptor TABLE_DESCRIPTOR = new LogJobTableDescriptor();
 
     public LogJobTableBean() {
-	super();
+        super();
     }
 
     protected LogJobRowBean createRow() {
-	return new LogJobRowBean();
+        return new LogJobRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<LogJobRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class AroFileVerIndiceAipUdTableBean
-	extends AbstractBaseTable<AroFileVerIndiceAipUdRowBean> {
+        extends AbstractBaseTable<AroFileVerIndiceAipUdRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -35,19 +35,19 @@ public class AroFileVerIndiceAipUdTableBean
     public static AroFileVerIndiceAipUdTableDescriptor TABLE_DESCRIPTOR = new AroFileVerIndiceAipUdTableDescriptor();
 
     public AroFileVerIndiceAipUdTableBean() {
-	super();
+        super();
     }
 
     protected AroFileVerIndiceAipUdRowBean createRow() {
-	return new AroFileVerIndiceAipUdRowBean();
+        return new AroFileVerIndiceAipUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroFileVerIndiceAipUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -35,81 +35,81 @@ public class AplSistemaMigrazRowBean extends BaseRow implements JEEBaseRowInterf
     public static AplSistemaMigrazTableDescriptor TABLE_DESCRIPTOR = new AplSistemaMigrazTableDescriptor();
 
     public AplSistemaMigrazRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdSistemaMigraz() {
-	return getBigDecimal("id_sistema_migraz");
+        return getBigDecimal("id_sistema_migraz");
     }
 
     public void setIdSistemaMigraz(BigDecimal idSistemaMigraz) {
-	setObject("id_sistema_migraz", idSistemaMigraz);
+        setObject("id_sistema_migraz", idSistemaMigraz);
     }
 
     public String getNmSistemaMigraz() {
-	return getString("nm_sistema_migraz");
+        return getString("nm_sistema_migraz");
     }
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
-	setObject("nm_sistema_migraz", nmSistemaMigraz);
+        setObject("nm_sistema_migraz", nmSistemaMigraz);
     }
 
     public String getDsSistemaMigraz() {
-	return getString("ds_sistema_migraz");
+        return getString("ds_sistema_migraz");
     }
 
     public void setDsSistemaMigraz(String dsSistemaMigraz) {
-	setObject("ds_sistema_migraz", dsSistemaMigraz);
+        setObject("ds_sistema_migraz", dsSistemaMigraz);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AplSistemaMigraz entity = (AplSistemaMigraz) obj;
-	this.setIdSistemaMigraz(entity.getIdSistemaMigraz() == null ? null
-		: BigDecimal.valueOf(entity.getIdSistemaMigraz()));
-	this.setNmSistemaMigraz(entity.getNmSistemaMigraz());
-	this.setDsSistemaMigraz(entity.getDsSistemaMigraz());
+        AplSistemaMigraz entity = (AplSistemaMigraz) obj;
+        this.setIdSistemaMigraz(entity.getIdSistemaMigraz() == null ? null
+                : BigDecimal.valueOf(entity.getIdSistemaMigraz()));
+        this.setNmSistemaMigraz(entity.getNmSistemaMigraz());
+        this.setDsSistemaMigraz(entity.getDsSistemaMigraz());
     }
 
     @Override
     public AplSistemaMigraz rowBeanToEntity() {
-	AplSistemaMigraz entity = new AplSistemaMigraz();
-	if (this.getIdSistemaMigraz() != null) {
-	    entity.setIdSistemaMigraz(this.getIdSistemaMigraz().longValue());
-	}
-	entity.setNmSistemaMigraz(this.getNmSistemaMigraz());
-	entity.setDsSistemaMigraz(this.getDsSistemaMigraz());
-	return entity;
+        AplSistemaMigraz entity = new AplSistemaMigraz();
+        if (this.getIdSistemaMigraz() != null) {
+            entity.setIdSistemaMigraz(this.getIdSistemaMigraz().longValue());
+        }
+        entity.setNmSistemaMigraz(this.getNmSistemaMigraz());
+        entity.setDsSistemaMigraz(this.getDsSistemaMigraz());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

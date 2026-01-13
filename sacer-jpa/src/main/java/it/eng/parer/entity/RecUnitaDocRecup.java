@@ -55,33 +55,33 @@ public class RecUnitaDocRecup {
 
     @Column(name = "ID_UNITA_DOC_RECUP")
     @GenericGenerator(name = "SREC_UNITA_DOC_RECUP_ID_UNITA_DOC_RECUP_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SREC_UNITA_DOC_RECUP"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SREC_UNITA_DOC_RECUP"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SREC_UNITA_DOC_RECUP_ID_UNITA_DOC_RECUP_GENERATOR")
     public Long getIdUnitaDocRecup() {
-	return this.idUnitaDocRecup;
+        return this.idUnitaDocRecup;
     }
 
     public void setIdUnitaDocRecup(Long idUnitaDocRecup) {
-	this.idUnitaDocRecup = idUnitaDocRecup;
+        this.idUnitaDocRecup = idUnitaDocRecup;
     }
 
     @OneToMany(mappedBy = "recUnitaDocRecup")
     public List<RecSessioneRecup> getRecSessioneRecups() {
-	return this.recSessioneRecups;
+        return this.recSessioneRecups;
     }
 
     public void setRecSessioneRecups(List<RecSessioneRecup> recSessioneRecups) {
-	this.recSessioneRecups = recSessioneRecups;
+        this.recSessioneRecups = recSessioneRecups;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_UNITA_DOC")
     public AroUnitaDoc getAroUnitaDoc() {
-	return this.aroUnitaDoc;
+        return this.aroUnitaDoc;
     }
 
     public void setAroUnitaDoc(AroUnitaDoc aroUnitaDoc) {
-	this.aroUnitaDoc = aroUnitaDoc;
+        this.aroUnitaDoc = aroUnitaDoc;
     }
 }

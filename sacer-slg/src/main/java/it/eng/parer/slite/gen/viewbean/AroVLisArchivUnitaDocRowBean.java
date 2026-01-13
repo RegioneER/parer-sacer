@@ -35,117 +35,117 @@ public class AroVLisArchivUnitaDocRowBean extends BaseRow implements JEEBaseRowI
     public static AroVLisArchivUnitaDocTableDescriptor TABLE_DESCRIPTOR = new AroVLisArchivUnitaDocTableDescriptor();
 
     public AroVLisArchivUnitaDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public BigDecimal getIdArchivSec() {
-	return getBigDecimal("id_archiv_sec");
+        return getBigDecimal("id_archiv_sec");
     }
 
     public void setIdArchivSec(BigDecimal idArchivSec) {
-	setObject("id_archiv_sec", idArchivSec);
+        setObject("id_archiv_sec", idArchivSec);
     }
 
     public String getDsClassif() {
-	return getString("ds_classif");
+        return getString("ds_classif");
     }
 
     public void setDsClassif(String dsClassif) {
-	setObject("ds_classif", dsClassif);
+        setObject("ds_classif", dsClassif);
     }
 
     public String getCdFascic() {
-	return getString("cd_fascic");
+        return getString("cd_fascic");
     }
 
     public void setCdFascic(String cdFascic) {
-	setObject("cd_fascic", cdFascic);
+        setObject("cd_fascic", cdFascic);
     }
 
     public String getDsOggettoFascic() {
-	return getString("ds_oggetto_fascic");
+        return getString("ds_oggetto_fascic");
     }
 
     public void setDsOggettoFascic(String dsOggettoFascic) {
-	setObject("ds_oggetto_fascic", dsOggettoFascic);
+        setObject("ds_oggetto_fascic", dsOggettoFascic);
     }
 
     public String getCdSottofascic() {
-	return getString("cd_sottofascic");
+        return getString("cd_sottofascic");
     }
 
     public void setCdSottofascic(String cdSottofascic) {
-	setObject("cd_sottofascic", cdSottofascic);
+        setObject("cd_sottofascic", cdSottofascic);
     }
 
     public String getDsOggettoSottofascic() {
-	return getString("ds_oggetto_sottofascic");
+        return getString("ds_oggetto_sottofascic");
     }
 
     public void setDsOggettoSottofascic(String dsOggettoSottofascic) {
-	setObject("ds_oggetto_sottofascic", dsOggettoSottofascic);
+        setObject("ds_oggetto_sottofascic", dsOggettoSottofascic);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVLisArchivUnitaDoc entity = (AroVLisArchivUnitaDoc) obj;
-	this.setIdUnitaDoc(entity.getIdUnitaDoc());
-	this.setIdArchivSec(entity.getIdArchivSec());
-	this.setDsClassif(entity.getDsClassif());
-	this.setCdFascic(entity.getCdFascic());
-	this.setDsOggettoFascic(entity.getDsOggettoFascic());
-	this.setCdSottofascic(entity.getCdSottofascic());
-	this.setDsOggettoSottofascic(entity.getDsOggettoSottofascic());
+        AroVLisArchivUnitaDoc entity = (AroVLisArchivUnitaDoc) obj;
+        this.setIdUnitaDoc(entity.getIdUnitaDoc());
+        this.setIdArchivSec(entity.getIdArchivSec());
+        this.setDsClassif(entity.getDsClassif());
+        this.setCdFascic(entity.getCdFascic());
+        this.setDsOggettoFascic(entity.getDsOggettoFascic());
+        this.setCdSottofascic(entity.getCdSottofascic());
+        this.setDsOggettoSottofascic(entity.getDsOggettoSottofascic());
     }
 
     @Override
     public AroVLisArchivUnitaDoc rowBeanToEntity() {
-	AroVLisArchivUnitaDoc entity = new AroVLisArchivUnitaDoc();
-	entity.setIdUnitaDoc(this.getIdUnitaDoc());
-	entity.setIdArchivSec(this.getIdArchivSec());
-	entity.setDsClassif(this.getDsClassif());
-	entity.setCdFascic(this.getCdFascic());
-	entity.setDsOggettoFascic(this.getDsOggettoFascic());
-	entity.setCdSottofascic(this.getCdSottofascic());
-	entity.setDsOggettoSottofascic(this.getDsOggettoSottofascic());
-	return entity;
+        AroVLisArchivUnitaDoc entity = new AroVLisArchivUnitaDoc();
+        entity.setIdUnitaDoc(this.getIdUnitaDoc());
+        entity.setIdArchivSec(this.getIdArchivSec());
+        entity.setDsClassif(this.getDsClassif());
+        entity.setCdFascic(this.getCdFascic());
+        entity.setDsOggettoFascic(this.getDsOggettoFascic());
+        entity.setCdSottofascic(this.getCdSottofascic());
+        entity.setDsOggettoSottofascic(this.getDsOggettoSottofascic());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

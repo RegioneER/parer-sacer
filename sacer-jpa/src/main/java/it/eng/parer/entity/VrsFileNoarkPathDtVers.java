@@ -53,43 +53,43 @@ public class VrsFileNoarkPathDtVers implements Serializable {
 
     @Column(name = "ID_FILE_NO_ARK_PATH_DT_VERS")
     @GenericGenerator(name = "SVRS_FILE_NOARK_PATH_DT_VERS_ID_FILE_NO_ARK_PATH_DT_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVRS_FILE_NOARK_PATH_DT_VERS"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVRS_FILE_NOARK_PATH_DT_VERS"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SVRS_FILE_NOARK_PATH_DT_VERS_ID_FILE_NO_ARK_PATH_DT_VERS_GENERATOR")
     public Long getIdFileNoArkPathDtVers() {
-	return this.idFileNoArkPathDtVers;
+        return this.idFileNoArkPathDtVers;
     }
 
     public void setIdFileNoArkPathDtVers(Long idFileNoArkPathDtVers) {
-	this.idFileNoArkPathDtVers = idFileNoArkPathDtVers;
+        this.idFileNoArkPathDtVers = idFileNoArkPathDtVers;
     }
 
     @Column(name = "DS_FILE_NOARK")
     public String getDsFileNoark() {
-	return this.dsFileNoark;
+        return this.dsFileNoark;
     }
 
     public void setDsFileNoark(String dsFileNoark) {
-	this.dsFileNoark = dsFileNoark;
+        this.dsFileNoark = dsFileNoark;
     }
 
     @Column(name = "TI_ARK_FILE_NOARK")
     public String getTiArkFileNoark() {
-	return this.tiArkFileNoark;
+        return this.tiArkFileNoark;
     }
 
     public void setTiArkFileNoark(String tiArkFileNoark) {
-	this.tiArkFileNoark = tiArkFileNoark;
+        this.tiArkFileNoark = tiArkFileNoark;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PATH_DT_VERS")
     public VrsPathDtVers getVrsPathDtVers() {
-	return this.vrsPathDtVers;
+        return this.vrsPathDtVers;
     }
 
     public void setVrsPathDtVers(VrsPathDtVers vrsPathDtVers) {
-	this.vrsPathDtVers = vrsPathDtVers;
+        this.vrsPathDtVers = vrsPathDtVers;
     }
 
 }

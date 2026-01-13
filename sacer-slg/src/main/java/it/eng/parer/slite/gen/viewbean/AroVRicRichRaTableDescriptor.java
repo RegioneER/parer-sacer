@@ -54,38 +54,38 @@ public class AroVRicRichRaTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_NM_ENTE_CONVENZ,
-		new ColumnDescriptor(COL_NM_ENTE_CONVENZ, Types.VARCHAR, 254, true));
-	map.put(COL_NM_ENTE_STRUT,
-		new ColumnDescriptor(COL_NM_ENTE_STRUT, Types.VARCHAR, 203, true));
-	map.put(COL_TI_STATO, new ColumnDescriptor(COL_TI_STATO, Types.VARCHAR, 30, true));
-	map.put(COL_ID_RICHIESTA_RA,
-		new ColumnDescriptor(COL_ID_RICHIESTA_RA, Types.DECIMAL, 22, true));
-	map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_TOTALI, new ColumnDescriptor(COL_TOTALI, Types.DECIMAL, 22, true));
-	map.put(COL_ESTRATTI, new ColumnDescriptor(COL_ESTRATTI, Types.DECIMAL, 22, true));
-	map.put(COL_ERRORI, new ColumnDescriptor(COL_ERRORI, Types.DECIMAL, 22, true));
-	map.put(COL_SUM_DIM, new ColumnDescriptor(COL_SUM_DIM, Types.DECIMAL, 22, true));
-	map.put(COL_MAX_DT_ESTRAZIONE,
-		new ColumnDescriptor(COL_MAX_DT_ESTRAZIONE, Types.TIMESTAMP, 7, true));
-	map.put(COL_ESTRATTI_TOTALI,
-		new ColumnDescriptor(COL_ESTRATTI_TOTALI, Types.DECIMAL, 22, true));
-	map.put(COL_CD_ERRORE, new ColumnDescriptor(COL_CD_ERRORE, Types.VARCHAR, 300, true));
-	map.put(COL_TS_INIZIO, new ColumnDescriptor(COL_TS_INIZIO, Types.TIMESTAMP, 11, false));
+        map.put(COL_NM_ENTE_CONVENZ,
+                new ColumnDescriptor(COL_NM_ENTE_CONVENZ, Types.VARCHAR, 254, true));
+        map.put(COL_NM_ENTE_STRUT,
+                new ColumnDescriptor(COL_NM_ENTE_STRUT, Types.VARCHAR, 203, true));
+        map.put(COL_TI_STATO, new ColumnDescriptor(COL_TI_STATO, Types.VARCHAR, 30, true));
+        map.put(COL_ID_RICHIESTA_RA,
+                new ColumnDescriptor(COL_ID_RICHIESTA_RA, Types.DECIMAL, 22, true));
+        map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_TOTALI, new ColumnDescriptor(COL_TOTALI, Types.DECIMAL, 22, true));
+        map.put(COL_ESTRATTI, new ColumnDescriptor(COL_ESTRATTI, Types.DECIMAL, 22, true));
+        map.put(COL_ERRORI, new ColumnDescriptor(COL_ERRORI, Types.DECIMAL, 22, true));
+        map.put(COL_SUM_DIM, new ColumnDescriptor(COL_SUM_DIM, Types.DECIMAL, 22, true));
+        map.put(COL_MAX_DT_ESTRAZIONE,
+                new ColumnDescriptor(COL_MAX_DT_ESTRAZIONE, Types.TIMESTAMP, 7, true));
+        map.put(COL_ESTRATTI_TOTALI,
+                new ColumnDescriptor(COL_ESTRATTI_TOTALI, Types.DECIMAL, 22, true));
+        map.put(COL_CD_ERRORE, new ColumnDescriptor(COL_CD_ERRORE, Types.VARCHAR, 300, true));
+        map.put(COL_TS_INIZIO, new ColumnDescriptor(COL_TS_INIZIO, Types.TIMESTAMP, 11, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

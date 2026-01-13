@@ -38,21 +38,21 @@ public class MonVCntDocNonversAmb implements Serializable {
 
     @Column(name = "NI_DOC_NONVERS")
     public BigDecimal getNiDocNonvers() {
-	return this.niDocNonvers;
+        return this.niDocNonvers;
     }
 
     public void setNiDocNonvers(BigDecimal niDocNonvers) {
-	this.niDocNonvers = niDocNonvers;
+        this.niDocNonvers = niDocNonvers;
     }
 
     private MonVCntDocNonversAmbId monVCntDocNonversAmbId;
 
     @EmbeddedId()
     public MonVCntDocNonversAmbId getMonVCntDocNonversAmbId() {
-	return monVCntDocNonversAmbId;
+        return monVCntDocNonversAmbId;
     }
 
     public void setMonVCntDocNonversAmbId(MonVCntDocNonversAmbId monVCntDocNonversAmbId) {
-	this.monVCntDocNonversAmbId = monVCntDocNonversAmbId;
+        this.monVCntDocNonversAmbId = monVCntDocNonversAmbId;
     }
 }

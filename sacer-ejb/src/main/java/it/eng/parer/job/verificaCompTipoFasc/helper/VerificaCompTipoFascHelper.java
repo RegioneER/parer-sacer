@@ -44,87 +44,87 @@ public class VerificaCompTipoFascHelper {
     private EntityManager entityManager;
 
     public List<DecAaTipoFascicolo> getAaTipoFascicoloDaElab() {
-	List<DecAaTipoFascicolo> aaTipoFascicolos;
-	String queryStr = "SELECT d FROM DecAaTipoFascicolo d " + "where d.flUpdFmtNumero = '1' ";
-	javax.persistence.Query query = entityManager.createQuery(queryStr);
-	aaTipoFascicolos = query.getResultList();
-	return aaTipoFascicolos;
+        List<DecAaTipoFascicolo> aaTipoFascicolos;
+        String queryStr = "SELECT d FROM DecAaTipoFascicolo d " + "where d.flUpdFmtNumero = '1' ";
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        aaTipoFascicolos = query.getResultList();
+        return aaTipoFascicolos;
     }
 
     public List<FasFascicolo> getListaFasFascicoloDaVerificare(long idTipoFascicolo, long idStrut,
-	    Long anno) {
-	List<FasFascicolo> fasFascicolos;
+            Long anno) {
+        List<FasFascicolo> fasFascicolos;
 
-	String queryStr = "select f from FasFascicolo f " + "where "
-		+ "f.orgStrut.idStrut = :idStrut "
-		+ "and f.decTipoFascicolo.idTipoFascicolo = :idTipoFascicolo "
-		+ "and f.aaFascicolo = :aaFascicolo " + "and f.dtAnnull > :dataDiOggiIn"; // esclude
-											  // dalla
-											  // ricerca
-											  // i
-											  // fascicoli
-											  // annullati
-	javax.persistence.Query query = entityManager.createQuery(queryStr);
-	query.setParameter("idStrut", idStrut);
-	query.setParameter("idTipoFascicolo", idTipoFascicolo);
-	query.setParameter("aaFascicolo", new BigDecimal(anno));
-	query.setParameter("dataDiOggiIn", new Date());
-	fasFascicolos = query.getResultList();
-	return fasFascicolos;
+        String queryStr = "select f from FasFascicolo f " + "where "
+                + "f.orgStrut.idStrut = :idStrut "
+                + "and f.decTipoFascicolo.idTipoFascicolo = :idTipoFascicolo "
+                + "and f.aaFascicolo = :aaFascicolo " + "and f.dtAnnull > :dataDiOggiIn"; // esclude
+        // dalla
+        // ricerca
+        // i
+        // fascicoli
+        // annullati
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        query.setParameter("idStrut", idStrut);
+        query.setParameter("idTipoFascicolo", idTipoFascicolo);
+        query.setParameter("aaFascicolo", new BigDecimal(anno));
+        query.setParameter("dataDiOggiIn", new Date());
+        fasFascicolos = query.getResultList();
+        return fasFascicolos;
     }
 
     public void sbloccaAaTipoFascicolo(long idAaTipoFasc) {
-	String queryStr = "update DecAaTipoFascicolo d " + "set d.flUpdFmtNumero = '0' "
-		+ "where d.idAaTipoFascicolo = :idAaTipoFascicolo ";
-	javax.persistence.Query query = entityManager.createQuery(queryStr);
-	query.setParameter("idAaTipoFascicolo", idAaTipoFasc);
-	query.executeUpdate();
+        String queryStr = "update DecAaTipoFascicolo d " + "set d.flUpdFmtNumero = '0' "
+                + "where d.idAaTipoFascicolo = :idAaTipoFascicolo ";
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        query.setParameter("idAaTipoFascicolo", idAaTipoFasc);
+        query.executeUpdate();
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void scriviErrorePerAnnoNewTrans(long idAaTipoFasc, long anno, long idFascicolo,
-	    String errMessaggio) {
+            String errMessaggio) {
 
-	this.rimuoviErroriTipoFascAnno(idAaTipoFasc, anno);
-	//
-	this.rimuoviWarningTipoFascAnno(idAaTipoFasc, anno);
-	//
-	DecErrAaTipoFascicolo err = new DecErrAaTipoFascicolo();
-	err.setAaFascicolo(new BigDecimal(anno));
-	err.setDsErrFmtNumero(errMessaggio);
-	err.setDecAaTipoFascicolo(entityManager.find(DecAaTipoFascicolo.class, idAaTipoFasc));
-	err.setIdFascicoloErrFmtNumero(new BigDecimal(idFascicolo));
-	entityManager.persist(err);
+        this.rimuoviErroriTipoFascAnno(idAaTipoFasc, anno);
+        //
+        this.rimuoviWarningTipoFascAnno(idAaTipoFasc, anno);
+        //
+        DecErrAaTipoFascicolo err = new DecErrAaTipoFascicolo();
+        err.setAaFascicolo(new BigDecimal(anno));
+        err.setDsErrFmtNumero(errMessaggio);
+        err.setDecAaTipoFascicolo(entityManager.find(DecAaTipoFascicolo.class, idAaTipoFasc));
+        err.setIdFascicoloErrFmtNumero(new BigDecimal(idFascicolo));
+        entityManager.persist(err);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void pulisciErroriRegAnnoNewTrans(long idAaRegistroUnitaDoc, long anno) {
 
-	this.rimuoviErroriTipoFascAnno(idAaRegistroUnitaDoc, anno);
-	//
-	this.rimuoviWarningTipoFascAnno(idAaRegistroUnitaDoc, anno);
-	//
+        this.rimuoviErroriTipoFascAnno(idAaRegistroUnitaDoc, anno);
+        //
+        this.rimuoviWarningTipoFascAnno(idAaRegistroUnitaDoc, anno);
+        //
     }
 
     private void rimuoviErroriTipoFascAnno(long idAaTipoFascicolo, long anno) {
-	String queryStr = "delete from DecErrAaTipoFascicolo d "
-		+ "where d.decAaTipoFascicolo.idAaTipoFascicolo = :idAaTipoFascicolo "
-		+ "and d.aaFascicolo = :aaFascicolo ";
-	javax.persistence.Query query = entityManager.createQuery(queryStr);
-	query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
-	query.setParameter("aaFascicolo", new BigDecimal(anno));
-	query.executeUpdate();
+        String queryStr = "delete from DecErrAaTipoFascicolo d "
+                + "where d.decAaTipoFascicolo.idAaTipoFascicolo = :idAaTipoFascicolo "
+                + "and d.aaFascicolo = :aaFascicolo ";
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
+        query.setParameter("aaFascicolo", new BigDecimal(anno));
+        query.executeUpdate();
     }
 
     private void rimuoviWarningTipoFascAnno(long idAaTipoFascicolo, long anno) {
-	String queryStr = "update DecWarnAaTipoFascicolo d "
-		+ "set d.flWarnAaTipoFascicolo = :flWarnAaTipoFascicolo "
-		+ "where d.decAaTipoFascicolo.idAaTipoFascicolo = :idAaTipoFascicolo "
-		+ "and d.aaTipoFascicolo = :aaTipoFascicolo ";
-	javax.persistence.Query query = entityManager.createQuery(queryStr);
-	query.setParameter("flWarnAaTipoFascicolo", "0");
-	query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
-	query.setParameter("aaTipoFascicolo", new BigDecimal(anno));
-	query.executeUpdate();
+        String queryStr = "update DecWarnAaTipoFascicolo d "
+                + "set d.flWarnAaTipoFascicolo = :flWarnAaTipoFascicolo "
+                + "where d.decAaTipoFascicolo.idAaTipoFascicolo = :idAaTipoFascicolo "
+                + "and d.aaTipoFascicolo = :aaTipoFascicolo ";
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        query.setParameter("flWarnAaTipoFascicolo", "0");
+        query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
+        query.setParameter("aaTipoFascicolo", new BigDecimal(anno));
+        query.executeUpdate();
     }
 }

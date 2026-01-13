@@ -27,23 +27,23 @@ public abstract class Digest {
      * Type of encoding
      */
     public enum Encoding {
-	base64
+        base64
     }
 
     /**
      * Type of digest algorithm
      */
     public enum DigestAlgorithm {
-	SHA1("SHA-1"), SHA256("SHA-256");
+        SHA1("SHA-1"), SHA256("SHA-256");
 
-	private final String value;
+        private final String value;
 
-	private DigestAlgorithm(final String alg) {
-	    this.value = alg;
-	}
+        private DigestAlgorithm(final String alg) {
+            this.value = alg;
+        }
 
-	public String getValue() {
-	    return this.value;
-	}
+        public String getValue() {
+            return this.value;
+        }
     }
 }

@@ -38,221 +38,221 @@ public class MonVChkCntUdAnnulRowBean extends BaseRow implements JEEBaseRowInter
     public static MonVChkCntUdAnnulTableDescriptor TABLE_DESCRIPTOR = new MonVChkCntUdAnnulTableDescriptor();
 
     public MonVChkCntUdAnnulRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public String getFlUdAnnulDafarePing() {
-	return getString("fl_ud_annul_dafare_ping");
+        return getString("fl_ud_annul_dafare_ping");
     }
 
     public void setFlUdAnnulDafarePing(String flUdAnnulDafarePing) {
-	setObject("fl_ud_annul_dafare_ping", flUdAnnulDafarePing);
+        setObject("fl_ud_annul_dafare_ping", flUdAnnulDafarePing);
     }
 
     public String getFlUdAnnulDafareSacer() {
-	return getString("fl_ud_annul_dafare_sacer");
+        return getString("fl_ud_annul_dafare_sacer");
     }
 
     public void setFlUdAnnulDafareSacer(String flUdAnnulDafareSacer) {
-	setObject("fl_ud_annul_dafare_sacer", flUdAnnulDafareSacer);
+        setObject("fl_ud_annul_dafare_sacer", flUdAnnulDafareSacer);
     }
 
     public String getFlUdAnnul() {
-	return getString("fl_ud_annul");
+        return getString("fl_ud_annul");
     }
 
     public void setFlUdAnnul(String flUdAnnul) {
-	setObject("fl_ud_annul", flUdAnnul);
+        setObject("fl_ud_annul", flUdAnnul);
     }
 
     public String getFlUdAnnulTot() {
-	return getString("fl_ud_annul_tot");
+        return getString("fl_ud_annul_tot");
     }
 
     public void setFlUdAnnulTot(String flUdAnnulTot) {
-	setObject("fl_ud_annul_tot", flUdAnnulTot);
+        setObject("fl_ud_annul_tot", flUdAnnulTot);
     }
 
     public BigDecimal getNiUdAnnulDafarePing() {
-	return getBigDecimal("ni_ud_annul_dafare_ping");
+        return getBigDecimal("ni_ud_annul_dafare_ping");
     }
 
     public void setNiUdAnnulDafarePing(BigDecimal niUdAnnulDafarePing) {
-	setObject("ni_ud_annul_dafare_ping", niUdAnnulDafarePing);
+        setObject("ni_ud_annul_dafare_ping", niUdAnnulDafarePing);
     }
 
     public BigDecimal getNiUdAnnulDafareSacer() {
-	return getBigDecimal("ni_ud_annul_dafare_sacer");
+        return getBigDecimal("ni_ud_annul_dafare_sacer");
     }
 
     public void setNiUdAnnulDafareSacer(BigDecimal niUdAnnulDafareSacer) {
-	setObject("ni_ud_annul_dafare_sacer", niUdAnnulDafareSacer);
+        setObject("ni_ud_annul_dafare_sacer", niUdAnnulDafareSacer);
     }
 
     public BigDecimal getNiUdAnnul() {
-	return getBigDecimal("ni_ud_annul");
+        return getBigDecimal("ni_ud_annul");
     }
 
     public void setNiUdAnnul(BigDecimal niUdAnnul) {
-	setObject("ni_ud_annul", niUdAnnul);
+        setObject("ni_ud_annul", niUdAnnul);
     }
 
     public BigDecimal getNiUdAnnulTot() {
-	return getBigDecimal("ni_ud_annul_tot");
+        return getBigDecimal("ni_ud_annul_tot");
     }
 
     public void setNiUdAnnulTot(BigDecimal niUdAnnulTot) {
-	setObject("ni_ud_annul_tot", niUdAnnulTot);
+        setObject("ni_ud_annul_tot", niUdAnnulTot);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	MonVChkUdAnnul entity;
-	if (obj instanceof MonVChkUdAnnulTipoUd) {
-	    entity = new MonVChkUdAnnul((MonVChkUdAnnulTipoUd) obj);
-	} else if (obj instanceof MonVChkUdAnnulStrut) {
-	    entity = new MonVChkUdAnnul((MonVChkUdAnnulStrut) obj);
-	} else if (obj instanceof MonVChkUdAnnulEnte) {
-	    entity = new MonVChkUdAnnul((MonVChkUdAnnulEnte) obj);
-	} else if (obj instanceof MonVChkUdAnnulAmb) {
-	    entity = new MonVChkUdAnnul((MonVChkUdAnnulAmb) obj);
-	} else {
-	    throw new IllegalArgumentException("Errore inaspettato nel casting dell'entity");
-	}
-	this.setFlUdAnnulDafarePing(entity.getFlUdAnnulDafarePing());
-	this.setFlUdAnnulDafareSacer(entity.getFlUdAnnulDafareSacer());
-	this.setFlUdAnnul(entity.getFlUdAnnul());
-	this.setFlUdAnnulTot(entity.getFlUdAnnulTot());
+        MonVChkUdAnnul entity;
+        if (obj instanceof MonVChkUdAnnulTipoUd) {
+            entity = new MonVChkUdAnnul((MonVChkUdAnnulTipoUd) obj);
+        } else if (obj instanceof MonVChkUdAnnulStrut) {
+            entity = new MonVChkUdAnnul((MonVChkUdAnnulStrut) obj);
+        } else if (obj instanceof MonVChkUdAnnulEnte) {
+            entity = new MonVChkUdAnnul((MonVChkUdAnnulEnte) obj);
+        } else if (obj instanceof MonVChkUdAnnulAmb) {
+            entity = new MonVChkUdAnnul((MonVChkUdAnnulAmb) obj);
+        } else {
+            throw new IllegalArgumentException("Errore inaspettato nel casting dell'entity");
+        }
+        this.setFlUdAnnulDafarePing(entity.getFlUdAnnulDafarePing());
+        this.setFlUdAnnulDafareSacer(entity.getFlUdAnnulDafareSacer());
+        this.setFlUdAnnul(entity.getFlUdAnnul());
+        this.setFlUdAnnulTot(entity.getFlUdAnnulTot());
     }
 
     @Override
     public MonVChkUdAnnul rowBeanToEntity() {
-	MonVChkUdAnnul entity = new MonVChkUdAnnul();
-	entity.setFlUdAnnulDafarePing(this.getFlUdAnnulDafarePing());
-	entity.setFlUdAnnulDafareSacer(this.getFlUdAnnulDafareSacer());
-	entity.setFlUdAnnul(this.getFlUdAnnul());
-	entity.setFlUdAnnulTot(this.getFlUdAnnulTot());
-	return entity;
+        MonVChkUdAnnul entity = new MonVChkUdAnnul();
+        entity.setFlUdAnnulDafarePing(this.getFlUdAnnulDafarePing());
+        entity.setFlUdAnnulDafareSacer(this.getFlUdAnnulDafareSacer());
+        entity.setFlUdAnnul(this.getFlUdAnnul());
+        entity.setFlUdAnnulTot(this.getFlUdAnnulTot());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
     public void resetCounters() {
-	this.setNiUdAnnul(BigDecimal.ZERO);
-	this.setNiUdAnnulDafarePing(BigDecimal.ZERO);
-	this.setNiUdAnnulDafareSacer(BigDecimal.ZERO);
-	this.setNiUdAnnulTot(BigDecimal.ZERO);
+        this.setNiUdAnnul(BigDecimal.ZERO);
+        this.setNiUdAnnulDafarePing(BigDecimal.ZERO);
+        this.setNiUdAnnulDafareSacer(BigDecimal.ZERO);
+        this.setNiUdAnnulTot(BigDecimal.ZERO);
     }
 
     public class MonVChkUdAnnul {
 
-	private String flUdAnnul;
-	private String flUdAnnulTot;
-	private String flUdAnnulDafarePing;
-	private String flUdAnnulDafareSacer;
+        private String flUdAnnul;
+        private String flUdAnnulTot;
+        private String flUdAnnulDafarePing;
+        private String flUdAnnulDafareSacer;
 
-	public MonVChkUdAnnul() {
+        public MonVChkUdAnnul() {
 
-	}
+        }
 
-	public MonVChkUdAnnul(MonVChkUdAnnulTipoUd entity) {
-	    this.flUdAnnul = entity.getFlUdAnnul();
-	    this.flUdAnnulDafarePing = entity.getFlUdAnnulDafarePing();
-	    this.flUdAnnulDafareSacer = entity.getFlUdAnnulDafareSacer();
-	    boolean udAnnul = entity.getFlUdAnnul().equals("1")
-		    || entity.getFlUdAnnulDafarePing().equals("1")
-		    || entity.getFlUdAnnulDafareSacer().equals("1");
-	    this.flUdAnnulTot = (udAnnul ? "1" : "0");
-	}
+        public MonVChkUdAnnul(MonVChkUdAnnulTipoUd entity) {
+            this.flUdAnnul = entity.getFlUdAnnul();
+            this.flUdAnnulDafarePing = entity.getFlUdAnnulDafarePing();
+            this.flUdAnnulDafareSacer = entity.getFlUdAnnulDafareSacer();
+            boolean udAnnul = entity.getFlUdAnnul().equals("1")
+                    || entity.getFlUdAnnulDafarePing().equals("1")
+                    || entity.getFlUdAnnulDafareSacer().equals("1");
+            this.flUdAnnulTot = (udAnnul ? "1" : "0");
+        }
 
-	public MonVChkUdAnnul(MonVChkUdAnnulStrut entity) {
-	    this.flUdAnnul = entity.getFlUdAnnul();
-	    this.flUdAnnulDafarePing = entity.getFlUdAnnulDafarePing();
-	    this.flUdAnnulDafareSacer = entity.getFlUdAnnulDafareSacer();
-	    boolean udAnnul = entity.getFlUdAnnul().equals("1")
-		    || entity.getFlUdAnnulDafarePing().equals("1")
-		    || entity.getFlUdAnnulDafareSacer().equals("1");
-	    this.flUdAnnulTot = (udAnnul ? "1" : "0");
-	}
+        public MonVChkUdAnnul(MonVChkUdAnnulStrut entity) {
+            this.flUdAnnul = entity.getFlUdAnnul();
+            this.flUdAnnulDafarePing = entity.getFlUdAnnulDafarePing();
+            this.flUdAnnulDafareSacer = entity.getFlUdAnnulDafareSacer();
+            boolean udAnnul = entity.getFlUdAnnul().equals("1")
+                    || entity.getFlUdAnnulDafarePing().equals("1")
+                    || entity.getFlUdAnnulDafareSacer().equals("1");
+            this.flUdAnnulTot = (udAnnul ? "1" : "0");
+        }
 
-	public MonVChkUdAnnul(MonVChkUdAnnulEnte entity) {
-	    this.flUdAnnul = entity.getFlUdAnnul();
-	    this.flUdAnnulDafarePing = entity.getFlUdAnnulDafarePing();
-	    this.flUdAnnulDafareSacer = entity.getFlUdAnnulDafareSacer();
-	    boolean udAnnul = entity.getFlUdAnnul().equals("1")
-		    || entity.getFlUdAnnulDafarePing().equals("1")
-		    || entity.getFlUdAnnulDafareSacer().equals("1");
-	    this.flUdAnnulTot = (udAnnul ? "1" : "0");
-	}
+        public MonVChkUdAnnul(MonVChkUdAnnulEnte entity) {
+            this.flUdAnnul = entity.getFlUdAnnul();
+            this.flUdAnnulDafarePing = entity.getFlUdAnnulDafarePing();
+            this.flUdAnnulDafareSacer = entity.getFlUdAnnulDafareSacer();
+            boolean udAnnul = entity.getFlUdAnnul().equals("1")
+                    || entity.getFlUdAnnulDafarePing().equals("1")
+                    || entity.getFlUdAnnulDafareSacer().equals("1");
+            this.flUdAnnulTot = (udAnnul ? "1" : "0");
+        }
 
-	public MonVChkUdAnnul(MonVChkUdAnnulAmb entity) {
-	    this.flUdAnnul = entity.getFlUdAnnul();
-	    this.flUdAnnulDafarePing = entity.getFlUdAnnulDafarePing();
-	    this.flUdAnnulDafareSacer = entity.getFlUdAnnulDafareSacer();
-	    boolean udAnnul = entity.getFlUdAnnul().equals("1")
-		    || entity.getFlUdAnnulDafarePing().equals("1")
-		    || entity.getFlUdAnnulDafareSacer().equals("1");
-	    this.flUdAnnulTot = (udAnnul ? "1" : "0");
-	}
+        public MonVChkUdAnnul(MonVChkUdAnnulAmb entity) {
+            this.flUdAnnul = entity.getFlUdAnnul();
+            this.flUdAnnulDafarePing = entity.getFlUdAnnulDafarePing();
+            this.flUdAnnulDafareSacer = entity.getFlUdAnnulDafareSacer();
+            boolean udAnnul = entity.getFlUdAnnul().equals("1")
+                    || entity.getFlUdAnnulDafarePing().equals("1")
+                    || entity.getFlUdAnnulDafareSacer().equals("1");
+            this.flUdAnnulTot = (udAnnul ? "1" : "0");
+        }
 
-	public String getFlUdAnnul() {
-	    return flUdAnnul;
-	}
+        public String getFlUdAnnul() {
+            return flUdAnnul;
+        }
 
-	public void setFlUdAnnul(String flUdAnnul) {
-	    this.flUdAnnul = flUdAnnul;
-	}
+        public void setFlUdAnnul(String flUdAnnul) {
+            this.flUdAnnul = flUdAnnul;
+        }
 
-	public String getFlUdAnnulTot() {
-	    return flUdAnnulTot;
-	}
+        public String getFlUdAnnulTot() {
+            return flUdAnnulTot;
+        }
 
-	public void setFlUdAnnulTot(String flUdAnnulTot) {
-	    this.flUdAnnulTot = flUdAnnulTot;
-	}
+        public void setFlUdAnnulTot(String flUdAnnulTot) {
+            this.flUdAnnulTot = flUdAnnulTot;
+        }
 
-	public String getFlUdAnnulDafarePing() {
-	    return flUdAnnulDafarePing;
-	}
+        public String getFlUdAnnulDafarePing() {
+            return flUdAnnulDafarePing;
+        }
 
-	public void setFlUdAnnulDafarePing(String flUdAnnulDafarePing) {
-	    this.flUdAnnulDafarePing = flUdAnnulDafarePing;
-	}
+        public void setFlUdAnnulDafarePing(String flUdAnnulDafarePing) {
+            this.flUdAnnulDafarePing = flUdAnnulDafarePing;
+        }
 
-	public String getFlUdAnnulDafareSacer() {
-	    return flUdAnnulDafareSacer;
-	}
+        public String getFlUdAnnulDafareSacer() {
+            return flUdAnnulDafareSacer;
+        }
 
-	public void setFlUdAnnulDafareSacer(String flUdAnnulDafareSacer) {
-	    this.flUdAnnulDafareSacer = flUdAnnulDafareSacer;
-	}
+        public void setFlUdAnnulDafareSacer(String flUdAnnulDafareSacer) {
+            this.flUdAnnulDafareSacer = flUdAnnulDafareSacer;
+        }
 
     }
 

@@ -37,19 +37,19 @@ public class TpiVVisDtSchedTableBean extends AbstractBaseTable<TpiVVisDtSchedRow
     public static TpiVVisDtSchedTableDescriptor TABLE_DESCRIPTOR = new TpiVVisDtSchedTableDescriptor();
 
     public TpiVVisDtSchedTableBean() {
-	super();
+        super();
     }
 
     protected TpiVVisDtSchedRowBean createRow() {
-	return new TpiVVisDtSchedRowBean();
+        return new TpiVVisDtSchedRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<TpiVVisDtSchedRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -33,19 +33,19 @@ public class DecTipoRapprAmmessoTableBean extends AbstractBaseTable<DecTipoRappr
     public static DecTipoRapprAmmessoTableDescriptor TABLE_DESCRIPTOR = new DecTipoRapprAmmessoTableDescriptor();
 
     public DecTipoRapprAmmessoTableBean() {
-	super();
+        super();
     }
 
     protected DecTipoRapprAmmessoRowBean createRow() {
-	return new DecTipoRapprAmmessoRowBean();
+        return new DecTipoRapprAmmessoRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecTipoRapprAmmessoRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

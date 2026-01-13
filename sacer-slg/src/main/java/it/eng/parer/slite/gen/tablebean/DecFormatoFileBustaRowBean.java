@@ -36,93 +36,93 @@ public class DecFormatoFileBustaRowBean extends BaseRow implements JEEBaseRowInt
     public static DecFormatoFileBustaTableDescriptor TABLE_DESCRIPTOR = new DecFormatoFileBustaTableDescriptor();
 
     public DecFormatoFileBustaRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdFormatoFileBusta() {
-	return getBigDecimal("id_formato_file_busta");
+        return getBigDecimal("id_formato_file_busta");
     }
 
     public void setIdFormatoFileBusta(BigDecimal idFormatoFileBusta) {
-	setObject("id_formato_file_busta", idFormatoFileBusta);
+        setObject("id_formato_file_busta", idFormatoFileBusta);
     }
 
     public BigDecimal getIdFormatoFileStandard() {
-	return getBigDecimal("id_formato_file_standard");
+        return getBigDecimal("id_formato_file_standard");
     }
 
     public void setIdFormatoFileStandard(BigDecimal idFormatoFileStandard) {
-	setObject("id_formato_file_standard", idFormatoFileStandard);
+        setObject("id_formato_file_standard", idFormatoFileStandard);
     }
 
     public String getTiFormatoFirmaMarca() {
-	return getString("ti_formato_firma_marca");
+        return getString("ti_formato_firma_marca");
     }
 
     public void setTiFormatoFirmaMarca(String tiFormatoFirmaMarca) {
-	setObject("ti_formato_firma_marca", tiFormatoFirmaMarca);
+        setObject("ti_formato_firma_marca", tiFormatoFirmaMarca);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecFormatoFileBusta entity = (DecFormatoFileBusta) obj;
+        DecFormatoFileBusta entity = (DecFormatoFileBusta) obj;
 
-	this.setIdFormatoFileBusta(entity.getIdFormatoFileBusta() == null ? null
-		: BigDecimal.valueOf(entity.getIdFormatoFileBusta()));
+        this.setIdFormatoFileBusta(entity.getIdFormatoFileBusta() == null ? null
+                : BigDecimal.valueOf(entity.getIdFormatoFileBusta()));
 
-	if (entity.getDecFormatoFileStandard() != null) {
-	    this.setIdFormatoFileStandard(
-		    new BigDecimal(entity.getDecFormatoFileStandard().getIdFormatoFileStandard()));
-	}
+        if (entity.getDecFormatoFileStandard() != null) {
+            this.setIdFormatoFileStandard(
+                    new BigDecimal(entity.getDecFormatoFileStandard().getIdFormatoFileStandard()));
+        }
 
-	this.setTiFormatoFirmaMarca(entity.getTiFormatoFirmaMarca());
+        this.setTiFormatoFirmaMarca(entity.getTiFormatoFirmaMarca());
     }
 
     @Override
     public DecFormatoFileBusta rowBeanToEntity() {
-	DecFormatoFileBusta entity = new DecFormatoFileBusta();
-	if (this.getIdFormatoFileBusta() != null) {
-	    entity.setIdFormatoFileBusta(this.getIdFormatoFileBusta().longValue());
-	}
-	if (this.getIdFormatoFileStandard() != null) {
-	    if (entity.getDecFormatoFileStandard() == null) {
-		entity.setDecFormatoFileStandard(new DecFormatoFileStandard());
-	    }
-	    entity.getDecFormatoFileStandard()
-		    .setIdFormatoFileStandard(this.getIdFormatoFileStandard().longValue());
-	}
-	entity.setTiFormatoFirmaMarca(this.getTiFormatoFirmaMarca());
-	return entity;
+        DecFormatoFileBusta entity = new DecFormatoFileBusta();
+        if (this.getIdFormatoFileBusta() != null) {
+            entity.setIdFormatoFileBusta(this.getIdFormatoFileBusta().longValue());
+        }
+        if (this.getIdFormatoFileStandard() != null) {
+            if (entity.getDecFormatoFileStandard() == null) {
+                entity.setDecFormatoFileStandard(new DecFormatoFileStandard());
+            }
+            entity.getDecFormatoFileStandard()
+                    .setIdFormatoFileStandard(this.getIdFormatoFileStandard().longValue());
+        }
+        entity.setTiFormatoFirmaMarca(this.getTiFormatoFirmaMarca());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

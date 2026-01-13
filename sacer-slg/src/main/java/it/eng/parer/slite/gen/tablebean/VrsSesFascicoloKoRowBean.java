@@ -41,224 +41,224 @@ public class VrsSesFascicoloKoRowBean extends BaseRow implements JEEBaseRowInter
     public static VrsSesFascicoloKoTableDescriptor TABLE_DESCRIPTOR = new VrsSesFascicoloKoTableDescriptor();
 
     public VrsSesFascicoloKoRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdSesFascicoloKo() {
-	return getBigDecimal("id_ses_fascicolo_ko");
+        return getBigDecimal("id_ses_fascicolo_ko");
     }
 
     public void setIdSesFascicoloKo(BigDecimal idSesFascicoloKo) {
-	setObject("id_ses_fascicolo_ko", idSesFascicoloKo);
+        setObject("id_ses_fascicolo_ko", idSesFascicoloKo);
     }
 
     public BigDecimal getIdFascicoloKo() {
-	return getBigDecimal("id_fascicolo_ko");
+        return getBigDecimal("id_fascicolo_ko");
     }
 
     public void setIdFascicoloKo(BigDecimal idFascicoloKo) {
-	setObject("id_fascicolo_ko", idFascicoloKo);
+        setObject("id_fascicolo_ko", idFascicoloKo);
     }
 
     public BigDecimal getIdTipoFascicolo() {
-	return getBigDecimal("id_tipo_fascicolo");
+        return getBigDecimal("id_tipo_fascicolo");
     }
 
     public void setIdTipoFascicolo(BigDecimal idTipoFascicolo) {
-	setObject("id_tipo_fascicolo", idTipoFascicolo);
+        setObject("id_tipo_fascicolo", idTipoFascicolo);
     }
 
     public BigDecimal getIdFascicolo() {
-	return getBigDecimal("id_fascicolo");
+        return getBigDecimal("id_fascicolo");
     }
 
     public void setIdFascicolo(BigDecimal idFascicolo) {
-	setObject("id_fascicolo", idFascicolo);
+        setObject("id_fascicolo", idFascicolo);
     }
 
     public Timestamp getTsIniSes() {
-	return getTimestamp("ts_ini_ses");
+        return getTimestamp("ts_ini_ses");
     }
 
     public void setTsIniSes(Timestamp tsIniSes) {
-	setObject("ts_ini_ses", tsIniSes);
+        setObject("ts_ini_ses", tsIniSes);
     }
 
     public Timestamp getTsFineSes() {
-	return getTimestamp("ts_fine_ses");
+        return getTimestamp("ts_fine_ses");
     }
 
     public void setTsFineSes(Timestamp tsFineSes) {
-	setObject("ts_fine_ses", tsFineSes);
+        setObject("ts_fine_ses", tsFineSes);
     }
 
     public String getCdVersioneWs() {
-	return getString("cd_versione_ws");
+        return getString("cd_versione_ws");
     }
 
     public void setCdVersioneWs(String cdVersioneWs) {
-	setObject("cd_versione_ws", cdVersioneWs);
+        setObject("cd_versione_ws", cdVersioneWs);
     }
 
     public BigDecimal getIdUserIam() {
-	return getBigDecimal("id_user_iam");
+        return getBigDecimal("id_user_iam");
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	setObject("id_user_iam", idUserIam);
+        setObject("id_user_iam", idUserIam);
     }
 
     public BigDecimal getIdErrSacerPrinc() {
-	return getBigDecimal("id_err_sacer_princ");
+        return getBigDecimal("id_err_sacer_princ");
     }
 
     public void setIdErrSacerPrinc(BigDecimal idErrSacerPrinc) {
-	setObject("id_err_sacer_princ", idErrSacerPrinc);
+        setObject("id_err_sacer_princ", idErrSacerPrinc);
     }
 
     public String getDsErrPrinc() {
-	return getString("ds_err_princ");
+        return getString("ds_err_princ");
     }
 
     public void setDsErrPrinc(String dsErrPrinc) {
-	setObject("ds_err_princ", dsErrPrinc);
+        setObject("ds_err_princ", dsErrPrinc);
     }
 
     public String getTiStatoSes() {
-	return getString("ti_stato_ses");
+        return getString("ti_stato_ses");
     }
 
     public void setTiStatoSes(String tiStatoSes) {
-	setObject("ti_stato_ses", tiStatoSes);
+        setObject("ti_stato_ses", tiStatoSes);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getAaFascicolo() {
-	return getBigDecimal("aa_fascicolo");
+        return getBigDecimal("aa_fascicolo");
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-	setObject("aa_fascicolo", aaFascicolo);
+        setObject("aa_fascicolo", aaFascicolo);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	VrsSesFascicoloKo entity = (VrsSesFascicoloKo) obj;
+        VrsSesFascicoloKo entity = (VrsSesFascicoloKo) obj;
 
-	this.setIdSesFascicoloKo(entity.getIdSesFascicoloKo() == null ? null
-		: BigDecimal.valueOf(entity.getIdSesFascicoloKo()));
+        this.setIdSesFascicoloKo(entity.getIdSesFascicoloKo() == null ? null
+                : BigDecimal.valueOf(entity.getIdSesFascicoloKo()));
 
-	if (entity.getVrsFascicoloKo() != null) {
-	    this.setIdFascicoloKo(new BigDecimal(entity.getVrsFascicoloKo().getIdFascicoloKo()));
-	}
+        if (entity.getVrsFascicoloKo() != null) {
+            this.setIdFascicoloKo(new BigDecimal(entity.getVrsFascicoloKo().getIdFascicoloKo()));
+        }
 
-	if (entity.getDecTipoFascicolo() != null) {
-	    this.setIdTipoFascicolo(
-		    new BigDecimal(entity.getDecTipoFascicolo().getIdTipoFascicolo()));
-	}
+        if (entity.getDecTipoFascicolo() != null) {
+            this.setIdTipoFascicolo(
+                    new BigDecimal(entity.getDecTipoFascicolo().getIdTipoFascicolo()));
+        }
 
-	if (entity.getFasFascicolo() != null) {
-	    this.setIdFascicolo(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
-	}
+        if (entity.getFasFascicolo() != null) {
+            this.setIdFascicolo(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
+        }
 
-	this.setTsIniSes(new Timestamp(entity.getTsIniSes().getTime()));
-	this.setTsFineSes(new Timestamp(entity.getTsFineSes().getTime()));
-	this.setCdVersioneWs(entity.getCdVersioneWs());
+        this.setTsIniSes(new Timestamp(entity.getTsIniSes().getTime()));
+        this.setTsFineSes(new Timestamp(entity.getTsFineSes().getTime()));
+        this.setCdVersioneWs(entity.getCdVersioneWs());
 
-	if (entity.getIamUser() != null) {
-	    this.setIdUserIam(new BigDecimal(entity.getIamUser().getIdUserIam()));
-	}
+        if (entity.getIamUser() != null) {
+            this.setIdUserIam(new BigDecimal(entity.getIamUser().getIdUserIam()));
+        }
 
-	if (entity.getDecErrSacer() != null) {
-	    this.setIdErrSacerPrinc(new BigDecimal(entity.getDecErrSacer().getIdErrSacer()));
-	}
+        if (entity.getDecErrSacer() != null) {
+            this.setIdErrSacerPrinc(new BigDecimal(entity.getDecErrSacer().getIdErrSacer()));
+        }
 
-	this.setDsErrPrinc(entity.getDsErrPrinc());
-	this.setTiStatoSes(entity.getTiStatoSes());
-	this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
-	this.setAaFascicolo(entity.getAaFascicolo());
+        this.setDsErrPrinc(entity.getDsErrPrinc());
+        this.setTiStatoSes(entity.getTiStatoSes());
+        this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
+        this.setAaFascicolo(entity.getAaFascicolo());
     }
 
     @Override
     public VrsSesFascicoloKo rowBeanToEntity() {
-	VrsSesFascicoloKo entity = new VrsSesFascicoloKo();
-	if (this.getIdSesFascicoloKo() != null) {
-	    entity.setIdSesFascicoloKo(this.getIdSesFascicoloKo().longValue());
-	}
-	if (this.getIdFascicoloKo() != null) {
-	    if (entity.getVrsFascicoloKo() == null) {
-		entity.setVrsFascicoloKo(new VrsFascicoloKo());
-	    }
-	    entity.getVrsFascicoloKo().setIdFascicoloKo(this.getIdFascicoloKo().longValue());
-	}
-	if (this.getIdTipoFascicolo() != null) {
-	    if (entity.getDecTipoFascicolo() == null) {
-		entity.setDecTipoFascicolo(new DecTipoFascicolo());
-	    }
-	    entity.getDecTipoFascicolo().setIdTipoFascicolo(this.getIdTipoFascicolo().longValue());
-	}
-	if (this.getIdFascicolo() != null) {
-	    if (entity.getFasFascicolo() == null) {
-		entity.setFasFascicolo(new FasFascicolo());
-	    }
-	    entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
-	}
-	entity.setTsIniSes(this.getTsIniSes());
-	entity.setTsFineSes(this.getTsFineSes());
-	entity.setCdVersioneWs(this.getCdVersioneWs());
-	if (this.getIdUserIam() != null) {
-	    if (entity.getIamUser() == null) {
-		entity.setIamUser(new IamUser());
-	    }
-	    entity.getIamUser().setIdUserIam(this.getIdUserIam().longValue());
-	}
-	if (this.getIdErrSacerPrinc() != null) {
-	    if (entity.getDecErrSacer() == null) {
-		entity.setDecErrSacer(new DecErrSacer());
-	    }
-	    entity.getDecErrSacer().setIdErrSacer(this.getIdErrSacerPrinc().longValue());
-	}
-	entity.setDsErrPrinc(this.getDsErrPrinc());
-	entity.setTiStatoSes(this.getTiStatoSes());
-	entity.setAaFascicolo(this.getAaFascicolo());
-	return entity;
+        VrsSesFascicoloKo entity = new VrsSesFascicoloKo();
+        if (this.getIdSesFascicoloKo() != null) {
+            entity.setIdSesFascicoloKo(this.getIdSesFascicoloKo().longValue());
+        }
+        if (this.getIdFascicoloKo() != null) {
+            if (entity.getVrsFascicoloKo() == null) {
+                entity.setVrsFascicoloKo(new VrsFascicoloKo());
+            }
+            entity.getVrsFascicoloKo().setIdFascicoloKo(this.getIdFascicoloKo().longValue());
+        }
+        if (this.getIdTipoFascicolo() != null) {
+            if (entity.getDecTipoFascicolo() == null) {
+                entity.setDecTipoFascicolo(new DecTipoFascicolo());
+            }
+            entity.getDecTipoFascicolo().setIdTipoFascicolo(this.getIdTipoFascicolo().longValue());
+        }
+        if (this.getIdFascicolo() != null) {
+            if (entity.getFasFascicolo() == null) {
+                entity.setFasFascicolo(new FasFascicolo());
+            }
+            entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
+        }
+        entity.setTsIniSes(this.getTsIniSes());
+        entity.setTsFineSes(this.getTsFineSes());
+        entity.setCdVersioneWs(this.getCdVersioneWs());
+        if (this.getIdUserIam() != null) {
+            if (entity.getIamUser() == null) {
+                entity.setIamUser(new IamUser());
+            }
+            entity.getIamUser().setIdUserIam(this.getIdUserIam().longValue());
+        }
+        if (this.getIdErrSacerPrinc() != null) {
+            if (entity.getDecErrSacer() == null) {
+                entity.setDecErrSacer(new DecErrSacer());
+            }
+            entity.getDecErrSacer().setIdErrSacer(this.getIdErrSacerPrinc().longValue());
+        }
+        entity.setDsErrPrinc(this.getDsErrPrinc());
+        entity.setTiStatoSes(this.getTiStatoSes());
+        entity.setAaFascicolo(this.getAaFascicolo());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

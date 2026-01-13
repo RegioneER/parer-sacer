@@ -37,19 +37,19 @@ public class AroVVisMarcaCompTableBean extends AbstractBaseTable<AroVVisMarcaCom
     public static AroVVisMarcaCompTableDescriptor TABLE_DESCRIPTOR = new AroVVisMarcaCompTableDescriptor();
 
     public AroVVisMarcaCompTableBean() {
-	super();
+        super();
     }
 
     protected AroVVisMarcaCompRowBean createRow() {
-	return new AroVVisMarcaCompRowBean();
+        return new AroVVisMarcaCompRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVVisMarcaCompRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -37,19 +37,19 @@ public class SerVRicSerieUdTableBean extends AbstractBaseTable<SerVRicSerieUdRow
     public static SerVRicSerieUdTableDescriptor TABLE_DESCRIPTOR = new SerVRicSerieUdTableDescriptor();
 
     public SerVRicSerieUdTableBean() {
-	super();
+        super();
     }
 
     protected SerVRicSerieUdRowBean createRow() {
-	return new SerVRicSerieUdRowBean();
+        return new SerVRicSerieUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerVRicSerieUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

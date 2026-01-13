@@ -77,90 +77,90 @@ public final class IOUtils {
 
     /** Definizione dei contenuti gestiti */
     public enum CONTENT_TYPE {
-	DOCX("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "WORD",
-		"doc,docx"),
-	PDF("application/pdf", "PDF", "pdf"), RTF("application/rtf", "RTF", "rtf"),
-	TXT("text/plain", "TXT", "txt"), XLS("application/vnd.ms-excel", "EXCEL 2003", "xls"),
-	XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "EXCEL", "xlsx"),
-	ZIP("application/zip", "ZIP", "zip"), XML("application/xml;charset=UTF-8", "XML", "xml");
+        DOCX("application/vnd.openxmlformats-officedocument.wordprocessingml.document", "WORD",
+                "doc,docx"),
+        PDF("application/pdf", "PDF", "pdf"), RTF("application/rtf", "RTF", "rtf"),
+        TXT("text/plain", "TXT", "txt"), XLS("application/vnd.ms-excel", "EXCEL 2003", "xls"),
+        XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "EXCEL", "xlsx"),
+        ZIP("application/zip", "ZIP", "zip"), XML("application/xml;charset=UTF-8", "XML", "xml");
 
-	/** <code>content-type</code> associato al formato di output del documento */
-	private final String mContentType;
-	/** Descrizione del formato di output del documento */
-	private final String mDescription;
-	/** Estensione (<code>multi-value</code>) del formato di output del documento */
-	private final String mFileExt;
+        /** <code>content-type</code> associato al formato di output del documento */
+        private final String mContentType;
+        /** Descrizione del formato di output del documento */
+        private final String mDescription;
+        /** Estensione (<code>multi-value</code>) del formato di output del documento */
+        private final String mFileExt;
 
-	/**
-	 * Costruttore.
-	 *
-	 * @param pContentType <code>content-type</code> associato al formato di output del
-	 *                     documento
-	 * @param pDescription Descrizione del formato di output del documento
-	 */
-	CONTENT_TYPE(final String pContentType, final String pDescription, final String pFileExt) {
-	    mContentType = pContentType;
-	    mDescription = pDescription;
-	    mFileExt = pFileExt;
-	}
+        /**
+         * Costruttore.
+         *
+         * @param pContentType <code>content-type</code> associato al formato di output del
+         *                     documento
+         * @param pDescription Descrizione del formato di output del documento
+         */
+        CONTENT_TYPE(final String pContentType, final String pDescription, final String pFileExt) {
+            mContentType = pContentType;
+            mDescription = pDescription;
+            mFileExt = pFileExt;
+        }
 
-	/**
-	 * Ritorna il <code>content-type</code> associato al formato di output del documento.
-	 *
-	 * @return <code>content-type</code> associato al formato di output del documento.
-	 */
-	public String getContentType() {
-	    return mContentType;
-	}
+        /**
+         * Ritorna il <code>content-type</code> associato al formato di output del documento.
+         *
+         * @return <code>content-type</code> associato al formato di output del documento.
+         */
+        public String getContentType() {
+            return mContentType;
+        }
 
-	/**
-	 * Ritorna la descrizione del formato di output del documento.
-	 *
-	 * @return Descrizione del formato di output del documento.
-	 */
-	public String getDescription() {
-	    return mDescription;
-	}
+        /**
+         * Ritorna la descrizione del formato di output del documento.
+         *
+         * @return Descrizione del formato di output del documento.
+         */
+        public String getDescription() {
+            return mDescription;
+        }
 
-	/**
-	 * Ritorna l'estensione (<code>multi-value</code>) del formato di output del documento.
-	 *
-	 * @return Estensione (<code>multi-value</code>) del formato di output del documento
-	 */
-	public String getFileExt() {
-	    return mFileExt;
-	}
+        /**
+         * Ritorna l'estensione (<code>multi-value</code>) del formato di output del documento.
+         *
+         * @return Estensione (<code>multi-value</code>) del formato di output del documento
+         */
+        public String getFileExt() {
+            return mFileExt;
+        }
 
-	/**
-	 * Ritorna la definizione delle tipologia di output identificata dal parametro fornito.
-	 *
-	 * @param pFileExt path file esterno
-	 *
-	 * @return efinizione delle tipologia di output identificata dal parametro fornito
-	 */
-	public static CONTENT_TYPE getFromFileExt(final String pFileExt) {
-	    CONTENT_TYPE lContentType = null;
+        /**
+         * Ritorna la definizione delle tipologia di output identificata dal parametro fornito.
+         *
+         * @param pFileExt path file esterno
+         *
+         * @return efinizione delle tipologia di output identificata dal parametro fornito
+         */
+        public static CONTENT_TYPE getFromFileExt(final String pFileExt) {
+            CONTENT_TYPE lContentType = null;
 
-	    for (CONTENT_TYPE lTmpContentType : CONTENT_TYPE.values()) {
-		String lFileExt = lTmpContentType.getFileExt();
-		String[] lAvailableExt = lFileExt.split(",");
+            for (CONTENT_TYPE lTmpContentType : CONTENT_TYPE.values()) {
+                String lFileExt = lTmpContentType.getFileExt();
+                String[] lAvailableExt = lFileExt.split(",");
 
-		for (String lExt : lAvailableExt) {
-		    if (lExt.equalsIgnoreCase(pFileExt)) {
-			lContentType = lTmpContentType;
+                for (String lExt : lAvailableExt) {
+                    if (lExt.equalsIgnoreCase(pFileExt)) {
+                        lContentType = lTmpContentType;
 
-			break;
-		    }
-		}
-	    }
+                        break;
+                    }
+                }
+            }
 
-	    if (lContentType == null) {
-		throw new RuntimeException(
-			String.format("[%s] file extention not supported", pFileExt));
-	    }
+            if (lContentType == null) {
+                throw new RuntimeException(
+                        String.format("[%s] file extention not supported", pFileExt));
+            }
 
-	    return lContentType;
-	}
+            return lContentType;
+        }
     }
 
     /**
@@ -178,10 +178,10 @@ public final class IOUtils {
      * @return True se il file esiste, false in caso contrario.
      */
     public static boolean exists(final String pFile) {
-	File lFile = getFile(pFile);
-	boolean lExists = lFile.exists();
+        File lFile = getFile(pFile);
+        boolean lExists = lFile.exists();
 
-	return lExists;
+        return lExists;
     }
 
     /**
@@ -192,25 +192,25 @@ public final class IOUtils {
      * @return Nome del file fornito, senza estensione.
      */
     public static String extractBaseFileName(final String pFileName) {
-	String lBaseFileName = pFileName;
+        String lBaseFileName = pFileName;
 
-	if (lBaseFileName != null) {
-	    String lFileExt = extractFileExtension(pFileName, true);
+        if (lBaseFileName != null) {
+            String lFileExt = extractFileExtension(pFileName, true);
 
-	    if (lFileExt != null) {
-		lBaseFileName = lBaseFileName.replace(lFileExt, "");
-	    }
+            if (lFileExt != null) {
+                lBaseFileName = lBaseFileName.replace(lFileExt, "");
+            }
 
-	    int lUnixSep = lBaseFileName.lastIndexOf(UNIX_FILE_SEP);
-	    int lWindowsSep = lBaseFileName.lastIndexOf(WINDOWS_FILE_SEP);
-	    int lSep = Math.max(lUnixSep, lWindowsSep);
+            int lUnixSep = lBaseFileName.lastIndexOf(UNIX_FILE_SEP);
+            int lWindowsSep = lBaseFileName.lastIndexOf(WINDOWS_FILE_SEP);
+            int lSep = Math.max(lUnixSep, lWindowsSep);
 
-	    if (lSep != -1) {
-		lBaseFileName = lBaseFileName.substring(++lSep);
-	    }
-	}
+            if (lSep != -1) {
+                lBaseFileName = lBaseFileName.substring(++lSep);
+            }
+        }
 
-	return lBaseFileName;
+        return lBaseFileName;
     }
 
     // EVO#20792
@@ -222,7 +222,7 @@ public final class IOUtils {
      * @return Nome relativo dall'urn fornito.
      */
     public static String extractPartUrnName(final String pUrn) {
-	return extractPartUrnName(pUrn, false);
+        return extractPartUrnName(pUrn, false);
     }
 
     /**
@@ -234,21 +234,21 @@ public final class IOUtils {
      * @return Nome relativo dall'urn fornito.
      */
     public static String extractPartUrnName(final String pUrn, final boolean pNormalize) {
-	String lBaseUrnName = pUrn;
+        String lBaseUrnName = pUrn;
 
-	if (lBaseUrnName != null) {
-	    Pattern p = Pattern.compile("[:-]+([a-zA-Z]+[-[A-Z]+]*[:-[0-9]+]*[.[0-9]+]*)$");
-	    Matcher m = p.matcher(lBaseUrnName);
-	    if (m.find()) {
-		lBaseUrnName = m.group(1);
+        if (lBaseUrnName != null) {
+            Pattern p = Pattern.compile("[:-]+([a-zA-Z]+[-[A-Z]+]*[:-[0-9]+]*[.[0-9]+]*)$");
+            Matcher m = p.matcher(lBaseUrnName);
+            if (m.find()) {
+                lBaseUrnName = m.group(1);
 
-		if (pNormalize) {
-		    lBaseUrnName = MessaggiWSFormat.normalizingKey(lBaseUrnName);
-		}
-	    }
-	}
+                if (pNormalize) {
+                    lBaseUrnName = MessaggiWSFormat.normalizingKey(lBaseUrnName);
+                }
+            }
+        }
 
-	return lBaseUrnName;
+        return lBaseUrnName;
     }
     // EVO#20792
 
@@ -260,7 +260,7 @@ public final class IOUtils {
      * @return Estensione del file fornito.
      */
     public static String extractFileExtension(final String pFileName) {
-	return extractFileExtension(pFileName, false);
+        return extractFileExtension(pFileName, false);
     }
 
     /**
@@ -272,21 +272,21 @@ public final class IOUtils {
      * @return Estensione del file fornito.
      */
     public static String extractFileExtension(final String pFileName, final Boolean pWithDot) {
-	String lFileExt = null;
+        String lFileExt = null;
 
-	if (pFileName != null) {
-	    int lIdx = pFileName.lastIndexOf(FILE_EXT_SEP);
+        if (pFileName != null) {
+            int lIdx = pFileName.lastIndexOf(FILE_EXT_SEP);
 
-	    if (lIdx != -1) {
-		if (!pWithDot) {
-		    lIdx++;
-		}
+            if (lIdx != -1) {
+                if (!pWithDot) {
+                    lIdx++;
+                }
 
-		lFileExt = pFileName.substring(lIdx);
-	    }
-	}
+                lFileExt = pFileName.substring(lIdx);
+            }
+        }
 
-	return lFileExt;
+        return lFileExt;
     }
 
     /**
@@ -297,9 +297,9 @@ public final class IOUtils {
      * @return Percorso contenuto nel nome dei file fornito.
      */
     public static String extractPath(final String pFilename) {
-	File lFile = getFile(pFilename);
+        File lFile = getFile(pFilename);
 
-	return extractPath(lFile);
+        return extractPath(lFile);
     }
 
     /**
@@ -310,9 +310,9 @@ public final class IOUtils {
      * @return Percorso che contiene il file fornito
      */
     public static String extractPath(final File pFile) {
-	String lPath = pFile.getParentFile().getAbsolutePath();
+        String lPath = pFile.getParentFile().getAbsolutePath();
 
-	return lPath;
+        return lPath;
     }
 
     /**
@@ -324,7 +324,7 @@ public final class IOUtils {
      * @return Percorso assoluto per i parametri forniti.
      */
     public static String getAbsolutePath(final String pFilePath, final String pFileName) {
-	return getAbsolutePath(pFilePath, pFileName, FILE_SEPARATOR);
+        return getAbsolutePath(pFilePath, pFileName, FILE_SEPARATOR);
     }
 
     /**
@@ -337,16 +337,16 @@ public final class IOUtils {
      * @return Percorso assoluto per i parametri forniti.
      */
     public static String getAbsolutePath(final String pFilePath, final String pFileName,
-	    final String pFileSeparator) {
-	String lPath;
+            final String pFileSeparator) {
+        String lPath;
 
-	if (pFilePath.endsWith(pFileSeparator)) {
-	    lPath = pFilePath.concat(pFileName);
-	} else {
-	    lPath = pFilePath.concat(pFileSeparator).concat(pFileName);
-	}
+        if (pFilePath.endsWith(pFileSeparator)) {
+            lPath = pFilePath.concat(pFileName);
+        } else {
+            lPath = pFilePath.concat(pFileSeparator).concat(pFileName);
+        }
 
-	return lPath;
+        return lPath;
     }
 
     /**
@@ -357,10 +357,10 @@ public final class IOUtils {
      * @return True se il percorso fornito è relativo, false in caso contrario.
      */
     public static boolean isRelativePath(final String pFilePath) {
-	boolean lIsRelative = (pFilePath.startsWith(CURRENT_DIR)
-		|| pFilePath.startsWith(PARENT_DIR));
+        boolean lIsRelative = (pFilePath.startsWith(CURRENT_DIR)
+                || pFilePath.startsWith(PARENT_DIR));
 
-	return lIsRelative;
+        return lIsRelative;
     }
 
     /**
@@ -372,9 +372,9 @@ public final class IOUtils {
      * @return Nome del file ottenuto dalla concatenazione dei parametri forniti.
      */
     public static String getFilename(final String pFileName, final String pFileExt) {
-	String lFormat = pFileExt.startsWith(".") ? "%s%s" : "%s.%s";
+        String lFormat = pFileExt.startsWith(".") ? "%s%s" : "%s.%s";
 
-	return String.format(lFormat, pFileName, pFileExt);
+        return String.format(lFormat, pFileName, pFileExt);
     }
 
     /**
@@ -386,10 +386,10 @@ public final class IOUtils {
      * @return Nome del file (<code>last-name</code>) contenuto nel parametro fornito.
      */
     public static String getFilename(final String pAbsoluteFileName) {
-	// TODO: DiLorenzo_F, usare getFile
-	File lFile = new File(pAbsoluteFileName);
+        // TODO: DiLorenzo_F, usare getFile
+        File lFile = new File(pAbsoluteFileName);
 
-	return lFile.getName();
+        return lFile.getName();
     }
 
     /**
@@ -405,26 +405,26 @@ public final class IOUtils {
      * @return <code>File</code> per la risorsa identificata dal parametro fornito.
      */
     public static File getFile(final String pFile) {
-	String lDir = CURRENT_DIR;
-	String lName = pFile;
+        String lDir = CURRENT_DIR;
+        String lName = pFile;
 
-	if (pFile.charAt(0) == UNIX_FILE_SEP || pFile.charAt(0) == WINDOWS_FILE_SEP) {
-	    int lUnixSep = lName.lastIndexOf(UNIX_FILE_SEP);
-	    int lWindowsSep = lName.lastIndexOf(WINDOWS_FILE_SEP);
-	    int lLastFileSep = Math.max(lUnixSep, lWindowsSep);
+        if (pFile.charAt(0) == UNIX_FILE_SEP || pFile.charAt(0) == WINDOWS_FILE_SEP) {
+            int lUnixSep = lName.lastIndexOf(UNIX_FILE_SEP);
+            int lWindowsSep = lName.lastIndexOf(WINDOWS_FILE_SEP);
+            int lLastFileSep = Math.max(lUnixSep, lWindowsSep);
 
-	    lDir = pFile.substring(0, lLastFileSep);
-	    lName = lName.substring(lLastFileSep);
-	}
+            lDir = pFile.substring(0, lLastFileSep);
+            lName = lName.substring(lLastFileSep);
+        }
 
-	// TIP: DiLorenzo_F, path in formato WINDOWS
-	if (pFile.charAt(1) == ':') {
-	    lDir = null;
-	}
+        // TIP: DiLorenzo_F, path in formato WINDOWS
+        if (pFile.charAt(1) == ':') {
+            lDir = null;
+        }
 
-	File lFile = getFile(lDir, lName);
+        File lFile = getFile(lDir, lName);
 
-	return lFile;
+        return lFile;
     }
 
     /**
@@ -436,9 +436,9 @@ public final class IOUtils {
      * @return <code>File</code> per la risorsa identificata dai parametri forniti.
      */
     public static File getFile(final String pFilePath, final String pFileName) {
-	File lFile = new File(pFilePath, pFileName);
+        File lFile = new File(pFilePath, pFileName);
 
-	return lFile;
+        return lFile;
     }
 
     /**
@@ -452,10 +452,10 @@ public final class IOUtils {
      * @throws FileNotFoundException Eccezione sollevata dalle primitive utilizzate.
      */
     public static FileInputStream getFileInputStream(final File pFile)
-	    throws FileNotFoundException {
-	FileInputStream lFileInputStream = new FileInputStream(pFile);
+            throws FileNotFoundException {
+        FileInputStream lFileInputStream = new FileInputStream(pFile);
 
-	return lFileInputStream;
+        return lFileInputStream;
     }
 
     /**
@@ -469,10 +469,10 @@ public final class IOUtils {
      * @throws FileNotFoundException Eccezione sollevata dalle primitive utilizzate.
      */
     public static FileInputStream getFileInputStream(final String pFile)
-	    throws FileNotFoundException {
-	FileInputStream lFileInputStream = new FileInputStream(pFile);
+            throws FileNotFoundException {
+        FileInputStream lFileInputStream = new FileInputStream(pFile);
 
-	return lFileInputStream;
+        return lFileInputStream;
     }
 
     /**
@@ -488,10 +488,10 @@ public final class IOUtils {
      * @throws FileNotFoundException Eccezione sollevata dalle primitive utilizzate.
      */
     public static FileInputStream getFileInputStream(final String pFilePath, final String pFileName)
-	    throws FileNotFoundException {
-	String lFile = getAbsolutePath(pFilePath, pFileName);
+            throws FileNotFoundException {
+        String lFile = getAbsolutePath(pFilePath, pFileName);
 
-	return getFileInputStream(lFile);
+        return getFileInputStream(lFile);
     }
 
     /**
@@ -505,10 +505,10 @@ public final class IOUtils {
      * @throws FileNotFoundException Eccezione sollevata dalle primitive utilizzate.
      */
     public static FileOutputStream getFileOutputStream(final File pFile)
-	    throws FileNotFoundException {
-	FileOutputStream lFileOutputStream = new FileOutputStream(pFile);
+            throws FileNotFoundException {
+        FileOutputStream lFileOutputStream = new FileOutputStream(pFile);
 
-	return lFileOutputStream;
+        return lFileOutputStream;
     }
 
     /**
@@ -522,10 +522,10 @@ public final class IOUtils {
      * @throws FileNotFoundException Eccezione sollevata dalle primitive utilizzate.
      */
     public static FileOutputStream getFileOutputStream(final String pFile)
-	    throws FileNotFoundException {
-	FileOutputStream lFileOutputStream = new FileOutputStream(pFile);
+            throws FileNotFoundException {
+        FileOutputStream lFileOutputStream = new FileOutputStream(pFile);
 
-	return lFileOutputStream;
+        return lFileOutputStream;
     }
 
     /**
@@ -541,10 +541,10 @@ public final class IOUtils {
      * @throws FileNotFoundException Eccezione sollevata dalle primitive utilizzate.
      */
     public static FileOutputStream getFileOutputStream(final String pFilePath,
-	    final String pFileName) throws FileNotFoundException {
-	String lFile = getAbsolutePath(pFilePath, pFileName);
+            final String pFileName) throws FileNotFoundException {
+        String lFile = getAbsolutePath(pFilePath, pFileName);
 
-	return getFileOutputStream(lFile);
+        return getFileOutputStream(lFile);
     }
 
     /**
@@ -556,7 +556,7 @@ public final class IOUtils {
      * @return Percorso ottenuto come concatenazione dei parametri forniti.
      */
     public static String getPath(final String pRoot, final String pPath) {
-	return getPath(pRoot, pPath, FILE_SEPARATOR);
+        return getPath(pRoot, pPath, FILE_SEPARATOR);
     }
 
     /**
@@ -569,13 +569,13 @@ public final class IOUtils {
      * @return Percorso ottenuto come concatenazione dei parametri forniti.
      */
     public static String getPath(final String pRoot, final String pPath,
-	    final String pFileSeparator) {
-	String lRoot = (pRoot.endsWith(pFileSeparator)) ? pRoot : pRoot.concat(pFileSeparator);
-	String lPath = (pPath.endsWith(pFileSeparator))
-		? pPath.substring(0, pPath.length() - pFileSeparator.length())
-		: pPath;
+            final String pFileSeparator) {
+        String lRoot = (pRoot.endsWith(pFileSeparator)) ? pRoot : pRoot.concat(pFileSeparator);
+        String lPath = (pPath.endsWith(pFileSeparator))
+                ? pPath.substring(0, pPath.length() - pFileSeparator.length())
+                : pPath;
 
-	return lRoot.concat(lPath);
+        return lRoot.concat(lPath);
     }
 
     /**
@@ -584,9 +584,9 @@ public final class IOUtils {
      * @return Nome della cartella temporanea.
      */
     public static String getTempDirName() {
-	String lTempDir = System.getProperty("java.io.tmpdir");
+        String lTempDir = System.getProperty("java.io.tmpdir");
 
-	return lTempDir;
+        return lTempDir;
     }
 
     /**
@@ -600,7 +600,7 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static File newFile(final String pFilePath, final String pFileName) throws IOException {
-	return newFile(pFilePath, pFileName, false);
+        return newFile(pFilePath, pFileName, false);
     }
 
     /**
@@ -616,19 +616,19 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static File newFile(final String pFilePath, final String pFileName, final boolean pMkDir)
-	    throws IOException {
-	if (pMkDir) {
-	    newDirectory(pFilePath);
-	}
+            throws IOException {
+        if (pMkDir) {
+            newDirectory(pFilePath);
+        }
 
-	File lFile = getFile(pFilePath, pFileName);
+        File lFile = getFile(pFilePath, pFileName);
 
-	if (!lFile.createNewFile()) {
-	    throw new RuntimeException(
-		    String.format("Creating [%s] new file", lFile.getAbsolutePath()));
-	}
+        if (!lFile.createNewFile()) {
+            throw new RuntimeException(
+                    String.format("Creating [%s] new file", lFile.getAbsolutePath()));
+        }
 
-	return lFile;
+        return lFile;
     }
 
     /**
@@ -641,20 +641,20 @@ public final class IOUtils {
      *         parametro fornito.
      */
     public static File newTempDirectory(final String pDirName) {
-	String lTempDir = getTempDirName();
-	String lDirName = pDirName;
+        String lTempDir = getTempDirName();
+        String lDirName = pDirName;
 
-	if (!lTempDir.endsWith(FILE_SEPARATOR)) {
-	    lTempDir = lTempDir.concat(FILE_SEPARATOR);
-	}
+        if (!lTempDir.endsWith(FILE_SEPARATOR)) {
+            lTempDir = lTempDir.concat(FILE_SEPARATOR);
+        }
 
-	if (lDirName.startsWith(FILE_SEPARATOR)) {
-	    lDirName = lDirName.substring(1);
-	}
+        if (lDirName.startsWith(FILE_SEPARATOR)) {
+            lDirName = lDirName.substring(1);
+        }
 
-	lTempDir = lTempDir.concat(lDirName);
+        lTempDir = lTempDir.concat(lDirName);
 
-	return newDirectory(lTempDir);
+        return newDirectory(lTempDir);
     }
 
     /**
@@ -667,14 +667,14 @@ public final class IOUtils {
      *         fornito.
      */
     public static File newDirectory(final String pDirName) {
-	File lDir = new File(pDirName);
+        File lDir = new File(pDirName);
 
-	if (!lDir.exists() && !lDir.mkdirs()) {
-	    throw new RuntimeException(
-		    String.format("Creating [%s] new directory", lDir.getAbsolutePath()));
-	}
+        if (!lDir.exists() && !lDir.mkdirs()) {
+            throw new RuntimeException(
+                    String.format("Creating [%s] new directory", lDir.getAbsolutePath()));
+        }
 
-	return lDir;
+        return lDir;
     }
 
     /**
@@ -685,15 +685,15 @@ public final class IOUtils {
      * @return Nome del file temporaneo.
      */
     public static String getTempFilename(final String pFile) {
-	String lTempFile = getTempDirName();
+        String lTempFile = getTempDirName();
 
-	if (!lTempFile.endsWith(FILE_SEPARATOR)) {
-	    lTempFile = lTempFile.concat(FILE_SEPARATOR);
-	}
+        if (!lTempFile.endsWith(FILE_SEPARATOR)) {
+            lTempFile = lTempFile.concat(FILE_SEPARATOR);
+        }
 
-	lTempFile = lTempFile.concat(pFile);
+        lTempFile = lTempFile.concat(pFile);
 
-	return lTempFile;
+        return lTempFile;
     }
 
     /**
@@ -705,9 +705,9 @@ public final class IOUtils {
      * @return <code>File</code> per la risorsa temporanea identificata dal parametro fornito.
      */
     public static File getTempFile(final String pFileName) {
-	String lFilePath = getTempDirName();
+        String lFilePath = getTempDirName();
 
-	return new File(lFilePath, pFileName);
+        return new File(lFilePath, pFileName);
     }
 
     /**
@@ -719,15 +719,15 @@ public final class IOUtils {
      *         contrario.
      */
     public static boolean isFileReady(final String pFile) {
-	boolean isReady = false;
+        boolean isReady = false;
 
-	File file = new File(pFile);
+        File file = new File(pFile);
 
-	if (file.exists() && file.canWrite() && file.canRead()) {
-	    isReady = true;
-	}
+        if (file.exists() && file.canWrite() && file.canRead()) {
+            isReady = true;
+        }
 
-	return isReady;
+        return isReady;
     }
 
     /**
@@ -742,8 +742,8 @@ public final class IOUtils {
      * @return Lista dei file (<code>absolute-path</code>) cancellati, filtrati dai criteri forniti.
      */
     public static List<String> delete(final File pFilePath, final FileFilter pFileFilter,
-	    final boolean pDeeply) {
-	return delete(pFilePath, pFileFilter, pDeeply, true);
+            final boolean pDeeply) {
+        return delete(pFilePath, pFileFilter, pDeeply, true);
     }
 
     /**
@@ -761,18 +761,18 @@ public final class IOUtils {
      *         dai criteri forniti.
      */
     public static List<String> delete(final File pFilePath, final FileFilter pFileFilter,
-	    final boolean pDeeply, final boolean pSmooth) {
-	List<File> lFilesToDelete = new ArrayList<File>();
-	lFilesToDelete = recursivelyList(pFilePath, pFileFilter, pDeeply, lFilesToDelete);
-	List<String> lDeletedWithSuccess = new ArrayList<String>();
+            final boolean pDeeply, final boolean pSmooth) {
+        List<File> lFilesToDelete = new ArrayList<File>();
+        lFilesToDelete = recursivelyList(pFilePath, pFileFilter, pDeeply, lFilesToDelete);
+        List<String> lDeletedWithSuccess = new ArrayList<String>();
 
-	for (File lFile : lFilesToDelete) {
-	    if (delete(lFile, pSmooth)) {
-		lDeletedWithSuccess.add(lFile.getAbsolutePath());
-	    }
-	}
+        for (File lFile : lFilesToDelete) {
+            if (delete(lFile, pSmooth)) {
+                lDeletedWithSuccess.add(lFile.getAbsolutePath());
+            }
+        }
 
-	return lDeletedWithSuccess;
+        return lDeletedWithSuccess;
     }
 
     /**
@@ -784,7 +784,7 @@ public final class IOUtils {
      *
      */
     public static boolean delete(final String pFile) {
-	return delete(pFile, false);
+        return delete(pFile, false);
     }
 
     /**
@@ -797,7 +797,7 @@ public final class IOUtils {
      * @return True se l'operzione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean delete(final String pFile, final boolean pSmooth) {
-	return delete(new File(pFile), pSmooth);
+        return delete(new File(pFile), pSmooth);
     }
 
     /**
@@ -808,7 +808,7 @@ public final class IOUtils {
      * @return True se l'operzione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean delete(final File pFile) {
-	return delete(pFile, false);
+        return delete(pFile, false);
     }
 
     /**
@@ -821,49 +821,49 @@ public final class IOUtils {
      * @return True se l'operzione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean delete(final File pFile, final boolean pSmooth) {
-	boolean lDeleted = false;
-	boolean lIsTempDir = false;
-	String lMessage = null;
-	boolean lIsDirectory = pFile.isDirectory();
-	String lFileRef = (lIsDirectory) ? "directory" : "file";
+        boolean lDeleted = false;
+        boolean lIsTempDir = false;
+        String lMessage = null;
+        boolean lIsDirectory = pFile.isDirectory();
+        String lFileRef = (lIsDirectory) ? "directory" : "file";
 
-	if (pFile.exists()) {
-	    if (lIsDirectory) {
-		String lTempDirName = getTempDirName();
-		String lFilePath = pFile.getAbsolutePath()
-			.concat((lTempDirName.endsWith(FILE_SEPARATOR) ? FILE_SEPARATOR : ""));
-		lIsTempDir = lTempDirName.equals(lFilePath);
+        if (pFile.exists()) {
+            if (lIsDirectory) {
+                String lTempDirName = getTempDirName();
+                String lFilePath = pFile.getAbsolutePath()
+                        .concat((lTempDirName.endsWith(FILE_SEPARATOR) ? FILE_SEPARATOR : ""));
+                lIsTempDir = lTempDirName.equals(lFilePath);
 
-		if (lIsTempDir) {
-		    lMessage = String.format("Can't delete [%s] tempory directory", lTempDirName);
-		    LOG.warn(lMessage);
-		}
-	    }
+                if (lIsTempDir) {
+                    lMessage = String.format("Can't delete [%s] tempory directory", lTempDirName);
+                    LOG.warn(lMessage);
+                }
+            }
 
-	    if (!lIsTempDir) {
-		lDeleted = pFile.delete();
+            if (!lIsTempDir) {
+                lDeleted = pFile.delete();
 
-		if (lDeleted) {
-		    LOG.debug(String.format("[%s] %s deleted", pFile, lFileRef));
-		} else {
-		    lMessage = String.format("[%s] %s was not deleted", pFile, lFileRef);
-		    LOG.warn(lMessage);
-		}
+                if (lDeleted) {
+                    LOG.debug(String.format("[%s] %s deleted", pFile, lFileRef));
+                } else {
+                    lMessage = String.format("[%s] %s was not deleted", pFile, lFileRef);
+                    LOG.warn(lMessage);
+                }
 
-		if (!lDeleted && !pSmooth) {
-		    throw new RuntimeException(lMessage);
-		}
-	    }
-	} else {
-	    lMessage = String.format("[%s] %s does not exist", pFile.getAbsolutePath(), lFileRef);
-	    LOG.warn(lMessage);
+                if (!lDeleted && !pSmooth) {
+                    throw new RuntimeException(lMessage);
+                }
+            }
+        } else {
+            lMessage = String.format("[%s] %s does not exist", pFile.getAbsolutePath(), lFileRef);
+            LOG.warn(lMessage);
 
-	    if (!pSmooth) {
-		throw new RuntimeException(lMessage);
-	    }
-	}
+            if (!pSmooth) {
+                throw new RuntimeException(lMessage);
+            }
+        }
 
-	return lDeleted;
+        return lDeleted;
     }
 
     /**
@@ -874,7 +874,7 @@ public final class IOUtils {
      * @return True se l'operzione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean deleteDir(final String pDirName) {
-	return deleteDir(pDirName, false, false);
+        return deleteDir(pDirName, false, false);
     }
 
     /**
@@ -887,7 +887,7 @@ public final class IOUtils {
      * @return True se l'operzione stata eseguita correttamente, false in caso contrario
      */
     public static boolean deleteDir(final String pDirName, final boolean pDeleteContent) {
-	return deleteDir(pDirName, pDeleteContent, false);
+        return deleteDir(pDirName, pDeleteContent, false);
     }
 
     /**
@@ -902,28 +902,28 @@ public final class IOUtils {
      * @return True se l'operazione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean deleteDir(final String pDirName, final boolean pDeleteContent,
-	    final boolean pSmooth) {
-	File lDirFile = new File(pDirName);
-	boolean lDeleted = true;
+            final boolean pSmooth) {
+        File lDirFile = new File(pDirName);
+        boolean lDeleted = true;
 
-	if (pDeleteContent) {
-	    List<String> lFiles = list(lDirFile, AllFileFilter.getInstance(), false);
+        if (pDeleteContent) {
+            List<String> lFiles = list(lDirFile, AllFileFilter.getInstance(), false);
 
-	    for (String lFile : lFiles) {
-		File lEntry = new File(lFile);
-		if (lEntry.isDirectory()) {
-		    lDeleted = (lDeleted) ? deleteDir(lFile, pDeleteContent, pSmooth) : lDeleted;
-		} else {
-		    lDeleted = (lDeleted) ? delete(lFile, pSmooth) : lDeleted;
-		}
-	    }
-	}
+            for (String lFile : lFiles) {
+                File lEntry = new File(lFile);
+                if (lEntry.isDirectory()) {
+                    lDeleted = (lDeleted) ? deleteDir(lFile, pDeleteContent, pSmooth) : lDeleted;
+                } else {
+                    lDeleted = (lDeleted) ? delete(lFile, pSmooth) : lDeleted;
+                }
+            }
+        }
 
-	if (lDeleted) {
-	    lDeleted = delete(lDirFile, pSmooth);
-	}
+        if (lDeleted) {
+            lDeleted = delete(lDirFile, pSmooth);
+        }
 
-	return lDeleted;
+        return lDeleted;
     }
 
     /**
@@ -937,10 +937,10 @@ public final class IOUtils {
      * @return Lista dei file (<code>absolute-path</code>) filtrati dai criteri forniti.
      */
     public static List<String> list(final String pFilePath, final FileFilter pFileFilter,
-	    final boolean pDeeply) {
-	File lFilePath = getFile(pFilePath);
+            final boolean pDeeply) {
+        File lFilePath = getFile(pFilePath);
 
-	return list(lFilePath, pFileFilter, pDeeply);
+        return list(lFilePath, pFileFilter, pDeeply);
     }
 
     /**
@@ -954,16 +954,16 @@ public final class IOUtils {
      * @return Lista dei file (<code>absolute-path</code>) filtrati dai criteri forniti.
      */
     public static List<String> list(final File pFilePath, final FileFilter pFileFilter,
-	    final boolean pDeeply) {
-	List<File> lFileList = new ArrayList<>();
-	lFileList = recursivelyList(pFilePath, pFileFilter, pDeeply, lFileList);
-	List<String> lFileNames = new ArrayList<>();
+            final boolean pDeeply) {
+        List<File> lFileList = new ArrayList<>();
+        lFileList = recursivelyList(pFilePath, pFileFilter, pDeeply, lFileList);
+        List<String> lFileNames = new ArrayList<>();
 
-	for (File file : lFileList) {
-	    lFileNames.add(file.getAbsolutePath());
-	}
+        for (File file : lFileList) {
+            lFileNames.add(file.getAbsolutePath());
+        }
 
-	return lFileNames;
+        return lFileNames;
     }
 
     /**
@@ -978,22 +978,22 @@ public final class IOUtils {
      * @return Lista dei file (<code>absolute-path</code>) filtrati dai criteri forniti.
      */
     private static List<File> recursivelyList(final File pFilePath, final FileFilter pFileFilter,
-	    final boolean pDeeply, final List<File> pFileList) {
-	if (pFilePath.isDirectory()) {
-	    if (pDeeply) {
-		for (File child : pFilePath.listFiles()) {
-		    recursivelyList(child, pFileFilter, pDeeply, pFileList);
-		}
-	    } else {
-		for (File child : pFilePath.listFiles(pFileFilter)) {
-		    pFileList.add(child);
-		}
-	    }
-	} else if (pFileFilter.accept(pFilePath)) {
-	    pFileList.add(pFilePath);
-	}
+            final boolean pDeeply, final List<File> pFileList) {
+        if (pFilePath.isDirectory()) {
+            if (pDeeply) {
+                for (File child : pFilePath.listFiles()) {
+                    recursivelyList(child, pFileFilter, pDeeply, pFileList);
+                }
+            } else {
+                for (File child : pFilePath.listFiles(pFileFilter)) {
+                    pFileList.add(child);
+                }
+            }
+        } else if (pFileFilter.accept(pFilePath)) {
+            pFileList.add(pFilePath);
+        }
 
-	return pFileList;
+        return pFileList;
     }
 
     /**
@@ -1006,13 +1006,13 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static byte[] readAsBytes(final InputStream pInputStream) throws IOException {
-	byte[] lBuffer;
+        byte[] lBuffer;
 
-	lBuffer = new byte[pInputStream.available()];
-	pInputStream.read(lBuffer);
-	pInputStream.close();
+        lBuffer = new byte[pInputStream.available()];
+        pInputStream.read(lBuffer);
+        pInputStream.close();
 
-	return lBuffer;
+        return lBuffer;
     }
 
     /**
@@ -1025,9 +1025,9 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static byte[] readFileAsBytes(final String pFile) throws IOException {
-	FileInputStream lFileInputStream = new FileInputStream(pFile);
+        FileInputStream lFileInputStream = new FileInputStream(pFile);
 
-	return readAsBytes(lFileInputStream);
+        return readAsBytes(lFileInputStream);
     }
 
     /**
@@ -1041,10 +1041,10 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static byte[] readFileAsBytes(final String pFilePath, final String pFileName)
-	    throws IOException {
-	String lFile = getAbsolutePath(pFilePath, pFileName);
+            throws IOException {
+        String lFile = getAbsolutePath(pFilePath, pFileName);
 
-	return readFileAsBytes(lFile);
+        return readFileAsBytes(lFile);
     }
 
     /**
@@ -1057,10 +1057,10 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static void writeAsByteArray(final String pFilePath, final String pFileName,
-	    final byte[] pBuffer) throws IOException {
-	String lFile = getAbsolutePath(pFilePath, pFileName);
+            final byte[] pBuffer) throws IOException {
+        String lFile = getAbsolutePath(pFilePath, pFileName);
 
-	writeAsByteArray(lFile, pBuffer);
+        writeAsByteArray(lFile, pBuffer);
     }
 
     /**
@@ -1072,10 +1072,10 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static void writeAsByteArray(final String pFile, final byte[] pBuffer)
-	    throws IOException {
-	File lFile = getFile(pFile);
+            throws IOException {
+        File lFile = getFile(pFile);
 
-	writeAsByteArray(lFile, pBuffer);
+        writeAsByteArray(lFile, pBuffer);
     }
 
     /**
@@ -1087,11 +1087,11 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static void writeAsByteArray(final File pFile, final byte[] pBuffer) throws IOException {
-	FileOutputStream lFileOutputStream;
+        FileOutputStream lFileOutputStream;
 
-	lFileOutputStream = getFileOutputStream(pFile);
-	lFileOutputStream.write(pBuffer);
-	lFileOutputStream.close();
+        lFileOutputStream = getFileOutputStream(pFile);
+        lFileOutputStream.write(pBuffer);
+        lFileOutputStream.close();
     }
 
     /**
@@ -1105,17 +1105,17 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static void writeFile(final String pFile, final String pContent, final boolean pAppend)
-	    throws IOException {
-	File lFile = new File(pFile);
+            throws IOException {
+        File lFile = new File(pFile);
 
-	if (!lFile.exists()) {
-	    lFile.createNewFile();
-	}
+        if (!lFile.exists()) {
+            lFile.createNewFile();
+        }
 
-	FileWriter lFileWriter = new FileWriter(lFile.getAbsoluteFile(), pAppend);
-	try (BufferedWriter lBufferedWriter = new BufferedWriter(lFileWriter)) {
-	    lBufferedWriter.write(pContent);
-	}
+        FileWriter lFileWriter = new FileWriter(lFile.getAbsoluteFile(), pAppend);
+        try (BufferedWriter lBufferedWriter = new BufferedWriter(lFileWriter)) {
+            lBufferedWriter.write(pContent);
+        }
     }
 
     /**
@@ -1128,10 +1128,10 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static byte[] toByteArray(final InputStream pInputStream) throws IOException {
-	ByteArrayOutputStream lOutputStream = new ByteArrayOutputStream();
-	copy(pInputStream, lOutputStream);
+        ByteArrayOutputStream lOutputStream = new ByteArrayOutputStream();
+        copy(pInputStream, lOutputStream);
 
-	return lOutputStream.toByteArray();
+        return lOutputStream.toByteArray();
     }
 
     /**
@@ -1145,11 +1145,11 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static boolean copyFile(final String pSourceFileCompletePath,
-	    final String pDestFileCompletePath) throws IOException {
-	File lSource = getFile(pSourceFileCompletePath);
-	File lDest = getFile(pDestFileCompletePath);
+            final String pDestFileCompletePath) throws IOException {
+        File lSource = getFile(pSourceFileCompletePath);
+        File lDest = getFile(pDestFileCompletePath);
 
-	return copyFile(lSource, lDest);
+        return copyFile(lSource, lDest);
     }
 
     /**
@@ -1163,17 +1163,17 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static boolean copyFile(final File pSourceFile, final File pDestFile)
-	    throws IOException {
-	InputStream lInputStream = getFileInputStream(pSourceFile);
-	OutputStream lOutputStream = getFileOutputStream(pDestFile);
+            throws IOException {
+        InputStream lInputStream = getFileInputStream(pSourceFile);
+        OutputStream lOutputStream = getFileOutputStream(pDestFile);
 
-	int lCount = copy(lInputStream, lOutputStream);
-	boolean lIsCopyOk = (lCount > 0) ? true : false;
+        int lCount = copy(lInputStream, lOutputStream);
+        boolean lIsCopyOk = (lCount > 0) ? true : false;
 
-	lInputStream.close();
-	lOutputStream.close();
+        lInputStream.close();
+        lOutputStream.close();
 
-	return lIsCopyOk;
+        return lIsCopyOk;
     }
 
     /**
@@ -1189,20 +1189,20 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static boolean copyFile(final String pSourceFilePath, final String pSourceFileName,
-	    final String pDestFilePath, final String pDestFileName) throws IOException {
-	File lSource = getFile(pSourceFilePath, pSourceFileName);
-	InputStream lInputStream = getFileInputStream(lSource);
+            final String pDestFilePath, final String pDestFileName) throws IOException {
+        File lSource = getFile(pSourceFilePath, pSourceFileName);
+        InputStream lInputStream = getFileInputStream(lSource);
 
-	File lDest = getFile(pDestFilePath, pDestFileName);
-	OutputStream lOutputStream = getFileOutputStream(lDest);
+        File lDest = getFile(pDestFilePath, pDestFileName);
+        OutputStream lOutputStream = getFileOutputStream(lDest);
 
-	int lCount = copy(lInputStream, lOutputStream);
-	boolean lIsCopyOk = (lCount > 0) ? true : false;
+        int lCount = copy(lInputStream, lOutputStream);
+        boolean lIsCopyOk = (lCount > 0) ? true : false;
 
-	lInputStream.close();
-	lOutputStream.close();
+        lInputStream.close();
+        lOutputStream.close();
 
-	return lIsCopyOk;
+        return lIsCopyOk;
     }
 
     /**
@@ -1217,8 +1217,8 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static boolean copyFile(final String pFilePath, final String pSourceFileName,
-	    final String pDestFileName) throws IOException {
-	return copyFile(pFilePath, pSourceFileName, pFilePath, pDestFileName);
+            final String pDestFileName) throws IOException {
+        return copyFile(pFilePath, pSourceFileName, pFilePath, pDestFileName);
     }
 
     /**
@@ -1232,17 +1232,17 @@ public final class IOUtils {
      * @throws IOException Eccezione sollevata dalle primitive utilizzate.
      */
     public static int copy(final InputStream pInputStream, final OutputStream pOutputStream)
-	    throws IOException {
-	byte[] lBuffer = new byte[DEFAULT_BUFFER_SIZE];
-	int lCount = 0;
-	int lBufferSize;
+            throws IOException {
+        byte[] lBuffer = new byte[DEFAULT_BUFFER_SIZE];
+        int lCount = 0;
+        int lBufferSize;
 
-	while (-1 != (lBufferSize = pInputStream.read(lBuffer))) {
-	    pOutputStream.write(lBuffer, 0, lBufferSize);
-	    lCount += lBufferSize;
-	}
+        while (-1 != (lBufferSize = pInputStream.read(lBuffer))) {
+            pOutputStream.write(lBuffer, 0, lBufferSize);
+            lCount += lBufferSize;
+        }
 
-	return lCount;
+        return lCount;
     }
 
     /**
@@ -1251,10 +1251,10 @@ public final class IOUtils {
      * @param pFile Istanza <code>File</code> con cui eseguire l'operazione
      */
     public static void mkDirs(final File pFile) {
-	if (pFile != null && !pFile.exists() && !pFile.mkdirs()) {
-	    throw new RuntimeException(
-		    String.format("Creating [%s] directory", pFile.getAbsolutePath()));
-	}
+        if (pFile != null && !pFile.exists() && !pFile.mkdirs()) {
+            throw new RuntimeException(
+                    String.format("Creating [%s] directory", pFile.getAbsolutePath()));
+        }
     }
 
     /**
@@ -1263,9 +1263,9 @@ public final class IOUtils {
      * @param pFilePath Percorso con cui eseguire l'operazione
      */
     public static void mkDirs(final String pFilePath) {
-	File lFile = new File(pFilePath);
+        File lFile = new File(pFilePath);
 
-	mkDirs(lFile);
+        mkDirs(lFile);
     }
 
     /**
@@ -1276,14 +1276,14 @@ public final class IOUtils {
      * @return True se una directory è vuota, false in caso contrario
      */
     public static boolean isEmpty(final File pFilePath) {
-	if (!pFilePath.isDirectory()) {
-	    throw new RuntimeException(
-		    String.format("[%s] file is not a directory", pFilePath.getAbsolutePath()));
-	}
+        if (!pFilePath.isDirectory()) {
+            throw new RuntimeException(
+                    String.format("[%s] file is not a directory", pFilePath.getAbsolutePath()));
+        }
 
-	File[] lFiles = pFilePath.listFiles(AllFileFilter.getInstance());
+        File[] lFiles = pFilePath.listFiles(AllFileFilter.getInstance());
 
-	return lFiles.length == 0;
+        return lFiles.length == 0;
     }
 
     /**
@@ -1297,31 +1297,31 @@ public final class IOUtils {
      * @return True se l'operazione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean renameWithTimestamp(final String pFilePath, final String pFileName) {
-	File lFile = getFile(pFilePath, pFileName);
-	String lFileName = lFile.getName();
-	boolean lSuccess = true;
+        File lFile = getFile(pFilePath, pFileName);
+        String lFileName = lFile.getName();
+        boolean lSuccess = true;
 
-	if (lFile.exists()) {
-	    Date lDate = new Date();
+        if (lFile.exists()) {
+            Date lDate = new Date();
 
-	    Calendar lCal = Calendar.getInstance();
-	    lCal.setTime(lDate);
+            Calendar lCal = Calendar.getInstance();
+            lCal.setTime(lDate);
 
-	    SimpleDateFormat lSdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-	    String lStrDate = lSdf.format(lCal.getTime());
+            SimpleDateFormat lSdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+            String lStrDate = lSdf.format(lCal.getTime());
 
-	    String lFileNameWithoutExt = extractBaseFileName(lFileName);
-	    String lExtension = extractFileExtension(lFileName);
-	    String lNewFileName = String.format("%s_%s.%s", lFileNameWithoutExt, lStrDate,
-		    lExtension);
-	    File lNewFile = IOUtils.getFile(pFilePath, lNewFileName);
+            String lFileNameWithoutExt = extractBaseFileName(lFileName);
+            String lExtension = extractFileExtension(lFileName);
+            String lNewFileName = String.format("%s_%s.%s", lFileNameWithoutExt, lStrDate,
+                    lExtension);
+            File lNewFile = IOUtils.getFile(pFilePath, lNewFileName);
 
-	    lSuccess = lFile.renameTo(lNewFile);
-	} else {
-	    lSuccess = true;
-	}
+            lSuccess = lFile.renameTo(lNewFile);
+        } else {
+            lSuccess = true;
+        }
 
-	return lSuccess;
+        return lSuccess;
     }
 
     /**
@@ -1334,29 +1334,29 @@ public final class IOUtils {
      * @return True se l'operazione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean renameDirWithTimestamp(final String pDirPath) {
-	String lParentDir = IOUtils.extractPath(pDirPath);
-	File lFile = getFile(pDirPath);
-	String lDirName = lFile.getName();
-	boolean lSuccess = true;
+        String lParentDir = IOUtils.extractPath(pDirPath);
+        File lFile = getFile(pDirPath);
+        String lDirName = lFile.getName();
+        boolean lSuccess = true;
 
-	if (lFile.exists()) {
-	    Date lDate = new Date();
+        if (lFile.exists()) {
+            Date lDate = new Date();
 
-	    Calendar lCal = Calendar.getInstance();
-	    lCal.setTime(lDate);
+            Calendar lCal = Calendar.getInstance();
+            lCal.setTime(lDate);
 
-	    SimpleDateFormat lSdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
-	    String lStrDate = lSdf.format(lCal.getTime());
+            SimpleDateFormat lSdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+            String lStrDate = lSdf.format(lCal.getTime());
 
-	    String lNewDirName = String.format("%s_%s", lDirName, lStrDate);
-	    File lNewDir = IOUtils.getFile(lParentDir, lNewDirName);
+            String lNewDirName = String.format("%s_%s", lDirName, lStrDate);
+            File lNewDir = IOUtils.getFile(lParentDir, lNewDirName);
 
-	    lSuccess = lFile.renameTo(lNewDir);
-	} else {
-	    lSuccess = true;
-	}
+            lSuccess = lFile.renameTo(lNewDir);
+        } else {
+            lSuccess = true;
+        }
 
-	return lSuccess;
+        return lSuccess;
     }
 
     /**
@@ -1369,17 +1369,17 @@ public final class IOUtils {
      * @return Percorso con cui eseguire l'operazione
      */
     public static String getDirWithProgressive(final String pDirPath,
-	    final Map<String, Integer> pMapDirPrg) {
-	String lParentDir = IOUtils.extractPath(pDirPath);
-	File lFile = getFile(pDirPath);
-	String lDirName = lFile.getName();
+            final Map<String, Integer> pMapDirPrg) {
+        String lParentDir = IOUtils.extractPath(pDirPath);
+        File lFile = getFile(pDirPath);
+        String lDirName = lFile.getName();
 
-	if (lFile.exists() && pMapDirPrg.containsKey(lDirName)) {
-	    String lNewDirName = String.format("%s_%s", lDirName, pMapDirPrg.get(lDirName));
+        if (lFile.exists() && pMapDirPrg.containsKey(lDirName)) {
+            String lNewDirName = String.format("%s_%s", lDirName, pMapDirPrg.get(lDirName));
 
-	    return IOUtils.getPath(lParentDir, lNewDirName);
-	} else {
-	    return pDirPath;
-	}
+            return IOUtils.getPath(lParentDir, lNewDirName);
+        } else {
+            return pDirPath;
+        }
     }
 }

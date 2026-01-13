@@ -72,350 +72,350 @@ public class VolVRicVolume implements Serializable {
     }
 
     public VolVRicVolume(Date dtChius, Date dtCreazione, Date dtFirmaMarca, Date dtScadChius,
-	    BigDecimal idVolumeConserv, BigDecimal niCompVolume, BigDecimal niKbSize,
-	    BigDecimal niMaxComp, BigDecimal niMaxUnitaDoc, BigDecimal niTempoScadChius,
-	    BigDecimal niTempoScadChiusFirme, BigDecimal niUnitaDocVolume, String nmCriterioRaggr,
-	    String nmVolumeConserv, String dsVolumeConserv, String tiPresenzaFirme,
-	    String tiScadChiusVolume, String tiStatoVolumeConserv, String tiTempoScadChius,
-	    String tiTempoScadChiusFirme, String tiValFirme, String ntIndiceVolume,
-	    String dlMotivoChius, String cdVersioneIndice, String ntVolumeChiuso,
-	    BigDecimal idStrutVolume) {
-	this.dtChius = dtChius;
-	this.dtCreazione = dtCreazione;
-	this.dtFirmaMarca = dtFirmaMarca;
-	this.dtScadChius = dtScadChius;
-	this.idVolumeConserv = idVolumeConserv;
-	this.niCompVolume = niCompVolume;
-	this.niKbSize = niKbSize;
-	this.niMaxComp = niMaxComp;
-	this.niMaxUnitaDoc = niMaxUnitaDoc;
-	this.niTempoScadChius = niTempoScadChius;
-	this.niTempoScadChiusFirme = niTempoScadChiusFirme;
-	this.niUnitaDocVolume = niUnitaDocVolume;
-	this.nmCriterioRaggr = nmCriterioRaggr;
-	this.nmVolumeConserv = nmVolumeConserv;
-	this.dsVolumeConserv = dsVolumeConserv;
-	this.tiPresenzaFirme = tiPresenzaFirme;
-	this.tiScadChiusVolume = tiScadChiusVolume;
-	this.tiStatoVolumeConserv = tiStatoVolumeConserv;
-	this.tiTempoScadChius = tiTempoScadChius;
-	this.tiTempoScadChiusFirme = tiTempoScadChiusFirme;
-	this.tiValFirme = tiValFirme;
-	this.ntIndiceVolume = ntIndiceVolume;
-	this.dlMotivoChius = dlMotivoChius;
-	this.cdVersioneIndice = cdVersioneIndice;
-	this.ntVolumeChiuso = ntVolumeChiuso;
-	this.idStrutVolume = idStrutVolume;
+            BigDecimal idVolumeConserv, BigDecimal niCompVolume, BigDecimal niKbSize,
+            BigDecimal niMaxComp, BigDecimal niMaxUnitaDoc, BigDecimal niTempoScadChius,
+            BigDecimal niTempoScadChiusFirme, BigDecimal niUnitaDocVolume, String nmCriterioRaggr,
+            String nmVolumeConserv, String dsVolumeConserv, String tiPresenzaFirme,
+            String tiScadChiusVolume, String tiStatoVolumeConserv, String tiTempoScadChius,
+            String tiTempoScadChiusFirme, String tiValFirme, String ntIndiceVolume,
+            String dlMotivoChius, String cdVersioneIndice, String ntVolumeChiuso,
+            BigDecimal idStrutVolume) {
+        this.dtChius = dtChius;
+        this.dtCreazione = dtCreazione;
+        this.dtFirmaMarca = dtFirmaMarca;
+        this.dtScadChius = dtScadChius;
+        this.idVolumeConserv = idVolumeConserv;
+        this.niCompVolume = niCompVolume;
+        this.niKbSize = niKbSize;
+        this.niMaxComp = niMaxComp;
+        this.niMaxUnitaDoc = niMaxUnitaDoc;
+        this.niTempoScadChius = niTempoScadChius;
+        this.niTempoScadChiusFirme = niTempoScadChiusFirme;
+        this.niUnitaDocVolume = niUnitaDocVolume;
+        this.nmCriterioRaggr = nmCriterioRaggr;
+        this.nmVolumeConserv = nmVolumeConserv;
+        this.dsVolumeConserv = dsVolumeConserv;
+        this.tiPresenzaFirme = tiPresenzaFirme;
+        this.tiScadChiusVolume = tiScadChiusVolume;
+        this.tiStatoVolumeConserv = tiStatoVolumeConserv;
+        this.tiTempoScadChius = tiTempoScadChius;
+        this.tiTempoScadChiusFirme = tiTempoScadChiusFirme;
+        this.tiValFirme = tiValFirme;
+        this.ntIndiceVolume = ntIndiceVolume;
+        this.dlMotivoChius = dlMotivoChius;
+        this.cdVersioneIndice = cdVersioneIndice;
+        this.ntVolumeChiuso = ntVolumeChiuso;
+        this.idStrutVolume = idStrutVolume;
     }
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC")
     public String getCdKeyUnitaDoc() {
-	return this.cdKeyUnitaDoc;
+        return this.cdKeyUnitaDoc;
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     @Column(name = "CD_REGISTRO_KEY_UNITA_DOC")
     public String getCdRegistroKeyUnitaDoc() {
-	return this.cdRegistroKeyUnitaDoc;
+        return this.cdRegistroKeyUnitaDoc;
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
     }
 
     @Column(name = "CD_VERSIONE_INDICE")
     public String getCdVersioneIndice() {
-	return this.cdVersioneIndice;
+        return this.cdVersioneIndice;
     }
 
     public void setCdVersioneIndice(String cdVersioneIndice) {
-	this.cdVersioneIndice = cdVersioneIndice;
+        this.cdVersioneIndice = cdVersioneIndice;
     }
 
     @Column(name = "DL_MOTIVO_CHIUS")
     public String getDlMotivoChius() {
-	return this.dlMotivoChius;
+        return this.dlMotivoChius;
     }
 
     public void setDlMotivoChius(String dlMotivoChius) {
-	this.dlMotivoChius = dlMotivoChius;
+        this.dlMotivoChius = dlMotivoChius;
     }
 
     @Column(name = "DS_VOLUME_CONSERV")
     public String getDsVolumeConserv() {
-	return dsVolumeConserv;
+        return dsVolumeConserv;
     }
 
     public void setDsVolumeConserv(String dsVolumeConserv) {
-	this.dsVolumeConserv = dsVolumeConserv;
+        this.dsVolumeConserv = dsVolumeConserv;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CHIUS")
     public Date getDtChius() {
-	return this.dtChius;
+        return this.dtChius;
     }
 
     public void setDtChius(Date dtChius) {
-	this.dtChius = dtChius;
+        this.dtChius = dtChius;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE")
     public Date getDtCreazione() {
-	return this.dtCreazione;
+        return this.dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-	this.dtCreazione = dtCreazione;
+        this.dtCreazione = dtCreazione;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIRMA_MARCA")
     public Date getDtFirmaMarca() {
-	return this.dtFirmaMarca;
+        return this.dtFirmaMarca;
     }
 
     public void setDtFirmaMarca(Date dtFirmaMarca) {
-	this.dtFirmaMarca = dtFirmaMarca;
+        this.dtFirmaMarca = dtFirmaMarca;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SCAD_CHIUS")
     public Date getDtScadChius() {
-	return this.dtScadChius;
+        return this.dtScadChius;
     }
 
     public void setDtScadChius(Date dtScadChius) {
-	this.dtScadChius = dtScadChius;
+        this.dtScadChius = dtScadChius;
     }
 
     @Id
     @Column(name = "ID_APPART_UNITA_DOC_VOLUME")
     public Long getIdAppartUnitaDocVolume() {
-	return this.idAppartUnitaDocVolume;
+        return this.idAppartUnitaDocVolume;
     }
 
     public void setIdAppartUnitaDocVolume(Long idAppartUnitaDocVolume) {
-	this.idAppartUnitaDocVolume = idAppartUnitaDocVolume;
+        this.idAppartUnitaDocVolume = idAppartUnitaDocVolume;
     }
 
     @Column(name = "ID_CRITERIO_RAGGR")
     public BigDecimal getIdCriterioRaggr() {
-	return this.idCriterioRaggr;
+        return this.idCriterioRaggr;
     }
 
     public void setIdCriterioRaggr(BigDecimal idCriterioRaggr) {
-	this.idCriterioRaggr = idCriterioRaggr;
+        this.idCriterioRaggr = idCriterioRaggr;
     }
 
     @Column(name = "ID_STRUT_CRITERIO")
     public BigDecimal getIdStrutCriterio() {
-	return this.idStrutCriterio;
+        return this.idStrutCriterio;
     }
 
     public void setIdStrutCriterio(BigDecimal idStrutCriterio) {
-	this.idStrutCriterio = idStrutCriterio;
+        this.idStrutCriterio = idStrutCriterio;
     }
 
     @Column(name = "ID_STRUT_UNITA_DOC")
     public BigDecimal getIdStrutUnitaDoc() {
-	return this.idStrutUnitaDoc;
+        return this.idStrutUnitaDoc;
     }
 
     public void setIdStrutUnitaDoc(BigDecimal idStrutUnitaDoc) {
-	this.idStrutUnitaDoc = idStrutUnitaDoc;
+        this.idStrutUnitaDoc = idStrutUnitaDoc;
     }
 
     @Column(name = "ID_STRUT_VOLUME")
     public BigDecimal getIdStrutVolume() {
-	return this.idStrutVolume;
+        return this.idStrutVolume;
     }
 
     public void setIdStrutVolume(BigDecimal idStrutVolume) {
-	this.idStrutVolume = idStrutVolume;
+        this.idStrutVolume = idStrutVolume;
     }
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     @Column(name = "ID_VOLUME_CONSERV")
     public BigDecimal getIdVolumeConserv() {
-	return this.idVolumeConserv;
+        return this.idVolumeConserv;
     }
 
     public void setIdVolumeConserv(BigDecimal idVolumeConserv) {
-	this.idVolumeConserv = idVolumeConserv;
+        this.idVolumeConserv = idVolumeConserv;
     }
 
     @Column(name = "NI_COMP_VOLUME")
     public BigDecimal getNiCompVolume() {
-	return this.niCompVolume;
+        return this.niCompVolume;
     }
 
     public void setNiCompVolume(BigDecimal niCompVolume) {
-	this.niCompVolume = niCompVolume;
+        this.niCompVolume = niCompVolume;
     }
 
     @Column(name = "NI_KB_SIZE")
     public BigDecimal getNiKbSize() {
-	return this.niKbSize;
+        return this.niKbSize;
     }
 
     public void setNiKbSize(BigDecimal niKbSize) {
-	this.niKbSize = niKbSize;
+        this.niKbSize = niKbSize;
     }
 
     @Column(name = "NI_MAX_COMP")
     public BigDecimal getNiMaxComp() {
-	return this.niMaxComp;
+        return this.niMaxComp;
     }
 
     public void setNiMaxComp(BigDecimal niMaxComp) {
-	this.niMaxComp = niMaxComp;
+        this.niMaxComp = niMaxComp;
     }
 
     @Column(name = "NI_MAX_UNITA_DOC")
     public BigDecimal getNiMaxUnitaDoc() {
-	return this.niMaxUnitaDoc;
+        return this.niMaxUnitaDoc;
     }
 
     public void setNiMaxUnitaDoc(BigDecimal niMaxUnitaDoc) {
-	this.niMaxUnitaDoc = niMaxUnitaDoc;
+        this.niMaxUnitaDoc = niMaxUnitaDoc;
     }
 
     @Column(name = "NI_TEMPO_SCAD_CHIUS")
     public BigDecimal getNiTempoScadChius() {
-	return this.niTempoScadChius;
+        return this.niTempoScadChius;
     }
 
     public void setNiTempoScadChius(BigDecimal niTempoScadChius) {
-	this.niTempoScadChius = niTempoScadChius;
+        this.niTempoScadChius = niTempoScadChius;
     }
 
     @Column(name = "NI_TEMPO_SCAD_CHIUS_FIRME")
     public BigDecimal getNiTempoScadChiusFirme() {
-	return this.niTempoScadChiusFirme;
+        return this.niTempoScadChiusFirme;
     }
 
     public void setNiTempoScadChiusFirme(BigDecimal niTempoScadChiusFirme) {
-	this.niTempoScadChiusFirme = niTempoScadChiusFirme;
+        this.niTempoScadChiusFirme = niTempoScadChiusFirme;
     }
 
     @Column(name = "NI_UNITA_DOC_VOLUME")
     public BigDecimal getNiUnitaDocVolume() {
-	return this.niUnitaDocVolume;
+        return this.niUnitaDocVolume;
     }
 
     public void setNiUnitaDocVolume(BigDecimal niUnitaDocVolume) {
-	this.niUnitaDocVolume = niUnitaDocVolume;
+        this.niUnitaDocVolume = niUnitaDocVolume;
     }
 
     @Column(name = "NM_CRITERIO_RAGGR")
     public String getNmCriterioRaggr() {
-	return this.nmCriterioRaggr;
+        return this.nmCriterioRaggr;
     }
 
     public void setNmCriterioRaggr(String nmCriterioRaggr) {
-	this.nmCriterioRaggr = nmCriterioRaggr;
+        this.nmCriterioRaggr = nmCriterioRaggr;
     }
 
     @Column(name = "NM_VOLUME_CONSERV")
     public String getNmVolumeConserv() {
-	return this.nmVolumeConserv;
+        return this.nmVolumeConserv;
     }
 
     public void setNmVolumeConserv(String nmVolumeConserv) {
-	this.nmVolumeConserv = nmVolumeConserv;
+        this.nmVolumeConserv = nmVolumeConserv;
     }
 
     @Column(name = "NT_INDICE_VOLUME")
     public String getNtIndiceVolume() {
-	return this.ntIndiceVolume;
+        return this.ntIndiceVolume;
     }
 
     public void setNtIndiceVolume(String ntIndiceVolume) {
-	this.ntIndiceVolume = ntIndiceVolume;
+        this.ntIndiceVolume = ntIndiceVolume;
     }
 
     @Column(name = "NT_VOLUME_CHIUSO")
     public String getNtVolumeChiuso() {
-	return this.ntVolumeChiuso;
+        return this.ntVolumeChiuso;
     }
 
     public void setNtVolumeChiuso(String ntVolumeChiuso) {
-	this.ntVolumeChiuso = ntVolumeChiuso;
+        this.ntVolumeChiuso = ntVolumeChiuso;
     }
 
     @Column(name = "TI_PRESENZA_FIRME")
     public String getTiPresenzaFirme() {
-	return this.tiPresenzaFirme;
+        return this.tiPresenzaFirme;
     }
 
     public void setTiPresenzaFirme(String tiPresenzaFirme) {
-	this.tiPresenzaFirme = tiPresenzaFirme;
+        this.tiPresenzaFirme = tiPresenzaFirme;
     }
 
     @Column(name = "TI_SCAD_CHIUS_VOLUME")
     public String getTiScadChiusVolume() {
-	return this.tiScadChiusVolume;
+        return this.tiScadChiusVolume;
     }
 
     public void setTiScadChiusVolume(String tiScadChiusVolume) {
-	this.tiScadChiusVolume = tiScadChiusVolume;
+        this.tiScadChiusVolume = tiScadChiusVolume;
     }
 
     @Column(name = "TI_STATO_VOLUME_CONSERV")
     public String getTiStatoVolumeConserv() {
-	return this.tiStatoVolumeConserv;
+        return this.tiStatoVolumeConserv;
     }
 
     public void setTiStatoVolumeConserv(String tiStatoVolumeConserv) {
-	this.tiStatoVolumeConserv = tiStatoVolumeConserv;
+        this.tiStatoVolumeConserv = tiStatoVolumeConserv;
     }
 
     @Column(name = "TI_TEMPO_SCAD_CHIUS")
     public String getTiTempoScadChius() {
-	return this.tiTempoScadChius;
+        return this.tiTempoScadChius;
     }
 
     public void setTiTempoScadChius(String tiTempoScadChius) {
-	this.tiTempoScadChius = tiTempoScadChius;
+        this.tiTempoScadChius = tiTempoScadChius;
     }
 
     @Column(name = "TI_TEMPO_SCAD_CHIUS_FIRME")
     public String getTiTempoScadChiusFirme() {
-	return this.tiTempoScadChiusFirme;
+        return this.tiTempoScadChiusFirme;
     }
 
     public void setTiTempoScadChiusFirme(String tiTempoScadChiusFirme) {
-	this.tiTempoScadChiusFirme = tiTempoScadChiusFirme;
+        this.tiTempoScadChiusFirme = tiTempoScadChiusFirme;
     }
 
     @Column(name = "TI_VAL_FIRME")
     public String getTiValFirme() {
-	return this.tiValFirme;
+        return this.tiValFirme;
     }
 
     public void setTiValFirme(String tiValFirme) {
-	this.tiValFirme = tiValFirme;
+        this.tiValFirme = tiValFirme;
     }
 }

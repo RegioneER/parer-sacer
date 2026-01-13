@@ -41,67 +41,67 @@ public class OrgVRicOrganizRestArch implements Serializable {
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_FINE_VAL")
     public Date getDtFineVal() {
-	return this.dtFineVal;
+        return this.dtFineVal;
     }
 
     public void setDtFineVal(Date dtFineVal) {
-	this.dtFineVal = dtFineVal;
+        this.dtFineVal = dtFineVal;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_INI_VAL")
     public Date getDtIniVal() {
-	return this.dtIniVal;
+        return this.dtIniVal;
     }
 
     public void setDtIniVal(Date dtIniVal) {
-	this.dtIniVal = dtIniVal;
+        this.dtIniVal = dtIniVal;
     }
 
     @Column(name = "FL_ASSOCIAZIONE_SCADUTA")
     public String getFlAssociazioneScaduta() {
-	return this.flAssociazioneScaduta;
+        return this.flAssociazioneScaduta;
     }
 
     public void setFlAssociazioneScaduta(String flAssociazioneScaduta) {
-	this.flAssociazioneScaduta = flAssociazioneScaduta;
+        this.flAssociazioneScaduta = flAssociazioneScaduta;
     }
 
     @Column(name = "FL_ASSOCIAZIONI_FUTURE")
     public String getFlAssociazioniFuture() {
-	return this.flAssociazioniFuture;
+        return this.flAssociazioniFuture;
     }
 
     public void setFlAssociazioniFuture(String flAssociazioniFuture) {
-	this.flAssociazioniFuture = flAssociazioniFuture;
+        this.flAssociazioniFuture = flAssociazioniFuture;
     }
 
     @Column(name = "ID_ENTE_CONVENZ")
     public BigDecimal getIdEnteConvenz() {
-	return this.idEnteConvenz;
+        return this.idEnteConvenz;
     }
 
     public void setIdEnteConvenz(BigDecimal idEnteConvenz) {
-	this.idEnteConvenz = idEnteConvenz;
+        this.idEnteConvenz = idEnteConvenz;
     }
 
     @Column(name = "ID_ENTE_CONVENZ_ORG")
     public BigDecimal getIdEnteConvenzOrg() {
-	return this.idEnteConvenzOrg;
+        return this.idEnteConvenzOrg;
     }
 
     public void setIdEnteConvenzOrg(BigDecimal idEnteConvenzOrg) {
-	this.idEnteConvenzOrg = idEnteConvenzOrg;
+        this.idEnteConvenzOrg = idEnteConvenzOrg;
     }
 
     @Id
     @Column(name = "ID_ORGANIZ_IAM")
     public BigDecimal getIdOrganizIam() {
-	return this.idOrganizIam;
+        return this.idOrganizIam;
     }
 
     public void setIdOrganizIam(BigDecimal idOrganizIam) {
-	this.idOrganizIam = idOrganizIam;
+        this.idOrganizIam = idOrganizIam;
     }
 
 }

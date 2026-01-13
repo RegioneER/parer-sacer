@@ -43,43 +43,43 @@ public class SpringTikaSingletonTest {
     @Deployment
     public static JavaArchive createTestArchive() {
 
-	return ShrinkWrap.create(JavaArchive.class, "test-tika.jar")
-		.addClass(SpringTikaSingleton.class).addClass(Tika.class)// .addClass(SecureProtocolSocketFactory.class)
-		.addPackages(true, "org.apache.tika", "org.apache.pdfbox", "org.apache.james",
-			"org.apache.commons", "org.osgi", "com.healthmarketscience", "de.l3s",
-			"org.apache.fontbox", "org.apache.xerces", "org.w3c.dom", "org.apache.poi",
-			"com.google", "org.bouncycastle", "org.mozilla", "com.sun.net",
-			"org.objectweb", "org.apache.xmlbeans", "org.apache.tools")
-		.addAsResource("org/apache/tika/mime/tika-mimetypes.xml")
-		.addAsResource(SpringTikaSingletonTest.class.getClassLoader()
-			.getResource("ejb-jar-firma.xml"), "ejb-jar-firma.xml")
-		.addAsResource(
-			SpringTikaSingletonTest.class.getClassLoader().getResource("testTika.docx"),
-			"testTika.docx")
-		.addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
+        return ShrinkWrap.create(JavaArchive.class, "test-tika.jar")
+                .addClass(SpringTikaSingleton.class).addClass(Tika.class)// .addClass(SecureProtocolSocketFactory.class)
+                .addPackages(true, "org.apache.tika", "org.apache.pdfbox", "org.apache.james",
+                        "org.apache.commons", "org.osgi", "com.healthmarketscience", "de.l3s",
+                        "org.apache.fontbox", "org.apache.xerces", "org.w3c.dom", "org.apache.poi",
+                        "com.google", "org.bouncycastle", "org.mozilla", "com.sun.net",
+                        "org.objectweb", "org.apache.xmlbeans", "org.apache.tools")
+                .addAsResource("org/apache/tika/mime/tika-mimetypes.xml")
+                .addAsResource(SpringTikaSingletonTest.class.getClassLoader()
+                        .getResource("ejb-jar-firma.xml"), "ejb-jar-firma.xml")
+                .addAsResource(
+                        SpringTikaSingletonTest.class.getClassLoader().getResource("testTika.docx"),
+                        "testTika.docx")
+                .addAsManifestResource("META-INF/beans.xml", ArchivePaths.create("beans.xml"));
     }
 
     @Test
     void testTikaXml() throws Exception {
 
-	URL fileXml = SpringTikaSingletonTest.class.getResource("/ejb-jar-firma.xml");
-	byte[] fileBytes = IOUtils.toByteArray(fileXml);
-	String expectedMimeType = "application/xml";
-	String actualMimeType = tikaSingleton.detectMimeType(fileBytes);
+        URL fileXml = SpringTikaSingletonTest.class.getResource("/ejb-jar-firma.xml");
+        byte[] fileBytes = IOUtils.toByteArray(fileXml);
+        String expectedMimeType = "application/xml";
+        String actualMimeType = tikaSingleton.detectMimeType(fileBytes);
 
-	assertEquals(expectedMimeType, actualMimeType);
+        assertEquals(expectedMimeType, actualMimeType);
 
     }
 
     @Test
     void verificaDocx() throws Exception {
 
-	URL fileDocx = SpringTikaSingletonTest.class.getResource("/testTika.docx");
-	byte[] fileBytes = IOUtils.toByteArray(fileDocx);
-	String expectedDocxMimeType = "application/msword";
-	String actualMimeType = tikaSingleton.detectMimeType(fileBytes);
+        URL fileDocx = SpringTikaSingletonTest.class.getResource("/testTika.docx");
+        byte[] fileBytes = IOUtils.toByteArray(fileDocx);
+        String expectedDocxMimeType = "application/msword";
+        String actualMimeType = tikaSingleton.detectMimeType(fileBytes);
 
-	assertEquals(expectedDocxMimeType, actualMimeType);
+        assertEquals(expectedDocxMimeType, actualMimeType);
 
     }
 }

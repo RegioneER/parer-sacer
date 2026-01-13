@@ -48,59 +48,59 @@ public class LogVLisIniSchedJobStrut implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_LOG_JOB_FINE_SUC")
     public Date getDtRegLogJobFineSuc() {
-	return this.dtRegLogJobFineSuc;
+        return this.dtRegLogJobFineSuc;
     }
 
     public void setDtRegLogJobFineSuc(Date dtRegLogJobFineSuc) {
-	this.dtRegLogJobFineSuc = dtRegLogJobFineSuc;
+        this.dtRegLogJobFineSuc = dtRegLogJobFineSuc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_LOG_JOB_INI")
     public Date getDtRegLogJobIni() {
-	return this.dtRegLogJobIni;
+        return this.dtRegLogJobIni;
     }
 
     public void setDtRegLogJobIni(Date dtRegLogJobIni) {
-	this.dtRegLogJobIni = dtRegLogJobIni;
+        this.dtRegLogJobIni = dtRegLogJobIni;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_LOG_JOB_INI_SUC")
     public Date getDtRegLogJobIniSuc() {
-	return this.dtRegLogJobIniSuc;
+        return this.dtRegLogJobIniSuc;
     }
 
     public void setDtRegLogJobIniSuc(Date dtRegLogJobIniSuc) {
-	this.dtRegLogJobIniSuc = dtRegLogJobIniSuc;
+        this.dtRegLogJobIniSuc = dtRegLogJobIniSuc;
     }
 
     @Id
     @Column(name = "ID_LOG_JOB")
     public BigDecimal getIdLogJob() {
-	return this.idLogJob;
+        return this.idLogJob;
     }
 
     public void setIdLogJob(BigDecimal idLogJob) {
-	this.idLogJob = idLogJob;
+        this.idLogJob = idLogJob;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "NM_JOB")
     public String getNmJob() {
-	return this.nmJob;
+        return this.nmJob;
     }
 
     public void setNmJob(String nmJob) {
-	this.nmJob = nmJob;
+        this.nmJob = nmJob;
     }
 
 }

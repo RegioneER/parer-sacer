@@ -33,19 +33,19 @@ public class DecFormatoFileDocTableBean extends AbstractBaseTable<DecFormatoFile
     public static DecFormatoFileDocTableDescriptor TABLE_DESCRIPTOR = new DecFormatoFileDocTableDescriptor();
 
     public DecFormatoFileDocTableBean() {
-	super();
+        super();
     }
 
     protected DecFormatoFileDocRowBean createRow() {
-	return new DecFormatoFileDocRowBean();
+        return new DecFormatoFileDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecFormatoFileDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -69,134 +69,134 @@ public class FasSogFascicolo implements Serializable {
 
     @Column(name = "ID_SOG_FASCICOLO")
     @GenericGenerator(name = "SFAS_SOG_FASCICOLO_ID_SOG_FASCICOLO_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SFAS_SOG_FASCICOLO"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SFAS_SOG_FASCICOLO"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SFAS_SOG_FASCICOLO_ID_SOG_FASCICOLO_GENERATOR")
     public Long getIdSogFascicolo() {
-	return this.idSogFascicolo;
+        return this.idSogFascicolo;
     }
 
     public void setIdSogFascicolo(Long idSogFascicolo) {
-	this.idSogFascicolo = idSogFascicolo;
+        this.idSogFascicolo = idSogFascicolo;
     }
 
     @Column(name = "CD_SOG")
     public String getCdSog() {
-	return this.cdSog;
+        return this.cdSog;
     }
 
     public void setCdSog(String cdSog) {
-	this.cdSog = cdSog;
+        this.cdSog = cdSog;
     }
 
     @Column(name = "DS_CIT")
     public String getDsCit() {
-	return this.dsCit;
+        return this.dsCit;
     }
 
     public void setDsCit(String dsCit) {
-	this.dsCit = dsCit;
+        this.dsCit = dsCit;
     }
 
     @Column(name = "DS_CMN_NSC")
     public String getDsCmnNsc() {
-	return this.dsCmnNsc;
+        return this.dsCmnNsc;
     }
 
     public void setDsCmnNsc(String dsCmnNsc) {
-	this.dsCmnNsc = dsCmnNsc;
+        this.dsCmnNsc = dsCmnNsc;
     }
 
     @Column(name = "DS_DENOM_SOG")
     public String getDsDenomSog() {
-	return this.dsDenomSog;
+        return this.dsDenomSog;
     }
 
     public void setDsDenomSog(String dsDenomSog) {
-	this.dsDenomSog = dsDenomSog;
+        this.dsDenomSog = dsDenomSog;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_NAS")
     public Date getDtNas() {
-	return this.dtNas;
+        return this.dtNas;
     }
 
     public void setDtNas(Date dtNas) {
-	this.dtNas = dtNas;
+        this.dtNas = dtNas;
     }
 
     @Column(name = "NM_COGN_SOG")
     public String getNmCognSog() {
-	return this.nmCognSog;
+        return this.nmCognSog;
     }
 
     public void setNmCognSog(String nmCognSog) {
-	this.nmCognSog = nmCognSog;
+        this.nmCognSog = nmCognSog;
     }
 
     @Column(name = "NM_NOME_SOG")
     public String getNmNomeSog() {
-	return this.nmNomeSog;
+        return this.nmNomeSog;
     }
 
     public void setNmNomeSog(String nmNomeSog) {
-	this.nmNomeSog = nmNomeSog;
+        this.nmNomeSog = nmNomeSog;
     }
 
     @Column(name = "TI_CD_SOG")
     public String getTiCdSog() {
-	return this.tiCdSog;
+        return this.tiCdSog;
     }
 
     public void setTiCdSog(String tiCdSog) {
-	this.tiCdSog = tiCdSog;
+        this.tiCdSog = tiCdSog;
     }
 
     @Column(name = "TI_RAPP")
     public String getTiRapp() {
-	return this.tiRapp;
+        return this.tiRapp;
     }
 
     public void setTiRapp(String tiRapp) {
-	this.tiRapp = tiRapp;
+        this.tiRapp = tiRapp;
     }
 
     @Column(name = "TI_SES")
     public String getTiSes() {
-	return this.tiSes;
+        return this.tiSes;
     }
 
     public void setTiSes(String tiSes) {
-	this.tiSes = tiSes;
+        this.tiSes = tiSes;
     }
 
     @Column(name = "TI_SOG")
     public String getTiSog() {
-	return this.tiSog;
+        return this.tiSog;
     }
 
     public void setTiSog(String tiSog) {
-	this.tiSog = tiSog;
+        this.tiSog = tiSog;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FASCICOLO")
     public FasFascicolo getFasFascicolo() {
-	return this.fasFascicolo;
+        return this.fasFascicolo;
     }
 
     public void setFasFascicolo(FasFascicolo fasFascicolo) {
-	this.fasFascicolo = fasFascicolo;
+        this.fasFascicolo = fasFascicolo;
     }
 
     @OneToMany(mappedBy = "fasSogFascicolo")
     public List<FasCodIdeSog> getFasCodIdeSogs() {
-	return this.fasCodIdeSogs;
+        return this.fasCodIdeSogs;
     }
 
     public void setFasCodIdeSogs(List<FasCodIdeSog> fasCodIdeSogs) {
-	this.fasCodIdeSogs = fasCodIdeSogs;
+        this.fasCodIdeSogs = fasCodIdeSogs;
     }
 
 }

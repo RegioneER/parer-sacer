@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class ElvVRicElencoVersByUdTableBean
-	extends AbstractBaseTable<ElvVRicElencoVersByUdRowBean> {
+        extends AbstractBaseTable<ElvVRicElencoVersByUdRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -39,19 +39,19 @@ public class ElvVRicElencoVersByUdTableBean
     public static ElvVRicElencoVersByUdTableDescriptor TABLE_DESCRIPTOR = new ElvVRicElencoVersByUdTableDescriptor();
 
     public ElvVRicElencoVersByUdTableBean() {
-	super();
+        super();
     }
 
     protected ElvVRicElencoVersByUdRowBean createRow() {
-	return new ElvVRicElencoVersByUdRowBean();
+        return new ElvVRicElencoVersByUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<ElvVRicElencoVersByUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

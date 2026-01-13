@@ -52,84 +52,84 @@ public class MonVChkDocEnte implements Serializable {
 
     @Column(name = "FL_DOC_30GG", columnDefinition = "char")
     public String getFlDoc30gg() {
-	return this.flDoc30gg;
+        return this.flDoc30gg;
     }
 
     public void setFlDoc30gg(String flDoc30gg) {
-	this.flDoc30gg = flDoc30gg;
+        this.flDoc30gg = flDoc30gg;
     }
 
     @Column(name = "FL_DOC_ATTESA_MEM_30GG", columnDefinition = "char")
     public String getFlDocAttesaMem30gg() {
-	return this.flDocAttesaMem30gg;
+        return this.flDocAttesaMem30gg;
     }
 
     public void setFlDocAttesaMem30gg(String flDocAttesaMem30gg) {
-	this.flDocAttesaMem30gg = flDocAttesaMem30gg;
+        this.flDocAttesaMem30gg = flDocAttesaMem30gg;
     }
 
     @Column(name = "FL_DOC_ATTESA_MEM_CORR", columnDefinition = "char(1)")
     public String getFlDocAttesaMemCorr() {
-	return this.flDocAttesaMemCorr;
+        return this.flDocAttesaMemCorr;
     }
 
     public void setFlDocAttesaMemCorr(String flDocAttesaMemCorr) {
-	this.flDocAttesaMemCorr = flDocAttesaMemCorr;
+        this.flDocAttesaMemCorr = flDocAttesaMemCorr;
     }
 
     @Column(name = "FL_DOC_ATTESA_SCHED_30GG", columnDefinition = "char")
     public String getFlDocAttesaSched30gg() {
-	return this.flDocAttesaSched30gg;
+        return this.flDocAttesaSched30gg;
     }
 
     public void setFlDocAttesaSched30gg(String flDocAttesaSched30gg) {
-	this.flDocAttesaSched30gg = flDocAttesaSched30gg;
+        this.flDocAttesaSched30gg = flDocAttesaSched30gg;
     }
 
     @Column(name = "FL_DOC_ATTESA_SCHED_CORR", columnDefinition = "char(1)")
     public String getFlDocAttesaSchedCorr() {
-	return this.flDocAttesaSchedCorr;
+        return this.flDocAttesaSchedCorr;
     }
 
     public void setFlDocAttesaSchedCorr(String flDocAttesaSchedCorr) {
-	this.flDocAttesaSchedCorr = flDocAttesaSchedCorr;
+        this.flDocAttesaSchedCorr = flDocAttesaSchedCorr;
     }
 
     @Column(name = "FL_DOC_CORR", columnDefinition = "char(1)")
     public String getFlDocCorr() {
-	return this.flDocCorr;
+        return this.flDocCorr;
     }
 
     public void setFlDocCorr(String flDocCorr) {
-	this.flDocCorr = flDocCorr;
+        this.flDocCorr = flDocCorr;
     }
 
     @Column(name = "FL_DOC_NOSEL_SCHED_30GG", columnDefinition = "char")
     public String getFlDocNoselSched30gg() {
-	return this.flDocNoselSched30gg;
+        return this.flDocNoselSched30gg;
     }
 
     public void setFlDocNoselSched30gg(String flDocNoselSched30gg) {
-	this.flDocNoselSched30gg = flDocNoselSched30gg;
+        this.flDocNoselSched30gg = flDocNoselSched30gg;
     }
 
     @Column(name = "FL_DOC_NOSEL_SCHED_CORR", columnDefinition = "char(1)")
     public String getFlDocNoselSchedCorr() {
-	return this.flDocNoselSchedCorr;
+        return this.flDocNoselSchedCorr;
     }
 
     public void setFlDocNoselSchedCorr(String flDocNoselSchedCorr) {
-	this.flDocNoselSchedCorr = flDocNoselSchedCorr;
+        this.flDocNoselSchedCorr = flDocNoselSchedCorr;
     }
 
     private MonVChkDocEnteId monVChkDocEnteId;
 
     @EmbeddedId()
     public MonVChkDocEnteId getMonVChkDocEnteId() {
-	return monVChkDocEnteId;
+        return monVChkDocEnteId;
     }
 
     public void setMonVChkDocEnteId(MonVChkDocEnteId monVChkDocEnteId) {
-	this.monVChkDocEnteId = monVChkDocEnteId;
+        this.monVChkDocEnteId = monVChkDocEnteId;
     }
 }

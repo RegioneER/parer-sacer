@@ -33,18 +33,18 @@ public class CostantiReplicaOrg {
     // Enum per tipo stato replica
     public enum TiOperReplic {
 
-	INS, MOD, CANC
+        INS, MOD, CANC
     }
 
     // Enum per tipo stato replica
     public enum TiStatoReplic {
 
-	DA_REPLICARE, REPLICA_OK, REPLICA_IN_ERRORE, REPLICA_NON_POSSIBILE, REPLICA_IN_TIMEOUT
+        DA_REPLICARE, REPLICA_OK, REPLICA_IN_ERRORE, REPLICA_NON_POSSIBILE, REPLICA_IN_TIMEOUT
     }
 
     public enum EsitoServizio {
 
-	OK, KO, NO_RISPOSTA
+        OK, KO, NO_RISPOSTA
     }
 
 }

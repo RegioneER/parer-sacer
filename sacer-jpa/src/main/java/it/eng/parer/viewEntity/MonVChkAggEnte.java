@@ -52,84 +52,84 @@ public class MonVChkAggEnte implements Serializable {
 
     @Column(name = "FL_AGG_NORISOLUB_30GG", columnDefinition = "char")
     public String getFlAggNorisolub30gg() {
-	return this.flAggNorisolub30gg;
+        return this.flAggNorisolub30gg;
     }
 
     public void setFlAggNorisolub30gg(String flAggNorisolub30gg) {
-	this.flAggNorisolub30gg = flAggNorisolub30gg;
+        this.flAggNorisolub30gg = flAggNorisolub30gg;
     }
 
     @Column(name = "FL_AGG_NORISOLUB_CORR", columnDefinition = "char(1)")
     public String getFlAggNorisolubCorr() {
-	return this.flAggNorisolubCorr;
+        return this.flAggNorisolubCorr;
     }
 
     public void setFlAggNorisolubCorr(String flAggNorisolubCorr) {
-	this.flAggNorisolubCorr = flAggNorisolubCorr;
+        this.flAggNorisolubCorr = flAggNorisolubCorr;
     }
 
     @Column(name = "FL_AGG_NOVERIF_30GG", columnDefinition = "char")
     public String getFlAggNoverif30gg() {
-	return this.flAggNoverif30gg;
+        return this.flAggNoverif30gg;
     }
 
     public void setFlAggNoverif30gg(String flAggNoverif30gg) {
-	this.flAggNoverif30gg = flAggNoverif30gg;
+        this.flAggNoverif30gg = flAggNoverif30gg;
     }
 
     @Column(name = "FL_AGG_NOVERIF_CORR", columnDefinition = "char(1)")
     public String getFlAggNoverifCorr() {
-	return this.flAggNoverifCorr;
+        return this.flAggNoverifCorr;
     }
 
     public void setFlAggNoverifCorr(String flAggNoverifCorr) {
-	this.flAggNoverifCorr = flAggNoverifCorr;
+        this.flAggNoverifCorr = flAggNoverifCorr;
     }
 
     @Column(name = "FL_AGG_RISOLTI_30GG", columnDefinition = "char")
     public String getFlAggRisolti30gg() {
-	return this.flAggRisolti30gg;
+        return this.flAggRisolti30gg;
     }
 
     public void setFlAggRisolti30gg(String flAggRisolti30gg) {
-	this.flAggRisolti30gg = flAggRisolti30gg;
+        this.flAggRisolti30gg = flAggRisolti30gg;
     }
 
     @Column(name = "FL_AGG_RISOLTI_CORR", columnDefinition = "char(1)")
     public String getFlAggRisoltiCorr() {
-	return this.flAggRisoltiCorr;
+        return this.flAggRisoltiCorr;
     }
 
     public void setFlAggRisoltiCorr(String flAggRisoltiCorr) {
-	this.flAggRisoltiCorr = flAggRisoltiCorr;
+        this.flAggRisoltiCorr = flAggRisoltiCorr;
     }
 
     @Column(name = "FL_AGG_VERIF_30GG", columnDefinition = "char")
     public String getFlAggVerif30gg() {
-	return this.flAggVerif30gg;
+        return this.flAggVerif30gg;
     }
 
     public void setFlAggVerif30gg(String flAggVerif30gg) {
-	this.flAggVerif30gg = flAggVerif30gg;
+        this.flAggVerif30gg = flAggVerif30gg;
     }
 
     @Column(name = "FL_AGG_VERIF_CORR", columnDefinition = "char(1)")
     public String getFlAggVerifCorr() {
-	return this.flAggVerifCorr;
+        return this.flAggVerifCorr;
     }
 
     public void setFlAggVerifCorr(String flAggVerifCorr) {
-	this.flAggVerifCorr = flAggVerifCorr;
+        this.flAggVerifCorr = flAggVerifCorr;
     }
 
     private MonVChkAggEnteId monVChkAggEnteId;
 
     @EmbeddedId()
     public MonVChkAggEnteId getMonVChkAggEnteId() {
-	return monVChkAggEnteId;
+        return monVChkAggEnteId;
     }
 
     public void setMonVChkAggEnteId(MonVChkAggEnteId monVChkAggEnteId) {
-	this.monVChkAggEnteId = monVChkAggEnteId;
+        this.monVChkAggEnteId = monVChkAggEnteId;
     }
 }

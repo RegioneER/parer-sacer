@@ -40,333 +40,333 @@ public class AroFirmaCompRowBean extends BaseRow implements JEEBaseRowInterface 
     public static AroFirmaCompTableDescriptor TABLE_DESCRIPTOR = new AroFirmaCompTableDescriptor();
 
     public AroFirmaCompRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdFirmaComp() {
-	return getBigDecimal("id_firma_comp");
+        return getBigDecimal("id_firma_comp");
     }
 
     public void setIdFirmaComp(BigDecimal idFirmaComp) {
-	setObject("id_firma_comp", idFirmaComp);
+        setObject("id_firma_comp", idFirmaComp);
     }
 
     public BigDecimal getIdCompDoc() {
-	return getBigDecimal("id_comp_doc");
+        return getBigDecimal("id_comp_doc");
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	setObject("id_comp_doc", idCompDoc);
+        setObject("id_comp_doc", idCompDoc);
     }
 
     public String getCdFirmatario() {
-	return getString("cd_firmatario");
+        return getString("cd_firmatario");
     }
 
     public void setCdFirmatario(String cdFirmatario) {
-	setObject("cd_firmatario", cdFirmatario);
+        setObject("cd_firmatario", cdFirmatario);
     }
 
     public String getNmCognomeFirmatario() {
-	return getString("nm_cognome_firmatario");
+        return getString("nm_cognome_firmatario");
     }
 
     public void setNmCognomeFirmatario(String nmCognomeFirmatario) {
-	setObject("nm_cognome_firmatario", nmCognomeFirmatario);
+        setObject("nm_cognome_firmatario", nmCognomeFirmatario);
     }
 
     public String getNmFirmatario() {
-	return getString("nm_firmatario");
+        return getString("nm_firmatario");
     }
 
     public void setNmFirmatario(String nmFirmatario) {
-	setObject("nm_firmatario", nmFirmatario);
+        setObject("nm_firmatario", nmFirmatario);
     }
 
     public String getTiFirma() {
-	return getString("ti_firma");
+        return getString("ti_firma");
     }
 
     public void setTiFirma(String tiFirma) {
-	setObject("ti_firma", tiFirma);
+        setObject("ti_firma", tiFirma);
     }
 
     public String getTiEsitoContrConforme() {
-	return getString("ti_esito_contr_conforme");
+        return getString("ti_esito_contr_conforme");
     }
 
     public void setTiEsitoContrConforme(String tiEsitoContrConforme) {
-	setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
+        setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
     }
 
     public String getDsMsgEsitoContrConforme() {
-	return getString("ds_msg_esito_contr_conforme");
+        return getString("ds_msg_esito_contr_conforme");
     }
 
     public void setDsMsgEsitoContrConforme(String dsMsgEsitoContrConforme) {
-	setObject("ds_msg_esito_contr_conforme", dsMsgEsitoContrConforme);
+        setObject("ds_msg_esito_contr_conforme", dsMsgEsitoContrConforme);
     }
 
     public String getDsAlgoFirma() {
-	return getString("ds_algo_firma");
+        return getString("ds_algo_firma");
     }
 
     public void setDsAlgoFirma(String dsAlgoFirma) {
-	setObject("ds_algo_firma", dsAlgoFirma);
+        setObject("ds_algo_firma", dsAlgoFirma);
     }
 
     public String getTiFormatoFirma() {
-	return getString("ti_formato_firma");
+        return getString("ti_formato_firma");
     }
 
     public void setTiFormatoFirma(String tiFormatoFirma) {
-	setObject("ti_formato_firma", tiFormatoFirma);
+        setObject("ti_formato_firma", tiFormatoFirma);
     }
 
     public BigDecimal getIdCertifFirmatario() {
-	return getBigDecimal("id_certif_firmatario");
+        return getBigDecimal("id_certif_firmatario");
     }
 
     public void setIdCertifFirmatario(BigDecimal idCertifFirmatario) {
-	setObject("id_certif_firmatario", idCertifFirmatario);
+        setObject("id_certif_firmatario", idCertifFirmatario);
     }
 
     public Timestamp getDtFirma() {
-	return getTimestamp("dt_firma");
+        return getTimestamp("dt_firma");
     }
 
     public void setDtFirma(Timestamp dtFirma) {
-	setObject("dt_firma", dtFirma);
+        setObject("dt_firma", dtFirma);
     }
 
     public Timestamp getTmRifTempUsato() {
-	return getTimestamp("tm_rif_temp_usato");
+        return getTimestamp("tm_rif_temp_usato");
     }
 
     public void setTmRifTempUsato(Timestamp tmRifTempUsato) {
-	setObject("tm_rif_temp_usato", tmRifTempUsato);
+        setObject("tm_rif_temp_usato", tmRifTempUsato);
     }
 
     public String getTiRifTempUsato() {
-	return getString("ti_rif_temp_usato");
+        return getString("ti_rif_temp_usato");
     }
 
     public void setTiRifTempUsato(String tiRifTempUsato) {
-	setObject("ti_rif_temp_usato", tiRifTempUsato);
+        setObject("ti_rif_temp_usato", tiRifTempUsato);
     }
 
     public String getTiEsitoVerifFirma() {
-	return getString("ti_esito_verif_firma");
+        return getString("ti_esito_verif_firma");
     }
 
     public void setTiEsitoVerifFirma(String tiEsitoVerifFirma) {
-	setObject("ti_esito_verif_firma", tiEsitoVerifFirma);
+        setObject("ti_esito_verif_firma", tiEsitoVerifFirma);
     }
 
     public String getDsMsgEsitoVerifFirma() {
-	return getString("ds_msg_esito_verif_firma");
+        return getString("ds_msg_esito_verif_firma");
     }
 
     public void setDsMsgEsitoVerifFirma(String dsMsgEsitoVerifFirma) {
-	setObject("ds_msg_esito_verif_firma", dsMsgEsitoVerifFirma);
+        setObject("ds_msg_esito_verif_firma", dsMsgEsitoVerifFirma);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getIdMarcaComp() {
-	return getBigDecimal("id_marca_comp");
+        return getBigDecimal("id_marca_comp");
     }
 
     public void setIdMarcaComp(BigDecimal idMarcaComp) {
-	setObject("id_marca_comp", idMarcaComp);
+        setObject("id_marca_comp", idMarcaComp);
     }
 
     public BigDecimal getPgFirma() {
-	return getBigDecimal("pg_firma");
+        return getBigDecimal("pg_firma");
     }
 
     public void setPgFirma(BigDecimal pgFirma) {
-	setObject("pg_firma", pgFirma);
+        setObject("pg_firma", pgFirma);
     }
 
     public BigDecimal getPgBusta() {
-	return getBigDecimal("pg_busta");
+        return getBigDecimal("pg_busta");
     }
 
     public void setPgBusta(BigDecimal pgBusta) {
-	setObject("pg_busta", pgBusta);
+        setObject("pg_busta", pgBusta);
     }
 
     public String getDlDnFirmatario() {
-	return getString("dl_dn_firmatario");
+        return getString("dl_dn_firmatario");
     }
 
     public void setDlDnFirmatario(String dlDnFirmatario) {
-	setObject("dl_dn_firmatario", dlDnFirmatario);
+        setObject("dl_dn_firmatario", dlDnFirmatario);
     }
 
     public BigDecimal getIdBustaCrittog() {
-	return getBigDecimal("id_busta_crittog");
+        return getBigDecimal("id_busta_crittog");
     }
 
     public void setIdBustaCrittog(BigDecimal idBustaCrittog) {
-	setObject("id_busta_crittog", idBustaCrittog);
+        setObject("id_busta_crittog", idBustaCrittog);
     }
 
     public String getBlFirmaBase64() {
-	return getString("bl_firma_base64");
+        return getString("bl_firma_base64");
     }
 
     public void setBlFirmaBase64(String bl_firma_base64) {
-	setObject("bl_firma_base64", bl_firma_base64);
+        setObject("bl_firma_base64", bl_firma_base64);
     }
 
     public String getDsNote() {
-	return getString("ds_note");
+        return getString("ds_note");
     }
 
     public void setDsNote(String ds_note) {
-	setObject("ds_note", ds_note);
+        setObject("ds_note", ds_note);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroFirmaComp entity = (AroFirmaComp) obj;
-	this.setIdFirmaComp(entity.getIdFirmaComp() == null ? null
-		: BigDecimal.valueOf(entity.getIdFirmaComp()));
+        AroFirmaComp entity = (AroFirmaComp) obj;
+        this.setIdFirmaComp(entity.getIdFirmaComp() == null ? null
+                : BigDecimal.valueOf(entity.getIdFirmaComp()));
 
-	if (entity.getAroCompDoc() != null) {
-	    this.setIdCompDoc(new BigDecimal(entity.getAroCompDoc().getIdCompDoc()));
-	}
+        if (entity.getAroCompDoc() != null) {
+            this.setIdCompDoc(new BigDecimal(entity.getAroCompDoc().getIdCompDoc()));
+        }
 
-	this.setCdFirmatario(entity.getCdFirmatario());
-	this.setNmCognomeFirmatario(entity.getNmCognomeFirmatario());
-	this.setNmFirmatario(entity.getNmFirmatario());
-	this.setTiFirma(entity.getTiFirma());
-	this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
-	this.setDsMsgEsitoContrConforme(entity.getDsMsgEsitoContrConforme());
-	this.setDsAlgoFirma(entity.getDsAlgoFirma());
-	this.setTiFormatoFirma(entity.getTiFormatoFirma());
+        this.setCdFirmatario(entity.getCdFirmatario());
+        this.setNmCognomeFirmatario(entity.getNmCognomeFirmatario());
+        this.setNmFirmatario(entity.getNmFirmatario());
+        this.setTiFirma(entity.getTiFirma());
+        this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
+        this.setDsMsgEsitoContrConforme(entity.getDsMsgEsitoContrConforme());
+        this.setDsAlgoFirma(entity.getDsAlgoFirma());
+        this.setTiFormatoFirma(entity.getTiFormatoFirma());
 
-	if (entity.getFirCertifFirmatario() != null) {
-	    this.setIdCertifFirmatario(
-		    new BigDecimal(entity.getFirCertifFirmatario().getIdCertifFirmatario()));
-	}
+        if (entity.getFirCertifFirmatario() != null) {
+            this.setIdCertifFirmatario(
+                    new BigDecimal(entity.getFirCertifFirmatario().getIdCertifFirmatario()));
+        }
 
-	if (entity.getDtFirma() != null) {
-	    this.setDtFirma(new Timestamp(entity.getDtFirma().getTime()));
-	}
-	if (entity.getTmRifTempUsato() != null) {
-	    this.setTmRifTempUsato(new Timestamp(entity.getTmRifTempUsato().getTime()));
-	}
-	this.setTiRifTempUsato(entity.getTiRifTempUsato());
-	this.setTiEsitoVerifFirma(entity.getTiEsitoVerifFirma());
-	this.setDsMsgEsitoVerifFirma(entity.getDsMsgEsitoVerifFirma());
-	this.setIdStrut(entity.getIdStrut());
+        if (entity.getDtFirma() != null) {
+            this.setDtFirma(new Timestamp(entity.getDtFirma().getTime()));
+        }
+        if (entity.getTmRifTempUsato() != null) {
+            this.setTmRifTempUsato(new Timestamp(entity.getTmRifTempUsato().getTime()));
+        }
+        this.setTiRifTempUsato(entity.getTiRifTempUsato());
+        this.setTiEsitoVerifFirma(entity.getTiEsitoVerifFirma());
+        this.setDsMsgEsitoVerifFirma(entity.getDsMsgEsitoVerifFirma());
+        this.setIdStrut(entity.getIdStrut());
 
-	if (entity.getAroMarcaComp() != null) {
-	    this.setIdMarcaComp(new BigDecimal(entity.getAroMarcaComp().getIdMarcaComp()));
-	}
+        if (entity.getAroMarcaComp() != null) {
+            this.setIdMarcaComp(new BigDecimal(entity.getAroMarcaComp().getIdMarcaComp()));
+        }
 
-	this.setPgFirma(entity.getPgFirma());
-	this.setPgBusta(entity.getPgBusta());
-	this.setDlDnFirmatario(entity.getDlDnFirmatario());
+        this.setPgFirma(entity.getPgFirma());
+        this.setPgBusta(entity.getPgBusta());
+        this.setDlDnFirmatario(entity.getDlDnFirmatario());
 
-	if (entity.getAroBustaCrittog() != null) {
-	    this.setIdBustaCrittog(new BigDecimal(entity.getAroBustaCrittog().getIdBustaCrittog()));
-	}
+        if (entity.getAroBustaCrittog() != null) {
+            this.setIdBustaCrittog(new BigDecimal(entity.getAroBustaCrittog().getIdBustaCrittog()));
+        }
 
-	this.setBlFirmaBase64(entity.getBlFirmaBase64());
-	this.setDsNote(entity.getDsNote());
+        this.setBlFirmaBase64(entity.getBlFirmaBase64());
+        this.setDsNote(entity.getDsNote());
     }
 
     @Override
     public AroFirmaComp rowBeanToEntity() {
-	AroFirmaComp entity = new AroFirmaComp();
-	if (this.getIdFirmaComp() != null) {
-	    entity.setIdFirmaComp(this.getIdFirmaComp().longValue());
-	}
-	if (this.getIdCompDoc() != null) {
-	    if (entity.getAroCompDoc() == null) {
-		entity.setAroCompDoc(new AroCompDoc());
-	    }
-	    entity.getAroCompDoc().setIdCompDoc(this.getIdCompDoc().longValue());
-	}
-	entity.setCdFirmatario(this.getCdFirmatario());
-	entity.setNmCognomeFirmatario(this.getNmCognomeFirmatario());
-	entity.setNmFirmatario(this.getNmFirmatario());
-	entity.setTiFirma(this.getTiFirma());
-	entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
-	entity.setDsMsgEsitoContrConforme(this.getDsMsgEsitoContrConforme());
-	entity.setDsAlgoFirma(this.getDsAlgoFirma());
-	entity.setTiFormatoFirma(this.getTiFormatoFirma());
-	if (this.getIdCertifFirmatario() != null) {
-	    if (entity.getFirCertifFirmatario() == null) {
-		entity.setFirCertifFirmatario(new FirCertifFirmatario());
-	    }
-	    entity.getFirCertifFirmatario()
-		    .setIdCertifFirmatario(this.getIdCertifFirmatario().longValue());
-	}
-	entity.setDtFirma(this.getDtFirma());
-	entity.setTmRifTempUsato(this.getTmRifTempUsato());
-	entity.setTiRifTempUsato(this.getTiRifTempUsato());
-	entity.setTiEsitoVerifFirma(this.getTiEsitoVerifFirma());
-	entity.setDsMsgEsitoVerifFirma(this.getDsMsgEsitoVerifFirma());
-	entity.setIdStrut(this.getIdStrut());
-	if (this.getIdMarcaComp() != null) {
-	    if (entity.getAroMarcaComp() == null) {
-		entity.setAroMarcaComp(new AroMarcaComp());
-	    }
-	    entity.getAroMarcaComp().setIdMarcaComp(this.getIdMarcaComp().longValue());
-	}
-	entity.setPgFirma(this.getPgFirma());
-	entity.setPgBusta(this.getPgBusta());
-	entity.setDlDnFirmatario(this.getDlDnFirmatario());
-	if (this.getIdBustaCrittog() != null) {
-	    if (entity.getAroBustaCrittog() == null) {
-		entity.setAroBustaCrittog(new AroBustaCrittog());
-	    }
-	    entity.getAroBustaCrittog().setIdBustaCrittog(this.getIdBustaCrittog().longValue());
-	}
-	entity.setBlFirmaBase64(this.getBlFirmaBase64());
-	entity.setDsNote(this.getDsNote());
-	return entity;
+        AroFirmaComp entity = new AroFirmaComp();
+        if (this.getIdFirmaComp() != null) {
+            entity.setIdFirmaComp(this.getIdFirmaComp().longValue());
+        }
+        if (this.getIdCompDoc() != null) {
+            if (entity.getAroCompDoc() == null) {
+                entity.setAroCompDoc(new AroCompDoc());
+            }
+            entity.getAroCompDoc().setIdCompDoc(this.getIdCompDoc().longValue());
+        }
+        entity.setCdFirmatario(this.getCdFirmatario());
+        entity.setNmCognomeFirmatario(this.getNmCognomeFirmatario());
+        entity.setNmFirmatario(this.getNmFirmatario());
+        entity.setTiFirma(this.getTiFirma());
+        entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
+        entity.setDsMsgEsitoContrConforme(this.getDsMsgEsitoContrConforme());
+        entity.setDsAlgoFirma(this.getDsAlgoFirma());
+        entity.setTiFormatoFirma(this.getTiFormatoFirma());
+        if (this.getIdCertifFirmatario() != null) {
+            if (entity.getFirCertifFirmatario() == null) {
+                entity.setFirCertifFirmatario(new FirCertifFirmatario());
+            }
+            entity.getFirCertifFirmatario()
+                    .setIdCertifFirmatario(this.getIdCertifFirmatario().longValue());
+        }
+        entity.setDtFirma(this.getDtFirma());
+        entity.setTmRifTempUsato(this.getTmRifTempUsato());
+        entity.setTiRifTempUsato(this.getTiRifTempUsato());
+        entity.setTiEsitoVerifFirma(this.getTiEsitoVerifFirma());
+        entity.setDsMsgEsitoVerifFirma(this.getDsMsgEsitoVerifFirma());
+        entity.setIdStrut(this.getIdStrut());
+        if (this.getIdMarcaComp() != null) {
+            if (entity.getAroMarcaComp() == null) {
+                entity.setAroMarcaComp(new AroMarcaComp());
+            }
+            entity.getAroMarcaComp().setIdMarcaComp(this.getIdMarcaComp().longValue());
+        }
+        entity.setPgFirma(this.getPgFirma());
+        entity.setPgBusta(this.getPgBusta());
+        entity.setDlDnFirmatario(this.getDlDnFirmatario());
+        if (this.getIdBustaCrittog() != null) {
+            if (entity.getAroBustaCrittog() == null) {
+                entity.setAroBustaCrittog(new AroBustaCrittog());
+            }
+            entity.getAroBustaCrittog().setIdBustaCrittog(this.getIdBustaCrittog().longValue());
+        }
+        entity.setBlFirmaBase64(this.getBlFirmaBase64());
+        entity.setDsNote(this.getDsNote());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

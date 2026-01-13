@@ -36,123 +36,123 @@ public class VrsXmlDatiSessioneVersRowBean extends BaseRow implements JEEBaseRow
     public static VrsXmlDatiSessioneVersTableDescriptor TABLE_DESCRIPTOR = new VrsXmlDatiSessioneVersTableDescriptor();
 
     public VrsXmlDatiSessioneVersRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdXmlDatiSessioneVers() {
-	return getBigDecimal("id_xml_dati_sessione_vers");
+        return getBigDecimal("id_xml_dati_sessione_vers");
     }
 
     public void setIdXmlDatiSessioneVers(BigDecimal idXmlDatiSessioneVers) {
-	setObject("id_xml_dati_sessione_vers", idXmlDatiSessioneVers);
+        setObject("id_xml_dati_sessione_vers", idXmlDatiSessioneVers);
     }
 
     public BigDecimal getIdDatiSessioneVers() {
-	return getBigDecimal("id_dati_sessione_vers");
+        return getBigDecimal("id_dati_sessione_vers");
     }
 
     public void setIdDatiSessioneVers(BigDecimal idDatiSessioneVers) {
-	setObject("id_dati_sessione_vers", idDatiSessioneVers);
+        setObject("id_dati_sessione_vers", idDatiSessioneVers);
     }
 
     public String getTiXmlDati() {
-	return getString("ti_xml_dati");
+        return getString("ti_xml_dati");
     }
 
     public void setTiXmlDati(String tiXmlDati) {
-	setObject("ti_xml_dati", tiXmlDati);
+        setObject("ti_xml_dati", tiXmlDati);
     }
 
     public String getBlXml() {
-	return getString("bl_xml");
+        return getString("bl_xml");
     }
 
     public void setBlXml(String blXml) {
-	setObject("bl_xml", blXml);
+        setObject("bl_xml", blXml);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getCdVersioneXml() {
-	return getString("cd_versione_xml");
+        return getString("cd_versione_xml");
     }
 
     public void setCdVersioneXml(String cdVersioneXml) {
-	setObject("cd_versione_xml", cdVersioneXml);
+        setObject("cd_versione_xml", cdVersioneXml);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	VrsXmlDatiSessioneVers entity = (VrsXmlDatiSessioneVers) obj;
+        VrsXmlDatiSessioneVers entity = (VrsXmlDatiSessioneVers) obj;
 
-	this.setIdXmlDatiSessioneVers(entity.getIdXmlDatiSessioneVers() == null ? null
-		: BigDecimal.valueOf(entity.getIdXmlDatiSessioneVers()));
+        this.setIdXmlDatiSessioneVers(entity.getIdXmlDatiSessioneVers() == null ? null
+                : BigDecimal.valueOf(entity.getIdXmlDatiSessioneVers()));
 
-	if (entity.getVrsDatiSessioneVers() != null) {
-	    this.setIdDatiSessioneVers(
-		    new BigDecimal(entity.getVrsDatiSessioneVers().getIdDatiSessioneVers()));
-	}
+        if (entity.getVrsDatiSessioneVers() != null) {
+            this.setIdDatiSessioneVers(
+                    new BigDecimal(entity.getVrsDatiSessioneVers().getIdDatiSessioneVers()));
+        }
 
-	this.setTiXmlDati(entity.getTiXmlDati());
-	this.setBlXml(entity.getBlXml());
-	this.setIdStrut(entity.getIdStrut());
-	this.setCdVersioneXml(entity.getCdVersioneXml());
+        this.setTiXmlDati(entity.getTiXmlDati());
+        this.setBlXml(entity.getBlXml());
+        this.setIdStrut(entity.getIdStrut());
+        this.setCdVersioneXml(entity.getCdVersioneXml());
     }
 
     @Override
     public VrsXmlDatiSessioneVers rowBeanToEntity() {
-	VrsXmlDatiSessioneVers entity = new VrsXmlDatiSessioneVers();
-	if (this.getIdXmlDatiSessioneVers() != null) {
-	    entity.setIdXmlDatiSessioneVers(this.getIdXmlDatiSessioneVers().longValue());
-	}
-	if (this.getIdDatiSessioneVers() != null) {
-	    if (entity.getVrsDatiSessioneVers() == null) {
-		entity.setVrsDatiSessioneVers(new VrsDatiSessioneVers());
-	    }
-	    entity.getVrsDatiSessioneVers()
-		    .setIdDatiSessioneVers(this.getIdDatiSessioneVers().longValue());
-	}
-	entity.setTiXmlDati(this.getTiXmlDati());
-	entity.setBlXml(this.getBlXml());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setCdVersioneXml(this.getCdVersioneXml());
-	return entity;
+        VrsXmlDatiSessioneVers entity = new VrsXmlDatiSessioneVers();
+        if (this.getIdXmlDatiSessioneVers() != null) {
+            entity.setIdXmlDatiSessioneVers(this.getIdXmlDatiSessioneVers().longValue());
+        }
+        if (this.getIdDatiSessioneVers() != null) {
+            if (entity.getVrsDatiSessioneVers() == null) {
+                entity.setVrsDatiSessioneVers(new VrsDatiSessioneVers());
+            }
+            entity.getVrsDatiSessioneVers()
+                    .setIdDatiSessioneVers(this.getIdDatiSessioneVers().longValue());
+        }
+        entity.setTiXmlDati(this.getTiXmlDati());
+        entity.setBlXml(this.getBlXml());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setCdVersioneXml(this.getCdVersioneXml());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

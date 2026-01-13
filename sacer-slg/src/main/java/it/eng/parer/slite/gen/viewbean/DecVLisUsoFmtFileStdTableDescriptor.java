@@ -45,29 +45,29 @@ public class DecVLisUsoFmtFileStdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_USO_FORMATO_FILE_AMMESSO,
-		new ColumnDescriptor(COL_ID_USO_FORMATO_FILE_AMMESSO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_FORMATO_FILE_DOC,
-		new ColumnDescriptor(COL_ID_FORMATO_FILE_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NM_FORMATO_FILE_DOC,
-		new ColumnDescriptor(COL_NM_FORMATO_FILE_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_NI_ORD_USO, new ColumnDescriptor(COL_NI_ORD_USO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_FORMATO_FILE_STANDARD,
-		new ColumnDescriptor(COL_ID_FORMATO_FILE_STANDARD, Types.DECIMAL, 22, true));
-	map.put(COL_NM_FORMATO_FILE_STANDARD,
-		new ColumnDescriptor(COL_NM_FORMATO_FILE_STANDARD, Types.VARCHAR, 100, true));
+        map.put(COL_ID_USO_FORMATO_FILE_AMMESSO,
+                new ColumnDescriptor(COL_ID_USO_FORMATO_FILE_AMMESSO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_FORMATO_FILE_DOC,
+                new ColumnDescriptor(COL_ID_FORMATO_FILE_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NM_FORMATO_FILE_DOC,
+                new ColumnDescriptor(COL_NM_FORMATO_FILE_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_NI_ORD_USO, new ColumnDescriptor(COL_NI_ORD_USO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_FORMATO_FILE_STANDARD,
+                new ColumnDescriptor(COL_ID_FORMATO_FILE_STANDARD, Types.DECIMAL, 22, true));
+        map.put(COL_NM_FORMATO_FILE_STANDARD,
+                new ColumnDescriptor(COL_NM_FORMATO_FILE_STANDARD, Types.VARCHAR, 100, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -37,19 +37,19 @@ public class MonVLisDocNonVersIamTableBean extends AbstractBaseTable<MonVLisDocN
     public static MonVLisDocNonVersIamTableDescriptor TABLE_DESCRIPTOR = new MonVLisDocNonVersIamTableDescriptor();
 
     public MonVLisDocNonVersIamTableBean() {
-	super();
+        super();
     }
 
     protected MonVLisDocNonVersIamRowBean createRow() {
-	return new MonVLisDocNonVersIamRowBean();
+        return new MonVLisDocNonVersIamRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVLisDocNonVersIamRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -23,7 +23,7 @@ public class AroVerIndiceAipUdObjectStorage implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public AroVerIndiceAipUdObjectStorage() {
-	super();
+        super();
     }
 
     private Long idVerIndiceAipUdObjectStorage;
@@ -39,75 +39,75 @@ public class AroVerIndiceAipUdObjectStorage implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_VER_INDICE_AIP_UD_OBJECT_STORAGE")
     public Long getIdVerIndiceAipUdObjectStorage() {
-	return idVerIndiceAipUdObjectStorage;
+        return idVerIndiceAipUdObjectStorage;
     }
 
     public void setIdVerIndiceAipUdObjectStorage(Long idVerIndiceAipUdObjectStorage) {
-	this.idVerIndiceAipUdObjectStorage = idVerIndiceAipUdObjectStorage;
+        this.idVerIndiceAipUdObjectStorage = idVerIndiceAipUdObjectStorage;
     }
 
     @Column(name = "ID_SUB_STRUT")
     public BigDecimal getIdSubStrut() {
-	return this.idSubStrut;
+        return this.idSubStrut;
     }
 
     public void setIdSubStrut(BigDecimal idSubStrut) {
-	this.idSubStrut = idSubStrut;
+        this.idSubStrut = idSubStrut;
     }
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_DEC_BACKEND")
     public DecBackend getDecBackend() {
-	return decBackend;
+        return decBackend;
     }
 
     public void setDecBackend(DecBackend decBackend) {
-	this.decBackend = decBackend;
+        this.decBackend = decBackend;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VER_INDICE_AIP")
     public AroVerIndiceAipUd getAroVerIndiceAipUd() {
-	return aroVerIndiceAipUd;
+        return aroVerIndiceAipUd;
     }
 
     public void setAroVerIndiceAipUd(AroVerIndiceAipUd aroVerIndiceAipUd) {
-	this.aroVerIndiceAipUd = aroVerIndiceAipUd;
+        this.aroVerIndiceAipUd = aroVerIndiceAipUd;
     }
 
     @Column(name = "NM_TENANT")
     public String getNmTenant() {
-	return nmTenant;
+        return nmTenant;
     }
 
     public void setNmTenant(String nmTenant) {
-	this.nmTenant = nmTenant;
+        this.nmTenant = nmTenant;
     }
 
     @Column(name = "NM_BUCKET")
     public String getNmBucket() {
-	return nmBucket;
+        return nmBucket;
     }
 
     public void setNmBucket(String nmBucket) {
-	this.nmBucket = nmBucket;
+        this.nmBucket = nmBucket;
     }
 
     @Column(name = "CD_KEY_FILE")
     public String getCdKeyFile() {
-	return cdKeyFile;
+        return cdKeyFile;
     }
 
     public void setCdKeyFile(String cdKeyFile) {
-	this.cdKeyFile = cdKeyFile;
+        this.cdKeyFile = cdKeyFile;
     }
 }

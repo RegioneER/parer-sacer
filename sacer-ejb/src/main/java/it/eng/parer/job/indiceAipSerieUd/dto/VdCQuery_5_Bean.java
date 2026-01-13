@@ -23,18 +23,18 @@ public class VdCQuery_5_Bean {
     private String nmTipoDocPrinc;
 
     public Long getIdTipoSerieUd() {
-	return idTipoSerieUd;
+        return idTipoSerieUd;
     }
 
     public void setIdTipoSerieUd(Long idTipoSerieUd) {
-	this.idTipoSerieUd = idTipoSerieUd;
+        this.idTipoSerieUd = idTipoSerieUd;
     }
 
     public String getNmTipoDocPrinc() {
-	return nmTipoDocPrinc;
+        return nmTipoDocPrinc;
     }
 
     public void setNmTipoDocPrinc(String nmTipoDocPrinc) {
-	this.nmTipoDocPrinc = nmTipoDocPrinc;
+        this.nmTipoDocPrinc = nmTipoDocPrinc;
     }
 }

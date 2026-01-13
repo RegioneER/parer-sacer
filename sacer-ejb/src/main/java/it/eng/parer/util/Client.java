@@ -33,43 +33,43 @@ public class Client {
     }
 
     public String getId() {
-	return id;
+        return id;
     }
 
     public void setId(String id) {
-	this.id = id;
+        this.id = id;
     }
 
     public String getClientId() {
-	return clientId;
+        return clientId;
     }
 
     public void setClientId(String clientId) {
-	this.clientId = clientId;
+        this.clientId = clientId;
     }
 
     public String getName() {
-	return name;
+        return name;
     }
 
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     public String getDescription() {
-	return description;
+        return description;
     }
 
     public void setDescription(String description) {
-	this.description = description;
+        this.description = description;
     }
 
     public String getSecret() {
-	return secret;
+        return secret;
     }
 
     public void setSecret(String secret) {
-	this.secret = secret;
+        this.secret = secret;
     }
 
 }

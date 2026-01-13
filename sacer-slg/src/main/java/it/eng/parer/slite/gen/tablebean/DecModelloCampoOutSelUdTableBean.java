@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class DecModelloCampoOutSelUdTableBean
-	extends AbstractBaseTable<DecModelloCampoOutSelUdRowBean> {
+        extends AbstractBaseTable<DecModelloCampoOutSelUdRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class DecModelloCampoOutSelUdTableBean
     public static DecModelloCampoOutSelUdTableDescriptor TABLE_DESCRIPTOR = new DecModelloCampoOutSelUdTableDescriptor();
 
     public DecModelloCampoOutSelUdTableBean() {
-	super();
+        super();
     }
 
     protected DecModelloCampoOutSelUdRowBean createRow() {
-	return new DecModelloCampoOutSelUdRowBean();
+        return new DecModelloCampoOutSelUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecModelloCampoOutSelUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

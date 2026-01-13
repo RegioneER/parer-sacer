@@ -42,24 +42,24 @@ public class DecEstensioneFileTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_ESTENSIONE_FILE,
-		new ColumnDescriptor(COL_ID_ESTENSIONE_FILE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_FORMATO_FILE_STANDARD,
-		new ColumnDescriptor(COL_ID_FORMATO_FILE_STANDARD, Types.DECIMAL, 22, false));
-	map.put(COL_CD_ESTENSIONE_FILE,
-		new ColumnDescriptor(COL_CD_ESTENSIONE_FILE, Types.VARCHAR, 100, false));
+        map.put(COL_ID_ESTENSIONE_FILE,
+                new ColumnDescriptor(COL_ID_ESTENSIONE_FILE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_FORMATO_FILE_STANDARD,
+                new ColumnDescriptor(COL_ID_FORMATO_FILE_STANDARD, Types.DECIMAL, 22, false));
+        map.put(COL_CD_ESTENSIONE_FILE,
+                new ColumnDescriptor(COL_CD_ESTENSIONE_FILE, Types.VARCHAR, 100, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

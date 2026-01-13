@@ -33,11 +33,11 @@ public class MsgUtil {
     private static Logger log = LoggerFactory.getLogger(MsgUtil.class);
 
     static {
-	try {
-	    instance.load(MsgUtil.class.getResourceAsStream("/messaggi_ejb.properties"));
-	} catch (IOException ex) {
-	    log.error("Errore caricamento messaggi", ex);
-	}
+        try {
+            instance.load(MsgUtil.class.getResourceAsStream("/messaggi_ejb.properties"));
+        } catch (IOException ex) {
+            log.error("Errore caricamento messaggi", ex);
+        }
     }
 
     protected MsgUtil() {
@@ -47,11 +47,11 @@ public class MsgUtil {
      * public static Object getInstance() { return instance; }
      */
     public static String getMessage(String codice) {
-	return (String) instance.get(codice);
+        return (String) instance.get(codice);
     }
 
     public static String getCompleteMessage(String codice) {
-	return codice + " - " + getMessage(codice) + ";";
+        return codice + " - " + getMessage(codice) + ";";
     }
 
 }

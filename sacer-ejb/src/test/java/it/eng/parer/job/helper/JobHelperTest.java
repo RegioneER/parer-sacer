@@ -29,23 +29,23 @@ import it.eng.parer.web.helper.HelperTest;
 public class JobHelperTest extends HelperTest<JobHelper> {
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(JobHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(
-			Arrays.asList("it.eng.parer.ws.dto", "it.eng.tpi.bean",
-				"it.eng.parer.ws.versamento.dto"),
-			it.eng.parer.job.helper.JobHelper.class,
-			AggiornaStatoArchiviazioneHelper.class, AppServerInstance.class,
-			it.eng.parer.ws.ejb.ControlliSemantici.class,
-			it.eng.parer.ws.ejb.ControlliTpi.class,
-			it.eng.parer.web.helper.ConfigurationHelper.class,
-			it.eng.parer.ws.utils.Costanti.class, Utente.class, JobHelperTest.class));
+        return HelperTest.createEnterpriseArchive(JobHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(
+                        Arrays.asList("it.eng.parer.ws.dto", "it.eng.tpi.bean",
+                                "it.eng.parer.ws.versamento.dto"),
+                        it.eng.parer.job.helper.JobHelper.class,
+                        AggiornaStatoArchiviazioneHelper.class, AppServerInstance.class,
+                        it.eng.parer.ws.ejb.ControlliSemantici.class,
+                        it.eng.parer.ws.ejb.ControlliTpi.class,
+                        it.eng.parer.web.helper.ConfigurationHelper.class,
+                        it.eng.parer.ws.utils.Costanti.class, Utente.class, JobHelperTest.class));
     }
 
     @Test
     public void findUltimaAttivazioneByJob_queryIsOk() {
-	String nmJob = aString();
-	helper.findUltimaAttivazioneByJob(nmJob);
-	assertTrue(true);
+        String nmJob = aString();
+        helper.findUltimaAttivazioneByJob(nmJob);
+        assertTrue(true);
     }
 }

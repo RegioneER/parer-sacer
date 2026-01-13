@@ -48,77 +48,77 @@ public class SerVLisVolSerieUd implements Serializable {
 
     @Column(name = "CD_FIRST_UNITA_DOC_VOL")
     public String getCdFirstUnitaDocVol() {
-	return this.cdFirstUnitaDocVol;
+        return this.cdFirstUnitaDocVol;
     }
 
     public void setCdFirstUnitaDocVol(String cdFirstUnitaDocVol) {
-	this.cdFirstUnitaDocVol = cdFirstUnitaDocVol;
+        this.cdFirstUnitaDocVol = cdFirstUnitaDocVol;
     }
 
     @Column(name = "CD_LAST_UNITA_DOC_VOL")
     public String getCdLastUnitaDocVol() {
-	return this.cdLastUnitaDocVol;
+        return this.cdLastUnitaDocVol;
     }
 
     public void setCdLastUnitaDocVol(String cdLastUnitaDocVol) {
-	this.cdLastUnitaDocVol = cdLastUnitaDocVol;
+        this.cdLastUnitaDocVol = cdLastUnitaDocVol;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIRST_UNITA_DOC_VOL")
     public Date getDtFirstUnitaDocVol() {
-	return this.dtFirstUnitaDocVol;
+        return this.dtFirstUnitaDocVol;
     }
 
     public void setDtFirstUnitaDocVol(Date dtFirstUnitaDocVol) {
-	this.dtFirstUnitaDocVol = dtFirstUnitaDocVol;
+        this.dtFirstUnitaDocVol = dtFirstUnitaDocVol;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_LAST_UNITA_DOC_VOL")
     public Date getDtLastUnitaDocVol() {
-	return this.dtLastUnitaDocVol;
+        return this.dtLastUnitaDocVol;
     }
 
     public void setDtLastUnitaDocVol(Date dtLastUnitaDocVol) {
-	this.dtLastUnitaDocVol = dtLastUnitaDocVol;
+        this.dtLastUnitaDocVol = dtLastUnitaDocVol;
     }
 
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-	return this.idVerSerie;
+        return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	this.idVerSerie = idVerSerie;
+        this.idVerSerie = idVerSerie;
     }
 
     @Id
     @Column(name = "ID_VOL_VER_SERIE")
     public BigDecimal getIdVolVerSerie() {
-	return this.idVolVerSerie;
+        return this.idVolVerSerie;
     }
 
     public void setIdVolVerSerie(BigDecimal idVolVerSerie) {
-	this.idVolVerSerie = idVolVerSerie;
+        this.idVolVerSerie = idVolVerSerie;
     }
 
     @Column(name = "NI_UNITA_DOC_VOL")
     public BigDecimal getNiUnitaDocVol() {
-	return this.niUnitaDocVol;
+        return this.niUnitaDocVol;
     }
 
     public void setNiUnitaDocVol(BigDecimal niUnitaDocVol) {
-	this.niUnitaDocVol = niUnitaDocVol;
+        this.niUnitaDocVol = niUnitaDocVol;
     }
 
     @Column(name = "PG_VOL_VER_SERIE")
     public BigDecimal getPgVolVerSerie() {
-	return this.pgVolVerSerie;
+        return this.pgVolVerSerie;
     }
 
     public void setPgVolVerSerie(BigDecimal pgVolVerSerie) {
-	this.pgVolVerSerie = pgVolVerSerie;
+        this.pgVolVerSerie = pgVolVerSerie;
     }
 
 }

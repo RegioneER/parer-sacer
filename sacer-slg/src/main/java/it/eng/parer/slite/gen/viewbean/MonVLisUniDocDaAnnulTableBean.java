@@ -38,19 +38,19 @@ public class MonVLisUniDocDaAnnulTableBean extends AbstractBaseTable<MonVLisUniD
     public static MonVLisUniDocDaAnnulTableDescriptor TABLE_DESCRIPTOR = new MonVLisUniDocDaAnnulTableDescriptor();
 
     public MonVLisUniDocDaAnnulTableBean() {
-	super();
+        super();
     }
 
     protected MonVLisUniDocDaAnnulRowBean createRow() {
-	return new MonVLisUniDocDaAnnulRowBean();
+        return new MonVLisUniDocDaAnnulRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVLisUniDocDaAnnulRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

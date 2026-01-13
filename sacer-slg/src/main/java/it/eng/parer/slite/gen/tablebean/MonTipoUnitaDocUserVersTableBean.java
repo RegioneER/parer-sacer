@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class MonTipoUnitaDocUserVersTableBean
-	extends AbstractBaseTable<MonTipoUnitaDocUserVersRowBean> {
+        extends AbstractBaseTable<MonTipoUnitaDocUserVersRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class MonTipoUnitaDocUserVersTableBean
     public static MonTipoUnitaDocUserVersTableDescriptor TABLE_DESCRIPTOR = new MonTipoUnitaDocUserVersTableDescriptor();
 
     public MonTipoUnitaDocUserVersTableBean() {
-	super();
+        super();
     }
 
     protected MonTipoUnitaDocUserVersRowBean createRow() {
-	return new MonTipoUnitaDocUserVersRowBean();
+        return new MonTipoUnitaDocUserVersRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonTipoUnitaDocUserVersRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

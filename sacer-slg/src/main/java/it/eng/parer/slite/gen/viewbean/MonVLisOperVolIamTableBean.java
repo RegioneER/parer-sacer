@@ -37,19 +37,19 @@ public class MonVLisOperVolIamTableBean extends AbstractBaseTable<MonVLisOperVol
     public static MonVLisOperVolIamTableDescriptor TABLE_DESCRIPTOR = new MonVLisOperVolIamTableDescriptor();
 
     public MonVLisOperVolIamTableBean() {
-	super();
+        super();
     }
 
     protected MonVLisOperVolIamRowBean createRow() {
-	return new MonVLisOperVolIamRowBean();
+        return new MonVLisOperVolIamRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVLisOperVolIamRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

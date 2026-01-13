@@ -59,62 +59,62 @@ public class DecCampoOutSelUd implements Serializable {
 
     @Column(name = "ID_CAMPO_OUT_SEL_UD")
     @GenericGenerator(name = "SDEC_CAMPO_OUT_SEL_UD_ID_CAMPO_OUT_SEL_UD_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_CAMPO_OUT_SEL_UD"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_CAMPO_OUT_SEL_UD"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_CAMPO_OUT_SEL_UD_ID_CAMPO_OUT_SEL_UD_GENERATOR")
     public Long getIdCampoOutSelUd() {
-	return this.idCampoOutSelUd;
+        return this.idCampoOutSelUd;
     }
 
     public void setIdCampoOutSelUd(Long idCampoOutSelUd) {
-	this.idCampoOutSelUd = idCampoOutSelUd;
+        this.idCampoOutSelUd = idCampoOutSelUd;
     }
 
     @Column(name = "NM_CAMPO")
     public String getNmCampo() {
-	return this.nmCampo;
+        return this.nmCampo;
     }
 
     public void setNmCampo(String nmCampo) {
-	this.nmCampo = nmCampo;
+        this.nmCampo = nmCampo;
     }
 
     @Column(name = "TI_CAMPO")
     public String getTiCampo() {
-	return this.tiCampo;
+        return this.tiCampo;
     }
 
     public void setTiCampo(String tiCampo) {
-	this.tiCampo = tiCampo;
+        this.tiCampo = tiCampo;
     }
 
     @Column(name = "TI_TRASFORM_CAMPO")
     public String getTiTrasformCampo() {
-	return this.tiTrasformCampo;
+        return this.tiTrasformCampo;
     }
 
     public void setTiTrasformCampo(String tiTrasformCampo) {
-	this.tiTrasformCampo = tiTrasformCampo;
+        this.tiTrasformCampo = tiTrasformCampo;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ATTRIB_DATI_SPEC")
     public DecAttribDatiSpec getDecAttribDatiSpec() {
-	return this.decAttribDatiSpec;
+        return this.decAttribDatiSpec;
     }
 
     public void setDecAttribDatiSpec(DecAttribDatiSpec decAttribDatiSpec) {
-	this.decAttribDatiSpec = decAttribDatiSpec;
+        this.decAttribDatiSpec = decAttribDatiSpec;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_OUT_SEL_UD")
     public DecOutSelUd getDecOutSelUd() {
-	return this.decOutSelUd;
+        return this.decOutSelUd;
     }
 
     public void setDecOutSelUd(DecOutSelUd decOutSelUd) {
-	this.decOutSelUd = decOutSelUd;
+        this.decOutSelUd = decOutSelUd;
     }
 
 }

@@ -44,12 +44,12 @@ public final class AllFileFilter implements FileFilter {
      * @return Implementazione con cui filtrare il contenuto di una directory.
      */
     public static AllFileFilter getInstance() {
-	return mFileFilter;
+        return mFileFilter;
     }
 
     @Override
     public boolean accept(final File pathname) {
-	return true;
+        return true;
     }
 
 }

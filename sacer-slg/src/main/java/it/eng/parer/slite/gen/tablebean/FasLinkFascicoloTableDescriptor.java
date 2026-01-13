@@ -45,28 +45,28 @@ public class FasLinkFascicoloTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_LINK_FASCICOLO,
-		new ColumnDescriptor(COL_ID_LINK_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_AA_FASCICOLO_LINK,
-		new ColumnDescriptor(COL_AA_FASCICOLO_LINK, Types.DECIMAL, 22, false));
-	map.put(COL_CD_KEY_FASCICOLO_LINK,
-		new ColumnDescriptor(COL_CD_KEY_FASCICOLO_LINK, Types.VARCHAR, 100, false));
-	map.put(COL_DS_LINK, new ColumnDescriptor(COL_DS_LINK, Types.VARCHAR, 254, false));
-	map.put(COL_ID_FASCICOLO_LINK,
-		new ColumnDescriptor(COL_ID_FASCICOLO_LINK, Types.DECIMAL, 22, false));
+        map.put(COL_ID_LINK_FASCICOLO,
+                new ColumnDescriptor(COL_ID_LINK_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_AA_FASCICOLO_LINK,
+                new ColumnDescriptor(COL_AA_FASCICOLO_LINK, Types.DECIMAL, 22, false));
+        map.put(COL_CD_KEY_FASCICOLO_LINK,
+                new ColumnDescriptor(COL_CD_KEY_FASCICOLO_LINK, Types.VARCHAR, 100, false));
+        map.put(COL_DS_LINK, new ColumnDescriptor(COL_DS_LINK, Types.VARCHAR, 254, false));
+        map.put(COL_ID_FASCICOLO_LINK,
+                new ColumnDescriptor(COL_ID_FASCICOLO_LINK, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

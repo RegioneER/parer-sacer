@@ -37,100 +37,100 @@ public class DecTipoRapprAmmessoRowBean extends BaseRow implements JEEBaseRowInt
     public static DecTipoRapprAmmessoTableDescriptor TABLE_DESCRIPTOR = new DecTipoRapprAmmessoTableDescriptor();
 
     public DecTipoRapprAmmessoRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdTipoRapprAmmesso() {
-	return getBigDecimal("id_tipo_rappr_ammesso");
+        return getBigDecimal("id_tipo_rappr_ammesso");
     }
 
     public void setIdTipoRapprAmmesso(BigDecimal idTipoRapprAmmesso) {
-	setObject("id_tipo_rappr_ammesso", idTipoRapprAmmesso);
+        setObject("id_tipo_rappr_ammesso", idTipoRapprAmmesso);
     }
 
     public BigDecimal getIdTipoCompDoc() {
-	return getBigDecimal("id_tipo_comp_doc");
+        return getBigDecimal("id_tipo_comp_doc");
     }
 
     public void setIdTipoCompDoc(BigDecimal idTipoCompDoc) {
-	setObject("id_tipo_comp_doc", idTipoCompDoc);
+        setObject("id_tipo_comp_doc", idTipoCompDoc);
     }
 
     public BigDecimal getIdTipoRapprComp() {
-	return getBigDecimal("id_tipo_rappr_comp");
+        return getBigDecimal("id_tipo_rappr_comp");
     }
 
     public void setIdTipoRapprComp(BigDecimal idTipoRapprComp) {
-	setObject("id_tipo_rappr_comp", idTipoRapprComp);
+        setObject("id_tipo_rappr_comp", idTipoRapprComp);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecTipoRapprAmmesso entity = (DecTipoRapprAmmesso) obj;
+        DecTipoRapprAmmesso entity = (DecTipoRapprAmmesso) obj;
 
-	this.setIdTipoRapprAmmesso(entity.getIdTipoRapprAmmesso() == null ? null
-		: BigDecimal.valueOf(entity.getIdTipoRapprAmmesso()));
+        this.setIdTipoRapprAmmesso(entity.getIdTipoRapprAmmesso() == null ? null
+                : BigDecimal.valueOf(entity.getIdTipoRapprAmmesso()));
 
-	if (entity.getDecTipoCompDoc() != null) {
-	    this.setIdTipoCompDoc(new BigDecimal(entity.getDecTipoCompDoc().getIdTipoCompDoc()));
-	}
+        if (entity.getDecTipoCompDoc() != null) {
+            this.setIdTipoCompDoc(new BigDecimal(entity.getDecTipoCompDoc().getIdTipoCompDoc()));
+        }
 
-	if (entity.getDecTipoRapprComp() != null) {
-	    this.setIdTipoRapprComp(
-		    new BigDecimal(entity.getDecTipoRapprComp().getIdTipoRapprComp()));
-	}
+        if (entity.getDecTipoRapprComp() != null) {
+            this.setIdTipoRapprComp(
+                    new BigDecimal(entity.getDecTipoRapprComp().getIdTipoRapprComp()));
+        }
 
     }
 
     @Override
     public DecTipoRapprAmmesso rowBeanToEntity() {
-	DecTipoRapprAmmesso entity = new DecTipoRapprAmmesso();
-	if (this.getIdTipoRapprAmmesso() != null) {
-	    entity.setIdTipoRapprAmmesso(this.getIdTipoRapprAmmesso().longValue());
-	}
-	if (this.getIdTipoCompDoc() != null) {
-	    if (entity.getDecTipoCompDoc() == null) {
-		entity.setDecTipoCompDoc(new DecTipoCompDoc());
-	    }
-	    entity.getDecTipoCompDoc().setIdTipoCompDoc(this.getIdTipoCompDoc().longValue());
-	}
-	if (this.getIdTipoRapprComp() != null) {
-	    if (entity.getDecTipoRapprComp() == null) {
-		entity.setDecTipoRapprComp(new DecTipoRapprComp());
-	    }
-	    entity.getDecTipoRapprComp().setIdTipoRapprComp(this.getIdTipoRapprComp().longValue());
-	}
-	return entity;
+        DecTipoRapprAmmesso entity = new DecTipoRapprAmmesso();
+        if (this.getIdTipoRapprAmmesso() != null) {
+            entity.setIdTipoRapprAmmesso(this.getIdTipoRapprAmmesso().longValue());
+        }
+        if (this.getIdTipoCompDoc() != null) {
+            if (entity.getDecTipoCompDoc() == null) {
+                entity.setDecTipoCompDoc(new DecTipoCompDoc());
+            }
+            entity.getDecTipoCompDoc().setIdTipoCompDoc(this.getIdTipoCompDoc().longValue());
+        }
+        if (this.getIdTipoRapprComp() != null) {
+            if (entity.getDecTipoRapprComp() == null) {
+                entity.setDecTipoRapprComp(new DecTipoRapprComp());
+            }
+            entity.getDecTipoRapprComp().setIdTipoRapprComp(this.getIdTipoRapprComp().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

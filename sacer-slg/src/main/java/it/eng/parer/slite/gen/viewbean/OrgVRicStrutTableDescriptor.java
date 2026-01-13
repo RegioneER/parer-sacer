@@ -63,57 +63,57 @@ public class OrgVRicStrutTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_USER_IAM_COR,
-		new ColumnDescriptor(COL_ID_USER_IAM_COR, Types.DECIMAL, 22, true));
-	map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
-	map.put(COL_DS_STRUT, new ColumnDescriptor(COL_DS_STRUT, Types.VARCHAR, 254, true));
-	map.put(COL_FL_TEMPLATE, new ColumnDescriptor(COL_FL_TEMPLATE, Types.VARCHAR, 1, true));
-	map.put(COL_FL_PART_OK, new ColumnDescriptor(COL_FL_PART_OK, Types.VARCHAR, 1, true));
-	map.put(COL_FL_PARAMETRI_STRUT,
-		new ColumnDescriptor(COL_FL_PARAMETRI_STRUT, Types.VARCHAR, 1, true));
-	map.put(COL_FL_PARAMETRI_TIPO_UD,
-		new ColumnDescriptor(COL_FL_PARAMETRI_TIPO_UD, Types.VARCHAR, 1, true));
-	map.put(COL_ID_AMBITO_TERRIT,
-		new ColumnDescriptor(COL_ID_AMBITO_TERRIT, Types.DECIMAL, 22, true));
-	map.put(COL_TI_AMBITO_TERRIT,
-		new ColumnDescriptor(COL_TI_AMBITO_TERRIT, Types.VARCHAR, 20, true));
-	map.put(COL_DS_TREE_CD_AMBITO_TERRIT,
-		new ColumnDescriptor(COL_DS_TREE_CD_AMBITO_TERRIT, Types.VARCHAR, 4000, true));
-	map.put(COL_DS_TREE_ID_AMBITO_TERRIT,
-		new ColumnDescriptor(COL_DS_TREE_ID_AMBITO_TERRIT, Types.VARCHAR, 4000, true));
-	map.put(COL_ID_CATEG_ENTE,
-		new ColumnDescriptor(COL_ID_CATEG_ENTE, Types.DECIMAL, 22, true));
-	map.put(COL_CD_CATEG_ENTE,
-		new ColumnDescriptor(COL_CD_CATEG_ENTE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_SISTEMA_VERSANTE,
-		new ColumnDescriptor(COL_ID_SISTEMA_VERSANTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_SISTEMA_VERSANTE,
-		new ColumnDescriptor(COL_NM_SISTEMA_VERSANTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_ENTE_CONVENZ,
-		new ColumnDescriptor(COL_NM_ENTE_CONVENZ, Types.VARCHAR, 254, true));
-	map.put(COL_ID_ENTE_CONVENZ,
-		new ColumnDescriptor(COL_ID_ENTE_CONVENZ, Types.DECIMAL, 22, true));
-	map.put(COL_NM_AMBIENTE_ENTE_CONVENZ,
-		new ColumnDescriptor(COL_NM_AMBIENTE_ENTE_CONVENZ, Types.VARCHAR, 100, true));
-	map.put(COL_ID_AMBIENTE_ENTE_CONVENZ,
-		new ColumnDescriptor(COL_ID_AMBIENTE_ENTE_CONVENZ, Types.DECIMAL, 22, true));
+        map.put(COL_ID_USER_IAM_COR,
+                new ColumnDescriptor(COL_ID_USER_IAM_COR, Types.DECIMAL, 22, true));
+        map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
+        map.put(COL_DS_STRUT, new ColumnDescriptor(COL_DS_STRUT, Types.VARCHAR, 254, true));
+        map.put(COL_FL_TEMPLATE, new ColumnDescriptor(COL_FL_TEMPLATE, Types.VARCHAR, 1, true));
+        map.put(COL_FL_PART_OK, new ColumnDescriptor(COL_FL_PART_OK, Types.VARCHAR, 1, true));
+        map.put(COL_FL_PARAMETRI_STRUT,
+                new ColumnDescriptor(COL_FL_PARAMETRI_STRUT, Types.VARCHAR, 1, true));
+        map.put(COL_FL_PARAMETRI_TIPO_UD,
+                new ColumnDescriptor(COL_FL_PARAMETRI_TIPO_UD, Types.VARCHAR, 1, true));
+        map.put(COL_ID_AMBITO_TERRIT,
+                new ColumnDescriptor(COL_ID_AMBITO_TERRIT, Types.DECIMAL, 22, true));
+        map.put(COL_TI_AMBITO_TERRIT,
+                new ColumnDescriptor(COL_TI_AMBITO_TERRIT, Types.VARCHAR, 20, true));
+        map.put(COL_DS_TREE_CD_AMBITO_TERRIT,
+                new ColumnDescriptor(COL_DS_TREE_CD_AMBITO_TERRIT, Types.VARCHAR, 4000, true));
+        map.put(COL_DS_TREE_ID_AMBITO_TERRIT,
+                new ColumnDescriptor(COL_DS_TREE_ID_AMBITO_TERRIT, Types.VARCHAR, 4000, true));
+        map.put(COL_ID_CATEG_ENTE,
+                new ColumnDescriptor(COL_ID_CATEG_ENTE, Types.DECIMAL, 22, true));
+        map.put(COL_CD_CATEG_ENTE,
+                new ColumnDescriptor(COL_CD_CATEG_ENTE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_SISTEMA_VERSANTE,
+                new ColumnDescriptor(COL_ID_SISTEMA_VERSANTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_SISTEMA_VERSANTE,
+                new ColumnDescriptor(COL_NM_SISTEMA_VERSANTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_ENTE_CONVENZ,
+                new ColumnDescriptor(COL_NM_ENTE_CONVENZ, Types.VARCHAR, 254, true));
+        map.put(COL_ID_ENTE_CONVENZ,
+                new ColumnDescriptor(COL_ID_ENTE_CONVENZ, Types.DECIMAL, 22, true));
+        map.put(COL_NM_AMBIENTE_ENTE_CONVENZ,
+                new ColumnDescriptor(COL_NM_AMBIENTE_ENTE_CONVENZ, Types.VARCHAR, 100, true));
+        map.put(COL_ID_AMBIENTE_ENTE_CONVENZ,
+                new ColumnDescriptor(COL_ID_AMBIENTE_ENTE_CONVENZ, Types.DECIMAL, 22, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

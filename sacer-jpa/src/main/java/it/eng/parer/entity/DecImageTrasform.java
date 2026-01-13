@@ -65,65 +65,65 @@ public class DecImageTrasform implements Serializable {
     @Column(name = "ID_IMAGE_TRASFORM")
     @XmlID
     @GenericGenerator(name = "SDEC_IMAGE_TRASFORM_ID_IMAGE_TRASFORM_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_IMAGE_TRASFORM"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_IMAGE_TRASFORM"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_IMAGE_TRASFORM_ID_IMAGE_TRASFORM_GENERATOR")
     public Long getIdImageTrasform() {
-	return this.idImageTrasform;
+        return this.idImageTrasform;
     }
 
     public void setIdImageTrasform(Long idImageTrasform) {
-	this.idImageTrasform = idImageTrasform;
+        this.idImageTrasform = idImageTrasform;
     }
 
     @Lob
     @Column(name = "BL_IMAGE_TRASFORM")
     @XmlTransient
     public byte[] getBlImageTrasform() {
-	return this.blImageTrasform;
+        return this.blImageTrasform;
     }
 
     public void setBlImageTrasform(byte[] blImageTrasform) {
-	this.blImageTrasform = blImageTrasform;
+        this.blImageTrasform = blImageTrasform;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_LAST_MOD_IMAGE_TRASFORM")
     public Date getDtLastModImageTrasform() {
-	return this.dtLastModImageTrasform;
+        return this.dtLastModImageTrasform;
     }
 
     public void setDtLastModImageTrasform(Date dtLastModImageTrasform) {
-	this.dtLastModImageTrasform = dtLastModImageTrasform;
+        this.dtLastModImageTrasform = dtLastModImageTrasform;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_LAST_SCARICO_IMAGE_TRASFORM")
     public Date getDtLastScaricoImageTrasform() {
-	return this.dtLastScaricoImageTrasform;
+        return this.dtLastScaricoImageTrasform;
     }
 
     public void setDtLastScaricoImageTrasform(Date dtLastScaricoImageTrasform) {
-	this.dtLastScaricoImageTrasform = dtLastScaricoImageTrasform;
+        this.dtLastScaricoImageTrasform = dtLastScaricoImageTrasform;
     }
 
     @Column(name = "NM_IMAGE_TRASFORM")
     public String getNmImageTrasform() {
-	return this.nmImageTrasform;
+        return this.nmImageTrasform;
     }
 
     public void setNmImageTrasform(String nmImageTrasform) {
-	this.nmImageTrasform = nmImageTrasform;
+        this.nmImageTrasform = nmImageTrasform;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TRASFORM_TIPO_RAPPR")
     @XmlInverseReference(mappedBy = "decImageTrasforms")
     public DecTrasformTipoRappr getDecTrasformTipoRappr() {
-	return this.decTrasformTipoRappr;
+        return this.decTrasformTipoRappr;
     }
 
     public void setDecTrasformTipoRappr(DecTrasformTipoRappr decTrasformTipoRappr) {
-	this.decTrasformTipoRappr = decTrasformTipoRappr;
+        this.decTrasformTipoRappr = decTrasformTipoRappr;
     }
 }

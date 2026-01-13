@@ -26,59 +26,59 @@ public class SerieAppartenenzaRowBean extends BaseRow {
     private static final long serialVersionUID = 1L;
 
     public BigDecimal getIdVerSerie() {
-	return getBigDecimal("id_ver_serie");
+        return getBigDecimal("id_ver_serie");
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	setObject("id_ver_serie", idVerSerie);
+        setObject("id_ver_serie", idVerSerie);
     }
 
     public String getCdCompositoSerie() {
-	return getString("cd_composito_serie");
+        return getString("cd_composito_serie");
     }
 
     public void setCdCompositoSerie(String cdCompositoSerie) {
-	setObject("cd_composito_serie", cdCompositoSerie);
+        setObject("cd_composito_serie", cdCompositoSerie);
     }
 
     public BigDecimal getAaSerie() {
-	return getBigDecimal("aa_serie");
+        return getBigDecimal("aa_serie");
     }
 
     public void setAaSerie(BigDecimal aaSerie) {
-	setObject("aa_serie", aaSerie);
+        setObject("aa_serie", aaSerie);
     }
 
     public String getDsSerie() {
-	return getString("ds_serie");
+        return getString("ds_serie");
     }
 
     public void setDsSerie(String dsSerie) {
-	setObject("ds_serie", dsSerie);
+        setObject("ds_serie", dsSerie);
     }
 
     public String getCdVerSerie() {
-	return getString("cd_ver_serie");
+        return getString("cd_ver_serie");
     }
 
     public void setCdVerSerie(String cdVerSerie) {
-	setObject("cd_ver_serie", cdVerSerie);
+        setObject("cd_ver_serie", cdVerSerie);
     }
 
     public String getTiStatoVerSerie() {
-	return getString("ti_stato_ver_serie");
+        return getString("ti_stato_ver_serie");
     }
 
     public void setTiStatoVerSerie(String tiStatoVerSerie) {
-	setObject("ti_stato_ver_serie", tiStatoVerSerie);
+        setObject("ti_stato_ver_serie", tiStatoVerSerie);
     }
 
     public String getTiStatoSerie() {
-	return getString("ti_stato_serie");
+        return getString("ti_stato_serie");
     }
 
     public void setTiStatoSerie(String tiStatoSerie) {
-	setObject("ti_stato_serie", tiStatoSerie);
+        setObject("ti_stato_serie", tiStatoSerie);
     }
 
 }

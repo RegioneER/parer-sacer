@@ -44,28 +44,28 @@ public class AroVLisControfirmaFirmaTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_FIRMA_COMP,
-		new ColumnDescriptor(COL_ID_FIRMA_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_ID_CONTROFIRMA_FIRMA,
-		new ColumnDescriptor(COL_ID_CONTROFIRMA_FIRMA, Types.DECIMAL, 22, true));
-	map.put(COL_NM_COGNOME_FIRMATARIO,
-		new ColumnDescriptor(COL_NM_COGNOME_FIRMATARIO, Types.VARCHAR, 1024, true));
-	map.put(COL_NM_FIRMATARIO,
-		new ColumnDescriptor(COL_NM_FIRMATARIO, Types.VARCHAR, 100, true));
-	map.put(COL_CD_FIRMATARIO,
-		new ColumnDescriptor(COL_CD_FIRMATARIO, Types.VARCHAR, 100, true));
+        map.put(COL_ID_FIRMA_COMP,
+                new ColumnDescriptor(COL_ID_FIRMA_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_ID_CONTROFIRMA_FIRMA,
+                new ColumnDescriptor(COL_ID_CONTROFIRMA_FIRMA, Types.DECIMAL, 22, true));
+        map.put(COL_NM_COGNOME_FIRMATARIO,
+                new ColumnDescriptor(COL_NM_COGNOME_FIRMATARIO, Types.VARCHAR, 1024, true));
+        map.put(COL_NM_FIRMATARIO,
+                new ColumnDescriptor(COL_NM_FIRMATARIO, Types.VARCHAR, 100, true));
+        map.put(COL_CD_FIRMATARIO,
+                new ColumnDescriptor(COL_CD_FIRMATARIO, Types.VARCHAR, 100, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

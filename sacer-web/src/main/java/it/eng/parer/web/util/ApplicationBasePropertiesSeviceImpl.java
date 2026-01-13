@@ -38,16 +38,16 @@ public class ApplicationBasePropertiesSeviceImpl implements IApplicationBaseProp
 
     @Override
     public ApplicationBaseProperties getApplicationBaseProperties() {
-	String nmApplic = configurationHelper
-		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC); // NM_APPLIC
-	String user = configurationHelper
-		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_RECUP_INFO);
-	String password = configurationHelper
-		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_RECUP_INFO);
-	String url = configurationHelper
-		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_RECUP_HELP);
+        String nmApplic = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC); // NM_APPLIC
+        String user = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_RECUP_INFO);
+        String password = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_RECUP_INFO);
+        String url = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_RECUP_HELP);
 
-	return new ApplicationBaseProperties(nmApplic, user, password, url);
+        return new ApplicationBaseProperties(nmApplic, user, password, url);
     }
 
 }

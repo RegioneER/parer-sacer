@@ -50,7 +50,7 @@ import it.eng.parer.ws.utils.CostantiDB;
 @Stateless
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class ControlloContenutoEffettivoSerieJob {
 
     private final Logger log = LoggerFactory.getLogger(ControlloContenutoEffettivoSerieJob.class);
@@ -69,44 +69,44 @@ public class ControlloContenutoEffettivoSerieJob {
 
     public void controllaContenutoEffettivo() throws ParerInternalError {
 
-	log.info(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name()
-		+ " --- ricerca le versioni serie con stato = DA_CONTROLLARE registrate in SER_VER_SERIE_DA_ELAB");
-	List<SerVerSerieDaElab> verSerieDaElabAperte = serieHelper.getSerVerSerieDaElab(null,
-		CostantiDB.StatoVersioneSerieDaElab.DA_CONTROLLARE.name());
-	log.info(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name()
-		+ " --- Trovati " + verSerieDaElabAperte.size() + " record");
-	Map<String, BigDecimal> idVerSeries = new HashMap<>();
-	// String nmUserId = configHelper.getValoreParamApplic("USERID_CREAZIONE_SERIE");
-	// IamUser userCreazioneSerie = userHelper.findIamUser(nmUserId);
+        log.info(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name()
+                + " --- ricerca le versioni serie con stato = DA_CONTROLLARE registrate in SER_VER_SERIE_DA_ELAB");
+        List<SerVerSerieDaElab> verSerieDaElabAperte = serieHelper.getSerVerSerieDaElab(null,
+                CostantiDB.StatoVersioneSerieDaElab.DA_CONTROLLARE.name());
+        log.info(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name()
+                + " --- Trovati " + verSerieDaElabAperte.size() + " record");
+        Map<String, BigDecimal> idVerSeries = new HashMap<>();
+        // String nmUserId = configHelper.getValoreParamApplic("USERID_CREAZIONE_SERIE");
+        // IamUser userCreazioneSerie = userHelper.findIamUser(nmUserId);
 
-	for (SerVerSerieDaElab verSerieDaElab : verSerieDaElabAperte) {
-	    // Preparo per la generazione del contenuto effettivo.
-	    BigDecimal idVerSerie = new BigDecimal(verSerieDaElab.getSerVerSerie().getIdVerSerie());
-	    BigDecimal idSerie = new BigDecimal(
-		    verSerieDaElab.getSerVerSerie().getSerSerie().getIdSerie());
-	    log.debug(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name()
-		    + " --- preparo il controllo del contenuto");
-	    boolean result = context.getBusinessObject(ControlloContenutoEffettivoSerieJob.class)
-		    .prepareCon(idSerie, idVerSerie);
-	    if (result) {
-		SerSerie serSerie = verSerieDaElab.getSerVerSerie().getSerSerie();
-		String keyFuture = FutureUtils.buildKeyFuture(
-			CostantiDB.TipoChiamataAsync.CONTROLLO_CONTENUTO.name(),
-			serSerie.getCdCompositoSerie(), serSerie.getAaSerie(),
-			verSerieDaElab.getIdStrut(), idVerSerie.longValue());
-		idVerSeries.put(keyFuture, idVerSerie);
-	    }
-	}
+        for (SerVerSerieDaElab verSerieDaElab : verSerieDaElabAperte) {
+            // Preparo per la generazione del contenuto effettivo.
+            BigDecimal idVerSerie = new BigDecimal(verSerieDaElab.getSerVerSerie().getIdVerSerie());
+            BigDecimal idSerie = new BigDecimal(
+                    verSerieDaElab.getSerVerSerie().getSerSerie().getIdSerie());
+            log.debug(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name()
+                    + " --- preparo il controllo del contenuto");
+            boolean result = context.getBusinessObject(ControlloContenutoEffettivoSerieJob.class)
+                    .prepareCon(idSerie, idVerSerie);
+            if (result) {
+                SerSerie serSerie = verSerieDaElab.getSerVerSerie().getSerSerie();
+                String keyFuture = FutureUtils.buildKeyFuture(
+                        CostantiDB.TipoChiamataAsync.CONTROLLO_CONTENUTO.name(),
+                        serSerie.getCdCompositoSerie(), serSerie.getAaSerie(),
+                        verSerieDaElab.getIdStrut(), idVerSerie.longValue());
+                idVerSeries.put(keyFuture, idVerSerie);
+            }
+        }
 
-	if (!idVerSeries.isEmpty()) {
-	    serieEjb.callControlloContenutoAsync(idVerSeries);
-	}
+        if (!idVerSeries.isEmpty()) {
+            serieEjb.callControlloContenutoAsync(idVerSeries);
+        }
 
-	log.info(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name()
-		+ " --- Fine schedulazione job");
-	jobHelper.writeAtomicLogJob(
-		JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name(),
-		JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name());
+        log.info(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name()
+                + " --- Fine schedulazione job");
+        jobHelper.writeAtomicLogJob(
+                JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name(),
+                JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name());
     }
 
     /**
@@ -119,27 +119,27 @@ public class ControlloContenutoEffettivoSerieJob {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean prepareCon(BigDecimal idSerie, BigDecimal idVerSerie) {
-	boolean result = false;
-	if (serieEjb.checkVersione(idVerSerie, CostantiDB.StatoVersioneSerie.APERTA.name(),
-		CostantiDB.StatoVersioneSerie.DA_CONTROLLARE.name())
-		&& serieEjb.checkContenuto(idVerSerie, false, false, true,
-			CostantiDB.StatoContenutoVerSerie.CREATO.name(),
-			CostantiDB.StatoContenutoVerSerie.DA_CONTROLLARE_CONSIST.name())) {
-	    try {
-		serieEjb.initControlloContenuto(idSerie, idVerSerie,
-			CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
-		result = true;
-	    } catch (ParerUserError ex) {
-		log.debug(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name()
-			+ " --- " + ex.getDescription());
-	    }
-	} else {
-	    log.debug(JobConstants.JobEnum.GENERAZIONE_AUTOMATICA_CONTENUTO_EFFETTIVO.name()
-		    + " --- La versione non \u00E8 corrente, non ha stato APERTA o il contenuto CALCOLATO non ha stato CREATO o CONTROLLATA_CONSIST");
-	    // Elimina il record da serVerSerieDaElab e chiude senza generare il contenuto
-	    serieHelper.deleteSerVerSerieDaElab(idVerSerie);
-	}
+        boolean result = false;
+        if (serieEjb.checkVersione(idVerSerie, CostantiDB.StatoVersioneSerie.APERTA.name(),
+                CostantiDB.StatoVersioneSerie.DA_CONTROLLARE.name())
+                && serieEjb.checkContenuto(idVerSerie, false, false, true,
+                        CostantiDB.StatoContenutoVerSerie.CREATO.name(),
+                        CostantiDB.StatoContenutoVerSerie.DA_CONTROLLARE_CONSIST.name())) {
+            try {
+                serieEjb.initControlloContenuto(idSerie, idVerSerie,
+                        CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
+                result = true;
+            } catch (ParerUserError ex) {
+                log.debug(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name()
+                        + " --- " + ex.getDescription());
+            }
+        } else {
+            log.debug(JobConstants.JobEnum.GENERAZIONE_AUTOMATICA_CONTENUTO_EFFETTIVO.name()
+                    + " --- La versione non \u00E8 corrente, non ha stato APERTA o il contenuto CALCOLATO non ha stato CREATO o CONTROLLATA_CONSIST");
+            // Elimina il record da serVerSerieDaElab e chiude senza generare il contenuto
+            serieHelper.deleteSerVerSerieDaElab(idVerSerie);
+        }
 
-	return result;
+        return result;
     }
 }

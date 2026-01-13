@@ -26,21 +26,21 @@ public class WSDescModificaUtente implements IWSDesc {
 
     @Override
     public String getVersione() {
-	return Costanti.WS_MODIFICA_UTENTE_VRSN;
+        return Costanti.WS_MODIFICA_UTENTE_VRSN;
     }
 
     @Override
     public String getNomeWs() {
-	return Costanti.WS_MODIFICA_UTENTE_NOME;
+        return Costanti.WS_MODIFICA_UTENTE_NOME;
     }
 
     public String[] getCompatibilitaWS() {
-	return Costanti.WS_MODIFICA_UTENTE_COMP;
+        return Costanti.WS_MODIFICA_UTENTE_COMP;
     }
 
     @Override
     public String getVersione(HashMap<String, String> mapWsVersion) {
-	throw new UnsupportedOperationException(getNomeWs() + ": non supporta la versione su DB !");
+        throw new UnsupportedOperationException(getNomeWs() + ": non supporta la versione su DB !");
 
     }
 }

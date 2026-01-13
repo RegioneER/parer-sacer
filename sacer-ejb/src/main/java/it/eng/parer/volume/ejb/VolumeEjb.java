@@ -33,7 +33,7 @@ import it.eng.parer.volume.helper.VolumeHelper;
 @Stateless
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class VolumeEjb {
 
     Logger log = LoggerFactory.getLogger(VolumeEjb.class);
@@ -47,7 +47,7 @@ public class VolumeEjb {
     }
 
     public byte[] retrieveFileByIdVolume(long idVolume, String fileType) {
-	VolVolumeConserv volume = volumeHelper.retrieveVolumeById(idVolume);
-	return volumeHelper.retrieveFile(volume, fileType);
+        VolVolumeConserv volume = volumeHelper.retrieveVolumeById(idVolume);
+        return volumeHelper.retrieveFile(volume, fileType);
     }
 }

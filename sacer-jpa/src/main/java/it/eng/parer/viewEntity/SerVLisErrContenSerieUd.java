@@ -44,66 +44,66 @@ public class SerVLisErrContenSerieUd implements Serializable {
 
     @Column(name = "DL_ERR")
     public String getDlErr() {
-	return this.dlErr;
+        return this.dlErr;
     }
 
     public void setDlErr(String dlErr) {
-	this.dlErr = dlErr;
+        this.dlErr = dlErr;
     }
 
     @Column(name = "ID_CONTENUTO_VER_SERIE")
     public BigDecimal getIdContenutoVerSerie() {
-	return this.idContenutoVerSerie;
+        return this.idContenutoVerSerie;
     }
 
     public void setIdContenutoVerSerie(BigDecimal idContenutoVerSerie) {
-	this.idContenutoVerSerie = idContenutoVerSerie;
+        this.idContenutoVerSerie = idContenutoVerSerie;
     }
 
     @Id
     @Column(name = "ID_ERR_CONTENUTO_VER_SERIE")
     public BigDecimal getIdErrContenutoVerSerie() {
-	return this.idErrContenutoVerSerie;
+        return this.idErrContenutoVerSerie;
     }
 
     public void setIdErrContenutoVerSerie(BigDecimal idErrContenutoVerSerie) {
-	this.idErrContenutoVerSerie = idErrContenutoVerSerie;
+        this.idErrContenutoVerSerie = idErrContenutoVerSerie;
     }
 
     @Column(name = "PG_ERR")
     public BigDecimal getPgErr() {
-	return this.pgErr;
+        return this.pgErr;
     }
 
     public void setPgErr(BigDecimal pgErr) {
-	this.pgErr = pgErr;
+        this.pgErr = pgErr;
     }
 
     @Column(name = "TI_ERR")
     public String getTiErr() {
-	return this.tiErr;
+        return this.tiErr;
     }
 
     public void setTiErr(String tiErr) {
-	this.tiErr = tiErr;
+        this.tiErr = tiErr;
     }
 
     @Column(name = "TI_GRAVITA_ERR")
     public String getTiGravitaErr() {
-	return this.tiGravitaErr;
+        return this.tiGravitaErr;
     }
 
     public void setTiGravitaErr(String tiGravitaErr) {
-	this.tiGravitaErr = tiGravitaErr;
+        this.tiGravitaErr = tiGravitaErr;
     }
 
     @Column(name = "TI_ORIGINE_ERR")
     public String getTiOrigineErr() {
-	return this.tiOrigineErr;
+        return this.tiOrigineErr;
     }
 
     public void setTiOrigineErr(String tiOrigineErr) {
-	this.tiOrigineErr = tiOrigineErr;
+        this.tiOrigineErr = tiOrigineErr;
     }
 
 }

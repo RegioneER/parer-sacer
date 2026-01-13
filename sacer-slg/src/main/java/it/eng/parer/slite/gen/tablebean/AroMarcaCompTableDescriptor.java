@@ -55,46 +55,46 @@ public class AroMarcaCompTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_MARCA_COMP,
-		new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_PG_MARCA, new ColumnDescriptor(COL_PG_MARCA, Types.DECIMAL, 22, false));
-	map.put(COL_TI_ESITO_CONTR_CONFORME,
-		new ColumnDescriptor(COL_TI_ESITO_CONTR_CONFORME, Types.VARCHAR, 30, false));
-	map.put(COL_DS_MSG_ESITO_CONTR_CONFORME,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_CONTR_CONFORME, Types.VARCHAR, 254, false));
-	map.put(COL_TI_MARCA_TEMP,
-		new ColumnDescriptor(COL_TI_MARCA_TEMP, Types.VARCHAR, 20, false));
-	map.put(COL_DS_MARCA_BASE64,
-		new ColumnDescriptor(COL_DS_MARCA_BASE64, Types.VARCHAR, 2048, false));
-	map.put(COL_DS_ALGO_MARCA,
-		new ColumnDescriptor(COL_DS_ALGO_MARCA, Types.VARCHAR, 254, false));
-	map.put(COL_TM_MARCA_TEMP,
-		new ColumnDescriptor(COL_TM_MARCA_TEMP, Types.TIMESTAMP, 7, false));
-	map.put(COL_TI_FORMATO_MARCA,
-		new ColumnDescriptor(COL_TI_FORMATO_MARCA, Types.VARCHAR, 20, false));
-	map.put(COL_ID_CERTIF_CA, new ColumnDescriptor(COL_ID_CERTIF_CA, Types.DECIMAL, 22, false));
-	map.put(COL_DT_SCAD_MARCA,
-		new ColumnDescriptor(COL_DT_SCAD_MARCA, Types.TIMESTAMP, 7, false));
-	map.put(COL_TI_ESITO_VERIF_MARCA,
-		new ColumnDescriptor(COL_TI_ESITO_VERIF_MARCA, Types.VARCHAR, 20, false));
-	map.put(COL_DS_MSG_ESITO_VERIF_MARCA,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_MARCA, Types.VARCHAR, 254, false));
-	map.put(COL_PG_BUSTA, new ColumnDescriptor(COL_PG_BUSTA, Types.DECIMAL, 22, false));
-	map.put(COL_ID_BUSTA_CRITTOG,
-		new ColumnDescriptor(COL_ID_BUSTA_CRITTOG, Types.DECIMAL, 22, false));
+        map.put(COL_ID_MARCA_COMP,
+                new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_PG_MARCA, new ColumnDescriptor(COL_PG_MARCA, Types.DECIMAL, 22, false));
+        map.put(COL_TI_ESITO_CONTR_CONFORME,
+                new ColumnDescriptor(COL_TI_ESITO_CONTR_CONFORME, Types.VARCHAR, 30, false));
+        map.put(COL_DS_MSG_ESITO_CONTR_CONFORME,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_CONTR_CONFORME, Types.VARCHAR, 254, false));
+        map.put(COL_TI_MARCA_TEMP,
+                new ColumnDescriptor(COL_TI_MARCA_TEMP, Types.VARCHAR, 20, false));
+        map.put(COL_DS_MARCA_BASE64,
+                new ColumnDescriptor(COL_DS_MARCA_BASE64, Types.VARCHAR, 2048, false));
+        map.put(COL_DS_ALGO_MARCA,
+                new ColumnDescriptor(COL_DS_ALGO_MARCA, Types.VARCHAR, 254, false));
+        map.put(COL_TM_MARCA_TEMP,
+                new ColumnDescriptor(COL_TM_MARCA_TEMP, Types.TIMESTAMP, 7, false));
+        map.put(COL_TI_FORMATO_MARCA,
+                new ColumnDescriptor(COL_TI_FORMATO_MARCA, Types.VARCHAR, 20, false));
+        map.put(COL_ID_CERTIF_CA, new ColumnDescriptor(COL_ID_CERTIF_CA, Types.DECIMAL, 22, false));
+        map.put(COL_DT_SCAD_MARCA,
+                new ColumnDescriptor(COL_DT_SCAD_MARCA, Types.TIMESTAMP, 7, false));
+        map.put(COL_TI_ESITO_VERIF_MARCA,
+                new ColumnDescriptor(COL_TI_ESITO_VERIF_MARCA, Types.VARCHAR, 20, false));
+        map.put(COL_DS_MSG_ESITO_VERIF_MARCA,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_MARCA, Types.VARCHAR, 254, false));
+        map.put(COL_PG_BUSTA, new ColumnDescriptor(COL_PG_BUSTA, Types.DECIMAL, 22, false));
+        map.put(COL_ID_BUSTA_CRITTOG,
+                new ColumnDescriptor(COL_ID_BUSTA_CRITTOG, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

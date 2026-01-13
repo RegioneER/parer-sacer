@@ -50,34 +50,34 @@ public class MonVRiepStrutIamTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
-	map.put(COL_FL_SESSIONI_FALLITE_NO_RIS,
-		new ColumnDescriptor(COL_FL_SESSIONI_FALLITE_NO_RIS, Types.VARCHAR, 1, true));
-	map.put(COL_FL_DOC_SENZA_ELENCO,
-		new ColumnDescriptor(COL_FL_DOC_SENZA_ELENCO, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ELENCO_CHIUSO,
-		new ColumnDescriptor(COL_FL_ELENCO_CHIUSO, Types.VARCHAR, 1, true));
-	map.put(COL_FL_ERR_FMT_NUMERO,
-		new ColumnDescriptor(COL_FL_ERR_FMT_NUMERO, Types.VARCHAR, 1, true));
-	map.put(COL_FL_RICH_ANNUL_VERS_APERTA,
-		new ColumnDescriptor(COL_FL_RICH_ANNUL_VERS_APERTA, Types.VARCHAR, 1, true));
+        map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
+        map.put(COL_FL_SESSIONI_FALLITE_NO_RIS,
+                new ColumnDescriptor(COL_FL_SESSIONI_FALLITE_NO_RIS, Types.VARCHAR, 1, true));
+        map.put(COL_FL_DOC_SENZA_ELENCO,
+                new ColumnDescriptor(COL_FL_DOC_SENZA_ELENCO, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ELENCO_CHIUSO,
+                new ColumnDescriptor(COL_FL_ELENCO_CHIUSO, Types.VARCHAR, 1, true));
+        map.put(COL_FL_ERR_FMT_NUMERO,
+                new ColumnDescriptor(COL_FL_ERR_FMT_NUMERO, Types.VARCHAR, 1, true));
+        map.put(COL_FL_RICH_ANNUL_VERS_APERTA,
+                new ColumnDescriptor(COL_FL_RICH_ANNUL_VERS_APERTA, Types.VARCHAR, 1, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

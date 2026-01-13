@@ -26,8 +26,8 @@ import it.eng.tpi.bean.Esito.EsitoServizio;
 
 @XmlRootElement(name = "StatoArchiviazioneCartella")
 @XmlType(propOrder = {
-	"esito", "flCartellaMigraz", "dtVers", "flPresenzaSitoSecondario", "flDaArchiviare",
-	"flDaRiArchiviare", "listaAggreg" })
+        "esito", "flCartellaMigraz", "dtVers", "flPresenzaSitoSecondario", "flDaArchiviare",
+        "flDaRiArchiviare", "listaAggreg" })
 public class StatoArchiviazioneCartellaRisposta {
 
     protected Esito esito;
@@ -39,73 +39,73 @@ public class StatoArchiviazioneCartellaRisposta {
     protected List<Aggregato> listaAggreg = new ArrayList<Aggregato>();
 
     public StatoArchiviazioneCartellaRisposta() {
-	setEsito(new Esito());
+        setEsito(new Esito());
     }
 
     public StatoArchiviazioneCartellaRisposta(Boolean flCartellaMigraz, Date dtVers) {
-	this();
-	getEsito().setCdEsito(EsitoServizio.KO);
-	this.flCartellaMigraz = flCartellaMigraz;
-	this.dtVers = dtVers;
+        this();
+        getEsito().setCdEsito(EsitoServizio.KO);
+        this.flCartellaMigraz = flCartellaMigraz;
+        this.dtVers = dtVers;
     }
 
     @XmlElement(name = "Esito")
     public Esito getEsito() {
-	return esito;
+        return esito;
     }
 
     public void setEsito(Esito esito) {
-	this.esito = esito;
+        this.esito = esito;
     }
 
     @XmlElement(name = "FlCartellaMigraz")
     public Boolean getFlCartellaMigraz() {
-	return flCartellaMigraz;
+        return flCartellaMigraz;
     }
 
     public void setFlCartellaMigraz(Boolean flCartellaMigraz) {
-	this.flCartellaMigraz = flCartellaMigraz;
+        this.flCartellaMigraz = flCartellaMigraz;
     }
 
     @XmlElement(name = "DtVers")
     public Date getDtVers() {
-	return dtVers;
+        return dtVers;
     }
 
     public void setDtVers(Date dtVers) {
-	this.dtVers = dtVers;
+        this.dtVers = dtVers;
     }
 
     @XmlElement(name = "FlPresenzaSitoSecondario")
     public Boolean getFlPresenzaSitoSecondario() {
-	return flPresenzaSitoSecondario;
+        return flPresenzaSitoSecondario;
     }
 
     public void setFlPresenzaSitoSecondario(Boolean flPresenzaSitoSecondario) {
-	this.flPresenzaSitoSecondario = flPresenzaSitoSecondario;
+        this.flPresenzaSitoSecondario = flPresenzaSitoSecondario;
     }
 
     @XmlElement(name = "FlDaArchiviare")
     public Boolean getFlDaArchiviare() {
-	return flDaArchiviare;
+        return flDaArchiviare;
     }
 
     public void setFlDaArchiviare(Boolean flDaArchiviare) {
-	this.flDaArchiviare = flDaArchiviare;
+        this.flDaArchiviare = flDaArchiviare;
     }
 
     @XmlElement(name = "FlDaRiArchiviare")
     public Boolean getFlDaRiArchiviare() {
-	return flDaRiArchiviare;
+        return flDaRiArchiviare;
     }
 
     public void setFlDaRiArchiviare(Boolean flDaRiArchiviare) {
-	this.flDaRiArchiviare = flDaRiArchiviare;
+        this.flDaRiArchiviare = flDaRiArchiviare;
     }
 
     @XmlElement(name = "Aggregato")
     @XmlElementWrapper(name = "ListaAggreg")
     public List<Aggregato> getListaAggreg() {
-	return listaAggreg;
+        return listaAggreg;
     }
 }

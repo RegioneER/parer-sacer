@@ -48,29 +48,29 @@ public class VrsErrSesUpdUnitaDocErrTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_ERR_SES_UPD_UNITA_DOC_ERR,
-		new ColumnDescriptor(COL_ID_ERR_SES_UPD_UNITA_DOC_ERR, Types.DECIMAL, 22, true));
-	map.put(COL_ID_SES_UPD_UNITA_DOC_ERR,
-		new ColumnDescriptor(COL_ID_SES_UPD_UNITA_DOC_ERR, Types.DECIMAL, 22, false));
-	map.put(COL_PG_ERR, new ColumnDescriptor(COL_PG_ERR, Types.DECIMAL, 22, false));
-	map.put(COL_TI_ERR, new ColumnDescriptor(COL_TI_ERR, Types.VARCHAR, 20, false));
-	map.put(COL_ID_ERR_SACER, new ColumnDescriptor(COL_ID_ERR_SACER, Types.DECIMAL, 22, false));
-	map.put(COL_DS_ERR, new ColumnDescriptor(COL_DS_ERR, Types.VARCHAR, 1024, false));
-	map.put(COL_ID_CONTROLLO_WS,
-		new ColumnDescriptor(COL_ID_CONTROLLO_WS, Types.DECIMAL, 22, false));
-	map.put(COL_FL_ERR_PRINC, new ColumnDescriptor(COL_FL_ERR_PRINC, Types.VARCHAR, 1, false));
+        map.put(COL_ID_ERR_SES_UPD_UNITA_DOC_ERR,
+                new ColumnDescriptor(COL_ID_ERR_SES_UPD_UNITA_DOC_ERR, Types.DECIMAL, 22, true));
+        map.put(COL_ID_SES_UPD_UNITA_DOC_ERR,
+                new ColumnDescriptor(COL_ID_SES_UPD_UNITA_DOC_ERR, Types.DECIMAL, 22, false));
+        map.put(COL_PG_ERR, new ColumnDescriptor(COL_PG_ERR, Types.DECIMAL, 22, false));
+        map.put(COL_TI_ERR, new ColumnDescriptor(COL_TI_ERR, Types.VARCHAR, 20, false));
+        map.put(COL_ID_ERR_SACER, new ColumnDescriptor(COL_ID_ERR_SACER, Types.DECIMAL, 22, false));
+        map.put(COL_DS_ERR, new ColumnDescriptor(COL_DS_ERR, Types.VARCHAR, 1024, false));
+        map.put(COL_ID_CONTROLLO_WS,
+                new ColumnDescriptor(COL_ID_CONTROLLO_WS, Types.DECIMAL, 22, false));
+        map.put(COL_FL_ERR_PRINC, new ColumnDescriptor(COL_FL_ERR_PRINC, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

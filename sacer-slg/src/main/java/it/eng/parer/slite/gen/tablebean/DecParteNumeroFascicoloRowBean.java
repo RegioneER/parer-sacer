@@ -36,183 +36,183 @@ public class DecParteNumeroFascicoloRowBean extends BaseRow implements JEEBaseRo
     public static DecParteNumeroFascicoloTableDescriptor TABLE_DESCRIPTOR = new DecParteNumeroFascicoloTableDescriptor();
 
     public DecParteNumeroFascicoloRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdParteNumeroFascicolo() {
-	return getBigDecimal("id_parte_numero_fascicolo");
+        return getBigDecimal("id_parte_numero_fascicolo");
     }
 
     public void setIdParteNumeroFascicolo(BigDecimal idParteNumeroFascicolo) {
-	setObject("id_parte_numero_fascicolo", idParteNumeroFascicolo);
+        setObject("id_parte_numero_fascicolo", idParteNumeroFascicolo);
     }
 
     public BigDecimal getIdAaTipoFascicolo() {
-	return getBigDecimal("id_aa_tipo_fascicolo");
+        return getBigDecimal("id_aa_tipo_fascicolo");
     }
 
     public void setIdAaTipoFascicolo(BigDecimal idAaTipoFascicolo) {
-	setObject("id_aa_tipo_fascicolo", idAaTipoFascicolo);
+        setObject("id_aa_tipo_fascicolo", idAaTipoFascicolo);
     }
 
     public String getNmParteNumero() {
-	return getString("nm_parte_numero");
+        return getString("nm_parte_numero");
     }
 
     public void setNmParteNumero(String nmParteNumero) {
-	setObject("nm_parte_numero", nmParteNumero);
+        setObject("nm_parte_numero", nmParteNumero);
     }
 
     public String getDsParteNumero() {
-	return getString("ds_parte_numero");
+        return getString("ds_parte_numero");
     }
 
     public void setDsParteNumero(String dsParteNumero) {
-	setObject("ds_parte_numero", dsParteNumero);
+        setObject("ds_parte_numero", dsParteNumero);
     }
 
     public BigDecimal getNiParteNumero() {
-	return getBigDecimal("ni_parte_numero");
+        return getBigDecimal("ni_parte_numero");
     }
 
     public void setNiParteNumero(BigDecimal niParteNumero) {
-	setObject("ni_parte_numero", niParteNumero);
+        setObject("ni_parte_numero", niParteNumero);
     }
 
     public String getTiCharParte() {
-	return getString("ti_char_parte");
+        return getString("ti_char_parte");
     }
 
     public void setTiCharParte(String tiCharParte) {
-	setObject("ti_char_parte", tiCharParte);
+        setObject("ti_char_parte", tiCharParte);
     }
 
     public BigDecimal getNiMinCharParte() {
-	return getBigDecimal("ni_min_char_parte");
+        return getBigDecimal("ni_min_char_parte");
     }
 
     public void setNiMinCharParte(BigDecimal niMinCharParte) {
-	setObject("ni_min_char_parte", niMinCharParte);
+        setObject("ni_min_char_parte", niMinCharParte);
     }
 
     public BigDecimal getNiMaxCharParte() {
-	return getBigDecimal("ni_max_char_parte");
+        return getBigDecimal("ni_max_char_parte");
     }
 
     public void setNiMaxCharParte(BigDecimal niMaxCharParte) {
-	setObject("ni_max_char_parte", niMaxCharParte);
+        setObject("ni_max_char_parte", niMaxCharParte);
     }
 
     public String getTiCharSep() {
-	return getString("ti_char_sep");
+        return getString("ti_char_sep");
     }
 
     public void setTiCharSep(String tiCharSep) {
-	setObject("ti_char_sep", tiCharSep);
+        setObject("ti_char_sep", tiCharSep);
     }
 
     public String getDlValoriParte() {
-	return getString("dl_valori_parte");
+        return getString("dl_valori_parte");
     }
 
     public void setDlValoriParte(String dlValoriParte) {
-	setObject("dl_valori_parte", dlValoriParte);
+        setObject("dl_valori_parte", dlValoriParte);
     }
 
     public String getTiParte() {
-	return getString("ti_parte");
+        return getString("ti_parte");
     }
 
     public void setTiParte(String tiParte) {
-	setObject("ti_parte", tiParte);
+        setObject("ti_parte", tiParte);
     }
 
     public String getTiPadParte() {
-	return getString("ti_pad_parte");
+        return getString("ti_pad_parte");
     }
 
     public void setTiPadParte(String tiPadParte) {
-	setObject("ti_pad_parte", tiPadParte);
+        setObject("ti_pad_parte", tiPadParte);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecParteNumeroFascicolo entity = (DecParteNumeroFascicolo) obj;
+        DecParteNumeroFascicolo entity = (DecParteNumeroFascicolo) obj;
 
-	this.setIdParteNumeroFascicolo(entity.getIdParteNumeroFascicolo() == null ? null
-		: BigDecimal.valueOf(entity.getIdParteNumeroFascicolo()));
+        this.setIdParteNumeroFascicolo(entity.getIdParteNumeroFascicolo() == null ? null
+                : BigDecimal.valueOf(entity.getIdParteNumeroFascicolo()));
 
-	if (entity.getDecAaTipoFascicolo() != null) {
-	    this.setIdAaTipoFascicolo(
-		    new BigDecimal(entity.getDecAaTipoFascicolo().getIdAaTipoFascicolo()));
-	}
+        if (entity.getDecAaTipoFascicolo() != null) {
+            this.setIdAaTipoFascicolo(
+                    new BigDecimal(entity.getDecAaTipoFascicolo().getIdAaTipoFascicolo()));
+        }
 
-	this.setNmParteNumero(entity.getNmParteNumero());
-	this.setDsParteNumero(entity.getDsParteNumero());
-	this.setNiParteNumero(entity.getNiParteNumero());
-	this.setTiCharParte(entity.getTiCharParte());
-	this.setNiMinCharParte(entity.getNiMinCharParte());
-	this.setNiMaxCharParte(entity.getNiMaxCharParte());
-	this.setTiCharSep(entity.getTiCharSep());
-	this.setDlValoriParte(entity.getDlValoriParte());
-	this.setTiParte(entity.getTiParte());
-	this.setTiPadParte(entity.getTiPadParte());
+        this.setNmParteNumero(entity.getNmParteNumero());
+        this.setDsParteNumero(entity.getDsParteNumero());
+        this.setNiParteNumero(entity.getNiParteNumero());
+        this.setTiCharParte(entity.getTiCharParte());
+        this.setNiMinCharParte(entity.getNiMinCharParte());
+        this.setNiMaxCharParte(entity.getNiMaxCharParte());
+        this.setTiCharSep(entity.getTiCharSep());
+        this.setDlValoriParte(entity.getDlValoriParte());
+        this.setTiParte(entity.getTiParte());
+        this.setTiPadParte(entity.getTiPadParte());
     }
 
     @Override
     public DecParteNumeroFascicolo rowBeanToEntity() {
-	DecParteNumeroFascicolo entity = new DecParteNumeroFascicolo();
-	if (this.getIdParteNumeroFascicolo() != null) {
-	    entity.setIdParteNumeroFascicolo(this.getIdParteNumeroFascicolo().longValue());
-	}
-	if (this.getIdAaTipoFascicolo() != null) {
-	    if (entity.getDecAaTipoFascicolo() == null) {
-		entity.setDecAaTipoFascicolo(new DecAaTipoFascicolo());
-	    }
-	    entity.getDecAaTipoFascicolo()
-		    .setIdAaTipoFascicolo(this.getIdAaTipoFascicolo().longValue());
-	}
-	entity.setNmParteNumero(this.getNmParteNumero());
-	entity.setDsParteNumero(this.getDsParteNumero());
-	entity.setNiParteNumero(this.getNiParteNumero());
-	entity.setTiCharParte(this.getTiCharParte());
-	entity.setNiMinCharParte(this.getNiMinCharParte());
-	entity.setNiMaxCharParte(this.getNiMaxCharParte());
-	entity.setTiCharSep(this.getTiCharSep());
-	entity.setDlValoriParte(this.getDlValoriParte());
-	entity.setTiParte(this.getTiParte());
-	entity.setTiPadParte(this.getTiPadParte());
-	return entity;
+        DecParteNumeroFascicolo entity = new DecParteNumeroFascicolo();
+        if (this.getIdParteNumeroFascicolo() != null) {
+            entity.setIdParteNumeroFascicolo(this.getIdParteNumeroFascicolo().longValue());
+        }
+        if (this.getIdAaTipoFascicolo() != null) {
+            if (entity.getDecAaTipoFascicolo() == null) {
+                entity.setDecAaTipoFascicolo(new DecAaTipoFascicolo());
+            }
+            entity.getDecAaTipoFascicolo()
+                    .setIdAaTipoFascicolo(this.getIdAaTipoFascicolo().longValue());
+        }
+        entity.setNmParteNumero(this.getNmParteNumero());
+        entity.setDsParteNumero(this.getDsParteNumero());
+        entity.setNiParteNumero(this.getNiParteNumero());
+        entity.setTiCharParte(this.getTiCharParte());
+        entity.setNiMinCharParte(this.getNiMinCharParte());
+        entity.setNiMaxCharParte(this.getNiMaxCharParte());
+        entity.setTiCharSep(this.getTiCharSep());
+        entity.setDlValoriParte(this.getDlValoriParte());
+        entity.setTiParte(this.getTiParte());
+        entity.setTiPadParte(this.getTiPadParte());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

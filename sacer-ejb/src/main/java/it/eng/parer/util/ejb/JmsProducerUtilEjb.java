@@ -46,62 +46,62 @@ import it.eng.parer.ws.utils.Costanti;
 @Stateless(mappedName = "JmsProducerUtilEjb")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class JmsProducerUtilEjb {
 
     private final static Logger log = LoggerFactory.getLogger(JmsProducerUtilEjb.class);
 
     public void inviaMessaggioInFormatoJson(ConnectionFactory connectionFactory, Queue queue,
-	    Object objectToSerializeInJson, String tipoPayload) {
-	TextMessage textMessage = null;
-	try (Connection connection = connectionFactory.createConnection();
-		Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
-		MessageProducer messageProducer = session.createProducer(queue);) {
-	    textMessage = session.createTextMessage();
-	    // app selector
-	    textMessage.setStringProperty(Costanti.JMSMsgProperties.MSG_K_APP, Constants.SACER);
-	    textMessage.setStringProperty("tipoPayload", tipoPayload);
-	    ObjectMapper jsonMapper = new ObjectMapper();
-	    textMessage.setText(jsonMapper.writeValueAsString(objectToSerializeInJson));
-	    log.debug(String.format("JmsProducer [JSON] %s", textMessage.getText()));
-	    messageProducer.send(textMessage);
-	    log.debug("JmsProducer messaggio inviato");
-	} catch (JMSException ex) {
-	    throw new SacerRuntimeException("Errore nell'invio del messaggio in coda", ex,
-		    SacerErrorCategory.INTERNAL_ERROR);
-	} catch (JsonProcessingException ex) {
-	    throw new SacerRuntimeException(
-		    "Errore nella serializzazione in JSON del messaggio per la coda", ex,
-		    SacerErrorCategory.INTERNAL_ERROR);
-	}
+            Object objectToSerializeInJson, String tipoPayload) {
+        TextMessage textMessage = null;
+        try (Connection connection = connectionFactory.createConnection();
+                Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+                MessageProducer messageProducer = session.createProducer(queue);) {
+            textMessage = session.createTextMessage();
+            // app selector
+            textMessage.setStringProperty(Costanti.JMSMsgProperties.MSG_K_APP, Constants.SACER);
+            textMessage.setStringProperty("tipoPayload", tipoPayload);
+            ObjectMapper jsonMapper = new ObjectMapper();
+            textMessage.setText(jsonMapper.writeValueAsString(objectToSerializeInJson));
+            log.debug(String.format("JmsProducer [JSON] %s", textMessage.getText()));
+            messageProducer.send(textMessage);
+            log.debug("JmsProducer messaggio inviato");
+        } catch (JMSException ex) {
+            throw new SacerRuntimeException("Errore nell'invio del messaggio in coda", ex,
+                    SacerErrorCategory.INTERNAL_ERROR);
+        } catch (JsonProcessingException ex) {
+            throw new SacerRuntimeException(
+                    "Errore nella serializzazione in JSON del messaggio per la coda", ex,
+                    SacerErrorCategory.INTERNAL_ERROR);
+        }
     }
 
     // MAC#27499
     public void manageMessageGroupingInFormatoJson(ConnectionFactory connectionFactory, Queue queue,
-	    Object objectToSerializeInJson, String tipoPayload, String groupId) {
-	TextMessage textMessage = null;
-	try (Connection connection = connectionFactory.createConnection();
-		Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
-		MessageProducer messageProducer = session.createProducer(queue);) {
-	    textMessage = session.createTextMessage();
-	    textMessage.setStringProperty("JMSXGroupID", groupId);
-	    // app selector
-	    textMessage.setStringProperty(Costanti.JMSMsgProperties.MSG_K_APP, Constants.SACER);
-	    textMessage.setStringProperty("tipoPayload", tipoPayload);
-	    ObjectMapper jsonMapper = new ObjectMapper();
-	    textMessage.setText(jsonMapper.writeValueAsString(objectToSerializeInJson));
-	    log.debug("JmsProducer [JSON] {}", textMessage.getText());
-	    messageProducer.send(textMessage);
-	    log.debug(String.format("JmsProducer messaggio inviato con groupId %s", groupId));
-	} catch (JMSException ex) {
-	    throw new SacerRuntimeException(String
-		    .format("Errore nell'invio del messaggio con groupId %s in coda", groupId), ex,
-		    SacerErrorCategory.INTERNAL_ERROR);
-	} catch (JsonProcessingException ex) {
-	    throw new SacerRuntimeException(
-		    "Errore nella serializzazione in JSON del messaggio per la coda", ex,
-		    SacerErrorCategory.INTERNAL_ERROR);
-	}
+            Object objectToSerializeInJson, String tipoPayload, String groupId) {
+        TextMessage textMessage = null;
+        try (Connection connection = connectionFactory.createConnection();
+                Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+                MessageProducer messageProducer = session.createProducer(queue);) {
+            textMessage = session.createTextMessage();
+            textMessage.setStringProperty("JMSXGroupID", groupId);
+            // app selector
+            textMessage.setStringProperty(Costanti.JMSMsgProperties.MSG_K_APP, Constants.SACER);
+            textMessage.setStringProperty("tipoPayload", tipoPayload);
+            ObjectMapper jsonMapper = new ObjectMapper();
+            textMessage.setText(jsonMapper.writeValueAsString(objectToSerializeInJson));
+            log.debug("JmsProducer [JSON] {}", textMessage.getText());
+            messageProducer.send(textMessage);
+            log.debug(String.format("JmsProducer messaggio inviato con groupId %s", groupId));
+        } catch (JMSException ex) {
+            throw new SacerRuntimeException(String
+                    .format("Errore nell'invio del messaggio con groupId %s in coda", groupId), ex,
+                    SacerErrorCategory.INTERNAL_ERROR);
+        } catch (JsonProcessingException ex) {
+            throw new SacerRuntimeException(
+                    "Errore nella serializzazione in JSON del messaggio per la coda", ex,
+                    SacerErrorCategory.INTERNAL_ERROR);
+        }
     }
     // end MAC#27499
 }

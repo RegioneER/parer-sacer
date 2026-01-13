@@ -54,104 +54,104 @@ public class FasVLisUdInFasc implements Serializable {
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC")
     public String getCdKeyUnitaDoc() {
-	return this.cdKeyUnitaDoc;
+        return this.cdKeyUnitaDoc;
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     @Column(name = "CD_REGISTRO_KEY_UNITA_DOC")
     public String getCdRegistroKeyUnitaDoc() {
-	return this.cdRegistroKeyUnitaDoc;
+        return this.cdRegistroKeyUnitaDoc;
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE")
     public Date getDtCreazione() {
-	return this.dtCreazione;
+        return this.dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-	this.dtCreazione = dtCreazione;
+        this.dtCreazione = dtCreazione;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_UNITA_DOC")
     public Date getDtRegUnitaDoc() {
-	return this.dtRegUnitaDoc;
+        return this.dtRegUnitaDoc;
     }
 
     public void setDtRegUnitaDoc(Date dtRegUnitaDoc) {
-	this.dtRegUnitaDoc = dtRegUnitaDoc;
+        this.dtRegUnitaDoc = dtRegUnitaDoc;
     }
 
     @Column(name = "ID_USER_IAM_CORRENTE")
     public BigDecimal getIdUserIamCorrente() {
-	return this.idUserIamCorrente;
+        return this.idUserIamCorrente;
     }
 
     public void setIdUserIamCorrente(BigDecimal idUserIamCorrente) {
-	this.idUserIamCorrente = idUserIamCorrente;
+        this.idUserIamCorrente = idUserIamCorrente;
     }
 
     @Column(name = "NM_TIPO_DOC")
     public String getNmTipoDoc() {
-	return this.nmTipoDoc;
+        return this.nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	this.nmTipoDoc = nmTipoDoc;
+        this.nmTipoDoc = nmTipoDoc;
     }
 
     @Column(name = "NM_TIPO_UNITA_DOC")
     public String getNmTipoUnitaDoc() {
-	return this.nmTipoUnitaDoc;
+        return this.nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     @Column(name = "NI_POSIZIONE")
     public BigDecimal getNiPosizione() {
-	return this.niPosizione;
+        return this.niPosizione;
     }
 
     public void setNiPosizione(BigDecimal niPosizione) {
-	this.niPosizione = niPosizione;
+        this.niPosizione = niPosizione;
     }
 
     @Column(name = "TI_STATO_CONSERVAZIONE")
     public String getTiStatoConservazione() {
-	return this.tiStatoConservazione;
+        return this.tiStatoConservazione;
     }
 
     public void setTiStatoConservazione(String tiStatoConservazione) {
-	this.tiStatoConservazione = tiStatoConservazione;
+        this.tiStatoConservazione = tiStatoConservazione;
     }
 
     private FasVLisUdInFascId fasVLisUdInFascId;
 
     @EmbeddedId()
     public FasVLisUdInFascId getFasVLisUdInFascId() {
-	return fasVLisUdInFascId;
+        return fasVLisUdInFascId;
     }
 
     public void setFasVLisUdInFascId(FasVLisUdInFascId fasVLisUdInFascId) {
-	this.fasVLisUdInFascId = fasVLisUdInFascId;
+        this.fasVLisUdInFascId = fasVLisUdInFascId;
     }
 }

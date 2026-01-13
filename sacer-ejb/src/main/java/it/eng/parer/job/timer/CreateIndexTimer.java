@@ -44,97 +44,97 @@ public class CreateIndexTimer extends JobTimer {
     private CreateIndexTimer thisTimer;
 
     public CreateIndexTimer() {
-	super(JobConstants.JobEnum.CREAZIONE_INDICI_ELENCHI_VERS.name());
-	logger.debug("{} creato", CreateIndexTimer.class.getName());
+        super(JobConstants.JobEnum.CREAZIONE_INDICI_ELENCHI_VERS.name());
+        logger.debug("{} creato", CreateIndexTimer.class.getName());
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startSingleAction(String appplicationName) {
-	boolean existTimer = false;
+        boolean existTimer = false;
 
-	for (Timer timer : timerService.getTimers()) {
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		existTimer = true;
-	    }
-	}
-	if (!existTimer) {
-	    timerService.createTimer(TIME_DURATION, jobName);
-	}
+        for (Timer timer : timerService.getTimers()) {
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                existTimer = true;
+            }
+        }
+        if (!existTimer) {
+            timerService.createTimer(TIME_DURATION, jobName);
+        }
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startCronScheduled(CronSchedule sched, String appplicationName) {
-	boolean existTimer = false;
-	ScheduleExpression tmpScheduleExpression;
+        boolean existTimer = false;
+        ScheduleExpression tmpScheduleExpression;
 
-	for (Timer timer : timerService.getTimers()) {
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		existTimer = true;
-	    }
-	}
-	if (!existTimer) {
-	    logger.info("Schedulazione: Ore: {}", sched.getHour());
-	    logger.info("Schedulazione: Minuti: {}", sched.getMinute());
-	    logger.info("Schedulazione: DOW: {}", sched.getDayOfWeek());
-	    logger.info("Schedulazione: Mese: {}", sched.getMonth());
-	    logger.info("Schedulazione: DOM: {}", sched.getDayOfMonth());
+        for (Timer timer : timerService.getTimers()) {
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                existTimer = true;
+            }
+        }
+        if (!existTimer) {
+            logger.info("Schedulazione: Ore: {}", sched.getHour());
+            logger.info("Schedulazione: Minuti: {}", sched.getMinute());
+            logger.info("Schedulazione: DOW: {}", sched.getDayOfWeek());
+            logger.info("Schedulazione: Mese: {}", sched.getMonth());
+            logger.info("Schedulazione: DOM: {}", sched.getDayOfMonth());
 
-	    tmpScheduleExpression = new ScheduleExpression();
-	    tmpScheduleExpression.hour(sched.getHour());
-	    tmpScheduleExpression.minute(sched.getMinute());
-	    tmpScheduleExpression.dayOfWeek(sched.getDayOfWeek());
-	    tmpScheduleExpression.dayOfMonth(sched.getDayOfMonth());
-	    tmpScheduleExpression.month(sched.getMonth());
-	    logger.info("Lancio il timer CreateIndexTimer...");
-	    timerService.createCalendarTimer(tmpScheduleExpression,
-		    new TimerConfig(jobName, false));
-	}
+            tmpScheduleExpression = new ScheduleExpression();
+            tmpScheduleExpression.hour(sched.getHour());
+            tmpScheduleExpression.minute(sched.getMinute());
+            tmpScheduleExpression.dayOfWeek(sched.getDayOfWeek());
+            tmpScheduleExpression.dayOfMonth(sched.getDayOfMonth());
+            tmpScheduleExpression.month(sched.getMonth());
+            logger.info("Lancio il timer CreateIndexTimer...");
+            timerService.createCalendarTimer(tmpScheduleExpression,
+                    new TimerConfig(jobName, false));
+        }
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void stop(String appplicationName) {
-	for (Timer timer : timerService.getTimers()) {
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		timer.cancel();
-	    }
-	}
+        for (Timer timer : timerService.getTimers()) {
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                timer.cancel();
+            }
+        }
     }
 
     @Timeout
     public void doJob(Timer timer) {
-	if (timer.getInfo().equals(jobName)) {
-	    try {
-		thisTimer.startProcess(timer);
-	    } catch (Exception e) {
-		logger.error("Errore nell'esecuzione del job di creazione degli indici", e);
-	    }
-	}
+        if (timer.getInfo().equals(jobName)) {
+            try {
+                thisTimer.startProcess(timer);
+            } catch (Exception e) {
+                logger.error("Errore nell'esecuzione del job di creazione degli indici", e);
+            }
+        }
     }
 
     @Override
     public void startProcess(Timer timer) throws Exception {
-	logger.info("Job automatico per la creazione automatica indici avviato");
-	// Operazione ATOMICA di inizio schedulazione Job
-	LogJob logJob = jobHelper.writeAtomicLogJob(OpTypeEnum.CREAZIONE_INDICI_ELENCHI_VERS.name(),
-		OpTypeEnum.INIZIO_SCHEDULAZIONE.name());
-	try {
-	    indexEjb.buildIndex(logJob);
-	} catch (Exception e) {
-	    String message = null;
-	    if (e.getCause() != null) {
-		message = e.getCause().getMessage();
-	    }
-	    jobHelper.writeAtomicLogJob(OpTypeEnum.CREAZIONE_INDICI_ELENCHI_VERS.name(),
-		    OpTypeEnum.ERRORE.name(), message);
-	    logger.error("Errore nell'esecuzione del job di creazione automatica degli indici", e);
-	    logger.info("Timer cancellato");
-	    timer.cancel();
-	}
+        logger.info("Job automatico per la creazione automatica indici avviato");
+        // Operazione ATOMICA di inizio schedulazione Job
+        LogJob logJob = jobHelper.writeAtomicLogJob(OpTypeEnum.CREAZIONE_INDICI_ELENCHI_VERS.name(),
+                OpTypeEnum.INIZIO_SCHEDULAZIONE.name());
+        try {
+            indexEjb.buildIndex(logJob);
+        } catch (Exception e) {
+            String message = null;
+            if (e.getCause() != null) {
+                message = e.getCause().getMessage();
+            }
+            jobHelper.writeAtomicLogJob(OpTypeEnum.CREAZIONE_INDICI_ELENCHI_VERS.name(),
+                    OpTypeEnum.ERRORE.name(), message);
+            logger.error("Errore nell'esecuzione del job di creazione automatica degli indici", e);
+            logger.info("Timer cancellato");
+            timer.cancel();
+        }
     }
 }

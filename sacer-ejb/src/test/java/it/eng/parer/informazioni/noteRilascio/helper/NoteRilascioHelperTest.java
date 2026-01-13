@@ -38,73 +38,73 @@ public class NoteRilascioHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(NoteRilascioHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), NoteRilascioHelperTest.class,
-			NoteRilascioHelper.class));
+        return HelperTest.createEnterpriseArchive(NoteRilascioHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), NoteRilascioHelperTest.class,
+                        NoteRilascioHelper.class));
     }
 
     @Test
     public void getAplApplicByName_queryIsOk() {
-	String nmApplic = aString();
+        String nmApplic = aString();
 
-	helper.getAplApplicByName(nmApplic);
-	assertTrue(true);
+        helper.getAplApplicByName(nmApplic);
+        assertTrue(true);
 
     }
 
     @Test
     public void getAplApplic_queryIsOk() {
-	String name = "SACER";
-	helper.getAplApplic(name);
-	assertTrue(true);
+        String name = "SACER";
+        helper.getAplApplic(name);
+        assertTrue(true);
 
     }
 
     @Test
     public void getAplNoteRilascioList_queryIsOk() {
-	BigDecimal idApplic = aBigDecimal();
+        BigDecimal idApplic = aBigDecimal();
 
-	helper.getAplNoteRilascioList(idApplic);
-	assertTrue(true);
+        helper.getAplNoteRilascioList(idApplic);
+        assertTrue(true);
 
     }
 
     @Test
     public void getAplNotaRilascioByVersione_queryIsOk() {
-	String cdVersione = aString();
+        String cdVersione = aString();
 
-	helper.getAplNotaRilascioByVersione(cdVersione);
-	assertTrue(true);
+        helper.getAplNotaRilascioByVersione(cdVersione);
+        assertTrue(true);
 
     }
 
     @Test
     public void getAplNotaRilascioById_queryIsOk() {
-	BigDecimal idNotaRilascio = aBigDecimal();
+        BigDecimal idNotaRilascio = aBigDecimal();
 
-	helper.getAplNotaRilascioById(idNotaRilascio);
-	assertTrue(true);
+        helper.getAplNotaRilascioById(idNotaRilascio);
+        assertTrue(true);
 
     }
 
     @Test
     public void getAplApplicById_queryIsOk() {
-	BigDecimal idApplic = aBigDecimal();
+        BigDecimal idApplic = aBigDecimal();
 
-	helper.getAplApplicById(idApplic);
-	assertTrue(true);
+        helper.getAplApplicById(idApplic);
+        assertTrue(true);
 
     }
 
     @Test
     public void getAplNoteRilascioPrecList_queryIsOk() {
-	BigDecimal idApplic = aBigDecimal();
-	BigDecimal idNotaRilascio = aBigDecimal();
-	Date dtVersione = todayTs();
+        BigDecimal idApplic = aBigDecimal();
+        BigDecimal idNotaRilascio = aBigDecimal();
+        Date dtVersione = todayTs();
 
-	helper.getAplNoteRilascioPrecList(idApplic, idNotaRilascio, dtVersione);
-	assertTrue(true);
+        helper.getAplNoteRilascioPrecList(idApplic, idNotaRilascio, dtVersione);
+        assertTrue(true);
 
     }
 }

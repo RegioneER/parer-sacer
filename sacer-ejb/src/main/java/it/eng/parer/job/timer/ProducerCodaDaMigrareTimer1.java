@@ -33,7 +33,7 @@ import it.eng.parer.job.utils.JobConstants;
 @Lock(LockType.READ)
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class ProducerCodaDaMigrareTimer1 extends ProducerCodaDaMigrareTimerSuperclass {
 
     @EJB
@@ -44,44 +44,44 @@ public class ProducerCodaDaMigrareTimer1 extends ProducerCodaDaMigrareTimerSuper
      * costruttore col numero del timer ennesimo che si vuole deployare.
      */
     public ProducerCodaDaMigrareTimer1() {
-	super(JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE_1.name());
-	numeroJob = 1;
-	logger.debug("{} creato", ProducerCodaDaMigrareTimer1.class.getName() + numeroJob);
+        super(JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE_1.name());
+        numeroJob = 1;
+        logger.debug("{} creato", ProducerCodaDaMigrareTimer1.class.getName() + numeroJob);
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startSingleAction(String applicationName) {
-	super.startSingleAction(applicationName);
+        super.startSingleAction(applicationName);
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startCronScheduled(CronSchedule sched, String applicationName) {
-	super.startCronScheduled(sched, applicationName);
+        super.startCronScheduled(sched, applicationName);
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void stop(String applicationName) {
-	super.stop(applicationName);
+        super.stop(applicationName);
     }
 
     @Timeout
     @Override
     public void doJob(Timer timer) {
-	if (timer.getInfo().equals(jobName)) {
-	    try {
-		thisTimer.startProcess(timer);
-	    } catch (Exception e) {
-		logger.error("Errore nell'esecuzione del job di Producer coda da migrare [{}] ",
-			numeroJob, e);
-	    }
-	}
+        if (timer.getInfo().equals(jobName)) {
+            try {
+                thisTimer.startProcess(timer);
+            } catch (Exception e) {
+                logger.error("Errore nell'esecuzione del job di Producer coda da migrare [{}] ",
+                        numeroJob, e);
+            }
+        }
     }
 
     @Override
     public void startProcess(Timer timer) {
-	super.startProcess(timer);
+        super.startProcess(timer);
     }
 }

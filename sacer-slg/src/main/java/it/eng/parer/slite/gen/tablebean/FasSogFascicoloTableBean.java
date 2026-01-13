@@ -33,19 +33,19 @@ public class FasSogFascicoloTableBean extends AbstractBaseTable<FasSogFascicoloR
     public static FasSogFascicoloTableDescriptor TABLE_DESCRIPTOR = new FasSogFascicoloTableDescriptor();
 
     public FasSogFascicoloTableBean() {
-	super();
+        super();
     }
 
     protected FasSogFascicoloRowBean createRow() {
-	return new FasSogFascicoloRowBean();
+        return new FasSogFascicoloRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<FasSogFascicoloRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

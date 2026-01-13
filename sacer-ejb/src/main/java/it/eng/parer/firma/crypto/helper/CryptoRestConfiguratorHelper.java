@@ -67,100 +67,100 @@ public class CryptoRestConfiguratorHelper implements RestConfiguratorHelper {
     protected ConfigurationHelper configurationHelper;
 
     private Long getLongParameter(final String name) {
-	Long paramValue = null;
-	try {
-	    final String paramValueString = configurationHelper.getValoreParamApplicByApplic(name);
-	    if (paramValueString != null && paramValueString.matches(NUMBER_REGEXP)) {
-		paramValue = Long.parseLong(paramValueString);
-	    }
-	} catch (ParamApplicNotFoundException | NumberFormatException e) {
-	    log.warn(PARAMETRO_NON_TROVATO, name);
+        Long paramValue = null;
+        try {
+            final String paramValueString = configurationHelper.getValoreParamApplicByApplic(name);
+            if (paramValueString != null && paramValueString.matches(NUMBER_REGEXP)) {
+                paramValue = Long.parseLong(paramValueString);
+            }
+        } catch (ParamApplicNotFoundException | NumberFormatException e) {
+            log.warn(PARAMETRO_NON_TROVATO, name);
 
-	}
-	return paramValue;
+        }
+        return paramValue;
     }
 
     private Integer getIntParameter(final String name) {
-	Integer paramValue = null;
-	try {
-	    final String paramValueString = configurationHelper.getValoreParamApplicByApplic(name);
-	    if (paramValueString != null && paramValueString.matches(NUMBER_REGEXP)) {
-		paramValue = Integer.parseInt(paramValueString);
-	    }
+        Integer paramValue = null;
+        try {
+            final String paramValueString = configurationHelper.getValoreParamApplicByApplic(name);
+            if (paramValueString != null && paramValueString.matches(NUMBER_REGEXP)) {
+                paramValue = Integer.parseInt(paramValueString);
+            }
 
-	} catch (ParamApplicNotFoundException | NumberFormatException e) {
-	    log.warn(PARAMETRO_NON_TROVATO, name);
-	}
-	return paramValue;
+        } catch (ParamApplicNotFoundException | NumberFormatException e) {
+            log.warn(PARAMETRO_NON_TROVATO, name);
+        }
+        return paramValue;
     }
 
     private Boolean getBooleanParameter(final String name) {
-	Boolean paramValue = true;
-	try {
-	    final String boolParameterString = configurationHelper
-		    .getValoreParamApplicByApplic(name);
-	    paramValue = Boolean.parseBoolean(boolParameterString);
+        Boolean paramValue = true;
+        try {
+            final String boolParameterString = configurationHelper
+                    .getValoreParamApplicByApplic(name);
+            paramValue = Boolean.parseBoolean(boolParameterString);
 
-	} catch (ParamApplicNotFoundException e) {
-	    log.warn(PARAMETRO_NON_TROVATO, name);
+        } catch (ParamApplicNotFoundException e) {
+            log.warn(PARAMETRO_NON_TROVATO, name);
 
-	}
-	return paramValue;
+        }
+        return paramValue;
     }
 
     @Override
     public Long getRetryTimeoutParam() {
-	Long value = getLongParameter(CRYPTO_RETRY_TIMEOUT);
-	if (value != null && value < 2000L) {
-	    log.warn(
-		    "Attenzione, il parametro {} è stato configurato con un valore inferiore a 2 secondi.",
-		    CRYPTO_RETRY_TIMEOUT);
-	}
+        Long value = getLongParameter(CRYPTO_RETRY_TIMEOUT);
+        if (value != null && value < 2000L) {
+            log.warn(
+                    "Attenzione, il parametro {} è stato configurato con un valore inferiore a 2 secondi.",
+                    CRYPTO_RETRY_TIMEOUT);
+        }
 
-	return value;
+        return value;
     }
 
     @Override
     public Integer getMaxRetryParam() {
-	Integer value = getIntParameter(CRYPTO_MAX_TENTATIVI);
-	if (value != null && value < 2) {
-	    log.warn(
-		    "Attenzione, il parametro {} è stato configurato per un numero di tentativi inferiore a 2.",
-		    CRYPTO_MAX_TENTATIVI);
-	}
-	return value;
+        Integer value = getIntParameter(CRYPTO_MAX_TENTATIVI);
+        if (value != null && value < 2) {
+            log.warn(
+                    "Attenzione, il parametro {} è stato configurato per un numero di tentativi inferiore a 2.",
+                    CRYPTO_MAX_TENTATIVI);
+        }
+        return value;
     }
 
     @Override
     public Long getCircuitBreakerOpenTimeoutParam() {
-	return getLongParameter(CRYPTO_CIRCUIT_BREAKER_OPEN_TIMEOUT);
+        return getLongParameter(CRYPTO_CIRCUIT_BREAKER_OPEN_TIMEOUT);
     }
 
     @Override
     public Long getCircuitBreakerResetTimeoutParam() {
-	return getLongParameter(CRYPTO_CIRCUIT_BREAKER_RESET_TIMEOUT);
+        return getLongParameter(CRYPTO_CIRCUIT_BREAKER_RESET_TIMEOUT);
     }
 
     @Override
     public Long getPeriodoBackOffParam() {
-	return getLongParameter(CRYPTO_PERIODO_BACKOFF);
+        return getLongParameter(CRYPTO_PERIODO_BACKOFF);
     }
 
     @Override
     public Long getClientTimeoutInMinutesParam() {
-	Long value = getLongParameter(CRYPTO_CLIENT_TIMEOUT);
-	if (value != null && value < 2L) {
-	    log.warn(
-		    "Attenzione, il parametro {} è stato configurato con un valore inferiore a 2 minuti.",
-		    CRYPTO_CLIENT_TIMEOUT);
+        Long value = getLongParameter(CRYPTO_CLIENT_TIMEOUT);
+        if (value != null && value < 2L) {
+            log.warn(
+                    "Attenzione, il parametro {} è stato configurato con un valore inferiore a 2 minuti.",
+                    CRYPTO_CLIENT_TIMEOUT);
 
-	}
-	return value;
+        }
+        return value;
     }
 
     @Override
     public Boolean isCompositePolicyOptimisticParam() {
-	return getBooleanParameter(CRYPTO_COMPOSITE_POLICY_OPTIMISTIC);
+        return getBooleanParameter(CRYPTO_COMPOSITE_POLICY_OPTIMISTIC);
     }
 
     /**
@@ -171,20 +171,20 @@ public class CryptoRestConfiguratorHelper implements RestConfiguratorHelper {
      */
     @Override
     public List<String> endPoints() {
-	final List<String> endPointCL = new LinkedList<>();
-	final String endPointsString = configurationHelper
-		.getValoreParamApplicByApplic(CRYPTO_ENDPOINT);
-	Pattern.compile(ENDPOINT_SEPARATOR).splitAsStream(endPointsString).map(String::trim)
-		.forEach(endpoint -> {
-		    endPointCL.add(endpoint);
-		});
+        final List<String> endPointCL = new LinkedList<>();
+        final String endPointsString = configurationHelper
+                .getValoreParamApplicByApplic(CRYPTO_ENDPOINT);
+        Pattern.compile(ENDPOINT_SEPARATOR).splitAsStream(endPointsString).map(String::trim)
+                .forEach(endpoint -> {
+                    endPointCL.add(endpoint);
+                });
 
-	return endPointCL;
+        return endPointCL;
     }
 
     @Override
     public String preferredEndpoint() {
-	return endPoints().get(0);
+        return endPoints().get(0);
     }
 
 }

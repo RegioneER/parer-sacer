@@ -33,19 +33,19 @@ public class DecUsoModelloXsdDocTableBean extends AbstractBaseTable<DecUsoModell
     public static DecUsoModelloXsdUniDocTableDescriptor TABLE_DESCRIPTOR = new DecUsoModelloXsdUniDocTableDescriptor();
 
     public DecUsoModelloXsdDocTableBean() {
-	super();
+        super();
     }
 
     protected DecUsoModelloXsdDocRowBean createRow() {
-	return new DecUsoModelloXsdDocRowBean();
+        return new DecUsoModelloXsdDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecUsoModelloXsdDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

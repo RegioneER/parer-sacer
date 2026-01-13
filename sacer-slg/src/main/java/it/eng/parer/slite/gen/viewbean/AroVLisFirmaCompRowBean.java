@@ -36,189 +36,189 @@ public class AroVLisFirmaCompRowBean extends BaseRow implements JEEBaseRowInterf
     public static AroVLisFirmaCompTableDescriptor TABLE_DESCRIPTOR = new AroVLisFirmaCompTableDescriptor();
 
     public AroVLisFirmaCompRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdCompDoc() {
-	return getBigDecimal("id_comp_doc");
+        return getBigDecimal("id_comp_doc");
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	setObject("id_comp_doc", idCompDoc);
+        setObject("id_comp_doc", idCompDoc);
     }
 
     public BigDecimal getIdFirmaComp() {
-	return getBigDecimal("id_firma_comp");
+        return getBigDecimal("id_firma_comp");
     }
 
     public void setIdFirmaComp(BigDecimal idFirmaComp) {
-	setObject("id_firma_comp", idFirmaComp);
+        setObject("id_firma_comp", idFirmaComp);
     }
 
     public BigDecimal getPgFirma() {
-	return getBigDecimal("pg_firma");
+        return getBigDecimal("pg_firma");
     }
 
     public void setPgFirma(BigDecimal pgFirma) {
-	setObject("pg_firma", pgFirma);
+        setObject("pg_firma", pgFirma);
     }
 
     public String getCdFirmatario() {
-	return getString("cd_firmatario");
+        return getString("cd_firmatario");
     }
 
     public void setCdFirmatario(String cdFirmatario) {
-	setObject("cd_firmatario", cdFirmatario);
+        setObject("cd_firmatario", cdFirmatario);
     }
 
     public String getNmCognomeFirmatario() {
-	return getString("nm_cognome_firmatario");
+        return getString("nm_cognome_firmatario");
     }
 
     public void setNmCognomeFirmatario(String nmCognomeFirmatario) {
-	setObject("nm_cognome_firmatario", nmCognomeFirmatario);
+        setObject("nm_cognome_firmatario", nmCognomeFirmatario);
     }
 
     public String getNmFirmatario() {
-	return getString("nm_firmatario");
+        return getString("nm_firmatario");
     }
 
     public void setNmFirmatario(String nmFirmatario) {
-	setObject("nm_firmatario", nmFirmatario);
+        setObject("nm_firmatario", nmFirmatario);
     }
 
     public String getTiFormatoFirma() {
-	return getString("ti_formato_firma");
+        return getString("ti_formato_firma");
     }
 
     public void setTiFormatoFirma(String tiFormatoFirma) {
-	setObject("ti_formato_firma", tiFormatoFirma);
+        setObject("ti_formato_firma", tiFormatoFirma);
     }
 
     public String getTiEsitoContrConforme() {
-	return getString("ti_esito_contr_conforme");
+        return getString("ti_esito_contr_conforme");
     }
 
     public void setTiEsitoContrConforme(String tiEsitoContrConforme) {
-	setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
+        setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
     }
 
     public Timestamp getTmRifTempUsato() {
-	return getTimestamp("tm_rif_temp_usato");
+        return getTimestamp("tm_rif_temp_usato");
     }
 
     public void setTmRifTempUsato(Timestamp tmRifTempUsato) {
-	setObject("tm_rif_temp_usato", tmRifTempUsato);
+        setObject("tm_rif_temp_usato", tmRifTempUsato);
     }
 
     public String getTiRifTempUsato() {
-	return getString("ti_rif_temp_usato");
+        return getString("ti_rif_temp_usato");
     }
 
     public void setTiRifTempUsato(String tiRifTempUsato) {
-	setObject("ti_rif_temp_usato", tiRifTempUsato);
+        setObject("ti_rif_temp_usato", tiRifTempUsato);
     }
 
     public String getTiEsitoVerifFirma() {
-	return getString("ti_esito_verif_firma");
+        return getString("ti_esito_verif_firma");
     }
 
     public void setTiEsitoVerifFirma(String tiEsitoVerifFirma) {
-	setObject("ti_esito_verif_firma", tiEsitoVerifFirma);
+        setObject("ti_esito_verif_firma", tiEsitoVerifFirma);
     }
 
     public String getDsMsgEsitoVerifFirma() {
-	return getString("ds_msg_esito_verif_firma");
+        return getString("ds_msg_esito_verif_firma");
     }
 
     public void setDsMsgEsitoVerifFirma(String dsMsgEsitoVerifFirma) {
-	setObject("ds_msg_esito_verif_firma", dsMsgEsitoVerifFirma);
+        setObject("ds_msg_esito_verif_firma", dsMsgEsitoVerifFirma);
     }
 
     public String getTiEsitoVerifFirmaDtVers() {
-	return getString("ti_esito_verif_firma_dt_vers");
+        return getString("ti_esito_verif_firma_dt_vers");
     }
 
     public void setTiEsitoVerifFirmaDtVers(String tiEsitoVerifFirmaDtVers) {
-	setObject("ti_esito_verif_firma_dt_vers", tiEsitoVerifFirmaDtVers);
+        setObject("ti_esito_verif_firma_dt_vers", tiEsitoVerifFirmaDtVers);
     }
 
     public String getDsMsgVerifFirmaDtVers() {
-	return getString("ds_msg_verif_firma_dt_vers");
+        return getString("ds_msg_verif_firma_dt_vers");
     }
 
     public void setDsMsgVerifFirmaDtVers(String dsMsgVerifFirmaDtVers) {
-	setObject("ds_msg_verif_firma_dt_vers", dsMsgVerifFirmaDtVers);
+        setObject("ds_msg_verif_firma_dt_vers", dsMsgVerifFirmaDtVers);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVLisFirmaComp entity = (AroVLisFirmaComp) obj;
-	this.setIdCompDoc(entity.getIdCompDoc());
-	this.setIdFirmaComp(entity.getIdFirmaComp());
-	this.setPgFirma(entity.getPgFirma());
-	this.setCdFirmatario(entity.getCdFirmatario());
-	this.setNmCognomeFirmatario(entity.getNmCognomeFirmatario());
-	this.setNmFirmatario(entity.getNmFirmatario());
-	this.setTiFormatoFirma(entity.getTiFormatoFirma());
-	this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
-	if (entity.getTmRifTempUsato() != null) {
-	    this.setTmRifTempUsato(new Timestamp(entity.getTmRifTempUsato().getTime()));
-	}
-	this.setTiRifTempUsato(entity.getTiRifTempUsato());
-	this.setTiEsitoVerifFirma(entity.getTiEsitoVerifFirma());
-	this.setDsMsgEsitoVerifFirma(entity.getDsMsgEsitoVerifFirma());
-	this.setTiEsitoVerifFirmaDtVers(entity.getTiEsitoVerifFirmaDtVers());
-	this.setDsMsgVerifFirmaDtVers(entity.getDsMsgVerifFirmaDtVers());
+        AroVLisFirmaComp entity = (AroVLisFirmaComp) obj;
+        this.setIdCompDoc(entity.getIdCompDoc());
+        this.setIdFirmaComp(entity.getIdFirmaComp());
+        this.setPgFirma(entity.getPgFirma());
+        this.setCdFirmatario(entity.getCdFirmatario());
+        this.setNmCognomeFirmatario(entity.getNmCognomeFirmatario());
+        this.setNmFirmatario(entity.getNmFirmatario());
+        this.setTiFormatoFirma(entity.getTiFormatoFirma());
+        this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
+        if (entity.getTmRifTempUsato() != null) {
+            this.setTmRifTempUsato(new Timestamp(entity.getTmRifTempUsato().getTime()));
+        }
+        this.setTiRifTempUsato(entity.getTiRifTempUsato());
+        this.setTiEsitoVerifFirma(entity.getTiEsitoVerifFirma());
+        this.setDsMsgEsitoVerifFirma(entity.getDsMsgEsitoVerifFirma());
+        this.setTiEsitoVerifFirmaDtVers(entity.getTiEsitoVerifFirmaDtVers());
+        this.setDsMsgVerifFirmaDtVers(entity.getDsMsgVerifFirmaDtVers());
     }
 
     @Override
     public AroVLisFirmaComp rowBeanToEntity() {
-	AroVLisFirmaComp entity = new AroVLisFirmaComp();
-	entity.setIdCompDoc(this.getIdCompDoc());
-	entity.setIdFirmaComp(this.getIdFirmaComp());
-	entity.setPgFirma(this.getPgFirma());
-	entity.setCdFirmatario(this.getCdFirmatario());
-	entity.setNmCognomeFirmatario(this.getNmCognomeFirmatario());
-	entity.setNmFirmatario(this.getNmFirmatario());
-	entity.setTiFormatoFirma(this.getTiFormatoFirma());
-	entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
-	entity.setTmRifTempUsato(this.getTmRifTempUsato());
-	entity.setTiRifTempUsato(this.getTiRifTempUsato());
-	entity.setTiEsitoVerifFirma(this.getTiEsitoVerifFirma());
-	entity.setDsMsgEsitoVerifFirma(this.getDsMsgEsitoVerifFirma());
-	entity.setTiEsitoVerifFirmaDtVers(this.getTiEsitoVerifFirmaDtVers());
-	entity.setDsMsgVerifFirmaDtVers(this.getDsMsgVerifFirmaDtVers());
-	return entity;
+        AroVLisFirmaComp entity = new AroVLisFirmaComp();
+        entity.setIdCompDoc(this.getIdCompDoc());
+        entity.setIdFirmaComp(this.getIdFirmaComp());
+        entity.setPgFirma(this.getPgFirma());
+        entity.setCdFirmatario(this.getCdFirmatario());
+        entity.setNmCognomeFirmatario(this.getNmCognomeFirmatario());
+        entity.setNmFirmatario(this.getNmFirmatario());
+        entity.setTiFormatoFirma(this.getTiFormatoFirma());
+        entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
+        entity.setTmRifTempUsato(this.getTmRifTempUsato());
+        entity.setTiRifTempUsato(this.getTiRifTempUsato());
+        entity.setTiEsitoVerifFirma(this.getTiEsitoVerifFirma());
+        entity.setDsMsgEsitoVerifFirma(this.getDsMsgEsitoVerifFirma());
+        entity.setTiEsitoVerifFirmaDtVers(this.getTiEsitoVerifFirmaDtVers());
+        entity.setDsMsgVerifFirmaDtVers(this.getDsMsgVerifFirmaDtVers());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

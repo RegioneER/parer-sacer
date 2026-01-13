@@ -33,19 +33,19 @@ public class OrgAmbitoTerritTableBean extends AbstractBaseTable<OrgAmbitoTerritR
     public static OrgAmbitoTerritTableDescriptor TABLE_DESCRIPTOR = new OrgAmbitoTerritTableDescriptor();
 
     public OrgAmbitoTerritTableBean() {
-	super();
+        super();
     }
 
     protected OrgAmbitoTerritRowBean createRow() {
-	return new OrgAmbitoTerritRowBean();
+        return new OrgAmbitoTerritRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<OrgAmbitoTerritRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

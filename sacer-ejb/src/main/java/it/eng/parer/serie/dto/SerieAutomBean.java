@@ -27,56 +27,56 @@ public class SerieAutomBean {
     private final List<IntervalliSerieAutomBean> intervalli;
 
     public SerieAutomBean(BigDecimal niMesiCreazioneSerie) {
-	this.niMesiCreazioneSerie = niMesiCreazioneSerie;
-	this.niGiorniCalcolo = null;
-	this.numeroSerieDaCreare = 1;
-	this.numMesiIntervallo = 1;
-	this.tipoIntervallo = null;
-	this.intervalli = new ArrayList<>();
+        this.niMesiCreazioneSerie = niMesiCreazioneSerie;
+        this.niGiorniCalcolo = null;
+        this.numeroSerieDaCreare = 1;
+        this.numMesiIntervallo = 1;
+        this.tipoIntervallo = null;
+        this.intervalli = new ArrayList<>();
     }
 
     public BigDecimal getNiMesiCreazioneSerie() {
-	return niMesiCreazioneSerie;
+        return niMesiCreazioneSerie;
     }
 
     public void setNiMesiCreazioneSerie(BigDecimal niMesiCreazioneSerie) {
-	this.niMesiCreazioneSerie = niMesiCreazioneSerie;
+        this.niMesiCreazioneSerie = niMesiCreazioneSerie;
     }
 
     public BigDecimal getNiGiorniCalcolo() {
-	return niGiorniCalcolo;
+        return niGiorniCalcolo;
     }
 
     public void setNiGiorniCalcolo(BigDecimal niGiorniCalcolo) {
-	this.niGiorniCalcolo = niGiorniCalcolo;
+        this.niGiorniCalcolo = niGiorniCalcolo;
     }
 
     public int getNumeroSerieDaCreare() {
-	return numeroSerieDaCreare;
+        return numeroSerieDaCreare;
     }
 
     public void setNumeroSerieDaCreare(int numeroSerieDaCreare) {
-	this.numeroSerieDaCreare = numeroSerieDaCreare;
+        this.numeroSerieDaCreare = numeroSerieDaCreare;
     }
 
     public String getTipoIntervallo() {
-	return tipoIntervallo;
+        return tipoIntervallo;
     }
 
     public void setTipoIntervallo(String tipoIntervallo) {
-	this.tipoIntervallo = tipoIntervallo;
+        this.tipoIntervallo = tipoIntervallo;
     }
 
     public int getNumMesiIntervallo() {
-	return numMesiIntervallo;
+        return numMesiIntervallo;
     }
 
     public void setNumMesiIntervallo(int numMesiIntervallo) {
-	this.numMesiIntervallo = numMesiIntervallo;
+        this.numMesiIntervallo = numMesiIntervallo;
     }
 
     public List<IntervalliSerieAutomBean> getIntervalli() {
-	return intervalli;
+        return intervalli;
     }
 
 }

@@ -67,118 +67,118 @@ public class DecTipoSerieUd implements Serializable {
 
     @Column(name = "ID_TIPO_SERIE_UD")
     @GenericGenerator(name = "SDEC_TIPO_SERIE_UD_ID_TIPO_SERIE_UD_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_SERIE_UD"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_SERIE_UD"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_SERIE_UD_ID_TIPO_SERIE_UD_GENERATOR")
     public Long getIdTipoSerieUd() {
-	return this.idTipoSerieUd;
+        return this.idTipoSerieUd;
     }
 
     public void setIdTipoSerieUd(Long idTipoSerieUd) {
-	this.idTipoSerieUd = idTipoSerieUd;
+        this.idTipoSerieUd = idTipoSerieUd;
     }
 
     @Column(name = "FL_SEL_UNITA_DOC_ANNUL", columnDefinition = "char(1)")
     public String getFlSelUnitaDocAnnul() {
-	return this.flSelUnitaDocAnnul;
+        return this.flSelUnitaDocAnnul;
     }
 
     public void setFlSelUnitaDocAnnul(String flSelUnitaDocAnnul) {
-	this.flSelUnitaDocAnnul = flSelUnitaDocAnnul;
+        this.flSelUnitaDocAnnul = flSelUnitaDocAnnul;
     }
 
     @OneToMany(mappedBy = "decTipoSerieUd", cascade = CascadeType.PERSIST)
     public List<DecFiltroSelUd> getDecFiltroSelUds() {
-	return this.decFiltroSelUds;
+        return this.decFiltroSelUds;
     }
 
     public void setDecFiltroSelUds(List<DecFiltroSelUd> decFiltroSelUds) {
-	this.decFiltroSelUds = decFiltroSelUds;
+        this.decFiltroSelUds = decFiltroSelUds;
     }
 
     public DecFiltroSelUd addDecFiltroSelUd(DecFiltroSelUd decFiltroSelUd) {
-	getDecFiltroSelUds().add(decFiltroSelUd);
-	decFiltroSelUd.setDecTipoSerieUd(this);
-	return decFiltroSelUd;
+        getDecFiltroSelUds().add(decFiltroSelUd);
+        decFiltroSelUd.setDecTipoSerieUd(this);
+        return decFiltroSelUd;
     }
 
     public DecFiltroSelUd removeDecFiltroSelUd(DecFiltroSelUd decFiltroSelUd) {
-	getDecFiltroSelUds().remove(decFiltroSelUd);
-	decFiltroSelUd.setDecTipoSerieUd(null);
-	return decFiltroSelUd;
+        getDecFiltroSelUds().remove(decFiltroSelUd);
+        decFiltroSelUd.setDecTipoSerieUd(null);
+        return decFiltroSelUd;
     }
 
     @OneToMany(mappedBy = "decTipoSerieUd", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     public List<DecFiltroSelUdAttb> getDecFiltroSelUdAttbs() {
-	return this.decFiltroSelUdAttbs;
+        return this.decFiltroSelUdAttbs;
     }
 
     public void setDecFiltroSelUdAttbs(List<DecFiltroSelUdAttb> decFiltroSelUdAttbs) {
-	this.decFiltroSelUdAttbs = decFiltroSelUdAttbs;
+        this.decFiltroSelUdAttbs = decFiltroSelUdAttbs;
     }
 
     public DecFiltroSelUdAttb addDecFiltroSelUdAttb(DecFiltroSelUdAttb decFiltroSelUdAttb) {
-	getDecFiltroSelUdAttbs().add(decFiltroSelUdAttb);
-	decFiltroSelUdAttb.setDecTipoSerieUd(this);
-	return decFiltroSelUdAttb;
+        getDecFiltroSelUdAttbs().add(decFiltroSelUdAttb);
+        decFiltroSelUdAttb.setDecTipoSerieUd(this);
+        return decFiltroSelUdAttb;
     }
 
     public DecFiltroSelUdAttb removeDecFiltroSelUdAttb(DecFiltroSelUdAttb decFiltroSelUdAttb) {
-	getDecFiltroSelUdAttbs().remove(decFiltroSelUdAttb);
-	decFiltroSelUdAttb.setDecTipoSerieUd(null);
-	return decFiltroSelUdAttb;
+        getDecFiltroSelUdAttbs().remove(decFiltroSelUdAttb);
+        decFiltroSelUdAttb.setDecTipoSerieUd(null);
+        return decFiltroSelUdAttb;
     }
 
     @OneToMany(mappedBy = "decTipoSerieUd", cascade = CascadeType.PERSIST)
     public List<DecOutSelUd> getDecOutSelUds() {
-	return this.decOutSelUds;
+        return this.decOutSelUds;
     }
 
     public void setDecOutSelUds(List<DecOutSelUd> decOutSelUds) {
-	this.decOutSelUds = decOutSelUds;
+        this.decOutSelUds = decOutSelUds;
     }
 
     public DecOutSelUd addDecOutSelUd(DecOutSelUd decOutSelUd) {
-	getDecOutSelUds().add(decOutSelUd);
-	decOutSelUd.setDecTipoSerieUd(this);
-	return decOutSelUd;
+        getDecOutSelUds().add(decOutSelUd);
+        decOutSelUd.setDecTipoSerieUd(this);
+        return decOutSelUd;
     }
 
     public DecOutSelUd removeDecOutSelUd(DecOutSelUd decOutSelUd) {
-	getDecOutSelUds().remove(decOutSelUd);
-	decOutSelUd.setDecTipoSerieUd(null);
-	return decOutSelUd;
+        getDecOutSelUds().remove(decOutSelUd);
+        decOutSelUd.setDecTipoSerieUd(null);
+        return decOutSelUd;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_REGISTRO_UNITA_DOC")
     public DecRegistroUnitaDoc getDecRegistroUnitaDoc() {
-	return this.decRegistroUnitaDoc;
+        return this.decRegistroUnitaDoc;
     }
 
     public void setDecRegistroUnitaDoc(DecRegistroUnitaDoc decRegistroUnitaDoc) {
-	this.decRegistroUnitaDoc = decRegistroUnitaDoc;
+        this.decRegistroUnitaDoc = decRegistroUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_SERIE")
     public DecTipoSerie getDecTipoSerie() {
-	return this.decTipoSerie;
+        return this.decTipoSerie;
     }
 
     public void setDecTipoSerie(DecTipoSerie decTipoSerie) {
-	this.decTipoSerie = decTipoSerie;
+        this.decTipoSerie = decTipoSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_UNITA_DOC")
     public DecTipoUnitaDoc getDecTipoUnitaDoc() {
-	return this.decTipoUnitaDoc;
+        return this.decTipoUnitaDoc;
     }
 
     public void setDecTipoUnitaDoc(DecTipoUnitaDoc decTipoUnitaDoc) {
-	this.decTipoUnitaDoc = decTipoUnitaDoc;
+        this.decTipoUnitaDoc = decTipoUnitaDoc;
     }
 
 }

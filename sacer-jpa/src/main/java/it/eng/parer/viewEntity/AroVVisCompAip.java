@@ -73,292 +73,292 @@ public class AroVVisCompAip implements Serializable {
 
     @Column(name = "CD_ENCODING_HASH_FILE_CALC")
     public String getCdEncodingHashFileCalc() {
-	return this.cdEncodingHashFileCalc;
+        return this.cdEncodingHashFileCalc;
     }
 
     public void setCdEncodingHashFileCalc(String cdEncodingHashFileCalc) {
-	this.cdEncodingHashFileCalc = cdEncodingHashFileCalc;
+        this.cdEncodingHashFileCalc = cdEncodingHashFileCalc;
     }
 
     @Column(name = "DL_URN_COMP_VERS")
     public String getDlUrnCompVers() {
-	return this.dlUrnCompVers;
+        return this.dlUrnCompVers;
     }
 
     public void setDlUrnCompVers(String dlUrnCompVers) {
-	this.dlUrnCompVers = dlUrnCompVers;
+        this.dlUrnCompVers = dlUrnCompVers;
     }
 
     @Column(name = "DS_ALGO_HASH_FILE_CALC")
     public String getDsAlgoHashFileCalc() {
-	return this.dsAlgoHashFileCalc;
+        return this.dsAlgoHashFileCalc;
     }
 
     public void setDsAlgoHashFileCalc(String dsAlgoHashFileCalc) {
-	this.dsAlgoHashFileCalc = dsAlgoHashFileCalc;
+        this.dsAlgoHashFileCalc = dsAlgoHashFileCalc;
     }
 
     @Column(name = "DS_ESITO_VERIF_FIRME_DT_VERS")
     public String getDsEsitoVerifFirmeDtVers() {
-	return this.dsEsitoVerifFirmeDtVers;
+        return this.dsEsitoVerifFirmeDtVers;
     }
 
     public void setDsEsitoVerifFirmeDtVers(String dsEsitoVerifFirmeDtVers) {
-	this.dsEsitoVerifFirmeDtVers = dsEsitoVerifFirmeDtVers;
+        this.dsEsitoVerifFirmeDtVers = dsEsitoVerifFirmeDtVers;
     }
 
     @Column(name = "DS_FORMATO_RAPPR_CALC")
     public String getDsFormatoRapprCalc() {
-	return this.dsFormatoRapprCalc;
+        return this.dsFormatoRapprCalc;
     }
 
     public void setDsFormatoRapprCalc(String dsFormatoRapprCalc) {
-	this.dsFormatoRapprCalc = dsFormatoRapprCalc;
+        this.dsFormatoRapprCalc = dsFormatoRapprCalc;
     }
 
     @Column(name = "DS_FORMATO_RAPPR_ESTESO_CALC")
     public String getDsFormatoRapprEstesoCalc() {
-	return this.dsFormatoRapprEstesoCalc;
+        return this.dsFormatoRapprEstesoCalc;
     }
 
     public void setDsFormatoRapprEstesoCalc(String dsFormatoRapprEstesoCalc) {
-	this.dsFormatoRapprEstesoCalc = dsFormatoRapprEstesoCalc;
+        this.dsFormatoRapprEstesoCalc = dsFormatoRapprEstesoCalc;
     }
 
     @Column(name = "DS_FORMATO_RAPPR_FILE_DOC")
     public String getDsFormatoRapprFileDoc() {
-	return this.dsFormatoRapprFileDoc;
+        return this.dsFormatoRapprFileDoc;
     }
 
     public void setDsFormatoRapprFileDoc(String dsFormatoRapprFileDoc) {
-	this.dsFormatoRapprFileDoc = dsFormatoRapprFileDoc;
+        this.dsFormatoRapprFileDoc = dsFormatoRapprFileDoc;
     }
 
     @Column(name = "DS_HASH_FILE_CALC")
     public String getDsHashFileCalc() {
-	return this.dsHashFileCalc;
+        return this.dsHashFileCalc;
     }
 
     public void setDsHashFileCalc(String dsHashFileCalc) {
-	this.dsHashFileCalc = dsHashFileCalc;
+        this.dsHashFileCalc = dsHashFileCalc;
     }
 
     @Column(name = "DS_HASH_FILE_VERS")
     public String getDsHashFileVers() {
-	return this.dsHashFileVers;
+        return this.dsHashFileVers;
     }
 
     public void setDsHashFileVers(String dsHashFileVers) {
-	this.dsHashFileVers = dsHashFileVers;
+        this.dsHashFileVers = dsHashFileVers;
     }
 
     @Column(name = "DS_ID_COMP_VERS")
     public String getDsIdCompVers() {
-	return this.dsIdCompVers;
+        return this.dsIdCompVers;
     }
 
     public void setDsIdCompVers(String dsIdCompVers) {
-	this.dsIdCompVers = dsIdCompVers;
+        this.dsIdCompVers = dsIdCompVers;
     }
 
     @Column(name = "DS_MSG_ESITO_CONTR_FORMATO")
     public String getDsMsgEsitoContrFormato() {
-	return this.dsMsgEsitoContrFormato;
+        return this.dsMsgEsitoContrFormato;
     }
 
     public void setDsMsgEsitoContrFormato(String dsMsgEsitoContrFormato) {
-	this.dsMsgEsitoContrFormato = dsMsgEsitoContrFormato;
+        this.dsMsgEsitoContrFormato = dsMsgEsitoContrFormato;
     }
 
     @Column(name = "DS_MSG_ESITO_VERIF_FIRME")
     public String getDsMsgEsitoVerifFirme() {
-	return this.dsMsgEsitoVerifFirme;
+        return this.dsMsgEsitoVerifFirme;
     }
 
     public void setDsMsgEsitoVerifFirme(String dsMsgEsitoVerifFirme) {
-	this.dsMsgEsitoVerifFirme = dsMsgEsitoVerifFirme;
+        this.dsMsgEsitoVerifFirme = dsMsgEsitoVerifFirme;
     }
 
     @Column(name = "DS_NOME_COMP_VERS")
     public String getDsNomeCompVers() {
-	return this.dsNomeCompVers;
+        return this.dsNomeCompVers;
     }
 
     public void setDsNomeCompVers(String dsNomeCompVers) {
-	this.dsNomeCompVers = dsNomeCompVers;
+        this.dsNomeCompVers = dsNomeCompVers;
     }
 
     @Column(name = "DS_RIF_TEMP_VERS")
     public String getDsRifTempVers() {
-	return this.dsRifTempVers;
+        return this.dsRifTempVers;
     }
 
     public void setDsRifTempVers(String dsRifTempVers) {
-	this.dsRifTempVers = dsRifTempVers;
+        this.dsRifTempVers = dsRifTempVers;
     }
 
     @Column(name = "DS_URN_COMP_CALC")
     public String getDsUrnCompCalc() {
-	return this.dsUrnCompCalc;
+        return this.dsUrnCompCalc;
     }
 
     public void setDsUrnCompCalc(String dsUrnCompCalc) {
-	this.dsUrnCompCalc = dsUrnCompCalc;
+        this.dsUrnCompCalc = dsUrnCompCalc;
     }
 
     @Column(name = "FL_COMP_FIRMATO", columnDefinition = "char(1)")
     public String getFlCompFirmato() {
-	return this.flCompFirmato;
+        return this.flCompFirmato;
     }
 
     public void setFlCompFirmato(String flCompFirmato) {
-	this.flCompFirmato = flCompFirmato;
+        this.flCompFirmato = flCompFirmato;
     }
 
     @Column(name = "FL_NO_CALC_FMT_VERIF_FIRME", columnDefinition = "char(1)")
     public String getFlNoCalcFmtVerifFirme() {
-	return this.flNoCalcFmtVerifFirme;
+        return this.flNoCalcFmtVerifFirme;
     }
 
     public void setFlNoCalcFmtVerifFirme(String flNoCalcFmtVerifFirme) {
-	this.flNoCalcFmtVerifFirme = flNoCalcFmtVerifFirme;
+        this.flNoCalcFmtVerifFirme = flNoCalcFmtVerifFirme;
     }
 
     @Column(name = "FL_NO_CALC_HASH_FILE", columnDefinition = "char(1)")
     public String getFlNoCalcHashFile() {
-	return this.flNoCalcHashFile;
+        return this.flNoCalcHashFile;
     }
 
     public void setFlNoCalcHashFile(String flNoCalcHashFile) {
-	this.flNoCalcHashFile = flNoCalcHashFile;
+        this.flNoCalcHashFile = flNoCalcHashFile;
     }
 
     @Column(name = "FL_RIF_TEMP_DATA_FIRMA_VERS", columnDefinition = "char(1)")
     public String getFlRifTempDataFirmaVers() {
-	return this.flRifTempDataFirmaVers;
+        return this.flRifTempDataFirmaVers;
     }
 
     public void setFlRifTempDataFirmaVers(String flRifTempDataFirmaVers) {
-	this.flRifTempDataFirmaVers = flRifTempDataFirmaVers;
+        this.flRifTempDataFirmaVers = flRifTempDataFirmaVers;
     }
 
     @Id
     @Column(name = "ID_COMP_DOC")
     public BigDecimal getIdCompDoc() {
-	return this.idCompDoc;
+        return this.idCompDoc;
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	this.idCompDoc = idCompDoc;
+        this.idCompDoc = idCompDoc;
     }
 
     @Column(name = "NI_ORD_COMP_DOC")
     public BigDecimal getNiOrdCompDoc() {
-	return this.niOrdCompDoc;
+        return this.niOrdCompDoc;
     }
 
     public void setNiOrdCompDoc(BigDecimal niOrdCompDoc) {
-	this.niOrdCompDoc = niOrdCompDoc;
+        this.niOrdCompDoc = niOrdCompDoc;
     }
 
     @Column(name = "NI_SIZE_FILE_CALC")
     public BigDecimal getNiSizeFileCalc() {
-	return this.niSizeFileCalc;
+        return this.niSizeFileCalc;
     }
 
     public void setNiSizeFileCalc(BigDecimal niSizeFileCalc) {
-	this.niSizeFileCalc = niSizeFileCalc;
+        this.niSizeFileCalc = niSizeFileCalc;
     }
 
     @Column(name = "NM_FORMATO_CALC")
     public String getNmFormatoCalc() {
-	return this.nmFormatoCalc;
+        return this.nmFormatoCalc;
     }
 
     public void setNmFormatoCalc(String nmFormatoCalc) {
-	this.nmFormatoCalc = nmFormatoCalc;
+        this.nmFormatoCalc = nmFormatoCalc;
     }
 
     @Column(name = "NM_FORMATO_VERS")
     public String getNmFormatoVers() {
-	return this.nmFormatoVers;
+        return this.nmFormatoVers;
     }
 
     public void setNmFormatoVers(String nmFormatoVers) {
-	this.nmFormatoVers = nmFormatoVers;
+        this.nmFormatoVers = nmFormatoVers;
     }
 
     @Column(name = "NM_MIMETYPE_FILE")
     public String getNmMimetypeFile() {
-	return this.nmMimetypeFile;
+        return this.nmMimetypeFile;
     }
 
     public void setNmMimetypeFile(String nmMimetypeFile) {
-	this.nmMimetypeFile = nmMimetypeFile;
+        this.nmMimetypeFile = nmMimetypeFile;
     }
 
     @Column(name = "NM_TIPO_COMP_DOC")
     public String getNmTipoCompDoc() {
-	return this.nmTipoCompDoc;
+        return this.nmTipoCompDoc;
     }
 
     public void setNmTipoCompDoc(String nmTipoCompDoc) {
-	this.nmTipoCompDoc = nmTipoCompDoc;
+        this.nmTipoCompDoc = nmTipoCompDoc;
     }
 
     @Column(name = "NM_TIPO_RAPPR_COMP")
     public String getNmTipoRapprComp() {
-	return this.nmTipoRapprComp;
+        return this.nmTipoRapprComp;
     }
 
     public void setNmTipoRapprComp(String nmTipoRapprComp) {
-	this.nmTipoRapprComp = nmTipoRapprComp;
+        this.nmTipoRapprComp = nmTipoRapprComp;
     }
 
     @Column(name = "TI_ESITO_CONTR_FORMATO_FILE")
     public String getTiEsitoContrFormatoFile() {
-	return this.tiEsitoContrFormatoFile;
+        return this.tiEsitoContrFormatoFile;
     }
 
     public void setTiEsitoContrFormatoFile(String tiEsitoContrFormatoFile) {
-	this.tiEsitoContrFormatoFile = tiEsitoContrFormatoFile;
+        this.tiEsitoContrFormatoFile = tiEsitoContrFormatoFile;
     }
 
     @Column(name = "TI_ESITO_VERIF_FIRME")
     public String getTiEsitoVerifFirme() {
-	return this.tiEsitoVerifFirme;
+        return this.tiEsitoVerifFirme;
     }
 
     public void setTiEsitoVerifFirme(String tiEsitoVerifFirme) {
-	this.tiEsitoVerifFirme = tiEsitoVerifFirme;
+        this.tiEsitoVerifFirme = tiEsitoVerifFirme;
     }
 
     @Column(name = "TI_ESITO_VERIF_FIRME_DT_VERS")
     public String getTiEsitoVerifFirmeDtVers() {
-	return this.tiEsitoVerifFirmeDtVers;
+        return this.tiEsitoVerifFirmeDtVers;
     }
 
     public void setTiEsitoVerifFirmeDtVers(String tiEsitoVerifFirmeDtVers) {
-	this.tiEsitoVerifFirmeDtVers = tiEsitoVerifFirmeDtVers;
+        this.tiEsitoVerifFirmeDtVers = tiEsitoVerifFirmeDtVers;
     }
 
     @Column(name = "TI_SUPPORTO_COMP")
     public String getTiSupportoComp() {
-	return this.tiSupportoComp;
+        return this.tiSupportoComp;
     }
 
     public void setTiSupportoComp(String tiSupportoComp) {
-	this.tiSupportoComp = tiSupportoComp;
+        this.tiSupportoComp = tiSupportoComp;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TM_RIF_TEMP_VERS")
     public Date getTmRifTempVers() {
-	return this.tmRifTempVers;
+        return this.tmRifTempVers;
     }
 
     public void setTmRifTempVers(Date tmRifTempVers) {
-	this.tmRifTempVers = tmRifTempVers;
+        this.tmRifTempVers = tmRifTempVers;
     }
 
 }

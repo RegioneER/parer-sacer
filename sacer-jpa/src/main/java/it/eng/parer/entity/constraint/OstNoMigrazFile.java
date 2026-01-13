@@ -23,15 +23,15 @@ public final class OstNoMigrazFile {
     }
 
     public enum TiCausaleNoMigraz {
-	CONTENUTO_NON_SELEZIONATO, FILE_NON_BLOB, SUPPORTO_NON_FILE
+        CONTENUTO_NON_SELEZIONATO, FILE_NON_BLOB, SUPPORTO_NON_FILE
     }
 
     public enum TiSupportoComp {
-	FILE
+        FILE
     }
 
     public enum TiSaveFile {
-	BLOB
+        BLOB
     }
 
 }

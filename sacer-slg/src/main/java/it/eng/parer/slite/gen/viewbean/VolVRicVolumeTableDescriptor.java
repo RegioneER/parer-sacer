@@ -73,80 +73,80 @@ public class VolVRicVolumeTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_ID_VOLUME_CONSERV, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT_VOLUME,
-		new ColumnDescriptor(COL_ID_STRUT_VOLUME, Types.DECIMAL, 22, true));
-	map.put(COL_NM_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_NM_VOLUME_CONSERV, Types.VARCHAR, 100, true));
-	map.put(COL_DS_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_DS_VOLUME_CONSERV, Types.VARCHAR, 254, true));
-	map.put(COL_TI_STATO_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_TI_STATO_VOLUME_CONSERV, Types.VARCHAR, 20, true));
-	map.put(COL_DT_CREAZIONE, new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, true));
-	map.put(COL_NI_MAX_UNITA_DOC,
-		new ColumnDescriptor(COL_NI_MAX_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NI_MAX_COMP, new ColumnDescriptor(COL_NI_MAX_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_TI_SCAD_CHIUS_VOLUME,
-		new ColumnDescriptor(COL_TI_SCAD_CHIUS_VOLUME, Types.VARCHAR, 20, true));
-	map.put(COL_NI_TEMPO_SCAD_CHIUS,
-		new ColumnDescriptor(COL_NI_TEMPO_SCAD_CHIUS, Types.DECIMAL, 22, true));
-	map.put(COL_TI_TEMPO_SCAD_CHIUS,
-		new ColumnDescriptor(COL_TI_TEMPO_SCAD_CHIUS, Types.VARCHAR, 20, true));
-	map.put(COL_NI_TEMPO_SCAD_CHIUS_FIRME,
-		new ColumnDescriptor(COL_NI_TEMPO_SCAD_CHIUS_FIRME, Types.DECIMAL, 22, true));
-	map.put(COL_TI_TEMPO_SCAD_CHIUS_FIRME,
-		new ColumnDescriptor(COL_TI_TEMPO_SCAD_CHIUS_FIRME, Types.VARCHAR, 20, true));
-	map.put(COL_NI_UNITA_DOC_VOLUME,
-		new ColumnDescriptor(COL_NI_UNITA_DOC_VOLUME, Types.DECIMAL, 22, true));
-	map.put(COL_NI_COMP_VOLUME,
-		new ColumnDescriptor(COL_NI_COMP_VOLUME, Types.DECIMAL, 22, true));
-	map.put(COL_NI_KB_SIZE, new ColumnDescriptor(COL_NI_KB_SIZE, Types.DECIMAL, 22, true));
-	map.put(COL_DT_SCAD_CHIUS,
-		new ColumnDescriptor(COL_DT_SCAD_CHIUS, Types.TIMESTAMP, 7, true));
-	map.put(COL_NT_INDICE_VOLUME,
-		new ColumnDescriptor(COL_NT_INDICE_VOLUME, Types.VARCHAR, 2000, true));
-	map.put(COL_DT_CHIUS, new ColumnDescriptor(COL_DT_CHIUS, Types.TIMESTAMP, 7, true));
-	map.put(COL_DL_MOTIVO_CHIUS,
-		new ColumnDescriptor(COL_DL_MOTIVO_CHIUS, Types.VARCHAR, 1024, true));
-	map.put(COL_DT_FIRMA_MARCA,
-		new ColumnDescriptor(COL_DT_FIRMA_MARCA, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_PRESENZA_FIRME,
-		new ColumnDescriptor(COL_TI_PRESENZA_FIRME, Types.VARCHAR, 20, true));
-	map.put(COL_TI_VAL_FIRME, new ColumnDescriptor(COL_TI_VAL_FIRME, Types.VARCHAR, 20, true));
-	map.put(COL_CD_VERSIONE_INDICE,
-		new ColumnDescriptor(COL_CD_VERSIONE_INDICE, Types.VARCHAR, 100, true));
-	map.put(COL_NT_VOLUME_CHIUSO,
-		new ColumnDescriptor(COL_NT_VOLUME_CHIUSO, Types.VARCHAR, 2000, true));
-	map.put(COL_ID_CRITERIO_RAGGR,
-		new ColumnDescriptor(COL_ID_CRITERIO_RAGGR, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT_CRITERIO,
-		new ColumnDescriptor(COL_ID_STRUT_CRITERIO, Types.DECIMAL, 22, true));
-	map.put(COL_NM_CRITERIO_RAGGR,
-		new ColumnDescriptor(COL_NM_CRITERIO_RAGGR, Types.VARCHAR, 100, true));
-	map.put(COL_ID_APPART_UNITA_DOC_VOLUME,
-		new ColumnDescriptor(COL_ID_APPART_UNITA_DOC_VOLUME, Types.DECIMAL, 22, true));
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_STRUT_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_AA_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_ID_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_ID_VOLUME_CONSERV, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT_VOLUME,
+                new ColumnDescriptor(COL_ID_STRUT_VOLUME, Types.DECIMAL, 22, true));
+        map.put(COL_NM_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_NM_VOLUME_CONSERV, Types.VARCHAR, 100, true));
+        map.put(COL_DS_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_DS_VOLUME_CONSERV, Types.VARCHAR, 254, true));
+        map.put(COL_TI_STATO_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_TI_STATO_VOLUME_CONSERV, Types.VARCHAR, 20, true));
+        map.put(COL_DT_CREAZIONE, new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, true));
+        map.put(COL_NI_MAX_UNITA_DOC,
+                new ColumnDescriptor(COL_NI_MAX_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NI_MAX_COMP, new ColumnDescriptor(COL_NI_MAX_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_TI_SCAD_CHIUS_VOLUME,
+                new ColumnDescriptor(COL_TI_SCAD_CHIUS_VOLUME, Types.VARCHAR, 20, true));
+        map.put(COL_NI_TEMPO_SCAD_CHIUS,
+                new ColumnDescriptor(COL_NI_TEMPO_SCAD_CHIUS, Types.DECIMAL, 22, true));
+        map.put(COL_TI_TEMPO_SCAD_CHIUS,
+                new ColumnDescriptor(COL_TI_TEMPO_SCAD_CHIUS, Types.VARCHAR, 20, true));
+        map.put(COL_NI_TEMPO_SCAD_CHIUS_FIRME,
+                new ColumnDescriptor(COL_NI_TEMPO_SCAD_CHIUS_FIRME, Types.DECIMAL, 22, true));
+        map.put(COL_TI_TEMPO_SCAD_CHIUS_FIRME,
+                new ColumnDescriptor(COL_TI_TEMPO_SCAD_CHIUS_FIRME, Types.VARCHAR, 20, true));
+        map.put(COL_NI_UNITA_DOC_VOLUME,
+                new ColumnDescriptor(COL_NI_UNITA_DOC_VOLUME, Types.DECIMAL, 22, true));
+        map.put(COL_NI_COMP_VOLUME,
+                new ColumnDescriptor(COL_NI_COMP_VOLUME, Types.DECIMAL, 22, true));
+        map.put(COL_NI_KB_SIZE, new ColumnDescriptor(COL_NI_KB_SIZE, Types.DECIMAL, 22, true));
+        map.put(COL_DT_SCAD_CHIUS,
+                new ColumnDescriptor(COL_DT_SCAD_CHIUS, Types.TIMESTAMP, 7, true));
+        map.put(COL_NT_INDICE_VOLUME,
+                new ColumnDescriptor(COL_NT_INDICE_VOLUME, Types.VARCHAR, 2000, true));
+        map.put(COL_DT_CHIUS, new ColumnDescriptor(COL_DT_CHIUS, Types.TIMESTAMP, 7, true));
+        map.put(COL_DL_MOTIVO_CHIUS,
+                new ColumnDescriptor(COL_DL_MOTIVO_CHIUS, Types.VARCHAR, 1024, true));
+        map.put(COL_DT_FIRMA_MARCA,
+                new ColumnDescriptor(COL_DT_FIRMA_MARCA, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_PRESENZA_FIRME,
+                new ColumnDescriptor(COL_TI_PRESENZA_FIRME, Types.VARCHAR, 20, true));
+        map.put(COL_TI_VAL_FIRME, new ColumnDescriptor(COL_TI_VAL_FIRME, Types.VARCHAR, 20, true));
+        map.put(COL_CD_VERSIONE_INDICE,
+                new ColumnDescriptor(COL_CD_VERSIONE_INDICE, Types.VARCHAR, 100, true));
+        map.put(COL_NT_VOLUME_CHIUSO,
+                new ColumnDescriptor(COL_NT_VOLUME_CHIUSO, Types.VARCHAR, 2000, true));
+        map.put(COL_ID_CRITERIO_RAGGR,
+                new ColumnDescriptor(COL_ID_CRITERIO_RAGGR, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT_CRITERIO,
+                new ColumnDescriptor(COL_ID_STRUT_CRITERIO, Types.DECIMAL, 22, true));
+        map.put(COL_NM_CRITERIO_RAGGR,
+                new ColumnDescriptor(COL_NM_CRITERIO_RAGGR, Types.VARCHAR, 100, true));
+        map.put(COL_ID_APPART_UNITA_DOC_VOLUME,
+                new ColumnDescriptor(COL_ID_APPART_UNITA_DOC_VOLUME, Types.DECIMAL, 22, true));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_STRUT_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_AA_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -65,70 +65,70 @@ public class MonitorCoda {
      * @throws JMSException errore generico
      */
     public List<DLQMsgInfo> retrieveMsgInQueue(String queue, String messageSelector)
-	    throws JMSException {
-	List<DLQMsgInfo> msgList = new ArrayList<>();
-	QueueBrowser queueBrowser = null;
-	try (QueueConnection queueConn = connFactory.createQueueConnection();
-		QueueSession queueSession = queueConn.createQueueSession(true,
-			Session.AUTO_ACKNOWLEDGE);) {
-	    if (queue.equals(NomeCoda.dmqQueue.name())) {
-		queueBrowser = queueSession.createBrowser(dmqQueue, messageSelector);
-	    } else {
-		// coda non presente
-	    }
+            throws JMSException {
+        List<DLQMsgInfo> msgList = new ArrayList<>();
+        QueueBrowser queueBrowser = null;
+        try (QueueConnection queueConn = connFactory.createQueueConnection();
+                QueueSession queueSession = queueConn.createQueueSession(true,
+                        Session.AUTO_ACKNOWLEDGE);) {
+            if (queue.equals(NomeCoda.dmqQueue.name())) {
+                queueBrowser = queueSession.createBrowser(dmqQueue, messageSelector);
+            } else {
+                // coda non presente
+            }
 
-	    Enumeration<?> e = queueBrowser.getEnumeration();
-	    while (e.hasMoreElements()) {
+            Enumeration<?> e = queueBrowser.getEnumeration();
+            while (e.hasMoreElements()) {
 
-		DLQMsgInfo infoCoda = new DLQMsgInfo();
-		Message objMessage = (Message) e.nextElement();
+                DLQMsgInfo infoCoda = new DLQMsgInfo();
+                Message objMessage = (Message) e.nextElement();
 
-		/**
-		 * JMS Message Metadata custom info (PARER) a) tipoPayload b) statoElenco
-		 */
-		if (objMessage
-			.getStringProperty(Costanti.JMSMsgProperties.MSG_K_PAYLOADTYPE) != null) {
-		    infoCoda.setPayloadType(objMessage
-			    .getStringProperty(Costanti.JMSMsgProperties.MSG_K_PAYLOADTYPE));
-		} else {
-		    // continue; // passa al messaggio successivo (Nota: avendo inserito un
-		    // selettore, caso che non
-		    // // dovrebbe mai verificarsi)
-		    infoCoda.setPayloadType(PAYLOAD_NOTYPE);
-		}
-		if (objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_APP) != null) {
-		    infoCoda.setFromApplication(
-			    objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_APP));
-		}
-		if (objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_STATUS) != null) {
-		    infoCoda.setState(
-			    objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_STATUS));
-		} else /* no state */ {
-		    infoCoda.setState(PAYLOAD_NOSTATE);
-		}
-		infoCoda.setSentTimestamp(new Date(objMessage.getJMSTimestamp()));
+                /**
+                 * JMS Message Metadata custom info (PARER) a) tipoPayload b) statoElenco
+                 */
+                if (objMessage
+                        .getStringProperty(Costanti.JMSMsgProperties.MSG_K_PAYLOADTYPE) != null) {
+                    infoCoda.setPayloadType(objMessage
+                            .getStringProperty(Costanti.JMSMsgProperties.MSG_K_PAYLOADTYPE));
+                } else {
+                    // continue; // passa al messaggio successivo (Nota: avendo inserito un
+                    // selettore, caso che non
+                    // // dovrebbe mai verificarsi)
+                    infoCoda.setPayloadType(PAYLOAD_NOTYPE);
+                }
+                if (objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_APP) != null) {
+                    infoCoda.setFromApplication(
+                            objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_APP));
+                }
+                if (objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_STATUS) != null) {
+                    infoCoda.setState(
+                            objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_STATUS));
+                } else /* no state */ {
+                    infoCoda.setState(PAYLOAD_NOSTATE);
+                }
+                infoCoda.setSentTimestamp(new Date(objMessage.getJMSTimestamp()));
 
-		infoCoda.setMessageID(objMessage.getJMSMessageID());
+                infoCoda.setMessageID(objMessage.getJMSMessageID());
 
-		if (objMessage.getStringProperty("JMSXDeliveryCount") != null) {
-		    infoCoda.setDeliveryCount(
-			    Integer.parseInt(objMessage.getStringProperty("JMSXDeliveryCount")));
-		}
+                if (objMessage.getStringProperty("JMSXDeliveryCount") != null) {
+                    infoCoda.setDeliveryCount(
+                            Integer.parseInt(objMessage.getStringProperty("JMSXDeliveryCount")));
+                }
 
-		msgList.add(infoCoda);
-	    }
-	} catch (Exception ex) {
-	    throw new JMSException("Errore nella lettura dalla coda '" + queue);
-	} finally {
-	    if (queueBrowser != null) {
-		queueBrowser.close();
-	    }
-	}
-	return msgList;
+                msgList.add(infoCoda);
+            }
+        } catch (Exception ex) {
+            throw new JMSException("Errore nella lettura dalla coda '" + queue);
+        } finally {
+            if (queueBrowser != null) {
+                queueBrowser.close();
+            }
+        }
+        return msgList;
     }
 
     public enum NomeCoda {
-	dmqQueue;
+        dmqQueue;
     }
 
 }

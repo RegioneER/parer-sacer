@@ -31,91 +31,91 @@ import it.eng.parer.web.helper.HelperTest;
 public class ElenchiSignatureHelperTest extends HelperTest<ElenchiSignatureHelper> {
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(ElenchiSignatureHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			ElenchiSignatureHelperTest.class, ElenchiSignatureHelper.class,
-			SigningHelper.class, ConfigurationHelper.class));
+        return HelperTest.createEnterpriseArchive(ElenchiSignatureHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        ElenchiSignatureHelperTest.class, ElenchiSignatureHelper.class,
+                        SigningHelper.class, ConfigurationHelper.class));
     }
 
     @Test
     void createSessioneFirma_queryIsOk() {
-	long userId = aLong();
-	try {
-	    helper.createSessioneFirma(userId);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertExceptionMessage(e, "org.hibernate.exception.ConstraintViolationException");
-	}
+        long userId = aLong();
+        try {
+            helper.createSessioneFirma(userId);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertExceptionMessage(e, "org.hibernate.exception.ConstraintViolationException");
+        }
     }
 
     @Test
     void getActiveSessionsByUser_IamUser_queryIsOk() {
-	IamUser user = myUserIam();
-	helper.getActiveSessionsByUser(user);
-	assertTrue(true);
+        IamUser user = myUserIam();
+        helper.getActiveSessionsByUser(user);
+        assertTrue(true);
     }
 
     private IamUser myUserIam() {
-	IamUser user = new IamUser();
-	user.setIdUserIam(aLong());
-	return user;
+        IamUser user = new IamUser();
+        user.setIdUserIam(aLong());
+        return user;
     }
 
     @Test
     void getActiveSessionsByUser_long_queryIsOk() {
-	long userId = aLong();
-	helper.getActiveSessionsByUser(userId);
-	assertTrue(true);
+        long userId = aLong();
+        helper.getActiveSessionsByUser(userId);
+        assertTrue(true);
     }
 
     @Test
     void getBlockedSessionsByUser_IamUser_queryIsOk() {
-	IamUser user = myUserIam();
-	helper.getBlockedSessionsByUser(user);
-	assertTrue(true);
+        IamUser user = myUserIam();
+        helper.getBlockedSessionsByUser(user);
+        assertTrue(true);
     }
 
     @Test
     void getBlockedSessionsByUser_long_queryIsOk() {
-	long userId = aLong();
-	helper.getBlockedSessionsByUser(userId);
-	assertTrue(true);
+        long userId = aLong();
+        helper.getBlockedSessionsByUser(userId);
+        assertTrue(true);
     }
 
     @Test
     void isAllFileSigned_HsmSessioneFirma_queryIsOk() {
-	HsmSessioneFirma session = aHsmSessioneFirma();
-	helper.isAllFileSigned(session);
-	assertTrue(true);
+        HsmSessioneFirma session = aHsmSessioneFirma();
+        helper.isAllFileSigned(session);
+        assertTrue(true);
     }
 
     private HsmSessioneFirma aHsmSessioneFirma() {
-	HsmSessioneFirma session = new HsmSessioneFirma();
-	session.setIdSessioneFirma(aLong());
-	return session;
+        HsmSessioneFirma session = new HsmSessioneFirma();
+        session.setIdSessioneFirma(aLong());
+        return session;
     }
 
     @Test
     void isAllFileSigned_long_queryIsOk() {
-	long sessionId = aLong();
-	helper.isAllFileSigned(sessionId);
-	assertTrue(true);
+        long sessionId = aLong();
+        helper.isAllFileSigned(sessionId);
+        assertTrue(true);
     }
 
     @Test
     void findElencoSessione_HsmSessioneFirma_long_queryIsOk() {
-	HsmSessioneFirma session = aHsmSessioneFirma();
-	long idElenco = aLong();
-	helper.findElencoSessione(session, idElenco);
-	assertTrue(true);
+        HsmSessioneFirma session = aHsmSessioneFirma();
+        long idElenco = aLong();
+        helper.findElencoSessione(session, idElenco);
+        assertTrue(true);
     }
 
     @Test
     void findElencoSessione_long_long_queryIsOk() {
-	long sessionId = aLong();
-	long idElenco = aLong();
-	helper.findElencoSessione(sessionId, idElenco);
-	assertTrue(true);
+        long sessionId = aLong();
+        long idElenco = aLong();
+        helper.findElencoSessione(sessionId, idElenco);
+        assertTrue(true);
     }
 }

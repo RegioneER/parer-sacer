@@ -33,19 +33,19 @@ public class AroContenutoCompTableBean extends AbstractBaseTable<AroContenutoCom
     public static AroContenutoCompTableDescriptor TABLE_DESCRIPTOR = new AroContenutoCompTableDescriptor();
 
     public AroContenutoCompTableBean() {
-	super();
+        super();
     }
 
     protected AroContenutoCompRowBean createRow() {
-	return new AroContenutoCompRowBean();
+        return new AroContenutoCompRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroContenutoCompRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -63,54 +63,54 @@ public class AroVRicRichAnnvrsTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
-	map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
-	map.put(COL_ID_RICH_ANNUL_VERS,
-		new ColumnDescriptor(COL_ID_RICH_ANNUL_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_CD_RICH_ANNUL_VERS,
-		new ColumnDescriptor(COL_CD_RICH_ANNUL_VERS, Types.VARCHAR, 100, true));
-	map.put(COL_DS_RICH_ANNUL_VERS,
-		new ColumnDescriptor(COL_DS_RICH_ANNUL_VERS, Types.VARCHAR, 254, true));
-	map.put(COL_NT_RICH_ANNUL_VERS,
-		new ColumnDescriptor(COL_NT_RICH_ANNUL_VERS, Types.VARCHAR, 2000, true));
-	map.put(COL_DT_CREAZIONE_RICH_ANNUL_VERS,
-		new ColumnDescriptor(COL_DT_CREAZIONE_RICH_ANNUL_VERS, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_CREAZIONE_RICH_ANNUL_VERS,
-		new ColumnDescriptor(COL_TI_CREAZIONE_RICH_ANNUL_VERS, Types.VARCHAR, 30, true));
-	map.put(COL_FL_IMMEDIATA, new ColumnDescriptor(COL_FL_IMMEDIATA, Types.VARCHAR, 1, true));
-	map.put(COL_TI_STATO_RICH_ANNUL_VERS_COR,
-		new ColumnDescriptor(COL_TI_STATO_RICH_ANNUL_VERS_COR, Types.VARCHAR, 30, true));
-	map.put(COL_ID_ITEM_RICH_ANNUL_VERS,
-		new ColumnDescriptor(COL_ID_ITEM_RICH_ANNUL_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_AA_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_FL_ANNUL_PING, new ColumnDescriptor(COL_FL_ANNUL_PING, Types.VARCHAR, 1, true));
-	map.put(COL_FL_NON_ANNUL, new ColumnDescriptor(COL_FL_NON_ANNUL, Types.VARCHAR, 1, true));
-	map.put(COL_NI_ITEM, new ColumnDescriptor(COL_NI_ITEM, Types.DECIMAL, 22, true));
-	map.put(COL_NI_ITEM_PING, new ColumnDescriptor(COL_NI_ITEM_PING, Types.DECIMAL, 22, true));
-	map.put(COL_NI_ITEM_NON_ANNUL,
-		new ColumnDescriptor(COL_NI_ITEM_NON_ANNUL, Types.DECIMAL, 22, true));
+        map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
+        map.put(COL_ID_AMBIENTE, new ColumnDescriptor(COL_ID_AMBIENTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
+        map.put(COL_ID_RICH_ANNUL_VERS,
+                new ColumnDescriptor(COL_ID_RICH_ANNUL_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_CD_RICH_ANNUL_VERS,
+                new ColumnDescriptor(COL_CD_RICH_ANNUL_VERS, Types.VARCHAR, 100, true));
+        map.put(COL_DS_RICH_ANNUL_VERS,
+                new ColumnDescriptor(COL_DS_RICH_ANNUL_VERS, Types.VARCHAR, 254, true));
+        map.put(COL_NT_RICH_ANNUL_VERS,
+                new ColumnDescriptor(COL_NT_RICH_ANNUL_VERS, Types.VARCHAR, 2000, true));
+        map.put(COL_DT_CREAZIONE_RICH_ANNUL_VERS,
+                new ColumnDescriptor(COL_DT_CREAZIONE_RICH_ANNUL_VERS, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_CREAZIONE_RICH_ANNUL_VERS,
+                new ColumnDescriptor(COL_TI_CREAZIONE_RICH_ANNUL_VERS, Types.VARCHAR, 30, true));
+        map.put(COL_FL_IMMEDIATA, new ColumnDescriptor(COL_FL_IMMEDIATA, Types.VARCHAR, 1, true));
+        map.put(COL_TI_STATO_RICH_ANNUL_VERS_COR,
+                new ColumnDescriptor(COL_TI_STATO_RICH_ANNUL_VERS_COR, Types.VARCHAR, 30, true));
+        map.put(COL_ID_ITEM_RICH_ANNUL_VERS,
+                new ColumnDescriptor(COL_ID_ITEM_RICH_ANNUL_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_AA_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_FL_ANNUL_PING, new ColumnDescriptor(COL_FL_ANNUL_PING, Types.VARCHAR, 1, true));
+        map.put(COL_FL_NON_ANNUL, new ColumnDescriptor(COL_FL_NON_ANNUL, Types.VARCHAR, 1, true));
+        map.put(COL_NI_ITEM, new ColumnDescriptor(COL_NI_ITEM, Types.DECIMAL, 22, true));
+        map.put(COL_NI_ITEM_PING, new ColumnDescriptor(COL_NI_ITEM_PING, Types.DECIMAL, 22, true));
+        map.put(COL_NI_ITEM_NON_ANNUL,
+                new ColumnDescriptor(COL_NI_ITEM_NON_ANNUL, Types.DECIMAL, 22, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

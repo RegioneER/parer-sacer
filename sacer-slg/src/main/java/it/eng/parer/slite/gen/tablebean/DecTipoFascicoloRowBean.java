@@ -37,125 +37,125 @@ public class DecTipoFascicoloRowBean extends BaseRow implements JEEBaseRowInterf
     public static DecTipoFascicoloTableDescriptor TABLE_DESCRIPTOR = new DecTipoFascicoloTableDescriptor();
 
     public DecTipoFascicoloRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdTipoFascicolo() {
-	return getBigDecimal("id_tipo_fascicolo");
+        return getBigDecimal("id_tipo_fascicolo");
     }
 
     public void setIdTipoFascicolo(BigDecimal idTipoFascicolo) {
-	setObject("id_tipo_fascicolo", idTipoFascicolo);
+        setObject("id_tipo_fascicolo", idTipoFascicolo);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getNmTipoFascicolo() {
-	return getString("nm_tipo_fascicolo");
+        return getString("nm_tipo_fascicolo");
     }
 
     public void setNmTipoFascicolo(String nmTipoFascicolo) {
-	setObject("nm_tipo_fascicolo", nmTipoFascicolo);
+        setObject("nm_tipo_fascicolo", nmTipoFascicolo);
     }
 
     public String getDsTipoFascicolo() {
-	return getString("ds_tipo_fascicolo");
+        return getString("ds_tipo_fascicolo");
     }
 
     public void setDsTipoFascicolo(String dsTipoFascicolo) {
-	setObject("ds_tipo_fascicolo", dsTipoFascicolo);
+        setObject("ds_tipo_fascicolo", dsTipoFascicolo);
     }
 
     public Timestamp getDtIstituz() {
-	return getTimestamp("dt_istituz");
+        return getTimestamp("dt_istituz");
     }
 
     public void setDtIstituz(Timestamp dtIstituz) {
-	setObject("dt_istituz", dtIstituz);
+        setObject("dt_istituz", dtIstituz);
     }
 
     public Timestamp getDtSoppres() {
-	return getTimestamp("dt_soppres");
+        return getTimestamp("dt_soppres");
     }
 
     public void setDtSoppres(Timestamp dtSoppres) {
-	setObject("dt_soppres", dtSoppres);
+        setObject("dt_soppres", dtSoppres);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecTipoFascicolo entity = (DecTipoFascicolo) obj;
+        DecTipoFascicolo entity = (DecTipoFascicolo) obj;
 
-	this.setIdTipoFascicolo(entity.getIdTipoFascicolo() == null ? null
-		: BigDecimal.valueOf(entity.getIdTipoFascicolo()));
+        this.setIdTipoFascicolo(entity.getIdTipoFascicolo() == null ? null
+                : BigDecimal.valueOf(entity.getIdTipoFascicolo()));
 
-	if (entity.getOrgStrut() != null) {
-	    this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
-	}
+        if (entity.getOrgStrut() != null) {
+            this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
+        }
 
-	this.setNmTipoFascicolo(entity.getNmTipoFascicolo());
-	this.setDsTipoFascicolo(entity.getDsTipoFascicolo());
-	if (entity.getDtIstituz() != null) {
-	    this.setDtIstituz(new Timestamp(entity.getDtIstituz().getTime()));
-	}
-	if (entity.getDtSoppres() != null) {
-	    this.setDtSoppres(new Timestamp(entity.getDtSoppres().getTime()));
-	}
+        this.setNmTipoFascicolo(entity.getNmTipoFascicolo());
+        this.setDsTipoFascicolo(entity.getDsTipoFascicolo());
+        if (entity.getDtIstituz() != null) {
+            this.setDtIstituz(new Timestamp(entity.getDtIstituz().getTime()));
+        }
+        if (entity.getDtSoppres() != null) {
+            this.setDtSoppres(new Timestamp(entity.getDtSoppres().getTime()));
+        }
     }
 
     @Override
     public DecTipoFascicolo rowBeanToEntity() {
-	DecTipoFascicolo entity = new DecTipoFascicolo();
-	if (this.getIdTipoFascicolo() != null) {
-	    entity.setIdTipoFascicolo(this.getIdTipoFascicolo().longValue());
-	}
-	if (this.getIdStrut() != null) {
-	    if (entity.getOrgStrut() == null) {
-		entity.setOrgStrut(new OrgStrut());
-	    }
-	    entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
-	}
-	entity.setNmTipoFascicolo(this.getNmTipoFascicolo());
-	entity.setDsTipoFascicolo(this.getDsTipoFascicolo());
-	entity.setDtIstituz(this.getDtIstituz());
-	entity.setDtSoppres(this.getDtSoppres());
-	return entity;
+        DecTipoFascicolo entity = new DecTipoFascicolo();
+        if (this.getIdTipoFascicolo() != null) {
+            entity.setIdTipoFascicolo(this.getIdTipoFascicolo().longValue());
+        }
+        if (this.getIdStrut() != null) {
+            if (entity.getOrgStrut() == null) {
+                entity.setOrgStrut(new OrgStrut());
+            }
+            entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
+        }
+        entity.setNmTipoFascicolo(this.getNmTipoFascicolo());
+        entity.setDsTipoFascicolo(this.getDsTipoFascicolo());
+        entity.setDtIstituz(this.getDtIstituz());
+        entity.setDtSoppres(this.getDtSoppres());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

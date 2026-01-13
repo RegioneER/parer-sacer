@@ -56,37 +56,37 @@ public class DecTipoRapprAmmesso implements Serializable {
     @Column(name = "ID_TIPO_RAPPR_AMMESSO")
     @XmlID
     @GenericGenerator(name = "SDEC_TIPO_RAPPR_AMMESSO_ID_TIPO_RAPPR_AMMESSO_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_RAPPR_AMMESSO"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_RAPPR_AMMESSO"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_RAPPR_AMMESSO_ID_TIPO_RAPPR_AMMESSO_GENERATOR")
     public Long getIdTipoRapprAmmesso() {
-	return this.idTipoRapprAmmesso;
+        return this.idTipoRapprAmmesso;
     }
 
     public void setIdTipoRapprAmmesso(Long idTipoRapprAmmesso) {
-	this.idTipoRapprAmmesso = idTipoRapprAmmesso;
+        this.idTipoRapprAmmesso = idTipoRapprAmmesso;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_COMP_DOC")
     @XmlInverseReference(mappedBy = "decTipoRapprAmmessos")
     public DecTipoCompDoc getDecTipoCompDoc() {
-	return this.decTipoCompDoc;
+        return this.decTipoCompDoc;
     }
 
     public void setDecTipoCompDoc(DecTipoCompDoc decTipoCompDoc) {
-	this.decTipoCompDoc = decTipoCompDoc;
+        this.decTipoCompDoc = decTipoCompDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_RAPPR_COMP")
     @XmlInverseReference(mappedBy = "decTipoRapprAmmessos")
     public DecTipoRapprComp getDecTipoRapprComp() {
-	return this.decTipoRapprComp;
+        return this.decTipoRapprComp;
     }
 
     public void setDecTipoRapprComp(DecTipoRapprComp decTipoRapprComp) {
-	this.decTipoRapprComp = decTipoRapprComp;
+        this.decTipoRapprComp = decTipoRapprComp;
     }
 
 }

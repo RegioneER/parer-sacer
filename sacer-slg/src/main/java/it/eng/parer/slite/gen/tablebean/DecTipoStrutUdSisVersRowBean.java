@@ -37,105 +37,105 @@ public class DecTipoStrutUdSisVersRowBean extends BaseRow implements JEEBaseRowI
     public static DecTipoStrutUdSisVersTableDescriptor TABLE_DESCRIPTOR = new DecTipoStrutUdSisVersTableDescriptor();
 
     public DecTipoStrutUdSisVersRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdTipoStrutUdSisVers() {
-	return getBigDecimal("id_tipo_strut_ud_sis_vers");
+        return getBigDecimal("id_tipo_strut_ud_sis_vers");
     }
 
     public void setIdTipoStrutUdSisVers(BigDecimal idTipoStrutUdSisVers) {
-	setObject("id_tipo_strut_ud_sis_vers", idTipoStrutUdSisVers);
+        setObject("id_tipo_strut_ud_sis_vers", idTipoStrutUdSisVers);
     }
 
     public BigDecimal getIdTipoStrutUnitaDoc() {
-	return getBigDecimal("id_tipo_strut_unita_doc");
+        return getBigDecimal("id_tipo_strut_unita_doc");
     }
 
     public void setIdTipoStrutUnitaDoc(BigDecimal idTipoStrutUnitaDoc) {
-	setObject("id_tipo_strut_unita_doc", idTipoStrutUnitaDoc);
+        setObject("id_tipo_strut_unita_doc", idTipoStrutUnitaDoc);
     }
 
     public BigDecimal getIdSistemaVersante() {
-	return getBigDecimal("id_sistema_versante");
+        return getBigDecimal("id_sistema_versante");
     }
 
     public void setIdSistemaVersante(BigDecimal idSistemaVersante) {
-	setObject("id_sistema_versante", idSistemaVersante);
+        setObject("id_sistema_versante", idSistemaVersante);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecTipoStrutUdSisVer entity = (DecTipoStrutUdSisVer) obj;
+        DecTipoStrutUdSisVer entity = (DecTipoStrutUdSisVer) obj;
 
-	this.setIdTipoStrutUdSisVers(entity.getIdTipoStrutUdSisVers() == null ? null
-		: BigDecimal.valueOf(entity.getIdTipoStrutUdSisVers()));
+        this.setIdTipoStrutUdSisVers(entity.getIdTipoStrutUdSisVers() == null ? null
+                : BigDecimal.valueOf(entity.getIdTipoStrutUdSisVers()));
 
-	if (entity.getDecTipoStrutUnitaDoc() != null) {
-	    this.setIdTipoStrutUnitaDoc(
-		    new BigDecimal(entity.getDecTipoStrutUnitaDoc().getIdTipoStrutUnitaDoc()));
-	}
+        if (entity.getDecTipoStrutUnitaDoc() != null) {
+            this.setIdTipoStrutUnitaDoc(
+                    new BigDecimal(entity.getDecTipoStrutUnitaDoc().getIdTipoStrutUnitaDoc()));
+        }
 
-	// this.setIdSistemaVersante(entity.getIdSistemaVersante());
-	if (entity.getAplSistemaVersante() != null) {
-	    this.setIdSistemaVersante(
-		    new BigDecimal(entity.getAplSistemaVersante().getIdSistemaVersante()));
-	}
+        // this.setIdSistemaVersante(entity.getIdSistemaVersante());
+        if (entity.getAplSistemaVersante() != null) {
+            this.setIdSistemaVersante(
+                    new BigDecimal(entity.getAplSistemaVersante().getIdSistemaVersante()));
+        }
 
     }
 
     @Override
     public DecTipoStrutUdSisVer rowBeanToEntity() {
-	DecTipoStrutUdSisVer entity = new DecTipoStrutUdSisVer();
-	if (this.getIdTipoStrutUdSisVers() != null) {
-	    entity.setIdTipoStrutUdSisVers(this.getIdTipoStrutUdSisVers().longValue());
-	}
-	if (this.getIdTipoStrutUnitaDoc() != null) {
-	    if (entity.getDecTipoStrutUnitaDoc() == null) {
-		entity.setDecTipoStrutUnitaDoc(new DecTipoStrutUnitaDoc());
-	    }
-	    entity.getDecTipoStrutUnitaDoc()
-		    .setIdTipoStrutUnitaDoc(this.getIdTipoStrutUnitaDoc().longValue());
-	}
-	// entity.setIdSistemaVersante(this.getIdSistemaVersante());
-	if (this.getIdSistemaVersante() != null) {
-	    if (entity.getAplSistemaVersante() == null) {
-		entity.setAplSistemaVersante(new AplSistemaVersante());
-	    }
-	    entity.getAplSistemaVersante()
-		    .setIdSistemaVersante(this.getIdSistemaVersante().longValue());
-	}
-	return entity;
+        DecTipoStrutUdSisVer entity = new DecTipoStrutUdSisVer();
+        if (this.getIdTipoStrutUdSisVers() != null) {
+            entity.setIdTipoStrutUdSisVers(this.getIdTipoStrutUdSisVers().longValue());
+        }
+        if (this.getIdTipoStrutUnitaDoc() != null) {
+            if (entity.getDecTipoStrutUnitaDoc() == null) {
+                entity.setDecTipoStrutUnitaDoc(new DecTipoStrutUnitaDoc());
+            }
+            entity.getDecTipoStrutUnitaDoc()
+                    .setIdTipoStrutUnitaDoc(this.getIdTipoStrutUnitaDoc().longValue());
+        }
+        // entity.setIdSistemaVersante(this.getIdSistemaVersante());
+        if (this.getIdSistemaVersante() != null) {
+            if (entity.getAplSistemaVersante() == null) {
+                entity.setAplSistemaVersante(new AplSistemaVersante());
+            }
+            entity.getAplSistemaVersante()
+                    .setIdSistemaVersante(this.getIdSistemaVersante().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

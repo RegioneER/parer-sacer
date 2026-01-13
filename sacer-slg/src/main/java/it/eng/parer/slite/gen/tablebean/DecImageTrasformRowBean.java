@@ -37,140 +37,140 @@ public class DecImageTrasformRowBean extends BaseRow implements JEEBaseRowInterf
     public static DecImageTrasformTableDescriptor TABLE_DESCRIPTOR = new DecImageTrasformTableDescriptor();
 
     public DecImageTrasformRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdImageTrasform() {
-	return getBigDecimal("id_image_trasform");
+        return getBigDecimal("id_image_trasform");
     }
 
     public void setIdImageTrasform(BigDecimal idImageTrasform) {
-	setObject("id_image_trasform", idImageTrasform);
+        setObject("id_image_trasform", idImageTrasform);
     }
 
     public BigDecimal getIdTrasformTipoRappr() {
-	return getBigDecimal("id_trasform_tipo_rappr");
+        return getBigDecimal("id_trasform_tipo_rappr");
     }
 
     public void setIdTrasformTipoRappr(BigDecimal idTrasformTipoRappr) {
-	setObject("id_trasform_tipo_rappr", idTrasformTipoRappr);
+        setObject("id_trasform_tipo_rappr", idTrasformTipoRappr);
     }
 
     public String getNmImageTrasform() {
-	return getString("nm_image_trasform");
+        return getString("nm_image_trasform");
     }
 
     public void setNmImageTrasform(String nmImageTrasform) {
-	setObject("nm_image_trasform", nmImageTrasform);
+        setObject("nm_image_trasform", nmImageTrasform);
     }
 
     // FIXME: in pratica gestisce i Blob come stringhe, per i blob veri e' da implementare
     public byte[] getBlImageTrasform() {
-	return (byte[]) getObject("bl_image_trasform");
+        return (byte[]) getObject("bl_image_trasform");
     }
 
     public void setBlImageTrasform(byte[] blImageTrasform) {
-	setObject("bl_image_trasform", blImageTrasform);
+        setObject("bl_image_trasform", blImageTrasform);
     }
 
     public Timestamp getDtLastModImageTrasform() {
-	return getTimestamp("dt_last_mod_image_trasform");
+        return getTimestamp("dt_last_mod_image_trasform");
     }
 
     public void setDtLastModImageTrasform(Timestamp dtLastModImageTrasform) {
-	setObject("dt_last_mod_image_trasform", dtLastModImageTrasform);
+        setObject("dt_last_mod_image_trasform", dtLastModImageTrasform);
     }
 
     public Timestamp getDtLastScaricoImageTrasform() {
-	return getTimestamp("dt_last_scarico_image_trasform");
+        return getTimestamp("dt_last_scarico_image_trasform");
     }
 
     public void setDtLastScaricoImageTrasform(Timestamp dtLastScaricoImageTrasform) {
-	setObject("dt_last_scarico_image_trasform", dtLastScaricoImageTrasform);
+        setObject("dt_last_scarico_image_trasform", dtLastScaricoImageTrasform);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecImageTrasform entity = (DecImageTrasform) obj;
+        DecImageTrasform entity = (DecImageTrasform) obj;
 
-	this.setIdImageTrasform(entity.getIdImageTrasform() == null ? null
-		: BigDecimal.valueOf(entity.getIdImageTrasform()));
+        this.setIdImageTrasform(entity.getIdImageTrasform() == null ? null
+                : BigDecimal.valueOf(entity.getIdImageTrasform()));
 
-	if (entity.getDecTrasformTipoRappr() != null) {
-	    this.setIdTrasformTipoRappr(
-		    new BigDecimal(entity.getDecTrasformTipoRappr().getIdTrasformTipoRappr()));
-	}
+        if (entity.getDecTrasformTipoRappr() != null) {
+            this.setIdTrasformTipoRappr(
+                    new BigDecimal(entity.getDecTrasformTipoRappr().getIdTrasformTipoRappr()));
+        }
 
-	this.setNmImageTrasform(entity.getNmImageTrasform());
-	byte[] image = entity.getBlImageTrasform();
-	if (image != null) {
-	    this.setBlImageTrasform(image);
-	} else {
-	    this.setBlImageTrasform(null);
-	}
-	if (entity.getDtLastModImageTrasform() != null) {
-	    this.setDtLastModImageTrasform(
-		    new Timestamp(entity.getDtLastModImageTrasform().getTime()));
-	}
-	if (entity.getDtLastScaricoImageTrasform() != null) {
-	    this.setDtLastScaricoImageTrasform(
-		    new Timestamp(entity.getDtLastScaricoImageTrasform().getTime()));
-	}
+        this.setNmImageTrasform(entity.getNmImageTrasform());
+        byte[] image = entity.getBlImageTrasform();
+        if (image != null) {
+            this.setBlImageTrasform(image);
+        } else {
+            this.setBlImageTrasform(null);
+        }
+        if (entity.getDtLastModImageTrasform() != null) {
+            this.setDtLastModImageTrasform(
+                    new Timestamp(entity.getDtLastModImageTrasform().getTime()));
+        }
+        if (entity.getDtLastScaricoImageTrasform() != null) {
+            this.setDtLastScaricoImageTrasform(
+                    new Timestamp(entity.getDtLastScaricoImageTrasform().getTime()));
+        }
     }
 
     @Override
     public DecImageTrasform rowBeanToEntity() {
-	DecImageTrasform entity = new DecImageTrasform();
-	if (this.getIdImageTrasform() != null) {
-	    entity.setIdImageTrasform(this.getIdImageTrasform().longValue());
-	}
-	if (this.getIdTrasformTipoRappr() != null) {
-	    if (entity.getDecTrasformTipoRappr() == null) {
-		entity.setDecTrasformTipoRappr(new DecTrasformTipoRappr());
-	    }
-	    entity.getDecTrasformTipoRappr()
-		    .setIdTrasformTipoRappr(this.getIdTrasformTipoRappr().longValue());
-	}
-	entity.setNmImageTrasform(this.getNmImageTrasform());
-	byte[] image = this.getBlImageTrasform();
-	if (image != null) {
-	    entity.setBlImageTrasform(image);
-	} else {
-	    entity.setBlImageTrasform(null);
-	}
-	entity.setDtLastModImageTrasform(this.getDtLastModImageTrasform());
-	entity.setDtLastScaricoImageTrasform(this.getDtLastScaricoImageTrasform());
-	return entity;
+        DecImageTrasform entity = new DecImageTrasform();
+        if (this.getIdImageTrasform() != null) {
+            entity.setIdImageTrasform(this.getIdImageTrasform().longValue());
+        }
+        if (this.getIdTrasformTipoRappr() != null) {
+            if (entity.getDecTrasformTipoRappr() == null) {
+                entity.setDecTrasformTipoRappr(new DecTrasformTipoRappr());
+            }
+            entity.getDecTrasformTipoRappr()
+                    .setIdTrasformTipoRappr(this.getIdTrasformTipoRappr().longValue());
+        }
+        entity.setNmImageTrasform(this.getNmImageTrasform());
+        byte[] image = this.getBlImageTrasform();
+        if (image != null) {
+            entity.setBlImageTrasform(image);
+        } else {
+            entity.setBlImageTrasform(null);
+        }
+        entity.setDtLastModImageTrasform(this.getDtLastModImageTrasform());
+        entity.setDtLastScaricoImageTrasform(this.getDtLastScaricoImageTrasform());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
     /*
@@ -180,19 +180,19 @@ public class DecImageTrasformRowBean extends BaseRow implements JEEBaseRowInterf
      *
      */
     public String getNmCompletoImageTrasform() {
-	return getString("nm_completo_image_trasform");
+        return getString("nm_completo_image_trasform");
     }
 
     public void setNmCompletoImageTrasform(String nmCompletoImageTrasform) {
-	setObject("nm_completo_image_trasform", nmCompletoImageTrasform);
+        setObject("nm_completo_image_trasform", nmCompletoImageTrasform);
     }
 
     public String getTiPathTrasform() {
-	return getString("ti_path_trasform");
+        return getString("ti_path_trasform");
     }
 
     public void setTiPathTrasform(String tiPathTrasform) {
-	setObject("ti_path_trasform", tiPathTrasform);
+        setObject("ti_path_trasform", tiPathTrasform);
     }
 
 }

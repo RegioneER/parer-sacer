@@ -45,25 +45,25 @@ public class FasEventoFascicoloTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_EVENTO_FASCICOLO,
-		new ColumnDescriptor(COL_ID_EVENTO_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_DS_DENOM_EVENTO,
-		new ColumnDescriptor(COL_DS_DENOM_EVENTO, Types.VARCHAR, 254, false));
-	map.put(COL_TS_APERTURA, new ColumnDescriptor(COL_TS_APERTURA, Types.TIMESTAMP, 7, false));
-	map.put(COL_TS_CHIUSURA, new ColumnDescriptor(COL_TS_CHIUSURA, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_EVENTO_FASCICOLO,
+                new ColumnDescriptor(COL_ID_EVENTO_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_DS_DENOM_EVENTO,
+                new ColumnDescriptor(COL_DS_DENOM_EVENTO, Types.VARCHAR, 254, false));
+        map.put(COL_TS_APERTURA, new ColumnDescriptor(COL_TS_APERTURA, Types.TIMESTAMP, 7, false));
+        map.put(COL_TS_CHIUSURA, new ColumnDescriptor(COL_TS_CHIUSURA, Types.TIMESTAMP, 7, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

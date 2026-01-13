@@ -29,17 +29,17 @@ import it.eng.parer.ws.utils.VerificaVersione;
 public class WSDescRecProveConsMM implements IWSDesc {
 
     public String getVersione() {
-	return Costanti.WS_REC_PROVE_CON_VRSN;
+        return Costanti.WS_REC_PROVE_CON_VRSN;
     }
 
     @Override
     public String getNomeWs() {
-	return Costanti.WS_REC_PROVE_CON_MM_NOME;
+        return Costanti.WS_REC_PROVE_CON_MM_NOME;
     }
 
     @Override
     public String getVersione(HashMap<String, String> mapWsVersion) {
-	return VerificaVersione.latestVersion(getNomeWs(), mapWsVersion);
+        return VerificaVersione.latestVersion(getNomeWs(), mapWsVersion);
     }
 
     // @Override

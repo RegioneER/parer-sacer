@@ -58,64 +58,64 @@ public class VolContrVerifFirmaVolume implements Serializable {
 
     @Column(name = "ID_CONTR_VERIF_FIRMA_VOLUME")
     @GenericGenerator(name = "SVOL_CONTR_VERIF_FIRMA_VOLUME_ID_CONTR_VERIF_FIRMA_VOLUME_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_CONTR_VERIF_FIRMA_VOLUME"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_CONTR_VERIF_FIRMA_VOLUME"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SVOL_CONTR_VERIF_FIRMA_VOLUME_ID_CONTR_VERIF_FIRMA_VOLUME_GENERATOR")
     public Long getIdContrVerifFirmaVolume() {
-	return this.idContrVerifFirmaVolume;
+        return this.idContrVerifFirmaVolume;
     }
 
     public void setIdContrVerifFirmaVolume(Long idContrVerifFirmaVolume) {
-	this.idContrVerifFirmaVolume = idContrVerifFirmaVolume;
+        this.idContrVerifFirmaVolume = idContrVerifFirmaVolume;
     }
 
     @Column(name = "DS_MSG_CONTR_VERIF")
     public String getDsMsgContrVerif() {
-	return this.dsMsgContrVerif;
+        return this.dsMsgContrVerif;
     }
 
     public void setDsMsgContrVerif(String dsMsgContrVerif) {
-	this.dsMsgContrVerif = dsMsgContrVerif;
+        this.dsMsgContrVerif = dsMsgContrVerif;
     }
 
     @Column(name = "TI_CONTR")
     public String getTiContr() {
-	return this.tiContr;
+        return this.tiContr;
     }
 
     public void setTiContr(String tiContr) {
-	this.tiContr = tiContr;
+        this.tiContr = tiContr;
     }
 
     @Column(name = "TI_ESITO_CONTR_VERIF")
     public String getTiEsitoContrVerif() {
-	return this.tiEsitoContrVerif;
+        return this.tiEsitoContrVerif;
     }
 
     public void setTiEsitoContrVerif(String tiEsitoContrVerif) {
-	this.tiEsitoContrVerif = tiEsitoContrVerif;
+        this.tiEsitoContrVerif = tiEsitoContrVerif;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     @JoinColumn(name = "ID_CRL_USATA")
     public FirCrl getFirCrl() {
-	return this.firCrl;
+        return this.firCrl;
     }
 
     public void setFirCrl(FirCrl firCrl) {
-	this.firCrl = firCrl;
+        this.firCrl = firCrl;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {
-	    CascadeType.DETACH })
+            CascadeType.DETACH })
     @JoinColumn(name = "ID_VERIF_FIRMA_VOLUME")
     public VolVerifFirmaVolume getVolVerifFirmaVolume() {
-	return this.volVerifFirmaVolume;
+        return this.volVerifFirmaVolume;
     }
 
     public void setVolVerifFirmaVolume(VolVerifFirmaVolume volVerifFirmaVolume) {
-	this.volVerifFirmaVolume = volVerifFirmaVolume;
+        this.volVerifFirmaVolume = volVerifFirmaVolume;
     }
 
 }

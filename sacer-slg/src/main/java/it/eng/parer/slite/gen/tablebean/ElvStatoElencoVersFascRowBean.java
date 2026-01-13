@@ -39,124 +39,124 @@ public class ElvStatoElencoVersFascRowBean extends BaseRow implements JEEBaseRow
     public static ElvStatoElencoVersFascTableDescriptor TABLE_DESCRIPTOR = new ElvStatoElencoVersFascTableDescriptor();
 
     public ElvStatoElencoVersFascRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdStatoElencoVersFasc() {
-	return getBigDecimal("id_stato_elenco_vers_fasc");
+        return getBigDecimal("id_stato_elenco_vers_fasc");
     }
 
     public void setIdStatoElencoVersFasc(BigDecimal idStatoElencoVersFasc) {
-	setObject("id_stato_elenco_vers_fasc", idStatoElencoVersFasc);
+        setObject("id_stato_elenco_vers_fasc", idStatoElencoVersFasc);
     }
 
     public BigDecimal getIdElencoVersFasc() {
-	return getBigDecimal("id_elenco_vers_fasc");
+        return getBigDecimal("id_elenco_vers_fasc");
     }
 
     public void setIdElencoVersFasc(BigDecimal idElencoVersFasc) {
-	setObject("id_elenco_vers_fasc", idElencoVersFasc);
+        setObject("id_elenco_vers_fasc", idElencoVersFasc);
     }
 
     public Timestamp getTsStato() {
-	return getTimestamp("ts_stato");
+        return getTimestamp("ts_stato");
     }
 
     public void setTsStato(Timestamp tsStato) {
-	setObject("ts_stato", tsStato);
+        setObject("ts_stato", tsStato);
     }
 
     public String getTiStato() {
-	return getString("ti_stato");
+        return getString("ti_stato");
     }
 
     public void setTiStato(String tiStato) {
-	setObject("ti_stato", tiStato);
+        setObject("ti_stato", tiStato);
     }
 
     public BigDecimal getIdUserIam() {
-	return getBigDecimal("id_user_iam");
+        return getBigDecimal("id_user_iam");
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	setObject("id_user_iam", idUserIam);
+        setObject("id_user_iam", idUserIam);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	ElvStatoElencoVersFasc entity = (ElvStatoElencoVersFasc) obj;
+        ElvStatoElencoVersFasc entity = (ElvStatoElencoVersFasc) obj;
 
-	this.setIdStatoElencoVersFasc(entity.getIdStatoElencoVersFasc() == null ? null
-		: BigDecimal.valueOf(entity.getIdStatoElencoVersFasc()));
+        this.setIdStatoElencoVersFasc(entity.getIdStatoElencoVersFasc() == null ? null
+                : BigDecimal.valueOf(entity.getIdStatoElencoVersFasc()));
 
-	if (entity.getElvElencoVersFasc() != null) {
-	    this.setIdElencoVersFasc(
-		    new BigDecimal(entity.getElvElencoVersFasc().getIdElencoVersFasc()));
-	}
+        if (entity.getElvElencoVersFasc() != null) {
+            this.setIdElencoVersFasc(
+                    new BigDecimal(entity.getElvElencoVersFasc().getIdElencoVersFasc()));
+        }
 
-	if (entity.getTsStato() != null) {
-	    this.setTsStato(new Timestamp(entity.getTsStato().getTime()));
-	}
-	this.setTiStato(entity.getTiStato().name());
+        if (entity.getTsStato() != null) {
+            this.setTsStato(new Timestamp(entity.getTsStato().getTime()));
+        }
+        this.setTiStato(entity.getTiStato().name());
 
-	if (entity.getIamUser() != null) {
-	    this.setIdUserIam(new BigDecimal(entity.getIamUser().getIdUserIam()));
-	}
+        if (entity.getIamUser() != null) {
+            this.setIdUserIam(new BigDecimal(entity.getIamUser().getIdUserIam()));
+        }
 
     }
 
     @Override
     public ElvStatoElencoVersFasc rowBeanToEntity() {
-	ElvStatoElencoVersFasc entity = new ElvStatoElencoVersFasc();
-	if (this.getIdStatoElencoVersFasc() != null) {
-	    entity.setIdStatoElencoVersFasc(this.getIdStatoElencoVersFasc().longValue());
-	}
-	if (this.getIdElencoVersFasc() != null) {
-	    if (entity.getElvElencoVersFasc() == null) {
-		entity.setElvElencoVersFasc(new ElvElencoVersFasc());
-	    }
-	    entity.getElvElencoVersFasc()
-		    .setIdElencoVersFasc(this.getIdElencoVersFasc().longValue());
-	}
-	entity.setTsStato(this.getTsStato());
-	entity.setTiStato(TiStatoElencoFasc.valueOf(this.getTiStato()));
-	if (this.getIdUserIam() != null) {
-	    if (entity.getIamUser() == null) {
-		entity.setIamUser(new IamUser());
-	    }
-	    entity.getIamUser().setIdUserIam(this.getIdUserIam().longValue());
-	}
-	return entity;
+        ElvStatoElencoVersFasc entity = new ElvStatoElencoVersFasc();
+        if (this.getIdStatoElencoVersFasc() != null) {
+            entity.setIdStatoElencoVersFasc(this.getIdStatoElencoVersFasc().longValue());
+        }
+        if (this.getIdElencoVersFasc() != null) {
+            if (entity.getElvElencoVersFasc() == null) {
+                entity.setElvElencoVersFasc(new ElvElencoVersFasc());
+            }
+            entity.getElvElencoVersFasc()
+                    .setIdElencoVersFasc(this.getIdElencoVersFasc().longValue());
+        }
+        entity.setTsStato(this.getTsStato());
+        entity.setTiStato(TiStatoElencoFasc.valueOf(this.getTiStato()));
+        if (this.getIdUserIam() != null) {
+            if (entity.getIamUser() == null) {
+                entity.setIamUser(new IamUser());
+            }
+            entity.getIamUser().setIdUserIam(this.getIdUserIam().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

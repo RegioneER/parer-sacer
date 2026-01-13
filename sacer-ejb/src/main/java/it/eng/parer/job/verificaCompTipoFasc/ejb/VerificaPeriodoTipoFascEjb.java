@@ -70,90 +70,90 @@ public class VerificaPeriodoTipoFascEjb {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void verificaPeriodo(long idAaTipoFasc) {
-	// recupero un proxy per invocare il metodo con una nuova transazione
-	VerificaPeriodoTipoFascEjb me = sessionContext
-		.getBusinessObject(VerificaPeriodoTipoFascEjb.class);
-	//
-	DecAaTipoFascicolo tmpDecAaTipoFascicolo = entityManager.find(DecAaTipoFascicolo.class,
-		idAaTipoFasc);
-	ConfigNumFasc configNumFasc = controlliFascicoli.caricaPartiAANumero(
-		tmpDecAaTipoFascicolo.getIdAaTipoFascicolo(),
-		tmpDecAaTipoFascicolo.getNiCharPadParteClassif().longValue());
-	// inizializzo la verifica delle parti, dando come massima lunghezza, la massima possibile
-	// per il numero; di fatto escludendo il test di lunghezza.
-	// Fascicoli già versati, il registro non può cambiare nome e quindi il controllo
-	// dello spazio residuo nella chiave ordinamento è inutile.
-	KeyOrdFascUtility tmpKeyOrdFascUtility = new KeyOrdFascUtility(configNumFasc,
-		KeySizeFascUtility.MAX_LEN_CHIAVEORD);
-	long anno = tmpDecAaTipoFascicolo.getAaIniTipoFascicolo().longValue();
-	long annoMax = tmpDecAaTipoFascicolo.getAaFinTipoFascicolo() != null
-		? tmpDecAaTipoFascicolo.getAaIniTipoFascicolo().longValue()
-		: new GregorianCalendar().get(Calendar.YEAR);
-	long idTipoFasc = tmpDecAaTipoFascicolo.getDecTipoFascicolo().getIdTipoFascicolo();
-	long idOrgStrut = tmpDecAaTipoFascicolo.getDecTipoFascicolo().getOrgStrut().getIdStrut();
-	//
-	while (anno <= annoMax) {
-	    RispostaControlli rispostaControlli = me.verificaAnnoNewTrans(idTipoFasc, anno,
-		    idOrgStrut, tmpKeyOrdFascUtility);
-	    if (!rispostaControlli.isrBoolean()) {
-		// se ci sono errori, dopo aver fatto il rollback sui fascicoli elaborati,
-		// pulisce gli eventuali errori e warning dell'anno e
-		// scrive l'errore in una transazione autonoma
-		verificaCompTipoFascHelper.scriviErrorePerAnnoNewTrans(idAaTipoFasc, anno,
-			rispostaControlli.getrLong(), rispostaControlli.getDsErr());
-	    } else {
-		// pulisce gli eventuali errori e warning dell'anno, in una transazione autonoma
-		verificaCompTipoFascHelper.pulisciErroriRegAnnoNewTrans(idAaTipoFasc, anno);
-	    }
-	    //
-	    anno++;
-	}
-	// azzero il flag di AARegistro modificato
-	verificaCompTipoFascHelper.sbloccaAaTipoFascicolo(idAaTipoFasc);
+        // recupero un proxy per invocare il metodo con una nuova transazione
+        VerificaPeriodoTipoFascEjb me = sessionContext
+                .getBusinessObject(VerificaPeriodoTipoFascEjb.class);
+        //
+        DecAaTipoFascicolo tmpDecAaTipoFascicolo = entityManager.find(DecAaTipoFascicolo.class,
+                idAaTipoFasc);
+        ConfigNumFasc configNumFasc = controlliFascicoli.caricaPartiAANumero(
+                tmpDecAaTipoFascicolo.getIdAaTipoFascicolo(),
+                tmpDecAaTipoFascicolo.getNiCharPadParteClassif().longValue());
+        // inizializzo la verifica delle parti, dando come massima lunghezza, la massima possibile
+        // per il numero; di fatto escludendo il test di lunghezza.
+        // Fascicoli già versati, il registro non può cambiare nome e quindi il controllo
+        // dello spazio residuo nella chiave ordinamento è inutile.
+        KeyOrdFascUtility tmpKeyOrdFascUtility = new KeyOrdFascUtility(configNumFasc,
+                KeySizeFascUtility.MAX_LEN_CHIAVEORD);
+        long anno = tmpDecAaTipoFascicolo.getAaIniTipoFascicolo().longValue();
+        long annoMax = tmpDecAaTipoFascicolo.getAaFinTipoFascicolo() != null
+                ? tmpDecAaTipoFascicolo.getAaIniTipoFascicolo().longValue()
+                : new GregorianCalendar().get(Calendar.YEAR);
+        long idTipoFasc = tmpDecAaTipoFascicolo.getDecTipoFascicolo().getIdTipoFascicolo();
+        long idOrgStrut = tmpDecAaTipoFascicolo.getDecTipoFascicolo().getOrgStrut().getIdStrut();
+        //
+        while (anno <= annoMax) {
+            RispostaControlli rispostaControlli = me.verificaAnnoNewTrans(idTipoFasc, anno,
+                    idOrgStrut, tmpKeyOrdFascUtility);
+            if (!rispostaControlli.isrBoolean()) {
+                // se ci sono errori, dopo aver fatto il rollback sui fascicoli elaborati,
+                // pulisce gli eventuali errori e warning dell'anno e
+                // scrive l'errore in una transazione autonoma
+                verificaCompTipoFascHelper.scriviErrorePerAnnoNewTrans(idAaTipoFasc, anno,
+                        rispostaControlli.getrLong(), rispostaControlli.getDsErr());
+            } else {
+                // pulisce gli eventuali errori e warning dell'anno, in una transazione autonoma
+                verificaCompTipoFascHelper.pulisciErroriRegAnnoNewTrans(idAaTipoFasc, anno);
+            }
+            //
+            anno++;
+        }
+        // azzero il flag di AARegistro modificato
+        verificaCompTipoFascHelper.sbloccaAaTipoFascicolo(idAaTipoFasc);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public RispostaControlli verificaAnnoNewTrans(long idTipoFasc, long anno, long idOrgStrut,
-	    KeyOrdFascUtility tmpKeyOrdFascUtility) {
-	RispostaControlli risposta = new RispostaControlli();
-	risposta.setrBoolean(true);
+            KeyOrdFascUtility tmpKeyOrdFascUtility) {
+        RispostaControlli risposta = new RispostaControlli();
+        risposta.setrBoolean(true);
 
-	// elabora anno
-	List<FasFascicolo> fasFascicolos = verificaCompTipoFascHelper
-		.getListaFasFascicoloDaVerificare(idTipoFasc, idOrgStrut, anno);
-	for (FasFascicolo tmpFasc : fasFascicolos) {
-	    CSChiaveFasc tmpCSChiaveFasc = new CSChiaveFasc();
-	    tmpCSChiaveFasc.setAnno(tmpFasc.getAaFascicolo().intValue());
-	    tmpCSChiaveFasc.setNumero(tmpFasc.getCdKeyFascicolo());
-	    RispostaControlli rispostaControlli = tmpKeyOrdFascUtility.verificaChiave(
-		    tmpCSChiaveFasc, tmpFasc.getOrgStrut().getIdStrut(),
-		    tmpFasc.getDtApeFascicolo(), tmpFasc.getCdIndiceClassif());
+        // elabora anno
+        List<FasFascicolo> fasFascicolos = verificaCompTipoFascHelper
+                .getListaFasFascicoloDaVerificare(idTipoFasc, idOrgStrut, anno);
+        for (FasFascicolo tmpFasc : fasFascicolos) {
+            CSChiaveFasc tmpCSChiaveFasc = new CSChiaveFasc();
+            tmpCSChiaveFasc.setAnno(tmpFasc.getAaFascicolo().intValue());
+            tmpCSChiaveFasc.setNumero(tmpFasc.getCdKeyFascicolo());
+            RispostaControlli rispostaControlli = tmpKeyOrdFascUtility.verificaChiave(
+                    tmpCSChiaveFasc, tmpFasc.getOrgStrut().getIdStrut(),
+                    tmpFasc.getDtApeFascicolo(), tmpFasc.getCdIndiceClassif());
 
-	    if (rispostaControlli.isrBoolean()) {
-		// salvo la chiave per l'ordinamento
-		KeyOrdFascUtility.KeyOrdResult keyOrdResult = (KeyOrdFascUtility.KeyOrdResult) rispostaControlli
-			.getrObject();
-		// aggiorno tmpUd
-		// aggiorno la chiave di ordinamento calcolata
-		tmpFasc.setCdKeyOrd(keyOrdResult.getKeyOrdCalcolata());
-		// TODO: aggiorno il progressivo calcolato, estratto dal numero della chiave..
-		// potrebbe non esistere
-		/*
-		 * if (keyOrdResult.getProgressivoCalcolato() != null) { tmpFasc.setPgUnitaDoc(new
-		 * BigDecimal(keyOrdResult.getProgressivoCalcolato())); } else {
-		 * tmpFasc.setPgUnitaDoc(null); }
-		 */
-	    } else {
-		risposta.setCodErr(rispostaControlli.getCodErr());
-		risposta.setDsErr(rispostaControlli.getDsErr());
-		risposta.setrLong(tmpFasc.getIdFascicolo());
-		risposta.setrBoolean(false);
-		// in caso di problemi, effettuo il rollback delle modifiche fatte alle UD dell'anno
-		ejbContext.setRollbackOnly();
-		break;
-	    }
-	}
-	return risposta;
+            if (rispostaControlli.isrBoolean()) {
+                // salvo la chiave per l'ordinamento
+                KeyOrdFascUtility.KeyOrdResult keyOrdResult = (KeyOrdFascUtility.KeyOrdResult) rispostaControlli
+                        .getrObject();
+                // aggiorno tmpUd
+                // aggiorno la chiave di ordinamento calcolata
+                tmpFasc.setCdKeyOrd(keyOrdResult.getKeyOrdCalcolata());
+                // TODO: aggiorno il progressivo calcolato, estratto dal numero della chiave..
+                // potrebbe non esistere
+                /*
+                 * if (keyOrdResult.getProgressivoCalcolato() != null) { tmpFasc.setPgUnitaDoc(new
+                 * BigDecimal(keyOrdResult.getProgressivoCalcolato())); } else {
+                 * tmpFasc.setPgUnitaDoc(null); }
+                 */
+            } else {
+                risposta.setCodErr(rispostaControlli.getCodErr());
+                risposta.setDsErr(rispostaControlli.getDsErr());
+                risposta.setrLong(tmpFasc.getIdFascicolo());
+                risposta.setrBoolean(false);
+                // in caso di problemi, effettuo il rollback delle modifiche fatte alle UD dell'anno
+                ejbContext.setRollbackOnly();
+                break;
+            }
+        }
+        return risposta;
     }
 
 }

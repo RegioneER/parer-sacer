@@ -36,121 +36,121 @@ public class TpiErrArkRowBean extends BaseRow implements JEEBaseRowInterface {
     public static TpiErrArkTableDescriptor TABLE_DESCRIPTOR = new TpiErrArkTableDescriptor();
 
     public TpiErrArkRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdErrArk() {
-	return getBigDecimal("id_err_ark");
+        return getBigDecimal("id_err_ark");
     }
 
     public void setIdErrArk(BigDecimal idErrArk) {
-	setObject("id_err_ark", idErrArk);
+        setObject("id_err_ark", idErrArk);
     }
 
     public BigDecimal getIdSchedJob() {
-	return getBigDecimal("id_sched_job");
+        return getBigDecimal("id_sched_job");
     }
 
     public void setIdSchedJob(BigDecimal idSchedJob) {
-	setObject("id_sched_job", idSchedJob);
+        setObject("id_sched_job", idSchedJob);
     }
 
     public BigDecimal getNiErrArk() {
-	return getBigDecimal("ni_err_ark");
+        return getBigDecimal("ni_err_ark");
     }
 
     public void setNiErrArk(BigDecimal niErrArk) {
-	setObject("ni_err_ark", niErrArk);
+        setObject("ni_err_ark", niErrArk);
     }
 
     public String getTiErrArk() {
-	return getString("ti_err_ark");
+        return getString("ti_err_ark");
     }
 
     public void setTiErrArk(String tiErrArk) {
-	setObject("ti_err_ark", tiErrArk);
+        setObject("ti_err_ark", tiErrArk);
     }
 
     public String getCdErrArk() {
-	return getString("cd_err_ark");
+        return getString("cd_err_ark");
     }
 
     public void setCdErrArk(String cdErrArk) {
-	setObject("cd_err_ark", cdErrArk);
+        setObject("cd_err_ark", cdErrArk);
     }
 
     public String getDlErrArk() {
-	return getString("dl_err_ark");
+        return getString("dl_err_ark");
     }
 
     public void setDlErrArk(String dlErrArk) {
-	setObject("dl_err_ark", dlErrArk);
+        setObject("dl_err_ark", dlErrArk);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	TpiErrArk entity = (TpiErrArk) obj;
+        TpiErrArk entity = (TpiErrArk) obj;
 
-	this.setIdErrArk(
-		entity.getIdErrArk() == null ? null : BigDecimal.valueOf(entity.getIdErrArk()));
+        this.setIdErrArk(
+                entity.getIdErrArk() == null ? null : BigDecimal.valueOf(entity.getIdErrArk()));
 
-	if (entity.getTpiSchedJob() != null) {
-	    this.setIdSchedJob(new BigDecimal(entity.getTpiSchedJob().getIdSchedJob()));
-	}
+        if (entity.getTpiSchedJob() != null) {
+            this.setIdSchedJob(new BigDecimal(entity.getTpiSchedJob().getIdSchedJob()));
+        }
 
-	this.setNiErrArk(entity.getNiErrArk());
-	this.setTiErrArk(entity.getTiErrArk());
-	this.setCdErrArk(entity.getCdErrArk());
-	this.setDlErrArk(entity.getDlErrArk());
+        this.setNiErrArk(entity.getNiErrArk());
+        this.setTiErrArk(entity.getTiErrArk());
+        this.setCdErrArk(entity.getCdErrArk());
+        this.setDlErrArk(entity.getDlErrArk());
     }
 
     @Override
     public TpiErrArk rowBeanToEntity() {
-	TpiErrArk entity = new TpiErrArk();
-	if (this.getIdErrArk() != null) {
-	    entity.setIdErrArk(this.getIdErrArk().longValue());
-	}
-	if (this.getIdSchedJob() != null) {
-	    if (entity.getTpiSchedJob() == null) {
-		entity.setTpiSchedJob(new TpiSchedJob());
-	    }
-	    entity.getTpiSchedJob().setIdSchedJob(this.getIdSchedJob().longValue());
-	}
-	entity.setNiErrArk(this.getNiErrArk());
-	entity.setTiErrArk(this.getTiErrArk());
-	entity.setCdErrArk(this.getCdErrArk());
-	entity.setDlErrArk(this.getDlErrArk());
-	return entity;
+        TpiErrArk entity = new TpiErrArk();
+        if (this.getIdErrArk() != null) {
+            entity.setIdErrArk(this.getIdErrArk().longValue());
+        }
+        if (this.getIdSchedJob() != null) {
+            if (entity.getTpiSchedJob() == null) {
+                entity.setTpiSchedJob(new TpiSchedJob());
+            }
+            entity.getTpiSchedJob().setIdSchedJob(this.getIdSchedJob().longValue());
+        }
+        entity.setNiErrArk(this.getNiErrArk());
+        entity.setTiErrArk(this.getTiErrArk());
+        entity.setCdErrArk(this.getCdErrArk());
+        entity.setDlErrArk(this.getDlErrArk());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

@@ -46,32 +46,32 @@ public class DecAaRegistroUnitaDocTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_AA_REGISTRO_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_AA_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_REGISTRO_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_AA_MIN_REGISTRO_UNITA_DOC,
-		new ColumnDescriptor(COL_AA_MIN_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_AA_MAX_REGISTRO_UNITA_DOC,
-		new ColumnDescriptor(COL_AA_MAX_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_FL_UPD_FMT_NUMERO,
-		new ColumnDescriptor(COL_FL_UPD_FMT_NUMERO, Types.VARCHAR, 1, false));
-	map.put(COL_CD_FORMATO_NUMERO,
-		new ColumnDescriptor(COL_CD_FORMATO_NUMERO, Types.VARCHAR, 254, false));
-	map.put(COL_DS_FORMATO_NUMERO,
-		new ColumnDescriptor(COL_DS_FORMATO_NUMERO, Types.VARCHAR, 1024, false));
+        map.put(COL_ID_AA_REGISTRO_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_AA_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_REGISTRO_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_AA_MIN_REGISTRO_UNITA_DOC,
+                new ColumnDescriptor(COL_AA_MIN_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_AA_MAX_REGISTRO_UNITA_DOC,
+                new ColumnDescriptor(COL_AA_MAX_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_FL_UPD_FMT_NUMERO,
+                new ColumnDescriptor(COL_FL_UPD_FMT_NUMERO, Types.VARCHAR, 1, false));
+        map.put(COL_CD_FORMATO_NUMERO,
+                new ColumnDescriptor(COL_CD_FORMATO_NUMERO, Types.VARCHAR, 254, false));
+        map.put(COL_DS_FORMATO_NUMERO,
+                new ColumnDescriptor(COL_DS_FORMATO_NUMERO, Types.VARCHAR, 1024, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

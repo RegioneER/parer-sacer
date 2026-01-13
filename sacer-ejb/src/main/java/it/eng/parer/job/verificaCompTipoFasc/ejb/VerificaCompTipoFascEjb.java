@@ -40,7 +40,7 @@ import it.eng.parer.job.verificaCompTipoFasc.helper.VerificaCompTipoFascHelper;
 @Stateless(mappedName = "VerificaCompTipoFascEjb")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class VerificaCompTipoFascEjb {
 
     Logger log = LoggerFactory.getLogger(VerificaCompTipoFascEjb.class);
@@ -53,20 +53,20 @@ public class VerificaCompTipoFascEjb {
 
     public void verificaCompTipoFasc() throws ParerInternalError {
 
-	log.debug("Recupero lista elementi da elaborare");
-	List<DecAaTipoFascicolo> tmpList = verificaCompTipoFascHelper.getAaTipoFascicoloDaElab();
-	try {
-	    for (DecAaTipoFascicolo tmpAaTipoFasc : tmpList) {
-		verificaPeriodoTipoFasc.verificaPeriodo(tmpAaTipoFasc.getIdAaTipoFascicolo());
-	    }
-	} catch (Exception ex) {
-	    // log.fatal("Creazione Indice SIP - Errore: " + ex);
-	    log.error("Creazione Indice SIP - Errore: " + ex);
-	    throw new ParerInternalError(ex);
-	}
-	/* Scrivo nel LogJob la fine corretta dell'esecuzione del job di verifica */
-	jobHelper.writeAtomicLogJob(JobConstants.JobEnum.VERIFICA_COMPATIBILITA_TIPO_FASC.name(),
-		JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
-	log.debug("Verifica Compatibilità tipo fascicolo - fine");
+        log.debug("Recupero lista elementi da elaborare");
+        List<DecAaTipoFascicolo> tmpList = verificaCompTipoFascHelper.getAaTipoFascicoloDaElab();
+        try {
+            for (DecAaTipoFascicolo tmpAaTipoFasc : tmpList) {
+                verificaPeriodoTipoFasc.verificaPeriodo(tmpAaTipoFasc.getIdAaTipoFascicolo());
+            }
+        } catch (Exception ex) {
+            // log.fatal("Creazione Indice SIP - Errore: " + ex);
+            log.error("Creazione Indice SIP - Errore: " + ex);
+            throw new ParerInternalError(ex);
+        }
+        /* Scrivo nel LogJob la fine corretta dell'esecuzione del job di verifica */
+        jobHelper.writeAtomicLogJob(JobConstants.JobEnum.VERIFICA_COMPATIBILITA_TIPO_FASC.name(),
+                JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
+        log.debug("Verifica Compatibilità tipo fascicolo - fine");
     }
 }

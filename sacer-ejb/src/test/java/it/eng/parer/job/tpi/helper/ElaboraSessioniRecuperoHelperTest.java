@@ -37,28 +37,28 @@ public class ElaboraSessioniRecuperoHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		ElaboraSessioniRecuperoHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			ElaboraSessioniRecuperoHelperTest.class,
-			ElaboraSessioniRecuperoHelper.class, JobConstants.class));
+        return HelperTest.createEnterpriseArchive(
+                ElaboraSessioniRecuperoHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        ElaboraSessioniRecuperoHelperTest.class,
+                        ElaboraSessioniRecuperoHelper.class, JobConstants.class));
     }
 
     @Test
     void testGetSessioniRecuperoInCorso() throws Exception {
-	helper.getSessioniRecuperoInCorso();
-	assertTrue(true);
+        helper.getSessioniRecuperoInCorso();
+        assertTrue(true);
     }
 
     @Test
     void testGetVrsDtVersByDate() throws Exception {
-	// MAC#27666
-	// Date dtVers = todayTs();
-	LocalDate dtVers = todayTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	// end MAC#27666
-	helper.getVrsDtVersByDate(dtVers);
-	assertTrue(true);
+        // MAC#27666
+        // Date dtVers = todayTs();
+        LocalDate dtVers = todayTs().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        // end MAC#27666
+        helper.getVrsDtVersByDate(dtVers);
+        assertTrue(true);
     }
 
 }

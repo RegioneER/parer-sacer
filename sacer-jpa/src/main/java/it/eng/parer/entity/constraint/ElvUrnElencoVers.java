@@ -23,7 +23,7 @@ public final class ElvUrnElencoVers {
     }
 
     public enum TiUrnElenco {
-	ORIGINALE, NORMALIZZATO, INIZIALE
+        ORIGINALE, NORMALIZZATO, INIZIALE
     }
 
 }

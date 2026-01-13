@@ -53,44 +53,44 @@ public class AplValParamApplicMulti implements Serializable {
     @Id
     @Column(name = "ID_VAL_PARAM_APPLIC_MULTI")
     @GenericGenerator(name = "SAPL_VAL_PARAM_APPLIC_MULTI_ID_VAL_PARAM_APPLIC_MULTI_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SAPL_VAL_PARAM_APPLIC_MULTI"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SAPL_VAL_PARAM_APPLIC_MULTI"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAPL_VAL_PARAM_APPLIC_MULTI_ID_VAL_PARAM_APPLIC_MULTI_GENERATOR")
     public Long getIdValParamApplicMulti() {
-	return this.idValParamApplicMulti;
+        return this.idValParamApplicMulti;
     }
 
     public void setIdValParamApplicMulti(Long idValParamApplicMulti) {
-	this.idValParamApplicMulti = idValParamApplicMulti;
+        this.idValParamApplicMulti = idValParamApplicMulti;
     }
 
     @Column(name = "DS_VALORE_PARAM_APPLIC")
     public String getDsValoreParamApplic() {
-	return this.dsValoreParamApplic;
+        return this.dsValoreParamApplic;
     }
 
     public void setDsValoreParamApplic(String dsValoreParamApplic) {
-	this.dsValoreParamApplic = dsValoreParamApplic;
+        this.dsValoreParamApplic = dsValoreParamApplic;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PARAM_APPLIC")
     public AplParamApplic getAplParamApplic() {
-	return this.aplParamApplic;
+        return this.aplParamApplic;
     }
 
     public void setAplParamApplic(AplParamApplic aplParamApplic) {
-	this.aplParamApplic = aplParamApplic;
+        this.aplParamApplic = aplParamApplic;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_AMBIENTE")
     public OrgAmbiente getOrgAmbiente() {
-	return this.orgAmbiente;
+        return this.orgAmbiente;
     }
 
     public void setOrgAmbiente(OrgAmbiente orgAmbiente) {
-	this.orgAmbiente = orgAmbiente;
+        this.orgAmbiente = orgAmbiente;
     }
 
 }

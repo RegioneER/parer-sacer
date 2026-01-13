@@ -37,117 +37,117 @@ public class FirCertifFirmatarioRowBean extends BaseRow implements JEEBaseRowInt
     public static FirCertifFirmatarioTableDescriptor TABLE_DESCRIPTOR = new FirCertifFirmatarioTableDescriptor();
 
     public FirCertifFirmatarioRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdCertifFirmatario() {
-	return getBigDecimal("id_certif_firmatario");
+        return getBigDecimal("id_certif_firmatario");
     }
 
     public void setIdCertifFirmatario(BigDecimal idCertifFirmatario) {
-	setObject("id_certif_firmatario", idCertifFirmatario);
+        setObject("id_certif_firmatario", idCertifFirmatario);
     }
 
     public BigDecimal getIdCertifCa() {
-	return getBigDecimal("id_certif_ca");
+        return getBigDecimal("id_certif_ca");
     }
 
     public void setIdCertifCa(BigDecimal idCertifCa) {
-	setObject("id_certif_ca", idCertifCa);
+        setObject("id_certif_ca", idCertifCa);
     }
 
     public BigDecimal getNiSerialCertifFirmatario() {
-	return getBigDecimal("ni_serial_certif_firmatario");
+        return getBigDecimal("ni_serial_certif_firmatario");
     }
 
     public void setNiSerialCertifFirmatario(BigDecimal niSerialCertifFirmatario) {
-	setObject("ni_serial_certif_firmatario", niSerialCertifFirmatario);
+        setObject("ni_serial_certif_firmatario", niSerialCertifFirmatario);
     }
 
     public Timestamp getDtIniValCertifFirmatario() {
-	return getTimestamp("dt_ini_val_certif_firmatario");
+        return getTimestamp("dt_ini_val_certif_firmatario");
     }
 
     public void setDtIniValCertifFirmatario(Timestamp dtIniValCertifFirmatario) {
-	setObject("dt_ini_val_certif_firmatario", dtIniValCertifFirmatario);
+        setObject("dt_ini_val_certif_firmatario", dtIniValCertifFirmatario);
     }
 
     public Timestamp getDtFinValCertifFirmatario() {
-	return getTimestamp("dt_fin_val_certif_firmatario");
+        return getTimestamp("dt_fin_val_certif_firmatario");
     }
 
     public void setDtFinValCertifFirmatario(Timestamp dtFinValCertifFirmatario) {
-	setObject("dt_fin_val_certif_firmatario", dtFinValCertifFirmatario);
+        setObject("dt_fin_val_certif_firmatario", dtFinValCertifFirmatario);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	FirCertifFirmatario entity = (FirCertifFirmatario) obj;
+        FirCertifFirmatario entity = (FirCertifFirmatario) obj;
 
-	this.setIdCertifFirmatario(entity.getIdCertifFirmatario() == null ? null
-		: BigDecimal.valueOf(entity.getIdCertifFirmatario()));
+        this.setIdCertifFirmatario(entity.getIdCertifFirmatario() == null ? null
+                : BigDecimal.valueOf(entity.getIdCertifFirmatario()));
 
-	if (entity.getFirCertifCa() != null) {
-	    this.setIdCertifCa(new BigDecimal(entity.getFirCertifCa().getIdCertifCa()));
-	}
+        if (entity.getFirCertifCa() != null) {
+            this.setIdCertifCa(new BigDecimal(entity.getFirCertifCa().getIdCertifCa()));
+        }
 
-	this.setNiSerialCertifFirmatario(entity.getNiSerialCertifFirmatario());
-	if (entity.getDtIniValCertifFirmatario() != null) {
-	    this.setDtIniValCertifFirmatario(
-		    new Timestamp(entity.getDtIniValCertifFirmatario().getTime()));
-	}
-	if (entity.getDtFinValCertifFirmatario() != null) {
-	    this.setDtFinValCertifFirmatario(
-		    new Timestamp(entity.getDtFinValCertifFirmatario().getTime()));
-	}
+        this.setNiSerialCertifFirmatario(entity.getNiSerialCertifFirmatario());
+        if (entity.getDtIniValCertifFirmatario() != null) {
+            this.setDtIniValCertifFirmatario(
+                    new Timestamp(entity.getDtIniValCertifFirmatario().getTime()));
+        }
+        if (entity.getDtFinValCertifFirmatario() != null) {
+            this.setDtFinValCertifFirmatario(
+                    new Timestamp(entity.getDtFinValCertifFirmatario().getTime()));
+        }
     }
 
     @Override
     public FirCertifFirmatario rowBeanToEntity() {
-	FirCertifFirmatario entity = new FirCertifFirmatario();
-	if (this.getIdCertifFirmatario() != null) {
-	    entity.setIdCertifFirmatario(this.getIdCertifFirmatario().longValue());
-	}
-	if (this.getIdCertifCa() != null) {
-	    if (entity.getFirCertifCa() == null) {
-		entity.setFirCertifCa(new FirCertifCa());
-	    }
-	    entity.getFirCertifCa().setIdCertifCa(this.getIdCertifCa().longValue());
-	}
-	entity.setNiSerialCertifFirmatario(this.getNiSerialCertifFirmatario());
-	entity.setDtIniValCertifFirmatario(this.getDtIniValCertifFirmatario());
-	entity.setDtFinValCertifFirmatario(this.getDtFinValCertifFirmatario());
-	return entity;
+        FirCertifFirmatario entity = new FirCertifFirmatario();
+        if (this.getIdCertifFirmatario() != null) {
+            entity.setIdCertifFirmatario(this.getIdCertifFirmatario().longValue());
+        }
+        if (this.getIdCertifCa() != null) {
+            if (entity.getFirCertifCa() == null) {
+                entity.setFirCertifCa(new FirCertifCa());
+            }
+            entity.getFirCertifCa().setIdCertifCa(this.getIdCertifCa().longValue());
+        }
+        entity.setNiSerialCertifFirmatario(this.getNiSerialCertifFirmatario());
+        entity.setDtIniValCertifFirmatario(this.getDtIniValCertifFirmatario());
+        entity.setDtFinValCertifFirmatario(this.getDtFinValCertifFirmatario());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

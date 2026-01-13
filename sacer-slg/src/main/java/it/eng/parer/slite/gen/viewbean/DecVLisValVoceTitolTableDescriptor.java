@@ -61,59 +61,59 @@ public class DecVLisValVoceTitolTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_VAL_VOCE_TITOL,
-		new ColumnDescriptor(COL_ID_VAL_VOCE_TITOL, Types.DECIMAL, 22, true));
-	map.put(COL_ID_VOCE_TITOL,
-		new ColumnDescriptor(COL_ID_VOCE_TITOL, Types.DECIMAL, 22, true));
-	map.put(COL_DT_INI_VAL, new ColumnDescriptor(COL_DT_INI_VAL, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_FIN_VAL, new ColumnDescriptor(COL_DT_FIN_VAL, Types.TIMESTAMP, 7, true));
-	map.put(COL_DS_VOCE_TITOL,
-		new ColumnDescriptor(COL_DS_VOCE_TITOL, Types.VARCHAR, 1024, true));
-	map.put(COL_FL_USO_CLASSIF,
-		new ColumnDescriptor(COL_FL_USO_CLASSIF, Types.VARCHAR, 1, true));
-	map.put(COL_NI_ANNI_CONSERV,
-		new ColumnDescriptor(COL_NI_ANNI_CONSERV, Types.DECIMAL, 22, true));
-	map.put(COL_DL_NOTE, new ColumnDescriptor(COL_DL_NOTE, Types.VARCHAR, 1024, true));
-	map.put(COL_CD_REGISTRO_DOC_INVIO_INI,
-		new ColumnDescriptor(COL_CD_REGISTRO_DOC_INVIO_INI, Types.VARCHAR, 100, true));
-	map.put(COL_AA_DOC_INVIO_INI,
-		new ColumnDescriptor(COL_AA_DOC_INVIO_INI, Types.DECIMAL, 22, true));
-	map.put(COL_CD_DOC_INVIO_INI,
-		new ColumnDescriptor(COL_CD_DOC_INVIO_INI, Types.VARCHAR, 100, true));
-	map.put(COL_DT_DOC_INVIO_INI,
-		new ColumnDescriptor(COL_DT_DOC_INVIO_INI, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_OPER_TITOL_INI,
-		new ColumnDescriptor(COL_TI_OPER_TITOL_INI, Types.VARCHAR, 20, true));
-	map.put(COL_TI_OPER_VOCE_TITOL_INI,
-		new ColumnDescriptor(COL_TI_OPER_VOCE_TITOL_INI, Types.VARCHAR, 20, true));
-	map.put(COL_DT_VAL_OPER_VOCE_TITOL_INI,
-		new ColumnDescriptor(COL_DT_VAL_OPER_VOCE_TITOL_INI, Types.TIMESTAMP, 7, true));
-	map.put(COL_CD_REGISTRO_DOC_INVIO_FIN,
-		new ColumnDescriptor(COL_CD_REGISTRO_DOC_INVIO_FIN, Types.VARCHAR, 100, true));
-	map.put(COL_AA_DOC_INVIO_FIN,
-		new ColumnDescriptor(COL_AA_DOC_INVIO_FIN, Types.DECIMAL, 22, true));
-	map.put(COL_CD_DOC_INVIO_FIN,
-		new ColumnDescriptor(COL_CD_DOC_INVIO_FIN, Types.VARCHAR, 100, true));
-	map.put(COL_DT_DOC_INVIO_FIN,
-		new ColumnDescriptor(COL_DT_DOC_INVIO_FIN, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_OPER_TITOL_FIN,
-		new ColumnDescriptor(COL_TI_OPER_TITOL_FIN, Types.VARCHAR, 20, true));
-	map.put(COL_TI_OPER_VOCE_TITOL_FIN,
-		new ColumnDescriptor(COL_TI_OPER_VOCE_TITOL_FIN, Types.VARCHAR, 20, true));
-	map.put(COL_DT_VAL_OPER_VOCE_TITOL_FIN,
-		new ColumnDescriptor(COL_DT_VAL_OPER_VOCE_TITOL_FIN, Types.TIMESTAMP, 7, true));
+        map.put(COL_ID_VAL_VOCE_TITOL,
+                new ColumnDescriptor(COL_ID_VAL_VOCE_TITOL, Types.DECIMAL, 22, true));
+        map.put(COL_ID_VOCE_TITOL,
+                new ColumnDescriptor(COL_ID_VOCE_TITOL, Types.DECIMAL, 22, true));
+        map.put(COL_DT_INI_VAL, new ColumnDescriptor(COL_DT_INI_VAL, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_FIN_VAL, new ColumnDescriptor(COL_DT_FIN_VAL, Types.TIMESTAMP, 7, true));
+        map.put(COL_DS_VOCE_TITOL,
+                new ColumnDescriptor(COL_DS_VOCE_TITOL, Types.VARCHAR, 1024, true));
+        map.put(COL_FL_USO_CLASSIF,
+                new ColumnDescriptor(COL_FL_USO_CLASSIF, Types.VARCHAR, 1, true));
+        map.put(COL_NI_ANNI_CONSERV,
+                new ColumnDescriptor(COL_NI_ANNI_CONSERV, Types.DECIMAL, 22, true));
+        map.put(COL_DL_NOTE, new ColumnDescriptor(COL_DL_NOTE, Types.VARCHAR, 1024, true));
+        map.put(COL_CD_REGISTRO_DOC_INVIO_INI,
+                new ColumnDescriptor(COL_CD_REGISTRO_DOC_INVIO_INI, Types.VARCHAR, 100, true));
+        map.put(COL_AA_DOC_INVIO_INI,
+                new ColumnDescriptor(COL_AA_DOC_INVIO_INI, Types.DECIMAL, 22, true));
+        map.put(COL_CD_DOC_INVIO_INI,
+                new ColumnDescriptor(COL_CD_DOC_INVIO_INI, Types.VARCHAR, 100, true));
+        map.put(COL_DT_DOC_INVIO_INI,
+                new ColumnDescriptor(COL_DT_DOC_INVIO_INI, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_OPER_TITOL_INI,
+                new ColumnDescriptor(COL_TI_OPER_TITOL_INI, Types.VARCHAR, 20, true));
+        map.put(COL_TI_OPER_VOCE_TITOL_INI,
+                new ColumnDescriptor(COL_TI_OPER_VOCE_TITOL_INI, Types.VARCHAR, 20, true));
+        map.put(COL_DT_VAL_OPER_VOCE_TITOL_INI,
+                new ColumnDescriptor(COL_DT_VAL_OPER_VOCE_TITOL_INI, Types.TIMESTAMP, 7, true));
+        map.put(COL_CD_REGISTRO_DOC_INVIO_FIN,
+                new ColumnDescriptor(COL_CD_REGISTRO_DOC_INVIO_FIN, Types.VARCHAR, 100, true));
+        map.put(COL_AA_DOC_INVIO_FIN,
+                new ColumnDescriptor(COL_AA_DOC_INVIO_FIN, Types.DECIMAL, 22, true));
+        map.put(COL_CD_DOC_INVIO_FIN,
+                new ColumnDescriptor(COL_CD_DOC_INVIO_FIN, Types.VARCHAR, 100, true));
+        map.put(COL_DT_DOC_INVIO_FIN,
+                new ColumnDescriptor(COL_DT_DOC_INVIO_FIN, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_OPER_TITOL_FIN,
+                new ColumnDescriptor(COL_TI_OPER_TITOL_FIN, Types.VARCHAR, 20, true));
+        map.put(COL_TI_OPER_VOCE_TITOL_FIN,
+                new ColumnDescriptor(COL_TI_OPER_VOCE_TITOL_FIN, Types.VARCHAR, 20, true));
+        map.put(COL_DT_VAL_OPER_VOCE_TITOL_FIN,
+                new ColumnDescriptor(COL_DT_VAL_OPER_VOCE_TITOL_FIN, Types.TIMESTAMP, 7, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

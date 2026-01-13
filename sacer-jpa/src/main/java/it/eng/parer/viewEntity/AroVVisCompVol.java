@@ -48,67 +48,67 @@ public class AroVVisCompVol implements Serializable {
 
     @Column(name = "DS_ESITO_VERIF_FIRME_CHIUS")
     public String getDsEsitoVerifFirmeChius() {
-	return this.dsEsitoVerifFirmeChius;
+        return this.dsEsitoVerifFirmeChius;
     }
 
     public void setDsEsitoVerifFirmeChius(String dsEsitoVerifFirmeChius) {
-	this.dsEsitoVerifFirmeChius = dsEsitoVerifFirmeChius;
+        this.dsEsitoVerifFirmeChius = dsEsitoVerifFirmeChius;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CHIUS_VOLUME")
     public Date getDtChiusVolume() {
-	return this.dtChiusVolume;
+        return this.dtChiusVolume;
     }
 
     public void setDtChiusVolume(Date dtChiusVolume) {
-	this.dtChiusVolume = dtChiusVolume;
+        this.dtChiusVolume = dtChiusVolume;
     }
 
     @Id
     @Column(name = "ID_COMP_DOC")
     public BigDecimal getIdCompDoc() {
-	return this.idCompDoc;
+        return this.idCompDoc;
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	this.idCompDoc = idCompDoc;
+        this.idCompDoc = idCompDoc;
     }
 
     @Column(name = "ID_VOLUME_CONSERV")
     public BigDecimal getIdVolumeConserv() {
-	return this.idVolumeConserv;
+        return this.idVolumeConserv;
     }
 
     public void setIdVolumeConserv(BigDecimal idVolumeConserv) {
-	this.idVolumeConserv = idVolumeConserv;
+        this.idVolumeConserv = idVolumeConserv;
     }
 
     @Column(name = "NM_VOLUME_CONSERV")
     public String getNmVolumeConserv() {
-	return this.nmVolumeConserv;
+        return this.nmVolumeConserv;
     }
 
     public void setNmVolumeConserv(String nmVolumeConserv) {
-	this.nmVolumeConserv = nmVolumeConserv;
+        this.nmVolumeConserv = nmVolumeConserv;
     }
 
     @Column(name = "TI_ESITO_VERIF_FIRME_CHIUS")
     public String getTiEsitoVerifFirmeChius() {
-	return this.tiEsitoVerifFirmeChius;
+        return this.tiEsitoVerifFirmeChius;
     }
 
     public void setTiEsitoVerifFirmeChius(String tiEsitoVerifFirmeChius) {
-	this.tiEsitoVerifFirmeChius = tiEsitoVerifFirmeChius;
+        this.tiEsitoVerifFirmeChius = tiEsitoVerifFirmeChius;
     }
 
     @Column(name = "TI_STATO_VOLUME_CONSERV")
     public String getTiStatoVolumeConserv() {
-	return this.tiStatoVolumeConserv;
+        return this.tiStatoVolumeConserv;
     }
 
     public void setTiStatoVolumeConserv(String tiStatoVolumeConserv) {
-	this.tiStatoVolumeConserv = tiStatoVolumeConserv;
+        this.tiStatoVolumeConserv = tiStatoVolumeConserv;
     }
 
 }

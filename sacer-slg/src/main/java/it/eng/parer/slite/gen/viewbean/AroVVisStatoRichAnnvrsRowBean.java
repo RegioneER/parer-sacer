@@ -36,210 +36,210 @@ public class AroVVisStatoRichAnnvrsRowBean extends BaseRow implements JEEBaseRow
     public static AroVVisStatoRichAnnvrsTableDescriptor TABLE_DESCRIPTOR = new AroVVisStatoRichAnnvrsTableDescriptor();
 
     public AroVVisStatoRichAnnvrsRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdAmbiente() {
-	return getBigDecimal("id_ambiente");
+        return getBigDecimal("id_ambiente");
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	setObject("id_ambiente", idAmbiente);
+        setObject("id_ambiente", idAmbiente);
     }
 
     public String getNmAmbiente() {
-	return getString("nm_ambiente");
+        return getString("nm_ambiente");
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	setObject("nm_ambiente", nmAmbiente);
+        setObject("nm_ambiente", nmAmbiente);
     }
 
     public BigDecimal getIdEnte() {
-	return getBigDecimal("id_ente");
+        return getBigDecimal("id_ente");
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	setObject("id_ente", idEnte);
+        setObject("id_ente", idEnte);
     }
 
     public String getNmEnte() {
-	return getString("nm_ente");
+        return getString("nm_ente");
     }
 
     public void setNmEnte(String nmEnte) {
-	setObject("nm_ente", nmEnte);
+        setObject("nm_ente", nmEnte);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getNmStrut() {
-	return getString("nm_strut");
+        return getString("nm_strut");
     }
 
     public void setNmStrut(String nmStrut) {
-	setObject("nm_strut", nmStrut);
+        setObject("nm_strut", nmStrut);
     }
 
     public BigDecimal getIdRichAnnulVers() {
-	return getBigDecimal("id_rich_annul_vers");
+        return getBigDecimal("id_rich_annul_vers");
     }
 
     public void setIdRichAnnulVers(BigDecimal idRichAnnulVers) {
-	setObject("id_rich_annul_vers", idRichAnnulVers);
+        setObject("id_rich_annul_vers", idRichAnnulVers);
     }
 
     public String getCdRichAnnulVers() {
-	return getString("cd_rich_annul_vers");
+        return getString("cd_rich_annul_vers");
     }
 
     public void setCdRichAnnulVers(String cdRichAnnulVers) {
-	setObject("cd_rich_annul_vers", cdRichAnnulVers);
+        setObject("cd_rich_annul_vers", cdRichAnnulVers);
     }
 
     public String getDsRichAnnulVers() {
-	return getString("ds_rich_annul_vers");
+        return getString("ds_rich_annul_vers");
     }
 
     public void setDsRichAnnulVers(String dsRichAnnulVers) {
-	setObject("ds_rich_annul_vers", dsRichAnnulVers);
+        setObject("ds_rich_annul_vers", dsRichAnnulVers);
     }
 
     public String getTiStatoRichAnnulVersCor() {
-	return getString("ti_stato_rich_annul_vers_cor");
+        return getString("ti_stato_rich_annul_vers_cor");
     }
 
     public void setTiStatoRichAnnulVersCor(String tiStatoRichAnnulVersCor) {
-	setObject("ti_stato_rich_annul_vers_cor", tiStatoRichAnnulVersCor);
+        setObject("ti_stato_rich_annul_vers_cor", tiStatoRichAnnulVersCor);
     }
 
     public BigDecimal getIdStatoRichAnnulVers() {
-	return getBigDecimal("id_stato_rich_annul_vers");
+        return getBigDecimal("id_stato_rich_annul_vers");
     }
 
     public void setIdStatoRichAnnulVers(BigDecimal idStatoRichAnnulVers) {
-	setObject("id_stato_rich_annul_vers", idStatoRichAnnulVers);
+        setObject("id_stato_rich_annul_vers", idStatoRichAnnulVers);
     }
 
     public BigDecimal getPgStatoRichAnnulVers() {
-	return getBigDecimal("pg_stato_rich_annul_vers");
+        return getBigDecimal("pg_stato_rich_annul_vers");
     }
 
     public void setPgStatoRichAnnulVers(BigDecimal pgStatoRichAnnulVers) {
-	setObject("pg_stato_rich_annul_vers", pgStatoRichAnnulVers);
+        setObject("pg_stato_rich_annul_vers", pgStatoRichAnnulVers);
     }
 
     public String getTiStatoRichAnnulVers() {
-	return getString("ti_stato_rich_annul_vers");
+        return getString("ti_stato_rich_annul_vers");
     }
 
     public void setTiStatoRichAnnulVers(String tiStatoRichAnnulVers) {
-	setObject("ti_stato_rich_annul_vers", tiStatoRichAnnulVers);
+        setObject("ti_stato_rich_annul_vers", tiStatoRichAnnulVers);
     }
 
     public Timestamp getDtRegStatoRichAnnulVers() {
-	return getTimestamp("dt_reg_stato_rich_annul_vers");
+        return getTimestamp("dt_reg_stato_rich_annul_vers");
     }
 
     public void setDtRegStatoRichAnnulVers(Timestamp dtRegStatoRichAnnulVers) {
-	setObject("dt_reg_stato_rich_annul_vers", dtRegStatoRichAnnulVers);
+        setObject("dt_reg_stato_rich_annul_vers", dtRegStatoRichAnnulVers);
     }
 
     public String getDsNotaRichAnnulVers() {
-	return getString("ds_nota_rich_annul_vers");
+        return getString("ds_nota_rich_annul_vers");
     }
 
     public void setDsNotaRichAnnulVers(String dsNotaRichAnnulVers) {
-	setObject("ds_nota_rich_annul_vers", dsNotaRichAnnulVers);
+        setObject("ds_nota_rich_annul_vers", dsNotaRichAnnulVers);
     }
 
     public String getNmUseridStato() {
-	return getString("nm_userid_stato");
+        return getString("nm_userid_stato");
     }
 
     public void setNmUseridStato(String nmUseridStato) {
-	setObject("nm_userid_stato", nmUseridStato);
+        setObject("nm_userid_stato", nmUseridStato);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVVisStatoRichAnnvrs entity = (AroVVisStatoRichAnnvrs) obj;
-	this.setIdAmbiente(entity.getIdAmbiente());
-	this.setNmAmbiente(entity.getNmAmbiente());
-	this.setIdEnte(entity.getIdEnte());
-	this.setNmEnte(entity.getNmEnte());
-	this.setIdStrut(entity.getIdStrut());
-	this.setNmStrut(entity.getNmStrut());
-	this.setIdRichAnnulVers(entity.getIdRichAnnulVers());
-	this.setCdRichAnnulVers(entity.getCdRichAnnulVers());
-	this.setDsRichAnnulVers(entity.getDsRichAnnulVers());
-	this.setTiStatoRichAnnulVersCor(entity.getTiStatoRichAnnulVersCor());
-	this.setIdStatoRichAnnulVers(entity.getIdStatoRichAnnulVers());
-	this.setPgStatoRichAnnulVers(entity.getPgStatoRichAnnulVers());
-	this.setTiStatoRichAnnulVers(entity.getTiStatoRichAnnulVers());
-	if (entity.getDtRegStatoRichAnnulVers() != null) {
-	    this.setDtRegStatoRichAnnulVers(
-		    new Timestamp(entity.getDtRegStatoRichAnnulVers().getTime()));
-	}
-	this.setDsNotaRichAnnulVers(entity.getDsNotaRichAnnulVers());
-	this.setNmUseridStato(entity.getNmUseridStato());
+        AroVVisStatoRichAnnvrs entity = (AroVVisStatoRichAnnvrs) obj;
+        this.setIdAmbiente(entity.getIdAmbiente());
+        this.setNmAmbiente(entity.getNmAmbiente());
+        this.setIdEnte(entity.getIdEnte());
+        this.setNmEnte(entity.getNmEnte());
+        this.setIdStrut(entity.getIdStrut());
+        this.setNmStrut(entity.getNmStrut());
+        this.setIdRichAnnulVers(entity.getIdRichAnnulVers());
+        this.setCdRichAnnulVers(entity.getCdRichAnnulVers());
+        this.setDsRichAnnulVers(entity.getDsRichAnnulVers());
+        this.setTiStatoRichAnnulVersCor(entity.getTiStatoRichAnnulVersCor());
+        this.setIdStatoRichAnnulVers(entity.getIdStatoRichAnnulVers());
+        this.setPgStatoRichAnnulVers(entity.getPgStatoRichAnnulVers());
+        this.setTiStatoRichAnnulVers(entity.getTiStatoRichAnnulVers());
+        if (entity.getDtRegStatoRichAnnulVers() != null) {
+            this.setDtRegStatoRichAnnulVers(
+                    new Timestamp(entity.getDtRegStatoRichAnnulVers().getTime()));
+        }
+        this.setDsNotaRichAnnulVers(entity.getDsNotaRichAnnulVers());
+        this.setNmUseridStato(entity.getNmUseridStato());
     }
 
     @Override
     public AroVVisStatoRichAnnvrs rowBeanToEntity() {
-	AroVVisStatoRichAnnvrs entity = new AroVVisStatoRichAnnvrs();
-	entity.setIdAmbiente(this.getIdAmbiente());
-	entity.setNmAmbiente(this.getNmAmbiente());
-	entity.setIdEnte(this.getIdEnte());
-	entity.setNmEnte(this.getNmEnte());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setNmStrut(this.getNmStrut());
-	entity.setIdRichAnnulVers(this.getIdRichAnnulVers());
-	entity.setCdRichAnnulVers(this.getCdRichAnnulVers());
-	entity.setDsRichAnnulVers(this.getDsRichAnnulVers());
-	entity.setTiStatoRichAnnulVersCor(this.getTiStatoRichAnnulVersCor());
-	entity.setIdStatoRichAnnulVers(this.getIdStatoRichAnnulVers());
-	entity.setPgStatoRichAnnulVers(this.getPgStatoRichAnnulVers());
-	entity.setTiStatoRichAnnulVers(this.getTiStatoRichAnnulVers());
-	entity.setDtRegStatoRichAnnulVers(this.getDtRegStatoRichAnnulVers());
-	entity.setDsNotaRichAnnulVers(this.getDsNotaRichAnnulVers());
-	entity.setNmUseridStato(this.getNmUseridStato());
-	return entity;
+        AroVVisStatoRichAnnvrs entity = new AroVVisStatoRichAnnvrs();
+        entity.setIdAmbiente(this.getIdAmbiente());
+        entity.setNmAmbiente(this.getNmAmbiente());
+        entity.setIdEnte(this.getIdEnte());
+        entity.setNmEnte(this.getNmEnte());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setNmStrut(this.getNmStrut());
+        entity.setIdRichAnnulVers(this.getIdRichAnnulVers());
+        entity.setCdRichAnnulVers(this.getCdRichAnnulVers());
+        entity.setDsRichAnnulVers(this.getDsRichAnnulVers());
+        entity.setTiStatoRichAnnulVersCor(this.getTiStatoRichAnnulVersCor());
+        entity.setIdStatoRichAnnulVers(this.getIdStatoRichAnnulVers());
+        entity.setPgStatoRichAnnulVers(this.getPgStatoRichAnnulVers());
+        entity.setTiStatoRichAnnulVers(this.getTiStatoRichAnnulVers());
+        entity.setDtRegStatoRichAnnulVers(this.getDtRegStatoRichAnnulVers());
+        entity.setDsNotaRichAnnulVers(this.getDsNotaRichAnnulVers());
+        entity.setNmUseridStato(this.getNmUseridStato());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

@@ -27,7 +27,7 @@ public final class ElvElencoVer {
      * ti_mod_valid_elenco IN ('AUTOMATICA', 'MANUALE')
      */
     public enum TiModValidElenco {
-	AUTOMATICA, MANUALE
+        AUTOMATICA, MANUALE
     }
 
     // MEV#31945 - Eliminare validazione elenco UD con firma
@@ -35,6 +35,6 @@ public final class ElvElencoVer {
      * ti_valid_elenco IN ('NO_FIRMA', 'NO_INDICE')
      */
     public enum TiValidElenco {
-	FIRMA, NO_FIRMA, NO_INDICE
+        FIRMA, NO_FIRMA, NO_INDICE
     }
 }

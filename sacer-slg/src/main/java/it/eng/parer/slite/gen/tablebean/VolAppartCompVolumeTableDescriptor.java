@@ -45,28 +45,28 @@ public class VolAppartCompVolumeTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_APPART_COMP_VOLUME,
-		new ColumnDescriptor(COL_ID_APPART_COMP_VOLUME, Types.DECIMAL, 22, true));
-	map.put(COL_ID_APPART_DOC_VOLUME,
-		new ColumnDescriptor(COL_ID_APPART_DOC_VOLUME, Types.DECIMAL, 22, false));
-	map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_TI_ESITO_VERIF_FIRME_CHIUS,
-		new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME_CHIUS, Types.VARCHAR, 20, false));
-	map.put(COL_DS_ESITO_VERIF_FIRME_CHIUS,
-		new ColumnDescriptor(COL_DS_ESITO_VERIF_FIRME_CHIUS, Types.VARCHAR, 254, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_ID_APPART_COMP_VOLUME,
+                new ColumnDescriptor(COL_ID_APPART_COMP_VOLUME, Types.DECIMAL, 22, true));
+        map.put(COL_ID_APPART_DOC_VOLUME,
+                new ColumnDescriptor(COL_ID_APPART_DOC_VOLUME, Types.DECIMAL, 22, false));
+        map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_TI_ESITO_VERIF_FIRME_CHIUS,
+                new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME_CHIUS, Types.VARCHAR, 20, false));
+        map.put(COL_DS_ESITO_VERIF_FIRME_CHIUS,
+                new ColumnDescriptor(COL_DS_ESITO_VERIF_FIRME_CHIUS, Types.VARCHAR, 254, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

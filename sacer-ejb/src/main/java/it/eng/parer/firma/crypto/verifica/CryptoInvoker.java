@@ -75,16 +75,16 @@ public class CryptoInvoker {
      * @return true/false se servizio UP and running
      */
     public boolean isUp(String url) {
-	boolean up = true;
-	try {
-	    RestTemplate restClient = new RestTemplate();
-	    restClient.setErrorHandler(new CryptoErrorHandler());
-	    restClient.getForEntity(url, Object.class);
-	} catch (Exception ex) {
-	    LOG.warn("Impossibile contattare " + url, ex);
-	    up = false;
-	}
-	return up;
+        boolean up = true;
+        try {
+            RestTemplate restClient = new RestTemplate();
+            restClient.setErrorHandler(new CryptoErrorHandler());
+            restClient.getForEntity(url, Object.class);
+        } catch (Exception ex) {
+            LOG.warn("Impossibile contattare " + url, ex);
+            up = false;
+        }
+        return up;
     }
 
     /**
@@ -99,21 +99,21 @@ public class CryptoInvoker {
      */
     public ParerCRL retrieveCRL(byte[] blobFilePerFirma) {
 
-	RestTemplate restTemplate = buildRestTemplateWithRetry();
+        RestTemplate restTemplate = buildRestTemplateWithRetry();
 
-	String baseUrl = restInvoker.preferredEndpoint();
+        String baseUrl = restInvoker.preferredEndpoint();
 
-	String endpoint = baseUrl + CRL_CTX;
+        String endpoint = baseUrl + CRL_CTX;
 
-	String certificatoFirmatarioBase64 = Base64.getUrlEncoder()
-		.encodeToString(blobFilePerFirma);
-	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(endpoint)
-		.queryParam("certifFirmatarioBase64UrlEncoded", certificatoFirmatarioBase64);
+        String certificatoFirmatarioBase64 = Base64.getUrlEncoder()
+                .encodeToString(blobFilePerFirma);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(endpoint)
+                .queryParam("certifFirmatarioBase64UrlEncoded", certificatoFirmatarioBase64);
 
-	String url = builder.build().toUriString();
-	LOG.debug("retreive crl da {}", url);
-	ResponseEntity<ParerCRL> crlEntity = restTemplate.getForEntity(url, ParerCRL.class);
-	return crlEntity.getBody();
+        String url = builder.build().toUriString();
+        LOG.debug("retreive crl da {}", url);
+        ResponseEntity<ParerCRL> crlEntity = restTemplate.getForEntity(url, ParerCRL.class);
+        return crlEntity.getBody();
     }
 
     /**
@@ -128,22 +128,22 @@ public class CryptoInvoker {
      * @throws RestClientException  Errore sullo strato REST
      */
     public ParerCRL retrieveCRL(String dnCa, String keyId) {
-	if (StringUtils.isBlank(dnCa) || StringUtils.isBlank(keyId)) {
-	    throw new IllegalArgumentException("Parametri dnCa/keyId vuoti.");
-	}
-	RestTemplate restTemplate = buildRestTemplateWithRetry();
+        if (StringUtils.isBlank(dnCa) || StringUtils.isBlank(keyId)) {
+            throw new IllegalArgumentException("Parametri dnCa/keyId vuoti.");
+        }
+        RestTemplate restTemplate = buildRestTemplateWithRetry();
 
-	String baseUrl = restInvoker.preferredEndpoint();
+        String baseUrl = restInvoker.preferredEndpoint();
 
-	String endpoint = baseUrl + CRL_CTX;
+        String endpoint = baseUrl + CRL_CTX;
 
-	UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(endpoint).path("/")
-		.path(ParerCRL.calcolaUniqueId(dnCa, keyId));
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(endpoint).path("/")
+                .path(ParerCRL.calcolaUniqueId(dnCa, keyId));
 
-	String url = builder.build().toUriString();
-	LOG.debug("retreive crl da {}", url);
-	ResponseEntity<ParerCRL> crlEntity = restTemplate.getForEntity(url, ParerCRL.class);
-	return crlEntity.getBody();
+        String url = builder.build().toUriString();
+        LOG.debug("retreive crl da {}", url);
+        ResponseEntity<ParerCRL> crlEntity = restTemplate.getForEntity(url, ParerCRL.class);
+        return crlEntity.getBody();
     }
 
     /**
@@ -158,15 +158,15 @@ public class CryptoInvoker {
      * @throws RestClientException  eccezione generica
      */
     public ParerCRL addCrlByURL(List<String> urls) {
-	RestTemplate restTemplate = buildRestTemplateWithRetry();
+        RestTemplate restTemplate = buildRestTemplateWithRetry();
 
-	String preferredEndPoint = restInvoker.preferredEndpoint();
+        String preferredEndPoint = restInvoker.preferredEndpoint();
 
-	String endpoint = preferredEndPoint + CRL_CTX;
+        String endpoint = preferredEndPoint + CRL_CTX;
 
-	LOG.debug("POST crl by url {}", endpoint);
-	HttpEntity<List<String>> request = new HttpEntity<>(urls);
-	return restTemplate.postForObject(endpoint, request, ParerCRL.class);
+        LOG.debug("POST crl by url {}", endpoint);
+        HttpEntity<List<String>> request = new HttpEntity<>(urls);
+        return restTemplate.postForObject(endpoint, request, ParerCRL.class);
 
     }
 
@@ -178,33 +178,33 @@ public class CryptoInvoker {
      * @return Marca temporale per l'oggetto in input.
      */
     public ParerTST requestTST(byte[] fileVerSerie) {
-	RestTemplate restTemplate = buildRestTemplateWithRetry();
-	ParerTST result = null;
+        RestTemplate restTemplate = buildRestTemplateWithRetry();
+        ParerTST result = null;
 
-	HttpHeaders headers = new HttpHeaders();
-	headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-	org.springframework.core.io.Resource resource = new ByteArrayResource(fileVerSerie) {
-	    @Override
-	    public String getFilename() {
-		return "requestTst";
-	    }
-	};
+        org.springframework.core.io.Resource resource = new ByteArrayResource(fileVerSerie) {
+            @Override
+            public String getFilename() {
+                return "requestTst";
+            }
+        };
 
-	MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-	body.add("description", "Richiesta TST");
-	body.add("file", resource);
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("description", "Richiesta TST");
+        body.add("file", resource);
 
-	HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-	String preferredEndPoint = restInvoker.preferredEndpoint();
+        String preferredEndPoint = restInvoker.preferredEndpoint();
 
-	String endpoint = preferredEndPoint + TST_CTX;
-	LOG.debug("post per {}", endpoint);
+        String endpoint = preferredEndPoint + TST_CTX;
+        LOG.debug("post per {}", endpoint);
 
-	result = restTemplate.postForObject(endpoint, requestEntity, ParerTST.class);
+        result = restTemplate.postForObject(endpoint, requestEntity, ParerTST.class);
 
-	return result;
+        return result;
     }
 
     /**
@@ -215,24 +215,24 @@ public class CryptoInvoker {
      * @return Oggetto sbustato.
      */
     public byte[] retriveOriginalP7mFromFile(File fileP7m) {
-	RestTemplate restTemplate = buildRestTemplateWithRetry();
-	ResponseEntity<byte[]> result = null;
+        RestTemplate restTemplate = buildRestTemplateWithRetry();
+        ResponseEntity<byte[]> result = null;
 
-	HttpHeaders headers = new HttpHeaders();
-	headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-	MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-	body.add("signed-p7m", new FileSystemResource(fileP7m));
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("signed-p7m", new FileSystemResource(fileP7m));
 
-	HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-	String preferredEndPoint = restInvoker.preferredEndpoint();
+        String preferredEndPoint = restInvoker.preferredEndpoint();
 
-	String endpoint = preferredEndPoint + UNSIGNED_P7M_CTX;
-	LOG.debug("post per {}", endpoint);
+        String endpoint = preferredEndPoint + UNSIGNED_P7M_CTX;
+        LOG.debug("post per {}", endpoint);
 
-	result = restTemplate.postForEntity(endpoint, requestEntity, byte[].class);
-	return result.getBody();
+        result = restTemplate.postForEntity(endpoint, requestEntity, byte[].class);
+        return result.getBody();
     }
 
     /**
@@ -243,21 +243,21 @@ public class CryptoInvoker {
      * @return Oggetto sbustato.
      */
     public byte[] retriveOriginalP7mFromURL(CryptoSignedP7mUri dto) {
-	RestTemplate restTemplate = buildRestTemplateWithRetry();
-	ResponseEntity<byte[]> result = null;
+        RestTemplate restTemplate = buildRestTemplateWithRetry();
+        ResponseEntity<byte[]> result = null;
 
-	HttpHeaders headers = new HttpHeaders();
-	headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-	HttpEntity<CryptoSignedP7mUri> entity = new HttpEntity<>(dto, headers);
+        HttpEntity<CryptoSignedP7mUri> entity = new HttpEntity<>(dto, headers);
 
-	String preferredEndPoint = restInvoker.preferredEndpoint();
+        String preferredEndPoint = restInvoker.preferredEndpoint();
 
-	String endpoint = preferredEndPoint + UNSIGNED_P7M_CTX;
-	LOG.debug("post per {}", endpoint);
+        String endpoint = preferredEndPoint + UNSIGNED_P7M_CTX;
+        LOG.debug("post per {}", endpoint);
 
-	result = restTemplate.postForEntity(endpoint, entity, byte[].class);
-	return result.getBody();
+        result = restTemplate.postForEntity(endpoint, entity, byte[].class);
+        return result.getBody();
     }
 
     /**
@@ -268,26 +268,26 @@ public class CryptoInvoker {
      * @return Oggetto in input + marca temporale.
      */
     public ParerTSD generateTSD(byte[] fileVerSerie) {
-	RestTemplate restTemplate = buildRestTemplateWithRetry();
+        RestTemplate restTemplate = buildRestTemplateWithRetry();
 
-	String baseUrl = restInvoker.preferredEndpoint();
-	String endpoint = baseUrl + TSD_CTX;
-	LOG.debug("post per  {}", endpoint);
+        String baseUrl = restInvoker.preferredEndpoint();
+        String endpoint = baseUrl + TSD_CTX;
+        LOG.debug("post per  {}", endpoint);
 
-	HttpHeaders headers = new HttpHeaders();
-	headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-	org.springframework.core.io.Resource resource = new ByteArrayResource(fileVerSerie) {
-	    @Override
-	    public String getFilename() {
-		return "requestTsd";
-	    }
-	};
-	MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-	body.add("description", "Richiesta TST");
-	body.add("file", resource);
+        org.springframework.core.io.Resource resource = new ByteArrayResource(fileVerSerie) {
+            @Override
+            public String getFilename() {
+                return "requestTsd";
+            }
+        };
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("description", "Richiesta TST");
+        body.add("file", resource);
 
-	return restTemplate.postForObject(endpoint, body, ParerTSD.class);
+        return restTemplate.postForObject(endpoint, body, ParerTSD.class);
     }
 
     /**
@@ -299,26 +299,26 @@ public class CryptoInvoker {
      */
     private RestTemplate buildRestTemplateWithRetry() {
 
-	RestTemplate template = new RestTemplate();
-	int timeout = restInvoker.clientTimeout();
+        RestTemplate template = new RestTemplate();
+        int timeout = restInvoker.clientTimeout();
 
-	HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-	clientHttpRequestFactory.setReadTimeout(timeout);
-	clientHttpRequestFactory.setConnectTimeout(timeout);
-	clientHttpRequestFactory.setConnectionRequestTimeout(timeout);
+        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+        clientHttpRequestFactory.setReadTimeout(timeout);
+        clientHttpRequestFactory.setConnectTimeout(timeout);
+        clientHttpRequestFactory.setConnectionRequestTimeout(timeout);
 
-	template.setRequestFactory(clientHttpRequestFactory);
-	template.setErrorHandler(new CryptoErrorHandler());
+        template.setRequestFactory(clientHttpRequestFactory);
+        template.setErrorHandler(new CryptoErrorHandler());
 
-	List<String> endpoints = restInvoker.endPoints();
-	List<URI> endpointsURI = endpoints.stream().map(e -> URI.create(e))
-		.collect(Collectors.toList());
+        List<String> endpoints = restInvoker.endPoints();
+        List<URI> endpointsURI = endpoints.stream().map(e -> URI.create(e))
+                .collect(Collectors.toList());
 
-	ParerRetryConfiguration retryClient = restInvoker.retryClient();
+        ParerRetryConfiguration retryClient = restInvoker.retryClient();
 
-	template.getInterceptors().add(new RestRetryInterceptor(endpointsURI, retryClient));
+        template.getInterceptors().add(new RestRetryInterceptor(endpointsURI, retryClient));
 
-	return template;
+        return template;
     }
 
 }

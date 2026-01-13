@@ -46,130 +46,130 @@ public class CompRecDip extends ComponenteRec {
     protected String dsAlgoHashFileCalc;
 
     public CompRecDip() {
-	super();
+        super();
     }
 
     public CompRecDip(String urnCompleto, String urnCompletoIniziale) {
-	super(urnCompleto, urnCompletoIniziale);
+        super(urnCompleto, urnCompletoIniziale);
     }
 
     public long getIdCompConvertitore() {
-	return idCompConvertitore;
+        return idCompConvertitore;
     }
 
     public void setIdCompConvertitore(long idCompConvertitore) {
-	this.idCompConvertitore = idCompConvertitore;
+        this.idCompConvertitore = idCompConvertitore;
     }
 
     public long getIdFileTrasform() {
-	return idFileTrasform;
+        return idFileTrasform;
     }
 
     public void setIdFileTrasform(long idFileTrasform) {
-	this.idFileTrasform = idFileTrasform;
+        this.idFileTrasform = idFileTrasform;
     }
 
     public String getNomeFormatoRappresentazione() {
-	return nomeFormatoRappresentazione;
+        return nomeFormatoRappresentazione;
     }
 
     public void setNomeFormatoRappresentazione(String nomeFormatoRappresentazione) {
-	this.nomeFormatoRappresentazione = nomeFormatoRappresentazione;
+        this.nomeFormatoRappresentazione = nomeFormatoRappresentazione;
     }
 
     public String getNomeConvertitore() {
-	return nomeConvertitore;
+        return nomeConvertitore;
     }
 
     public void setNomeConvertitore(String nomeConvertitore) {
-	this.nomeConvertitore = nomeConvertitore;
+        this.nomeConvertitore = nomeConvertitore;
     }
 
     public String getVersioneConvertitore() {
-	return versioneConvertitore;
+        return versioneConvertitore;
     }
 
     public void setVersioneConvertitore(String versioneConvertitore) {
-	this.versioneConvertitore = versioneConvertitore;
+        this.versioneConvertitore = versioneConvertitore;
     }
 
     public Date getDataUltimoAggiornamento() {
-	return dataUltimoAggiornamento;
+        return dataUltimoAggiornamento;
     }
 
     public void setDataUltimoAggiornamento(Date dataUltimoAggiornamento) {
-	this.dataUltimoAggiornamento = dataUltimoAggiornamento;
+        this.dataUltimoAggiornamento = dataUltimoAggiornamento;
     }
 
     public CostantiDB.TipoAlgoritmoRappr getTipoAlgoritmoRappresentazione() {
-	return tipoAlgoritmoRappresentazione;
+        return tipoAlgoritmoRappresentazione;
     }
 
     public void setTipoAlgoritmoRappresentazione(
-	    CostantiDB.TipoAlgoritmoRappr tipoAlgoritmoRappresentazione) {
-	this.tipoAlgoritmoRappresentazione = tipoAlgoritmoRappresentazione;
+            CostantiDB.TipoAlgoritmoRappr tipoAlgoritmoRappresentazione) {
+        this.tipoAlgoritmoRappresentazione = tipoAlgoritmoRappresentazione;
     }
 
     public CostantiDB.StatoFileTrasform getStatoFileTrasform() {
-	return statoFileTrasform;
+        return statoFileTrasform;
     }
 
     public void setStatoFileTrasform(CostantiDB.StatoFileTrasform statoFileTrasform) {
-	this.statoFileTrasform = statoFileTrasform;
+        this.statoFileTrasform = statoFileTrasform;
     }
 
     public IRispostaWS.SeverityEnum getSeverity() {
-	return severity;
+        return severity;
     }
 
     public void setSeverity(IRispostaWS.SeverityEnum severity) {
-	this.severity = severity;
+        this.severity = severity;
     }
 
     public String getErrorMessage() {
-	return errorMessage;
+        return errorMessage;
     }
 
     public void setErrorMessage(String errorMessage) {
-	this.errorMessage = errorMessage;
+        this.errorMessage = errorMessage;
     }
 
     public boolean isErroreFormatoContenuto() {
-	return erroreFormatoContenuto;
+        return erroreFormatoContenuto;
     }
 
     public void setErroreFormatoContenuto(boolean erroreFormatoContenuto) {
-	this.erroreFormatoContenuto = erroreFormatoContenuto;
+        this.erroreFormatoContenuto = erroreFormatoContenuto;
     }
 
     public String getDsFormatoContAtteso() {
-	return dsFormatoContAtteso;
+        return dsFormatoContAtteso;
     }
 
     public void setDsFormatoContAtteso(String dsFormatoContAtteso) {
-	this.dsFormatoContAtteso = dsFormatoContAtteso;
+        this.dsFormatoContAtteso = dsFormatoContAtteso;
     }
 
     public String getDsFormatoContReale() {
-	return dsFormatoContReale;
+        return dsFormatoContReale;
     }
 
     public void setDsFormatoContReale(String dsFormatoContReale) {
-	this.dsFormatoContReale = dsFormatoContReale;
+        this.dsFormatoContReale = dsFormatoContReale;
     }
 
     /**
      * @return the dsAlgoHashFileCalc
      */
     public String getDsAlgoHashFileCalc() {
-	return dsAlgoHashFileCalc;
+        return dsAlgoHashFileCalc;
     }
 
     /**
      * @param dsAlgoHashFileCalc the dsAlgoHashFileCalc to set
      */
     public void setDsAlgoHashFileCalc(String dsAlgoHashFileCalc) {
-	this.dsAlgoHashFileCalc = dsAlgoHashFileCalc;
+        this.dsAlgoHashFileCalc = dsAlgoHashFileCalc;
     }
 
 }

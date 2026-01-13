@@ -37,142 +37,142 @@ public class AroVLisLinkUnitaDocRowBean extends BaseRow implements JEEBaseRowInt
     public static AroVLisLinkUnitaDocTableDescriptor TABLE_DESCRIPTOR = new AroVLisLinkUnitaDocTableDescriptor();
 
     public AroVLisLinkUnitaDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public BigDecimal getIdLinkUnitaDoc() {
-	return getBigDecimal("id_link_unita_doc");
+        return getBigDecimal("id_link_unita_doc");
     }
 
     public void setIdLinkUnitaDoc(BigDecimal idLinkUnitaDoc) {
-	setObject("id_link_unita_doc", idLinkUnitaDoc);
+        setObject("id_link_unita_doc", idLinkUnitaDoc);
     }
 
     public String getCdRegistroKeyUnitaDocLink() {
-	return getString("cd_registro_key_unita_doc_link");
+        return getString("cd_registro_key_unita_doc_link");
     }
 
     public void setCdRegistroKeyUnitaDocLink(String cdRegistroKeyUnitaDocLink) {
-	setObject("cd_registro_key_unita_doc_link", cdRegistroKeyUnitaDocLink);
+        setObject("cd_registro_key_unita_doc_link", cdRegistroKeyUnitaDocLink);
     }
 
     public BigDecimal getAaKeyUnitaDocLink() {
-	return getBigDecimal("aa_key_unita_doc_link");
+        return getBigDecimal("aa_key_unita_doc_link");
     }
 
     public void setAaKeyUnitaDocLink(BigDecimal aaKeyUnitaDocLink) {
-	setObject("aa_key_unita_doc_link", aaKeyUnitaDocLink);
+        setObject("aa_key_unita_doc_link", aaKeyUnitaDocLink);
     }
 
     public String getCdKeyUnitaDocLink() {
-	return getString("cd_key_unita_doc_link");
+        return getString("cd_key_unita_doc_link");
     }
 
     public void setCdKeyUnitaDocLink(String cdKeyUnitaDocLink) {
-	setObject("cd_key_unita_doc_link", cdKeyUnitaDocLink);
+        setObject("cd_key_unita_doc_link", cdKeyUnitaDocLink);
     }
 
     public String getDsLinkUnitaDoc() {
-	return getString("ds_link_unita_doc");
+        return getString("ds_link_unita_doc");
     }
 
     public void setDsLinkUnitaDoc(String dsLinkUnitaDoc) {
-	setObject("ds_link_unita_doc", dsLinkUnitaDoc);
+        setObject("ds_link_unita_doc", dsLinkUnitaDoc);
     }
 
     public String getFlRisolto() {
-	return getString("fl_risolto");
+        return getString("fl_risolto");
     }
 
     public void setFlRisolto(String flRisolto) {
-	setObject("fl_risolto", flRisolto);
+        setObject("fl_risolto", flRisolto);
     }
 
     public BigDecimal getIdUnitaDocColleg() {
-	return getBigDecimal("id_unita_doc_colleg");
+        return getBigDecimal("id_unita_doc_colleg");
     }
 
     public void setIdUnitaDocColleg(BigDecimal idUnitaDocColleg) {
-	setObject("id_unita_doc_colleg", idUnitaDocColleg);
+        setObject("id_unita_doc_colleg", idUnitaDocColleg);
     }
 
     public Timestamp getDtRegUnitaDoc() {
-	return getTimestamp("dt_reg_unita_doc");
+        return getTimestamp("dt_reg_unita_doc");
     }
 
     public void setDtRegUnitaDoc(Timestamp dtRegUnitaDoc) {
-	setObject("dt_reg_unita_doc", dtRegUnitaDoc);
+        setObject("dt_reg_unita_doc", dtRegUnitaDoc);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVLisLinkUnitaDoc entity = (AroVLisLinkUnitaDoc) obj;
-	if (entity.getAroVLisLinkUnitaDocId() != null) {
-	    this.setIdUnitaDoc(entity.getAroVLisLinkUnitaDocId().getIdUnitaDoc());
-	    this.setIdLinkUnitaDoc(entity.getAroVLisLinkUnitaDocId().getIdLinkUnitaDoc());
-	}
-	this.setCdRegistroKeyUnitaDocLink(entity.getCdRegistroKeyUnitaDocLink());
-	this.setAaKeyUnitaDocLink(entity.getAaKeyUnitaDocLink());
-	this.setCdKeyUnitaDocLink(entity.getCdKeyUnitaDocLink());
-	this.setDsLinkUnitaDoc(entity.getDsLinkUnitaDoc());
-	this.setFlRisolto(entity.getFlRisolto());
-	this.setIdUnitaDocColleg(entity.getIdUnitaDocColleg());
-	if (entity.getDtRegUnitaDoc() != null) {
-	    this.setDtRegUnitaDoc(new Timestamp(entity.getDtRegUnitaDoc().getTime()));
-	}
+        AroVLisLinkUnitaDoc entity = (AroVLisLinkUnitaDoc) obj;
+        if (entity.getAroVLisLinkUnitaDocId() != null) {
+            this.setIdUnitaDoc(entity.getAroVLisLinkUnitaDocId().getIdUnitaDoc());
+            this.setIdLinkUnitaDoc(entity.getAroVLisLinkUnitaDocId().getIdLinkUnitaDoc());
+        }
+        this.setCdRegistroKeyUnitaDocLink(entity.getCdRegistroKeyUnitaDocLink());
+        this.setAaKeyUnitaDocLink(entity.getAaKeyUnitaDocLink());
+        this.setCdKeyUnitaDocLink(entity.getCdKeyUnitaDocLink());
+        this.setDsLinkUnitaDoc(entity.getDsLinkUnitaDoc());
+        this.setFlRisolto(entity.getFlRisolto());
+        this.setIdUnitaDocColleg(entity.getIdUnitaDocColleg());
+        if (entity.getDtRegUnitaDoc() != null) {
+            this.setDtRegUnitaDoc(new Timestamp(entity.getDtRegUnitaDoc().getTime()));
+        }
     }
 
     @Override
     public AroVLisLinkUnitaDoc rowBeanToEntity() {
-	AroVLisLinkUnitaDoc entity = new AroVLisLinkUnitaDoc();
-	entity.setAroVLisLinkUnitaDocId(new AroVLisLinkUnitaDocId());
-	entity.getAroVLisLinkUnitaDocId().setIdUnitaDoc(this.getIdUnitaDoc());
-	entity.getAroVLisLinkUnitaDocId().setIdLinkUnitaDoc(this.getIdLinkUnitaDoc());
-	entity.setCdRegistroKeyUnitaDocLink(this.getCdRegistroKeyUnitaDocLink());
-	entity.setAaKeyUnitaDocLink(this.getAaKeyUnitaDocLink());
-	entity.setCdKeyUnitaDocLink(this.getCdKeyUnitaDocLink());
-	entity.setDsLinkUnitaDoc(this.getDsLinkUnitaDoc());
-	entity.setFlRisolto(this.getFlRisolto());
-	entity.setIdUnitaDocColleg(this.getIdUnitaDocColleg());
-	entity.setDtRegUnitaDoc(this.getDtRegUnitaDoc());
-	return entity;
+        AroVLisLinkUnitaDoc entity = new AroVLisLinkUnitaDoc();
+        entity.setAroVLisLinkUnitaDocId(new AroVLisLinkUnitaDocId());
+        entity.getAroVLisLinkUnitaDocId().setIdUnitaDoc(this.getIdUnitaDoc());
+        entity.getAroVLisLinkUnitaDocId().setIdLinkUnitaDoc(this.getIdLinkUnitaDoc());
+        entity.setCdRegistroKeyUnitaDocLink(this.getCdRegistroKeyUnitaDocLink());
+        entity.setAaKeyUnitaDocLink(this.getAaKeyUnitaDocLink());
+        entity.setCdKeyUnitaDocLink(this.getCdKeyUnitaDocLink());
+        entity.setDsLinkUnitaDoc(this.getDsLinkUnitaDoc());
+        entity.setFlRisolto(this.getFlRisolto());
+        entity.setIdUnitaDocColleg(this.getIdUnitaDocColleg());
+        entity.setDtRegUnitaDoc(this.getDtRegUnitaDoc());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

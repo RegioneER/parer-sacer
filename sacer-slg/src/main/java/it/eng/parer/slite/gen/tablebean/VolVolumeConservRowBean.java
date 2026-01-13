@@ -39,461 +39,461 @@ public class VolVolumeConservRowBean extends BaseRow implements JEEBaseRowInterf
     public static VolVolumeConservTableDescriptor TABLE_DESCRIPTOR = new VolVolumeConservTableDescriptor();
 
     public VolVolumeConservRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdVolumeConserv() {
-	return getBigDecimal("id_volume_conserv");
+        return getBigDecimal("id_volume_conserv");
     }
 
     public void setIdVolumeConserv(BigDecimal idVolumeConserv) {
-	setObject("id_volume_conserv", idVolumeConserv);
+        setObject("id_volume_conserv", idVolumeConserv);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getNmVolumeConserv() {
-	return getString("nm_volume_conserv");
+        return getString("nm_volume_conserv");
     }
 
     public void setNmVolumeConserv(String nmVolumeConserv) {
-	setObject("nm_volume_conserv", nmVolumeConserv);
+        setObject("nm_volume_conserv", nmVolumeConserv);
     }
 
     public String getDsVolumeConserv() {
-	return getString("ds_volume_conserv");
+        return getString("ds_volume_conserv");
     }
 
     public void setDsVolumeConserv(String dsVolumeConserv) {
-	setObject("ds_volume_conserv", dsVolumeConserv);
+        setObject("ds_volume_conserv", dsVolumeConserv);
     }
 
     public String getTiStatoVolumeConserv() {
-	return getString("ti_stato_volume_conserv");
+        return getString("ti_stato_volume_conserv");
     }
 
     public void setTiStatoVolumeConserv(String tiStatoVolumeConserv) {
-	setObject("ti_stato_volume_conserv", tiStatoVolumeConserv);
+        setObject("ti_stato_volume_conserv", tiStatoVolumeConserv);
     }
 
     public BigDecimal getIdCriterioRaggr() {
-	return getBigDecimal("id_criterio_raggr");
+        return getBigDecimal("id_criterio_raggr");
     }
 
     public void setIdCriterioRaggr(BigDecimal idCriterioRaggr) {
-	setObject("id_criterio_raggr", idCriterioRaggr);
+        setObject("id_criterio_raggr", idCriterioRaggr);
     }
 
     public Timestamp getDtCreazione() {
-	return getTimestamp("dt_creazione");
+        return getTimestamp("dt_creazione");
     }
 
     public void setDtCreazione(Timestamp dtCreazione) {
-	setObject("dt_creazione", dtCreazione);
+        setObject("dt_creazione", dtCreazione);
     }
 
     public BigDecimal getNiMaxUnitaDoc() {
-	return getBigDecimal("ni_max_unita_doc");
+        return getBigDecimal("ni_max_unita_doc");
     }
 
     public void setNiMaxUnitaDoc(BigDecimal niMaxUnitaDoc) {
-	setObject("ni_max_unita_doc", niMaxUnitaDoc);
+        setObject("ni_max_unita_doc", niMaxUnitaDoc);
     }
 
     public BigDecimal getNiMaxComp() {
-	return getBigDecimal("ni_max_comp");
+        return getBigDecimal("ni_max_comp");
     }
 
     public void setNiMaxComp(BigDecimal niMaxComp) {
-	setObject("ni_max_comp", niMaxComp);
+        setObject("ni_max_comp", niMaxComp);
     }
 
     public String getTiScadChiusVolume() {
-	return getString("ti_scad_chius_volume");
+        return getString("ti_scad_chius_volume");
     }
 
     public void setTiScadChiusVolume(String tiScadChiusVolume) {
-	setObject("ti_scad_chius_volume", tiScadChiusVolume);
+        setObject("ti_scad_chius_volume", tiScadChiusVolume);
     }
 
     public String getTiTempoScadChius() {
-	return getString("ti_tempo_scad_chius");
+        return getString("ti_tempo_scad_chius");
     }
 
     public void setTiTempoScadChius(String tiTempoScadChius) {
-	setObject("ti_tempo_scad_chius", tiTempoScadChius);
+        setObject("ti_tempo_scad_chius", tiTempoScadChius);
     }
 
     public BigDecimal getNiTempoScadChius() {
-	return getBigDecimal("ni_tempo_scad_chius");
+        return getBigDecimal("ni_tempo_scad_chius");
     }
 
     public void setNiTempoScadChius(BigDecimal niTempoScadChius) {
-	setObject("ni_tempo_scad_chius", niTempoScadChius);
+        setObject("ni_tempo_scad_chius", niTempoScadChius);
     }
 
     public String getTiTempoScadChiusFirme() {
-	return getString("ti_tempo_scad_chius_firme");
+        return getString("ti_tempo_scad_chius_firme");
     }
 
     public void setTiTempoScadChiusFirme(String tiTempoScadChiusFirme) {
-	setObject("ti_tempo_scad_chius_firme", tiTempoScadChiusFirme);
+        setObject("ti_tempo_scad_chius_firme", tiTempoScadChiusFirme);
     }
 
     public BigDecimal getNiTempoScadChiusFirme() {
-	return getBigDecimal("ni_tempo_scad_chius_firme");
+        return getBigDecimal("ni_tempo_scad_chius_firme");
     }
 
     public void setNiTempoScadChiusFirme(BigDecimal niTempoScadChiusFirme) {
-	setObject("ni_tempo_scad_chius_firme", niTempoScadChiusFirme);
+        setObject("ni_tempo_scad_chius_firme", niTempoScadChiusFirme);
     }
 
     public BigDecimal getIdUserCreazione() {
-	return getBigDecimal("id_user_creazione");
+        return getBigDecimal("id_user_creazione");
     }
 
     public void setIdUserCreazione(BigDecimal idUserCreazione) {
-	setObject("id_user_creazione", idUserCreazione);
+        setObject("id_user_creazione", idUserCreazione);
     }
 
     public BigDecimal getNiUnitaDocVolume() {
-	return getBigDecimal("ni_unita_doc_volume");
+        return getBigDecimal("ni_unita_doc_volume");
     }
 
     public void setNiUnitaDocVolume(BigDecimal niUnitaDocVolume) {
-	setObject("ni_unita_doc_volume", niUnitaDocVolume);
+        setObject("ni_unita_doc_volume", niUnitaDocVolume);
     }
 
     public BigDecimal getNiCompVolume() {
-	return getBigDecimal("ni_comp_volume");
+        return getBigDecimal("ni_comp_volume");
     }
 
     public void setNiCompVolume(BigDecimal niCompVolume) {
-	setObject("ni_comp_volume", niCompVolume);
+        setObject("ni_comp_volume", niCompVolume);
     }
 
     public BigDecimal getNiKbSize() {
-	return getBigDecimal("ni_kb_size");
+        return getBigDecimal("ni_kb_size");
     }
 
     public void setNiKbSize(BigDecimal niKbSize) {
-	setObject("ni_kb_size", niKbSize);
+        setObject("ni_kb_size", niKbSize);
     }
 
     public String getNtIndiceVolume() {
-	return getString("nt_indice_volume");
+        return getString("nt_indice_volume");
     }
 
     public void setNtIndiceVolume(String ntIndiceVolume) {
-	setObject("nt_indice_volume", ntIndiceVolume);
+        setObject("nt_indice_volume", ntIndiceVolume);
     }
 
     public String getTiPresenzaFirme() {
-	return getString("ti_presenza_firme");
+        return getString("ti_presenza_firme");
     }
 
     public void setTiPresenzaFirme(String tiPresenzaFirme) {
-	setObject("ti_presenza_firme", tiPresenzaFirme);
+        setObject("ti_presenza_firme", tiPresenzaFirme);
     }
 
     public String getTiValFirme() {
-	return getString("ti_val_firme");
+        return getString("ti_val_firme");
     }
 
     public void setTiValFirme(String tiValFirme) {
-	setObject("ti_val_firme", tiValFirme);
+        setObject("ti_val_firme", tiValFirme);
     }
 
     public Timestamp getDtScadChius() {
-	return getTimestamp("dt_scad_chius");
+        return getTimestamp("dt_scad_chius");
     }
 
     public void setDtScadChius(Timestamp dtScadChius) {
-	setObject("dt_scad_chius", dtScadChius);
+        setObject("dt_scad_chius", dtScadChius);
     }
 
     public Timestamp getDtChius() {
-	return getTimestamp("dt_chius");
+        return getTimestamp("dt_chius");
     }
 
     public void setDtChius(Timestamp dtChius) {
-	setObject("dt_chius", dtChius);
+        setObject("dt_chius", dtChius);
     }
 
     public String getDlMotivoChius() {
-	return getString("dl_motivo_chius");
+        return getString("dl_motivo_chius");
     }
 
     public void setDlMotivoChius(String dlMotivoChius) {
-	setObject("dl_motivo_chius", dlMotivoChius);
+        setObject("dl_motivo_chius", dlMotivoChius);
     }
 
     public String getDsAlgoHash() {
-	return getString("ds_algo_hash");
+        return getString("ds_algo_hash");
     }
 
     public void setDsAlgoHash(String dsAlgoHash) {
-	setObject("ds_algo_hash", dsAlgoHash);
+        setObject("ds_algo_hash", dsAlgoHash);
     }
 
     public String getCdEncodingHash() {
-	return getString("cd_encoding_hash");
+        return getString("cd_encoding_hash");
     }
 
     public void setCdEncodingHash(String cdEncodingHash) {
-	setObject("cd_encoding_hash", cdEncodingHash);
+        setObject("cd_encoding_hash", cdEncodingHash);
     }
 
     public String getDsHashFileIndice() {
-	return getString("ds_hash_file_indice");
+        return getString("ds_hash_file_indice");
     }
 
     public void setDsHashFileIndice(String dsHashFileIndice) {
-	setObject("ds_hash_file_indice", dsHashFileIndice);
+        setObject("ds_hash_file_indice", dsHashFileIndice);
     }
 
     public Timestamp getTmMarcaIndice() {
-	return getTimestamp("tm_marca_indice");
+        return getTimestamp("tm_marca_indice");
     }
 
     public void setTmMarcaIndice(Timestamp tmMarcaIndice) {
-	setObject("tm_marca_indice", tmMarcaIndice);
+        setObject("tm_marca_indice", tmMarcaIndice);
     }
 
     public String getDsHashFileMarca() {
-	return getString("ds_hash_file_marca");
+        return getString("ds_hash_file_marca");
     }
 
     public void setDsHashFileMarca(String dsHashFileMarca) {
-	setObject("ds_hash_file_marca", dsHashFileMarca);
+        setObject("ds_hash_file_marca", dsHashFileMarca);
     }
 
     public Timestamp getDtFirmaMarca() {
-	return getTimestamp("dt_firma_marca");
+        return getTimestamp("dt_firma_marca");
     }
 
     public void setDtFirmaMarca(Timestamp dtFirmaMarca) {
-	setObject("dt_firma_marca", dtFirmaMarca);
+        setObject("dt_firma_marca", dtFirmaMarca);
     }
 
     public BigDecimal getIdUserFirmaMarca() {
-	return getBigDecimal("id_user_firma_marca");
+        return getBigDecimal("id_user_firma_marca");
     }
 
     public void setIdUserFirmaMarca(BigDecimal idUserFirmaMarca) {
-	setObject("id_user_firma_marca", idUserFirmaMarca);
+        setObject("id_user_firma_marca", idUserFirmaMarca);
     }
 
     public String getDsFirmaMarcaBase64() {
-	return getString("ds_firma_marca_base64");
+        return getString("ds_firma_marca_base64");
     }
 
     public void setDsFirmaMarcaBase64(String ds_firma_marca_base64) {
-	setObject("ds_firma_marca_base64", ds_firma_marca_base64);
+        setObject("ds_firma_marca_base64", ds_firma_marca_base64);
     }
 
     public String getDsHashFileFirma() {
-	return getString("ds_hash_file_firma");
+        return getString("ds_hash_file_firma");
     }
 
     public void setDsHashFileFirma(String dsHashFileFirma) {
-	setObject("ds_hash_file_firma", dsHashFileFirma);
+        setObject("ds_hash_file_firma", dsHashFileFirma);
     }
 
     public Timestamp getTmMarcaFirma() {
-	return getTimestamp("tm_marca_firma");
+        return getTimestamp("tm_marca_firma");
     }
 
     public void setTmMarcaFirma(Timestamp tmMarcaFirma) {
-	setObject("tm_marca_firma", tmMarcaFirma);
+        setObject("tm_marca_firma", tmMarcaFirma);
     }
 
     public String getCdVersioneIndice() {
-	return getString("cd_versione_indice");
+        return getString("cd_versione_indice");
     }
 
     public void setCdVersioneIndice(String cdVersioneIndice) {
-	setObject("cd_versione_indice", cdVersioneIndice);
+        setObject("cd_versione_indice", cdVersioneIndice);
     }
 
     public String getNtVolumeChiuso() {
-	return getString("nt_volume_chiuso");
+        return getString("nt_volume_chiuso");
     }
 
     public void setNtVolumeChiuso(String ntVolumeChiuso) {
-	setObject("nt_volume_chiuso", ntVolumeChiuso);
+        setObject("nt_volume_chiuso", ntVolumeChiuso);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	VolVolumeConserv entity = (VolVolumeConserv) obj;
+        VolVolumeConserv entity = (VolVolumeConserv) obj;
 
-	this.setIdVolumeConserv(entity.getIdVolumeConserv() == null ? null
-		: BigDecimal.valueOf(entity.getIdVolumeConserv()));
+        this.setIdVolumeConserv(entity.getIdVolumeConserv() == null ? null
+                : BigDecimal.valueOf(entity.getIdVolumeConserv()));
 
-	if (entity.getOrgStrut() != null) {
-	    this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
-	}
+        if (entity.getOrgStrut() != null) {
+            this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
+        }
 
-	this.setNmVolumeConserv(entity.getNmVolumeConserv());
-	this.setDsVolumeConserv(entity.getDsVolumeConserv());
-	this.setTiStatoVolumeConserv(entity.getTiStatoVolumeConserv());
+        this.setNmVolumeConserv(entity.getNmVolumeConserv());
+        this.setDsVolumeConserv(entity.getDsVolumeConserv());
+        this.setTiStatoVolumeConserv(entity.getTiStatoVolumeConserv());
 
-	if (entity.getDecCriterioRaggr() != null) {
-	    this.setIdCriterioRaggr(
-		    new BigDecimal(entity.getDecCriterioRaggr().getIdCriterioRaggr()));
-	}
+        if (entity.getDecCriterioRaggr() != null) {
+            this.setIdCriterioRaggr(
+                    new BigDecimal(entity.getDecCriterioRaggr().getIdCriterioRaggr()));
+        }
 
-	if (entity.getDtCreazione() != null) {
-	    this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
-	}
-	this.setNiMaxUnitaDoc(entity.getNiMaxUnitaDoc());
-	this.setNiMaxComp(entity.getNiMaxComp());
-	this.setTiScadChiusVolume(entity.getTiScadChiusVolume());
-	this.setTiTempoScadChius(entity.getTiTempoScadChius());
-	this.setNiTempoScadChius(entity.getNiTempoScadChius());
-	this.setTiTempoScadChiusFirme(entity.getTiTempoScadChiusFirme());
-	this.setNiTempoScadChiusFirme(entity.getNiTempoScadChiusFirme());
+        if (entity.getDtCreazione() != null) {
+            this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
+        }
+        this.setNiMaxUnitaDoc(entity.getNiMaxUnitaDoc());
+        this.setNiMaxComp(entity.getNiMaxComp());
+        this.setTiScadChiusVolume(entity.getTiScadChiusVolume());
+        this.setTiTempoScadChius(entity.getTiTempoScadChius());
+        this.setNiTempoScadChius(entity.getNiTempoScadChius());
+        this.setTiTempoScadChiusFirme(entity.getTiTempoScadChiusFirme());
+        this.setNiTempoScadChiusFirme(entity.getNiTempoScadChiusFirme());
 
-	if (entity.getIamUserCreazione() != null) {
-	    this.setIdUserCreazione(new BigDecimal(entity.getIamUserCreazione().getIdUserIam()));
-	}
+        if (entity.getIamUserCreazione() != null) {
+            this.setIdUserCreazione(new BigDecimal(entity.getIamUserCreazione().getIdUserIam()));
+        }
 
-	this.setNiUnitaDocVolume(entity.getNiUnitaDocVolume());
-	this.setNiCompVolume(entity.getNiCompVolume());
-	this.setNiKbSize(entity.getNiKbSize());
-	this.setNtIndiceVolume(entity.getNtIndiceVolume());
-	this.setTiPresenzaFirme(entity.getTiPresenzaFirme());
-	this.setTiValFirme(entity.getTiValFirme());
-	if (entity.getDtScadChius() != null) {
-	    this.setDtScadChius(new Timestamp(entity.getDtScadChius().getTime()));
-	}
-	if (entity.getDtChius() != null) {
-	    this.setDtChius(new Timestamp(entity.getDtChius().getTime()));
-	}
-	this.setDlMotivoChius(entity.getDlMotivoChius());
-	this.setDsAlgoHash(entity.getDsAlgoHash());
-	this.setCdEncodingHash(entity.getCdEncodingHash());
-	this.setDsHashFileIndice(entity.getDsHashFileIndice());
-	if (entity.getTmMarcaIndice() != null) {
-	    this.setTmMarcaIndice(new Timestamp(entity.getTmMarcaIndice().getTime()));
-	}
-	this.setDsHashFileMarca(entity.getDsHashFileMarca());
-	if (entity.getDtFirmaMarca() != null) {
-	    this.setDtFirmaMarca(new Timestamp(entity.getDtFirmaMarca().getTime()));
-	}
+        this.setNiUnitaDocVolume(entity.getNiUnitaDocVolume());
+        this.setNiCompVolume(entity.getNiCompVolume());
+        this.setNiKbSize(entity.getNiKbSize());
+        this.setNtIndiceVolume(entity.getNtIndiceVolume());
+        this.setTiPresenzaFirme(entity.getTiPresenzaFirme());
+        this.setTiValFirme(entity.getTiValFirme());
+        if (entity.getDtScadChius() != null) {
+            this.setDtScadChius(new Timestamp(entity.getDtScadChius().getTime()));
+        }
+        if (entity.getDtChius() != null) {
+            this.setDtChius(new Timestamp(entity.getDtChius().getTime()));
+        }
+        this.setDlMotivoChius(entity.getDlMotivoChius());
+        this.setDsAlgoHash(entity.getDsAlgoHash());
+        this.setCdEncodingHash(entity.getCdEncodingHash());
+        this.setDsHashFileIndice(entity.getDsHashFileIndice());
+        if (entity.getTmMarcaIndice() != null) {
+            this.setTmMarcaIndice(new Timestamp(entity.getTmMarcaIndice().getTime()));
+        }
+        this.setDsHashFileMarca(entity.getDsHashFileMarca());
+        if (entity.getDtFirmaMarca() != null) {
+            this.setDtFirmaMarca(new Timestamp(entity.getDtFirmaMarca().getTime()));
+        }
 
-	if (entity.getIamUserFirmaMarca() != null) {
-	    this.setIdUserFirmaMarca(new BigDecimal(entity.getIamUserFirmaMarca().getIdUserIam()));
-	}
+        if (entity.getIamUserFirmaMarca() != null) {
+            this.setIdUserFirmaMarca(new BigDecimal(entity.getIamUserFirmaMarca().getIdUserIam()));
+        }
 
-	this.setDsFirmaMarcaBase64(entity.getDsFirmaMarcaBase64());
-	this.setDsHashFileFirma(entity.getDsHashFileFirma());
-	if (entity.getTmMarcaFirma() != null) {
-	    this.setTmMarcaFirma(new Timestamp(entity.getTmMarcaFirma().getTime()));
-	}
-	this.setCdVersioneIndice(entity.getCdVersioneIndice());
-	this.setNtVolumeChiuso(entity.getNtVolumeChiuso());
+        this.setDsFirmaMarcaBase64(entity.getDsFirmaMarcaBase64());
+        this.setDsHashFileFirma(entity.getDsHashFileFirma());
+        if (entity.getTmMarcaFirma() != null) {
+            this.setTmMarcaFirma(new Timestamp(entity.getTmMarcaFirma().getTime()));
+        }
+        this.setCdVersioneIndice(entity.getCdVersioneIndice());
+        this.setNtVolumeChiuso(entity.getNtVolumeChiuso());
     }
 
     @Override
     public VolVolumeConserv rowBeanToEntity() {
-	VolVolumeConserv entity = new VolVolumeConserv();
-	if (this.getIdVolumeConserv() != null) {
-	    entity.setIdVolumeConserv(this.getIdVolumeConserv().longValue());
-	}
-	if (this.getIdStrut() != null) {
-	    if (entity.getOrgStrut() == null) {
-		entity.setOrgStrut(new OrgStrut());
-	    }
-	    entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
-	}
-	entity.setNmVolumeConserv(this.getNmVolumeConserv());
-	entity.setDsVolumeConserv(this.getDsVolumeConserv());
-	entity.setTiStatoVolumeConserv(this.getTiStatoVolumeConserv());
-	if (this.getIdCriterioRaggr() != null) {
-	    if (entity.getDecCriterioRaggr() == null) {
-		entity.setDecCriterioRaggr(new DecCriterioRaggr());
-	    }
-	    entity.getDecCriterioRaggr().setIdCriterioRaggr(this.getIdCriterioRaggr().longValue());
-	}
-	entity.setDtCreazione(this.getDtCreazione());
-	entity.setNiMaxUnitaDoc(this.getNiMaxUnitaDoc());
-	entity.setNiMaxComp(this.getNiMaxComp());
-	entity.setTiScadChiusVolume(this.getTiScadChiusVolume());
-	entity.setTiTempoScadChius(this.getTiTempoScadChius());
-	entity.setNiTempoScadChius(this.getNiTempoScadChius());
-	entity.setTiTempoScadChiusFirme(this.getTiTempoScadChiusFirme());
-	entity.setNiTempoScadChiusFirme(this.getNiTempoScadChiusFirme());
-	if (this.getIdUserCreazione() != null) {
-	    if (entity.getIamUserCreazione() == null) {
-		entity.setIamUserCreazione(new IamUser());
-	    }
-	    entity.getIamUserCreazione().setIdUserIam(this.getIdUserCreazione().longValue());
-	}
-	entity.setNiUnitaDocVolume(this.getNiUnitaDocVolume());
-	entity.setNiCompVolume(this.getNiCompVolume());
-	entity.setNiKbSize(this.getNiKbSize());
-	entity.setNtIndiceVolume(this.getNtIndiceVolume());
-	entity.setTiPresenzaFirme(this.getTiPresenzaFirme());
-	entity.setTiValFirme(this.getTiValFirme());
-	entity.setDtScadChius(this.getDtScadChius());
-	entity.setDtChius(this.getDtChius());
-	entity.setDlMotivoChius(this.getDlMotivoChius());
-	entity.setDsAlgoHash(this.getDsAlgoHash());
-	entity.setCdEncodingHash(this.getCdEncodingHash());
-	entity.setDsHashFileIndice(this.getDsHashFileIndice());
-	entity.setTmMarcaIndice(this.getTmMarcaIndice());
-	entity.setDsHashFileMarca(this.getDsHashFileMarca());
-	entity.setDtFirmaMarca(this.getDtFirmaMarca());
-	if (this.getIdUserFirmaMarca() != null) {
-	    if (entity.getIamUserFirmaMarca() == null) {
-		entity.setIamUserFirmaMarca(new IamUser());
-	    }
-	    entity.getIamUserFirmaMarca().setIdUserIam(this.getIdUserFirmaMarca().longValue());
-	}
-	entity.setDsFirmaMarcaBase64(this.getDsFirmaMarcaBase64());
-	entity.setDsHashFileFirma(this.getDsHashFileFirma());
-	entity.setTmMarcaFirma(this.getTmMarcaFirma());
-	entity.setCdVersioneIndice(this.getCdVersioneIndice());
-	entity.setNtVolumeChiuso(this.getNtVolumeChiuso());
-	return entity;
+        VolVolumeConserv entity = new VolVolumeConserv();
+        if (this.getIdVolumeConserv() != null) {
+            entity.setIdVolumeConserv(this.getIdVolumeConserv().longValue());
+        }
+        if (this.getIdStrut() != null) {
+            if (entity.getOrgStrut() == null) {
+                entity.setOrgStrut(new OrgStrut());
+            }
+            entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
+        }
+        entity.setNmVolumeConserv(this.getNmVolumeConserv());
+        entity.setDsVolumeConserv(this.getDsVolumeConserv());
+        entity.setTiStatoVolumeConserv(this.getTiStatoVolumeConserv());
+        if (this.getIdCriterioRaggr() != null) {
+            if (entity.getDecCriterioRaggr() == null) {
+                entity.setDecCriterioRaggr(new DecCriterioRaggr());
+            }
+            entity.getDecCriterioRaggr().setIdCriterioRaggr(this.getIdCriterioRaggr().longValue());
+        }
+        entity.setDtCreazione(this.getDtCreazione());
+        entity.setNiMaxUnitaDoc(this.getNiMaxUnitaDoc());
+        entity.setNiMaxComp(this.getNiMaxComp());
+        entity.setTiScadChiusVolume(this.getTiScadChiusVolume());
+        entity.setTiTempoScadChius(this.getTiTempoScadChius());
+        entity.setNiTempoScadChius(this.getNiTempoScadChius());
+        entity.setTiTempoScadChiusFirme(this.getTiTempoScadChiusFirme());
+        entity.setNiTempoScadChiusFirme(this.getNiTempoScadChiusFirme());
+        if (this.getIdUserCreazione() != null) {
+            if (entity.getIamUserCreazione() == null) {
+                entity.setIamUserCreazione(new IamUser());
+            }
+            entity.getIamUserCreazione().setIdUserIam(this.getIdUserCreazione().longValue());
+        }
+        entity.setNiUnitaDocVolume(this.getNiUnitaDocVolume());
+        entity.setNiCompVolume(this.getNiCompVolume());
+        entity.setNiKbSize(this.getNiKbSize());
+        entity.setNtIndiceVolume(this.getNtIndiceVolume());
+        entity.setTiPresenzaFirme(this.getTiPresenzaFirme());
+        entity.setTiValFirme(this.getTiValFirme());
+        entity.setDtScadChius(this.getDtScadChius());
+        entity.setDtChius(this.getDtChius());
+        entity.setDlMotivoChius(this.getDlMotivoChius());
+        entity.setDsAlgoHash(this.getDsAlgoHash());
+        entity.setCdEncodingHash(this.getCdEncodingHash());
+        entity.setDsHashFileIndice(this.getDsHashFileIndice());
+        entity.setTmMarcaIndice(this.getTmMarcaIndice());
+        entity.setDsHashFileMarca(this.getDsHashFileMarca());
+        entity.setDtFirmaMarca(this.getDtFirmaMarca());
+        if (this.getIdUserFirmaMarca() != null) {
+            if (entity.getIamUserFirmaMarca() == null) {
+                entity.setIamUserFirmaMarca(new IamUser());
+            }
+            entity.getIamUserFirmaMarca().setIdUserIam(this.getIdUserFirmaMarca().longValue());
+        }
+        entity.setDsFirmaMarcaBase64(this.getDsFirmaMarcaBase64());
+        entity.setDsHashFileFirma(this.getDsHashFileFirma());
+        entity.setTmMarcaFirma(this.getTmMarcaFirma());
+        entity.setCdVersioneIndice(this.getCdVersioneIndice());
+        entity.setNtVolumeChiuso(this.getNtVolumeChiuso());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

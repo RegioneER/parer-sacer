@@ -34,59 +34,59 @@ public class SalvaStrutturaDto implements Serializable {
     private Date dataAttuale;
 
     public boolean isCheckIncludiCriteri() {
-	return checkIncludiCriteri;
+        return checkIncludiCriteri;
     }
 
     public void setCheckIncludiCriteri(boolean checkIncludiCriteri) {
-	this.checkIncludiCriteri = checkIncludiCriteri;
+        this.checkIncludiCriteri = checkIncludiCriteri;
     }
 
     public boolean isCheckIncludiElementiDisattivi() {
-	return checkIncludiElementiDisattivi;
+        return checkIncludiElementiDisattivi;
     }
 
     public void setCheckIncludiElementiDisattivi(boolean checkIncludiElementiDisattivi) {
-	this.checkIncludiElementiDisattivi = checkIncludiElementiDisattivi;
+        this.checkIncludiElementiDisattivi = checkIncludiElementiDisattivi;
     }
 
     public boolean isCheckIncludiFormati() {
-	return checkIncludiFormati;
+        return checkIncludiFormati;
     }
 
     public void setCheckIncludiFormati(boolean checkIncludiFormati) {
-	this.checkIncludiFormati = checkIncludiFormati;
+        this.checkIncludiFormati = checkIncludiFormati;
     }
 
     public boolean isCheckIncludiTipiFascicolo() {
-	return checkIncludiTipiFascicolo;
+        return checkIncludiTipiFascicolo;
     }
 
     public void setCheckIncludiTipiFascicolo(boolean checkIncludiTipiFascicolo) {
-	this.checkIncludiTipiFascicolo = checkIncludiTipiFascicolo;
+        this.checkIncludiTipiFascicolo = checkIncludiTipiFascicolo;
     }
 
     public boolean isCheckMantieniDateFineValidita() {
-	return checkMantieniDateFineValidita;
+        return checkMantieniDateFineValidita;
     }
 
     public void setCheckMantieniDateFineValidita(boolean checkMantieniDateFineValidita) {
-	this.checkMantieniDateFineValidita = checkMantieniDateFineValidita;
+        this.checkMantieniDateFineValidita = checkMantieniDateFineValidita;
     }
 
     public boolean isCheckIncludiSistemiMigraz() {
-	return checkIncludiSistemiMigraz;
+        return checkIncludiSistemiMigraz;
     }
 
     public void setCheckIncludiSistemiMigraz(boolean checkIncludiSistemiMigraz) {
-	this.checkIncludiSistemiMigraz = checkIncludiSistemiMigraz;
+        this.checkIncludiSistemiMigraz = checkIncludiSistemiMigraz;
     }
 
     public Date getDataAttuale() {
-	return dataAttuale;
+        return dataAttuale;
     }
 
     public void setDataAttuale(Date dataAttuale) {
-	this.dataAttuale = dataAttuale;
+        this.dataAttuale = dataAttuale;
     }
 
 }

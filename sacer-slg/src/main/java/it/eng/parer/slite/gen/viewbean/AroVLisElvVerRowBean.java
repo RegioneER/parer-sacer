@@ -37,139 +37,139 @@ public class AroVLisElvVerRowBean extends BaseRow implements JEEBaseRowInterface
     public static AroVLisElvVerTableDescriptor TABLE_DESCRIPTOR = new AroVLisElvVerTableDescriptor();
 
     public AroVLisElvVerRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public BigDecimal getIdElencoVers() {
-	return getBigDecimal("id_elenco_vers");
+        return getBigDecimal("id_elenco_vers");
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-	setObject("id_elenco_vers", idElencoVers);
+        setObject("id_elenco_vers", idElencoVers);
     }
 
     public String getNmElenco() {
-	return getString("nm_elenco");
+        return getString("nm_elenco");
     }
 
     public void setNmElenco(String nmElenco) {
-	setObject("nm_elenco", nmElenco);
+        setObject("nm_elenco", nmElenco);
     }
 
     public Timestamp getDtCreazioneElenco() {
-	return getTimestamp("dt_creazione_elenco");
+        return getTimestamp("dt_creazione_elenco");
     }
 
     public void setDtCreazioneElenco(Timestamp dtCreazioneElenco) {
-	setObject("dt_creazione_elenco", dtCreazioneElenco);
+        setObject("dt_creazione_elenco", dtCreazioneElenco);
     }
 
     public String getTiStatoElenco() {
-	return getString("ti_stato_elenco");
+        return getString("ti_stato_elenco");
     }
 
     public void setTiStatoElenco(String tiStatoElenco) {
-	setObject("ti_stato_elenco", tiStatoElenco);
+        setObject("ti_stato_elenco", tiStatoElenco);
     }
 
     public Timestamp getDtCreazioneElencoIxAip() {
-	return getTimestamp("dt_creazione_elenco_ix_aip");
+        return getTimestamp("dt_creazione_elenco_ix_aip");
     }
 
     public void setDtCreazioneElencoIxAip(Timestamp dtCreazioneElencoIxAip) {
-	setObject("dt_creazione_elenco_ix_aip", dtCreazioneElencoIxAip);
+        setObject("dt_creazione_elenco_ix_aip", dtCreazioneElencoIxAip);
     }
 
     public Timestamp getDtFirmaElencoIxAip() {
-	return getTimestamp("dt_firma_elenco_ix_aip");
+        return getTimestamp("dt_firma_elenco_ix_aip");
     }
 
     public void setDtFirmaElencoIxAip(Timestamp dtFirmaElencoIxAip) {
-	setObject("dt_firma_elenco_ix_aip", dtFirmaElencoIxAip);
+        setObject("dt_firma_elenco_ix_aip", dtFirmaElencoIxAip);
     }
 
     public Timestamp getDtMarcaElencoIxAip() {
-	return getTimestamp("dt_marca_elenco_ix_aip");
+        return getTimestamp("dt_marca_elenco_ix_aip");
     }
 
     public void setDtMarcaElencoIxAip(Timestamp dtMarcaElencoIxAip) {
-	setObject("dt_marca_elenco_ix_aip", dtMarcaElencoIxAip);
+        setObject("dt_marca_elenco_ix_aip", dtMarcaElencoIxAip);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVLisElvVer entity = (AroVLisElvVer) obj;
-	if (entity.getAroVLisElvVerId() != null) {
-	    this.setIdUnitaDoc(entity.getAroVLisElvVerId().getIdUnitaDoc());
-	    this.setIdElencoVers(entity.getAroVLisElvVerId().getIdElencoVers());
-	}
-	this.setNmElenco(entity.getNmElenco());
-	if (entity.getDtCreazioneElenco() != null) {
-	    this.setDtCreazioneElenco(new Timestamp(entity.getDtCreazioneElenco().getTime()));
-	}
-	this.setTiStatoElenco(entity.getTiStatoElenco());
-	if (entity.getDtCreazioneElencoIxAip() != null) {
-	    this.setDtCreazioneElencoIxAip(
-		    new Timestamp(entity.getDtCreazioneElencoIxAip().getTime()));
-	}
-	if (entity.getDtFirmaElencoIxAip() != null) {
-	    this.setDtFirmaElencoIxAip(new Timestamp(entity.getDtFirmaElencoIxAip().getTime()));
-	}
-	if (entity.getDtMarcaElencoIxAip() != null) {
-	    this.setDtMarcaElencoIxAip(new Timestamp(entity.getDtMarcaElencoIxAip().getTime()));
-	}
+        AroVLisElvVer entity = (AroVLisElvVer) obj;
+        if (entity.getAroVLisElvVerId() != null) {
+            this.setIdUnitaDoc(entity.getAroVLisElvVerId().getIdUnitaDoc());
+            this.setIdElencoVers(entity.getAroVLisElvVerId().getIdElencoVers());
+        }
+        this.setNmElenco(entity.getNmElenco());
+        if (entity.getDtCreazioneElenco() != null) {
+            this.setDtCreazioneElenco(new Timestamp(entity.getDtCreazioneElenco().getTime()));
+        }
+        this.setTiStatoElenco(entity.getTiStatoElenco());
+        if (entity.getDtCreazioneElencoIxAip() != null) {
+            this.setDtCreazioneElencoIxAip(
+                    new Timestamp(entity.getDtCreazioneElencoIxAip().getTime()));
+        }
+        if (entity.getDtFirmaElencoIxAip() != null) {
+            this.setDtFirmaElencoIxAip(new Timestamp(entity.getDtFirmaElencoIxAip().getTime()));
+        }
+        if (entity.getDtMarcaElencoIxAip() != null) {
+            this.setDtMarcaElencoIxAip(new Timestamp(entity.getDtMarcaElencoIxAip().getTime()));
+        }
     }
 
     @Override
     public AroVLisElvVer rowBeanToEntity() {
-	AroVLisElvVer entity = new AroVLisElvVer();
-	entity.setAroVLisElvVerId(new AroVLisElvVerId());
-	entity.getAroVLisElvVerId().setIdUnitaDoc(this.getIdUnitaDoc());
-	entity.getAroVLisElvVerId().setIdElencoVers(this.getIdElencoVers());
-	entity.setNmElenco(this.getNmElenco());
-	entity.setDtCreazioneElenco(this.getDtCreazioneElenco());
-	entity.setTiStatoElenco(this.getTiStatoElenco());
-	entity.setDtCreazioneElencoIxAip(this.getDtCreazioneElencoIxAip());
-	entity.setDtFirmaElencoIxAip(this.getDtFirmaElencoIxAip());
-	entity.setDtMarcaElencoIxAip(this.getDtMarcaElencoIxAip());
-	return entity;
+        AroVLisElvVer entity = new AroVLisElvVer();
+        entity.setAroVLisElvVerId(new AroVLisElvVerId());
+        entity.getAroVLisElvVerId().setIdUnitaDoc(this.getIdUnitaDoc());
+        entity.getAroVLisElvVerId().setIdElencoVers(this.getIdElencoVers());
+        entity.setNmElenco(this.getNmElenco());
+        entity.setDtCreazioneElenco(this.getDtCreazioneElenco());
+        entity.setTiStatoElenco(this.getTiStatoElenco());
+        entity.setDtCreazioneElencoIxAip(this.getDtCreazioneElencoIxAip());
+        entity.setDtFirmaElencoIxAip(this.getDtFirmaElencoIxAip());
+        entity.setDtMarcaElencoIxAip(this.getDtMarcaElencoIxAip());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

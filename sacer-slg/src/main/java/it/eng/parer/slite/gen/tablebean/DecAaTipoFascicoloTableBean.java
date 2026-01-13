@@ -33,19 +33,19 @@ public class DecAaTipoFascicoloTableBean extends AbstractBaseTable<DecAaTipoFasc
     public static DecAaTipoFascicoloTableDescriptor TABLE_DESCRIPTOR = new DecAaTipoFascicoloTableDescriptor();
 
     public DecAaTipoFascicoloTableBean() {
-	super();
+        super();
     }
 
     protected DecAaTipoFascicoloRowBean createRow() {
-	return new DecAaTipoFascicoloRowBean();
+        return new DecAaTipoFascicoloRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecAaTipoFascicoloRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

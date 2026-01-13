@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class VrsFileNoarkPathDtVersTableBean
-	extends AbstractBaseTable<VrsFileNoarkPathDtVersRowBean> {
+        extends AbstractBaseTable<VrsFileNoarkPathDtVersRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class VrsFileNoarkPathDtVersTableBean
     public static VrsFileNoarkPathDtVersTableDescriptor TABLE_DESCRIPTOR = new VrsFileNoarkPathDtVersTableDescriptor();
 
     public VrsFileNoarkPathDtVersTableBean() {
-	super();
+        super();
     }
 
     protected VrsFileNoarkPathDtVersRowBean createRow() {
-	return new VrsFileNoarkPathDtVersRowBean();
+        return new VrsFileNoarkPathDtVersRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VrsFileNoarkPathDtVersRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

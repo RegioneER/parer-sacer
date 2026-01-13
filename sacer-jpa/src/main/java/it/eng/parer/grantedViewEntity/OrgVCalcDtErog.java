@@ -46,50 +46,50 @@ public class OrgVCalcDtErog implements Serializable {
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_DEC_ACCORDO")
     public Date getDtDecAccordo() {
-	return this.dtDecAccordo;
+        return this.dtDecAccordo;
     }
 
     public void setDtDecAccordo(Date dtDecAccordo) {
-	this.dtDecAccordo = dtDecAccordo;
+        this.dtDecAccordo = dtDecAccordo;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_EROG")
     public Date getDtErog() {
-	return this.dtErog;
+        return this.dtErog;
     }
 
     public void setDtErog(Date dtErog) {
-	this.dtErog = dtErog;
+        this.dtErog = dtErog;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_SCAD_ACCORDO")
     public Date getDtScadAccordo() {
-	return this.dtScadAccordo;
+        return this.dtScadAccordo;
     }
 
     public void setDtScadAccordo(Date dtScadAccordo) {
-	this.dtScadAccordo = dtScadAccordo;
+        this.dtScadAccordo = dtScadAccordo;
     }
 
     @Id
     @Column(name = "ID_SERVIZIO_EROGATO")
     public BigDecimal getIdServizioErogato() {
-	return this.idServizioErogato;
+        return this.idServizioErogato;
     }
 
     public void setIdServizioErogato(BigDecimal idServizioErogato) {
-	this.idServizioErogato = idServizioErogato;
+        this.idServizioErogato = idServizioErogato;
     }
 
     @Column(name = "NM_SERVIZIO_EROGATO")
     public String getNmServizioErogato() {
-	return this.nmServizioErogato;
+        return this.nmServizioErogato;
     }
 
     public void setNmServizioErogato(String nmServizioErogato) {
-	this.nmServizioErogato = nmServizioErogato;
+        this.nmServizioErogato = nmServizioErogato;
     }
 
 }

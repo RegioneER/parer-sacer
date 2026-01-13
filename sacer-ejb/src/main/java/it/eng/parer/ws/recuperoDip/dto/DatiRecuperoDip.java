@@ -29,19 +29,19 @@ public class DatiRecuperoDip {
     private LinkedHashMap<Long, CompRecDip> elementiTrovati;
 
     public long getNumeroElementiTrovati() {
-	return numeroElementiTrovati;
+        return numeroElementiTrovati;
     }
 
     public void setNumeroElementiTrovati(long numeroElementiTrovati) {
-	this.numeroElementiTrovati = numeroElementiTrovati;
+        this.numeroElementiTrovati = numeroElementiTrovati;
     }
 
     public LinkedHashMap<Long, CompRecDip> getElementiTrovati() {
-	return elementiTrovati;
+        return elementiTrovati;
     }
 
     public void setElementiTrovati(LinkedHashMap<Long, CompRecDip> elementiTrovati) {
-	this.elementiTrovati = elementiTrovati;
+        this.elementiTrovati = elementiTrovati;
     }
 
 }

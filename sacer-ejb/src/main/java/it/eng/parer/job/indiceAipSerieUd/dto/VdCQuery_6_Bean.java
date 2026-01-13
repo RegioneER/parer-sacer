@@ -26,43 +26,43 @@ public class VdCQuery_6_Bean {
     private String dlValore;
 
     public Long getIdTipoSerieUd() {
-	return idTipoSerieUd;
+        return idTipoSerieUd;
     }
 
     public void setIdTipoSerieUd(Long idTipoSerieUd) {
-	this.idTipoSerieUd = idTipoSerieUd;
+        this.idTipoSerieUd = idTipoSerieUd;
     }
 
     public Long getIdFiltroSelUdAttb() {
-	return idFiltroSelUdAttb;
+        return idFiltroSelUdAttb;
     }
 
     public void setIdFiltroSelUdAttb(Long idFiltroSelUdAttb) {
-	this.idFiltroSelUdAttb = idFiltroSelUdAttb;
+        this.idFiltroSelUdAttb = idFiltroSelUdAttb;
     }
 
     public String getNmAttribDatiSpec() {
-	return nmAttribDatiSpec;
+        return nmAttribDatiSpec;
     }
 
     public void setNmAttribDatiSpec(String nmAttribDatiSpec) {
-	this.nmAttribDatiSpec = nmAttribDatiSpec;
+        this.nmAttribDatiSpec = nmAttribDatiSpec;
     }
 
     public String getTiOper() {
-	return tiOper;
+        return tiOper;
     }
 
     public void setTiOper(String tiOper) {
-	this.tiOper = tiOper;
+        this.tiOper = tiOper;
     }
 
     public String getDlValore() {
-	return dlValore;
+        return dlValore;
     }
 
     public void setDlValore(String dlValore) {
-	this.dlValore = dlValore;
+        this.dlValore = dlValore;
     }
 
 }

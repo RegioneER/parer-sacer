@@ -24,14 +24,14 @@ public class HealthActuatorBean implements Serializable {
     private final static String STATUS_UP = "UP";
 
     private HealthActuatorBean(String status) {
-	this.status = status;
+        this.status = status;
     }
 
     public String getStatus() {
-	return status;
+        return status;
     }
 
     public static HealthActuatorBean statusUp() {
-	return new HealthActuatorBean(STATUS_UP);
+        return new HealthActuatorBean(STATUS_UP);
     }
 }

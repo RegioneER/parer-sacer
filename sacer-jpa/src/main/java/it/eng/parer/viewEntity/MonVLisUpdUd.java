@@ -67,289 +67,289 @@ public class MonVLisUpdUd implements MonVLisUpdUdInterface {
     @Column(name = "AA_KEY_UNITA_DOC")
     @Override
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     @Override
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC")
     @Override
     public String getCdKeyUnitaDoc() {
-	return this.cdKeyUnitaDoc;
+        return this.cdKeyUnitaDoc;
     }
 
     @Override
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     @Column(name = "CD_REGISTRO_KEY_UNITA_DOC")
     @Override
     public String getCdRegistroKeyUnitaDoc() {
-	return this.cdRegistroKeyUnitaDoc;
+        return this.cdRegistroKeyUnitaDoc;
     }
 
     @Override
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
     }
 
     @Column(name = "DS_ENTE_STRUT")
     @Override
     public String getDsEnteStrut() {
-	return this.dsEnteStrut;
+        return this.dsEnteStrut;
     }
 
     @Override
     public void setDsEnteStrut(String dsEnteStrut) {
-	this.dsEnteStrut = dsEnteStrut;
+        this.dsEnteStrut = dsEnteStrut;
     }
 
     @Column(name = "DS_TS_INI_SES")
     @Override
     public String getDsTsIniSes() {
-	return this.dsTsIniSes;
+        return this.dsTsIniSes;
     }
 
     @Override
     public void setDsTsIniSes(String dsTsIniSes) {
-	this.dsTsIniSes = dsTsIniSes;
+        this.dsTsIniSes = dsTsIniSes;
     }
 
     @Column(name = "DS_UNITA_DOC")
     @Override
     public String getDsUnitaDoc() {
-	return this.dsUnitaDoc;
+        return this.dsUnitaDoc;
     }
 
     @Override
     public void setDsUnitaDoc(String dsUnitaDoc) {
-	this.dsUnitaDoc = dsUnitaDoc;
+        this.dsUnitaDoc = dsUnitaDoc;
     }
 
     @Column(name = "FL_FORZA_UPD", columnDefinition = "char(1)")
     @Override
     public String getFlForzaUpd() {
-	return this.flForzaUpd;
+        return this.flForzaUpd;
     }
 
     @Override
     public void setFlForzaUpd(String flForzaUpd) {
-	this.flForzaUpd = flForzaUpd;
+        this.flForzaUpd = flForzaUpd;
     }
 
     @Column(name = "FL_SES_UPD_KO_RISOLTI", columnDefinition = "char(1)")
     @Override
     public String getFlSesUpdKoRisolti() {
-	return this.flSesUpdKoRisolti;
+        return this.flSesUpdKoRisolti;
     }
 
     @Override
     public void setFlSesUpdKoRisolti(String flSesUpdKoRisolti) {
-	this.flSesUpdKoRisolti = flSesUpdKoRisolti;
+        this.flSesUpdKoRisolti = flSesUpdKoRisolti;
     }
 
     @Column(name = "ID_AMBIENTE")
     @Override
     public BigDecimal getIdAmbiente() {
-	return this.idAmbiente;
+        return this.idAmbiente;
     }
 
     @Override
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	this.idAmbiente = idAmbiente;
+        this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_ENTE")
     @Override
     public BigDecimal getIdEnte() {
-	return this.idEnte;
+        return this.idEnte;
     }
 
     @Override
     public void setIdEnte(BigDecimal idEnte) {
-	this.idEnte = idEnte;
+        this.idEnte = idEnte;
     }
 
     @Column(name = "ID_REGISTRO_UNITA_DOC")
     @Override
     public BigDecimal getIdRegistroUnitaDoc() {
-	return this.idRegistroUnitaDoc;
+        return this.idRegistroUnitaDoc;
     }
 
     @Override
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-	this.idRegistroUnitaDoc = idRegistroUnitaDoc;
+        this.idRegistroUnitaDoc = idRegistroUnitaDoc;
     }
 
     @Column(name = "ID_STRUT")
     @Override
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     @Override
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "ID_TIPO_DOC_PRINC")
     @Override
     public BigDecimal getIdTipoDocPrinc() {
-	return this.idTipoDocPrinc;
+        return this.idTipoDocPrinc;
     }
 
     @Override
     public void setIdTipoDocPrinc(BigDecimal idTipoDocPrinc) {
-	this.idTipoDocPrinc = idTipoDocPrinc;
+        this.idTipoDocPrinc = idTipoDocPrinc;
     }
 
     @Column(name = "ID_TIPO_UNITA_DOC")
     @Override
     public BigDecimal getIdTipoUnitaDoc() {
-	return this.idTipoUnitaDoc;
+        return this.idTipoUnitaDoc;
     }
 
     @Override
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	this.idTipoUnitaDoc = idTipoUnitaDoc;
+        this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
     @Column(name = "ID_UNITA_DOC")
     @Override
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     @Override
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     @Id
     @Column(name = "ID_UPD_UNITA_DOC")
     @Override
     public BigDecimal getIdUpdUnitaDoc() {
-	return this.idUpdUnitaDoc;
+        return this.idUpdUnitaDoc;
     }
 
     @Override
     public void setIdUpdUnitaDoc(BigDecimal idUpdUnitaDoc) {
-	this.idUpdUnitaDoc = idUpdUnitaDoc;
+        this.idUpdUnitaDoc = idUpdUnitaDoc;
     }
 
     @Column(name = "ID_USER_IAM_COR")
     @Override
     public BigDecimal getIdUserIamCor() {
-	return this.idUserIamCor;
+        return this.idUserIamCor;
     }
 
     @Override
     public void setIdUserIamCor(BigDecimal idUserIamCor) {
-	this.idUserIamCor = idUserIamCor;
+        this.idUserIamCor = idUserIamCor;
     }
 
     @Column(name = "NM_AMBIENTE")
     @Override
     public String getNmAmbiente() {
-	return this.nmAmbiente;
+        return this.nmAmbiente;
     }
 
     @Override
     public void setNmAmbiente(String nmAmbiente) {
-	this.nmAmbiente = nmAmbiente;
+        this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_ENTE")
     @Override
     public String getNmEnte() {
-	return this.nmEnte;
+        return this.nmEnte;
     }
 
     @Override
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_STRUT")
     @Override
     public String getNmStrut() {
-	return this.nmStrut;
+        return this.nmStrut;
     }
 
     @Override
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
     @Column(name = "NM_TIPO_DOC_PRINC")
     @Override
     public String getNmTipoDocPrinc() {
-	return this.nmTipoDocPrinc;
+        return this.nmTipoDocPrinc;
     }
 
     @Override
     public void setNmTipoDocPrinc(String nmTipoDocPrinc) {
-	this.nmTipoDocPrinc = nmTipoDocPrinc;
+        this.nmTipoDocPrinc = nmTipoDocPrinc;
     }
 
     @Column(name = "NM_TIPO_UNITA_DOC")
     @Override
     public String getNmTipoUnitaDoc() {
-	return this.nmTipoUnitaDoc;
+        return this.nmTipoUnitaDoc;
     }
 
     @Override
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     @Column(name = "NT_UPD")
     @Override
     public String getNtUpd() {
-	return this.ntUpd;
+        return this.ntUpd;
     }
 
     @Override
     public void setNtUpd(String ntUpd) {
-	this.ntUpd = ntUpd;
+        this.ntUpd = ntUpd;
     }
 
     @Column(name = "PG_UPD_UNITA_DOC")
     @Override
     public BigDecimal getPgUpdUnitaDoc() {
-	return this.pgUpdUnitaDoc;
+        return this.pgUpdUnitaDoc;
     }
 
     @Override
     public void setPgUpdUnitaDoc(BigDecimal pgUpdUnitaDoc) {
-	this.pgUpdUnitaDoc = pgUpdUnitaDoc;
+        this.pgUpdUnitaDoc = pgUpdUnitaDoc;
     }
 
     @Column(name = "TI_STATO_UPD_ELENCO_VERS")
     @Override
     public String getTiStatoUpdElencoVers() {
-	return this.tiStatoUpdElencoVers;
+        return this.tiStatoUpdElencoVers;
     }
 
     @Override
     public void setTiStatoUpdElencoVers(String tiStatoUpdElencoVers) {
-	this.tiStatoUpdElencoVers = tiStatoUpdElencoVers;
+        this.tiStatoUpdElencoVers = tiStatoUpdElencoVers;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_INI_SES")
     @Override
     public Date getTsIniSes() {
-	return this.tsIniSes;
+        return this.tsIniSes;
     }
 
     @Override
     public void setTsIniSes(Date tsIniSes) {
-	this.tsIniSes = tsIniSes;
+        this.tsIniSes = tsIniSes;
     }
 
 }

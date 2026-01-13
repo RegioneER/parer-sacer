@@ -29,7 +29,7 @@ import it.eng.parer.serie.dto.CreazioneSerieBean;
  * @author Bonora_L
  */
 @SuppressWarnings({
-	"rawtypes", "unchecked" })
+        "rawtypes", "unchecked" })
 public class FutureUtils {
 
     // Nome parametri future asincroni serie
@@ -45,11 +45,11 @@ public class FutureUtils {
      * @param future      l'oggetto Future
      */
     public static void putFutureInMap(HttpSession httpSession, String sessionId, String key,
-	    Future<?> future) {
-	Map futureMap = FutureUtils.getFutureMap(httpSession, sessionId);
-	futureMap.put(key, future);
+            Future<?> future) {
+        Map futureMap = FutureUtils.getFutureMap(httpSession, sessionId);
+        futureMap.put(key, future);
 
-	FutureUtils.putFutureMapInAppContext(httpSession, sessionId, futureMap);
+        FutureUtils.putFutureMapInAppContext(httpSession, sessionId, futureMap);
     }
 
     /**
@@ -60,8 +60,8 @@ public class FutureUtils {
      * @param futures     l'oggetto Future di una mappa di risultati
      */
     public static void putFuturesInMap(HttpSession httpSession, String sessionId,
-	    Future<Map<String, ?>> futures) {
-	putFutureInMap(httpSession, sessionId, PARAMETER_FUTURE_MAP, futures);
+            Future<Map<String, ?>> futures) {
+        putFutureInMap(httpSession, sessionId, PARAMETER_FUTURE_MAP, futures);
     }
 
     /**
@@ -73,11 +73,11 @@ public class FutureUtils {
      * @param futureMap   la mappa da mantenere per quel sessionId
      */
     public static void putFutureMapInAppContext(HttpSession httpSession, String sessionId,
-	    Map futureMap) {
-	Map<String, Map<String, Future<?>>> futureMapPerApp = (Map<String, Map<String, Future<?>>>) httpSession
-		.getServletContext().getAttribute(PARAMETER_FUTURE_SERIE);
-	futureMapPerApp.put(sessionId, futureMap);
-	httpSession.getServletContext().setAttribute(PARAMETER_FUTURE_SERIE, futureMapPerApp);
+            Map futureMap) {
+        Map<String, Map<String, Future<?>>> futureMapPerApp = (Map<String, Map<String, Future<?>>>) httpSession
+                .getServletContext().getAttribute(PARAMETER_FUTURE_SERIE);
+        futureMapPerApp.put(sessionId, futureMap);
+        httpSession.getServletContext().setAttribute(PARAMETER_FUTURE_SERIE, futureMapPerApp);
     }
 
     /**
@@ -89,18 +89,18 @@ public class FutureUtils {
      * @return la mappa di future per la sessione richiesta
      */
     public static Map<String, Future<?>> getFutureMap(HttpSession httpSession, String sessionId) {
-	Map<String, Map<String, Future<?>>> futureMapPerApp = (Map<String, Map<String, Future<?>>>) httpSession
-		.getServletContext().getAttribute(PARAMETER_FUTURE_SERIE);
-	if (futureMapPerApp == null) {
-	    futureMapPerApp = new HashMap<>();
-	}
-	Map futureMap = futureMapPerApp.get(sessionId);
-	if (futureMap == null) {
-	    futureMap = new HashMap<>();
-	    futureMapPerApp.put(sessionId, futureMap);
-	}
-	httpSession.getServletContext().setAttribute(PARAMETER_FUTURE_SERIE, futureMapPerApp);
-	return futureMap;
+        Map<String, Map<String, Future<?>>> futureMapPerApp = (Map<String, Map<String, Future<?>>>) httpSession
+                .getServletContext().getAttribute(PARAMETER_FUTURE_SERIE);
+        if (futureMapPerApp == null) {
+            futureMapPerApp = new HashMap<>();
+        }
+        Map futureMap = futureMapPerApp.get(sessionId);
+        if (futureMap == null) {
+            futureMap = new HashMap<>();
+            futureMapPerApp.put(sessionId, futureMap);
+        }
+        httpSession.getServletContext().setAttribute(PARAMETER_FUTURE_SERIE, futureMapPerApp);
+        return futureMap;
     }
 
     /**
@@ -114,18 +114,18 @@ public class FutureUtils {
      * @return la stringa univoca per la gestione dell'oggetto Future che verra' chiamato
      */
     public static String buildKeyFuture(CreazioneSerieBean serieBean, BigDecimal idStrut,
-	    Long idVerSerie) {
-	String codiceSeriePadre = null;
-	if (StringUtils.isNotBlank(serieBean.getCd_serie_padre())) {
-	    codiceSeriePadre = serieBean.getCd_serie_padre();
-	} else if (StringUtils.isNotBlank(serieBean.getCd_serie_padre_da_creare())) {
-	    codiceSeriePadre = serieBean.getCd_serie_padre_da_creare();
-	}
-	String codiceSerie = StringUtils.isNotBlank(codiceSeriePadre)
-		? codiceSeriePadre + "/" + serieBean.getCd_serie()
-		: serieBean.getCd_serie();
-	return FutureUtils.buildKeyFuture(serieBean.getTi_creazione(), codiceSerie,
-		serieBean.getAa_serie(), idStrut, idVerSerie);
+            Long idVerSerie) {
+        String codiceSeriePadre = null;
+        if (StringUtils.isNotBlank(serieBean.getCd_serie_padre())) {
+            codiceSeriePadre = serieBean.getCd_serie_padre();
+        } else if (StringUtils.isNotBlank(serieBean.getCd_serie_padre_da_creare())) {
+            codiceSeriePadre = serieBean.getCd_serie_padre_da_creare();
+        }
+        String codiceSerie = StringUtils.isNotBlank(codiceSeriePadre)
+                ? codiceSeriePadre + "/" + serieBean.getCd_serie()
+                : serieBean.getCd_serie();
+        return FutureUtils.buildKeyFuture(serieBean.getTi_creazione(), codiceSerie,
+                serieBean.getAa_serie(), idStrut, idVerSerie);
     }
 
     /**
@@ -141,11 +141,11 @@ public class FutureUtils {
      * @return la stringa univoca per la gestione dell'oggetto Future che verra' chiamato
      */
     public static String buildKeyFuture(String tiCreazione, String cdSerie, BigDecimal aaSerie,
-	    BigDecimal idStrut, Long idVerSerie) {
-	StringBuilder key = new StringBuilder(tiCreazione);
-	key.append("#").append(idStrut.toPlainString()).append("#").append(aaSerie).append("#")
-		.append(cdSerie).append("#").append(String.valueOf(idVerSerie));
-	return key.toString();
+            BigDecimal idStrut, Long idVerSerie) {
+        StringBuilder key = new StringBuilder(tiCreazione);
+        key.append("#").append(idStrut.toPlainString()).append("#").append(aaSerie).append("#")
+                .append(cdSerie).append("#").append(String.valueOf(idVerSerie));
+        return key.toString();
     }
 
     /**
@@ -157,18 +157,18 @@ public class FutureUtils {
      * @return l'array che costituisce i dati della serie gestita in base alla chiave
      */
     public static String[] unbuildKeyFuture(String key) {
-	int firstHash = StringUtils.indexOf(key, "#");
-	int lastHash = StringUtils.lastIndexOf(key, "#");
-	String tipoCreazione = StringUtils.substring(key, 0, firstHash);
-	String idVerSerie = StringUtils.substring(key, lastHash + 1);
+        int firstHash = StringUtils.indexOf(key, "#");
+        int lastHash = StringUtils.lastIndexOf(key, "#");
+        String tipoCreazione = StringUtils.substring(key, 0, firstHash);
+        String idVerSerie = StringUtils.substring(key, lastHash + 1);
 
-	String substring = StringUtils.substring(key, firstHash + 1);
-	int aaHash = StringUtils.indexOf(substring, "#");
-	String idStrut = StringUtils.substring(substring, 0, aaHash);
-	int cdSerieHash = StringUtils.indexOf(substring, "#", aaHash + 1);
-	String aaSerie = StringUtils.substring(substring, aaHash + 1, cdSerieHash);
-	String cdSerie = StringUtils.substring(key, (firstHash + cdSerieHash + 2), lastHash);
-	return new String[] {
-		tipoCreazione, idStrut, aaSerie, cdSerie, idVerSerie };
+        String substring = StringUtils.substring(key, firstHash + 1);
+        int aaHash = StringUtils.indexOf(substring, "#");
+        String idStrut = StringUtils.substring(substring, 0, aaHash);
+        int cdSerieHash = StringUtils.indexOf(substring, "#", aaHash + 1);
+        String aaSerie = StringUtils.substring(substring, aaHash + 1, cdSerieHash);
+        String cdSerie = StringUtils.substring(key, (firstHash + cdSerieHash + 2), lastHash);
+        return new String[] {
+                tipoCreazione, idStrut, aaSerie, cdSerie, idVerSerie };
     }
 }

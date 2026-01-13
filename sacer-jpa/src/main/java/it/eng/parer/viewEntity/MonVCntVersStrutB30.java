@@ -36,23 +36,23 @@ public class MonVCntVersStrutB30 implements Serializable {
 
     @EmbeddedId
     public MonVCntVersStrutB30Id getMonVCntVersStrutB30Id() {
-	return monVCntVersStrutB30Id;
+        return monVCntVersStrutB30Id;
     }
 
     public void setMonVCntVersStrutB30Id(MonVCntVersStrutB30Id monVCntVersStrutB30Id) {
-	this.monVCntVersStrutB30Id = monVCntVersStrutB30Id;
+        this.monVCntVersStrutB30Id = monVCntVersStrutB30Id;
     }
 
     public MonVCntVersStrutB30() {
-	/* hibernate */
+        /* hibernate */
     }
 
     @Column(name = "NI_VERS")
     public BigDecimal getNiVers() {
-	return this.niVers;
+        return this.niVers;
     }
 
     public void setNiVers(BigDecimal niVers) {
-	this.niVers = niVers;
+        this.niVers = niVers;
     }
 }

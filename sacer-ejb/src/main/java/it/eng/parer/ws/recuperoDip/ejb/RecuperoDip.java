@@ -53,226 +53,226 @@ public class RecuperoDip {
     //
 
     public void contaComponenti(RispostaWSRecupero rispostaWs, RecuperoExt rec) {
-	StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
-	if (rec.getParametriRecupero().getUtente() == null) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-		    "Errore: l'utente non è autenticato.");
-	    return;
-	}
+        StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
+        if (rec.getParametriRecupero().getUtente() == null) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                    "Errore: l'utente non è autenticato.");
+            return;
+        }
 
-	RispostaControlli controlli = controlliRecDip.contaComponenti(rec.getParametriRecupero());
-	if (!controlli.isrBoolean()) {
-	    rispostaWs.setSeverity(SeverityEnum.ERROR);
-	    rispostaWs.setEsitoWsError(controlli.getCodErr(), controlli.getDsErr());
-	} else {
-	    if (rispostaWs.getDatiRecuperoDip() == null) {
-		rispostaWs.setDatiRecuperoDip(new DatiRecuperoDip());
-	    }
-	    rispostaWs.getDatiRecuperoDip().setNumeroElementiTrovati(controlli.getrLong());
-	    /*
-	     * da notare che nel caso il valore fosse 0. questo sarà da trattare come un errore nel
-	     * ws e come un caso normale - non viene mostrato il pulsante estrai/converti - nel caso
-	     * dell'online. per questo qui non viene impostato il flag ed il messaggio di errore
-	     */
-	}
-	if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
-	    myEsito.setXMLRichiesta(rec.getDatiXml());
-	}
+        RispostaControlli controlli = controlliRecDip.contaComponenti(rec.getParametriRecupero());
+        if (!controlli.isrBoolean()) {
+            rispostaWs.setSeverity(SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsError(controlli.getCodErr(), controlli.getDsErr());
+        } else {
+            if (rispostaWs.getDatiRecuperoDip() == null) {
+                rispostaWs.setDatiRecuperoDip(new DatiRecuperoDip());
+            }
+            rispostaWs.getDatiRecuperoDip().setNumeroElementiTrovati(controlli.getrLong());
+            /*
+             * da notare che nel caso il valore fosse 0. questo sarà da trattare come un errore nel
+             * ws e come un caso normale - non viene mostrato il pulsante estrai/converti - nel caso
+             * dell'online. per questo qui non viene impostato il flag ed il messaggio di errore
+             */
+        }
+        if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
+            myEsito.setXMLRichiesta(rec.getDatiXml());
+        }
     }
 
     public void listaComponenti(RispostaWSRecupero rispostaWs, RecuperoExt rec) {
-	StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
-	if (rec.getParametriRecupero().getUtente() == null) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-		    "Errore: l'utente non è autenticato.");
-	    return;
-	}
+        StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
+        if (rec.getParametriRecupero().getUtente() == null) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                    "Errore: l'utente non è autenticato.");
+            return;
+        }
 
-	if (rispostaWs.getDatiRecuperoDip() == null) {
-	    rispostaWs.setDatiRecuperoDip(new DatiRecuperoDip());
-	}
+        if (rispostaWs.getDatiRecuperoDip() == null) {
+            rispostaWs.setDatiRecuperoDip(new DatiRecuperoDip());
+        }
 
-	GestSessRecDip gestSessRecDip = new GestSessRecDip(rispostaWs);
-	if (rispostaWs.getSeverity() != SeverityEnum.ERROR) {
-	    gestSessRecDip.caricaListaComponenti(rec);
-	}
+        GestSessRecDip gestSessRecDip = new GestSessRecDip(rispostaWs);
+        if (rispostaWs.getSeverity() != SeverityEnum.ERROR) {
+            gestSessRecDip.caricaListaComponenti(rec);
+        }
 
-	if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
-	    myEsito.setXMLRichiesta(rec.getDatiXml());
-	}
+        if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
+            myEsito.setXMLRichiesta(rec.getDatiXml());
+        }
     }
 
     public void recuperaCompConvertito(RispostaWSRecupero rispostaWs, RecuperoExt rec,
-	    String path) {
-	StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
-	boolean salvaSessioneRecupero = false;
+            String path) {
+        StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
+        boolean salvaSessioneRecupero = false;
 
-	if (rec.getParametriRecupero().getUtente() == null) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-		    "Errore: l'utente non è autenticato.");
-	    return;
-	}
+        if (rec.getParametriRecupero().getUtente() == null) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                    "Errore: l'utente non è autenticato.");
+            return;
+        }
 
-	// VERIFICA CHE LA RICHIESTA SIA DAVVERO RELATIVA AD UN SOLO COMPONENTE!!!
-	if (rec.getParametriRecupero()
-		.getTipoEntitaSacer() != CostantiDB.TipiEntitaRecupero.COMP_DIP) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-		    "Errore: questo servizio supporta solo l'estrazione di singoli componenti.");
-	    return;
-	}
+        // VERIFICA CHE LA RICHIESTA SIA DAVVERO RELATIVA AD UN SOLO COMPONENTE!!!
+        if (rec.getParametriRecupero()
+                .getTipoEntitaSacer() != CostantiDB.TipiEntitaRecupero.COMP_DIP) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                    "Errore: questo servizio supporta solo l'estrazione di singoli componenti.");
+            return;
+        }
 
-	GestSessRecupero gestSessRecupero = new GestSessRecupero(rispostaWs);
-	// carica i parametri, stabilisce se è attivo il TPI, predispone i nomi di tutti i
-	// path utili per il salvataggio filesystem
-	if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-	    gestSessRecupero.caricaParametri(rec);
-	}
+        GestSessRecupero gestSessRecupero = new GestSessRecupero(rispostaWs);
+        // carica i parametri, stabilisce se è attivo il TPI, predispone i nomi di tutti i
+        // path utili per il salvataggio filesystem
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecupero.caricaParametri(rec);
+        }
 
-	GestSessRecDip gestSessRecDip = new GestSessRecDip(rispostaWs);
-	if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-	    gestSessRecDip.caricaParametri(rec);
-	}
+        GestSessRecDip gestSessRecDip = new GestSessRecDip(rispostaWs);
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecDip.caricaParametri(rec);
+        }
 
-	// verifica e carica la data del componente
-	// che deve essere recuperato
-	if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-	    gestSessRecupero.verificaDate(rec);
-	}
+        // verifica e carica la data del componente
+        // che deve essere recuperato
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecupero.verificaDate(rec);
+        }
 
-	if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-	    salvaSessioneRecupero = true;
-	    try {
-		gestSessRecDip.recuperaCompConvertito(path, rec,
-			rispostaWs.getDatiRecuperoDip().getElementiTrovati());
-	    } catch (Exception e) {
-		rispostaWs.setSeverity(SeverityEnum.ERROR);
-		rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-			"Errore nella fase di recupero DIP del EJB " + e.getMessage());
-		log.error("Errore nella fase di recupero DIP del EJB ", e);
-	    }
-	}
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            salvaSessioneRecupero = true;
+            try {
+                gestSessRecDip.recuperaCompConvertito(path, rec,
+                        rispostaWs.getDatiRecuperoDip().getElementiTrovati());
+            } catch (Exception e) {
+                rispostaWs.setSeverity(SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                        "Errore nella fase di recupero DIP del EJB " + e.getMessage());
+                log.error("Errore nella fase di recupero DIP del EJB ", e);
+            }
+        }
 
-	if (salvaSessioneRecupero) {
-	    if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-		rec.getDatiSessioneRecupero()
-			.setStatoSess(JobConstants.StatoSessioniRecupEnum.ELIMINATO);
-		rec.getDatiSessioneRecupero()
-			.setStatoDtVers(JobConstants.StatoDtVersRecupEnum.RECUPERATA);
-	    } else {
-		rec.getDatiSessioneRecupero()
-			.setStatoSess(JobConstants.StatoSessioniRecupEnum.CHIUSO_ERR);
-		rec.getDatiSessioneRecupero()
-			.setStatoDtVers(JobConstants.StatoDtVersRecupEnum.ERRORE);
-		rec.getDatiSessioneRecupero().setErrorCode(rispostaWs.getErrorCode());
-		rec.getDatiSessioneRecupero().setErrorMessage(rispostaWs.getErrorMessage());
-	    }
-	    //
-	    gestSessRecupero.creaSessRecChiusa(rec);
-	}
+        if (salvaSessioneRecupero) {
+            if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+                rec.getDatiSessioneRecupero()
+                        .setStatoSess(JobConstants.StatoSessioniRecupEnum.ELIMINATO);
+                rec.getDatiSessioneRecupero()
+                        .setStatoDtVers(JobConstants.StatoDtVersRecupEnum.RECUPERATA);
+            } else {
+                rec.getDatiSessioneRecupero()
+                        .setStatoSess(JobConstants.StatoSessioniRecupEnum.CHIUSO_ERR);
+                rec.getDatiSessioneRecupero()
+                        .setStatoDtVers(JobConstants.StatoDtVersRecupEnum.ERRORE);
+                rec.getDatiSessioneRecupero().setErrorCode(rispostaWs.getErrorCode());
+                rec.getDatiSessioneRecupero().setErrorMessage(rispostaWs.getErrorMessage());
+            }
+            //
+            gestSessRecupero.creaSessRecChiusa(rec);
+        }
 
-	if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
-	    myEsito.setXMLRichiesta(rec.getDatiXml());
-	}
+        if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
+            myEsito.setXMLRichiesta(rec.getDatiXml());
+        }
     }
 
     public void recuperaUnitaDocumentaria(RispostaWSRecupero rispostaWs, RecuperoExt rec,
-	    String path) {
-	StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
-	boolean salvaSessioneRecupero = false;
+            String path) {
+        StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
+        boolean salvaSessioneRecupero = false;
 
-	if (rec.getParametriRecupero().getUtente() == null) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-		    "Errore: l'utente non è autenticato.");
-	    return;
-	}
+        if (rec.getParametriRecupero().getUtente() == null) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                    "Errore: l'utente non è autenticato.");
+            return;
+        }
 
-	GestSessRecupero gestSessRecupero = new GestSessRecupero(rispostaWs);
-	// carica i parametri, stabilisce se è attivo il TPI, predispone i nomi di tutti i
-	// path utili per il salvataggio filesystem
-	if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-	    gestSessRecupero.caricaParametri(rec);
-	}
+        GestSessRecupero gestSessRecupero = new GestSessRecupero(rispostaWs);
+        // carica i parametri, stabilisce se è attivo il TPI, predispone i nomi di tutti i
+        // path utili per il salvataggio filesystem
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecupero.caricaParametri(rec);
+        }
 
-	GestSessRecDip gestSessRecDip = new GestSessRecDip(rispostaWs);
-	if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-	    gestSessRecDip.caricaParametri(rec);
-	}
+        GestSessRecDip gestSessRecDip = new GestSessRecDip(rispostaWs);
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecDip.caricaParametri(rec);
+        }
 
-	// verifica e carica le date di versamento di tutti i documenti dell'UD
-	// che devono essere recuperati
-	if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-	    gestSessRecupero.verificaDate(rec);
-	}
+        // verifica e carica le date di versamento di tutti i documenti dell'UD
+        // che devono essere recuperati
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecupero.verificaDate(rec);
+        }
 
-	if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-	    salvaSessioneRecupero = true;
-	    try {
-		gestSessRecDip.recuperaZip(path, rec,
-			rispostaWs.getDatiRecuperoDip().getElementiTrovati());
-	    } catch (Exception e) {
-		rispostaWs.setSeverity(SeverityEnum.ERROR);
-		rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-			"Errore nella fase di generazione dello zip del EJB " + e.getMessage());
-		log.error("Errore nella fase di generazione dello zip del EJB ", e);
-	    }
-	}
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            salvaSessioneRecupero = true;
+            try {
+                gestSessRecDip.recuperaZip(path, rec,
+                        rispostaWs.getDatiRecuperoDip().getElementiTrovati());
+            } catch (Exception e) {
+                rispostaWs.setSeverity(SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                        "Errore nella fase di generazione dello zip del EJB " + e.getMessage());
+                log.error("Errore nella fase di generazione dello zip del EJB ", e);
+            }
+        }
 
-	if (salvaSessioneRecupero) {
-	    if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-		rec.getDatiSessioneRecupero()
-			.setStatoSess(JobConstants.StatoSessioniRecupEnum.ELIMINATO);
-		rec.getDatiSessioneRecupero()
-			.setStatoDtVers(JobConstants.StatoDtVersRecupEnum.RECUPERATA);
-	    } else {
-		rec.getDatiSessioneRecupero()
-			.setStatoSess(JobConstants.StatoSessioniRecupEnum.CHIUSO_ERR);
-		rec.getDatiSessioneRecupero()
-			.setStatoDtVers(JobConstants.StatoDtVersRecupEnum.ERRORE);
-		rec.getDatiSessioneRecupero().setErrorCode(rispostaWs.getErrorCode());
-		rec.getDatiSessioneRecupero().setErrorMessage(rispostaWs.getErrorMessage());
-	    }
-	    //
-	    gestSessRecupero.creaSessRecChiusa(rec);
-	}
+        if (salvaSessioneRecupero) {
+            if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+                rec.getDatiSessioneRecupero()
+                        .setStatoSess(JobConstants.StatoSessioniRecupEnum.ELIMINATO);
+                rec.getDatiSessioneRecupero()
+                        .setStatoDtVers(JobConstants.StatoDtVersRecupEnum.RECUPERATA);
+            } else {
+                rec.getDatiSessioneRecupero()
+                        .setStatoSess(JobConstants.StatoSessioniRecupEnum.CHIUSO_ERR);
+                rec.getDatiSessioneRecupero()
+                        .setStatoDtVers(JobConstants.StatoDtVersRecupEnum.ERRORE);
+                rec.getDatiSessioneRecupero().setErrorCode(rispostaWs.getErrorCode());
+                rec.getDatiSessioneRecupero().setErrorMessage(rispostaWs.getErrorMessage());
+            }
+            //
+            gestSessRecupero.creaSessRecChiusa(rec);
+        }
 
-	if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
-	    myEsito.setXMLRichiesta(rec.getDatiXml());
-	}
+        if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
+            myEsito.setXMLRichiesta(rec.getDatiXml());
+        }
     }
 
     public void collaudaConvertitore(RispostaWSRecupero rispostaWs, long idConvertitore,
-	    String path) {
-	RecuperoExt rec = new RecuperoExt();
-	GestSessRecupero gestSessRecupero = new GestSessRecupero(rispostaWs);
-	CompRecDip comp = null;
+            String path) {
+        RecuperoExt rec = new RecuperoExt();
+        GestSessRecupero gestSessRecupero = new GestSessRecupero(rispostaWs);
+        CompRecDip comp = null;
 
-	GestSessRecDip gestSessRecDip = new GestSessRecDip(rispostaWs);
-	if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-	    gestSessRecDip.caricaParametri(rec);
-	}
+        GestSessRecDip gestSessRecDip = new GestSessRecDip(rispostaWs);
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecDip.caricaParametri(rec);
+        }
 
-	if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-	    RispostaControlli controlli = controlliRecDip.caricaConvertitore(idConvertitore);
-	    if (!controlli.isrBoolean()) {
-		rispostaWs.setSeverity(SeverityEnum.ERROR);
-		rispostaWs.setEsitoWsError(controlli.getCodErr(), controlli.getDsErr());
-	    } else {
-		try {
-		    comp = (CompRecDip) controlli.getrObject();
-		    gestSessRecDip.collaudaConvertitore(path, rec, comp);
-		} catch (Exception e) {
-		    rispostaWs.setSeverity(SeverityEnum.ERROR);
-		    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-			    "Errore nella fase di collaudo del convertitore " + e.getMessage());
-		    log.error("Errore nella fase di collaudo del convertitore ", e);
-		}
-	    }
-	}
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            RispostaControlli controlli = controlliRecDip.caricaConvertitore(idConvertitore);
+            if (!controlli.isrBoolean()) {
+                rispostaWs.setSeverity(SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsError(controlli.getCodErr(), controlli.getDsErr());
+            } else {
+                try {
+                    comp = (CompRecDip) controlli.getrObject();
+                    gestSessRecDip.collaudaConvertitore(path, rec, comp);
+                } catch (Exception e) {
+                    rispostaWs.setSeverity(SeverityEnum.ERROR);
+                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                            "Errore nella fase di collaudo del convertitore " + e.getMessage());
+                    log.error("Errore nella fase di collaudo del convertitore ", e);
+                }
+            }
+        }
 
     }
 

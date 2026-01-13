@@ -37,24 +37,24 @@ public class CriterioFiltroDoc {
     private List<AroDoc> docs;
 
     public CriterioFiltroDoc(DecCriterioRaggr criterioRaggr, List<AroDoc> docs) {
-	this.criterioRaggr = criterioRaggr;
-	this.docs = docs;
+        this.criterioRaggr = criterioRaggr;
+        this.docs = docs;
     }
 
     public DecCriterioRaggr getCriterioRaggr() {
-	return criterioRaggr;
+        return criterioRaggr;
     }
 
     public void setCriterioRaggr(DecCriterioRaggr criterioRaggr) {
-	this.criterioRaggr = criterioRaggr;
+        this.criterioRaggr = criterioRaggr;
     }
 
     public List<AroDoc> getDocs() {
-	return docs;
+        return docs;
     }
 
     public void setDocs(List<AroDoc> docs) {
-	this.docs = docs;
+        this.docs = docs;
     }
 
 }

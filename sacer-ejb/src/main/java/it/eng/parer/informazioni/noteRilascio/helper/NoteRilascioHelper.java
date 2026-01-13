@@ -35,13 +35,13 @@ import it.eng.parer.grantedEntity.SIAplNotaRilascio;
  * @author DiLorenzo_F
  */
 @SuppressWarnings({
-	"unchecked" })
+        "unchecked" })
 @Stateless
 @LocalBean
 public class NoteRilascioHelper {
 
     public NoteRilascioHelper() {
-	/* default */
+        /* default */
     }
 
     @PersistenceContext(unitName = "ParerJPA")
@@ -56,36 +56,36 @@ public class NoteRilascioHelper {
      */
     @Deprecated
     public SIAplApplic getAplApplicByName(String nmApplic) {
-	String queryStr = "SELECT applic FROM SIAplApplic applic WHERE applic.nmApplic = :nmApplic ";
-	Query query = entityManager.createQuery(queryStr);
-	query.setParameter("nmApplic", nmApplic);
-	List<SIAplApplic> applic = query.getResultList();
-	if (applic != null && applic.size() == 1) {
-	    return applic.get(0);
-	} else {
-	    return null;
-	}
+        String queryStr = "SELECT applic FROM SIAplApplic applic WHERE applic.nmApplic = :nmApplic ";
+        Query query = entityManager.createQuery(queryStr);
+        query.setParameter("nmApplic", nmApplic);
+        List<SIAplApplic> applic = query.getResultList();
+        if (applic != null && applic.size() == 1) {
+            return applic.get(0);
+        } else {
+            return null;
+        }
     }
 
     public SIAplApplic getAplApplic(String name) {
-	String queryStr = "SELECT applic FROM SIAplApplic applic WHERE applic.nmApplic = :nomeappl";
-	Query q = entityManager.createQuery(queryStr);
-	q.setParameter("nomeappl", name);
-	return (SIAplApplic) q.getSingleResult();
+        String queryStr = "SELECT applic FROM SIAplApplic applic WHERE applic.nmApplic = :nomeappl";
+        Query q = entityManager.createQuery(queryStr);
+        q.setParameter("nomeappl", name);
+        return (SIAplApplic) q.getSingleResult();
     }
 
     public List<SIAplNotaRilascio> getAplNoteRilascioList(BigDecimal idApplic) {
-	String queryStr = "SELECT notaRilascio FROM SIAplNotaRilascio notaRilascio "
-		+ "WHERE notaRilascio.siAplApplic.idApplic = :idApplic "
-		+ "ORDER BY notaRilascio.dtVersione DESC";
+        String queryStr = "SELECT notaRilascio FROM SIAplNotaRilascio notaRilascio "
+                + "WHERE notaRilascio.siAplApplic.idApplic = :idApplic "
+                + "ORDER BY notaRilascio.dtVersione DESC";
 
-	Query query = entityManager.createQuery(queryStr);
+        Query query = entityManager.createQuery(queryStr);
 
-	if (idApplic != null) {
-	    query.setParameter("idApplic", longFromBigDecimal(idApplic));
-	}
+        if (idApplic != null) {
+            query.setParameter("idApplic", longFromBigDecimal(idApplic));
+        }
 
-	return query.getResultList();
+        return query.getResultList();
     }
 
     /**
@@ -98,63 +98,63 @@ public class NoteRilascioHelper {
     @Deprecated
     public SIAplNotaRilascio getAplNotaRilascioByVersione(String cdVersione) {
 
-	StringBuilder queryStr = new StringBuilder(
-		"SELECT notaRilascio FROM SIAplNotaRilascio notaRilascio");
-	if (cdVersione != null) {
-	    queryStr.append(" WHERE notaRilascio.cdVersione = :cdVersione");
-	}
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT notaRilascio FROM SIAplNotaRilascio notaRilascio");
+        if (cdVersione != null) {
+            queryStr.append(" WHERE notaRilascio.cdVersione = :cdVersione");
+        }
 
-	Query query = entityManager.createQuery(queryStr.toString());
+        Query query = entityManager.createQuery(queryStr.toString());
 
-	if (cdVersione != null) {
-	    query.setParameter("cdVersione", cdVersione);
-	}
+        if (cdVersione != null) {
+            query.setParameter("cdVersione", cdVersione);
+        }
 
-	List<SIAplNotaRilascio> lista = query.getResultList();
+        List<SIAplNotaRilascio> lista = query.getResultList();
 
-	if (lista.isEmpty()) {
-	    return null;
-	}
+        if (lista.isEmpty()) {
+            return null;
+        }
 
-	return lista.get(0);
+        return lista.get(0);
     }
 
     public SIAplNotaRilascio getAplNotaRilascioById(BigDecimal idNotaRilascio) {
-	return entityManager.find(SIAplNotaRilascio.class, idNotaRilascio.longValue());
+        return entityManager.find(SIAplNotaRilascio.class, idNotaRilascio.longValue());
     }
 
     public SIAplApplic getAplApplicById(BigDecimal idApplic) {
-	return entityManager.find(SIAplApplic.class, idApplic.longValue());
+        return entityManager.find(SIAplApplic.class, idApplic.longValue());
     }
 
     public void insert(Object o) {
-	entityManager.persist(o);
-	entityManager.flush();
+        entityManager.persist(o);
+        entityManager.flush();
     }
 
     public void update(Object o) {
-	o = entityManager.merge(o);
-	entityManager.flush();
-	entityManager.refresh(o);
+        o = entityManager.merge(o);
+        entityManager.flush();
+        entityManager.refresh(o);
     }
 
     public void remove(Object o) {
-	entityManager.remove(o);
-	entityManager.flush();
+        entityManager.remove(o);
+        entityManager.flush();
     }
 
     public List<SIAplNotaRilascio> getAplNoteRilascioPrecList(BigDecimal idApplic,
-	    BigDecimal idNotaRilascio, Date dtVersione) {
-	String queryStr = "SELECT notaRilascio FROM SIAplNotaRilascio notaRilascio "
-		+ "JOIN notaRilascio.siAplApplic applic "
-		+ "WHERE notaRilascio.idNotaRilascio != :idNotaRilascio "
-		+ "AND applic.idApplic = :idApplic ";
-	Query query = entityManager.createQuery(queryStr);
-	query.setParameter("idNotaRilascio", longFromBigDecimal(idNotaRilascio));
-	query.setParameter("idApplic", longFromBigDecimal(idApplic));
-	List<SIAplNotaRilascio> list = query.getResultList();
-	CollectionUtils.filter(list,
-		object -> ((SIAplNotaRilascio) object).getDtVersione().compareTo(dtVersione) < 0);
-	return list;
+            BigDecimal idNotaRilascio, Date dtVersione) {
+        String queryStr = "SELECT notaRilascio FROM SIAplNotaRilascio notaRilascio "
+                + "JOIN notaRilascio.siAplApplic applic "
+                + "WHERE notaRilascio.idNotaRilascio != :idNotaRilascio "
+                + "AND applic.idApplic = :idApplic ";
+        Query query = entityManager.createQuery(queryStr);
+        query.setParameter("idNotaRilascio", longFromBigDecimal(idNotaRilascio));
+        query.setParameter("idApplic", longFromBigDecimal(idApplic));
+        List<SIAplNotaRilascio> list = query.getResultList();
+        CollectionUtils.filter(list,
+                object -> ((SIAplNotaRilascio) object).getDtVersione().compareTo(dtVersione) < 0);
+        return list;
     }
 }

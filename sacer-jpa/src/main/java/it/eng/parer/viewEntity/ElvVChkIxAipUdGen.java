@@ -40,21 +40,21 @@ public class ElvVChkIxAipUdGen implements Serializable {
 
     @Column(name = "FL_IX_AIP_UD_GEN_OK", columnDefinition = "char(1)")
     public String getFlIxAipUdGenOk() {
-	return this.flIxAipUdGenOk;
+        return this.flIxAipUdGenOk;
     }
 
     public void setFlIxAipUdGenOk(String flIxAipUdGenOk) {
-	this.flIxAipUdGenOk = flIxAipUdGenOk;
+        this.flIxAipUdGenOk = flIxAipUdGenOk;
     }
 
     @Id
     @Column(name = "ID_ELENCO_VERS")
     public BigDecimal getIdElencoVers() {
-	return this.idElencoVers;
+        return this.idElencoVers;
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-	this.idElencoVers = idElencoVers;
+        this.idElencoVers = idElencoVers;
     }
 
 }

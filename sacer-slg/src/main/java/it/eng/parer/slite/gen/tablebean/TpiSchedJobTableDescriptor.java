@@ -50,34 +50,34 @@ public class TpiSchedJobTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_SCHED_JOB, new ColumnDescriptor(COL_ID_SCHED_JOB, Types.DECIMAL, 22, true));
-	map.put(COL_ID_DT_SCHED, new ColumnDescriptor(COL_ID_DT_SCHED, Types.DECIMAL, 22, false));
-	map.put(COL_TI_TPI_SCHED_JOB,
-		new ColumnDescriptor(COL_TI_TPI_SCHED_JOB, Types.VARCHAR, 20, false));
-	map.put(COL_NM_JOB, new ColumnDescriptor(COL_NM_JOB, Types.VARCHAR, 100, false));
-	map.put(COL_FL_MIGRAZ, new ColumnDescriptor(COL_FL_MIGRAZ, Types.VARCHAR, 1, false));
-	map.put(COL_DT_SCHED_JOB,
-		new ColumnDescriptor(COL_DT_SCHED_JOB, Types.TIMESTAMP, 7, false));
-	map.put(COL_FL_JOB_OK, new ColumnDescriptor(COL_FL_JOB_OK, Types.VARCHAR, 1, false));
-	map.put(COL_DS_DURATA_JOB,
-		new ColumnDescriptor(COL_DS_DURATA_JOB, Types.VARCHAR, 254, false));
-	map.put(COL_DL_ERR_JOB, new ColumnDescriptor(COL_DL_ERR_JOB, Types.VARCHAR, 1024, false));
-	map.put(COL_NI_ORD_SCHED_JOB,
-		new ColumnDescriptor(COL_NI_ORD_SCHED_JOB, Types.DECIMAL, 22, false));
-	map.put(COL_FL_FINE_SCHED,
-		new ColumnDescriptor(COL_FL_FINE_SCHED, Types.VARCHAR, 1, false));
+        map.put(COL_ID_SCHED_JOB, new ColumnDescriptor(COL_ID_SCHED_JOB, Types.DECIMAL, 22, true));
+        map.put(COL_ID_DT_SCHED, new ColumnDescriptor(COL_ID_DT_SCHED, Types.DECIMAL, 22, false));
+        map.put(COL_TI_TPI_SCHED_JOB,
+                new ColumnDescriptor(COL_TI_TPI_SCHED_JOB, Types.VARCHAR, 20, false));
+        map.put(COL_NM_JOB, new ColumnDescriptor(COL_NM_JOB, Types.VARCHAR, 100, false));
+        map.put(COL_FL_MIGRAZ, new ColumnDescriptor(COL_FL_MIGRAZ, Types.VARCHAR, 1, false));
+        map.put(COL_DT_SCHED_JOB,
+                new ColumnDescriptor(COL_DT_SCHED_JOB, Types.TIMESTAMP, 7, false));
+        map.put(COL_FL_JOB_OK, new ColumnDescriptor(COL_FL_JOB_OK, Types.VARCHAR, 1, false));
+        map.put(COL_DS_DURATA_JOB,
+                new ColumnDescriptor(COL_DS_DURATA_JOB, Types.VARCHAR, 254, false));
+        map.put(COL_DL_ERR_JOB, new ColumnDescriptor(COL_DL_ERR_JOB, Types.VARCHAR, 1024, false));
+        map.put(COL_NI_ORD_SCHED_JOB,
+                new ColumnDescriptor(COL_NI_ORD_SCHED_JOB, Types.DECIMAL, 22, false));
+        map.put(COL_FL_FINE_SCHED,
+                new ColumnDescriptor(COL_FL_FINE_SCHED, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

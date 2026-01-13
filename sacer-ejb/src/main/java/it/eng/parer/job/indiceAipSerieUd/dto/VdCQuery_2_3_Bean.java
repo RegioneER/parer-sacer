@@ -29,51 +29,51 @@ public class VdCQuery_2_3_Bean {
     private String dlNotaLacuna;
 
     public Long getIdVerSerieCor() {
-	return idVerSerieCor;
+        return idVerSerieCor;
     }
 
     public void setIdVerSerieCor(Long idVerSerieCor) {
-	this.idVerSerieCor = idVerSerieCor;
+        this.idVerSerieCor = idVerSerieCor;
     }
 
     public String getTiModLacuna() {
-	return tiModLacuna;
+        return tiModLacuna;
     }
 
     public void setTiModLacuna(String tiModLacuna) {
-	this.tiModLacuna = tiModLacuna;
+        this.tiModLacuna = tiModLacuna;
     }
 
     public BigDecimal getNiIniLacuna() {
-	return niIniLacuna;
+        return niIniLacuna;
     }
 
     public void setNiIniLacuna(BigDecimal niIniLacuna) {
-	this.niIniLacuna = niIniLacuna;
+        this.niIniLacuna = niIniLacuna;
     }
 
     public BigDecimal getNiFinLacuna() {
-	return niFinLacuna;
+        return niFinLacuna;
     }
 
     public void setNiFinLacuna(BigDecimal niFinLacuna) {
-	this.niFinLacuna = niFinLacuna;
+        this.niFinLacuna = niFinLacuna;
     }
 
     public String getDlLacuna() {
-	return dlLacuna;
+        return dlLacuna;
     }
 
     public void setDlLacuna(String dlLacuna) {
-	this.dlLacuna = dlLacuna;
+        this.dlLacuna = dlLacuna;
     }
 
     public String getDlNotaLacuna() {
-	return dlNotaLacuna;
+        return dlNotaLacuna;
     }
 
     public void setDlNotaLacuna(String dlNotaLacuna) {
-	this.dlNotaLacuna = dlNotaLacuna;
+        this.dlNotaLacuna = dlNotaLacuna;
     }
 
 }

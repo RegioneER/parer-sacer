@@ -44,28 +44,28 @@ public class DecXsdAttribDatiSpecTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_XSD_ATTRIB_DATI_SPEC,
-		new ColumnDescriptor(COL_ID_XSD_ATTRIB_DATI_SPEC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_XSD_DATI_SPEC,
-		new ColumnDescriptor(COL_ID_XSD_DATI_SPEC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_ATTRIB_DATI_SPEC,
-		new ColumnDescriptor(COL_ID_ATTRIB_DATI_SPEC, Types.DECIMAL, 22, false));
-	map.put(COL_NI_ORD_ATTRIB,
-		new ColumnDescriptor(COL_NI_ORD_ATTRIB, Types.DECIMAL, 22, false));
-	map.put(COL_DS_ATTRIB_DATI_SPEC,
-		new ColumnDescriptor(COL_DS_ATTRIB_DATI_SPEC, Types.VARCHAR, 254, false));
+        map.put(COL_ID_XSD_ATTRIB_DATI_SPEC,
+                new ColumnDescriptor(COL_ID_XSD_ATTRIB_DATI_SPEC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_XSD_DATI_SPEC,
+                new ColumnDescriptor(COL_ID_XSD_DATI_SPEC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_ATTRIB_DATI_SPEC,
+                new ColumnDescriptor(COL_ID_ATTRIB_DATI_SPEC, Types.DECIMAL, 22, false));
+        map.put(COL_NI_ORD_ATTRIB,
+                new ColumnDescriptor(COL_NI_ORD_ATTRIB, Types.DECIMAL, 22, false));
+        map.put(COL_DS_ATTRIB_DATI_SPEC,
+                new ColumnDescriptor(COL_DS_ATTRIB_DATI_SPEC, Types.VARCHAR, 254, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

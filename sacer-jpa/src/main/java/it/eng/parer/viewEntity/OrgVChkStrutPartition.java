@@ -40,21 +40,21 @@ public class OrgVChkStrutPartition implements Serializable {
 
     @Column(name = "FL_PART_OK", columnDefinition = "char(1)")
     public String getFlPartOk() {
-	return this.flPartOk;
+        return this.flPartOk;
     }
 
     public void setFlPartOk(String flPartOk) {
-	this.flPartOk = flPartOk;
+        this.flPartOk = flPartOk;
     }
 
     @Id
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
 }

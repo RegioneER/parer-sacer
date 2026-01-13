@@ -58,53 +58,53 @@ public class VrsArkPathDtVers implements Serializable {
 
     @Column(name = "ID_ARK_PATH_DT_VERS")
     @GenericGenerator(name = "SVRS_ARK_PATH_DT_VERS_ID_ARK_PATH_DT_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVRS_ARK_PATH_DT_VERS"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVRS_ARK_PATH_DT_VERS"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SVRS_ARK_PATH_DT_VERS_ID_ARK_PATH_DT_VERS_GENERATOR")
     public Long getIdArkPathDtVers() {
-	return this.idArkPathDtVers;
+        return this.idArkPathDtVers;
     }
 
     public void setIdArkPathDtVers(Long idArkPathDtVers) {
-	this.idArkPathDtVers = idArkPathDtVers;
+        this.idArkPathDtVers = idArkPathDtVers;
     }
 
     @Column(name = "DS_ARK")
     public String getDsArk() {
-	return this.dsArk;
+        return this.dsArk;
     }
 
     public void setDsArk(String dsArk) {
-	this.dsArk = dsArk;
+        this.dsArk = dsArk;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ARK_PATH_DT_VERS")
     public Date getDtArkPathDtVers() {
-	return this.dtArkPathDtVers;
+        return this.dtArkPathDtVers;
     }
 
     public void setDtArkPathDtVers(Date dtArkPathDtVers) {
-	this.dtArkPathDtVers = dtArkPathDtVers;
+        this.dtArkPathDtVers = dtArkPathDtVers;
     }
 
     @Column(name = "TI_ARK_PATH")
     public String getTiArkPath() {
-	return this.tiArkPath;
+        return this.tiArkPath;
     }
 
     public void setTiArkPath(String tiArkPath) {
-	this.tiArkPath = tiArkPath;
+        this.tiArkPath = tiArkPath;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PATH_DT_VERS")
     public VrsPathDtVers getVrsPathDtVers() {
-	return this.vrsPathDtVers;
+        return this.vrsPathDtVers;
     }
 
     public void setVrsPathDtVers(VrsPathDtVers vrsPathDtVers) {
-	this.vrsPathDtVers = vrsPathDtVers;
+        this.vrsPathDtVers = vrsPathDtVers;
     }
 
 }

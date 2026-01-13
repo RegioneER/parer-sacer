@@ -36,113 +36,113 @@ public class DecErrAaTipoFascicoloRowBean extends BaseRow implements JEEBaseRowI
     public static DecErrAaTipoFascicoloTableDescriptor TABLE_DESCRIPTOR = new DecErrAaTipoFascicoloTableDescriptor();
 
     public DecErrAaTipoFascicoloRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdErrAaTipoFascicolo() {
-	return getBigDecimal("id_err_aa_tipo_fascicolo");
+        return getBigDecimal("id_err_aa_tipo_fascicolo");
     }
 
     public void setIdErrAaTipoFascicolo(BigDecimal idErrAaTipoFascicolo) {
-	setObject("id_err_aa_tipo_fascicolo", idErrAaTipoFascicolo);
+        setObject("id_err_aa_tipo_fascicolo", idErrAaTipoFascicolo);
     }
 
     public BigDecimal getIdAaTipoFascicolo() {
-	return getBigDecimal("id_aa_tipo_fascicolo");
+        return getBigDecimal("id_aa_tipo_fascicolo");
     }
 
     public void setIdAaTipoFascicolo(BigDecimal idAaTipoFascicolo) {
-	setObject("id_aa_tipo_fascicolo", idAaTipoFascicolo);
+        setObject("id_aa_tipo_fascicolo", idAaTipoFascicolo);
     }
 
     public BigDecimal getAaFascicolo() {
-	return getBigDecimal("aa_fascicolo");
+        return getBigDecimal("aa_fascicolo");
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-	setObject("aa_fascicolo", aaFascicolo);
+        setObject("aa_fascicolo", aaFascicolo);
     }
 
     public String getDsErrFmtNumero() {
-	return getString("ds_err_fmt_numero");
+        return getString("ds_err_fmt_numero");
     }
 
     public void setDsErrFmtNumero(String dsErrFmtNumero) {
-	setObject("ds_err_fmt_numero", dsErrFmtNumero);
+        setObject("ds_err_fmt_numero", dsErrFmtNumero);
     }
 
     public BigDecimal getIdFascicoloErrFmtNumero() {
-	return getBigDecimal("id_fascicolo_err_fmt_numero");
+        return getBigDecimal("id_fascicolo_err_fmt_numero");
     }
 
     public void setIdFascicoloErrFmtNumero(BigDecimal idFascicoloErrFmtNumero) {
-	setObject("id_fascicolo_err_fmt_numero", idFascicoloErrFmtNumero);
+        setObject("id_fascicolo_err_fmt_numero", idFascicoloErrFmtNumero);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecErrAaTipoFascicolo entity = (DecErrAaTipoFascicolo) obj;
+        DecErrAaTipoFascicolo entity = (DecErrAaTipoFascicolo) obj;
 
-	this.setIdErrAaTipoFascicolo(entity.getIdErrAaTipoFascicolo() == null ? null
-		: BigDecimal.valueOf(entity.getIdErrAaTipoFascicolo()));
+        this.setIdErrAaTipoFascicolo(entity.getIdErrAaTipoFascicolo() == null ? null
+                : BigDecimal.valueOf(entity.getIdErrAaTipoFascicolo()));
 
-	if (entity.getDecAaTipoFascicolo() != null) {
-	    this.setIdAaTipoFascicolo(
-		    new BigDecimal(entity.getDecAaTipoFascicolo().getIdAaTipoFascicolo()));
-	}
+        if (entity.getDecAaTipoFascicolo() != null) {
+            this.setIdAaTipoFascicolo(
+                    new BigDecimal(entity.getDecAaTipoFascicolo().getIdAaTipoFascicolo()));
+        }
 
-	this.setAaFascicolo(entity.getAaFascicolo());
-	this.setDsErrFmtNumero(entity.getDsErrFmtNumero());
-	this.setIdFascicoloErrFmtNumero(entity.getIdFascicoloErrFmtNumero());
+        this.setAaFascicolo(entity.getAaFascicolo());
+        this.setDsErrFmtNumero(entity.getDsErrFmtNumero());
+        this.setIdFascicoloErrFmtNumero(entity.getIdFascicoloErrFmtNumero());
     }
 
     @Override
     public DecErrAaTipoFascicolo rowBeanToEntity() {
-	DecErrAaTipoFascicolo entity = new DecErrAaTipoFascicolo();
-	if (this.getIdErrAaTipoFascicolo() != null) {
-	    entity.setIdErrAaTipoFascicolo(this.getIdErrAaTipoFascicolo().longValue());
-	}
-	if (this.getIdAaTipoFascicolo() != null) {
-	    if (entity.getDecAaTipoFascicolo() == null) {
-		entity.setDecAaTipoFascicolo(new DecAaTipoFascicolo());
-	    }
-	    entity.getDecAaTipoFascicolo()
-		    .setIdAaTipoFascicolo(this.getIdAaTipoFascicolo().longValue());
-	}
-	entity.setAaFascicolo(this.getAaFascicolo());
-	entity.setDsErrFmtNumero(this.getDsErrFmtNumero());
-	entity.setIdFascicoloErrFmtNumero(this.getIdFascicoloErrFmtNumero());
-	return entity;
+        DecErrAaTipoFascicolo entity = new DecErrAaTipoFascicolo();
+        if (this.getIdErrAaTipoFascicolo() != null) {
+            entity.setIdErrAaTipoFascicolo(this.getIdErrAaTipoFascicolo().longValue());
+        }
+        if (this.getIdAaTipoFascicolo() != null) {
+            if (entity.getDecAaTipoFascicolo() == null) {
+                entity.setDecAaTipoFascicolo(new DecAaTipoFascicolo());
+            }
+            entity.getDecAaTipoFascicolo()
+                    .setIdAaTipoFascicolo(this.getIdAaTipoFascicolo().longValue());
+        }
+        entity.setAaFascicolo(this.getAaFascicolo());
+        entity.setDsErrFmtNumero(this.getDsErrFmtNumero());
+        entity.setIdFascicoloErrFmtNumero(this.getIdFascicoloErrFmtNumero());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

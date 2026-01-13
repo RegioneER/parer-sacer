@@ -24,12 +24,12 @@ public class CalcoloConsistenzaHelperTest extends HelperTest<CalcoloConsistenzaH
 
     @Deployment
     public static Archive<?> createTestArchive_queryIsOk() {
-	return HelperTest
-		.createEnterpriseArchive(CalcoloConsistenzaHelperTest.class.getSimpleName(),
-			HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-			HelperTest.createSacerJavaArchive(Arrays.asList(""),
-				CalcoloConsistenzaHelper.class,
-				CalcoloConsistenzaHelperTest.class));
+        return HelperTest
+                .createEnterpriseArchive(CalcoloConsistenzaHelperTest.class.getSimpleName(),
+                        HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                        HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                                CalcoloConsistenzaHelper.class,
+                                CalcoloConsistenzaHelperTest.class));
     }
 
 }

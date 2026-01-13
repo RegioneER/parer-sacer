@@ -28,24 +28,24 @@ public class AppServerInstanceTest {
 
     @Lock(LockType.READ)
     public String getName() {
-	return "arquillian";
+        return "arquillian";
     }
 
     enum AddressTypes {
-	SITE_LOCAL_WITH_NAME, NON_SITE_LOCAL_WITH_NAME, SITE_LOCAL_WITHOUT_NAME_IPV4,
-	NON_SITE_LOCAL_WITHOUT_NAME_IPV4, SITE_LOCAL_WITHOUT_NAME_IPV6,
-	NON_SITE_LOCAL_WITHOUT_NAME_IPV6, LOOPBACK_IPV4, LOOPBACK_IPV6
+        SITE_LOCAL_WITH_NAME, NON_SITE_LOCAL_WITH_NAME, SITE_LOCAL_WITHOUT_NAME_IPV4,
+        NON_SITE_LOCAL_WITHOUT_NAME_IPV4, SITE_LOCAL_WITHOUT_NAME_IPV6,
+        NON_SITE_LOCAL_WITHOUT_NAME_IPV6, LOOPBACK_IPV4, LOOPBACK_IPV6
     }
 
     private InetAddress getMyHostAddress() throws UnknownHostException {
-	return InetAddress.getLocalHost();
+        return InetAddress.getLocalHost();
     }
 
     private AddressTypes decodeAddrType(InetAddress inetAddress) {
-	return AddressTypes.SITE_LOCAL_WITHOUT_NAME_IPV4;
+        return AddressTypes.SITE_LOCAL_WITHOUT_NAME_IPV4;
     }
 
     private boolean isAddressWithHostName(InetAddress inetAddress) {
-	return false;
+        return false;
     }
 }

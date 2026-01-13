@@ -1,3 +1,16 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.slite.gen.tablebean;
 
 import it.eng.spagoLite.db.base.BaseRowInterface;
@@ -8,14 +21,13 @@ import it.eng.parer.entity.DmUdDelRichieste;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import javax.annotation.Generated;
 
 /**
  * RowBean per la tabella DM_UD_DEL_RICHIESTE
  *
  */
 public class DmUdDelRichiesteRowBean extends BaseRow
-	implements BaseRowInterface, JEEBaseRowInterface {
+        implements BaseRowInterface, JEEBaseRowInterface {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -26,156 +38,156 @@ public class DmUdDelRichiesteRowBean extends BaseRow
     public static DmUdDelRichiesteTableDescriptor TABLE_DESCRIPTOR = new DmUdDelRichiesteTableDescriptor();
 
     public DmUdDelRichiesteRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // Getter e Setter
     public BigDecimal getIdUdDelRichiesta() {
-	return getBigDecimal("id_ud_del_richiesta");
+        return getBigDecimal("id_ud_del_richiesta");
     }
 
     public void setIdUdDelRichiesta(BigDecimal idUdDelRichiesta) {
-	setObject("id_ud_del_richiesta", idUdDelRichiesta);
+        setObject("id_ud_del_richiesta", idUdDelRichiesta);
     }
 
     public BigDecimal getIdRichiesta() {
-	return getBigDecimal("ID_RICHIESTA");
+        return getBigDecimal("ID_RICHIESTA");
     }
 
     public void setIdRichiesta(BigDecimal idRichiesta) {
-	setObject("ID_RICHIESTA", idRichiesta);
+        setObject("ID_RICHIESTA", idRichiesta);
     }
 
     public String getCdRichiesta() {
-	return getString("CD_RICHIESTA");
+        return getString("CD_RICHIESTA");
     }
 
     public void setCdRichiesta(String cdRichiesta) {
-	setObject("CD_RICHIESTA", cdRichiesta);
+        setObject("CD_RICHIESTA", cdRichiesta);
     }
 
     public String getTiMotCancellazione() {
-	return getString("TI_MOT_CANCELLAZIONE");
+        return getString("TI_MOT_CANCELLAZIONE");
     }
 
     public void setTiMotCancellazione(String tiMotCancellazione) {
-	setObject("TI_MOT_CANCELLAZIONE", tiMotCancellazione);
+        setObject("TI_MOT_CANCELLAZIONE", tiMotCancellazione);
     }
 
     public String getTiStatoRichiesta() {
-	return getString("TI_STATO_RICHIESTA");
+        return getString("TI_STATO_RICHIESTA");
     }
 
     public void setTiStatoRichiesta(String tiStatoRichiesta) {
-	setObject("TI_STATO_RICHIESTA", tiStatoRichiesta);
+        setObject("TI_STATO_RICHIESTA", tiStatoRichiesta);
     }
 
     public String getTiStatoInternoRich() {
-	return getString("TI_STATO_INTERNO_RICH");
+        return getString("TI_STATO_INTERNO_RICH");
     }
 
     public void setTiStatoInternoRich(String tiStatoInternoRich) {
-	setObject("TI_STATO_INTERNO_RICH", tiStatoInternoRich);
+        setObject("TI_STATO_INTERNO_RICH", tiStatoInternoRich);
     }
 
     public String getTiModDel() {
-	return getString("TI_MOD_DEL");
+        return getString("TI_MOD_DEL");
     }
 
     public void setTiModDel(String tiModDel) {
-	setObject("TI_MOD_DEL", tiModDel);
+        setObject("TI_MOD_DEL", tiModDel);
     }
 
     public String getDsMessaggioErrore() {
-	return getString("ds_messaggio_errore");
+        return getString("ds_messaggio_errore");
     }
 
     public void setDsMessaggioErrore(String dsMessaggioErrore) {
-	setObject("ds_messaggio_errore", dsMessaggioErrore);
+        setObject("ds_messaggio_errore", dsMessaggioErrore);
     }
 
     public Timestamp getDtCreazione() {
-	return getTimestamp("DT_CREAZIONE");
+        return getTimestamp("DT_CREAZIONE");
     }
 
     public void setDtCreazione(Timestamp dtCreazione) {
-	setObject("DT_CREAZIONE", dtCreazione);
+        setObject("DT_CREAZIONE", dtCreazione);
     }
 
     public Timestamp getDtUltimoAggiornamento() {
-	return getTimestamp("DT_ULTIMO_AGGIORNAMENTO");
+        return getTimestamp("DT_ULTIMO_AGGIORNAMENTO");
     }
 
     public void setDtUltimoAggiornamento(Timestamp dtUltimoAggiornamento) {
-	setObject("DT_ULTIMO_AGGIORNAMENTO", dtUltimoAggiornamento);
+        setObject("DT_ULTIMO_AGGIORNAMENTO", dtUltimoAggiornamento);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DmUdDelRichieste entity = (DmUdDelRichieste) obj;
-	this.setIdUdDelRichiesta(entity.getIdUdDelRichiesta() == null ? null
-		: BigDecimal.valueOf(entity.getIdUdDelRichiesta()));
-	this.setIdRichiesta(entity.getIdRichiesta());
-	this.setCdRichiesta(entity.getCdRichiesta());
-	this.setTiMotCancellazione(entity.getTiMotCancellazione());
-	this.setTiStatoRichiesta(entity.getTiStatoRichiesta());
-	this.setTiStatoInternoRich(entity.getTiStatoInternoRich());
-	this.setTiModDel(entity.getTiModDel());
-	this.setDsMessaggioErrore(entity.getDsMessaggioErrore());
+        DmUdDelRichieste entity = (DmUdDelRichieste) obj;
+        this.setIdUdDelRichiesta(entity.getIdUdDelRichiesta() == null ? null
+                : BigDecimal.valueOf(entity.getIdUdDelRichiesta()));
+        this.setIdRichiesta(entity.getIdRichiesta());
+        this.setCdRichiesta(entity.getCdRichiesta());
+        this.setTiMotCancellazione(entity.getTiMotCancellazione());
+        this.setTiStatoRichiesta(entity.getTiStatoRichiesta());
+        this.setTiStatoInternoRich(entity.getTiStatoInternoRich());
+        this.setTiModDel(entity.getTiModDel());
+        this.setDsMessaggioErrore(entity.getDsMessaggioErrore());
 
-	if (entity.getDtCreazione() != null) {
-	    this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
-	}
-	if (entity.getDtUltimoAggiornamento() != null) {
-	    this.setDtUltimoAggiornamento(
-		    new Timestamp(entity.getDtUltimoAggiornamento().getTime()));
-	}
+        if (entity.getDtCreazione() != null) {
+            this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
+        }
+        if (entity.getDtUltimoAggiornamento() != null) {
+            this.setDtUltimoAggiornamento(
+                    new Timestamp(entity.getDtUltimoAggiornamento().getTime()));
+        }
     }
 
     @Override
     public DmUdDelRichieste rowBeanToEntity() {
-	DmUdDelRichieste entity = new DmUdDelRichieste();
-	if (this.getIdUdDelRichiesta() != null) {
-	    entity.setIdUdDelRichiesta(this.getIdUdDelRichiesta().longValue());
-	}
-	entity.setIdRichiesta(this.getIdRichiesta());
-	entity.setCdRichiesta(this.getCdRichiesta());
-	entity.setTiMotCancellazione(this.getTiMotCancellazione());
-	entity.setTiStatoRichiesta(this.getTiStatoRichiesta());
-	entity.setTiStatoInternoRich(this.getTiStatoInternoRich());
-	entity.setTiModDel(this.getTiModDel());
-	entity.setDsMessaggioErrore(this.getDsMessaggioErrore());
-	entity.setDtCreazione(this.getDtCreazione());
-	entity.setDtUltimoAggiornamento(this.getDtUltimoAggiornamento());
-	return entity;
+        DmUdDelRichieste entity = new DmUdDelRichieste();
+        if (this.getIdUdDelRichiesta() != null) {
+            entity.setIdUdDelRichiesta(this.getIdUdDelRichiesta().longValue());
+        }
+        entity.setIdRichiesta(this.getIdRichiesta());
+        entity.setCdRichiesta(this.getCdRichiesta());
+        entity.setTiMotCancellazione(this.getTiMotCancellazione());
+        entity.setTiStatoRichiesta(this.getTiStatoRichiesta());
+        entity.setTiStatoInternoRich(this.getTiStatoInternoRich());
+        entity.setTiModDel(this.getTiModDel());
+        entity.setDsMessaggioErrore(this.getDsMessaggioErrore());
+        entity.setDtCreazione(this.getDtCreazione());
+        entity.setDtUltimoAggiornamento(this.getDtUltimoAggiornamento());
+        return entity;
     }
 
     // Gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 }

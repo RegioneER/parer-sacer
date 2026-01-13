@@ -66,87 +66,87 @@ public class OstNoMigrazFile implements Serializable {
 
     @Column(name = "ID_NO_MIGRAZ_FILE")
     @GenericGenerator(name = "SOST_NO_MIGRAZ_FILE_ID_NO_MIGRAZ_FILE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SOST_NO_MIGRAZ_FILE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SOST_NO_MIGRAZ_FILE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SOST_NO_MIGRAZ_FILE_ID_NO_MIGRAZ_FILE_GENERATOR")
     public Long getIdNoMigrazFile() {
-	return this.idNoMigrazFile;
+        return this.idNoMigrazFile;
     }
 
     public void setIdNoMigrazFile(Long idNoMigrazFile) {
-	this.idNoMigrazFile = idNoMigrazFile;
+        this.idNoMigrazFile = idNoMigrazFile;
     }
 
     @Column(name = "ID_OGGETTO")
     public BigDecimal getIdOggetto() {
-	return this.idOggetto;
+        return this.idOggetto;
     }
 
     public void setIdOggetto(BigDecimal idOggetto) {
-	this.idOggetto = idOggetto;
+        this.idOggetto = idOggetto;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "MM_FILE")
     public BigDecimal getMmFile() {
-	return this.mmFile;
+        return this.mmFile;
     }
 
     public void setMmFile(BigDecimal mmFile) {
-	this.mmFile = mmFile;
+        this.mmFile = mmFile;
     }
 
     @Column(name = "NM_TABELLA_ID_OGGETTO")
     public String getNmTabellaIdOggetto() {
-	return this.nmTabellaIdOggetto;
+        return this.nmTabellaIdOggetto;
     }
 
     public void setNmTabellaIdOggetto(String nmTabellaIdOggetto) {
-	this.nmTabellaIdOggetto = nmTabellaIdOggetto;
+        this.nmTabellaIdOggetto = nmTabellaIdOggetto;
     }
 
     @Column(name = "TI_SUPPORTO_COMP")
     public String getTiSupportoComp() {
-	return this.tiSupportoComp;
+        return this.tiSupportoComp;
     }
 
     public void setTiSupportoComp(String tiSupportoComp) {
-	this.tiSupportoComp = tiSupportoComp;
+        this.tiSupportoComp = tiSupportoComp;
     }
 
     @Column(name = "TI_SAVE_FILE")
     public String getTiSaveFile() {
-	return this.tiSaveFile;
+        return this.tiSaveFile;
     }
 
     public void setTiSaveFile(String tiSaveFile) {
-	this.tiSaveFile = tiSaveFile;
+        this.tiSaveFile = tiSaveFile;
     }
 
     @Column(name = "TI_CAUSALE_NO_MIGRAZ")
     public String getTiCausaleNoMigraz() {
-	return this.tiCausaleNoMigraz;
+        return this.tiCausaleNoMigraz;
     }
 
     public void setTiCausaleNoMigraz(String tiCausaleNoMigraz) {
-	this.tiCausaleNoMigraz = tiCausaleNoMigraz;
+        this.tiCausaleNoMigraz = tiCausaleNoMigraz;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MIGRAZ_SUB_PART")
     public OstMigrazSubPart getOstMigrazSubPart() {
-	return this.ostMigrazSubPart;
+        return this.ostMigrazSubPart;
     }
 
     public void setOstMigrazSubPart(OstMigrazSubPart ostMigrazSubPart) {
-	this.ostMigrazSubPart = ostMigrazSubPart;
+        this.ostMigrazSubPart = ostMigrazSubPart;
     }
 }

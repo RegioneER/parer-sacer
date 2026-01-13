@@ -24,26 +24,26 @@ public class VdCQuery_10_Bean {
     private String dsTipoDoc;
 
     public Long getIdVerSerie() {
-	return idVerSerie;
+        return idVerSerie;
     }
 
     public void setIdVerSerie(Long idVerSerie) {
-	this.idVerSerie = idVerSerie;
+        this.idVerSerie = idVerSerie;
     }
 
     public String getNmTipoDoc() {
-	return nmTipoDoc;
+        return nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	this.nmTipoDoc = nmTipoDoc;
+        this.nmTipoDoc = nmTipoDoc;
     }
 
     public String getDsTipoDoc() {
-	return dsTipoDoc;
+        return dsTipoDoc;
     }
 
     public void setDsTipoDoc(String dsTipoDoc) {
-	this.dsTipoDoc = dsTipoDoc;
+        this.dsTipoDoc = dsTipoDoc;
     }
 }

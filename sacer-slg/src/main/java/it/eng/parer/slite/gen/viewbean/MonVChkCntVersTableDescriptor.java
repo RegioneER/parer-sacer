@@ -47,34 +47,34 @@ public class MonVChkCntVersTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_FL_VERS_RISOLTI_CORR,
-		new ColumnDescriptor(COL_FL_VERS_RISOLTI_CORR, Types.VARCHAR, 1, true));
-	map.put(COL_FL_VERS_RISOLTI_30GG,
-		new ColumnDescriptor(COL_FL_VERS_RISOLTI_30GG, Types.VARCHAR, 1, true));
-	map.put(COL_FL_VERS_NOVERIF_CORR,
-		new ColumnDescriptor(COL_FL_VERS_NOVERIF_CORR, Types.VARCHAR, 1, true));
-	map.put(COL_FL_VERS_NOVERIF_30GG,
-		new ColumnDescriptor(COL_FL_VERS_NOVERIF_30GG, Types.VARCHAR, 1, true));
-	map.put(COL_FL_VERS_VERIF_CORR,
-		new ColumnDescriptor(COL_FL_VERS_VERIF_CORR, Types.VARCHAR, 1, true));
-	map.put(COL_FL_VERS_VERIF_30GG,
-		new ColumnDescriptor(COL_FL_VERS_VERIF_30GG, Types.VARCHAR, 1, true));
-	map.put(COL_FL_VERS_NORISOLUB_CORR,
-		new ColumnDescriptor(COL_FL_VERS_NORISOLUB_CORR, Types.VARCHAR, 1, true));
-	map.put(COL_FL_VERS_NORISOLUB_30GG,
-		new ColumnDescriptor(COL_FL_VERS_NORISOLUB_30GG, Types.VARCHAR, 1, true));
+        map.put(COL_FL_VERS_RISOLTI_CORR,
+                new ColumnDescriptor(COL_FL_VERS_RISOLTI_CORR, Types.VARCHAR, 1, true));
+        map.put(COL_FL_VERS_RISOLTI_30GG,
+                new ColumnDescriptor(COL_FL_VERS_RISOLTI_30GG, Types.VARCHAR, 1, true));
+        map.put(COL_FL_VERS_NOVERIF_CORR,
+                new ColumnDescriptor(COL_FL_VERS_NOVERIF_CORR, Types.VARCHAR, 1, true));
+        map.put(COL_FL_VERS_NOVERIF_30GG,
+                new ColumnDescriptor(COL_FL_VERS_NOVERIF_30GG, Types.VARCHAR, 1, true));
+        map.put(COL_FL_VERS_VERIF_CORR,
+                new ColumnDescriptor(COL_FL_VERS_VERIF_CORR, Types.VARCHAR, 1, true));
+        map.put(COL_FL_VERS_VERIF_30GG,
+                new ColumnDescriptor(COL_FL_VERS_VERIF_30GG, Types.VARCHAR, 1, true));
+        map.put(COL_FL_VERS_NORISOLUB_CORR,
+                new ColumnDescriptor(COL_FL_VERS_NORISOLUB_CORR, Types.VARCHAR, 1, true));
+        map.put(COL_FL_VERS_NORISOLUB_30GG,
+                new ColumnDescriptor(COL_FL_VERS_NORISOLUB_30GG, Types.VARCHAR, 1, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

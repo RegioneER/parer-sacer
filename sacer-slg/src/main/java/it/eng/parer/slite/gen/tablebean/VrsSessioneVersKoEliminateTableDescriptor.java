@@ -42,28 +42,28 @@ public class VrsSessioneVersKoEliminateTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_SESSIONE_VERS_KO_ELIMINATE,
-		new ColumnDescriptor(COL_ID_SESSIONE_VERS_KO_ELIMINATE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, false));
-	map.put(COL_DS_STRUT, new ColumnDescriptor(COL_DS_STRUT, Types.VARCHAR, 254, false));
-	map.put(COL_NI_SES_ELIMINATE,
-		new ColumnDescriptor(COL_NI_SES_ELIMINATE, Types.DECIMAL, 22, false));
-	map.put(COL_DT_ELAB, new ColumnDescriptor(COL_DT_ELAB, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_RIF, new ColumnDescriptor(COL_DT_RIF, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_SESSIONE_VERS_KO_ELIMINATE,
+                new ColumnDescriptor(COL_ID_SESSIONE_VERS_KO_ELIMINATE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, false));
+        map.put(COL_DS_STRUT, new ColumnDescriptor(COL_DS_STRUT, Types.VARCHAR, 254, false));
+        map.put(COL_NI_SES_ELIMINATE,
+                new ColumnDescriptor(COL_NI_SES_ELIMINATE, Types.DECIMAL, 22, false));
+        map.put(COL_DT_ELAB, new ColumnDescriptor(COL_DT_ELAB, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_RIF, new ColumnDescriptor(COL_DT_RIF, Types.TIMESTAMP, 7, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     @Override
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     @Override
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 }

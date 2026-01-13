@@ -35,77 +35,77 @@ public class DecVCalcCriterioFiscRowBean extends BaseRow implements JEEBaseRowIn
     public static DecVCalcCriterioFiscTableDescriptor TABLE_DESCRIPTOR = new DecVCalcCriterioFiscTableDescriptor();
 
     public DecVCalcCriterioFiscRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdCriterioRaggr() {
-	return getBigDecimal("id_criterio_raggr");
+        return getBigDecimal("id_criterio_raggr");
     }
 
     public void setIdCriterioRaggr(BigDecimal idCriterioRaggr) {
-	setObject("id_criterio_raggr", idCriterioRaggr);
+        setObject("id_criterio_raggr", idCriterioRaggr);
     }
 
     public String getNmCriterioRaggr() {
-	return getString("nm_criterio_raggr");
+        return getString("nm_criterio_raggr");
     }
 
     public void setNmCriterioRaggr(String nmCriterioRaggr) {
-	setObject("nm_criterio_raggr", nmCriterioRaggr);
+        setObject("nm_criterio_raggr", nmCriterioRaggr);
     }
 
     public String getDsMessaggio() {
-	return getString("ds_messaggio");
+        return getString("ds_messaggio");
     }
 
     public void setDsMessaggio(String dsMessaggio) {
-	setObject("ds_messaggio", dsMessaggio);
+        setObject("ds_messaggio", dsMessaggio);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecVCalcCriterioFisc entity = (DecVCalcCriterioFisc) obj;
-	this.setIdCriterioRaggr(entity.getIdCriterioRaggr());
-	this.setNmCriterioRaggr(entity.getNmCriterioRaggr());
-	this.setDsMessaggio(entity.getDsMessaggio());
+        DecVCalcCriterioFisc entity = (DecVCalcCriterioFisc) obj;
+        this.setIdCriterioRaggr(entity.getIdCriterioRaggr());
+        this.setNmCriterioRaggr(entity.getNmCriterioRaggr());
+        this.setDsMessaggio(entity.getDsMessaggio());
     }
 
     @Override
     public DecVCalcCriterioFisc rowBeanToEntity() {
-	DecVCalcCriterioFisc entity = new DecVCalcCriterioFisc();
-	entity.setIdCriterioRaggr(this.getIdCriterioRaggr());
-	entity.setNmCriterioRaggr(this.getNmCriterioRaggr());
-	entity.setDsMessaggio(this.getDsMessaggio());
-	return entity;
+        DecVCalcCriterioFisc entity = new DecVCalcCriterioFisc();
+        entity.setIdCriterioRaggr(this.getIdCriterioRaggr());
+        entity.setNmCriterioRaggr(this.getNmCriterioRaggr());
+        entity.setDsMessaggio(this.getDsMessaggio());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

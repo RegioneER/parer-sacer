@@ -27,50 +27,50 @@ public class MonVCntVersStrutB30Id implements Serializable {
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return idStrut;
+        return idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     private String tiStatoVers;
 
     @Column(name = "TI_STATO_VERS")
     public String getTiStatoVers() {
-	return tiStatoVers;
+        return tiStatoVers;
     }
 
     public void setTiStatoVers(String tiStatoVers) {
-	this.tiStatoVers = tiStatoVers;
+        this.tiStatoVers = tiStatoVers;
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 97 * hash + Objects.hashCode(this.idStrut);
-	hash = 97 * hash + Objects.hashCode(this.tiStatoVers);
-	return hash;
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.idStrut);
+        hash = 97 * hash + Objects.hashCode(this.tiStatoVers);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final MonVCntVersStrutB30Id other = (MonVCntVersStrutB30Id) obj;
-	if (!Objects.equals(this.tiStatoVers, other.tiStatoVers)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idStrut, other.idStrut)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MonVCntVersStrutB30Id other = (MonVCntVersStrutB30Id) obj;
+        if (!Objects.equals(this.tiStatoVers, other.tiStatoVers)) {
+            return false;
+        }
+        if (!Objects.equals(this.idStrut, other.idStrut)) {
+            return false;
+        }
+        return true;
     }
 }

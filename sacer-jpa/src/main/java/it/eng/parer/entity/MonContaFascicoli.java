@@ -55,72 +55,72 @@ public class MonContaFascicoli implements Serializable {
 
     @Column(name = "ID_CONTA_FASCICOLI")
     @GenericGenerator(name = "SMON_CONTA_FASCICOLI_ID_CONTA_FASCICOLI_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SMON_CONTA_FASCICOLI"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SMON_CONTA_FASCICOLI"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SMON_CONTA_FASCICOLI_ID_CONTA_FASCICOLI_GENERATOR")
     public Long getIdContaFascicoli() {
-	return this.idContaFascicoli;
+        return this.idContaFascicoli;
     }
 
     public void setIdContaFascicoli(Long idContaFascicoli) {
-	this.idContaFascicoli = idContaFascicoli;
+        this.idContaFascicoli = idContaFascicoli;
     }
 
     @Column(name = "AA_FASCICOLO")
     public BigDecimal getAaFascicolo() {
-	return this.aaFascicolo;
+        return this.aaFascicolo;
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-	this.aaFascicolo = aaFascicolo;
+        this.aaFascicolo = aaFascicolo;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_RIF_CONTA")
     public Date getDtRifConta() {
-	return this.dtRifConta;
+        return this.dtRifConta;
     }
 
     public void setDtRifConta(Date dtRifConta) {
-	this.dtRifConta = dtRifConta;
+        this.dtRifConta = dtRifConta;
     }
 
     @Column(name = "NI_FASCICOLI_VERS")
     public BigDecimal getNiFascicoliVers() {
-	return this.niFascicoliVers;
+        return this.niFascicoliVers;
     }
 
     public void setNiFascicoliVers(BigDecimal niFascicoliVers) {
-	this.niFascicoliVers = niFascicoliVers;
+        this.niFascicoliVers = niFascicoliVers;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_FASCICOLO")
     public DecTipoFascicolo getDecTipoFascicolo() {
-	return this.decTipoFascicolo;
+        return this.decTipoFascicolo;
     }
 
     public void setDecTipoFascicolo(DecTipoFascicolo decTipoFascicolo) {
-	this.decTipoFascicolo = decTipoFascicolo;
+        this.decTipoFascicolo = decTipoFascicolo;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USER_IAM")
     public IamUser getIamUser() {
-	return this.iamUser;
+        return this.iamUser;
     }
 
     public void setIamUser(IamUser iamUser) {
-	this.iamUser = iamUser;
+        this.iamUser = iamUser;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     public OrgStrut getOrgStrut() {
-	return this.orgStrut;
+        return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-	this.orgStrut = orgStrut;
+        this.orgStrut = orgStrut;
     }
 }

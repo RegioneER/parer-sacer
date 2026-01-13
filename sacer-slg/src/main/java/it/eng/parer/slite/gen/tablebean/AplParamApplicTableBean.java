@@ -33,19 +33,19 @@ public class AplParamApplicTableBean extends AbstractBaseTable<AplParamApplicRow
     public static AplParamApplicTableDescriptor TABLE_DESCRIPTOR = new AplParamApplicTableDescriptor();
 
     public AplParamApplicTableBean() {
-	super();
+        super();
     }
 
     protected AplParamApplicRowBean createRow() {
-	return new AplParamApplicRowBean();
+        return new AplParamApplicRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AplParamApplicRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

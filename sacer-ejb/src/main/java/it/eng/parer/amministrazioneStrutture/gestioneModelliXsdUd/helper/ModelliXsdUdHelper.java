@@ -50,9 +50,9 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @return lista dei modelli xsd
      */
     public List retrieveDecModelliXsdUdListByTiEntitaInUso(BigDecimal idTiEntita,
-	    TipiEntitaSacer tiEntitaSacer, String tiUsoModello, boolean filterValid) {
-	return retrieveDecUsoModelloXsdUdListByTiEntitaInUso(null, idTiEntita, tiEntitaSacer,
-		tiUsoModello, null, StringUtils.EMPTY, filterValid);
+            TipiEntitaSacer tiEntitaSacer, String tiUsoModello, boolean filterValid) {
+        return retrieveDecUsoModelloXsdUdListByTiEntitaInUso(null, idTiEntita, tiEntitaSacer,
+                tiUsoModello, null, StringUtils.EMPTY, filterValid);
     }
 
     /**
@@ -69,66 +69,66 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @return lista uso del modello
      */
     public List retrieveDecUsoModelloXsdUdListByTiEntitaInUso(BigDecimal idModelloXsdUd,
-	    BigDecimal idTiEntita, TipiEntitaSacer tiEntitaSacer, String tiUsoModello, String cdXsd,
-	    String flStandard, boolean filterValid) {
-	StringBuilder queryStr = new StringBuilder();
-	//
-	queryStr.append("select uso ");
+            BigDecimal idTiEntita, TipiEntitaSacer tiEntitaSacer, String tiUsoModello, String cdXsd,
+            String flStandard, boolean filterValid) {
+        StringBuilder queryStr = new StringBuilder();
+        //
+        queryStr.append("select uso ");
 
-	switch (tiEntitaSacer) {
-	case UNI_DOC:
-	    queryStr.append(" from DecUsoModelloXsdUniDoc uso ");
-	    queryStr.append(" where uso.decTipoUnitaDoc.idTipoUnitaDoc = :idTiEntita ");
-	    break;
-	case DOC:
-	    queryStr.append(" from DecUsoModelloXsdDoc uso ");
-	    queryStr.append(" where uso.decTipoDoc.idTipoDoc = :idTiEntita ");
-	    break;
-	case COMP:
-	case SUB_COMP:
-	    queryStr.append(" from DecUsoModelloXsdCompDoc uso ");
-	    queryStr.append(" where uso.decTipoCompDoc.idTipoCompDoc = :idTiEntita ");
-	    break;
-	default:
-	    throw new IllegalArgumentException(
-		    "Il tipo " + tiEntitaSacer.name() + " non è gestito");
-	}
-	//
-	if (idModelloXsdUd != null) {
-	    queryStr.append("AND uso.decModelloXsdUd.idModelloXsdUd = :idModelloXsdUd ");
-	}
-	if (StringUtils.isNotBlank(cdXsd)) {
-	    queryStr.append("AND uso.decModelloXsdUd.cdXsd = :cdXsd ");
-	}
-	if (StringUtils.isNotBlank(flStandard)) {
-	    queryStr.append("AND uso.flStandard = :flStandard ");
-	}
-	//
-	if (filterValid) {
-	    queryStr.append("AND uso.dtIstituz <= :filterDate AND uso.dtSoppres >= :filterDate ");
-	}
-	// common part (mandatory)
-	queryStr.append("AND uso.decModelloXsdUd.tiUsoModelloXsd = :tiUsoModelloXsd ");
+        switch (tiEntitaSacer) {
+        case UNI_DOC:
+            queryStr.append(" from DecUsoModelloXsdUniDoc uso ");
+            queryStr.append(" where uso.decTipoUnitaDoc.idTipoUnitaDoc = :idTiEntita ");
+            break;
+        case DOC:
+            queryStr.append(" from DecUsoModelloXsdDoc uso ");
+            queryStr.append(" where uso.decTipoDoc.idTipoDoc = :idTiEntita ");
+            break;
+        case COMP:
+        case SUB_COMP:
+            queryStr.append(" from DecUsoModelloXsdCompDoc uso ");
+            queryStr.append(" where uso.decTipoCompDoc.idTipoCompDoc = :idTiEntita ");
+            break;
+        default:
+            throw new IllegalArgumentException(
+                    "Il tipo " + tiEntitaSacer.name() + " non è gestito");
+        }
+        //
+        if (idModelloXsdUd != null) {
+            queryStr.append("AND uso.decModelloXsdUd.idModelloXsdUd = :idModelloXsdUd ");
+        }
+        if (StringUtils.isNotBlank(cdXsd)) {
+            queryStr.append("AND uso.decModelloXsdUd.cdXsd = :cdXsd ");
+        }
+        if (StringUtils.isNotBlank(flStandard)) {
+            queryStr.append("AND uso.flStandard = :flStandard ");
+        }
+        //
+        if (filterValid) {
+            queryStr.append("AND uso.dtIstituz <= :filterDate AND uso.dtSoppres >= :filterDate ");
+        }
+        // common part (mandatory)
+        queryStr.append("AND uso.decModelloXsdUd.tiUsoModelloXsd = :tiUsoModelloXsd ");
 
-	Query query = getEntityManager().createQuery(queryStr.toString());
-	if (idModelloXsdUd != null) {
-	    query.setParameter("idModelloXsdUd", longFromBigDecimal(idModelloXsdUd));
-	}
-	if (StringUtils.isNotBlank(cdXsd)) {
-	    query.setParameter("cdXsd", cdXsd);
-	}
-	if (StringUtils.isNotBlank(flStandard)) {
-	    query.setParameter("flStandard", flStandard);
-	}
-	if (filterValid) {
-	    query.setParameter("filterDate", new Date());
-	}
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        if (idModelloXsdUd != null) {
+            query.setParameter("idModelloXsdUd", longFromBigDecimal(idModelloXsdUd));
+        }
+        if (StringUtils.isNotBlank(cdXsd)) {
+            query.setParameter("cdXsd", cdXsd);
+        }
+        if (StringUtils.isNotBlank(flStandard)) {
+            query.setParameter("flStandard", flStandard);
+        }
+        if (filterValid) {
+            query.setParameter("filterDate", new Date());
+        }
 
-	// mandatory
-	query.setParameter("idTiEntita", longFromBigDecimal(idTiEntita));
-	query.setParameter("tiUsoModelloXsd", tiUsoModello);
+        // mandatory
+        query.setParameter("idTiEntita", longFromBigDecimal(idTiEntita));
+        query.setParameter("tiUsoModelloXsd", tiUsoModello);
 
-	return query.getResultList();
+        return query.getResultList();
     }
 
     /**
@@ -141,9 +141,9 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @return lista modelli
      */
     public List<DecModelloXsdUd> retrieveDecModelliXsdUd4Amb(BigDecimal idAmbiente,
-	    String tiUsoModelloXsd, boolean filterValid) {
-	return retrieveDecModelliXsdUd(idAmbiente, null, tiUsoModelloXsd, null, StringUtils.EMPTY,
-		filterValid);
+            String tiUsoModelloXsd, boolean filterValid) {
+        return retrieveDecModelliXsdUd(idAmbiente, null, tiUsoModelloXsd, null, StringUtils.EMPTY,
+                filterValid);
     }
 
     /**
@@ -158,9 +158,9 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @return lista modelli
      */
     public List<DecModelloXsdUd> retrieveDecModelliXsdUd4AmbAndTiModAndCdXsd(BigDecimal idAmbiente,
-	    String tiModelloXsd, String tiUsoModelloXsd, String cdXsd, boolean filterValid) {
-	return retrieveDecModelliXsdUd(idAmbiente, tiModelloXsd, tiUsoModelloXsd, cdXsd,
-		StringUtils.EMPTY, filterValid);
+            String tiModelloXsd, String tiUsoModelloXsd, String cdXsd, boolean filterValid) {
+        return retrieveDecModelliXsdUd(idAmbiente, tiModelloXsd, tiUsoModelloXsd, cdXsd,
+                StringUtils.EMPTY, filterValid);
     }
 
     /**
@@ -174,9 +174,9 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @return lista modelli
      */
     public List<DecModelloXsdUd> retrieveDecModelliXsdUd4AmbAndTiModelloXsd(BigDecimal idAmbiente,
-	    String tiModelloXsd, String tiUsoModelloXsd, boolean filterValid) {
-	return retrieveDecModelliXsdUd(idAmbiente, tiModelloXsd, tiUsoModelloXsd, null,
-		StringUtils.EMPTY, filterValid);
+            String tiModelloXsd, String tiUsoModelloXsd, boolean filterValid) {
+        return retrieveDecModelliXsdUd(idAmbiente, tiModelloXsd, tiUsoModelloXsd, null,
+                StringUtils.EMPTY, filterValid);
     }
 
     /**
@@ -191,52 +191,52 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @return lista modelli
      */
     public List<DecModelloXsdUd> retrieveDecModelliXsdUd4AmbAndTiModelloDefXsd(
-	    BigDecimal idAmbiente, String tiModelloXsd, String tiUsoModelloXsd, String flDefault,
-	    boolean filterValid) {
-	return retrieveDecModelliXsdUd(idAmbiente, tiModelloXsd, tiUsoModelloXsd, null, flDefault,
-		filterValid);
+            BigDecimal idAmbiente, String tiModelloXsd, String tiUsoModelloXsd, String flDefault,
+            boolean filterValid) {
+        return retrieveDecModelliXsdUd(idAmbiente, tiModelloXsd, tiUsoModelloXsd, null, flDefault,
+                filterValid);
     }
 
     private List<DecModelloXsdUd> retrieveDecModelliXsdUd(BigDecimal idAmbiente,
-	    String tiModelloXsd, String tiUsoModelloXsd, String cdXsd, String flDefault,
-	    boolean filterValid) {
-	StringBuilder queryStr = new StringBuilder();
-	//
-	queryStr.append("select d ");
-	queryStr.append("from DecModelloXsdUd d ");
-	queryStr.append("where d.orgAmbiente.idAmbiente = :idAmbiente ");
-	//
-	if (StringUtils.isNotBlank(tiModelloXsd)) {
-	    queryStr.append("AND d.tiModelloXsd = :tiModelloXsd ");
-	}
-	if (StringUtils.isNotBlank(cdXsd)) {
-	    queryStr.append("AND d.cdXsd = :cdXsd ");
-	}
-	if (StringUtils.isNotBlank(flDefault)) {
-	    queryStr.append("AND d.flDefault = :flDefault ");
-	}
-	queryStr.append("AND d.tiUsoModelloXsd = :tiUsoModelloXsd ");
-	//
-	if (filterValid) {
-	    queryStr.append("AND d.dtIstituz <= :filterDate AND d.dtSoppres >= :filterDate ");
-	}
+            String tiModelloXsd, String tiUsoModelloXsd, String cdXsd, String flDefault,
+            boolean filterValid) {
+        StringBuilder queryStr = new StringBuilder();
+        //
+        queryStr.append("select d ");
+        queryStr.append("from DecModelloXsdUd d ");
+        queryStr.append("where d.orgAmbiente.idAmbiente = :idAmbiente ");
+        //
+        if (StringUtils.isNotBlank(tiModelloXsd)) {
+            queryStr.append("AND d.tiModelloXsd = :tiModelloXsd ");
+        }
+        if (StringUtils.isNotBlank(cdXsd)) {
+            queryStr.append("AND d.cdXsd = :cdXsd ");
+        }
+        if (StringUtils.isNotBlank(flDefault)) {
+            queryStr.append("AND d.flDefault = :flDefault ");
+        }
+        queryStr.append("AND d.tiUsoModelloXsd = :tiUsoModelloXsd ");
+        //
+        if (filterValid) {
+            queryStr.append("AND d.dtIstituz <= :filterDate AND d.dtSoppres >= :filterDate ");
+        }
 
-	Query query = getEntityManager().createQuery(queryStr.toString());
-	query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
-	if (StringUtils.isNotBlank(tiModelloXsd)) {
-	    query.setParameter("tiModelloXsd", TiModelloXsdUd.valueOf(tiModelloXsd));
-	}
-	if (StringUtils.isNotBlank(cdXsd)) {
-	    query.setParameter("cdXsd", cdXsd);
-	}
-	if (StringUtils.isNotBlank(flDefault)) {
-	    query.setParameter("flDefault", flDefault);
-	}
-	query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
-	if (filterValid) {
-	    query.setParameter("filterDate", new Date());
-	}
-	return query.getResultList();
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
+        if (StringUtils.isNotBlank(tiModelloXsd)) {
+            query.setParameter("tiModelloXsd", TiModelloXsdUd.valueOf(tiModelloXsd));
+        }
+        if (StringUtils.isNotBlank(cdXsd)) {
+            query.setParameter("cdXsd", cdXsd);
+        }
+        if (StringUtils.isNotBlank(flDefault)) {
+            query.setParameter("flDefault", flDefault);
+        }
+        query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
+        if (filterValid) {
+            query.setParameter("filterDate", new Date());
+        }
+        return query.getResultList();
     }
 
     /**
@@ -249,43 +249,43 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @return true se non esiste modello in uso su versamento / false altrimenti
      */
     public boolean decUsoModelloXsdUdInUseOnVrs(BigDecimal idStrut, BigDecimal idUsoModelloXsdUd,
-	    TipiEntitaSacer tiEntitaSacer) {
-	boolean result = true;
-	StringBuilder queryStr = new StringBuilder();
+            TipiEntitaSacer tiEntitaSacer) {
+        boolean result = true;
+        StringBuilder queryStr = new StringBuilder();
 
-	queryStr.append("select uso.decModelloXsdUd ");
+        queryStr.append("select uso.decModelloXsdUd ");
 
-	switch (tiEntitaSacer) {
-	case UNI_DOC:
-	    queryStr.append("from DecUsoModelloXsdUniDoc uso ");
-	    queryStr.append("where uso.idUsoModelloXsdUniDoc = :idUsoModelloXsdUd ");
-	    queryStr.append(
-		    " AND NOT EXISTS (select vrs from VrsXmlModelloSessioneVers vrs where vrs.decUsoModelloXsdUniDoc.idUsoModelloXsdUniDoc = uso.idUsoModelloXsdUniDoc and vrs.idStrut = :idStrut) ");
-	    break;
-	case DOC:
-	    queryStr.append("from DecUsoModelloXsdDoc uso ");
-	    queryStr.append("where uso.idUsoModelloXsdDoc = :idUsoModelloXsdUd ");
-	    queryStr.append(
-		    " AND NOT EXISTS (select vrs from VrsXmlModelloSessioneVers vrs where vrs.decUsoModelloXsdDoc.idUsoModelloXsdDoc = uso.idUsoModelloXsdDoc and vrs.idStrut = :idStrut) ");
-	    break;
-	case COMP:
-	case SUB_COMP:
-	    queryStr.append("from DecUsoModelloXsdCompDoc uso ");
-	    queryStr.append("where uso.idUsoModelloXsdCompDoc = :idUsoModelloXsdUd ");
-	    queryStr.append(
-		    " AND NOT EXISTS (select vrs from VrsXmlModelloSessioneVers vrs where vrs.decUsoModelloXsdCompDoc.idUsoModelloXsdCompDoc = uso.idUsoModelloXsdCompDoc and vrs.idStrut = :idStrut) ");
-	    break;
-	default:
-	    throw new IllegalArgumentException(
-		    "il tipo " + tiEntitaSacer.name() + " non è gestito");
-	}
+        switch (tiEntitaSacer) {
+        case UNI_DOC:
+            queryStr.append("from DecUsoModelloXsdUniDoc uso ");
+            queryStr.append("where uso.idUsoModelloXsdUniDoc = :idUsoModelloXsdUd ");
+            queryStr.append(
+                    " AND NOT EXISTS (select vrs from VrsXmlModelloSessioneVers vrs where vrs.decUsoModelloXsdUniDoc.idUsoModelloXsdUniDoc = uso.idUsoModelloXsdUniDoc and vrs.idStrut = :idStrut) ");
+            break;
+        case DOC:
+            queryStr.append("from DecUsoModelloXsdDoc uso ");
+            queryStr.append("where uso.idUsoModelloXsdDoc = :idUsoModelloXsdUd ");
+            queryStr.append(
+                    " AND NOT EXISTS (select vrs from VrsXmlModelloSessioneVers vrs where vrs.decUsoModelloXsdDoc.idUsoModelloXsdDoc = uso.idUsoModelloXsdDoc and vrs.idStrut = :idStrut) ");
+            break;
+        case COMP:
+        case SUB_COMP:
+            queryStr.append("from DecUsoModelloXsdCompDoc uso ");
+            queryStr.append("where uso.idUsoModelloXsdCompDoc = :idUsoModelloXsdUd ");
+            queryStr.append(
+                    " AND NOT EXISTS (select vrs from VrsXmlModelloSessioneVers vrs where vrs.decUsoModelloXsdCompDoc.idUsoModelloXsdCompDoc = uso.idUsoModelloXsdCompDoc and vrs.idStrut = :idStrut) ");
+            break;
+        default:
+            throw new IllegalArgumentException(
+                    "il tipo " + tiEntitaSacer.name() + " non è gestito");
+        }
 
-	Query query = getEntityManager().createQuery(queryStr.toString());
-	query.setParameter("idStrut", idStrut);
-	query.setParameter("idUsoModelloXsdUd", longFromBigDecimal(idUsoModelloXsdUd));
-	List<Object[]> list = query.getResultList();
-	result = list.isEmpty();
-	return result;
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idStrut", idStrut);
+        query.setParameter("idUsoModelloXsdUd", longFromBigDecimal(idUsoModelloXsdUd));
+        List<Object[]> list = query.getResultList();
+        result = list.isEmpty();
+        return result;
     }
 
     /**
@@ -296,24 +296,24 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @return true se non esiste modello in uso su versamento / false altrimenti
      */
     public boolean decModelloXsdUdInUseOnVrs(BigDecimal idModelloXsdUd) {
-	StringBuilder queryStr = new StringBuilder();
+        StringBuilder queryStr = new StringBuilder();
 
-	queryStr.append("select m ");
+        queryStr.append("select m ");
 
-	queryStr.append("from DecModelloXsdUd m ");
-	queryStr.append("where m.idModelloXsdUd = :idModelloXsdUd ");
-	queryStr.append(" AND (");
-	queryStr.append(
-		" EXISTS (select vrsusounidoc from VrsXmlModelloSessioneVers vrsusounidoc where vrsusounidoc.decUsoModelloXsdUniDoc.decModelloXsdUd.idModelloXsdUd =  m.idModelloXsdUd) ");
-	queryStr.append(
-		" OR EXISTS (select vrsusodoc from VrsXmlModelloSessioneVers vrsusodoc where vrsusodoc.decUsoModelloXsdDoc.decModelloXsdUd.idModelloXsdUd = m.idModelloXsdUd) ");
-	queryStr.append(
-		" OR EXISTS (select vrsusocomp from VrsXmlModelloSessioneVers vrsusocomp where vrsusocomp.decUsoModelloXsdCompDoc.decModelloXsdUd.idModelloXsdUd = m.idModelloXsdUd) ");
-	queryStr.append(")");
-	Query query = getEntityManager().createQuery(queryStr.toString());
-	query.setParameter("idModelloXsdUd", longFromBigDecimal(idModelloXsdUd));
-	List<Object[]> list = query.getResultList();
-	return list.isEmpty();
+        queryStr.append("from DecModelloXsdUd m ");
+        queryStr.append("where m.idModelloXsdUd = :idModelloXsdUd ");
+        queryStr.append(" AND (");
+        queryStr.append(
+                " EXISTS (select vrsusounidoc from VrsXmlModelloSessioneVers vrsusounidoc where vrsusounidoc.decUsoModelloXsdUniDoc.decModelloXsdUd.idModelloXsdUd =  m.idModelloXsdUd) ");
+        queryStr.append(
+                " OR EXISTS (select vrsusodoc from VrsXmlModelloSessioneVers vrsusodoc where vrsusodoc.decUsoModelloXsdDoc.decModelloXsdUd.idModelloXsdUd = m.idModelloXsdUd) ");
+        queryStr.append(
+                " OR EXISTS (select vrsusocomp from VrsXmlModelloSessioneVers vrsusocomp where vrsusocomp.decUsoModelloXsdCompDoc.decModelloXsdUd.idModelloXsdUd = m.idModelloXsdUd) ");
+        queryStr.append(")");
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idModelloXsdUd", longFromBigDecimal(idModelloXsdUd));
+        List<Object[]> list = query.getResultList();
+        return list.isEmpty();
     }
 
     /**
@@ -325,35 +325,35 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @return true se il modello è utilizzato / false altrimenti
      */
     public boolean existDecModelliXsdUdListInUso(BigDecimal idModelloXsdUd, boolean filterValid) {
-	StringBuilder queryStr = new StringBuilder();
-	//
-	queryStr.append("select m from DecModelloXsdUd m " + "where (m.idModelloXsdUd IN ("
-		+ "select usoud.decModelloXsdUd.idModelloXsdUd "
-		+ "from DecUsoModelloXsdUniDoc usoud "
-		+ "where usoud.decModelloXsdUd.idModelloXsdUd = m.idModelloXsdUd ) "
+        StringBuilder queryStr = new StringBuilder();
+        //
+        queryStr.append("select m from DecModelloXsdUd m " + "where (m.idModelloXsdUd IN ("
+                + "select usoud.decModelloXsdUd.idModelloXsdUd "
+                + "from DecUsoModelloXsdUniDoc usoud "
+                + "where usoud.decModelloXsdUd.idModelloXsdUd = m.idModelloXsdUd ) "
 
-		+ "OR m.idModelloXsdUd IN (" + "select usod.decModelloXsdUd.idModelloXsdUd "
-		+ "from DecUsoModelloXsdDoc usod "
-		+ "where usod.decModelloXsdUd.idModelloXsdUd = m.idModelloXsdUd ) "
+                + "OR m.idModelloXsdUd IN (" + "select usod.decModelloXsdUd.idModelloXsdUd "
+                + "from DecUsoModelloXsdDoc usod "
+                + "where usod.decModelloXsdUd.idModelloXsdUd = m.idModelloXsdUd ) "
 
-		+ "OR m.idModelloXsdUd IN (" + "select usoc.decModelloXsdUd.idModelloXsdUd "
-		+ "from DecUsoModelloXsdCompDoc usoc "
-		+ "where usoc.decModelloXsdUd.idModelloXsdUd = m.idModelloXsdUd )) ");
+                + "OR m.idModelloXsdUd IN (" + "select usoc.decModelloXsdUd.idModelloXsdUd "
+                + "from DecUsoModelloXsdCompDoc usoc "
+                + "where usoc.decModelloXsdUd.idModelloXsdUd = m.idModelloXsdUd )) ");
 
-	queryStr.append("AND m.idModelloXsdUd = :idModelloXsdUd ");
+        queryStr.append("AND m.idModelloXsdUd = :idModelloXsdUd ");
 
-	//
-	if (filterValid) {
-	    queryStr.append("AND m.dtIstituz <= :filterDate AND m.dtSoppres >= :filterDate ");
-	}
+        //
+        if (filterValid) {
+            queryStr.append("AND m.dtIstituz <= :filterDate AND m.dtSoppres >= :filterDate ");
+        }
 
-	Query query = getEntityManager().createQuery(queryStr.toString());
-	query.setParameter("idModelloXsdUd", longFromBigDecimal(idModelloXsdUd));
-	if (filterValid) {
-	    query.setParameter("filterDate", new Date());
-	}
-	List<Object[]> list = query.getResultList();
-	return !list.isEmpty();
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idModelloXsdUd", longFromBigDecimal(idModelloXsdUd));
+        if (filterValid) {
+            query.setParameter("filterDate", new Date());
+        }
+        List<Object[]> list = query.getResultList();
+        return !list.isEmpty();
     }
 
     /**
@@ -369,12 +369,12 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @throws EMFError eccezione generica
      */
     public List<DecModelloXsdUd> findDecModelliXsdUdList(FiltriModelliXsdUd filtriModelliXsdUd,
-	    List<BigDecimal> idAmbientiToFind, String tiUsoModelloXsd, boolean filterValid)
-	    throws EMFError {
-	return findDecModelliXsdUdList(idAmbientiToFind, tiUsoModelloXsd, filterValid,
-		filtriModelliXsdUd.getCd_xsd().parse(), filtriModelliXsdUd.getDs_xsd().parse(),
-		filtriModelliXsdUd.getFl_default().parse(),
-		filtriModelliXsdUd.getTi_modello_xsd().parse());
+            List<BigDecimal> idAmbientiToFind, String tiUsoModelloXsd, boolean filterValid)
+            throws EMFError {
+        return findDecModelliXsdUdList(idAmbientiToFind, tiUsoModelloXsd, filterValid,
+                filtriModelliXsdUd.getCd_xsd().parse(), filtriModelliXsdUd.getDs_xsd().parse(),
+                filtriModelliXsdUd.getFl_default().parse(),
+                filtriModelliXsdUd.getTi_modello_xsd().parse());
     }
 
     /**
@@ -393,64 +393,64 @@ public class ModelliXsdUdHelper extends GenericHelper {
      *
      */
     public List<DecModelloXsdUd> findDecModelliXsdUdList(List<BigDecimal> idAmbientiToFind,
-	    String tiUsoModelloXsd, boolean filterValid, String cdXsd, String dsXsd,
-	    String flDefault, String tiModelloXsd) {
-	StringBuilder queryStr = new StringBuilder("select m FROM DecModelloXsdUd m ");
-	String whereClause = " WHERE ";
-	if (!idAmbientiToFind.isEmpty()) {
-	    queryStr.append(whereClause).append("m.orgAmbiente.idAmbiente IN :idAmbientiToFind ");
-	    whereClause = " AND ";
-	}
-	if (!StringUtils.isEmpty(cdXsd)) {
-	    queryStr.append(whereClause).append("UPPER(m.cdXsd) LIKE :cdXsd ");
-	    whereClause = " AND ";
-	}
-	if (!StringUtils.isEmpty(dsXsd)) {
-	    queryStr.append(whereClause).append("UPPER(m.dsXsd) LIKE :dsXsd ");
-	    whereClause = " AND ";
-	}
-	if (!StringUtils.isEmpty(flDefault)) {
-	    queryStr.append(whereClause).append("m.flDefault = :flDefault ");
-	    whereClause = " AND ";
-	}
-	if (!StringUtils.isEmpty(tiUsoModelloXsd)) {
-	    queryStr.append(whereClause).append("m.tiUsoModelloXsd = :tiUsoModelloXsd ");
-	    whereClause = " AND ";
-	}
-	if (!StringUtils.isEmpty(tiModelloXsd)) {
-	    queryStr.append(whereClause).append("m.tiModelloXsd = :tiModelloXsd ");
-	    whereClause = " AND ";
-	}
+            String tiUsoModelloXsd, boolean filterValid, String cdXsd, String dsXsd,
+            String flDefault, String tiModelloXsd) {
+        StringBuilder queryStr = new StringBuilder("select m FROM DecModelloXsdUd m ");
+        String whereClause = " WHERE ";
+        if (!idAmbientiToFind.isEmpty()) {
+            queryStr.append(whereClause).append("m.orgAmbiente.idAmbiente IN :idAmbientiToFind ");
+            whereClause = " AND ";
+        }
+        if (!StringUtils.isEmpty(cdXsd)) {
+            queryStr.append(whereClause).append("UPPER(m.cdXsd) LIKE :cdXsd ");
+            whereClause = " AND ";
+        }
+        if (!StringUtils.isEmpty(dsXsd)) {
+            queryStr.append(whereClause).append("UPPER(m.dsXsd) LIKE :dsXsd ");
+            whereClause = " AND ";
+        }
+        if (!StringUtils.isEmpty(flDefault)) {
+            queryStr.append(whereClause).append("m.flDefault = :flDefault ");
+            whereClause = " AND ";
+        }
+        if (!StringUtils.isEmpty(tiUsoModelloXsd)) {
+            queryStr.append(whereClause).append("m.tiUsoModelloXsd = :tiUsoModelloXsd ");
+            whereClause = " AND ";
+        }
+        if (!StringUtils.isEmpty(tiModelloXsd)) {
+            queryStr.append(whereClause).append("m.tiModelloXsd = :tiModelloXsd ");
+            whereClause = " AND ";
+        }
 
-	if (filterValid) {
-	    queryStr.append(whereClause)
-		    .append("(m.dtIstituz <= :filterDate AND m.dtSoppres >= :filterDate) ");
-	}
+        if (filterValid) {
+            queryStr.append(whereClause)
+                    .append("(m.dtIstituz <= :filterDate AND m.dtSoppres >= :filterDate) ");
+        }
 
-	Query query = getEntityManager().createQuery(queryStr.toString());
-	if (!idAmbientiToFind.isEmpty()) {
-	    query.setParameter("idAmbientiToFind", longListFrom(idAmbientiToFind));
-	}
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        if (!idAmbientiToFind.isEmpty()) {
+            query.setParameter("idAmbientiToFind", longListFrom(idAmbientiToFind));
+        }
 
-	if (!StringUtils.isEmpty(cdXsd)) {
-	    query.setParameter("cdXsd", cdXsd + "%");
-	}
-	if (!StringUtils.isEmpty(dsXsd)) {
-	    query.setParameter("dsXsd", "%" + dsXsd.toUpperCase() + "%");
-	}
-	if (!StringUtils.isEmpty(flDefault)) {
-	    query.setParameter("flDefault", flDefault);
-	}
-	if (!StringUtils.isEmpty(tiUsoModelloXsd)) {
-	    query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
-	}
-	if (!StringUtils.isEmpty(tiModelloXsd)) {
-	    query.setParameter("tiModelloXsd", TiModelloXsdUd.valueOf(tiModelloXsd));
-	}
-	if (filterValid) {
-	    query.setParameter("filterDate", Calendar.getInstance().getTime());
-	}
-	return query.getResultList();
+        if (!StringUtils.isEmpty(cdXsd)) {
+            query.setParameter("cdXsd", cdXsd + "%");
+        }
+        if (!StringUtils.isEmpty(dsXsd)) {
+            query.setParameter("dsXsd", "%" + dsXsd.toUpperCase() + "%");
+        }
+        if (!StringUtils.isEmpty(flDefault)) {
+            query.setParameter("flDefault", flDefault);
+        }
+        if (!StringUtils.isEmpty(tiUsoModelloXsd)) {
+            query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
+        }
+        if (!StringUtils.isEmpty(tiModelloXsd)) {
+            query.setParameter("tiModelloXsd", TiModelloXsdUd.valueOf(tiModelloXsd));
+        }
+        if (filterValid) {
+            query.setParameter("filterDate", Calendar.getInstance().getTime());
+        }
+        return query.getResultList();
     }
 
     /**
@@ -464,20 +464,20 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @return modello entity DecModelloXsdUd
      */
     public DecModelloXsdUd getDecModelloXsdUd(long idAmbiente, String tiModelloXsd,
-	    String tiUsoModelloXsd, String cdXsd) {
-	Query query = getEntityManager().createQuery(
-		"SELECT m FROM DecModelloXsdUd m WHERE m.orgAmbiente.idAmbiente = :idAmbiente "
-			+ "AND m.tiModelloXsd = :tiModelloXsd AND m.tiUsoModelloXsd = :tiUsoModelloXsd AND m.cdXsd = :cdXsd");
-	query.setParameter("idAmbiente", idAmbiente);
-	query.setParameter("tiModelloXsd", TiModelloXsdUd.valueOf(tiModelloXsd));
-	query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
-	query.setParameter("cdXsd", cdXsd);
-	List<DecModelloXsdUd> list = query.getResultList();
-	DecModelloXsdUd modello = null;
-	if (!list.isEmpty()) {
-	    modello = list.get(0);
-	}
-	return modello;
+            String tiUsoModelloXsd, String cdXsd) {
+        Query query = getEntityManager().createQuery(
+                "SELECT m FROM DecModelloXsdUd m WHERE m.orgAmbiente.idAmbiente = :idAmbiente "
+                        + "AND m.tiModelloXsd = :tiModelloXsd AND m.tiUsoModelloXsd = :tiUsoModelloXsd AND m.cdXsd = :cdXsd");
+        query.setParameter("idAmbiente", idAmbiente);
+        query.setParameter("tiModelloXsd", TiModelloXsdUd.valueOf(tiModelloXsd));
+        query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
+        query.setParameter("cdXsd", cdXsd);
+        List<DecModelloXsdUd> list = query.getResultList();
+        DecModelloXsdUd modello = null;
+        if (!list.isEmpty()) {
+            modello = list.get(0);
+        }
+        return modello;
     }
 
     /**
@@ -490,48 +490,48 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @return uso modello entity DecUsoModelloXsdUniDoc
      */
     public DecUsoModelloXsdUniDoc getDecUsoModelloXsdUniDoc(BigDecimal idStrut,
-	    String nmTipoUnitaDoc, Long idModelloXsdUd) {
-	StringBuilder queryStr = new StringBuilder("SELECT u FROM DecUsoModelloXsdUniDoc u ");
-	String whereWord = "WHERE ";
+            String nmTipoUnitaDoc, Long idModelloXsdUd) {
+        StringBuilder queryStr = new StringBuilder("SELECT u FROM DecUsoModelloXsdUniDoc u ");
+        String whereWord = "WHERE ";
 
-	if (idStrut != null) {
-	    queryStr.append(whereWord).append("u.decTipoUnitaDoc.orgStrut.idStrut = :idStrut ");
-	    whereWord = "AND ";
-	}
+        if (idStrut != null) {
+            queryStr.append(whereWord).append("u.decTipoUnitaDoc.orgStrut.idStrut = :idStrut ");
+            whereWord = "AND ";
+        }
 
-	if (nmTipoUnitaDoc != null) {
-	    queryStr.append(whereWord)
-		    .append("UPPER(u.decTipoUnitaDoc.nmTipoUnitaDoc) = :nmTipoUnitaDoc ");
-	    whereWord = "AND ";
-	}
+        if (nmTipoUnitaDoc != null) {
+            queryStr.append(whereWord)
+                    .append("UPPER(u.decTipoUnitaDoc.nmTipoUnitaDoc) = :nmTipoUnitaDoc ");
+            whereWord = "AND ";
+        }
 
-	if (idModelloXsdUd != null) {
-	    queryStr.append(whereWord)
-		    .append("u.decModelloXsdUd.idModelloXsdUd = :idModelloXsdUd ");
-	}
+        if (idModelloXsdUd != null) {
+            queryStr.append(whereWord)
+                    .append("u.decModelloXsdUd.idModelloXsdUd = :idModelloXsdUd ");
+        }
 
-	Query query = getEntityManager().createQuery(queryStr.toString());
+        Query query = getEntityManager().createQuery(queryStr.toString());
 
-	if (idStrut != null) {
-	    query.setParameter("idStrut", longFromBigDecimal(idStrut));
-	}
+        if (idStrut != null) {
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        }
 
-	if (nmTipoUnitaDoc != null) {
-	    query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc.toUpperCase());
+        if (nmTipoUnitaDoc != null) {
+            query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc.toUpperCase());
 
-	}
+        }
 
-	if (idModelloXsdUd != null) {
-	    query.setParameter("idModelloXsdUd", idModelloXsdUd);
+        if (idModelloXsdUd != null) {
+            query.setParameter("idModelloXsdUd", idModelloXsdUd);
 
-	}
+        }
 
-	List<DecUsoModelloXsdUniDoc> list = query.getResultList();
+        List<DecUsoModelloXsdUniDoc> list = query.getResultList();
 
-	if (list.isEmpty()) {
-	    return null;
-	}
-	return list.get(0);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
     }
 
 }

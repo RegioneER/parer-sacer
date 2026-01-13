@@ -38,23 +38,23 @@ public class CriterioFiltroUnitaDoc {
     private AroUnitaDoc unitaDoc;
 
     public CriterioFiltroUnitaDoc(DecCriterioRaggr criterioRaggr, AroUnitaDoc unitaDoc) {
-	this.criterioRaggr = criterioRaggr;
-	this.unitaDoc = unitaDoc;
+        this.criterioRaggr = criterioRaggr;
+        this.unitaDoc = unitaDoc;
     }
 
     public DecCriterioRaggr getCriterioRaggr() {
-	return criterioRaggr;
+        return criterioRaggr;
     }
 
     public void setCriterioRaggr(DecCriterioRaggr criterioRaggr) {
-	this.criterioRaggr = criterioRaggr;
+        this.criterioRaggr = criterioRaggr;
     }
 
     public AroUnitaDoc getUnitaDoc() {
-	return unitaDoc;
+        return unitaDoc;
     }
 
     public void setUnitaDoc(AroUnitaDoc unitaDoc) {
-	this.unitaDoc = unitaDoc;
+        this.unitaDoc = unitaDoc;
     }
 }

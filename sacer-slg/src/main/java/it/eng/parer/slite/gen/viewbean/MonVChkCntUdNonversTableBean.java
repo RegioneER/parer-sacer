@@ -37,19 +37,19 @@ public class MonVChkCntUdNonversTableBean extends AbstractBaseTable<MonVChkCntUd
     public static MonVChkCntUdNonversTableDescriptor TABLE_DESCRIPTOR = new MonVChkCntUdNonversTableDescriptor();
 
     public MonVChkCntUdNonversTableBean() {
-	super();
+        super();
     }
 
     protected MonVChkCntUdNonversRowBean createRow() {
-	return new MonVChkCntUdNonversRowBean();
+        return new MonVChkCntUdNonversRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVChkCntUdNonversRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

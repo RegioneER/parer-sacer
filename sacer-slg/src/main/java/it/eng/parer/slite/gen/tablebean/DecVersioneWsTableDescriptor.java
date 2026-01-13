@@ -43,23 +43,23 @@ public class DecVersioneWsTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_VERSIONE_WS,
-		new ColumnDescriptor(COL_ID_VERSIONE_WS, Types.DECIMAL, 22, false));
-	map.put(COL_TI_WS, new ColumnDescriptor(COL_TI_WS, Types.VARCHAR, 20, false));
-	map.put(COL_CD_VERSIONE_WS,
-		new ColumnDescriptor(COL_CD_VERSIONE_WS, Types.VARCHAR, 20, false));
+        map.put(COL_ID_VERSIONE_WS,
+                new ColumnDescriptor(COL_ID_VERSIONE_WS, Types.DECIMAL, 22, false));
+        map.put(COL_TI_WS, new ColumnDescriptor(COL_TI_WS, Types.VARCHAR, 20, false));
+        map.put(COL_CD_VERSIONE_WS,
+                new ColumnDescriptor(COL_CD_VERSIONE_WS, Types.VARCHAR, 20, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

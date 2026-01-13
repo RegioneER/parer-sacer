@@ -27,89 +27,89 @@ public class ConteggioStatoUdDto {
     private long conteggio; // COUNT restituisce un Long in JPA
 
     public ConteggioStatoUdDto(Long idUdDelRichiesta, BigDecimal idRichiesta,
-	    String tiMotCancellazione, BigDecimal idEnte, String nmEnte, BigDecimal idStrut,
-	    String nmStrut, String tiStatoUdCancellate, long conteggio) {
-	this.idUdDelRichiesta = idUdDelRichiesta;
-	this.idRichiesta = idRichiesta;
-	this.tiMotCancellazione = tiMotCancellazione;
-	this.idEnte = idEnte;
-	this.nmEnte = nmEnte;
-	this.idStrut = idStrut;
-	this.nmStrut = nmStrut;
-	this.tiStatoUdCancellate = tiStatoUdCancellate;
-	this.conteggio = conteggio;
+            String tiMotCancellazione, BigDecimal idEnte, String nmEnte, BigDecimal idStrut,
+            String nmStrut, String tiStatoUdCancellate, long conteggio) {
+        this.idUdDelRichiesta = idUdDelRichiesta;
+        this.idRichiesta = idRichiesta;
+        this.tiMotCancellazione = tiMotCancellazione;
+        this.idEnte = idEnte;
+        this.nmEnte = nmEnte;
+        this.idStrut = idStrut;
+        this.nmStrut = nmStrut;
+        this.tiStatoUdCancellate = tiStatoUdCancellate;
+        this.conteggio = conteggio;
     }
 
     public Long getIdUdDelRichiesta() {
-	return idUdDelRichiesta;
+        return idUdDelRichiesta;
     }
 
     public void setIdUdDelRichiesta(Long idUdDelRichiesta) {
-	this.idUdDelRichiesta = idUdDelRichiesta;
+        this.idUdDelRichiesta = idUdDelRichiesta;
     }
 
     public BigDecimal getIdRichiesta() {
-	return idRichiesta;
+        return idRichiesta;
     }
 
     public void setIdRichiesta(BigDecimal idRichiesta) {
-	this.idRichiesta = idRichiesta;
+        this.idRichiesta = idRichiesta;
     }
 
     public String getTiMotCancellazione() {
-	return tiMotCancellazione;
+        return tiMotCancellazione;
     }
 
     public void setTiMotCancellazione(String tiMotCancellazione) {
-	this.tiMotCancellazione = tiMotCancellazione;
+        this.tiMotCancellazione = tiMotCancellazione;
     }
 
     public BigDecimal getIdStrut() {
-	return idStrut;
+        return idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     public String getTiStatoUdCancellate() {
-	return tiStatoUdCancellate;
+        return tiStatoUdCancellate;
     }
 
     public void setTiStatoUdCancellate(String tiStatoUdCancellate) {
-	this.tiStatoUdCancellate = tiStatoUdCancellate;
+        this.tiStatoUdCancellate = tiStatoUdCancellate;
     }
 
     public long getConteggio() {
-	return conteggio;
+        return conteggio;
     }
 
     public void setConteggio(long conteggio) {
-	this.conteggio = conteggio;
+        this.conteggio = conteggio;
     }
 
     public BigDecimal getIdEnte() {
-	return idEnte;
+        return idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	this.idEnte = idEnte;
+        this.idEnte = idEnte;
     }
 
     public String getNmEnte() {
-	return nmEnte;
+        return nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     public String getNmStrut() {
-	return nmStrut;
+        return nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
 }

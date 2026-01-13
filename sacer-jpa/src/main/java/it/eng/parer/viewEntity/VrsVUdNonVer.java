@@ -35,10 +35,10 @@ public class VrsVUdNonVer implements Serializable {
 
     @EmbeddedId()
     public VrsVUdNonVerId getVrsVUdNonVerId() {
-	return vrsVUdNonVerId;
+        return vrsVUdNonVerId;
     }
 
     public void setVrsVUdNonVerId(VrsVUdNonVerId vrsVUdNonVerId) {
-	this.vrsVUdNonVerId = vrsVUdNonVerId;
+        this.vrsVUdNonVerId = vrsVUdNonVerId;
     }
 }

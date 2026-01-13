@@ -64,61 +64,61 @@ public class ElvElencoVersFascDaElab implements Serializable {
 
     @Column(name = "ID_ELENCO_VERS_DA_ELAB")
     @GenericGenerator(name = "SELV_ELENCO_VERS_DA_ELAB_ID_ELENCO_VERS_DA_ELAB_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_ELENCO_VERS_DA_ELAB"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_ELENCO_VERS_DA_ELAB"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SELV_ELENCO_VERS_DA_ELAB_ID_ELENCO_VERS_DA_ELAB_GENERATOR")
     public Long getIdElencoVersDaElab() {
-	return this.idElencoVersDaElab;
+        return this.idElencoVersDaElab;
     }
 
     public void setIdElencoVersDaElab(Long idElencoVersDaElab) {
-	this.idElencoVersDaElab = idElencoVersDaElab;
+        this.idElencoVersDaElab = idElencoVersDaElab;
     }
 
     @Column(name = "AA_FASCICOLO")
     public BigDecimal getAaFascicolo() {
-	return this.aaFascicolo;
+        return this.aaFascicolo;
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-	this.aaFascicolo = aaFascicolo;
+        this.aaFascicolo = aaFascicolo;
     }
 
     @Column(name = "ID_CRITERIO_RAGGR_FASC")
     public BigDecimal getIdCriterioRaggrFasc() {
-	return this.idCriterioRaggrFasc;
+        return this.idCriterioRaggrFasc;
     }
 
     public void setIdCriterioRaggrFasc(BigDecimal idCriterioRaggrFasc) {
-	this.idCriterioRaggrFasc = idCriterioRaggrFasc;
+        this.idCriterioRaggrFasc = idCriterioRaggrFasc;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TI_STATO")
     public TiStatoElencoFascDaElab getTiStato() {
-	return this.tiStato;
+        return this.tiStato;
     }
 
     public void setTiStato(TiStatoElencoFascDaElab tiStato) {
-	this.tiStato = tiStato;
+        this.tiStato = tiStato;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ELENCO_VERS_FASC")
     public ElvElencoVersFasc getElvElencoVersFasc() {
-	return this.elvElencoVersFasc;
+        return this.elvElencoVersFasc;
     }
 
     public void setElvElencoVersFasc(ElvElencoVersFasc elvElencoVersFasc) {
-	this.elvElencoVersFasc = elvElencoVersFasc;
+        this.elvElencoVersFasc = elvElencoVersFasc;
     }
 }

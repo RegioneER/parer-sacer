@@ -50,96 +50,96 @@ public class SerVLisVerSeriePrec implements Serializable {
 
     @Column(name = "CD_FIRST_UNITA_DOC_EFF")
     public String getCdFirstUnitaDocEff() {
-	return this.cdFirstUnitaDocEff;
+        return this.cdFirstUnitaDocEff;
     }
 
     public void setCdFirstUnitaDocEff(String cdFirstUnitaDocEff) {
-	this.cdFirstUnitaDocEff = cdFirstUnitaDocEff;
+        this.cdFirstUnitaDocEff = cdFirstUnitaDocEff;
     }
 
     @Column(name = "CD_LAST_UNITA_DOC_EFF")
     public String getCdLastUnitaDocEff() {
-	return this.cdLastUnitaDocEff;
+        return this.cdLastUnitaDocEff;
     }
 
     public void setCdLastUnitaDocEff(String cdLastUnitaDocEff) {
-	this.cdLastUnitaDocEff = cdLastUnitaDocEff;
+        this.cdLastUnitaDocEff = cdLastUnitaDocEff;
     }
 
     @Column(name = "CD_VER_SERIE")
     public String getCdVerSerie() {
-	return this.cdVerSerie;
+        return this.cdVerSerie;
     }
 
     public void setCdVerSerie(String cdVerSerie) {
-	this.cdVerSerie = cdVerSerie;
+        this.cdVerSerie = cdVerSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FINE_SEL_SERIE")
     public Date getDtFineSelSerie() {
-	return this.dtFineSelSerie;
+        return this.dtFineSelSerie;
     }
 
     public void setDtFineSelSerie(Date dtFineSelSerie) {
-	this.dtFineSelSerie = dtFineSelSerie;
+        this.dtFineSelSerie = dtFineSelSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIRMA_VER_SERIE")
     public Date getDtFirmaVerSerie() {
-	return this.dtFirmaVerSerie;
+        return this.dtFirmaVerSerie;
     }
 
     public void setDtFirmaVerSerie(Date dtFirmaVerSerie) {
-	this.dtFirmaVerSerie = dtFirmaVerSerie;
+        this.dtFirmaVerSerie = dtFirmaVerSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_INIZIO_SEL_SERIE")
     public Date getDtInizioSelSerie() {
-	return this.dtInizioSelSerie;
+        return this.dtInizioSelSerie;
     }
 
     public void setDtInizioSelSerie(Date dtInizioSelSerie) {
-	this.dtInizioSelSerie = dtInizioSelSerie;
+        this.dtInizioSelSerie = dtInizioSelSerie;
     }
 
     @Id
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-	return this.idVerSerie;
+        return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	this.idVerSerie = idVerSerie;
+        this.idVerSerie = idVerSerie;
     }
 
     @Column(name = "ID_VER_SERIE_INPUT")
     public BigDecimal getIdVerSerieInput() {
-	return this.idVerSerieInput;
+        return this.idVerSerieInput;
     }
 
     public void setIdVerSerieInput(BigDecimal idVerSerieInput) {
-	this.idVerSerieInput = idVerSerieInput;
+        this.idVerSerieInput = idVerSerieInput;
     }
 
     @Column(name = "NI_UNITA_DOC_EFF")
     public BigDecimal getNiUnitaDocEff() {
-	return this.niUnitaDocEff;
+        return this.niUnitaDocEff;
     }
 
     public void setNiUnitaDocEff(BigDecimal niUnitaDocEff) {
-	this.niUnitaDocEff = niUnitaDocEff;
+        this.niUnitaDocEff = niUnitaDocEff;
     }
 
     @Column(name = "PG_VER_SERIE")
     public BigDecimal getPgVerSerie() {
-	return this.pgVerSerie;
+        return this.pgVerSerie;
     }
 
     public void setPgVerSerie(BigDecimal pgVerSerie) {
-	this.pgVerSerie = pgVerSerie;
+        this.pgVerSerie = pgVerSerie;
     }
 
 }

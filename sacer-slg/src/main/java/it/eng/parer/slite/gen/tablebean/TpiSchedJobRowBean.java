@@ -37,173 +37,173 @@ public class TpiSchedJobRowBean extends BaseRow implements JEEBaseRowInterface {
     public static TpiSchedJobTableDescriptor TABLE_DESCRIPTOR = new TpiSchedJobTableDescriptor();
 
     public TpiSchedJobRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdSchedJob() {
-	return getBigDecimal("id_sched_job");
+        return getBigDecimal("id_sched_job");
     }
 
     public void setIdSchedJob(BigDecimal idSchedJob) {
-	setObject("id_sched_job", idSchedJob);
+        setObject("id_sched_job", idSchedJob);
     }
 
     public BigDecimal getIdDtSched() {
-	return getBigDecimal("id_dt_sched");
+        return getBigDecimal("id_dt_sched");
     }
 
     public void setIdDtSched(BigDecimal idDtSched) {
-	setObject("id_dt_sched", idDtSched);
+        setObject("id_dt_sched", idDtSched);
     }
 
     public String getTiTpiSchedJob() {
-	return getString("ti_tpi_sched_job");
+        return getString("ti_tpi_sched_job");
     }
 
     public void setTiTpiSchedJob(String tiTpiSchedJob) {
-	setObject("ti_tpi_sched_job", tiTpiSchedJob);
+        setObject("ti_tpi_sched_job", tiTpiSchedJob);
     }
 
     public String getNmJob() {
-	return getString("nm_job");
+        return getString("nm_job");
     }
 
     public void setNmJob(String nmJob) {
-	setObject("nm_job", nmJob);
+        setObject("nm_job", nmJob);
     }
 
     public String getFlMigraz() {
-	return getString("fl_migraz");
+        return getString("fl_migraz");
     }
 
     public void setFlMigraz(String flMigraz) {
-	setObject("fl_migraz", flMigraz);
+        setObject("fl_migraz", flMigraz);
     }
 
     public Timestamp getDtSchedJob() {
-	return getTimestamp("dt_sched_job");
+        return getTimestamp("dt_sched_job");
     }
 
     public void setDtSchedJob(Timestamp dtSchedJob) {
-	setObject("dt_sched_job", dtSchedJob);
+        setObject("dt_sched_job", dtSchedJob);
     }
 
     public String getFlJobOk() {
-	return getString("fl_job_ok");
+        return getString("fl_job_ok");
     }
 
     public void setFlJobOk(String flJobOk) {
-	setObject("fl_job_ok", flJobOk);
+        setObject("fl_job_ok", flJobOk);
     }
 
     public String getDsDurataJob() {
-	return getString("ds_durata_job");
+        return getString("ds_durata_job");
     }
 
     public void setDsDurataJob(String dsDurataJob) {
-	setObject("ds_durata_job", dsDurataJob);
+        setObject("ds_durata_job", dsDurataJob);
     }
 
     public String getDlErrJob() {
-	return getString("dl_err_job");
+        return getString("dl_err_job");
     }
 
     public void setDlErrJob(String dlErrJob) {
-	setObject("dl_err_job", dlErrJob);
+        setObject("dl_err_job", dlErrJob);
     }
 
     public BigDecimal getNiOrdSchedJob() {
-	return getBigDecimal("ni_ord_sched_job");
+        return getBigDecimal("ni_ord_sched_job");
     }
 
     public void setNiOrdSchedJob(BigDecimal niOrdSchedJob) {
-	setObject("ni_ord_sched_job", niOrdSchedJob);
+        setObject("ni_ord_sched_job", niOrdSchedJob);
     }
 
     public String getFlFineSched() {
-	return getString("fl_fine_sched");
+        return getString("fl_fine_sched");
     }
 
     public void setFlFineSched(String flFineSched) {
-	setObject("fl_fine_sched", flFineSched);
+        setObject("fl_fine_sched", flFineSched);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	TpiSchedJob entity = (TpiSchedJob) obj;
+        TpiSchedJob entity = (TpiSchedJob) obj;
 
-	this.setIdSchedJob(
-		entity.getIdSchedJob() == null ? null : BigDecimal.valueOf(entity.getIdSchedJob()));
+        this.setIdSchedJob(
+                entity.getIdSchedJob() == null ? null : BigDecimal.valueOf(entity.getIdSchedJob()));
 
-	if (entity.getTpiDtSched() != null) {
-	    this.setIdDtSched(new BigDecimal(entity.getTpiDtSched().getIdDtSched()));
-	}
+        if (entity.getTpiDtSched() != null) {
+            this.setIdDtSched(new BigDecimal(entity.getTpiDtSched().getIdDtSched()));
+        }
 
-	this.setTiTpiSchedJob(entity.getTiTpiSchedJob());
-	this.setNmJob(entity.getNmJob());
-	this.setFlMigraz(entity.getFlMigraz());
-	if (entity.getDtSchedJob() != null) {
-	    this.setDtSchedJob(new Timestamp(entity.getDtSchedJob().getTime()));
-	}
-	this.setFlJobOk(entity.getFlJobOk());
-	this.setDsDurataJob(entity.getDsDurataJob());
-	this.setDlErrJob(entity.getDlErrJob());
-	this.setNiOrdSchedJob(entity.getNiOrdSchedJob());
-	this.setFlFineSched(entity.getFlFineSched());
+        this.setTiTpiSchedJob(entity.getTiTpiSchedJob());
+        this.setNmJob(entity.getNmJob());
+        this.setFlMigraz(entity.getFlMigraz());
+        if (entity.getDtSchedJob() != null) {
+            this.setDtSchedJob(new Timestamp(entity.getDtSchedJob().getTime()));
+        }
+        this.setFlJobOk(entity.getFlJobOk());
+        this.setDsDurataJob(entity.getDsDurataJob());
+        this.setDlErrJob(entity.getDlErrJob());
+        this.setNiOrdSchedJob(entity.getNiOrdSchedJob());
+        this.setFlFineSched(entity.getFlFineSched());
     }
 
     @Override
     public TpiSchedJob rowBeanToEntity() {
-	TpiSchedJob entity = new TpiSchedJob();
-	if (this.getIdSchedJob() != null) {
-	    entity.setIdSchedJob(this.getIdSchedJob().longValue());
-	}
-	if (this.getIdDtSched() != null) {
-	    if (entity.getTpiDtSched() == null) {
-		entity.setTpiDtSched(new TpiDtSched());
-	    }
-	    entity.getTpiDtSched().setIdDtSched(this.getIdDtSched().longValue());
-	}
-	entity.setTiTpiSchedJob(this.getTiTpiSchedJob());
-	entity.setNmJob(this.getNmJob());
-	entity.setFlMigraz(this.getFlMigraz());
-	entity.setDtSchedJob(this.getDtSchedJob());
-	entity.setFlJobOk(this.getFlJobOk());
-	entity.setDsDurataJob(this.getDsDurataJob());
-	entity.setDlErrJob(this.getDlErrJob());
-	entity.setNiOrdSchedJob(this.getNiOrdSchedJob());
-	entity.setFlFineSched(this.getFlFineSched());
-	return entity;
+        TpiSchedJob entity = new TpiSchedJob();
+        if (this.getIdSchedJob() != null) {
+            entity.setIdSchedJob(this.getIdSchedJob().longValue());
+        }
+        if (this.getIdDtSched() != null) {
+            if (entity.getTpiDtSched() == null) {
+                entity.setTpiDtSched(new TpiDtSched());
+            }
+            entity.getTpiDtSched().setIdDtSched(this.getIdDtSched().longValue());
+        }
+        entity.setTiTpiSchedJob(this.getTiTpiSchedJob());
+        entity.setNmJob(this.getNmJob());
+        entity.setFlMigraz(this.getFlMigraz());
+        entity.setDtSchedJob(this.getDtSchedJob());
+        entity.setFlJobOk(this.getFlJobOk());
+        entity.setDsDurataJob(this.getDsDurataJob());
+        entity.setDlErrJob(this.getDlErrJob());
+        entity.setNiOrdSchedJob(this.getNiOrdSchedJob());
+        entity.setFlFineSched(this.getFlFineSched());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

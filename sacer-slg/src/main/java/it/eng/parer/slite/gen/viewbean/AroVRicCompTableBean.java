@@ -37,19 +37,19 @@ public class AroVRicCompTableBean extends AbstractBaseTable<AroVRicCompRowBean> 
     public static AroVRicCompTableDescriptor TABLE_DESCRIPTOR = new AroVRicCompTableDescriptor();
 
     public AroVRicCompTableBean() {
-	super();
+        super();
     }
 
     protected AroVRicCompRowBean createRow() {
-	return new AroVRicCompRowBean();
+        return new AroVRicCompRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVRicCompRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

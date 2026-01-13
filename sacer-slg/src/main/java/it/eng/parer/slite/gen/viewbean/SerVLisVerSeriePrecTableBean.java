@@ -37,19 +37,19 @@ public class SerVLisVerSeriePrecTableBean extends AbstractBaseTable<SerVLisVerSe
     public static SerVLisVerSeriePrecTableDescriptor TABLE_DESCRIPTOR = new SerVLisVerSeriePrecTableDescriptor();
 
     public SerVLisVerSeriePrecTableBean() {
-	super();
+        super();
     }
 
     protected SerVLisVerSeriePrecRowBean createRow() {
-	return new SerVLisVerSeriePrecRowBean();
+        return new SerVLisVerSeriePrecRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerVLisVerSeriePrecRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -42,66 +42,66 @@ public class AroVRicDatiSpec implements Serializable {
 
     @Column(name = "DL_VALORE")
     public String getDlValore() {
-	return this.dlValore;
+        return this.dlValore;
     }
 
     public void setDlValore(String dlValore) {
-	this.dlValore = dlValore;
+        this.dlValore = dlValore;
     }
 
     @Column(name = "ID_ATTRIB_DATI_SPEC")
     public BigDecimal getIdAttribDatiSpec() {
-	return this.idAttribDatiSpec;
+        return this.idAttribDatiSpec;
     }
 
     public void setIdAttribDatiSpec(BigDecimal idAttribDatiSpec) {
-	this.idAttribDatiSpec = idAttribDatiSpec;
+        this.idAttribDatiSpec = idAttribDatiSpec;
     }
 
     @Column(name = "ID_COMP_DOC")
     public BigDecimal getIdCompDoc() {
-	return this.idCompDoc;
+        return this.idCompDoc;
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	this.idCompDoc = idCompDoc;
+        this.idCompDoc = idCompDoc;
     }
 
     @Column(name = "ID_DOC")
     public BigDecimal getIdDoc() {
-	return this.idDoc;
+        return this.idDoc;
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	this.idDoc = idDoc;
+        this.idDoc = idDoc;
     }
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     @Id
     @Column(name = "ID_VALORE_ATTRIB_DATI_SPEC")
     public BigDecimal getIdValoreAttribDatiSpec() {
-	return this.idValoreAttribDatiSpec;
+        return this.idValoreAttribDatiSpec;
     }
 
     public void setIdValoreAttribDatiSpec(BigDecimal idValoreAttribDatiSpec) {
-	this.idValoreAttribDatiSpec = idValoreAttribDatiSpec;
+        this.idValoreAttribDatiSpec = idValoreAttribDatiSpec;
     }
 
     @Column(name = "TI_ENTITA_SACER")
     public String getTiEntitaSacer() {
-	return this.tiEntitaSacer;
+        return this.tiEntitaSacer;
     }
 
     public void setTiEntitaSacer(String tiEntitaSacer) {
-	this.tiEntitaSacer = tiEntitaSacer;
+        this.tiEntitaSacer = tiEntitaSacer;
     }
 
 }

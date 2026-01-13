@@ -41,30 +41,30 @@ public class AroVSelUdSerFascByEnte implements Serializable {
 
     @Column(name = "TI_ELE")
     public String getTiEle() {
-	return this.tiEle;
+        return this.tiEle;
     }
 
     public void setTiEle(String tiEle) {
-	this.tiEle = tiEle;
+        this.tiEle = tiEle;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     private AroVSelUdSerFascByEnteId aroVSelUdSerFascByEnteId;
 
     @EmbeddedId()
     public AroVSelUdSerFascByEnteId getAroVSelUdSerFascByEnteId() {
-	return aroVSelUdSerFascByEnteId;
+        return aroVSelUdSerFascByEnteId;
     }
 
     public void setAroVSelUdSerFascByEnteId(AroVSelUdSerFascByEnteId aroVSelUdSerFascByEnteId) {
-	this.aroVSelUdSerFascByEnteId = aroVSelUdSerFascByEnteId;
+        this.aroVSelUdSerFascByEnteId = aroVSelUdSerFascByEnteId;
     }
 }

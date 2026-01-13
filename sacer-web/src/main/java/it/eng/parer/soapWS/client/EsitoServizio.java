@@ -43,11 +43,11 @@ public enum EsitoServizio {
     OK, KO, WARN, NO_RISPOSTA;
 
     public String value() {
-	return name();
+        return name();
     }
 
     public static EsitoServizio fromValue(String v) {
-	return valueOf(v);
+        return valueOf(v);
     }
 
 }

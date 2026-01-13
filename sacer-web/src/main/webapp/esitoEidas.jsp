@@ -1,4 +1,4 @@
-<!--
+<%--
  Engineering Ingegneria Informatica S.p.A.
 
  Copyright (C) 2023 Regione Emilia-Romagna
@@ -13,7 +13,7 @@
  <p/>
  You should have received a copy of the GNU Affero General Public License along with this program.
  If not, see <https://www.gnu.org/licenses/>.
--->
+ --%>
 
 <%@page import="org.apache.commons.lang3.StringEscapeUtils"%>
 <%-- Questa pagina risiede nella root (e non in /jsp/) per "sfuggire" da spring-security ... --%>

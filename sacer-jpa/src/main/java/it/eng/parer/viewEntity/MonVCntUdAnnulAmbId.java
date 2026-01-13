@@ -35,73 +35,73 @@ public class MonVCntUdAnnulAmbId implements Serializable {
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-	return idAmbiente;
+        return idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	this.idAmbiente = idAmbiente;
+        this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return idUserIam;
+        return idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     @Column(name = "TI_STATO_ANNUL")
     public String getTiStatoAnnul() {
-	return tiStatoAnnul;
+        return tiStatoAnnul;
     }
 
     public void setTiStatoAnnul(String tiStatoAnnul) {
-	this.tiStatoAnnul = tiStatoAnnul;
+        this.tiStatoAnnul = tiStatoAnnul;
     }
 
     @Column(name = "TI_DT_CREAZIONE")
     public String getTiDtCreazione() {
-	return tiDtCreazione;
+        return tiDtCreazione;
     }
 
     public void setTiDtCreazione(String tiDtCreazione) {
-	this.tiDtCreazione = tiDtCreazione;
+        this.tiDtCreazione = tiDtCreazione;
     }
 
     @Override
     public int hashCode() {
-	int hash = 0;
-	hash += (idAmbiente != null ? idAmbiente.hashCode() : 0);
-	hash += (idUserIam != null ? idUserIam.hashCode() : 0);
-	hash += (tiStatoAnnul != null ? tiStatoAnnul.hashCode() : 0);
-	hash += (tiDtCreazione != null ? tiDtCreazione.hashCode() : 0);
-	return hash;
+        int hash = 0;
+        hash += (idAmbiente != null ? idAmbiente.hashCode() : 0);
+        hash += (idUserIam != null ? idUserIam.hashCode() : 0);
+        hash += (tiStatoAnnul != null ? tiStatoAnnul.hashCode() : 0);
+        hash += (tiDtCreazione != null ? tiDtCreazione.hashCode() : 0);
+        return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-	if (!(object instanceof MonVCntUdAnnulAmbId)) {
-	    return false;
-	}
-	MonVCntUdAnnulAmbId other = (MonVCntUdAnnulAmbId) object;
-	if ((this.idAmbiente == null && other.idAmbiente != null)
-		|| (this.idAmbiente != null && !this.idAmbiente.equals(other.idAmbiente))) {
-	    return false;
-	}
-	if ((this.idUserIam == null && other.idUserIam != null)
-		|| (this.idUserIam != null && !this.idUserIam.equals(other.idUserIam))) {
-	    return false;
-	}
-	if ((this.tiStatoAnnul == null && other.tiStatoAnnul != null)
-		|| (this.tiStatoAnnul != null && !this.tiStatoAnnul.equals(other.tiStatoAnnul))) {
-	    return false;
-	}
-	if ((this.tiDtCreazione == null && other.tiDtCreazione != null)
-		|| (this.tiDtCreazione != null
-			&& !this.tiDtCreazione.equals(other.tiDtCreazione))) {
-	    return false;
-	}
-	return true;
+        if (!(object instanceof MonVCntUdAnnulAmbId)) {
+            return false;
+        }
+        MonVCntUdAnnulAmbId other = (MonVCntUdAnnulAmbId) object;
+        if ((this.idAmbiente == null && other.idAmbiente != null)
+                || (this.idAmbiente != null && !this.idAmbiente.equals(other.idAmbiente))) {
+            return false;
+        }
+        if ((this.idUserIam == null && other.idUserIam != null)
+                || (this.idUserIam != null && !this.idUserIam.equals(other.idUserIam))) {
+            return false;
+        }
+        if ((this.tiStatoAnnul == null && other.tiStatoAnnul != null)
+                || (this.tiStatoAnnul != null && !this.tiStatoAnnul.equals(other.tiStatoAnnul))) {
+            return false;
+        }
+        if ((this.tiDtCreazione == null && other.tiDtCreazione != null)
+                || (this.tiDtCreazione != null
+                        && !this.tiDtCreazione.equals(other.tiDtCreazione))) {
+            return false;
+        }
+        return true;
     }
 }

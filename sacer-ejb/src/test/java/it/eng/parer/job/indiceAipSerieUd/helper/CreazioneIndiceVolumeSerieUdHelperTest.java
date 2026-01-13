@@ -41,68 +41,68 @@ public class CreazioneIndiceVolumeSerieUdHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		CreazioneIndiceVolumeSerieUdHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			CreazioneIndiceVolumeSerieUdHelperTest.class,
-			CreazioneIndiceVolumeSerieUdHelper.class, CSVersatore.class,
-			CSChiaveFasc.class, it.eng.parer.ws.dto.CSChiave.class));
+        return HelperTest.createEnterpriseArchive(
+                CreazioneIndiceVolumeSerieUdHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        CreazioneIndiceVolumeSerieUdHelperTest.class,
+                        CreazioneIndiceVolumeSerieUdHelper.class, CSVersatore.class,
+                        CSChiaveFasc.class, it.eng.parer.ws.dto.CSChiave.class));
     }
 
     @Test
     public void getSerVCreaIxVolSerieUd_queryIsOk() {
-	Long idVolVerSerie = aLong();
-	try {
-	    helper.getSerVCreaIxVolSerieUd(idVolVerSerie);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        Long idVolVerSerie = aLong();
+        try {
+            helper.getSerVCreaIxVolSerieUd(idVolVerSerie);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     public void getSerVLisUdAppartVolSerie_queryIsOk() {
-	Long idVolVerSerie = aLong();
-	helper.getSerVLisUdAppartVolSerie(idVolVerSerie);
-	assertTrue(true);
+        Long idVolVerSerie = aLong();
+        helper.getSerVLisUdAppartVolSerie(idVolVerSerie);
+        assertTrue(true);
     }
 
     @Test
     public void registraVolVerSerie_queryIsOk() {
-	long idVerSerie = aLong();
-	try {
-	    helper.registraVolVerSerie(idVerSerie);
-	} catch (Exception e) {
-	    assertExceptionMessage(e, "org.hibernate.exception.ConstraintViolationException");
-	}
+        long idVerSerie = aLong();
+        try {
+            helper.registraVolVerSerie(idVerSerie);
+        } catch (Exception e) {
+            assertExceptionMessage(e, "org.hibernate.exception.ConstraintViolationException");
+        }
     }
 
     @Test
     public void registraSerIxVolVerSerie_queryIsOk() {
-	long idVolVerSerie = aLong();
-	String cdVerXsdIxVol = aString();
-	String xml = aString();
-	String hash = aString();
-	BigDecimal idStrut = aBigDecimal();
-	try {
-	    helper.registraSerIxVolVerSerie(idVolVerSerie, cdVerXsdIxVol, xml, hash, idStrut);
-	} catch (Exception e) {
-	    assertExceptionMessage(e, "org.hibernate.exception.GenericJDBCException");
-	}
+        long idVolVerSerie = aLong();
+        String cdVerXsdIxVol = aString();
+        String xml = aString();
+        String hash = aString();
+        BigDecimal idStrut = aBigDecimal();
+        try {
+            helper.registraSerIxVolVerSerie(idVolVerSerie, cdVerXsdIxVol, xml, hash, idStrut);
+        } catch (Exception e) {
+            assertExceptionMessage(e, "org.hibernate.exception.GenericJDBCException");
+        }
     }
 
     @Test
     public void getUdEffettiveSenzaVolume_queryIsOk() {
-	Long idVerSerie = aLong();
-	helper.getUdEffettiveSenzaVolume(idVerSerie);
-	assertTrue(true);
+        Long idVerSerie = aLong();
+        helper.getUdEffettiveSenzaVolume(idVerSerie);
+        assertTrue(true);
     }
 
     @Test
     public void getUltimoProgressivoVolVerSerie_queryIsOk() {
-	Long idVerSerie = aLong();
-	helper.getUltimoProgressivoVolVerSerie(idVerSerie);
-	assertTrue(true);
+        Long idVerSerie = aLong();
+        helper.getUltimoProgressivoVolVerSerie(idVerSerie);
+        assertTrue(true);
     }
 }

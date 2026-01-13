@@ -50,60 +50,60 @@ public class SacerAuthenticator extends Authenticator {
      */
     @Override
     public User recuperoAutorizzazioni(HttpSession httpSession) {
-	User utente = (User) SessionManager.getUser(httpSession);
-	/*
-	 * try { // recupero l'ID utente nella tabella locale, partendo da nmUserid IAM univoco
-	 * UsrUser user = userHelper.findUsrUser(utente.getUsername());
-	 * utente.setIdUtente(user.getIdUserIam()); utente.setScadenzaPwd(user.getDtScadPsw()); }
-	 * catch (Exception e) { throw new WebServiceException(
-	 * "L'Utente non è ancora censito nella tabella IAMUSER locale:  " + e.getMessage()); }
-	 */
-	//
-	// RecuperoAutorizzazioni client =
-	// IAMSoapClients.recuperoAutorizzazioniClient(utente.getConfigurazione().get("USERID_RECUP_INFO"),
-	// utente.getConfigurazione().get("PSW_RECUP_INFO"),
-	// "http://localhost:8080/saceriam/RecuperoAutorizzazioni");
-	String psw = configHelper
-		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_RECUP_INFO);
-	String user = configHelper
-		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_RECUP_INFO);
-	String url = configHelper
-		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_RECUP_AUTOR_USER);
-	String timeoutString = configHelper
-		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TIMEOUT_RECUP_AUTOR_USER);
+        User utente = (User) SessionManager.getUser(httpSession);
+        /*
+         * try { // recupero l'ID utente nella tabella locale, partendo da nmUserid IAM univoco
+         * UsrUser user = userHelper.findUsrUser(utente.getUsername());
+         * utente.setIdUtente(user.getIdUserIam()); utente.setScadenzaPwd(user.getDtScadPsw()); }
+         * catch (Exception e) { throw new WebServiceException(
+         * "L'Utente non è ancora censito nella tabella IAMUSER locale:  " + e.getMessage()); }
+         */
+        //
+        // RecuperoAutorizzazioni client =
+        // IAMSoapClients.recuperoAutorizzazioniClient(utente.getConfigurazione().get("USERID_RECUP_INFO"),
+        // utente.getConfigurazione().get("PSW_RECUP_INFO"),
+        // "http://localhost:8080/saceriam/RecuperoAutorizzazioni");
+        String psw = configHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_RECUP_INFO);
+        String user = configHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_RECUP_INFO);
+        String url = configHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_RECUP_AUTOR_USER);
+        String timeoutString = configHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TIMEOUT_RECUP_AUTOR_USER);
 
-	RecuperoAutorizzazioni client = IAMSoapClients.recuperoAutorizzazioniClient(user, psw, url);
-	if (client == null) {
-	    throw new WebServiceException(
-		    "Non è stato possibile recuperare la lista delle autorizzazioni da SIAM");
-	}
+        RecuperoAutorizzazioni client = IAMSoapClients.recuperoAutorizzazioniClient(user, psw, url);
+        if (client == null) {
+            throw new WebServiceException(
+                    "Non è stato possibile recuperare la lista delle autorizzazioni da SIAM");
+        }
 
-	// imposto il valore di timeout. vedi MEV #23814
-	if (timeoutString != null && timeoutString.matches("^[0-9]+$")) {
-	    int timeoutRecuperoAutorizzazioni = Integer.parseInt(timeoutString);
-	    IAMSoapClients.changeRequestTimeout((BindingProvider) client,
-		    timeoutRecuperoAutorizzazioni);
-	} else {
-	    log.warn("Il valore personalizzato \"" + timeoutString
-		    + "\" per il parametro TIMEOUT_RECUP_AUTOR_USER non è corretto. Utilizzo il valore predefinito");
-	}
+        // imposto il valore di timeout. vedi MEV #23814
+        if (timeoutString != null && timeoutString.matches("^[0-9]+$")) {
+            int timeoutRecuperoAutorizzazioni = Integer.parseInt(timeoutString);
+            IAMSoapClients.changeRequestTimeout((BindingProvider) client,
+                    timeoutRecuperoAutorizzazioni);
+        } else {
+            log.warn("Il valore personalizzato \"" + timeoutString
+                    + "\" per il parametro TIMEOUT_RECUP_AUTOR_USER non è corretto. Utilizzo il valore predefinito");
+        }
 
-	RecuperoAutorizzazioniRisposta resp;
-	try {
-	    resp = client.recuperoAutorizzazioniPerNome(utente.getUsername(), getAppName(),
-		    utente.getIdOrganizzazioneFoglia().intValue());
-	} catch (AuthWSException_Exception e) {
-	    throw new RuntimeException(e);
-	}
-	UserUtil.fillComponenti(utente, resp);
-	SessionManager.setUser(httpSession, utente);
-	return utente;
+        RecuperoAutorizzazioniRisposta resp;
+        try {
+            resp = client.recuperoAutorizzazioniPerNome(utente.getUsername(), getAppName(),
+                    utente.getIdOrganizzazioneFoglia().intValue());
+        } catch (AuthWSException_Exception e) {
+            throw new RuntimeException(e);
+        }
+        UserUtil.fillComponenti(utente, resp);
+        SessionManager.setUser(httpSession, utente);
+        return utente;
 
     }
 
     @Override
     protected String getAppName() {
-	return configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
+        return configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
     }
 
 }

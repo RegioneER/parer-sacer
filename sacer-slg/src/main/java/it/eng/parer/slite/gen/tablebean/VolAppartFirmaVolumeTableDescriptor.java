@@ -42,24 +42,24 @@ public class VolAppartFirmaVolumeTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_APPART_FIRMA_VOLUME,
-		new ColumnDescriptor(COL_ID_APPART_FIRMA_VOLUME, Types.DECIMAL, 22, true));
-	map.put(COL_ID_APPART_COMP_VOLUME,
-		new ColumnDescriptor(COL_ID_APPART_COMP_VOLUME, Types.DECIMAL, 22, false));
-	map.put(COL_ID_FIRMA_COMP,
-		new ColumnDescriptor(COL_ID_FIRMA_COMP, Types.DECIMAL, 22, false));
+        map.put(COL_ID_APPART_FIRMA_VOLUME,
+                new ColumnDescriptor(COL_ID_APPART_FIRMA_VOLUME, Types.DECIMAL, 22, true));
+        map.put(COL_ID_APPART_COMP_VOLUME,
+                new ColumnDescriptor(COL_ID_APPART_COMP_VOLUME, Types.DECIMAL, 22, false));
+        map.put(COL_ID_FIRMA_COMP,
+                new ColumnDescriptor(COL_ID_FIRMA_COMP, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

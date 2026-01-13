@@ -43,55 +43,55 @@ public class SIOrgAmbienteEnteConvenz implements Serializable {
     }
 
     public SIOrgAmbienteEnteConvenz(Long idAmbienteEnteConvenz) {
-	this.idAmbienteEnteConvenz = idAmbienteEnteConvenz;
+        this.idAmbienteEnteConvenz = idAmbienteEnteConvenz;
     }
 
     @OneToMany(mappedBy = "siOrgAmbienteEnteConvenz", cascade = CascadeType.MERGE)
     public List<SIDecUsoModelloComunic> getDecUsoModelloComunics() {
-	return decUsoModelloComunics;
+        return decUsoModelloComunics;
     }
 
     public void setDecUsoModelloComunics(List<SIDecUsoModelloComunic> decUsoModelloComunics) {
-	this.decUsoModelloComunics = decUsoModelloComunics;
+        this.decUsoModelloComunics = decUsoModelloComunics;
     }
 
     @Basic
     @Column(name = "DS_AMBIENTE_ENTE_CONVENZ", nullable = false, length = 254)
     public String getDsAmbienteEnteConvenz() {
-	return dsAmbienteEnteConvenz;
+        return dsAmbienteEnteConvenz;
     }
 
     public void setDsAmbienteEnteConvenz(String dsAmbienteEnteConvenz) {
-	this.dsAmbienteEnteConvenz = dsAmbienteEnteConvenz;
+        this.dsAmbienteEnteConvenz = dsAmbienteEnteConvenz;
     }
 
     @Id
     @Column(name = "ID_AMBIENTE_ENTE_CONVENZ")
     public Long getIdAmbienteEnteConvenz() {
-	return idAmbienteEnteConvenz;
+        return idAmbienteEnteConvenz;
     }
 
     public void setIdAmbienteEnteConvenz(Long idAmbienteEnteConvenz) {
-	this.idAmbienteEnteConvenz = idAmbienteEnteConvenz;
+        this.idAmbienteEnteConvenz = idAmbienteEnteConvenz;
     }
 
     @Basic
     @Column(name = "NM_AMBIENTE_ENTE_CONVENZ", nullable = false, length = 100)
     public String getNmAmbienteEnteConvenz() {
-	return nmAmbienteEnteConvenz;
+        return nmAmbienteEnteConvenz;
     }
 
     public void setNmAmbienteEnteConvenz(String nmAmbienteEnteConvenz) {
-	this.nmAmbienteEnteConvenz = nmAmbienteEnteConvenz;
+        this.nmAmbienteEnteConvenz = nmAmbienteEnteConvenz;
     }
 
     @OneToMany(mappedBy = "siOrgAmbienteEnteConvenz", cascade = CascadeType.MERGE)
     public List<SIOrgEnteSiam> getOrgEnteConvenzs() {
-	return orgEnteConvenzs;
+        return orgEnteConvenzs;
     }
 
     public void setOrgEnteConvenzs(List<SIOrgEnteSiam> orgEnteConvenzs) {
-	this.orgEnteConvenzs = orgEnteConvenzs;
+        this.orgEnteConvenzs = orgEnteConvenzs;
     }
 
 }

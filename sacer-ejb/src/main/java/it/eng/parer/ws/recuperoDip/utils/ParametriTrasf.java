@@ -32,35 +32,35 @@ public class ParametriTrasf {
     private OutputStream fileXmlOut;
 
     public InputStream getFileXml() {
-	return fileXml;
+        return fileXml;
     }
 
     public void setFileXml(InputStream fileXml) {
-	this.fileXml = fileXml;
+        this.fileXml = fileXml;
     }
 
     public InputStream getFileXslt() {
-	return fileXslt;
+        return fileXslt;
     }
 
     public void setFileXslt(InputStream fileXslt) {
-	this.fileXslt = fileXslt;
+        this.fileXslt = fileXslt;
     }
 
     public OutputStream getFileXmlOut() {
-	return fileXmlOut;
+        return fileXmlOut;
     }
 
     public void setFileXmlOut(OutputStream fileXmlOut) {
-	this.fileXmlOut = fileXmlOut;
+        this.fileXmlOut = fileXmlOut;
     }
 
     public InputStream getFileXslFo() {
-	return fileXslFo;
+        return fileXslFo;
     }
 
     public void setFileXslFo(InputStream fileXslFo) {
-	this.fileXslFo = fileXslFo;
+        this.fileXslFo = fileXslFo;
     }
 
 }

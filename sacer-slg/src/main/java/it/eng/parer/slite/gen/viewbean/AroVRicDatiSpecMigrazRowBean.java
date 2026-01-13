@@ -35,127 +35,127 @@ public class AroVRicDatiSpecMigrazRowBean extends BaseRow implements JEEBaseRowI
     public static AroVRicDatiSpecMigrazTableDescriptor TABLE_DESCRIPTOR = new AroVRicDatiSpecMigrazTableDescriptor();
 
     public AroVRicDatiSpecMigrazRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public BigDecimal getIdDoc() {
-	return getBigDecimal("id_doc");
+        return getBigDecimal("id_doc");
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	setObject("id_doc", idDoc);
+        setObject("id_doc", idDoc);
     }
 
     public BigDecimal getIdCompDoc() {
-	return getBigDecimal("id_comp_doc");
+        return getBigDecimal("id_comp_doc");
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	setObject("id_comp_doc", idCompDoc);
+        setObject("id_comp_doc", idCompDoc);
     }
 
     public String getNmSistemaMigraz() {
-	return getString("nm_sistema_migraz");
+        return getString("nm_sistema_migraz");
     }
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
-	setObject("nm_sistema_migraz", nmSistemaMigraz);
+        setObject("nm_sistema_migraz", nmSistemaMigraz);
     }
 
     public String getTiEntitaSacer() {
-	return getString("ti_entita_sacer");
+        return getString("ti_entita_sacer");
     }
 
     public void setTiEntitaSacer(String tiEntitaSacer) {
-	setObject("ti_entita_sacer", tiEntitaSacer);
+        setObject("ti_entita_sacer", tiEntitaSacer);
     }
 
     public BigDecimal getIdValoreAttribDatiSpec() {
-	return getBigDecimal("id_valore_attrib_dati_spec");
+        return getBigDecimal("id_valore_attrib_dati_spec");
     }
 
     public void setIdValoreAttribDatiSpec(BigDecimal idValoreAttribDatiSpec) {
-	setObject("id_valore_attrib_dati_spec", idValoreAttribDatiSpec);
+        setObject("id_valore_attrib_dati_spec", idValoreAttribDatiSpec);
     }
 
     public BigDecimal getIdAttribDatiSpec() {
-	return getBigDecimal("id_attrib_dati_spec");
+        return getBigDecimal("id_attrib_dati_spec");
     }
 
     public void setIdAttribDatiSpec(BigDecimal idAttribDatiSpec) {
-	setObject("id_attrib_dati_spec", idAttribDatiSpec);
+        setObject("id_attrib_dati_spec", idAttribDatiSpec);
     }
 
     public String getDlValore() {
-	return getString("dl_valore");
+        return getString("dl_valore");
     }
 
     public void setDlValore(String dlValore) {
-	setObject("dl_valore", dlValore);
+        setObject("dl_valore", dlValore);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVRicDatiSpecMigraz entity = (AroVRicDatiSpecMigraz) obj;
-	this.setIdUnitaDoc(entity.getIdUnitaDoc());
-	this.setIdDoc(entity.getIdDoc());
-	this.setIdCompDoc(entity.getIdCompDoc());
-	this.setNmSistemaMigraz(entity.getNmSistemaMigraz());
-	this.setTiEntitaSacer(entity.getTiEntitaSacer());
-	this.setIdValoreAttribDatiSpec(entity.getIdValoreAttribDatiSpec());
-	this.setIdAttribDatiSpec(entity.getIdAttribDatiSpec());
-	this.setDlValore(entity.getDlValore());
+        AroVRicDatiSpecMigraz entity = (AroVRicDatiSpecMigraz) obj;
+        this.setIdUnitaDoc(entity.getIdUnitaDoc());
+        this.setIdDoc(entity.getIdDoc());
+        this.setIdCompDoc(entity.getIdCompDoc());
+        this.setNmSistemaMigraz(entity.getNmSistemaMigraz());
+        this.setTiEntitaSacer(entity.getTiEntitaSacer());
+        this.setIdValoreAttribDatiSpec(entity.getIdValoreAttribDatiSpec());
+        this.setIdAttribDatiSpec(entity.getIdAttribDatiSpec());
+        this.setDlValore(entity.getDlValore());
     }
 
     @Override
     public AroVRicDatiSpecMigraz rowBeanToEntity() {
-	AroVRicDatiSpecMigraz entity = new AroVRicDatiSpecMigraz();
-	entity.setIdUnitaDoc(this.getIdUnitaDoc());
-	entity.setIdDoc(this.getIdDoc());
-	entity.setIdCompDoc(this.getIdCompDoc());
-	entity.setNmSistemaMigraz(this.getNmSistemaMigraz());
-	entity.setTiEntitaSacer(this.getTiEntitaSacer());
-	entity.setIdValoreAttribDatiSpec(this.getIdValoreAttribDatiSpec());
-	entity.setIdAttribDatiSpec(this.getIdAttribDatiSpec());
-	entity.setDlValore(this.getDlValore());
-	return entity;
+        AroVRicDatiSpecMigraz entity = new AroVRicDatiSpecMigraz();
+        entity.setIdUnitaDoc(this.getIdUnitaDoc());
+        entity.setIdDoc(this.getIdDoc());
+        entity.setIdCompDoc(this.getIdCompDoc());
+        entity.setNmSistemaMigraz(this.getNmSistemaMigraz());
+        entity.setTiEntitaSacer(this.getTiEntitaSacer());
+        entity.setIdValoreAttribDatiSpec(this.getIdValoreAttribDatiSpec());
+        entity.setIdAttribDatiSpec(this.getIdAttribDatiSpec());
+        entity.setDlValore(this.getDlValore());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

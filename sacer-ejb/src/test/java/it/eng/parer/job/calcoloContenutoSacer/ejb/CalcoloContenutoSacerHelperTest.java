@@ -32,102 +32,102 @@ public class CalcoloContenutoSacerHelperTest extends HelperTest<CalcoloContenuto
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		CalcoloContenutoSacerHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			CalcoloContenutoSacerHelper.class,
-			it.eng.parer.sacerlog.ejb.helper.SacerLogHelper.class,
-			it.eng.parer.sacerlog.util.TransactionLogContext.class,
-			it.eng.parer.sacerlog.util.LogParam.class,
-			it.eng.parer.sacerlog.ejb.util.ObjectsToLogBefore.class,
-			CalcoloContenutoSacerHelperTest.class));
+        return HelperTest.createEnterpriseArchive(
+                CalcoloContenutoSacerHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        CalcoloContenutoSacerHelper.class,
+                        it.eng.parer.sacerlog.ejb.helper.SacerLogHelper.class,
+                        it.eng.parer.sacerlog.util.TransactionLogContext.class,
+                        it.eng.parer.sacerlog.util.LogParam.class,
+                        it.eng.parer.sacerlog.ejb.util.ObjectsToLogBefore.class,
+                        CalcoloContenutoSacerHelperTest.class));
     }
 
     @Test
     void getDataInizioCalcolo_queryIsOk() {
-	helper.getDataInizioCalcolo();
-	assertTrue(true);
+        helper.getDataInizioCalcolo();
+        assertTrue(true);
     }
 
     @Test
     void getIdTipiUnitaDocByStrutAndTipoServizio_queryIsOk() {
-	BigDecimal idTipoServizio = BigDecimal.ZERO;
-	List<BigDecimal> idStrutList = aListOfBigDecimal(2);
-	CostantiDB.TiClasseTipoServizio tiClasseTipoServizio = CostantiDB.TiClasseTipoServizio.ALTRO;
-	helper.getIdTipiUnitaDocByStrutAndTipoServizio(idTipoServizio, idStrutList,
-		tiClasseTipoServizio);
-	assertTrue(true);
-	tiClasseTipoServizio = CostantiDB.TiClasseTipoServizio.ATTIVAZIONE_SISTEMA_VERSANTE;
-	helper.getIdTipiUnitaDocByStrutAndTipoServizio(idTipoServizio, idStrutList,
-		tiClasseTipoServizio);
-	assertTrue(true);
-	tiClasseTipoServizio = CostantiDB.TiClasseTipoServizio.CONSERVAZIONE;
-	helper.getIdTipiUnitaDocByStrutAndTipoServizio(idTipoServizio, idStrutList,
-		tiClasseTipoServizio);
-	assertTrue(true);
+        BigDecimal idTipoServizio = BigDecimal.ZERO;
+        List<BigDecimal> idStrutList = aListOfBigDecimal(2);
+        CostantiDB.TiClasseTipoServizio tiClasseTipoServizio = CostantiDB.TiClasseTipoServizio.ALTRO;
+        helper.getIdTipiUnitaDocByStrutAndTipoServizio(idTipoServizio, idStrutList,
+                tiClasseTipoServizio);
+        assertTrue(true);
+        tiClasseTipoServizio = CostantiDB.TiClasseTipoServizio.ATTIVAZIONE_SISTEMA_VERSANTE;
+        helper.getIdTipiUnitaDocByStrutAndTipoServizio(idTipoServizio, idStrutList,
+                tiClasseTipoServizio);
+        assertTrue(true);
+        tiClasseTipoServizio = CostantiDB.TiClasseTipoServizio.CONSERVAZIONE;
+        helper.getIdTipiUnitaDocByStrutAndTipoServizio(idTipoServizio, idStrutList,
+                tiClasseTipoServizio);
+        assertTrue(true);
     }
 
     @Test
     void getMinimumDtRifConta_queryIsOk() {
-	List<Long> idTipoUnitaDocList = aListOfLong(2);
-	helper.getMinimumDtRifConta(idTipoUnitaDocList);
-	assertTrue(true);
+        List<Long> idTipoUnitaDocList = aListOfLong(2);
+        helper.getMinimumDtRifConta(idTipoUnitaDocList);
+        assertTrue(true);
     }
 
     @Test
     void getMinimumDtRifContaBySistVers_queryIsOk() {
-	List<Long> idTipoUnitaDocList = aListOfLong(2);
-	BigDecimal idSistemaVersante = aBigDecimal();
-	helper.getMinimumDtRifContaBySistVers(idTipoUnitaDocList, idSistemaVersante);
-	assertTrue(true);
+        List<Long> idTipoUnitaDocList = aListOfLong(2);
+        BigDecimal idSistemaVersante = aBigDecimal();
+        helper.getMinimumDtRifContaBySistVers(idTipoUnitaDocList, idSistemaVersante);
+        assertTrue(true);
     }
 
     @Test
     void getAplSistemiVersantiSeparatiPerTipoUd_queryIsOk() {
-	BigDecimal idTipoUnitaDoc = aBigDecimal();
-	helper.getAplSistemiVersantiSeparatiPerTipoUd(idTipoUnitaDoc);
-	assertTrue(true);
+        BigDecimal idTipoUnitaDoc = aBigDecimal();
+        helper.getAplSistemiVersantiSeparatiPerTipoUd(idTipoUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void getOrgVServTiServDaErog_queryIsOk() {
-	helper.getOrgVServTiServDaErog();
-	assertTrue(true);
+        helper.getOrgVServTiServDaErog();
+        assertTrue(true);
     }
 
     @Test
     void getOrgServizioErogs_queryIsOk() {
-	helper.getOrgServizioErogs();
-	assertTrue(true);
+        helper.getOrgServizioErogs();
+        assertTrue(true);
     }
 
     @Test
     @Disabled("test non funzionante, da rivedere")
     void getAnnullQuery_queryIsOk() {
-	// helper.getAnnullQuery("0)", "", "");
-	// assertTrue(true);
+        // helper.getAnnullQuery("0)", "", "");
+        // assertTrue(true);
     }
 
     @Test
     void insertTotaliPerGiorno_queryIsOk() {
-	helper.insertTotaliPerGiorno(tomorrowTs());
-	assertTrue(true);
+        helper.insertTotaliPerGiorno(tomorrowTs());
+        assertTrue(true);
     }
 
     @Test
     void setDtErog_queryIsOk() {
-	helper.setDtErog(aLogParam());
-	assertTrue(true);
+        helper.setDtErog(aLogParam());
+        assertTrue(true);
     }
 
     @Test
     void insertMonTipoUnitaDocUserVers_queryIsOk() {
-	try {
-	    helper.insertMonTipoUnitaDocUserVers(0L, 0L, tomorrowTs(), 0L);
-	    fail("mi aspetto che fallisca perché l'idTipoUnitaDoc non trova record");
-	} catch (Exception e) {
-	    assertExceptionMessage(e, "ConstraintViolationException");
-	}
+        try {
+            helper.insertMonTipoUnitaDocUserVers(0L, 0L, tomorrowTs(), 0L);
+            fail("mi aspetto che fallisca perché l'idTipoUnitaDoc non trova record");
+        } catch (Exception e) {
+            assertExceptionMessage(e, "ConstraintViolationException");
+        }
     }
 }

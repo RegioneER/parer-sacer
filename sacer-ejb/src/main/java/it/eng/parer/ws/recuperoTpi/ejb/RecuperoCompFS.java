@@ -55,94 +55,94 @@ public class RecuperoCompFS {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public RispostaControlli eliminaFileTempRecuperoTPI(RecuperoExt recupero) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrLong(-1);
-	rispostaControlli.setrBoolean(false);
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrLong(-1);
+        rispostaControlli.setrBoolean(false);
 
-	XADiskConnection xadConn = null;
-	String testDir;
+        XADiskConnection xadConn = null;
+        String testDir;
 
-	try {
-	    xadConn = xadCf.getConnection();
-	    // verifica l'esistenza della cartella versatore, in modo non bloccante
-	    testDir = MessageFormat.format("{0}/{1}/{2}", recupero.getTpiRootTpiDaSacer(),
-		    recupero.getTpiRootRecup(), recupero.getSubPathVersatoreArk());
-	    if (XAUtil.fileExistsAndIsDirectory(xadConn, new File(testDir))) {
-		// verifica presenza cartella UD (che verrà rimossa), in modo non bloccante
-		testDir = MessageFormat.format("{0}/{1}/{2}/{3}", recupero.getTpiRootTpiDaSacer(),
-			recupero.getTpiRootRecup(), recupero.getSubPathVersatoreArk(),
-			recupero.getSubPathUnitaDocArk());
-		if (XAUtil.fileExistsAndIsDirectory(xadConn, new File(testDir))) {
-		    // rimozione ricorsiva di cartella e contenuto.
-		    XAUtil.rimuoviFileRicorsivamente(xadConn, new File(testDir));
-		}
-	    }
-	    //
-	    // verifica l'esistenza della cartella ListaFile, in modo non bloccante
-	    testDir = MessageFormat.format("{0}/{1}", recupero.getTpiRootTpiDaSacer(),
-		    recupero.getTpiListaFile());
-	    if (XAUtil.fileExistsAndIsDirectory(xadConn, new File(testDir))) {
-		// verifica l'esistenza del file di log di retrieve del TSM, in modo non bloccante
-		testDir = MessageFormat.format("{0}/{1}/{2}", recupero.getTpiRootTpiDaSacer(),
-			recupero.getTpiListaFile(), recupero.getFileLogRetrieve());
-		if (XAUtil.fileExists(xadConn, new File(testDir))) {
-		    // rimozione effettiva
-		    XAUtil.deleteFile(xadConn, new File(testDir));
-		}
-	    }
-	    //
-	    rispostaControlli.setrLong(1);
-	    rispostaControlli.setrBoolean(true);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt();
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-		    "RecuperoCompFS.eliminaDirectoryRecTPI: Thread interrotto - "
-			    + e.getMessage()));
-	    log.error("Thread interrotto durante le operazioni su filesystem", e);
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-		    "RecuperoCompFS.eliminaDirectoryRecTPI: " + e.getMessage()));
-	    log.error("Si è verificato un errore durante le operazioni su filesystem", e);
-	} finally {
-	    if (xadConn != null) {
-		xadConn.close();
-		log.info("Effettuata chiusura della connessione XADisk");
-	    }
-	}
+        try {
+            xadConn = xadCf.getConnection();
+            // verifica l'esistenza della cartella versatore, in modo non bloccante
+            testDir = MessageFormat.format("{0}/{1}/{2}", recupero.getTpiRootTpiDaSacer(),
+                    recupero.getTpiRootRecup(), recupero.getSubPathVersatoreArk());
+            if (XAUtil.fileExistsAndIsDirectory(xadConn, new File(testDir))) {
+                // verifica presenza cartella UD (che verrà rimossa), in modo non bloccante
+                testDir = MessageFormat.format("{0}/{1}/{2}/{3}", recupero.getTpiRootTpiDaSacer(),
+                        recupero.getTpiRootRecup(), recupero.getSubPathVersatoreArk(),
+                        recupero.getSubPathUnitaDocArk());
+                if (XAUtil.fileExistsAndIsDirectory(xadConn, new File(testDir))) {
+                    // rimozione ricorsiva di cartella e contenuto.
+                    XAUtil.rimuoviFileRicorsivamente(xadConn, new File(testDir));
+                }
+            }
+            //
+            // verifica l'esistenza della cartella ListaFile, in modo non bloccante
+            testDir = MessageFormat.format("{0}/{1}", recupero.getTpiRootTpiDaSacer(),
+                    recupero.getTpiListaFile());
+            if (XAUtil.fileExistsAndIsDirectory(xadConn, new File(testDir))) {
+                // verifica l'esistenza del file di log di retrieve del TSM, in modo non bloccante
+                testDir = MessageFormat.format("{0}/{1}/{2}", recupero.getTpiRootTpiDaSacer(),
+                        recupero.getTpiListaFile(), recupero.getFileLogRetrieve());
+                if (XAUtil.fileExists(xadConn, new File(testDir))) {
+                    // rimozione effettiva
+                    XAUtil.deleteFile(xadConn, new File(testDir));
+                }
+            }
+            //
+            rispostaControlli.setrLong(1);
+            rispostaControlli.setrBoolean(true);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "RecuperoCompFS.eliminaDirectoryRecTPI: Thread interrotto - "
+                            + e.getMessage()));
+            log.error("Thread interrotto durante le operazioni su filesystem", e);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "RecuperoCompFS.eliminaDirectoryRecTPI: " + e.getMessage()));
+            log.error("Si è verificato un errore durante le operazioni su filesystem", e);
+        } finally {
+            if (xadConn != null) {
+                xadConn.close();
+                log.info("Effettuata chiusura della connessione XADisk");
+            }
+        }
 
-	return rispostaControlli;
+        return rispostaControlli;
     }
 
     @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
     public RispostaControlli recuperaFileCompSuStream(ComponenteRec componente,
-	    OutputStream outputStream, RecuperoExt recupero) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	byte[] buffer = new byte[BUFFERSIZE];
-	String tmpFilePath;
+            OutputStream outputStream, RecuperoExt recupero) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        byte[] buffer = new byte[BUFFERSIZE];
+        String tmpFilePath;
 
-	tmpFilePath = MessageFormat.format("{0}/{1}/{2}/{3}/{4}", recupero.getTpiRootTpiDaSacer(),
-		recupero.getTpiRootRecup(), recupero.getSubPathVersatoreArk(),
-		recupero.getSubPathUnitaDocArk(), componente.getNomeFileBreveTivoli());
-	try (FileInputStream is = new FileInputStream(tmpFilePath)) {
-	    log.debug("Lettura del file " + tmpFilePath);
-	    int len;
-	    while ((len = is.read(buffer)) > 0) {
-		outputStream.write(buffer, 0, len);
-		log.debug("letto file e scritto su stream...");
-	    }
-	    rispostaControlli.setrBoolean(true);
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-		    "RecuperoCompFS.recuperaFileCompSuStream: " + e.getMessage()));
-	    log.error("Si è verificato un errore durante le operazioni su filesystem", e);
-	}
+        tmpFilePath = MessageFormat.format("{0}/{1}/{2}/{3}/{4}", recupero.getTpiRootTpiDaSacer(),
+                recupero.getTpiRootRecup(), recupero.getSubPathVersatoreArk(),
+                recupero.getSubPathUnitaDocArk(), componente.getNomeFileBreveTivoli());
+        try (FileInputStream is = new FileInputStream(tmpFilePath)) {
+            log.debug("Lettura del file " + tmpFilePath);
+            int len;
+            while ((len = is.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, len);
+                log.debug("letto file e scritto su stream...");
+            }
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "RecuperoCompFS.recuperaFileCompSuStream: " + e.getMessage()));
+            log.error("Si è verificato un errore durante le operazioni su filesystem", e);
+        }
 
-	return rispostaControlli;
+        return rispostaControlli;
     }
 }

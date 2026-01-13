@@ -54,138 +54,138 @@ public class TpiVLisDtSched implements Serializable {
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_SCHED")
     public Date getDtSched() {
-	return this.dtSched;
+        return this.dtSched;
     }
 
     public void setDtSched(Date dtSched) {
-	this.dtSched = dtSched;
+        this.dtSched = dtSched;
     }
 
     @Column(name = "FL_ANOMALIA_ARK_PRIM", columnDefinition = "char(1)")
     public String getFlAnomaliaArkPrim() {
-	return this.flAnomaliaArkPrim;
+        return this.flAnomaliaArkPrim;
     }
 
     public void setFlAnomaliaArkPrim(String flAnomaliaArkPrim) {
-	this.flAnomaliaArkPrim = flAnomaliaArkPrim;
+        this.flAnomaliaArkPrim = flAnomaliaArkPrim;
     }
 
     @Column(name = "FL_ANOMALIA_ARK_SECOND", columnDefinition = "char(1)")
     public String getFlAnomaliaArkSecond() {
-	return this.flAnomaliaArkSecond;
+        return this.flAnomaliaArkSecond;
     }
 
     public void setFlAnomaliaArkSecond(String flAnomaliaArkSecond) {
-	this.flAnomaliaArkSecond = flAnomaliaArkSecond;
+        this.flAnomaliaArkSecond = flAnomaliaArkSecond;
     }
 
     @Column(name = "FL_ANOMALIA_BACKUP_PRIM", columnDefinition = "char(1)")
     public String getFlAnomaliaBackupPrim() {
-	return this.flAnomaliaBackupPrim;
+        return this.flAnomaliaBackupPrim;
     }
 
     public void setFlAnomaliaBackupPrim(String flAnomaliaBackupPrim) {
-	this.flAnomaliaBackupPrim = flAnomaliaBackupPrim;
+        this.flAnomaliaBackupPrim = flAnomaliaBackupPrim;
     }
 
     @Column(name = "FL_ANOMALIA_BACKUP_SECOND", columnDefinition = "char(1)")
     public String getFlAnomaliaBackupSecond() {
-	return this.flAnomaliaBackupSecond;
+        return this.flAnomaliaBackupSecond;
     }
 
     public void setFlAnomaliaBackupSecond(String flAnomaliaBackupSecond) {
-	this.flAnomaliaBackupSecond = flAnomaliaBackupSecond;
+        this.flAnomaliaBackupSecond = flAnomaliaBackupSecond;
     }
 
     @Column(name = "FL_ANOMALIA_COPIA_PRIM", columnDefinition = "char(1)")
     public String getFlAnomaliaCopiaPrim() {
-	return this.flAnomaliaCopiaPrim;
+        return this.flAnomaliaCopiaPrim;
     }
 
     public void setFlAnomaliaCopiaPrim(String flAnomaliaCopiaPrim) {
-	this.flAnomaliaCopiaPrim = flAnomaliaCopiaPrim;
+        this.flAnomaliaCopiaPrim = flAnomaliaCopiaPrim;
     }
 
     @Column(name = "FL_ANOMALIA_COPIA_SECOND", columnDefinition = "char(1)")
     public String getFlAnomaliaCopiaSecond() {
-	return this.flAnomaliaCopiaSecond;
+        return this.flAnomaliaCopiaSecond;
     }
 
     public void setFlAnomaliaCopiaSecond(String flAnomaliaCopiaSecond) {
-	this.flAnomaliaCopiaSecond = flAnomaliaCopiaSecond;
+        this.flAnomaliaCopiaSecond = flAnomaliaCopiaSecond;
     }
 
     @Column(name = "FL_ANOMALIA_MIGRATE_PRIM", columnDefinition = "char(1)")
     public String getFlAnomaliaMigratePrim() {
-	return this.flAnomaliaMigratePrim;
+        return this.flAnomaliaMigratePrim;
     }
 
     public void setFlAnomaliaMigratePrim(String flAnomaliaMigratePrim) {
-	this.flAnomaliaMigratePrim = flAnomaliaMigratePrim;
+        this.flAnomaliaMigratePrim = flAnomaliaMigratePrim;
     }
 
     @Column(name = "FL_ANOMALIA_MIGRATE_SECOND", columnDefinition = "char(1)")
     public String getFlAnomaliaMigrateSecond() {
-	return this.flAnomaliaMigrateSecond;
+        return this.flAnomaliaMigrateSecond;
     }
 
     public void setFlAnomaliaMigrateSecond(String flAnomaliaMigrateSecond) {
-	this.flAnomaliaMigrateSecond = flAnomaliaMigrateSecond;
+        this.flAnomaliaMigrateSecond = flAnomaliaMigrateSecond;
     }
 
     @Column(name = "FL_ANOMALIA_RI_ARK_PRIM", columnDefinition = "char(1)")
     public String getFlAnomaliaRiArkPrim() {
-	return this.flAnomaliaRiArkPrim;
+        return this.flAnomaliaRiArkPrim;
     }
 
     public void setFlAnomaliaRiArkPrim(String flAnomaliaRiArkPrim) {
-	this.flAnomaliaRiArkPrim = flAnomaliaRiArkPrim;
+        this.flAnomaliaRiArkPrim = flAnomaliaRiArkPrim;
     }
 
     @Column(name = "FL_ANOMALIA_RI_ARK_SECOND", columnDefinition = "char(1)")
     public String getFlAnomaliaRiArkSecond() {
-	return this.flAnomaliaRiArkSecond;
+        return this.flAnomaliaRiArkSecond;
     }
 
     public void setFlAnomaliaRiArkSecond(String flAnomaliaRiArkSecond) {
-	this.flAnomaliaRiArkSecond = flAnomaliaRiArkSecond;
+        this.flAnomaliaRiArkSecond = flAnomaliaRiArkSecond;
     }
 
     @Column(name = "FL_MIGRAZ_IN_CORSO", columnDefinition = "char(1)")
     public String getFlMigrazInCorso() {
-	return this.flMigrazInCorso;
+        return this.flMigrazInCorso;
     }
 
     public void setFlMigrazInCorso(String flMigrazInCorso) {
-	this.flMigrazInCorso = flMigrazInCorso;
+        this.flMigrazInCorso = flMigrazInCorso;
     }
 
     @Column(name = "FL_PRESENZA_SECONDARIO", columnDefinition = "char(1)")
     public String getFlPresenzaSecondario() {
-	return this.flPresenzaSecondario;
+        return this.flPresenzaSecondario;
     }
 
     public void setFlPresenzaSecondario(String flPresenzaSecondario) {
-	this.flPresenzaSecondario = flPresenzaSecondario;
+        this.flPresenzaSecondario = flPresenzaSecondario;
     }
 
     @Id
     @Column(name = "ID_DT_SCHED")
     public BigDecimal getIdDtSched() {
-	return this.idDtSched;
+        return this.idDtSched;
     }
 
     public void setIdDtSched(BigDecimal idDtSched) {
-	this.idDtSched = idDtSched;
+        this.idDtSched = idDtSched;
     }
 
     @Column(name = "TI_STATO_DT_SCHED")
     public String getTiStatoDtSched() {
-	return this.tiStatoDtSched;
+        return this.tiStatoDtSched;
     }
 
     public void setTiStatoDtSched(String tiStatoDtSched) {
-	this.tiStatoDtSched = tiStatoDtSched;
+        this.tiStatoDtSched = tiStatoDtSched;
     }
 
 }

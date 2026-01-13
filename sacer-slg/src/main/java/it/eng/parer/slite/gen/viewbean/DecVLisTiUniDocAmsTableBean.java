@@ -37,19 +37,19 @@ public class DecVLisTiUniDocAmsTableBean extends AbstractBaseTable<DecVLisTiUniD
     public static DecVLisTiUniDocAmsTableDescriptor TABLE_DESCRIPTOR = new DecVLisTiUniDocAmsTableDescriptor();
 
     public DecVLisTiUniDocAmsTableBean() {
-	super();
+        super();
     }
 
     protected DecVLisTiUniDocAmsRowBean createRow() {
-	return new DecVLisTiUniDocAmsRowBean();
+        return new DecVLisTiUniDocAmsRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecVLisTiUniDocAmsRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

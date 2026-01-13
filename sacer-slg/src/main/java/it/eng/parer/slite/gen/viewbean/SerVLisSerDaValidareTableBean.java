@@ -37,19 +37,19 @@ public class SerVLisSerDaValidareTableBean extends AbstractBaseTable<SerVLisSerD
     public static SerVLisSerDaValidareTableDescriptor TABLE_DESCRIPTOR = new SerVLisSerDaValidareTableDescriptor();
 
     public SerVLisSerDaValidareTableBean() {
-	super();
+        super();
     }
 
     protected SerVLisSerDaValidareRowBean createRow() {
-	return new SerVLisSerDaValidareRowBean();
+        return new SerVLisSerDaValidareRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerVLisSerDaValidareRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

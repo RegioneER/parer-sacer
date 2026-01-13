@@ -23,7 +23,7 @@ public final class AroUrnVerIndiceAipUd {
     }
 
     public enum TiUrnVerIxAipUd {
-	ORIGINALE, NORMALIZZATO, INIZIALE
+        ORIGINALE, NORMALIZZATO, INIZIALE
     }
 
 }

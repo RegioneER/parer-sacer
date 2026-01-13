@@ -45,30 +45,30 @@ public class VrsFileSessioneKoTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<>();
 
     static {
-	map.put(COL_ID_FILE_SESSIONE,
-		new ColumnDescriptor(COL_ID_FILE_SESSIONE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_DATI_SESSIONE_VERS,
-		new ColumnDescriptor(COL_ID_DATI_SESSIONE_VERS, Types.DECIMAL, 22, false));
-	map.put(COL_PG_FILE_SESSIONE,
-		new ColumnDescriptor(COL_PG_FILE_SESSIONE, Types.DECIMAL, 22, false));
-	map.put(COL_NM_FILE_SESSIONE,
-		new ColumnDescriptor(COL_NM_FILE_SESSIONE, Types.VARCHAR, 254, false));
-	map.put(COL_TI_STATO_FILE_SESSIONE,
-		new ColumnDescriptor(COL_TI_STATO_FILE_SESSIONE, Types.VARCHAR, 20, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_ID_FILE_SESSIONE,
+                new ColumnDescriptor(COL_ID_FILE_SESSIONE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_DATI_SESSIONE_VERS,
+                new ColumnDescriptor(COL_ID_DATI_SESSIONE_VERS, Types.DECIMAL, 22, false));
+        map.put(COL_PG_FILE_SESSIONE,
+                new ColumnDescriptor(COL_PG_FILE_SESSIONE, Types.DECIMAL, 22, false));
+        map.put(COL_NM_FILE_SESSIONE,
+                new ColumnDescriptor(COL_NM_FILE_SESSIONE, Types.VARCHAR, 254, false));
+        map.put(COL_TI_STATO_FILE_SESSIONE,
+                new ColumnDescriptor(COL_TI_STATO_FILE_SESSIONE, Types.VARCHAR, 20, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
     }
 
     @Override
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

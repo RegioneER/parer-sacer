@@ -45,27 +45,27 @@ public class DecUsoModelloXsdFascTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_USO_MODELLO_XSD_FASC,
-		new ColumnDescriptor(COL_ID_USO_MODELLO_XSD_FASC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_AA_TIPO_FASCICOLO,
-		new ColumnDescriptor(COL_ID_AA_TIPO_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_ID_MODELLO_XSD_FASCICOLO,
-		new ColumnDescriptor(COL_ID_MODELLO_XSD_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_FL_STANDARD, new ColumnDescriptor(COL_FL_STANDARD, Types.VARCHAR, 1, false));
-	map.put(COL_DT_ISTITUZ, new ColumnDescriptor(COL_DT_ISTITUZ, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_SOPPRES, new ColumnDescriptor(COL_DT_SOPPRES, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_USO_MODELLO_XSD_FASC,
+                new ColumnDescriptor(COL_ID_USO_MODELLO_XSD_FASC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_AA_TIPO_FASCICOLO,
+                new ColumnDescriptor(COL_ID_AA_TIPO_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_ID_MODELLO_XSD_FASCICOLO,
+                new ColumnDescriptor(COL_ID_MODELLO_XSD_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_FL_STANDARD, new ColumnDescriptor(COL_FL_STANDARD, Types.VARCHAR, 1, false));
+        map.put(COL_DT_ISTITUZ, new ColumnDescriptor(COL_DT_ISTITUZ, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_SOPPRES, new ColumnDescriptor(COL_DT_SOPPRES, Types.TIMESTAMP, 7, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

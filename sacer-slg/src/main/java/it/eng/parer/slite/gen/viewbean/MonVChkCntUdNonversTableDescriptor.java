@@ -42,24 +42,24 @@ public class MonVChkCntUdNonversTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_FL_UD_NONVERS_NOVERIF,
-		new ColumnDescriptor(COL_FL_UD_NONVERS_NOVERIF, Types.VARCHAR, 1, true));
-	map.put(COL_FL_UD_NONVERS_VERIF,
-		new ColumnDescriptor(COL_FL_UD_NONVERS_VERIF, Types.VARCHAR, 1, true));
-	map.put(COL_FL_UD_NONVERS_NORISOLUB,
-		new ColumnDescriptor(COL_FL_UD_NONVERS_NORISOLUB, Types.VARCHAR, 1, true));
+        map.put(COL_FL_UD_NONVERS_NOVERIF,
+                new ColumnDescriptor(COL_FL_UD_NONVERS_NOVERIF, Types.VARCHAR, 1, true));
+        map.put(COL_FL_UD_NONVERS_VERIF,
+                new ColumnDescriptor(COL_FL_UD_NONVERS_VERIF, Types.VARCHAR, 1, true));
+        map.put(COL_FL_UD_NONVERS_NORISOLUB,
+                new ColumnDescriptor(COL_FL_UD_NONVERS_NORISOLUB, Types.VARCHAR, 1, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

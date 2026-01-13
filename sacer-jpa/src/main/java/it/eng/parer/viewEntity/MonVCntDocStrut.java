@@ -35,11 +35,11 @@ public class MonVCntDocStrut implements Serializable {
 
     @EmbeddedId
     public MonVCntDocStrutId getMonVCntDocStrutId() {
-	return monVCntDocStrutId;
+        return monVCntDocStrutId;
     }
 
     public void setMonVCntDocStrutId(MonVCntDocStrutId monVCntDocStrutId) {
-	this.monVCntDocStrutId = monVCntDocStrutId;
+        this.monVCntDocStrutId = monVCntDocStrutId;
     }
 
     private BigDecimal niDoc;
@@ -49,11 +49,11 @@ public class MonVCntDocStrut implements Serializable {
 
     @Column(name = "NI_DOC")
     public BigDecimal getNiDoc() {
-	return this.niDoc;
+        return this.niDoc;
     }
 
     public void setNiDoc(BigDecimal niDoc) {
-	this.niDoc = niDoc;
+        this.niDoc = niDoc;
     }
 
 }

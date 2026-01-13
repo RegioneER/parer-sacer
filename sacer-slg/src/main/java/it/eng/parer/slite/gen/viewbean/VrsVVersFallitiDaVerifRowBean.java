@@ -36,119 +36,119 @@ public class VrsVVersFallitiDaVerifRowBean extends BaseRow implements JEEBaseRow
     public static VrsVVersFallitiDaVerifTableDescriptor TABLE_DESCRIPTOR = new VrsVVersFallitiDaVerifTableDescriptor();
 
     public VrsVVersFallitiDaVerifRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getIdSessioneVers() {
-	return getBigDecimal("id_sessione_vers");
+        return getBigDecimal("id_sessione_vers");
     }
 
     public void setIdSessioneVers(BigDecimal idSessioneVers) {
-	setObject("id_sessione_vers", idSessioneVers);
+        setObject("id_sessione_vers", idSessioneVers);
     }
 
     public Timestamp getDtApertura() {
-	return getTimestamp("dt_apertura");
+        return getTimestamp("dt_apertura");
     }
 
     public void setDtApertura(Timestamp dtApertura) {
-	setObject("dt_apertura", dtApertura);
+        setObject("dt_apertura", dtApertura);
     }
 
     public String getCdRegistroKeyUnitaDoc() {
-	return getString("cd_registro_key_unita_doc");
+        return getString("cd_registro_key_unita_doc");
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
+        setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return getBigDecimal("aa_key_unita_doc");
+        return getBigDecimal("aa_key_unita_doc");
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	setObject("aa_key_unita_doc", aaKeyUnitaDoc);
+        setObject("aa_key_unita_doc", aaKeyUnitaDoc);
     }
 
     public String getCdKeyUnitaDoc() {
-	return getString("cd_key_unita_doc");
+        return getString("cd_key_unita_doc");
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	setObject("cd_key_unita_doc", cdKeyUnitaDoc);
+        setObject("cd_key_unita_doc", cdKeyUnitaDoc);
     }
 
     public String getCdKeyDocVers() {
-	return getString("cd_key_doc_vers");
+        return getString("cd_key_doc_vers");
     }
 
     public void setCdKeyDocVers(String cdKeyDocVers) {
-	setObject("cd_key_doc_vers", cdKeyDocVers);
+        setObject("cd_key_doc_vers", cdKeyDocVers);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	VrsVVersFallitiDaVerif entity = (VrsVVersFallitiDaVerif) obj;
-	this.setIdStrut(entity.getIdStrut());
-	this.setIdSessioneVers(entity.getIdSessioneVers());
-	if (entity.getDtApertura() != null) {
-	    this.setDtApertura(new Timestamp(entity.getDtApertura().getTime()));
-	}
-	this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
-	this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
-	this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
-	this.setCdKeyDocVers(entity.getCdKeyDocVers());
+        VrsVVersFallitiDaVerif entity = (VrsVVersFallitiDaVerif) obj;
+        this.setIdStrut(entity.getIdStrut());
+        this.setIdSessioneVers(entity.getIdSessioneVers());
+        if (entity.getDtApertura() != null) {
+            this.setDtApertura(new Timestamp(entity.getDtApertura().getTime()));
+        }
+        this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
+        this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
+        this.setCdKeyDocVers(entity.getCdKeyDocVers());
     }
 
     @Override
     public VrsVVersFallitiDaVerif rowBeanToEntity() {
-	VrsVVersFallitiDaVerif entity = new VrsVVersFallitiDaVerif();
-	entity.setIdStrut(this.getIdStrut());
-	entity.setIdSessioneVers(this.getIdSessioneVers());
-	entity.setDtApertura(this.getDtApertura());
-	entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
-	entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
-	entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
-	entity.setCdKeyDocVers(this.getCdKeyDocVers());
-	return entity;
+        VrsVVersFallitiDaVerif entity = new VrsVVersFallitiDaVerif();
+        entity.setIdStrut(this.getIdStrut());
+        entity.setIdSessioneVers(this.getIdSessioneVers());
+        entity.setDtApertura(this.getDtApertura());
+        entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
+        entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
+        entity.setCdKeyDocVers(this.getCdKeyDocVers());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

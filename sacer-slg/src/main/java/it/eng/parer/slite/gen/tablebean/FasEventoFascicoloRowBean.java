@@ -34,7 +34,7 @@ import javax.annotation.Generated;
  *
  */
 public class FasEventoFascicoloRowBean extends BaseRow
-	implements BaseRowInterface, JEEBaseRowInterface {
+        implements BaseRowInterface, JEEBaseRowInterface {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -44,109 +44,109 @@ public class FasEventoFascicoloRowBean extends BaseRow
     public static FasEventoFascicoloTableDescriptor TABLE_DESCRIPTOR = new FasEventoFascicoloTableDescriptor();
 
     public FasEventoFascicoloRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdEventoFascicolo() {
-	return getBigDecimal("id_evento_fascicolo");
+        return getBigDecimal("id_evento_fascicolo");
     }
 
     public void setIdEventoFascicolo(BigDecimal id_evento_fascicolo) {
-	setObject("id_evento_fascicolo", id_evento_fascicolo);
+        setObject("id_evento_fascicolo", id_evento_fascicolo);
     }
 
     public BigDecimal getIdFascicolo() {
-	return getBigDecimal("id_fascicolo");
+        return getBigDecimal("id_fascicolo");
     }
 
     public void setIdFascicolo(BigDecimal id_fascicolo) {
-	setObject("id_fascicolo", id_fascicolo);
+        setObject("id_fascicolo", id_fascicolo);
     }
 
     public String getDsDenomEvento() {
-	return getString("ds_denom_evento");
+        return getString("ds_denom_evento");
     }
 
     public void setDsDenomEvento(String ds_denom_evento) {
-	setObject("ds_denom_evento", ds_denom_evento);
+        setObject("ds_denom_evento", ds_denom_evento);
     }
 
     public Timestamp getTsApertura() {
-	return getTimestamp("ts_apertura");
+        return getTimestamp("ts_apertura");
     }
 
     public void setTsApertura(Timestamp ts_apertura) {
-	setObject("ts_apertura", ts_apertura);
+        setObject("ts_apertura", ts_apertura);
     }
 
     public Timestamp getTsChiusura() {
-	return getTimestamp("ts_chiusura");
+        return getTimestamp("ts_chiusura");
     }
 
     public void setTsChiusura(Timestamp ts_chiusura) {
-	setObject("ts_chiusura", ts_chiusura);
+        setObject("ts_chiusura", ts_chiusura);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	FasEventoFascicolo entity = (FasEventoFascicolo) obj;
-	AbstractRecord ar;
-	this.setIdEventoFascicolo(new BigDecimal(entity.getIdEventoFascicolo()));
-	this.setDsDenomEvento(entity.getDsDenomEvento());
-	if (entity.getTsApertura() != null) {
-	    this.setTsApertura(new Timestamp(entity.getTsApertura().getTime()));
-	}
-	if (entity.getTsChiusura() != null) {
-	    this.setTsChiusura(new Timestamp(entity.getTsChiusura().getTime()));
-	}
+        FasEventoFascicolo entity = (FasEventoFascicolo) obj;
+        AbstractRecord ar;
+        this.setIdEventoFascicolo(new BigDecimal(entity.getIdEventoFascicolo()));
+        this.setDsDenomEvento(entity.getDsDenomEvento());
+        if (entity.getTsApertura() != null) {
+            this.setTsApertura(new Timestamp(entity.getTsApertura().getTime()));
+        }
+        if (entity.getTsChiusura() != null) {
+            this.setTsChiusura(new Timestamp(entity.getTsChiusura().getTime()));
+        }
     }
 
     @Override
     public FasEventoFascicolo rowBeanToEntity() {
-	FasEventoFascicolo entity = new FasEventoFascicolo();
-	if (this.getIdEventoFascicolo() != null) {
-	    entity.setIdEventoFascicolo(this.getIdEventoFascicolo().longValue());
-	}
-	if (this.getIdFascicolo() != null) {
-	    if (entity.getFasFascicolo() == null) {
-		entity.setFasFascicolo(new FasFascicolo());
-	    }
-	    entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
-	}
-	entity.setDsDenomEvento(this.getDsDenomEvento());
-	entity.setTsApertura(this.getTsApertura());
-	entity.setTsChiusura(this.getTsChiusura());
-	return entity;
+        FasEventoFascicolo entity = new FasEventoFascicolo();
+        if (this.getIdEventoFascicolo() != null) {
+            entity.setIdEventoFascicolo(this.getIdEventoFascicolo().longValue());
+        }
+        if (this.getIdFascicolo() != null) {
+            if (entity.getFasFascicolo() == null) {
+                entity.setFasFascicolo(new FasFascicolo());
+            }
+            entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
+        }
+        entity.setDsDenomEvento(this.getDsDenomEvento());
+        entity.setTsApertura(this.getTsApertura());
+        entity.setTsChiusura(this.getTsChiusura());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

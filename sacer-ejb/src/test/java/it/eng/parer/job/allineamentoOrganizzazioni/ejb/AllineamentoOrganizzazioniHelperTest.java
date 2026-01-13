@@ -43,88 +43,88 @@ public class AllineamentoOrganizzazioniHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		AllineamentoOrganizzazioniHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			AllineamentoOrganizzazioniHelperTest.class,
-			AllineamentoOrganizzazioniHelper.class, CostantiReplicaOrg.class));
+        return HelperTest.createEnterpriseArchive(
+                AllineamentoOrganizzazioniHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        AllineamentoOrganizzazioniHelperTest.class,
+                        AllineamentoOrganizzazioniHelper.class, CostantiReplicaOrg.class));
     }
 
     @Test
     public void getIamOrganizDaReplic_queryIsOk() {
-	helper.getIamOrganizDaReplic();
-	assertTrue(true);
+        helper.getIamOrganizDaReplic();
+        assertTrue(true);
     }
 
     @Test
     public void getOrgAmbiente_queryIsOk() {
-	BigDecimal idAmbiente = aBigDecimal();
-	helper.getOrgAmbiente(idAmbiente);
-	assertTrue(true);
+        BigDecimal idAmbiente = aBigDecimal();
+        helper.getOrgAmbiente(idAmbiente);
+        assertTrue(true);
     }
 
     @Test
     public void getOrgEnte_queryIsOk() {
-	BigDecimal idEnte = aBigDecimal();
-	helper.getOrgEnte(idEnte);
-	assertTrue(true);
+        BigDecimal idEnte = aBigDecimal();
+        helper.getOrgEnte(idEnte);
+        assertTrue(true);
     }
 
     @Test
     public void getOrgStrut_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	helper.getOrgStrut(idStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        helper.getOrgStrut(idStrut);
+        assertTrue(true);
     }
 
     @Test
     public void getDecTipoUnitaDocList_queryIsOk() {
-	List<Long> idStruts = aListOfLong(2);
-	helper.getDecTipoUnitaDocList(idStruts);
-	assertTrue(true);
+        List<Long> idStruts = aListOfLong(2);
+        helper.getDecTipoUnitaDocList(idStruts);
+        assertTrue(true);
     }
 
     @Test
     public void getDecTipoDocPrincipaliList_queryIsOk() {
-	List<Long> idStruts = aListOfLong(2);
-	helper.getDecTipoDocPrincipaliList(idStruts);
-	assertTrue(true);
+        List<Long> idStruts = aListOfLong(2);
+        helper.getDecTipoDocPrincipaliList(idStruts);
+        assertTrue(true);
     }
 
     @Test
     public void getDecTipoDocList_queryIsOk() {
-	List<Long> idStruts = aListOfLong(2);
-	helper.getDecTipoDocList(idStruts);
-	assertTrue(true);
+        List<Long> idStruts = aListOfLong(2);
+        helper.getDecTipoDocList(idStruts);
+        assertTrue(true);
     }
 
     @Test
     public void getDecRegistroUnitaDocList_queryIsOk() {
-	List<Long> idStruts = aListOfLong(2);
-	helper.getDecRegistroUnitaDocList(idStruts);
-	assertTrue(true);
+        List<Long> idStruts = aListOfLong(2);
+        helper.getDecRegistroUnitaDocList(idStruts);
+        assertTrue(true);
     }
 
     @Test
     public void getOrgSubStrutList_queryIsOk() {
-	List<Long> idStruts = aListOfLong(2);
-	helper.getOrgSubStrutList(idStruts);
-	assertTrue(true);
+        List<Long> idStruts = aListOfLong(2);
+        helper.getOrgSubStrutList(idStruts);
+        assertTrue(true);
     }
 
     @Test
     public void getDecTipoFascicoloList_queryIsOk() {
-	List<Long> idStruts = aListOfLong(2);
-	helper.getDecTipoFascicoloList(idStruts);
-	assertTrue(true);
+        List<Long> idStruts = aListOfLong(2);
+        helper.getDecTipoFascicoloList(idStruts);
+        assertTrue(true);
     }
 
     @Test
     public void getEnteConvenzInfo_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	helper.getEnteConvenzInfo(idStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        helper.getEnteConvenzInfo(idStrut);
+        assertTrue(true);
     }
 
 }

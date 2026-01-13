@@ -49,35 +49,35 @@ public class SerVLisVerSeriePrecTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_VER_SERIE_INPUT,
-		new ColumnDescriptor(COL_ID_VER_SERIE_INPUT, Types.DECIMAL, 22, true));
-	map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_PG_VER_SERIE, new ColumnDescriptor(COL_PG_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_CD_VER_SERIE, new ColumnDescriptor(COL_CD_VER_SERIE, Types.VARCHAR, 100, true));
-	map.put(COL_DT_INIZIO_SEL_SERIE,
-		new ColumnDescriptor(COL_DT_INIZIO_SEL_SERIE, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_FINE_SEL_SERIE,
-		new ColumnDescriptor(COL_DT_FINE_SEL_SERIE, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_FIRMA_VER_SERIE,
-		new ColumnDescriptor(COL_DT_FIRMA_VER_SERIE, Types.TIMESTAMP, 7, true));
-	map.put(COL_NI_UNITA_DOC_EFF,
-		new ColumnDescriptor(COL_NI_UNITA_DOC_EFF, Types.DECIMAL, 22, true));
-	map.put(COL_CD_FIRST_UNITA_DOC_EFF,
-		new ColumnDescriptor(COL_CD_FIRST_UNITA_DOC_EFF, Types.VARCHAR, 254, true));
-	map.put(COL_CD_LAST_UNITA_DOC_EFF,
-		new ColumnDescriptor(COL_CD_LAST_UNITA_DOC_EFF, Types.VARCHAR, 254, true));
+        map.put(COL_ID_VER_SERIE_INPUT,
+                new ColumnDescriptor(COL_ID_VER_SERIE_INPUT, Types.DECIMAL, 22, true));
+        map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_PG_VER_SERIE, new ColumnDescriptor(COL_PG_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_CD_VER_SERIE, new ColumnDescriptor(COL_CD_VER_SERIE, Types.VARCHAR, 100, true));
+        map.put(COL_DT_INIZIO_SEL_SERIE,
+                new ColumnDescriptor(COL_DT_INIZIO_SEL_SERIE, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_FINE_SEL_SERIE,
+                new ColumnDescriptor(COL_DT_FINE_SEL_SERIE, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_FIRMA_VER_SERIE,
+                new ColumnDescriptor(COL_DT_FIRMA_VER_SERIE, Types.TIMESTAMP, 7, true));
+        map.put(COL_NI_UNITA_DOC_EFF,
+                new ColumnDescriptor(COL_NI_UNITA_DOC_EFF, Types.DECIMAL, 22, true));
+        map.put(COL_CD_FIRST_UNITA_DOC_EFF,
+                new ColumnDescriptor(COL_CD_FIRST_UNITA_DOC_EFF, Types.VARCHAR, 254, true));
+        map.put(COL_CD_LAST_UNITA_DOC_EFF,
+                new ColumnDescriptor(COL_CD_LAST_UNITA_DOC_EFF, Types.VARCHAR, 254, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

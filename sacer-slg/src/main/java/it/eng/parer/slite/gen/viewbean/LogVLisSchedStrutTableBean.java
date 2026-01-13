@@ -37,19 +37,19 @@ public class LogVLisSchedStrutTableBean extends AbstractBaseTable<LogVLisSchedSt
     public static LogVLisSchedStrutTableDescriptor TABLE_DESCRIPTOR = new LogVLisSchedStrutTableDescriptor();
 
     public LogVLisSchedStrutTableBean() {
-	super();
+        super();
     }
 
     protected LogVLisSchedStrutRowBean createRow() {
-	return new LogVLisSchedStrutRowBean();
+        return new LogVLisSchedStrutRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<LogVLisSchedStrutRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

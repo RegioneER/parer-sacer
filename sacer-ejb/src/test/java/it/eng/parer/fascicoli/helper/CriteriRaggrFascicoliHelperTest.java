@@ -37,35 +37,35 @@ public class CriteriRaggrFascicoliHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		CriteriRaggrFascicoliHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			CriteriRaggrFascicoliHelperTest.class, CriteriRaggrFascicoliHelper.class,
-			Transform.class));
+        return HelperTest.createEnterpriseArchive(
+                CriteriRaggrFascicoliHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        CriteriRaggrFascicoliHelperTest.class, CriteriRaggrFascicoliHelper.class,
+                        Transform.class));
     }
 
     @Test
     void retrieveDecCriterioRaggrFascList_4args_queryIsOk() {
-	BigDecimal idAmbiente = aBigDecimal();
-	BigDecimal idEnte = aBigDecimal();
-	BigDecimal idStrut = aBigDecimal();
-	String nmCriterioRaggr = aString();
-	helper.retrieveDecCriterioRaggrFascList(idAmbiente, idEnte, idStrut, nmCriterioRaggr);
-	assertTrue(true);
+        BigDecimal idAmbiente = aBigDecimal();
+        BigDecimal idEnte = aBigDecimal();
+        BigDecimal idStrut = aBigDecimal();
+        String nmCriterioRaggr = aString();
+        helper.retrieveDecCriterioRaggrFascList(idAmbiente, idEnte, idStrut, nmCriterioRaggr);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecCriterioRaggrFascList_BigDecimal_queryIsOk() {
-	BigDecimal idStruttura = aBigDecimal();
-	helper.retrieveDecCriterioRaggrFascList(idStruttura);
-	assertTrue(true);
+        BigDecimal idStruttura = aBigDecimal();
+        helper.retrieveDecCriterioRaggrFascList(idStruttura);
+        assertTrue(true);
     }
 
     @Test
     void getOrgStrutById_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	helper.getOrgStrutById(idStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        helper.getOrgStrutById(idStrut);
+        assertTrue(true);
     }
 }

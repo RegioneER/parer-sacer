@@ -41,20 +41,20 @@ public class MonVCntDocEnte implements Serializable {
 
     @Column(name = "NI_DOC")
     public BigDecimal getNiDoc() {
-	return this.niDoc;
+        return this.niDoc;
     }
 
     public void setNiDoc(BigDecimal niDoc) {
-	this.niDoc = niDoc;
+        this.niDoc = niDoc;
     }
 
     @EmbeddedId
     public MonVCntDocEnteId getMonVCntDocEnteId() {
-	return monVCntDocEnteId;
+        return monVCntDocEnteId;
     }
 
     public void setMonVCntDocEnteId(MonVCntDocEnteId monVCntDocEnteId) {
-	this.monVCntDocEnteId = monVCntDocEnteId;
+        this.monVCntDocEnteId = monVCntDocEnteId;
     }
 
 }

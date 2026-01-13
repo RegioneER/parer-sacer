@@ -72,26 +72,26 @@ class RetryTest {
 
     @BeforeEach
     void setUp() {
-	restTemplate = new RestTemplate();
+        restTemplate = new RestTemplate();
 
-	HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-	clientHttpRequestFactory.setReadTimeout(TIMEOUT);
-	clientHttpRequestFactory.setConnectTimeout(TIMEOUT);
+        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+        clientHttpRequestFactory.setReadTimeout(TIMEOUT);
+        clientHttpRequestFactory.setConnectTimeout(TIMEOUT);
 
-	restTemplate.setRequestFactory(clientHttpRequestFactory);
-	restTemplate.setErrorHandler(new CryptoErrorHandler());
+        restTemplate.setRequestFactory(clientHttpRequestFactory);
+        restTemplate.setErrorHandler(new CryptoErrorHandler());
 
-	preferredEndpoint = CRYPTO_TEST_OKD;
+        preferredEndpoint = CRYPTO_TEST_OKD;
 
-	List<URI> endpoints = new ArrayList<>();
-	endpoints.add(URI.create(preferredEndpoint));
-	endpoints.add(URI.create(CRYPTO_LOCALE));
-	endpoints.add(URI.create(CRYPTO_SVIL_OKD));
-	// endpoints.add(URI.create(CRYPTO_PROD_OCP));
+        List<URI> endpoints = new ArrayList<>();
+        endpoints.add(URI.create(preferredEndpoint));
+        endpoints.add(URI.create(CRYPTO_LOCALE));
+        endpoints.add(URI.create(CRYPTO_SVIL_OKD));
+        // endpoints.add(URI.create(CRYPTO_PROD_OCP));
 
-	ParerRetryConfiguration retryClient = ParerRetryConfiguration.defaultInstance();
+        ParerRetryConfiguration retryClient = ParerRetryConfiguration.defaultInstance();
 
-	restTemplate.getInterceptors().add(new RestRetryInterceptor(endpoints, retryClient));
+        restTemplate.getInterceptors().add(new RestRetryInterceptor(endpoints, retryClient));
 
     }
 
@@ -102,149 +102,149 @@ class RetryTest {
     @Test
     void testTST() {
 
-	HttpHeaders headers = new HttpHeaders();
-	headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-	org.springframework.core.io.Resource resource = new ByteArrayResource(
-		"Ceci n'est pas un test".getBytes()) {
-	    @Override
-	    public String getFilename() {
-		return "requestTst";
-	    }
-	};
+        org.springframework.core.io.Resource resource = new ByteArrayResource(
+                "Ceci n'est pas un test".getBytes()) {
+            @Override
+            public String getFilename() {
+                return "requestTst";
+            }
+        };
 
-	MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-	body.add("description", "Richiesta TST");
-	body.add("file", resource);
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("description", "Richiesta TST");
+        body.add("file", resource);
 
-	HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-	String endpoint = preferredEndpoint + "v1/tst";
-	ParerTST result = restTemplate.postForObject(endpoint, requestEntity, ParerTST.class);
-	assertNotNull(result.getTimeStampInfo());
+        String endpoint = preferredEndpoint + "v1/tst";
+        ParerTST result = restTemplate.postForObject(endpoint, requestEntity, ParerTST.class);
+        assertNotNull(result.getTimeStampInfo());
     }
 
     @Test
     void testTSTWithSomeBadURI() {
 
-	HttpHeaders headers = new HttpHeaders();
-	headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-	org.springframework.core.io.Resource resource = new ByteArrayResource(
-		"Ceci n'est pas un test".getBytes()) {
-	    @Override
-	    public String getFilename() {
-		return "requestTst";
-	    }
-	};
+        org.springframework.core.io.Resource resource = new ByteArrayResource(
+                "Ceci n'est pas un test".getBytes()) {
+            @Override
+            public String getFilename() {
+                return "requestTst";
+            }
+        };
 
-	MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-	body.add("description", "Richiesta TST");
-	body.add("file", resource);
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("description", "Richiesta TST");
+        body.add("file", resource);
 
-	HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-	String preferredEndpoint = "http://localhost:8090/api/tst";
+        String preferredEndpoint = "http://localhost:8090/api/tst";
 
-	List<URI> badEndpoints = new ArrayList<>();
-	badEndpoints.add(URI.create("http://localhost:8091/"));
-	badEndpoints.add(URI.create("Br0kenUr1"));
-	badEndpoints.add(URI.create("http://localhost:8092/"));
-	badEndpoints.add(URI.create("http://localhost:8093/"));
-	badEndpoints.add(URI.create("//////////"));
-	badEndpoints.add(URI.create("../../"));
-	badEndpoints.add(URI.create(CRYPTO_SVIL_OKD));
+        List<URI> badEndpoints = new ArrayList<>();
+        badEndpoints.add(URI.create("http://localhost:8091/"));
+        badEndpoints.add(URI.create("Br0kenUr1"));
+        badEndpoints.add(URI.create("http://localhost:8092/"));
+        badEndpoints.add(URI.create("http://localhost:8093/"));
+        badEndpoints.add(URI.create("//////////"));
+        badEndpoints.add(URI.create("../../"));
+        badEndpoints.add(URI.create(CRYPTO_SVIL_OKD));
 
-	ParerRetryConfiguration retryClient = ParerRetryConfiguration.defaultInstance();
-	restTemplate.getInterceptors().removeIf(i -> true);
-	restTemplate.getInterceptors().add(new RestRetryInterceptor(badEndpoints, retryClient));
+        ParerRetryConfiguration retryClient = ParerRetryConfiguration.defaultInstance();
+        restTemplate.getInterceptors().removeIf(i -> true);
+        restTemplate.getInterceptors().add(new RestRetryInterceptor(badEndpoints, retryClient));
 
-	ParerTST result = restTemplate.postForObject(preferredEndpoint, requestEntity,
-		ParerTST.class);
-	assertNotNull(result.getTimeStampInfo());
+        ParerTST result = restTemplate.postForObject(preferredEndpoint, requestEntity,
+                ParerTST.class);
+        assertNotNull(result.getTimeStampInfo());
     }
 
     // Helper to build the multipart HttpEntity.
     private HttpEntity<MultiValueMap<String, Object>> buildRequestEntity(boolean addDescription) {
-	HttpHeaders headers = new HttpHeaders();
-	headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-	org.springframework.core.io.Resource resource = new ByteArrayResource(
-		"Ceci n\\'est pas un test".getBytes()) {
-	    @Override
-	    public String getFilename() {
-		return "requestTst";
-	    }
-	};
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        org.springframework.core.io.Resource resource = new ByteArrayResource(
+                "Ceci n\\'est pas un test".getBytes()) {
+            @Override
+            public String getFilename() {
+                return "requestTst";
+            }
+        };
 
-	MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-	if (addDescription) {
-	    body.add("description", "Richiesta TST");
-	}
-	body.add("file", resource);
-	return new HttpEntity<>(body, headers);
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        if (addDescription) {
+            body.add("description", "Richiesta TST");
+        }
+        body.add("file", resource);
+        return new HttpEntity<>(body, headers);
     }
 
     @Test
     void testTSTWithNoValidURL() {
-	HttpEntity<MultiValueMap<String, Object>> requestEntity = buildRequestEntity(true);
-	String preferredEndpoint = "http://localhost:8090/api/tst";
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = buildRequestEntity(true);
+        String preferredEndpoint = "http://localhost:8090/api/tst";
 
-	// Define bad endpoints.
-	List<URI> badEndpoints = new ArrayList<>();
-	badEndpoints.add(URI.create("http://localhost:8091/"));
-	badEndpoints.add(URI.create("http://localhost:8092/"));
-	badEndpoints.add(URI.create("http://localhost:8093/"));
-	badEndpoints.add(URI.create("http://localhost:8094/"));
+        // Define bad endpoints.
+        List<URI> badEndpoints = new ArrayList<>();
+        badEndpoints.add(URI.create("http://localhost:8091/"));
+        badEndpoints.add(URI.create("http://localhost:8092/"));
+        badEndpoints.add(URI.create("http://localhost:8093/"));
+        badEndpoints.add(URI.create("http://localhost:8094/"));
 
-	ParerRetryConfiguration retryClient = ParerRetryConfiguration.defaultInstance();
-	// Remove existing interceptors and add a new RestRetryInterceptor.
-	restTemplate.getInterceptors().removeIf(i -> true);
-	restTemplate.getInterceptors().add(new RestRetryInterceptor(badEndpoints, retryClient));
+        ParerRetryConfiguration retryClient = ParerRetryConfiguration.defaultInstance();
+        // Remove existing interceptors and add a new RestRetryInterceptor.
+        restTemplate.getInterceptors().removeIf(i -> true);
+        restTemplate.getInterceptors().add(new RestRetryInterceptor(badEndpoints, retryClient));
 
-	// Use assertThrows for RestClientException.
-	assertThrows(RestClientException.class, () -> {
-	    restTemplate.postForObject(preferredEndpoint, requestEntity, ParerTST.class);
-	});
+        // Use assertThrows for RestClientException.
+        assertThrows(RestClientException.class, () -> {
+            restTemplate.postForObject(preferredEndpoint, requestEntity, ParerTST.class);
+        });
     }
 
     @Test
     void testTSTWithoutMandatoryParameter() {
-	HttpHeaders headers = new HttpHeaders();
-	headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-	org.springframework.core.io.Resource resource = new ByteArrayResource(
-		"Ceci n'est pas un test".getBytes()) {
-	    @Override
-	    public String getFilename() {
-		return "requestTst";
-	    }
-	};
+        org.springframework.core.io.Resource resource = new ByteArrayResource(
+                "Ceci n'est pas un test".getBytes()) {
+            @Override
+            public String getFilename() {
+                return "requestTst";
+            }
+        };
 
-	MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-	// Mandatory parameter "description" is omitted.
-	body.add("file", resource);
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        // Mandatory parameter "description" is omitted.
+        body.add("file", resource);
 
-	HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-	String endpoint = "http://localhost:8090/api/tst";
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        String endpoint = "http://localhost:8090/api/tst";
 
-	List<URI> badEndpoints = new ArrayList<>();
-	badEndpoints.add(URI.create("http://localhost:8091/"));
-	badEndpoints.add(URI.create("Br0kenUr1"));
-	badEndpoints.add(URI.create("http://localhost:8092/"));
-	badEndpoints.add(URI.create("http://localhost:8093/"));
-	badEndpoints.add(URI.create("//////////"));
-	badEndpoints.add(URI.create("../../"));
-	badEndpoints.add(URI.create(CRYPTO_SVIL_OKD));
+        List<URI> badEndpoints = new ArrayList<>();
+        badEndpoints.add(URI.create("http://localhost:8091/"));
+        badEndpoints.add(URI.create("Br0kenUr1"));
+        badEndpoints.add(URI.create("http://localhost:8092/"));
+        badEndpoints.add(URI.create("http://localhost:8093/"));
+        badEndpoints.add(URI.create("//////////"));
+        badEndpoints.add(URI.create("../../"));
+        badEndpoints.add(URI.create(CRYPTO_SVIL_OKD));
 
-	ParerRetryConfiguration retryClient = ParerRetryConfiguration.defaultInstance();
-	restTemplate.getInterceptors().removeIf(i -> true);
-	restTemplate.getInterceptors().add(new RestRetryInterceptor(badEndpoints, retryClient));
+        ParerRetryConfiguration retryClient = ParerRetryConfiguration.defaultInstance();
+        restTemplate.getInterceptors().removeIf(i -> true);
+        restTemplate.getInterceptors().add(new RestRetryInterceptor(badEndpoints, retryClient));
 
-	// Assert that calling the service without the mandatory parameter throws
-	// CryptoParerException.
-	assertThrows(CryptoParerException.class, () -> {
-	    restTemplate.postForObject(endpoint, requestEntity, ParerTST.class);
-	});
+        // Assert that calling the service without the mandatory parameter throws
+        // CryptoParerException.
+        assertThrows(CryptoParerException.class, () -> {
+            restTemplate.postForObject(endpoint, requestEntity, ParerTST.class);
+        });
     }
 
 }

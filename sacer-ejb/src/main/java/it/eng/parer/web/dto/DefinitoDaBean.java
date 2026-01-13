@@ -30,66 +30,66 @@ public class DefinitoDaBean {
     private String dlValore;
 
     public BigDecimal getIdAttribDatiSpec() {
-	return idAttribDatiSpec;
+        return idAttribDatiSpec;
     }
 
     public void setIdAttribDatiSpec(BigDecimal idAttribDatiSpec) {
-	this.idAttribDatiSpec = idAttribDatiSpec;
+        this.idAttribDatiSpec = idAttribDatiSpec;
     }
 
     public String getTiEntitaSacer() {
-	return tiEntitaSacer;
+        return tiEntitaSacer;
     }
 
     public void setTiEntitaSacer(String tiEntitaSacer) {
-	this.tiEntitaSacer = tiEntitaSacer;
+        this.tiEntitaSacer = tiEntitaSacer;
     }
 
     public String getNmTipoDoc() {
-	return nmTipoDoc;
+        return nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	this.nmTipoDoc = nmTipoDoc;
+        this.nmTipoDoc = nmTipoDoc;
     }
 
     public String getNmTipoUnitaDoc() {
-	return nmTipoUnitaDoc;
+        return nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     public String getNmSistemaMigraz() {
-	return nmSistemaMigraz;
+        return nmSistemaMigraz;
     }
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
-	this.nmSistemaMigraz = nmSistemaMigraz;
+        this.nmSistemaMigraz = nmSistemaMigraz;
     }
 
     public String getNmAttribDatiSpec() {
-	return nmAttribDatiSpec;
+        return nmAttribDatiSpec;
     }
 
     public void setNmAttribDatiSpec(String nmAttribDatiSpec) {
-	this.nmAttribDatiSpec = nmAttribDatiSpec;
+        this.nmAttribDatiSpec = nmAttribDatiSpec;
     }
 
     public String getTiOper() {
-	return tiOper;
+        return tiOper;
     }
 
     public void setTiOper(String tiOper) {
-	this.tiOper = tiOper;
+        this.tiOper = tiOper;
     }
 
     public String getDlValore() {
-	return dlValore;
+        return dlValore;
     }
 
     public void setDlValore(String dlValore) {
-	this.dlValore = dlValore;
+        this.dlValore = dlValore;
     }
 }

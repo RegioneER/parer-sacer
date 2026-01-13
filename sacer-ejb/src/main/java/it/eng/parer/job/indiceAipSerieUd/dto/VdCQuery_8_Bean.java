@@ -24,27 +24,27 @@ public class VdCQuery_8_Bean {
     private String dsRegistroUnitaDoc;
 
     public Long getIdVerSerie() {
-	return idVerSerie;
+        return idVerSerie;
     }
 
     public void setIdVerSerie(Long idVerSerie) {
-	this.idVerSerie = idVerSerie;
+        this.idVerSerie = idVerSerie;
     }
 
     public String getCdRegistroUnitaDoc() {
-	return cdRegistroUnitaDoc;
+        return cdRegistroUnitaDoc;
     }
 
     public void setCdRegistroUnitaDoc(String cdRegistroUnitaDoc) {
-	this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
+        this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
     }
 
     public String getDsRegistroUnitaDoc() {
-	return dsRegistroUnitaDoc;
+        return dsRegistroUnitaDoc;
     }
 
     public void setDsRegistroUnitaDoc(String dsRegistroUnitaDoc) {
-	this.dsRegistroUnitaDoc = dsRegistroUnitaDoc;
+        this.dsRegistroUnitaDoc = dsRegistroUnitaDoc;
     }
 
 }

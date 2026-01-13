@@ -36,25 +36,25 @@ public class MonVCntVersEnteB30 implements Serializable {
     private MonVCntVersEnteB30Id monVCntVersEnteB30Id;
 
     public MonVCntVersEnteB30() {
-	/* hibernate */
+        /* hibernate */
     }
 
     @Column(name = "NI_VERS")
     public BigDecimal getNiVers() {
-	return this.niVers;
+        return this.niVers;
     }
 
     public void setNiVers(BigDecimal niVers) {
-	this.niVers = niVers;
+        this.niVers = niVers;
     }
 
     @EmbeddedId
     public MonVCntVersEnteB30Id getMonVCntVersEnteB30Id() {
-	return monVCntVersEnteB30Id;
+        return monVCntVersEnteB30Id;
     }
 
     public void setMonVCntVersEnteB30Id(MonVCntVersEnteB30Id monVCntVersEnteB30Id) {
-	this.monVCntVersEnteB30Id = monVCntVersEnteB30Id;
+        this.monVCntVersEnteB30Id = monVCntVersEnteB30Id;
     }
 
 }

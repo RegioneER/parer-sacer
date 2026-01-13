@@ -37,19 +37,19 @@ public class AroVLisVolCorTableBean extends AbstractBaseTable<AroVLisVolCorRowBe
     public static AroVLisVolCorTableDescriptor TABLE_DESCRIPTOR = new AroVLisVolCorTableDescriptor();
 
     public AroVLisVolCorTableBean() {
-	super();
+        super();
     }
 
     protected AroVLisVolCorRowBean createRow() {
-	return new AroVLisVolCorRowBean();
+        return new AroVLisVolCorRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVLisVolCorRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

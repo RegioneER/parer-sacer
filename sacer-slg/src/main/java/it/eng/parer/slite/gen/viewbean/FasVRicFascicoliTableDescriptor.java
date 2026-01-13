@@ -70,73 +70,73 @@ public class FasVRicFascicoliTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_AA_FASCICOLO, new ColumnDescriptor(COL_AA_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_FASCICOLO,
-		new ColumnDescriptor(COL_CD_KEY_FASCICOLO, Types.VARCHAR, 100, true));
-	map.put(COL_DT_APE_FASCICOLO,
-		new ColumnDescriptor(COL_DT_APE_FASCICOLO, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_CHIU_FASCICOLO,
-		new ColumnDescriptor(COL_DT_CHIU_FASCICOLO, Types.TIMESTAMP, 7, true));
-	map.put(COL_TS_INI_SES, new ColumnDescriptor(COL_TS_INI_SES, Types.TIMESTAMP, 11, true));
-	map.put(COL_ID_TIPO_FASCICOLO,
-		new ColumnDescriptor(COL_ID_TIPO_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_NM_TIPO_FASCICOLO,
-		new ColumnDescriptor(COL_NM_TIPO_FASCICOLO, Types.VARCHAR, 100, true));
-	map.put(COL_NI_UNITA_DOC, new ColumnDescriptor(COL_NI_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NI_AA_CONSERVAZIONE,
-		new ColumnDescriptor(COL_NI_AA_CONSERVAZIONE, Types.DECIMAL, 22, true));
-	map.put(COL_CD_LIVELLO_RISERV,
-		new ColumnDescriptor(COL_CD_LIVELLO_RISERV, Types.VARCHAR, 100, true));
-	map.put(COL_FL_FORZA_CONTR_CLASSIF,
-		new ColumnDescriptor(COL_FL_FORZA_CONTR_CLASSIF, Types.VARCHAR, 1, true));
-	map.put(COL_FL_FORZA_CONTR_NUMERO,
-		new ColumnDescriptor(COL_FL_FORZA_CONTR_NUMERO, Types.VARCHAR, 1, true));
-	map.put(COL_FL_FORZA_CONTR_COLLEG,
-		new ColumnDescriptor(COL_FL_FORZA_CONTR_COLLEG, Types.VARCHAR, 1, true));
-	map.put(COL_TI_STATO_CONSERVAZIONE,
-		new ColumnDescriptor(COL_TI_STATO_CONSERVAZIONE, Types.VARCHAR, 30, true));
-	map.put(COL_TI_STATO_FASC_ELENCO_VERS,
-		new ColumnDescriptor(COL_TI_STATO_FASC_ELENCO_VERS, Types.VARCHAR, 50, true));
-	map.put(COL_DS_OGGETTO_FASCICOLO,
-		new ColumnDescriptor(COL_DS_OGGETTO_FASCICOLO, Types.VARCHAR, 4000, true));
-	map.put(COL_TI_CONSERVAZIONE,
-		new ColumnDescriptor(COL_TI_CONSERVAZIONE, Types.VARCHAR, 30, true));
-	map.put(COL_CD_PROC_AMMIN,
-		new ColumnDescriptor(COL_CD_PROC_AMMIN, Types.VARCHAR, 100, true));
-	map.put(COL_DS_PROC_AMMIN,
-		new ColumnDescriptor(COL_DS_PROC_AMMIN, Types.VARCHAR, 100, true));
-	map.put(COL_AA_FASCICOLO_PADRE,
-		new ColumnDescriptor(COL_AA_FASCICOLO_PADRE, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_FASCICOLO_PADRE,
-		new ColumnDescriptor(COL_CD_KEY_FASCICOLO_PADRE, Types.VARCHAR, 100, true));
-	map.put(COL_DS_OGGETTO_FASCICOLO_PADRE,
-		new ColumnDescriptor(COL_DS_OGGETTO_FASCICOLO_PADRE, Types.VARCHAR, 4000, true));
-	map.put(COL_ID_USER_IAM_VERS,
-		new ColumnDescriptor(COL_ID_USER_IAM_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_NM_USERID, new ColumnDescriptor(COL_NM_USERID, Types.VARCHAR, 100, true));
-	map.put(COL_ID_SISTEMA_VERSANTE,
-		new ColumnDescriptor(COL_ID_SISTEMA_VERSANTE, Types.DECIMAL, 22, true));
-	map.put(COL_NM_SISTEMA_VERSANTE,
-		new ColumnDescriptor(COL_NM_SISTEMA_VERSANTE, Types.VARCHAR, 100, true));
-	map.put(COL_ID_VOCE_TITOL,
-		new ColumnDescriptor(COL_ID_VOCE_TITOL, Types.DECIMAL, 22, true));
-	map.put(COL_CD_COMPOSITO_VOCE_TITOL,
-		new ColumnDescriptor(COL_CD_COMPOSITO_VOCE_TITOL, Types.VARCHAR, 100, true));
-	map.put(COL_TI_ESITO, new ColumnDescriptor(COL_TI_ESITO, Types.VARCHAR, 8, true));
+        map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_AA_FASCICOLO, new ColumnDescriptor(COL_AA_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_FASCICOLO,
+                new ColumnDescriptor(COL_CD_KEY_FASCICOLO, Types.VARCHAR, 100, true));
+        map.put(COL_DT_APE_FASCICOLO,
+                new ColumnDescriptor(COL_DT_APE_FASCICOLO, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_CHIU_FASCICOLO,
+                new ColumnDescriptor(COL_DT_CHIU_FASCICOLO, Types.TIMESTAMP, 7, true));
+        map.put(COL_TS_INI_SES, new ColumnDescriptor(COL_TS_INI_SES, Types.TIMESTAMP, 11, true));
+        map.put(COL_ID_TIPO_FASCICOLO,
+                new ColumnDescriptor(COL_ID_TIPO_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_NM_TIPO_FASCICOLO,
+                new ColumnDescriptor(COL_NM_TIPO_FASCICOLO, Types.VARCHAR, 100, true));
+        map.put(COL_NI_UNITA_DOC, new ColumnDescriptor(COL_NI_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NI_AA_CONSERVAZIONE,
+                new ColumnDescriptor(COL_NI_AA_CONSERVAZIONE, Types.DECIMAL, 22, true));
+        map.put(COL_CD_LIVELLO_RISERV,
+                new ColumnDescriptor(COL_CD_LIVELLO_RISERV, Types.VARCHAR, 100, true));
+        map.put(COL_FL_FORZA_CONTR_CLASSIF,
+                new ColumnDescriptor(COL_FL_FORZA_CONTR_CLASSIF, Types.VARCHAR, 1, true));
+        map.put(COL_FL_FORZA_CONTR_NUMERO,
+                new ColumnDescriptor(COL_FL_FORZA_CONTR_NUMERO, Types.VARCHAR, 1, true));
+        map.put(COL_FL_FORZA_CONTR_COLLEG,
+                new ColumnDescriptor(COL_FL_FORZA_CONTR_COLLEG, Types.VARCHAR, 1, true));
+        map.put(COL_TI_STATO_CONSERVAZIONE,
+                new ColumnDescriptor(COL_TI_STATO_CONSERVAZIONE, Types.VARCHAR, 30, true));
+        map.put(COL_TI_STATO_FASC_ELENCO_VERS,
+                new ColumnDescriptor(COL_TI_STATO_FASC_ELENCO_VERS, Types.VARCHAR, 50, true));
+        map.put(COL_DS_OGGETTO_FASCICOLO,
+                new ColumnDescriptor(COL_DS_OGGETTO_FASCICOLO, Types.VARCHAR, 4000, true));
+        map.put(COL_TI_CONSERVAZIONE,
+                new ColumnDescriptor(COL_TI_CONSERVAZIONE, Types.VARCHAR, 30, true));
+        map.put(COL_CD_PROC_AMMIN,
+                new ColumnDescriptor(COL_CD_PROC_AMMIN, Types.VARCHAR, 100, true));
+        map.put(COL_DS_PROC_AMMIN,
+                new ColumnDescriptor(COL_DS_PROC_AMMIN, Types.VARCHAR, 100, true));
+        map.put(COL_AA_FASCICOLO_PADRE,
+                new ColumnDescriptor(COL_AA_FASCICOLO_PADRE, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_FASCICOLO_PADRE,
+                new ColumnDescriptor(COL_CD_KEY_FASCICOLO_PADRE, Types.VARCHAR, 100, true));
+        map.put(COL_DS_OGGETTO_FASCICOLO_PADRE,
+                new ColumnDescriptor(COL_DS_OGGETTO_FASCICOLO_PADRE, Types.VARCHAR, 4000, true));
+        map.put(COL_ID_USER_IAM_VERS,
+                new ColumnDescriptor(COL_ID_USER_IAM_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_NM_USERID, new ColumnDescriptor(COL_NM_USERID, Types.VARCHAR, 100, true));
+        map.put(COL_ID_SISTEMA_VERSANTE,
+                new ColumnDescriptor(COL_ID_SISTEMA_VERSANTE, Types.DECIMAL, 22, true));
+        map.put(COL_NM_SISTEMA_VERSANTE,
+                new ColumnDescriptor(COL_NM_SISTEMA_VERSANTE, Types.VARCHAR, 100, true));
+        map.put(COL_ID_VOCE_TITOL,
+                new ColumnDescriptor(COL_ID_VOCE_TITOL, Types.DECIMAL, 22, true));
+        map.put(COL_CD_COMPOSITO_VOCE_TITOL,
+                new ColumnDescriptor(COL_CD_COMPOSITO_VOCE_TITOL, Types.VARCHAR, 100, true));
+        map.put(COL_TI_ESITO, new ColumnDescriptor(COL_TI_ESITO, Types.VARCHAR, 8, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

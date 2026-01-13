@@ -29,42 +29,42 @@ public class DocUdObj {
     private Date dtCreazione;
 
     public DocUdObj(BigDecimal id, TipoEntitaSacer tiEntitaSacer, BigDecimal aaKeyUnitadoc,
-	    Date dtCreazione) {
-	this.id = id;
-	this.tiEntitaSacer = tiEntitaSacer;
-	this.aaKeyUnitaDoc = aaKeyUnitadoc;
-	this.dtCreazione = dtCreazione;
+            Date dtCreazione) {
+        this.id = id;
+        this.tiEntitaSacer = tiEntitaSacer;
+        this.aaKeyUnitaDoc = aaKeyUnitadoc;
+        this.dtCreazione = dtCreazione;
     }
 
     public BigDecimal getId() {
-	return id;
+        return id;
     }
 
     public void setId(BigDecimal id) {
-	this.id = id;
+        this.id = id;
     }
 
     public TipoEntitaSacer getTiEntitaSacer() {
-	return tiEntitaSacer;
+        return tiEntitaSacer;
     }
 
     public void setTiEntitaSacer(TipoEntitaSacer tiEntitaSacer) {
-	this.tiEntitaSacer = tiEntitaSacer;
+        this.tiEntitaSacer = tiEntitaSacer;
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return aaKeyUnitaDoc;
+        return aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     public Date getDtCreazione() {
-	return dtCreazione;
+        return dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-	this.dtCreazione = dtCreazione;
+        this.dtCreazione = dtCreazione;
     }
 }

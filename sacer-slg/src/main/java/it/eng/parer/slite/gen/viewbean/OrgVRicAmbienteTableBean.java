@@ -37,19 +37,19 @@ public class OrgVRicAmbienteTableBean extends AbstractBaseTable<OrgVRicAmbienteR
     public static OrgVRicAmbienteTableDescriptor TABLE_DESCRIPTOR = new OrgVRicAmbienteTableDescriptor();
 
     public OrgVRicAmbienteTableBean() {
-	super();
+        super();
     }
 
     protected OrgVRicAmbienteRowBean createRow() {
-	return new OrgVRicAmbienteRowBean();
+        return new OrgVRicAmbienteRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<OrgVRicAmbienteRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

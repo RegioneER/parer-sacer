@@ -35,87 +35,87 @@ public class DecVChkFmtNumeroRowBean extends BaseRow implements JEEBaseRowInterf
     public static DecVChkFmtNumeroTableDescriptor TABLE_DESCRIPTOR = new DecVChkFmtNumeroTableDescriptor();
 
     public DecVChkFmtNumeroRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getIdRegistroUnitaDoc() {
-	return getBigDecimal("id_registro_unita_doc");
+        return getBigDecimal("id_registro_unita_doc");
     }
 
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-	setObject("id_registro_unita_doc", idRegistroUnitaDoc);
+        setObject("id_registro_unita_doc", idRegistroUnitaDoc);
     }
 
     public BigDecimal getIdAaRegistroUnitaDoc() {
-	return getBigDecimal("id_aa_registro_unita_doc");
+        return getBigDecimal("id_aa_registro_unita_doc");
     }
 
     public void setIdAaRegistroUnitaDoc(BigDecimal idAaRegistroUnitaDoc) {
-	setObject("id_aa_registro_unita_doc", idAaRegistroUnitaDoc);
+        setObject("id_aa_registro_unita_doc", idAaRegistroUnitaDoc);
     }
 
     public String getFlFmtNumeroOk() {
-	return getString("fl_fmt_numero_ok");
+        return getString("fl_fmt_numero_ok");
     }
 
     public void setFlFmtNumeroOk(String flFmtNumeroOk) {
-	setObject("fl_fmt_numero_ok", flFmtNumeroOk);
+        setObject("fl_fmt_numero_ok", flFmtNumeroOk);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecVChkFmtNumero entity = (DecVChkFmtNumero) obj;
-	this.setIdStrut(entity.getIdStrut());
-	this.setIdRegistroUnitaDoc(entity.getIdRegistroUnitaDoc());
-	this.setIdAaRegistroUnitaDoc(entity.getIdAaRegistroUnitaDoc());
-	this.setFlFmtNumeroOk(entity.getFlFmtNumeroOk());
+        DecVChkFmtNumero entity = (DecVChkFmtNumero) obj;
+        this.setIdStrut(entity.getIdStrut());
+        this.setIdRegistroUnitaDoc(entity.getIdRegistroUnitaDoc());
+        this.setIdAaRegistroUnitaDoc(entity.getIdAaRegistroUnitaDoc());
+        this.setFlFmtNumeroOk(entity.getFlFmtNumeroOk());
     }
 
     @Override
     public DecVChkFmtNumero rowBeanToEntity() {
-	DecVChkFmtNumero entity = new DecVChkFmtNumero();
-	entity.setIdStrut(this.getIdStrut());
-	entity.setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc());
-	entity.setIdAaRegistroUnitaDoc(this.getIdAaRegistroUnitaDoc());
-	entity.setFlFmtNumeroOk(this.getFlFmtNumeroOk());
-	return entity;
+        DecVChkFmtNumero entity = new DecVChkFmtNumero();
+        entity.setIdStrut(this.getIdStrut());
+        entity.setIdRegistroUnitaDoc(this.getIdRegistroUnitaDoc());
+        entity.setIdAaRegistroUnitaDoc(this.getIdAaRegistroUnitaDoc());
+        entity.setFlFmtNumeroOk(this.getFlFmtNumeroOk());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

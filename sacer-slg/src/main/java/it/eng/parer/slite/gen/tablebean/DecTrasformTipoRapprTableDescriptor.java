@@ -49,37 +49,37 @@ public class DecTrasformTipoRapprTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_TRASFORM_TIPO_RAPPR,
-		new ColumnDescriptor(COL_ID_TRASFORM_TIPO_RAPPR, Types.DECIMAL, 22, true));
-	map.put(COL_ID_TIPO_RAPPR_COMP,
-		new ColumnDescriptor(COL_ID_TIPO_RAPPR_COMP, Types.DECIMAL, 22, false));
-	map.put(COL_DS_HASH_FILE_TRASFORM,
-		new ColumnDescriptor(COL_DS_HASH_FILE_TRASFORM, Types.VARCHAR, 254, false));
-	map.put(COL_BL_FILE_TRASFORM,
-		new ColumnDescriptor(COL_BL_FILE_TRASFORM, Types.CLOB, 4000, false));
-	map.put(COL_TI_STATO_FILE_TRASFORM,
-		new ColumnDescriptor(COL_TI_STATO_FILE_TRASFORM, Types.VARCHAR, 20, false));
-	map.put(COL_NM_TRASFORM, new ColumnDescriptor(COL_NM_TRASFORM, Types.VARCHAR, 100, false));
-	map.put(COL_CD_VERSIONE_TRASFORM,
-		new ColumnDescriptor(COL_CD_VERSIONE_TRASFORM, Types.VARCHAR, 100, false));
-	map.put(COL_DT_INS_TRASFORM,
-		new ColumnDescriptor(COL_DT_INS_TRASFORM, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_LAST_MOD_TRASFORM,
-		new ColumnDescriptor(COL_DT_LAST_MOD_TRASFORM, Types.TIMESTAMP, 7, false));
-	map.put(COL_ID_COMP_DOC_TEST,
-		new ColumnDescriptor(COL_ID_COMP_DOC_TEST, Types.DECIMAL, 22, false));
+        map.put(COL_ID_TRASFORM_TIPO_RAPPR,
+                new ColumnDescriptor(COL_ID_TRASFORM_TIPO_RAPPR, Types.DECIMAL, 22, true));
+        map.put(COL_ID_TIPO_RAPPR_COMP,
+                new ColumnDescriptor(COL_ID_TIPO_RAPPR_COMP, Types.DECIMAL, 22, false));
+        map.put(COL_DS_HASH_FILE_TRASFORM,
+                new ColumnDescriptor(COL_DS_HASH_FILE_TRASFORM, Types.VARCHAR, 254, false));
+        map.put(COL_BL_FILE_TRASFORM,
+                new ColumnDescriptor(COL_BL_FILE_TRASFORM, Types.CLOB, 4000, false));
+        map.put(COL_TI_STATO_FILE_TRASFORM,
+                new ColumnDescriptor(COL_TI_STATO_FILE_TRASFORM, Types.VARCHAR, 20, false));
+        map.put(COL_NM_TRASFORM, new ColumnDescriptor(COL_NM_TRASFORM, Types.VARCHAR, 100, false));
+        map.put(COL_CD_VERSIONE_TRASFORM,
+                new ColumnDescriptor(COL_CD_VERSIONE_TRASFORM, Types.VARCHAR, 100, false));
+        map.put(COL_DT_INS_TRASFORM,
+                new ColumnDescriptor(COL_DT_INS_TRASFORM, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_LAST_MOD_TRASFORM,
+                new ColumnDescriptor(COL_DT_LAST_MOD_TRASFORM, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_COMP_DOC_TEST,
+                new ColumnDescriptor(COL_ID_COMP_DOC_TEST, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

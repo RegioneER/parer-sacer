@@ -33,19 +33,19 @@ public class ElvElencoVersFascTableBean extends AbstractBaseTable<ElvElencoVersF
     public static ElvElencoVersFascTableDescriptor TABLE_DESCRIPTOR = new ElvElencoVersFascTableDescriptor();
 
     public ElvElencoVersFascTableBean() {
-	super();
+        super();
     }
 
     protected ElvElencoVersFascRowBean createRow() {
-	return new ElvElencoVersFascRowBean();
+        return new ElvElencoVersFascRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<ElvElencoVersFascRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

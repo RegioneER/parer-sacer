@@ -35,112 +35,112 @@ public class DecTipoNotaSerieRowBean extends BaseRow implements JEEBaseRowInterf
     public static DecTipoNotaSerieTableDescriptor TABLE_DESCRIPTOR = new DecTipoNotaSerieTableDescriptor();
 
     public DecTipoNotaSerieRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdTipoNotaSerie() {
-	return getBigDecimal("id_tipo_nota_serie");
+        return getBigDecimal("id_tipo_nota_serie");
     }
 
     public void setIdTipoNotaSerie(BigDecimal idTipoNotaSerie) {
-	setObject("id_tipo_nota_serie", idTipoNotaSerie);
+        setObject("id_tipo_nota_serie", idTipoNotaSerie);
     }
 
     public String getCdTipoNotaSerie() {
-	return getString("cd_tipo_nota_serie");
+        return getString("cd_tipo_nota_serie");
     }
 
     public void setCdTipoNotaSerie(String cdTipoNotaSerie) {
-	setObject("cd_tipo_nota_serie", cdTipoNotaSerie);
+        setObject("cd_tipo_nota_serie", cdTipoNotaSerie);
     }
 
     public String getDsTipoNotaSerie() {
-	return getString("ds_tipo_nota_serie");
+        return getString("ds_tipo_nota_serie");
     }
 
     public void setDsTipoNotaSerie(String dsTipoNotaSerie) {
-	setObject("ds_tipo_nota_serie", dsTipoNotaSerie);
+        setObject("ds_tipo_nota_serie", dsTipoNotaSerie);
     }
 
     public String getFlObblig() {
-	return getString("fl_obblig");
+        return getString("fl_obblig");
     }
 
     public void setFlObblig(String flObblig) {
-	setObject("fl_obblig", flObblig);
+        setObject("fl_obblig", flObblig);
     }
 
     public String getFlMolt() {
-	return getString("fl_molt");
+        return getString("fl_molt");
     }
 
     public void setFlMolt(String flMolt) {
-	setObject("fl_molt", flMolt);
+        setObject("fl_molt", flMolt);
     }
 
     public BigDecimal getNiOrd() {
-	return getBigDecimal("ni_ord");
+        return getBigDecimal("ni_ord");
     }
 
     public void setNiOrd(BigDecimal niOrd) {
-	setObject("ni_ord", niOrd);
+        setObject("ni_ord", niOrd);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecTipoNotaSerie entity = (DecTipoNotaSerie) obj;
+        DecTipoNotaSerie entity = (DecTipoNotaSerie) obj;
 
-	this.setIdTipoNotaSerie(entity.getIdTipoNotaSerie() == null ? null
-		: BigDecimal.valueOf(entity.getIdTipoNotaSerie()));
-	this.setCdTipoNotaSerie(entity.getCdTipoNotaSerie());
-	this.setDsTipoNotaSerie(entity.getDsTipoNotaSerie());
-	this.setFlObblig(entity.getFlObblig());
-	this.setFlMolt(entity.getFlMolt());
-	this.setNiOrd(entity.getNiOrd());
+        this.setIdTipoNotaSerie(entity.getIdTipoNotaSerie() == null ? null
+                : BigDecimal.valueOf(entity.getIdTipoNotaSerie()));
+        this.setCdTipoNotaSerie(entity.getCdTipoNotaSerie());
+        this.setDsTipoNotaSerie(entity.getDsTipoNotaSerie());
+        this.setFlObblig(entity.getFlObblig());
+        this.setFlMolt(entity.getFlMolt());
+        this.setNiOrd(entity.getNiOrd());
     }
 
     @Override
     public DecTipoNotaSerie rowBeanToEntity() {
-	DecTipoNotaSerie entity = new DecTipoNotaSerie();
-	if (this.getIdTipoNotaSerie() != null) {
-	    entity.setIdTipoNotaSerie(this.getIdTipoNotaSerie().longValue());
-	}
-	entity.setCdTipoNotaSerie(this.getCdTipoNotaSerie());
-	entity.setDsTipoNotaSerie(this.getDsTipoNotaSerie());
-	entity.setFlObblig(this.getFlObblig());
-	entity.setFlMolt(this.getFlMolt());
-	entity.setNiOrd(this.getNiOrd());
-	return entity;
+        DecTipoNotaSerie entity = new DecTipoNotaSerie();
+        if (this.getIdTipoNotaSerie() != null) {
+            entity.setIdTipoNotaSerie(this.getIdTipoNotaSerie().longValue());
+        }
+        entity.setCdTipoNotaSerie(this.getCdTipoNotaSerie());
+        entity.setDsTipoNotaSerie(this.getDsTipoNotaSerie());
+        entity.setFlObblig(this.getFlObblig());
+        entity.setFlMolt(this.getFlMolt());
+        entity.setNiOrd(this.getNiOrd());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

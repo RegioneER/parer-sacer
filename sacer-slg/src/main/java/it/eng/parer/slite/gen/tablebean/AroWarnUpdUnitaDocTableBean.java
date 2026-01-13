@@ -33,19 +33,19 @@ public class AroWarnUpdUnitaDocTableBean extends AbstractBaseTable<AroWarnUpdUni
     public static AroWarnUpdUnitaDocTableDescriptor TABLE_DESCRIPTOR = new AroWarnUpdUnitaDocTableDescriptor();
 
     public AroWarnUpdUnitaDocTableBean() {
-	super();
+        super();
     }
 
     protected AroWarnUpdUnitaDocRowBean createRow() {
-	return new AroWarnUpdUnitaDocRowBean();
+        return new AroWarnUpdUnitaDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroWarnUpdUnitaDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

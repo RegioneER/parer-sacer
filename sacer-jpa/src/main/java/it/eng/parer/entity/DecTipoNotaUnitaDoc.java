@@ -49,90 +49,90 @@ public class DecTipoNotaUnitaDoc implements Serializable {
     private List<AroNotaUnitaDoc> aroNotaUnitaDocs = new ArrayList<>();
 
     public DecTipoNotaUnitaDoc() {
-	// hibernate
+        // hibernate
     }
 
     @Id
 
     @GenericGenerator(name = "DEC_TIPO_NOTA_UNITA_DOC_IDTIPONOTAUNITADOC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_NOTA_UNITA_DOC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_NOTA_UNITA_DOC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DEC_TIPO_NOTA_UNITA_DOC_IDTIPONOTAUNITADOC_GENERATOR")
     @Column(name = "ID_TIPO_NOTA_UNITA_DOC")
     public Long getIdTipoNotaUnitaDoc() {
-	return this.idTipoNotaUnitaDoc;
+        return this.idTipoNotaUnitaDoc;
     }
 
     public void setIdTipoNotaUnitaDoc(Long idTipoNotaUnitaDoc) {
-	this.idTipoNotaUnitaDoc = idTipoNotaUnitaDoc;
+        this.idTipoNotaUnitaDoc = idTipoNotaUnitaDoc;
     }
 
     @Column(name = "CD_TIPO_NOTA_UNITA_DOC")
     public String getCdTipoNotaUnitaDoc() {
-	return this.cdTipoNotaUnitaDoc;
+        return this.cdTipoNotaUnitaDoc;
     }
 
     public void setCdTipoNotaUnitaDoc(String cdTipoNotaUnitaDoc) {
-	this.cdTipoNotaUnitaDoc = cdTipoNotaUnitaDoc;
+        this.cdTipoNotaUnitaDoc = cdTipoNotaUnitaDoc;
     }
 
     @Column(name = "DS_TIPO_NOTA_UNITA_DOC")
     public String getDsTipoNotaUnitaDoc() {
-	return this.dsTipoNotaUnitaDoc;
+        return this.dsTipoNotaUnitaDoc;
     }
 
     public void setDsTipoNotaUnitaDoc(String dsTipoNotaUnitaDoc) {
-	this.dsTipoNotaUnitaDoc = dsTipoNotaUnitaDoc;
+        this.dsTipoNotaUnitaDoc = dsTipoNotaUnitaDoc;
     }
 
     @Column(name = "FL_MOLT", columnDefinition = "CHAR")
     public String getFlMolt() {
-	return this.flMolt;
+        return this.flMolt;
     }
 
     public void setFlMolt(String flMolt) {
-	this.flMolt = flMolt;
+        this.flMolt = flMolt;
     }
 
     @Column(name = "FL_OBBLIG", columnDefinition = "CHAR")
     public String getFlObblig() {
-	return this.flObblig;
+        return this.flObblig;
     }
 
     public void setFlObblig(String flObblig) {
-	this.flObblig = flObblig;
+        this.flObblig = flObblig;
     }
 
     @Column(name = "NI_ORD")
     public BigDecimal getNiOrd() {
-	return this.niOrd;
+        return this.niOrd;
     }
 
     public void setNiOrd(BigDecimal niOrd) {
-	this.niOrd = niOrd;
+        this.niOrd = niOrd;
     }
 
     @OneToMany(mappedBy = "decTipoNotaUnitaDoc")
     public List<AroNotaUnitaDoc> getAroNotaUnitaDocs() {
-	return this.aroNotaUnitaDocs;
+        return this.aroNotaUnitaDocs;
     }
 
     public void setAroNotaUnitaDocs(List<AroNotaUnitaDoc> aroNotaUnitaDocs) {
-	this.aroNotaUnitaDocs = aroNotaUnitaDocs;
+        this.aroNotaUnitaDocs = aroNotaUnitaDocs;
     }
 
     public AroNotaUnitaDoc addAroNotaUnitaDoc(AroNotaUnitaDoc aroNotaUnitaDoc) {
-	getAroNotaUnitaDocs().add(aroNotaUnitaDoc);
-	aroNotaUnitaDoc.setDecTipoNotaUnitaDoc(this);
+        getAroNotaUnitaDocs().add(aroNotaUnitaDoc);
+        aroNotaUnitaDoc.setDecTipoNotaUnitaDoc(this);
 
-	return aroNotaUnitaDoc;
+        return aroNotaUnitaDoc;
     }
 
     public AroNotaUnitaDoc removeAroNotaUnitaDoc(AroNotaUnitaDoc aroNotaUnitaDoc) {
-	getAroNotaUnitaDocs().remove(aroNotaUnitaDoc);
-	aroNotaUnitaDoc.setDecTipoNotaUnitaDoc(null);
+        getAroNotaUnitaDocs().remove(aroNotaUnitaDoc);
+        aroNotaUnitaDoc.setDecTipoNotaUnitaDoc(null);
 
-	return aroNotaUnitaDoc;
+        return aroNotaUnitaDoc;
     }
 
 }

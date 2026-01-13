@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class VrsVVersFallitiDaVerifTableBean
-	extends AbstractBaseTable<VrsVVersFallitiDaVerifRowBean> {
+        extends AbstractBaseTable<VrsVVersFallitiDaVerifRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class VrsVVersFallitiDaVerifTableBean
     public static VrsVVersFallitiDaVerifTableDescriptor TABLE_DESCRIPTOR = new VrsVVersFallitiDaVerifTableDescriptor();
 
     public VrsVVersFallitiDaVerifTableBean() {
-	super();
+        super();
     }
 
     protected VrsVVersFallitiDaVerifRowBean createRow() {
-	return new VrsVVersFallitiDaVerifRowBean();
+        return new VrsVVersFallitiDaVerifRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VrsVVersFallitiDaVerifRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

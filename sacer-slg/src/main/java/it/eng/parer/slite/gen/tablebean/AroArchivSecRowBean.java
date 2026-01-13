@@ -36,139 +36,139 @@ public class AroArchivSecRowBean extends BaseRow implements JEEBaseRowInterface 
     public static AroArchivSecTableDescriptor TABLE_DESCRIPTOR = new AroArchivSecTableDescriptor();
 
     public AroArchivSecRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdArchivSec() {
-	return getBigDecimal("id_archiv_sec");
+        return getBigDecimal("id_archiv_sec");
     }
 
     public void setIdArchivSec(BigDecimal idArchivSec) {
-	setObject("id_archiv_sec", idArchivSec);
+        setObject("id_archiv_sec", idArchivSec);
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public String getDsClassif() {
-	return getString("ds_classif");
+        return getString("ds_classif");
     }
 
     public void setDsClassif(String dsClassif) {
-	setObject("ds_classif", dsClassif);
+        setObject("ds_classif", dsClassif);
     }
 
     public String getCdFascic() {
-	return getString("cd_fascic");
+        return getString("cd_fascic");
     }
 
     public void setCdFascic(String cdFascic) {
-	setObject("cd_fascic", cdFascic);
+        setObject("cd_fascic", cdFascic);
     }
 
     public String getDsOggettoFascic() {
-	return getString("ds_oggetto_fascic");
+        return getString("ds_oggetto_fascic");
     }
 
     public void setDsOggettoFascic(String dsOggettoFascic) {
-	setObject("ds_oggetto_fascic", dsOggettoFascic);
+        setObject("ds_oggetto_fascic", dsOggettoFascic);
     }
 
     public String getCdSottofascic() {
-	return getString("cd_sottofascic");
+        return getString("cd_sottofascic");
     }
 
     public void setCdSottofascic(String cdSottofascic) {
-	setObject("cd_sottofascic", cdSottofascic);
+        setObject("cd_sottofascic", cdSottofascic);
     }
 
     public String getDsOggettoSottofascic() {
-	return getString("ds_oggetto_sottofascic");
+        return getString("ds_oggetto_sottofascic");
     }
 
     public void setDsOggettoSottofascic(String dsOggettoSottofascic) {
-	setObject("ds_oggetto_sottofascic", dsOggettoSottofascic);
+        setObject("ds_oggetto_sottofascic", dsOggettoSottofascic);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroArchivSec entity = (AroArchivSec) obj;
-	this.setIdArchivSec(entity.getIdArchivSec() == null ? null
-		: BigDecimal.valueOf(entity.getIdArchivSec()));
-	if (entity.getAroUnitaDoc() != null) {
-	    this.setIdUnitaDoc(new BigDecimal(entity.getAroUnitaDoc().getIdUnitaDoc()));
-	}
+        AroArchivSec entity = (AroArchivSec) obj;
+        this.setIdArchivSec(entity.getIdArchivSec() == null ? null
+                : BigDecimal.valueOf(entity.getIdArchivSec()));
+        if (entity.getAroUnitaDoc() != null) {
+            this.setIdUnitaDoc(new BigDecimal(entity.getAroUnitaDoc().getIdUnitaDoc()));
+        }
 
-	this.setDsClassif(entity.getDsClassif());
-	this.setCdFascic(entity.getCdFascic());
-	this.setDsOggettoFascic(entity.getDsOggettoFascic());
-	this.setCdSottofascic(entity.getCdSottofascic());
-	this.setDsOggettoSottofascic(entity.getDsOggettoSottofascic());
-	this.setIdStrut(entity.getIdStrut());
+        this.setDsClassif(entity.getDsClassif());
+        this.setCdFascic(entity.getCdFascic());
+        this.setDsOggettoFascic(entity.getDsOggettoFascic());
+        this.setCdSottofascic(entity.getCdSottofascic());
+        this.setDsOggettoSottofascic(entity.getDsOggettoSottofascic());
+        this.setIdStrut(entity.getIdStrut());
     }
 
     @Override
     public AroArchivSec rowBeanToEntity() {
-	AroArchivSec entity = new AroArchivSec();
-	if (this.getIdArchivSec() != null) {
-	    entity.setIdArchivSec(this.getIdArchivSec().longValue());
-	}
-	if (this.getIdUnitaDoc() != null) {
-	    if (entity.getAroUnitaDoc() == null) {
-		entity.setAroUnitaDoc(new AroUnitaDoc());
-	    }
-	    entity.getAroUnitaDoc().setIdUnitaDoc(this.getIdUnitaDoc().longValue());
-	}
-	entity.setDsClassif(this.getDsClassif());
-	entity.setCdFascic(this.getCdFascic());
-	entity.setDsOggettoFascic(this.getDsOggettoFascic());
-	entity.setCdSottofascic(this.getCdSottofascic());
-	entity.setDsOggettoSottofascic(this.getDsOggettoSottofascic());
-	entity.setIdStrut(this.getIdStrut());
-	return entity;
+        AroArchivSec entity = new AroArchivSec();
+        if (this.getIdArchivSec() != null) {
+            entity.setIdArchivSec(this.getIdArchivSec().longValue());
+        }
+        if (this.getIdUnitaDoc() != null) {
+            if (entity.getAroUnitaDoc() == null) {
+                entity.setAroUnitaDoc(new AroUnitaDoc());
+            }
+            entity.getAroUnitaDoc().setIdUnitaDoc(this.getIdUnitaDoc().longValue());
+        }
+        entity.setDsClassif(this.getDsClassif());
+        entity.setCdFascic(this.getCdFascic());
+        entity.setDsOggettoFascic(this.getDsOggettoFascic());
+        entity.setCdSottofascic(this.getCdSottofascic());
+        entity.setDsOggettoSottofascic(this.getDsOggettoSottofascic());
+        entity.setIdStrut(this.getIdStrut());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

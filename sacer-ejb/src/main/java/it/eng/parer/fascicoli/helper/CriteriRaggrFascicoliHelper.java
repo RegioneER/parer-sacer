@@ -36,98 +36,98 @@ import it.eng.parer.web.util.Transform;
 @Stateless
 @LocalBean
 @Interceptors({
-	TransactionInterceptor.class })
+        TransactionInterceptor.class })
 public class CriteriRaggrFascicoliHelper extends GenericHelper {
 
     private static final Logger log = LoggerFactory
-	    .getLogger(CriteriRaggrFascicoliHelper.class.getName());
+            .getLogger(CriteriRaggrFascicoliHelper.class.getName());
 
     @SuppressWarnings("unchecked")
     public List<DecCriterioRaggrFasc> retrieveDecCriterioRaggrFascList(BigDecimal idAmbiente,
-	    BigDecimal idEnte, BigDecimal idStrut, String nmCriterioRaggr) {
-	StringBuilder queryStr = new StringBuilder("SELECT u FROM DecCriterioRaggrFasc u ");
-	String whereWord = "WHERE ";
-	if (idAmbiente != null) {
-	    queryStr.append(whereWord)
-		    .append("u.orgStrut.orgEnte.orgAmbiente.idAmbiente = :idAmbiente ");
-	    whereWord = "AND ";
-	}
-	if (idEnte != null) {
-	    queryStr.append(whereWord).append("u.orgStrut.orgEnte.idEnte = :idEnte ");
-	    whereWord = "AND ";
-	}
-	if (idStrut != null) {
-	    queryStr.append(whereWord).append("u.orgStrut.idStrut = :idStrut ");
-	    whereWord = "AND ";
-	}
-	if (nmCriterioRaggr != null) {
-	    queryStr.append(whereWord).append("u.nmCriterioRaggr = :nmCriterioRaggr");
-	}
-	queryStr.append(" ORDER BY u.nmCriterioRaggr ");
+            BigDecimal idEnte, BigDecimal idStrut, String nmCriterioRaggr) {
+        StringBuilder queryStr = new StringBuilder("SELECT u FROM DecCriterioRaggrFasc u ");
+        String whereWord = "WHERE ";
+        if (idAmbiente != null) {
+            queryStr.append(whereWord)
+                    .append("u.orgStrut.orgEnte.orgAmbiente.idAmbiente = :idAmbiente ");
+            whereWord = "AND ";
+        }
+        if (idEnte != null) {
+            queryStr.append(whereWord).append("u.orgStrut.orgEnte.idEnte = :idEnte ");
+            whereWord = "AND ";
+        }
+        if (idStrut != null) {
+            queryStr.append(whereWord).append("u.orgStrut.idStrut = :idStrut ");
+            whereWord = "AND ";
+        }
+        if (nmCriterioRaggr != null) {
+            queryStr.append(whereWord).append("u.nmCriterioRaggr = :nmCriterioRaggr");
+        }
+        queryStr.append(" ORDER BY u.nmCriterioRaggr ");
 
-	Query query = getEntityManager().createQuery(queryStr.toString());
-	if (idAmbiente != null) {
-	    query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
-	}
-	if (idEnte != null) {
-	    query.setParameter("idEnte", longFromBigDecimal(idEnte));
-	}
-	if (idStrut != null) {
-	    query.setParameter("idStrut", longFromBigDecimal(idStrut));
-	}
-	if (nmCriterioRaggr != null) {
-	    query.setParameter("nmCriterioRaggr", nmCriterioRaggr);
-	}
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        if (idAmbiente != null) {
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
+        }
+        if (idEnte != null) {
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
+        }
+        if (idStrut != null) {
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        }
+        if (nmCriterioRaggr != null) {
+            query.setParameter("nmCriterioRaggr", nmCriterioRaggr);
+        }
 
-	// ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-	return query.getResultList();
+        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
+        return query.getResultList();
     }
 
     public List<DecCriterioRaggrFasc> retrieveDecCriterioRaggrFascList(BigDecimal idStruttura) {
-	return retrieveDecCriterioRaggrFascList(null, null, idStruttura, null);
+        return retrieveDecCriterioRaggrFascList(null, null, idStruttura, null);
     }
 
     public OrgStrutRowBean getOrgStrutById(BigDecimal idStrut) {
-	OrgStrutRowBean strutRB = new OrgStrutRowBean();
-	try {
-	    strutRB = (OrgStrutRowBean) Transform
-		    .entity2RowBean(getEntityManager().find(OrgStrut.class, idStrut.longValue()));
-	} catch (Exception e) {
-	    log.error(e.getMessage(), e);
-	}
-	return strutRB;
+        OrgStrutRowBean strutRB = new OrgStrutRowBean();
+        try {
+            strutRB = (OrgStrutRowBean) Transform
+                    .entity2RowBean(getEntityManager().find(OrgStrut.class, idStrut.longValue()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return strutRB;
     }
 
     public DecCriterioRaggrFasc getDecCriterioRaggrFascByStrutturaCorrenteAndCriterio(
-	    BigDecimal idStrutCorrente, String nmCriterioRaggr) {
-	StringBuilder queryStr = new StringBuilder("SELECT u FROM DecCriterioRaggrFasc u ");
-	String whereWord = "WHERE ";
+            BigDecimal idStrutCorrente, String nmCriterioRaggr) {
+        StringBuilder queryStr = new StringBuilder("SELECT u FROM DecCriterioRaggrFasc u ");
+        String whereWord = "WHERE ";
 
-	if (idStrutCorrente != null) {
-	    queryStr.append(whereWord).append("u.orgStrut.idStrut = :idStrutCorrente ");
-	    whereWord = "AND ";
-	}
+        if (idStrutCorrente != null) {
+            queryStr.append(whereWord).append("u.orgStrut.idStrut = :idStrutCorrente ");
+            whereWord = "AND ";
+        }
 
-	if (nmCriterioRaggr != null) {
-	    queryStr.append(whereWord).append("u.nmCriterioRaggr = :nmCriterioRaggr ");
-	}
+        if (nmCriterioRaggr != null) {
+            queryStr.append(whereWord).append("u.nmCriterioRaggr = :nmCriterioRaggr ");
+        }
 
-	Query query = getEntityManager().createQuery(queryStr.toString());
+        Query query = getEntityManager().createQuery(queryStr.toString());
 
-	if (idStrutCorrente != null) {
-	    query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
-	}
+        if (idStrutCorrente != null) {
+            query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
+        }
 
-	if (nmCriterioRaggr != null) {
-	    query.setParameter("nmCriterioRaggr", nmCriterioRaggr);
-	}
+        if (nmCriterioRaggr != null) {
+            query.setParameter("nmCriterioRaggr", nmCriterioRaggr);
+        }
 
-	List<DecCriterioRaggrFasc> list = query.getResultList();
+        List<DecCriterioRaggrFasc> list = query.getResultList();
 
-	if (list.isEmpty()) {
-	    return null;
-	}
-	return list.get(0);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
     }
 
 }

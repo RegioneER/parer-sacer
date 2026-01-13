@@ -37,19 +37,19 @@ public class ElvVListaCompElvTableBean extends AbstractBaseTable<ElvVListaCompEl
     public static ElvVListaCompElvTableDescriptor TABLE_DESCRIPTOR = new ElvVListaCompElvTableDescriptor();
 
     public ElvVListaCompElvTableBean() {
-	super();
+        super();
     }
 
     protected ElvVListaCompElvRowBean createRow() {
-	return new ElvVListaCompElvRowBean();
+        return new ElvVListaCompElvRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<ElvVListaCompElvRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

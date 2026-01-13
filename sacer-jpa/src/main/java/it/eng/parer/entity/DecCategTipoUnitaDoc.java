@@ -62,63 +62,63 @@ public class DecCategTipoUnitaDoc implements Serializable {
 
     @Column(name = "ID_CATEG_TIPO_UNITA_DOC")
     @GenericGenerator(name = "SDEC_CATEG_TIPO_UNITA_DOC_ID_CATEG_TIPO_UNITA_DOC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_CATEG_TIPO_UNITA_DOC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_CATEG_TIPO_UNITA_DOC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_CATEG_TIPO_UNITA_DOC_ID_CATEG_TIPO_UNITA_DOC_GENERATOR")
     public Long getIdCategTipoUnitaDoc() {
-	return this.idCategTipoUnitaDoc;
+        return this.idCategTipoUnitaDoc;
     }
 
     public void setIdCategTipoUnitaDoc(Long idCategTipoUnitaDoc) {
-	this.idCategTipoUnitaDoc = idCategTipoUnitaDoc;
+        this.idCategTipoUnitaDoc = idCategTipoUnitaDoc;
     }
 
     @Column(name = "CD_CATEG_TIPO_UNITA_DOC")
     public String getCdCategTipoUnitaDoc() {
-	return this.cdCategTipoUnitaDoc;
+        return this.cdCategTipoUnitaDoc;
     }
 
     public void setCdCategTipoUnitaDoc(String cdCategTipoUnitaDoc) {
-	this.cdCategTipoUnitaDoc = cdCategTipoUnitaDoc;
+        this.cdCategTipoUnitaDoc = cdCategTipoUnitaDoc;
     }
 
     @Column(name = "DS_CATEG_TIPO_UNITA_DOC")
     public String getDsCategTipoUnitaDoc() {
-	return this.dsCategTipoUnitaDoc;
+        return this.dsCategTipoUnitaDoc;
     }
 
     public void setDsCategTipoUnitaDoc(String dsCategTipoUnitaDoc) {
-	this.dsCategTipoUnitaDoc = dsCategTipoUnitaDoc;
+        this.dsCategTipoUnitaDoc = dsCategTipoUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_CATEG_TIPO_UNITA_DOC_PADRE")
     @XmlTransient
     public DecCategTipoUnitaDoc getDecCategTipoUnitaDoc() {
-	return this.decCategTipoUnitaDoc;
+        return this.decCategTipoUnitaDoc;
     }
 
     public void setDecCategTipoUnitaDoc(DecCategTipoUnitaDoc decCategTipoUnitaDoc) {
-	this.decCategTipoUnitaDoc = decCategTipoUnitaDoc;
+        this.decCategTipoUnitaDoc = decCategTipoUnitaDoc;
     }
 
     @OneToMany(mappedBy = "decCategTipoUnitaDoc")
     public List<DecCategTipoUnitaDoc> getDecCategTipoUnitaDocs() {
-	return this.decCategTipoUnitaDocs;
+        return this.decCategTipoUnitaDocs;
     }
 
     public void setDecCategTipoUnitaDocs(List<DecCategTipoUnitaDoc> decCategTipoUnitaDocs) {
-	this.decCategTipoUnitaDocs = decCategTipoUnitaDocs;
+        this.decCategTipoUnitaDocs = decCategTipoUnitaDocs;
     }
 
     @OneToMany(mappedBy = "decCategTipoUnitaDoc")
     @XmlInverseReference(mappedBy = "decCategTipoUnitaDoc")
     public // @XmlTransient
     List<DecTipoUnitaDoc> getDecTipoUnitaDocs() {
-	return this.decTipoUnitaDocs;
+        return this.decTipoUnitaDocs;
     }
 
     public void setDecTipoUnitaDocs(List<DecTipoUnitaDoc> decTipoUnitaDocs) {
-	this.decTipoUnitaDocs = decTipoUnitaDocs;
+        this.decTipoUnitaDocs = decTipoUnitaDocs;
     }
 }

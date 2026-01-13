@@ -64,74 +64,74 @@ public class VolAppartCompVolume implements Serializable {
 
     @Column(name = "ID_APPART_COMP_VOLUME")
     @GenericGenerator(name = "SVOL_APPART_COMP_VOLUME_ID_APPART_COMP_VOLUME_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_APPART_COMP_VOLUME"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_APPART_COMP_VOLUME"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SVOL_APPART_COMP_VOLUME_ID_APPART_COMP_VOLUME_GENERATOR")
     public Long getIdAppartCompVolume() {
-	return this.idAppartCompVolume;
+        return this.idAppartCompVolume;
     }
 
     public void setIdAppartCompVolume(Long idAppartCompVolume) {
-	this.idAppartCompVolume = idAppartCompVolume;
+        this.idAppartCompVolume = idAppartCompVolume;
     }
 
     @Column(name = "DS_ESITO_VERIF_FIRME_CHIUS")
     public String getDsEsitoVerifFirmeChius() {
-	return this.dsEsitoVerifFirmeChius;
+        return this.dsEsitoVerifFirmeChius;
     }
 
     public void setDsEsitoVerifFirmeChius(String dsEsitoVerifFirmeChius) {
-	this.dsEsitoVerifFirmeChius = dsEsitoVerifFirmeChius;
+        this.dsEsitoVerifFirmeChius = dsEsitoVerifFirmeChius;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "TI_ESITO_VERIF_FIRME_CHIUS")
     public String getTiEsitoVerifFirmeChius() {
-	return this.tiEsitoVerifFirmeChius;
+        return this.tiEsitoVerifFirmeChius;
     }
 
     public void setTiEsitoVerifFirmeChius(String tiEsitoVerifFirmeChius) {
-	this.tiEsitoVerifFirmeChius = tiEsitoVerifFirmeChius;
+        this.tiEsitoVerifFirmeChius = tiEsitoVerifFirmeChius;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {
-	    CascadeType.DETACH })
+            CascadeType.DETACH })
     @JoinColumn(name = "ID_COMP_DOC")
     public AroCompDoc getAroCompDoc() {
-	return this.aroCompDoc;
+        return this.aroCompDoc;
     }
 
     public void setAroCompDoc(AroCompDoc aroCompDoc) {
-	this.aroCompDoc = aroCompDoc;
+        this.aroCompDoc = aroCompDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {
-	    CascadeType.DETACH })
+            CascadeType.DETACH })
     @JoinColumn(name = "ID_APPART_DOC_VOLUME")
     public VolAppartDocVolume getVolAppartDocVolume() {
-	return this.volAppartDocVolume;
+        return this.volAppartDocVolume;
     }
 
     public void setVolAppartDocVolume(VolAppartDocVolume volAppartDocVolume) {
-	this.volAppartDocVolume = volAppartDocVolume;
+        this.volAppartDocVolume = volAppartDocVolume;
     }
 
     @OneToMany(mappedBy = "volAppartCompVolume", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     public List<VolAppartFirmaVolume> getVolAppartFirmaVolumes() {
-	return this.volAppartFirmaVolumes;
+        return this.volAppartFirmaVolumes;
     }
 
     public void setVolAppartFirmaVolumes(List<VolAppartFirmaVolume> volAppartFirmaVolumes) {
-	this.volAppartFirmaVolumes = volAppartFirmaVolumes;
+        this.volAppartFirmaVolumes = volAppartFirmaVolumes;
     }
 
 }

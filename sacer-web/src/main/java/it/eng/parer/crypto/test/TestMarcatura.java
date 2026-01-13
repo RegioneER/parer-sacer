@@ -51,7 +51,7 @@ import java.io.InputStream;
  * @author Quaranta_M
  */
 @WebServlet(urlPatterns = {
-	"/TestMarcatura" }, asyncSupported = true)
+        "/TestMarcatura" }, asyncSupported = true)
 public class TestMarcatura extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -72,127 +72,127 @@ public class TestMarcatura extends HttpServlet {
      * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-	    throws ServletException, IOException {
-	response.setContentType("text/html;charset=UTF-8");
-	// PrintWriter out = response.getWriter();
-	File contDaMarcare = null;
-	File contTika = null;
-	Boolean tsd = false;
-	try {
-	    if (ServletFileUpload.isMultipartContent(request)) {
-		// Create a factory for disk-based file items
-		DiskFileItemFactory factory = new DiskFileItemFactory();
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        // PrintWriter out = response.getWriter();
+        File contDaMarcare = null;
+        File contTika = null;
+        Boolean tsd = false;
+        try {
+            if (ServletFileUpload.isMultipartContent(request)) {
+                // Create a factory for disk-based file items
+                DiskFileItemFactory factory = new DiskFileItemFactory();
 
-		// Set factory constraints
-		factory.setSizeThreshold(4096);
-		String basePath = System.getProperty("java.io.tmpdir");
-		factory.setRepository(new File(basePath));
+                // Set factory constraints
+                factory.setSizeThreshold(4096);
+                String basePath = System.getProperty("java.io.tmpdir");
+                factory.setRepository(new File(basePath));
 
-		// Create a new file upload handler
-		ServletFileUpload upload = new ServletFileUpload(factory);
+                // Create a new file upload handler
+                ServletFileUpload upload = new ServletFileUpload(factory);
 
-		// Set overall request size constraint
-		// MEV#33156 - Aumento della capacità di upload di lab
-		upload.setSizeMax(1024 * 1024 * MAX_DIM_FILE_UPLOAD);
-		try {
-		    // Parse the request
-		    List<FileItem> items = upload.parseRequest(request);
-		    Iterator iter = items.iterator();
-		    while (iter.hasNext()) {
-			FileItem item = (FileItem) iter.next();
-			if (item.getFieldName().equals("contDaMarcare")
-				&& !"".equals(item.getName())) {
-			    contDaMarcare = new File(
-				    basePath + "/" + FilenameUtils.getName(item.getName()));
-			    item.write(contDaMarcare);
-			    request.setAttribute("contDaMarcare", item.getName());
-			} else if (item.getFieldName().equals("contFormato")
-				&& !"".equals(item.getName())) {
-			    contTika = new File(
-				    basePath + "/" + FilenameUtils.getName(item.getName()));
-			    item.write(contTika);
-			    request.setAttribute("contFormato", item.getName());
-			} else if (item.getFieldName().equals("startMarcaturaTSD")
-				&& !"".equals(item.getName())) {
-			    tsd = true;
-			}
+                // Set overall request size constraint
+                // MEV#33156 - Aumento della capacità di upload di lab
+                upload.setSizeMax(1024 * 1024 * MAX_DIM_FILE_UPLOAD);
+                try {
+                    // Parse the request
+                    List<FileItem> items = upload.parseRequest(request);
+                    Iterator iter = items.iterator();
+                    while (iter.hasNext()) {
+                        FileItem item = (FileItem) iter.next();
+                        if (item.getFieldName().equals("contDaMarcare")
+                                && !"".equals(item.getName())) {
+                            contDaMarcare = new File(
+                                    basePath + "/" + FilenameUtils.getName(item.getName()));
+                            item.write(contDaMarcare);
+                            request.setAttribute("contDaMarcare", item.getName());
+                        } else if (item.getFieldName().equals("contFormato")
+                                && !"".equals(item.getName())) {
+                            contTika = new File(
+                                    basePath + "/" + FilenameUtils.getName(item.getName()));
+                            item.write(contTika);
+                            request.setAttribute("contFormato", item.getName());
+                        } else if (item.getFieldName().equals("startMarcaturaTSD")
+                                && !"".equals(item.getName())) {
+                            tsd = true;
+                        }
 
-		    }
-		} catch (Exception ex) {
-		    log.error("Errore nell'upload :", ex);
-		}
+                    }
+                } catch (Exception ex) {
+                    log.error("Errore nell'upload :", ex);
+                }
 
-	    }
+            }
 
-	    if (contDaMarcare != null) {
-		// Elaborazione Time Stamping
-		byte[] fileContent = FileUtils.readFileToByteArray(contDaMarcare);
-		byte[] encodedTs = null; // Definisco fuori perche serve dopo il try with resources
+            if (contDaMarcare != null) {
+                // Elaborazione Time Stamping
+                byte[] fileContent = FileUtils.readFileToByteArray(contDaMarcare);
+                byte[] encodedTs = null; // Definisco fuori perche serve dopo il try with resources
 
-		if (tsd) {
-		    try {
-			ParerTSD tsdData = cryInv.generateTSD(fileContent);
-			request.setAttribute("tstTime",
-				tsdData.getTimeStampTokens()[0].getTimeStampInfo().getGenTime());
-			encodedTs = tsdData.getEncoded();
-		    } catch (Exception ex) {
-			log.error("Errore nell'acquisizione della marca temporale TSD", ex);
-			throw new ServletException(
-				"Errore nell'acquisizione della marca temporale TSD", ex); // Rilancio
-											   // eccezione
-		    }
-		} else {
-		    try {
-			ParerTST tst = cryInv.requestTST(fileContent);
-			request.setAttribute("tstTime", tst.getTimeStampInfo().getGenTime());
-			encodedTs = tst.getEncoded();
-		    } catch (Exception ex) {
-			log.error("Errore nell'acquisizione della marca temporale TST", ex);
-			throw new ServletException(
-				"Errore nell'acquisizione della marca temporale TST", ex); // Rilancio
-											   // eccezione
-		    }
-		}
+                if (tsd) {
+                    try {
+                        ParerTSD tsdData = cryInv.generateTSD(fileContent);
+                        request.setAttribute("tstTime",
+                                tsdData.getTimeStampTokens()[0].getTimeStampInfo().getGenTime());
+                        encodedTs = tsdData.getEncoded();
+                    } catch (Exception ex) {
+                        log.error("Errore nell'acquisizione della marca temporale TSD", ex);
+                        throw new ServletException(
+                                "Errore nell'acquisizione della marca temporale TSD", ex); // Rilancio
+                        // eccezione
+                    }
+                } else {
+                    try {
+                        ParerTST tst = cryInv.requestTST(fileContent);
+                        request.setAttribute("tstTime", tst.getTimeStampInfo().getGenTime());
+                        encodedTs = tst.getEncoded();
+                    } catch (Exception ex) {
+                        log.error("Errore nell'acquisizione della marca temporale TST", ex);
+                        throw new ServletException(
+                                "Errore nell'acquisizione della marca temporale TST", ex); // Rilancio
+                        // eccezione
+                    }
+                }
 
-		String filename = FilenameUtils.getName(contDaMarcare.getName())
-			+ (tsd ? ".tsd" : ".tsr");
+                String filename = FilenameUtils.getName(contDaMarcare.getName())
+                        + (tsd ? ".tsd" : ".tsr");
 
-		response.setContentType("application/octet-stream");
-		response.setHeader("Content-Disposition", "attachment;filename=" + filename);
+                response.setContentType("application/octet-stream");
+                response.setHeader("Content-Disposition", "attachment;filename=" + filename);
 
-		try (InputStream is = new ByteArrayInputStream(encodedTs); // Try with resources per
-									   // InputStream
-			OutputStream os = response.getOutputStream()) { // Try with resources per
-									// OutputStream
-		    byte[] bytes = new byte[1024];
-		    int read;
-		    while ((read = is.read(bytes)) != -1) {
-			os.write(bytes, 0, read);
-		    }
-		    os.flush();
-		} // Chiusura automatica stream
+                try (InputStream is = new ByteArrayInputStream(encodedTs); // Try with resources per
+                        // InputStream
+                        OutputStream os = response.getOutputStream()) { // Try with resources per
+                    // OutputStream
+                    byte[] bytes = new byte[1024];
+                    int read;
+                    while ((read = is.read(bytes)) != -1) {
+                        os.write(bytes, 0, read);
+                    }
+                    os.flush();
+                } // Chiusura automatica stream
 
-	    } else if (contTika != null) {
-		String detectMimeType = ejbFormati
-			.detectMimeType(Files.readAllBytes(contTika.toPath()));
-		request.setAttribute("mimeType", detectMimeType);
-		request.getRequestDispatcher("JobMarche.jsp").forward(request, response);
-	    } else {
-		request.getRequestDispatcher("JobMarche.jsp").forward(request, response);
-	    }
+            } else if (contTika != null) {
+                String detectMimeType = ejbFormati
+                        .detectMimeType(Files.readAllBytes(contTika.toPath()));
+                request.setAttribute("mimeType", detectMimeType);
+                request.getRequestDispatcher("JobMarche.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("JobMarche.jsp").forward(request, response);
+            }
 
-	} catch (ServletException ex) { // Catturo eccezione lanciata nei vari try
-	    log.error("Si è verificato un errore durante l'elaborazione della richiesta", ex);
-	    throw ex;
-	} finally {
-	    // Cleanup dei file temporanei
-	    if (contDaMarcare != null) {
-		FileUtils.deleteQuietly(contDaMarcare);
-	    }
-	    if (contTika != null) {
-		FileUtils.deleteQuietly(contTika);
-	    }
-	}
+        } catch (ServletException ex) { // Catturo eccezione lanciata nei vari try
+            log.error("Si è verificato un errore durante l'elaborazione della richiesta", ex);
+            throw ex;
+        } finally {
+            // Cleanup dei file temporanei
+            if (contDaMarcare != null) {
+                FileUtils.deleteQuietly(contDaMarcare);
+            }
+            if (contTika != null) {
+                FileUtils.deleteQuietly(contTika);
+            }
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="STD">
@@ -207,8 +207,8 @@ public class TestMarcatura extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-	    throws ServletException, IOException {
-	processRequest(request, response);
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**
@@ -222,8 +222,8 @@ public class TestMarcatura extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-	    throws ServletException, IOException {
-	processRequest(request, response);
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**
@@ -233,6 +233,6 @@ public class TestMarcatura extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-	return "Short description";
+        return "Short description";
     }// </editor-fold>
 }

@@ -33,19 +33,19 @@ public class AroUsoXsdDatiSpecTableBean extends AbstractBaseTable<AroUsoXsdDatiS
     public static AroUsoXsdDatiSpecTableDescriptor TABLE_DESCRIPTOR = new AroUsoXsdDatiSpecTableDescriptor();
 
     public AroUsoXsdDatiSpecTableBean() {
-	super();
+        super();
     }
 
     protected AroUsoXsdDatiSpecRowBean createRow() {
-	return new AroUsoXsdDatiSpecRowBean();
+        return new AroUsoXsdDatiSpecRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroUsoXsdDatiSpecRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

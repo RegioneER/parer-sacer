@@ -26,6 +26,6 @@ public final class FasAipFascicoloDaElab {
      * Tipo di creazione
      */
     public enum TiCreazione {
-	ANTICIPATO, ARCHIVIO
+        ANTICIPATO, ARCHIVIO
     }
 }

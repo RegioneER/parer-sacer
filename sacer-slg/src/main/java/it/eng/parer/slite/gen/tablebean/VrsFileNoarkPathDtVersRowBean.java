@@ -36,101 +36,101 @@ public class VrsFileNoarkPathDtVersRowBean extends BaseRow implements JEEBaseRow
     public static VrsFileNoarkPathDtVersTableDescriptor TABLE_DESCRIPTOR = new VrsFileNoarkPathDtVersTableDescriptor();
 
     public VrsFileNoarkPathDtVersRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdFileNoArkPathDtVers() {
-	return getBigDecimal("id_file_no_ark_path_dt_vers");
+        return getBigDecimal("id_file_no_ark_path_dt_vers");
     }
 
     public void setIdFileNoArkPathDtVers(BigDecimal idFileNoArkPathDtVers) {
-	setObject("id_file_no_ark_path_dt_vers", idFileNoArkPathDtVers);
+        setObject("id_file_no_ark_path_dt_vers", idFileNoArkPathDtVers);
     }
 
     public BigDecimal getIdPathDtVers() {
-	return getBigDecimal("id_path_dt_vers");
+        return getBigDecimal("id_path_dt_vers");
     }
 
     public void setIdPathDtVers(BigDecimal idPathDtVers) {
-	setObject("id_path_dt_vers", idPathDtVers);
+        setObject("id_path_dt_vers", idPathDtVers);
     }
 
     public String getTiArkFileNoark() {
-	return getString("ti_ark_file_noark");
+        return getString("ti_ark_file_noark");
     }
 
     public void setTiArkFileNoark(String tiArkFileNoark) {
-	setObject("ti_ark_file_noark", tiArkFileNoark);
+        setObject("ti_ark_file_noark", tiArkFileNoark);
     }
 
     public String getDsFileNoark() {
-	return getString("ds_file_noark");
+        return getString("ds_file_noark");
     }
 
     public void setDsFileNoark(String dsFileNoark) {
-	setObject("ds_file_noark", dsFileNoark);
+        setObject("ds_file_noark", dsFileNoark);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	VrsFileNoarkPathDtVers entity = (VrsFileNoarkPathDtVers) obj;
+        VrsFileNoarkPathDtVers entity = (VrsFileNoarkPathDtVers) obj;
 
-	this.setIdFileNoArkPathDtVers(entity.getIdFileNoArkPathDtVers() == null ? null
-		: BigDecimal.valueOf(entity.getIdFileNoArkPathDtVers()));
+        this.setIdFileNoArkPathDtVers(entity.getIdFileNoArkPathDtVers() == null ? null
+                : BigDecimal.valueOf(entity.getIdFileNoArkPathDtVers()));
 
-	if (entity.getVrsPathDtVers() != null) {
-	    this.setIdPathDtVers(new BigDecimal(entity.getVrsPathDtVers().getIdPathDtVers()));
-	}
+        if (entity.getVrsPathDtVers() != null) {
+            this.setIdPathDtVers(new BigDecimal(entity.getVrsPathDtVers().getIdPathDtVers()));
+        }
 
-	this.setTiArkFileNoark(entity.getTiArkFileNoark());
-	this.setDsFileNoark(entity.getDsFileNoark());
+        this.setTiArkFileNoark(entity.getTiArkFileNoark());
+        this.setDsFileNoark(entity.getDsFileNoark());
     }
 
     @Override
     public VrsFileNoarkPathDtVers rowBeanToEntity() {
-	VrsFileNoarkPathDtVers entity = new VrsFileNoarkPathDtVers();
-	if (this.getIdFileNoArkPathDtVers() != null) {
-	    entity.setIdFileNoArkPathDtVers(this.getIdFileNoArkPathDtVers().longValue());
-	}
-	if (this.getIdPathDtVers() != null) {
-	    if (entity.getVrsPathDtVers() == null) {
-		entity.setVrsPathDtVers(new VrsPathDtVers());
-	    }
-	    entity.getVrsPathDtVers().setIdPathDtVers(this.getIdPathDtVers().longValue());
-	}
-	entity.setTiArkFileNoark(this.getTiArkFileNoark());
-	entity.setDsFileNoark(this.getDsFileNoark());
-	return entity;
+        VrsFileNoarkPathDtVers entity = new VrsFileNoarkPathDtVers();
+        if (this.getIdFileNoArkPathDtVers() != null) {
+            entity.setIdFileNoArkPathDtVers(this.getIdFileNoArkPathDtVers().longValue());
+        }
+        if (this.getIdPathDtVers() != null) {
+            if (entity.getVrsPathDtVers() == null) {
+                entity.setVrsPathDtVers(new VrsPathDtVers());
+            }
+            entity.getVrsPathDtVers().setIdPathDtVers(this.getIdPathDtVers().longValue());
+        }
+        entity.setTiArkFileNoark(this.getTiArkFileNoark());
+        entity.setDsFileNoark(this.getDsFileNoark());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

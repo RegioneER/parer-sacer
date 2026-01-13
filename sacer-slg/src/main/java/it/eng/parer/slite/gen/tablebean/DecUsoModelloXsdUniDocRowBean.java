@@ -38,232 +38,232 @@ public class DecUsoModelloXsdUniDocRowBean extends BaseRow implements JEEBaseRow
     public static DecUsoModelloXsdUniDocTableDescriptor TABLE_DESCRIPTOR = new DecUsoModelloXsdUniDocTableDescriptor();
 
     public DecUsoModelloXsdUniDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdUsoModelloXsdUniDoc() {
-	return getBigDecimal("id_uso_modello_xsd_uni_doc");
+        return getBigDecimal("id_uso_modello_xsd_uni_doc");
     }
 
     public void setIdUsoModelloXsdUniDoc(BigDecimal id_uso_modello_xsd_uni_doc) {
-	setObject("id_uso_modello_xsd_uni_doc", id_uso_modello_xsd_uni_doc);
+        setObject("id_uso_modello_xsd_uni_doc", id_uso_modello_xsd_uni_doc);
     }
 
     public BigDecimal getIdTipoUnitaDoc() {
-	return getBigDecimal("id_tipo_uni_doc");
+        return getBigDecimal("id_tipo_uni_doc");
     }
 
     public void setIdTipoUnitaDoc(BigDecimal id_tipo_uni_doc) {
-	setObject("id_tipo_uni_doc", id_tipo_uni_doc);
+        setObject("id_tipo_uni_doc", id_tipo_uni_doc);
     }
 
     public BigDecimal getIdModelloXsdUd() {
-	return getBigDecimal("id_modello_xsd_ud");
+        return getBigDecimal("id_modello_xsd_ud");
     }
 
     public void setIdModelloXsdUd(BigDecimal id_modello_xsd_ud) {
-	setObject("id_modello_xsd_ud", id_modello_xsd_ud);
+        setObject("id_modello_xsd_ud", id_modello_xsd_ud);
     }
 
     public String getFlStandard() {
-	return getString("fl_standard");
+        return getString("fl_standard");
     }
 
     public void setFlStandard(String fl_standard) {
-	setObject("fl_standard", fl_standard);
+        setObject("fl_standard", fl_standard);
     }
 
     public Timestamp getDtUsoIstituz() {
-	return getTimestamp("dt_uso_istituz");
+        return getTimestamp("dt_uso_istituz");
     }
 
     public void setDtUsoIstituz(Timestamp dt_uso_istituz) {
-	setObject("dt_uso_istituz", dt_uso_istituz);
+        setObject("dt_uso_istituz", dt_uso_istituz);
     }
 
     public Timestamp getDtUsoSoppres() {
-	return getTimestamp("dt_uso_soppres");
+        return getTimestamp("dt_uso_soppres");
     }
 
     public void setDtUsoSoppres(Timestamp dt_uso_soppres) {
-	setObject("dt_uso_soppres", dt_uso_soppres);
+        setObject("dt_uso_soppres", dt_uso_soppres);
     }
 
     // modello
 
     public BigDecimal getIdAmbiente() {
-	return getBigDecimal("id_ambiente");
+        return getBigDecimal("id_ambiente");
     }
 
     public void setIdAmbiente(BigDecimal id_ambiente) {
-	setObject("id_ambiente", id_ambiente);
+        setObject("id_ambiente", id_ambiente);
     }
 
     public String getTiModelloXsd() {
-	return getString("ti_modello_xsd");
+        return getString("ti_modello_xsd");
     }
 
     public void setTiModelloXsd(String ti_modello_xsd) {
-	setObject("ti_modello_xsd", ti_modello_xsd);
+        setObject("ti_modello_xsd", ti_modello_xsd);
     }
 
     public String getTiUsoModelloXsd() {
-	return getString("ti_uso_modello_xsd");
+        return getString("ti_uso_modello_xsd");
     }
 
     public void setTiUsoModelloXsd(String ti_uso_modello_xsd) {
-	setObject("ti_uso_modello_xsd", ti_uso_modello_xsd);
+        setObject("ti_uso_modello_xsd", ti_uso_modello_xsd);
     }
 
     public String getCdXsd() {
-	return getString("cd_xsd");
+        return getString("cd_xsd");
     }
 
     public void setCdXsd(String cd_xsd) {
-	setObject("cd_xsd", cd_xsd);
+        setObject("cd_xsd", cd_xsd);
     }
 
     public String getDsXsd() {
-	return getString("ds_xsd");
+        return getString("ds_xsd");
     }
 
     public void setDsXsd(String ds_xsd) {
-	setObject("ds_xsd", ds_xsd);
+        setObject("ds_xsd", ds_xsd);
     }
 
     public String getBlXsd() {
-	return getString("bl_xsd");
+        return getString("bl_xsd");
     }
 
     public void setBlXsd(String bl_xsd) {
-	setObject("bl_xsd", bl_xsd);
+        setObject("bl_xsd", bl_xsd);
     }
 
     public Timestamp getDtIstituz() {
-	return getTimestamp("dt_istituz");
+        return getTimestamp("dt_istituz");
     }
 
     public void setDtIstituz(Timestamp dt_istituz) {
-	setObject("dt_istituz", dt_istituz);
+        setObject("dt_istituz", dt_istituz);
     }
 
     public Timestamp getDtSoppres() {
-	return getTimestamp("dt_soppres");
+        return getTimestamp("dt_soppres");
     }
 
     public void setDtSoppres(Timestamp dt_soppres) {
-	setObject("dt_soppres", dt_soppres);
+        setObject("dt_soppres", dt_soppres);
     }
 
     public BigDecimal getIdSistemaMigraz() {
-	return getBigDecimal("id_sistema_migraz");
+        return getBigDecimal("id_sistema_migraz");
     }
 
     public void setIdSistemaMigraz(BigDecimal id_sistema_migraz) {
-	setObject("id_sistema_migraz", id_sistema_migraz);
+        setObject("id_sistema_migraz", id_sistema_migraz);
     }
 
     public String getFlDefault() {
-	return getString("fl_default");
+        return getString("fl_default");
     }
 
     public void setFlDefault(String fl_default) {
-	setObject("fl_default", fl_default);
+        setObject("fl_default", fl_default);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecUsoModelloXsdUniDoc entity = (DecUsoModelloXsdUniDoc) obj;
-	this.setIdUsoModelloXsdUniDoc(new BigDecimal(entity.getIdUsoModelloXsdUniDoc()));
-	if (entity.getDecTipoUnitaDoc() != null) {
-	    this.setIdTipoUnitaDoc(new BigDecimal(entity.getDecTipoUnitaDoc().getIdTipoUnitaDoc()));
-	}
-	if (entity.getDecModelloXsdUd() != null) {
-	    this.setIdModelloXsdUd(new BigDecimal(entity.getDecModelloXsdUd().getIdModelloXsdUd()));
-	}
-	this.setFlStandard(entity.getFlStandard());
-	if (entity.getDtIstituz() != null) {
-	    this.setDtUsoIstituz(new Timestamp(entity.getDtIstituz().getTime()));
-	}
-	if (entity.getDtSoppres() != null) {
-	    this.setDtUsoSoppres(new Timestamp(entity.getDtSoppres().getTime()));
-	}
-	// modello
-	DecModelloXsdUd modelloXsdUd = entity.getDecModelloXsdUd();
-	this.setIdModelloXsdUd(new BigDecimal(modelloXsdUd.getIdModelloXsdUd()));
-	if (modelloXsdUd.getOrgAmbiente() != null) {
-	    this.setIdAmbiente(new BigDecimal(modelloXsdUd.getOrgAmbiente().getIdAmbiente()));
-	}
-	this.setTiModelloXsd(modelloXsdUd.getTiModelloXsd().name());
-	this.setTiUsoModelloXsd(modelloXsdUd.getTiUsoModelloXsd());
-	this.setCdXsd(modelloXsdUd.getCdXsd());
-	this.setDsXsd(modelloXsdUd.getDsXsd());
-	this.setBlXsd(modelloXsdUd.getBlXsd());
-	if (modelloXsdUd.getDtIstituz() != null) {
-	    this.setDtIstituz(new Timestamp(modelloXsdUd.getDtIstituz().getTime()));
-	}
-	if (modelloXsdUd.getDtSoppres() != null) {
-	    this.setDtSoppres(new Timestamp(modelloXsdUd.getDtSoppres().getTime()));
-	}
-	if (modelloXsdUd.getAplSistemaMigraz() != null) {
-	    this.setIdSistemaMigraz(
-		    new BigDecimal(modelloXsdUd.getAplSistemaMigraz().getIdSistemaMigraz()));
-	}
-	this.setFlDefault(modelloXsdUd.getFlDefault());
+        DecUsoModelloXsdUniDoc entity = (DecUsoModelloXsdUniDoc) obj;
+        this.setIdUsoModelloXsdUniDoc(new BigDecimal(entity.getIdUsoModelloXsdUniDoc()));
+        if (entity.getDecTipoUnitaDoc() != null) {
+            this.setIdTipoUnitaDoc(new BigDecimal(entity.getDecTipoUnitaDoc().getIdTipoUnitaDoc()));
+        }
+        if (entity.getDecModelloXsdUd() != null) {
+            this.setIdModelloXsdUd(new BigDecimal(entity.getDecModelloXsdUd().getIdModelloXsdUd()));
+        }
+        this.setFlStandard(entity.getFlStandard());
+        if (entity.getDtIstituz() != null) {
+            this.setDtUsoIstituz(new Timestamp(entity.getDtIstituz().getTime()));
+        }
+        if (entity.getDtSoppres() != null) {
+            this.setDtUsoSoppres(new Timestamp(entity.getDtSoppres().getTime()));
+        }
+        // modello
+        DecModelloXsdUd modelloXsdUd = entity.getDecModelloXsdUd();
+        this.setIdModelloXsdUd(new BigDecimal(modelloXsdUd.getIdModelloXsdUd()));
+        if (modelloXsdUd.getOrgAmbiente() != null) {
+            this.setIdAmbiente(new BigDecimal(modelloXsdUd.getOrgAmbiente().getIdAmbiente()));
+        }
+        this.setTiModelloXsd(modelloXsdUd.getTiModelloXsd().name());
+        this.setTiUsoModelloXsd(modelloXsdUd.getTiUsoModelloXsd());
+        this.setCdXsd(modelloXsdUd.getCdXsd());
+        this.setDsXsd(modelloXsdUd.getDsXsd());
+        this.setBlXsd(modelloXsdUd.getBlXsd());
+        if (modelloXsdUd.getDtIstituz() != null) {
+            this.setDtIstituz(new Timestamp(modelloXsdUd.getDtIstituz().getTime()));
+        }
+        if (modelloXsdUd.getDtSoppres() != null) {
+            this.setDtSoppres(new Timestamp(modelloXsdUd.getDtSoppres().getTime()));
+        }
+        if (modelloXsdUd.getAplSistemaMigraz() != null) {
+            this.setIdSistemaMigraz(
+                    new BigDecimal(modelloXsdUd.getAplSistemaMigraz().getIdSistemaMigraz()));
+        }
+        this.setFlDefault(modelloXsdUd.getFlDefault());
     }
 
     @Override
     public DecUsoModelloXsdUniDoc rowBeanToEntity() {
-	DecUsoModelloXsdUniDoc entity = new DecUsoModelloXsdUniDoc();
-	if (this.getIdUsoModelloXsdUniDoc() != null) {
-	    entity.setIdUsoModelloXsdUniDoc(this.getIdUsoModelloXsdUniDoc().longValue());
-	}
-	if (this.getIdTipoUnitaDoc() != null) {
-	    if (entity.getDecTipoUnitaDoc() == null) {
-		entity.setDecTipoUnitaDoc(new DecTipoUnitaDoc());
-	    }
-	    entity.getDecTipoUnitaDoc().setIdTipoUnitaDoc(this.getIdTipoUnitaDoc().longValue());
-	}
-	if (this.getIdModelloXsdUd() != null) {
-	    if (entity.getDecModelloXsdUd() == null) {
-		entity.setDecModelloXsdUd(new DecModelloXsdUd());
-	    }
-	    entity.getDecModelloXsdUd().setIdModelloXsdUd(this.getIdModelloXsdUd().longValue());
-	}
-	entity.setFlStandard(this.getFlStandard());
-	entity.setDtIstituz(this.getDtUsoIstituz());
-	entity.setDtSoppres(this.getDtUsoSoppres());
-	return entity;
+        DecUsoModelloXsdUniDoc entity = new DecUsoModelloXsdUniDoc();
+        if (this.getIdUsoModelloXsdUniDoc() != null) {
+            entity.setIdUsoModelloXsdUniDoc(this.getIdUsoModelloXsdUniDoc().longValue());
+        }
+        if (this.getIdTipoUnitaDoc() != null) {
+            if (entity.getDecTipoUnitaDoc() == null) {
+                entity.setDecTipoUnitaDoc(new DecTipoUnitaDoc());
+            }
+            entity.getDecTipoUnitaDoc().setIdTipoUnitaDoc(this.getIdTipoUnitaDoc().longValue());
+        }
+        if (this.getIdModelloXsdUd() != null) {
+            if (entity.getDecModelloXsdUd() == null) {
+                entity.setDecModelloXsdUd(new DecModelloXsdUd());
+            }
+            entity.getDecModelloXsdUd().setIdModelloXsdUd(this.getIdModelloXsdUd().longValue());
+        }
+        entity.setFlStandard(this.getFlStandard());
+        entity.setDtIstituz(this.getDtUsoIstituz());
+        entity.setDtSoppres(this.getDtUsoSoppres());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

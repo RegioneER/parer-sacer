@@ -33,7 +33,7 @@ import it.eng.parer.job.utils.JobConstants;
 @Lock(LockType.READ)
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class PreparaPartizioneDaMigrareTimer3 extends PreparaPartizioneDaMigrareTimerSuperclass {
 
     @EJB
@@ -44,44 +44,44 @@ public class PreparaPartizioneDaMigrareTimer3 extends PreparaPartizioneDaMigrare
      * costruttore col numero del timer ennesimo che si vuole deployare.
      */
     public PreparaPartizioneDaMigrareTimer3() {
-	super(JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE_3.name());
-	numeroJob = 3;
-	logger.debug(PreparaPartizioneDaMigrareTimer3.class.getName() + numeroJob + " creato");
+        super(JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE_3.name());
+        numeroJob = 3;
+        logger.debug(PreparaPartizioneDaMigrareTimer3.class.getName() + numeroJob + " creato");
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startSingleAction(String applicationName) {
-	super.startSingleAction(applicationName);
+        super.startSingleAction(applicationName);
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startCronScheduled(CronSchedule sched, String applicationName) {
-	super.startCronScheduled(sched, applicationName);
+        super.startCronScheduled(sched, applicationName);
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void stop(String applicationName) {
-	super.stop(applicationName);
+        super.stop(applicationName);
     }
 
     @Timeout
     @Override
     public void doJob(Timer timer) {
-	if (timer.getInfo().equals(jobName)) {
-	    try {
-		thisTimer.startProcess(timer);
-	    } catch (Exception e) {
-		logger.error("Errore nell'esecuzione del job di Prepara Partizione da migrare ["
-			+ numeroJob + "] ", e);
-	    }
-	}
+        if (timer.getInfo().equals(jobName)) {
+            try {
+                thisTimer.startProcess(timer);
+            } catch (Exception e) {
+                logger.error("Errore nell'esecuzione del job di Prepara Partizione da migrare ["
+                        + numeroJob + "] ", e);
+            }
+        }
     }
 
     @Override
     public void startProcess(Timer timer) {
-	super.startProcess(timer);
+        super.startProcess(timer);
     }
 }

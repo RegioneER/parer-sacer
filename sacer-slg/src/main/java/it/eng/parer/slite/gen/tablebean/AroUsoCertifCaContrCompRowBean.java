@@ -38,129 +38,129 @@ public class AroUsoCertifCaContrCompRowBean extends BaseRow implements JEEBaseRo
     public static AroUsoCertifCaContrCompTableDescriptor TABLE_DESCRIPTOR = new AroUsoCertifCaContrCompTableDescriptor();
 
     public AroUsoCertifCaContrCompRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdUsoCertifCaContrComp() {
-	return getBigDecimal("id_uso_certif_ca_contr_comp");
+        return getBigDecimal("id_uso_certif_ca_contr_comp");
     }
 
     public void setIdUsoCertifCaContrComp(BigDecimal idUsoCertifCaContrComp) {
-	setObject("id_uso_certif_ca_contr_comp", idUsoCertifCaContrComp);
+        setObject("id_uso_certif_ca_contr_comp", idUsoCertifCaContrComp);
     }
 
     public BigDecimal getIdContrFirmaComp() {
-	return getBigDecimal("id_contr_firma_comp");
+        return getBigDecimal("id_contr_firma_comp");
     }
 
     public void setIdContrFirmaComp(BigDecimal idContrFirmaComp) {
-	setObject("id_contr_firma_comp", idContrFirmaComp);
+        setObject("id_contr_firma_comp", idContrFirmaComp);
     }
 
     public BigDecimal getIdCertifCa() {
-	return getBigDecimal("id_certif_ca");
+        return getBigDecimal("id_certif_ca");
     }
 
     public void setIdCertifCa(BigDecimal idCertifCa) {
-	setObject("id_certif_ca", idCertifCa);
+        setObject("id_certif_ca", idCertifCa);
     }
 
     public BigDecimal getPgCertifCa() {
-	return getBigDecimal("pg_certif_ca");
+        return getBigDecimal("pg_certif_ca");
     }
 
     public void setPgCertifCa(BigDecimal pgCertifCa) {
-	setObject("pg_certif_ca", pgCertifCa);
+        setObject("pg_certif_ca", pgCertifCa);
     }
 
     public BigDecimal getIdCrlUsata() {
-	return getBigDecimal("id_crl_usata");
+        return getBigDecimal("id_crl_usata");
     }
 
     public void setIdCrlUsata(BigDecimal idCrlUsata) {
-	setObject("id_crl_usata", idCrlUsata);
+        setObject("id_crl_usata", idCrlUsata);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroUsoCertifCaContrComp entity = (AroUsoCertifCaContrComp) obj;
-	this.setIdUsoCertifCaContrComp(entity.getIdUsoCertifCaContrComp() == null ? null
-		: BigDecimal.valueOf(entity.getIdUsoCertifCaContrComp()));
+        AroUsoCertifCaContrComp entity = (AroUsoCertifCaContrComp) obj;
+        this.setIdUsoCertifCaContrComp(entity.getIdUsoCertifCaContrComp() == null ? null
+                : BigDecimal.valueOf(entity.getIdUsoCertifCaContrComp()));
 
-	if (entity.getAroContrFirmaComp() != null) {
-	    this.setIdContrFirmaComp(
-		    new BigDecimal(entity.getAroContrFirmaComp().getIdContrFirmaComp()));
-	}
+        if (entity.getAroContrFirmaComp() != null) {
+            this.setIdContrFirmaComp(
+                    new BigDecimal(entity.getAroContrFirmaComp().getIdContrFirmaComp()));
+        }
 
-	if (entity.getFirCertifCa() != null) {
-	    this.setIdCertifCa(new BigDecimal(entity.getFirCertifCa().getIdCertifCa()));
-	}
+        if (entity.getFirCertifCa() != null) {
+            this.setIdCertifCa(new BigDecimal(entity.getFirCertifCa().getIdCertifCa()));
+        }
 
-	this.setPgCertifCa(entity.getPgCertifCa());
+        this.setPgCertifCa(entity.getPgCertifCa());
 
-	if (entity.getFirCrl() != null) {
-	    this.setIdCrlUsata(new BigDecimal(entity.getFirCrl().getIdCrl()));
-	}
+        if (entity.getFirCrl() != null) {
+            this.setIdCrlUsata(new BigDecimal(entity.getFirCrl().getIdCrl()));
+        }
 
     }
 
     @Override
     public AroUsoCertifCaContrComp rowBeanToEntity() {
-	AroUsoCertifCaContrComp entity = new AroUsoCertifCaContrComp();
-	if (this.getIdUsoCertifCaContrComp() != null) {
-	    entity.setIdUsoCertifCaContrComp(this.getIdUsoCertifCaContrComp().longValue());
-	}
-	if (this.getIdContrFirmaComp() != null) {
-	    if (entity.getAroContrFirmaComp() == null) {
-		entity.setAroContrFirmaComp(new AroContrFirmaComp());
-	    }
-	    entity.getAroContrFirmaComp()
-		    .setIdContrFirmaComp(this.getIdContrFirmaComp().longValue());
-	}
-	if (this.getIdCertifCa() != null) {
-	    if (entity.getFirCertifCa() == null) {
-		entity.setFirCertifCa(new FirCertifCa());
-	    }
-	    entity.getFirCertifCa().setIdCertifCa(this.getIdCertifCa().longValue());
-	}
-	entity.setPgCertifCa(this.getPgCertifCa());
-	if (this.getIdCrlUsata() != null) {
-	    if (entity.getFirCrl() == null) {
-		entity.setFirCrl(new FirCrl());
-	    }
-	    entity.getFirCrl().setIdCrl(this.getIdCrlUsata().longValue());
-	}
-	return entity;
+        AroUsoCertifCaContrComp entity = new AroUsoCertifCaContrComp();
+        if (this.getIdUsoCertifCaContrComp() != null) {
+            entity.setIdUsoCertifCaContrComp(this.getIdUsoCertifCaContrComp().longValue());
+        }
+        if (this.getIdContrFirmaComp() != null) {
+            if (entity.getAroContrFirmaComp() == null) {
+                entity.setAroContrFirmaComp(new AroContrFirmaComp());
+            }
+            entity.getAroContrFirmaComp()
+                    .setIdContrFirmaComp(this.getIdContrFirmaComp().longValue());
+        }
+        if (this.getIdCertifCa() != null) {
+            if (entity.getFirCertifCa() == null) {
+                entity.setFirCertifCa(new FirCertifCa());
+            }
+            entity.getFirCertifCa().setIdCertifCa(this.getIdCertifCa().longValue());
+        }
+        entity.setPgCertifCa(this.getPgCertifCa());
+        if (this.getIdCrlUsata() != null) {
+            if (entity.getFirCrl() == null) {
+                entity.setFirCrl(new FirCrl());
+            }
+            entity.getFirCrl().setIdCrl(this.getIdCrlUsata().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

@@ -37,126 +37,126 @@ public class AroContrMarcaCompRowBean extends BaseRow implements JEEBaseRowInter
     public static AroContrMarcaCompTableDescriptor TABLE_DESCRIPTOR = new AroContrMarcaCompTableDescriptor();
 
     public AroContrMarcaCompRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdContrMarcaComp() {
-	return getBigDecimal("id_contr_marca_comp");
+        return getBigDecimal("id_contr_marca_comp");
     }
 
     public void setIdContrMarcaComp(BigDecimal idContrMarcaComp) {
-	setObject("id_contr_marca_comp", idContrMarcaComp);
+        setObject("id_contr_marca_comp", idContrMarcaComp);
     }
 
     public BigDecimal getIdMarcaComp() {
-	return getBigDecimal("id_marca_comp");
+        return getBigDecimal("id_marca_comp");
     }
 
     public void setIdMarcaComp(BigDecimal idMarcaComp) {
-	setObject("id_marca_comp", idMarcaComp);
+        setObject("id_marca_comp", idMarcaComp);
     }
 
     public String getTiContr() {
-	return getString("ti_contr");
+        return getString("ti_contr");
     }
 
     public void setTiContr(String tiContr) {
-	setObject("ti_contr", tiContr);
+        setObject("ti_contr", tiContr);
     }
 
     public String getTiEsitoContrMarca() {
-	return getString("ti_esito_contr_marca");
+        return getString("ti_esito_contr_marca");
     }
 
     public void setTiEsitoContrMarca(String tiEsitoContrMarca) {
-	setObject("ti_esito_contr_marca", tiEsitoContrMarca);
+        setObject("ti_esito_contr_marca", tiEsitoContrMarca);
     }
 
     public String getDsMsgEsitoContrMarca() {
-	return getString("ds_msg_esito_contr_marca");
+        return getString("ds_msg_esito_contr_marca");
     }
 
     public void setDsMsgEsitoContrMarca(String dsMsgEsitoContrMarca) {
-	setObject("ds_msg_esito_contr_marca", dsMsgEsitoContrMarca);
+        setObject("ds_msg_esito_contr_marca", dsMsgEsitoContrMarca);
     }
 
     public BigDecimal getIdCrlUsata() {
-	return getBigDecimal("id_crl_usata");
+        return getBigDecimal("id_crl_usata");
     }
 
     public void setIdCrlUsata(BigDecimal idCrlUsata) {
-	setObject("id_crl_usata", idCrlUsata);
+        setObject("id_crl_usata", idCrlUsata);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroContrMarcaComp entity = (AroContrMarcaComp) obj;
-	this.setIdContrMarcaComp(entity.getIdContrMarcaComp() == null ? null
-		: BigDecimal.valueOf(entity.getIdContrMarcaComp()));
-	if (entity.getAroMarcaComp() != null) {
-	    this.setIdMarcaComp(new BigDecimal(entity.getAroMarcaComp().getIdMarcaComp()));
-	}
-	this.setTiContr(entity.getTiContr());
-	this.setTiEsitoContrMarca(entity.getTiEsitoContrMarca());
-	this.setDsMsgEsitoContrMarca(entity.getDsMsgEsitoContrMarca());
-	if (entity.getFirCrl() != null) {
-	    this.setIdCrlUsata(new BigDecimal(entity.getFirCrl().getIdCrl()));
-	}
+        AroContrMarcaComp entity = (AroContrMarcaComp) obj;
+        this.setIdContrMarcaComp(entity.getIdContrMarcaComp() == null ? null
+                : BigDecimal.valueOf(entity.getIdContrMarcaComp()));
+        if (entity.getAroMarcaComp() != null) {
+            this.setIdMarcaComp(new BigDecimal(entity.getAroMarcaComp().getIdMarcaComp()));
+        }
+        this.setTiContr(entity.getTiContr());
+        this.setTiEsitoContrMarca(entity.getTiEsitoContrMarca());
+        this.setDsMsgEsitoContrMarca(entity.getDsMsgEsitoContrMarca());
+        if (entity.getFirCrl() != null) {
+            this.setIdCrlUsata(new BigDecimal(entity.getFirCrl().getIdCrl()));
+        }
 
     }
 
     @Override
     public AroContrMarcaComp rowBeanToEntity() {
-	AroContrMarcaComp entity = new AroContrMarcaComp();
-	if (this.getIdContrMarcaComp() != null) {
-	    entity.setIdContrMarcaComp(this.getIdContrMarcaComp().longValue());
-	}
-	if (this.getIdMarcaComp() != null) {
-	    if (entity.getAroMarcaComp() == null) {
-		entity.setAroMarcaComp(new AroMarcaComp());
-	    }
-	    entity.getAroMarcaComp().setIdMarcaComp(this.getIdMarcaComp().longValue());
-	}
-	entity.setTiContr(this.getTiContr());
-	entity.setTiEsitoContrMarca(this.getTiEsitoContrMarca());
-	entity.setDsMsgEsitoContrMarca(this.getDsMsgEsitoContrMarca());
-	if (this.getIdCrlUsata() != null) {
-	    if (entity.getFirCrl() == null) {
-		entity.setFirCrl(new FirCrl());
-	    }
-	    entity.getFirCrl().setIdCrl(this.getIdCrlUsata().longValue());
-	}
-	return entity;
+        AroContrMarcaComp entity = new AroContrMarcaComp();
+        if (this.getIdContrMarcaComp() != null) {
+            entity.setIdContrMarcaComp(this.getIdContrMarcaComp().longValue());
+        }
+        if (this.getIdMarcaComp() != null) {
+            if (entity.getAroMarcaComp() == null) {
+                entity.setAroMarcaComp(new AroMarcaComp());
+            }
+            entity.getAroMarcaComp().setIdMarcaComp(this.getIdMarcaComp().longValue());
+        }
+        entity.setTiContr(this.getTiContr());
+        entity.setTiEsitoContrMarca(this.getTiEsitoContrMarca());
+        entity.setDsMsgEsitoContrMarca(this.getDsMsgEsitoContrMarca());
+        if (this.getIdCrlUsata() != null) {
+            if (entity.getFirCrl() == null) {
+                entity.setFirCrl(new FirCrl());
+            }
+            entity.getFirCrl().setIdCrl(this.getIdCrlUsata().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

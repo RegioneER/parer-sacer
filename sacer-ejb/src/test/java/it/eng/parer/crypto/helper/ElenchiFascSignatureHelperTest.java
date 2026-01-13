@@ -41,82 +41,82 @@ public class ElenchiFascSignatureHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		ElenchiFascSignatureHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			ElenchiFascSignatureHelperTest.class, ElenchiFascSignatureHelper.class,
-			SigningHelper.class, ConfigurationHelper.class));
+        return HelperTest.createEnterpriseArchive(
+                ElenchiFascSignatureHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        ElenchiFascSignatureHelperTest.class, ElenchiFascSignatureHelper.class,
+                        SigningHelper.class, ConfigurationHelper.class));
     }
 
     @Test
     public void getActiveSessionsByUser_IamUser_queryIsOk() {
-	IamUser user = myUserIam();
-	helper.getActiveSessionsByUser(user);
-	assertTrue(true);
+        IamUser user = myUserIam();
+        helper.getActiveSessionsByUser(user);
+        assertTrue(true);
     }
 
     @Test
     public void getActiveSessionsByUser_long_queryIsOk() {
-	long userId = aLong();
-	helper.getActiveSessionsByUser(userId);
-	assertTrue(true);
+        long userId = aLong();
+        helper.getActiveSessionsByUser(userId);
+        assertTrue(true);
     }
 
     @Test
     public void getBlockedSessionsByUser_IamUser_queryIsOk() {
-	IamUser user = myUserIam();
-	helper.getBlockedSessionsByUser(user);
-	assertTrue(true);
+        IamUser user = myUserIam();
+        helper.getBlockedSessionsByUser(user);
+        assertTrue(true);
     }
 
     private IamUser myUserIam() {
-	IamUser user = new IamUser();
-	user.setIdUserIam(5000L);
-	return user;
+        IamUser user = new IamUser();
+        user.setIdUserIam(5000L);
+        return user;
     }
 
     @Test
     public void getBlockedSessionsByUser_long_queryIsOk() {
-	long userId = 5000L;
-	final List<HsmSessioneFirma> blockedSessionsByUser = helper
-		.getBlockedSessionsByUser(userId);
-	assertTrue(true);
+        long userId = 5000L;
+        final List<HsmSessioneFirma> blockedSessionsByUser = helper
+                .getBlockedSessionsByUser(userId);
+        assertTrue(true);
     }
 
     @Test
     public void isAllFileSigned_HsmSessioneFirma_queryIsOk() {
-	HsmSessioneFirma session = aHsmSessioneFirma();
-	helper.isAllFileSigned(session);
-	assertTrue(true);
+        HsmSessioneFirma session = aHsmSessioneFirma();
+        helper.isAllFileSigned(session);
+        assertTrue(true);
     }
 
     private HsmSessioneFirma aHsmSessioneFirma() {
-	HsmSessioneFirma session = new HsmSessioneFirma();
-	session.setIdSessioneFirma(aLong());
-	return session;
+        HsmSessioneFirma session = new HsmSessioneFirma();
+        session.setIdSessioneFirma(aLong());
+        return session;
     }
 
     @Test
     public void isAllFileSigned_long_queryIsOk() {
-	long sessionId = aLong();
-	helper.isAllFileSigned(sessionId);
-	assertTrue(true);
+        long sessionId = aLong();
+        helper.isAllFileSigned(sessionId);
+        assertTrue(true);
     }
 
     @Test
     public void findElencoSessione_queryIsOk() {
-	HsmSessioneFirma session = null;
-	long idElenco = aLong();
-	helper.findElencoSessione(session, idElenco);
-	assertTrue(true);
+        HsmSessioneFirma session = null;
+        long idElenco = aLong();
+        helper.findElencoSessione(session, idElenco);
+        assertTrue(true);
     }
 
     @Test
     public void findElencoFascSes_queryIsOk() {
-	long sessionId = aLong();
-	long idElenco = aLong();
-	helper.findElencoFascSes(sessionId, idElenco);
-	assertTrue(true);
+        long sessionId = aLong();
+        long idElenco = aLong();
+        helper.findElencoFascSes(sessionId, idElenco);
+        assertTrue(true);
     }
 }

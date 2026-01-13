@@ -85,467 +85,467 @@ public class AroVRicUnitaDoc implements Serializable {
     }
 
     public AroVRicUnitaDoc(BigDecimal idUnitaDoc, BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc,
-	    String cdRegistroKeyUnitaDoc, Date dtCreazione, Date dtRegUnitaDoc,
-	    String flUnitaDocFirmato, String tiEsitoVerifFirme, String dsMsgEsitoVerifFirme,
-	    String nmTipoUnitaDoc, String flForzaAccettazione, String flForzaConservazione,
-	    String dsKeyOrd, BigDecimal niAlleg, BigDecimal niAnnessi, BigDecimal niAnnot,
-	    String nmTipoDocPrinc, String dsListaStatiElencoVers, String tiStatoConservazione) {
-	this.idUnitaDoc = idUnitaDoc;
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
-	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
-	this.dtCreazione = dtCreazione;
-	this.dtRegUnitaDoc = dtRegUnitaDoc;
-	this.flUnitaDocFirmato = flUnitaDocFirmato;
-	this.tiEsitoVerifFirme = tiEsitoVerifFirme;
-	this.dsMsgEsitoVerifFirme = dsMsgEsitoVerifFirme;
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
-	this.flForzaAccettazione = flForzaAccettazione;
-	this.flForzaConservazione = flForzaConservazione;
-	this.dsKeyOrd = dsKeyOrd;
-	this.niAlleg = niAlleg;
-	this.niAnnessi = niAnnessi;
-	this.niAnnot = niAnnot;
-	this.nmTipoDocPrinc = nmTipoDocPrinc;
-	this.dsListaStatiElencoVers = dsListaStatiElencoVers;
-	this.tiStatoConservazione = tiStatoConservazione;
+            String cdRegistroKeyUnitaDoc, Date dtCreazione, Date dtRegUnitaDoc,
+            String flUnitaDocFirmato, String tiEsitoVerifFirme, String dsMsgEsitoVerifFirme,
+            String nmTipoUnitaDoc, String flForzaAccettazione, String flForzaConservazione,
+            String dsKeyOrd, BigDecimal niAlleg, BigDecimal niAnnessi, BigDecimal niAnnot,
+            String nmTipoDocPrinc, String dsListaStatiElencoVers, String tiStatoConservazione) {
+        this.idUnitaDoc = idUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+        this.dtCreazione = dtCreazione;
+        this.dtRegUnitaDoc = dtRegUnitaDoc;
+        this.flUnitaDocFirmato = flUnitaDocFirmato;
+        this.tiEsitoVerifFirme = tiEsitoVerifFirme;
+        this.dsMsgEsitoVerifFirme = dsMsgEsitoVerifFirme;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.flForzaAccettazione = flForzaAccettazione;
+        this.flForzaConservazione = flForzaConservazione;
+        this.dsKeyOrd = dsKeyOrd;
+        this.niAlleg = niAlleg;
+        this.niAnnessi = niAnnessi;
+        this.niAnnot = niAnnot;
+        this.nmTipoDocPrinc = nmTipoDocPrinc;
+        this.dsListaStatiElencoVers = dsListaStatiElencoVers;
+        this.tiStatoConservazione = tiStatoConservazione;
     }
 
     public AroVRicUnitaDoc(BigDecimal idUnitaDoc, BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc,
-	    String cdRegistroKeyUnitaDoc, Date dtCreazione, Date dtRegUnitaDoc,
-	    String flUnitaDocFirmato, String tiEsitoVerifFirme, String dsMsgEsitoVerifFirme,
-	    String nmTipoUnitaDoc, String flForzaAccettazione, String flForzaConservazione,
-	    String dsKeyOrd, BigDecimal niAlleg, BigDecimal niAnnessi, BigDecimal niAnnot,
-	    String nmTipoDocPrinc, String dsListaStatiElencoVers, String tiStatoConservazione,
-	    String flEsisteProfiloNormativo) {
-	this.idUnitaDoc = idUnitaDoc;
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
-	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
-	this.dtCreazione = dtCreazione;
-	this.dtRegUnitaDoc = dtRegUnitaDoc;
-	this.flUnitaDocFirmato = flUnitaDocFirmato;
-	this.tiEsitoVerifFirme = tiEsitoVerifFirme;
-	this.dsMsgEsitoVerifFirme = dsMsgEsitoVerifFirme;
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
-	this.flForzaAccettazione = flForzaAccettazione;
-	this.flForzaConservazione = flForzaConservazione;
-	this.dsKeyOrd = dsKeyOrd;
-	this.niAlleg = niAlleg;
-	this.niAnnessi = niAnnessi;
-	this.niAnnot = niAnnot;
-	this.nmTipoDocPrinc = nmTipoDocPrinc;
-	this.dsListaStatiElencoVers = dsListaStatiElencoVers;
-	this.tiStatoConservazione = tiStatoConservazione;
-	this.flEsisteProfiloNormativo = flEsisteProfiloNormativo;
+            String cdRegistroKeyUnitaDoc, Date dtCreazione, Date dtRegUnitaDoc,
+            String flUnitaDocFirmato, String tiEsitoVerifFirme, String dsMsgEsitoVerifFirme,
+            String nmTipoUnitaDoc, String flForzaAccettazione, String flForzaConservazione,
+            String dsKeyOrd, BigDecimal niAlleg, BigDecimal niAnnessi, BigDecimal niAnnot,
+            String nmTipoDocPrinc, String dsListaStatiElencoVers, String tiStatoConservazione,
+            String flEsisteProfiloNormativo) {
+        this.idUnitaDoc = idUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+        this.dtCreazione = dtCreazione;
+        this.dtRegUnitaDoc = dtRegUnitaDoc;
+        this.flUnitaDocFirmato = flUnitaDocFirmato;
+        this.tiEsitoVerifFirme = tiEsitoVerifFirme;
+        this.dsMsgEsitoVerifFirme = dsMsgEsitoVerifFirme;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.flForzaAccettazione = flForzaAccettazione;
+        this.flForzaConservazione = flForzaConservazione;
+        this.dsKeyOrd = dsKeyOrd;
+        this.niAlleg = niAlleg;
+        this.niAnnessi = niAnnessi;
+        this.niAnnot = niAnnot;
+        this.nmTipoDocPrinc = nmTipoDocPrinc;
+        this.dsListaStatiElencoVers = dsListaStatiElencoVers;
+        this.tiStatoConservazione = tiStatoConservazione;
+        this.flEsisteProfiloNormativo = flEsisteProfiloNormativo;
     }
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "CD_KEY_DOC_VERS")
     public String getCdKeyDocVers() {
-	return this.cdKeyDocVers;
+        return this.cdKeyDocVers;
     }
 
     public void setCdKeyDocVers(String cdKeyDocVers) {
-	this.cdKeyDocVers = cdKeyDocVers;
+        this.cdKeyDocVers = cdKeyDocVers;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC")
     public String getCdKeyUnitaDoc() {
-	return this.cdKeyUnitaDoc;
+        return this.cdKeyUnitaDoc;
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     @Column(name = "CD_REGISTRO_KEY_UNITA_DOC")
     public String getCdRegistroKeyUnitaDoc() {
-	return this.cdRegistroKeyUnitaDoc;
+        return this.cdRegistroKeyUnitaDoc;
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
     }
 
     @Column(name = "CD_VERSIONE_WS")
     public String getCdVersioneWs() {
-	return this.cdVersioneWs;
+        return this.cdVersioneWs;
     }
 
     public void setCdVersioneWs(String cdVersioneWs) {
-	this.cdVersioneWs = cdVersioneWs;
+        this.cdVersioneWs = cdVersioneWs;
     }
 
     @Column(name = "CD_VERSIONE_XSD_DOC")
     public String getCdVersioneXsdDoc() {
-	return cdVersioneXsdDoc;
+        return cdVersioneXsdDoc;
     }
 
     public void setCdVersioneXsdDoc(String cdVersioneXsdDoc) {
-	this.cdVersioneXsdDoc = cdVersioneXsdDoc;
+        this.cdVersioneXsdDoc = cdVersioneXsdDoc;
     }
 
     @Column(name = "CD_VERSIONE_XSD_UD")
     public String getCdVersioneXsdUd() {
-	return cdVersioneXsdUd;
+        return cdVersioneXsdUd;
     }
 
     public void setCdVersioneXsdUd(String cdVersioneXsdUd) {
-	this.cdVersioneXsdUd = cdVersioneXsdUd;
+        this.cdVersioneXsdUd = cdVersioneXsdUd;
     }
 
     @Column(name = "DL_DOC")
     public String getDlDoc() {
-	return this.dlDoc;
+        return this.dlDoc;
     }
 
     public void setDlDoc(String dlDoc) {
-	this.dlDoc = dlDoc;
+        this.dlDoc = dlDoc;
     }
 
     @Column(name = "DL_OGGETTO_UNITA_DOC")
     public String getDlOggettoUnitaDoc() {
-	return this.dlOggettoUnitaDoc;
+        return this.dlOggettoUnitaDoc;
     }
 
     public void setDlOggettoUnitaDoc(String dlOggettoUnitaDoc) {
-	this.dlOggettoUnitaDoc = dlOggettoUnitaDoc;
+        this.dlOggettoUnitaDoc = dlOggettoUnitaDoc;
     }
 
     @Column(name = "DS_AUTORE_DOC")
     public String getDsAutoreDoc() {
-	return this.dsAutoreDoc;
+        return this.dsAutoreDoc;
     }
 
     public void setDsAutoreDoc(String dsAutoreDoc) {
-	this.dsAutoreDoc = dsAutoreDoc;
+        this.dsAutoreDoc = dsAutoreDoc;
     }
 
     @Column(name = "DS_KEY_ORD")
     public String getDsKeyOrd() {
-	return this.dsKeyOrd;
+        return this.dsKeyOrd;
     }
 
     public void setDsKeyOrd(String dsKeyOrd) {
-	this.dsKeyOrd = dsKeyOrd;
+        this.dsKeyOrd = dsKeyOrd;
     }
 
     @Column(name = "DS_LISTA_STATI_ELENCO_VERS")
     public String getDsListaStatiElencoVers() {
-	return this.dsListaStatiElencoVers;
+        return this.dsListaStatiElencoVers;
     }
 
     public void setDsListaStatiElencoVers(String dsListaStatiElencoVers) {
-	this.dsListaStatiElencoVers = dsListaStatiElencoVers;
+        this.dsListaStatiElencoVers = dsListaStatiElencoVers;
     }
 
     @Column(name = "DS_MSG_ESITO_VERIF_FIRME")
     public String getDsMsgEsitoVerifFirme() {
-	return this.dsMsgEsitoVerifFirme;
+        return this.dsMsgEsitoVerifFirme;
     }
 
     public void setDsMsgEsitoVerifFirme(String dsMsgEsitoVerifFirme) {
-	this.dsMsgEsitoVerifFirme = dsMsgEsitoVerifFirme;
+        this.dsMsgEsitoVerifFirme = dsMsgEsitoVerifFirme;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE")
     public Date getDtCreazione() {
-	return this.dtCreazione;
+        return this.dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-	this.dtCreazione = dtCreazione;
+        this.dtCreazione = dtCreazione;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_UNITA_DOC")
     public Date getDtRegUnitaDoc() {
-	return this.dtRegUnitaDoc;
+        return this.dtRegUnitaDoc;
     }
 
     public void setDtRegUnitaDoc(Date dtRegUnitaDoc) {
-	this.dtRegUnitaDoc = dtRegUnitaDoc;
+        this.dtRegUnitaDoc = dtRegUnitaDoc;
     }
 
     @Column(name = "FL_AGG_META", columnDefinition = "char(1)")
     public String getFlAggMeta() {
-	return this.flAggMeta;
+        return this.flAggMeta;
     }
 
     public void setFlAggMeta(String flAggMeta) {
-	this.flAggMeta = flAggMeta;
+        this.flAggMeta = flAggMeta;
     }
 
     @Column(name = "FL_DOC_AGGIUNTI", columnDefinition = "char(1)")
     public String getFlDocAggiunti() {
-	return this.flDocAggiunti;
+        return this.flDocAggiunti;
     }
 
     public void setFlDocAggiunti(String flDocAggiunti) {
-	this.flDocAggiunti = flDocAggiunti;
+        this.flDocAggiunti = flDocAggiunti;
     }
 
     @Column(name = "FL_DOC_ANNUL", columnDefinition = "char(1)")
     public String getFlDocAnnul() {
-	return this.flDocAnnul;
+        return this.flDocAnnul;
     }
 
     public void setFlDocAnnul(String flDocAnnul) {
-	this.flDocAnnul = flDocAnnul;
+        this.flDocAnnul = flDocAnnul;
     }
 
     @Column(name = "FL_ESISTE_PROFILO_NORMATIVO", columnDefinition = "char(1)")
     public String getFlEsisteProfiloNormativo() {
-	return this.flEsisteProfiloNormativo;
+        return this.flEsisteProfiloNormativo;
     }
 
     public void setFlEsisteProfiloNormativo(String flEsisteProfiloNormativo) {
-	this.flEsisteProfiloNormativo = flEsisteProfiloNormativo;
+        this.flEsisteProfiloNormativo = flEsisteProfiloNormativo;
     }
 
     @Column(name = "FL_FORZA_ACCETTAZIONE", columnDefinition = "char(1)")
     public String getFlForzaAccettazione() {
-	return this.flForzaAccettazione;
+        return this.flForzaAccettazione;
     }
 
     public void setFlForzaAccettazione(String flForzaAccettazione) {
-	this.flForzaAccettazione = flForzaAccettazione;
+        this.flForzaAccettazione = flForzaAccettazione;
     }
 
     @Column(name = "FL_FORZA_COLLEGAMENTO", columnDefinition = "char(1)")
     public String getFlForzaCollegamento() {
-	return this.flForzaCollegamento;
+        return this.flForzaCollegamento;
     }
 
     public void setFlForzaCollegamento(String flForzaCollegamento) {
-	this.flForzaCollegamento = flForzaCollegamento;
+        this.flForzaCollegamento = flForzaCollegamento;
     }
 
     @Column(name = "FL_FORZA_CONSERVAZIONE", columnDefinition = "char(1)")
     public String getFlForzaConservazione() {
-	return this.flForzaConservazione;
+        return this.flForzaConservazione;
     }
 
     public void setFlForzaConservazione(String flForzaConservazione) {
-	this.flForzaConservazione = flForzaConservazione;
+        this.flForzaConservazione = flForzaConservazione;
     }
 
     @Column(name = "FL_HASH_VERS", columnDefinition = "char(1)")
     public String getFlHashVers() {
-	return flHashVers;
+        return flHashVers;
     }
 
     public void setFlHashVers(String flHashVers) {
-	this.flHashVers = flHashVers;
+        this.flHashVers = flHashVers;
     }
 
     @Column(name = "FL_UNITA_DOC_ANNUL", columnDefinition = "char(1)")
     public String getFlUnitaDocAnnul() {
-	return this.flUnitaDocAnnul;
+        return this.flUnitaDocAnnul;
     }
 
     public void setFlUnitaDocAnnul(String flUnitaDocAnnul) {
-	this.flUnitaDocAnnul = flUnitaDocAnnul;
+        this.flUnitaDocAnnul = flUnitaDocAnnul;
     }
 
     @Column(name = "FL_UNITA_DOC_FIRMATO", columnDefinition = "char(1)")
     public String getFlUnitaDocFirmato() {
-	return this.flUnitaDocFirmato;
+        return this.flUnitaDocFirmato;
     }
 
     public void setFlUnitaDocFirmato(String flUnitaDocFirmato) {
-	this.flUnitaDocFirmato = flUnitaDocFirmato;
+        this.flUnitaDocFirmato = flUnitaDocFirmato;
     }
 
     @Id
     @Column(name = "ID_DOC")
     public BigDecimal getIdDoc() {
-	return this.idDoc;
+        return this.idDoc;
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	this.idDoc = idDoc;
+        this.idDoc = idDoc;
     }
 
     @Column(name = "ID_STRUT_TIPO_UNITA_DOC")
     public BigDecimal getIdStrutTipoUnitaDoc() {
-	return this.idStrutTipoUnitaDoc;
+        return this.idStrutTipoUnitaDoc;
     }
 
     public void setIdStrutTipoUnitaDoc(BigDecimal idStrutTipoUnitaDoc) {
-	this.idStrutTipoUnitaDoc = idStrutTipoUnitaDoc;
+        this.idStrutTipoUnitaDoc = idStrutTipoUnitaDoc;
     }
 
     @Column(name = "ID_STRUT_UNITA_DOC")
     public BigDecimal getIdStrutUnitaDoc() {
-	return this.idStrutUnitaDoc;
+        return this.idStrutUnitaDoc;
     }
 
     public void setIdStrutUnitaDoc(BigDecimal idStrutUnitaDoc) {
-	this.idStrutUnitaDoc = idStrutUnitaDoc;
+        this.idStrutUnitaDoc = idStrutUnitaDoc;
     }
 
     @Column(name = "ID_SUB_STRUT")
     public BigDecimal getIdSubStrut() {
-	return this.idSubStrut;
+        return this.idSubStrut;
     }
 
     public void setIdSubStrut(BigDecimal idSubStrut) {
-	this.idSubStrut = idSubStrut;
+        this.idSubStrut = idSubStrut;
     }
 
     @Column(name = "ID_TIPO_DOC")
     public BigDecimal getIdTipoDoc() {
-	return this.idTipoDoc;
+        return this.idTipoDoc;
     }
 
     public void setIdTipoDoc(BigDecimal idTipoDoc) {
-	this.idTipoDoc = idTipoDoc;
+        this.idTipoDoc = idTipoDoc;
     }
 
     @Column(name = "ID_TIPO_UNITA_DOC")
     public BigDecimal getIdTipoUnitaDoc() {
-	return this.idTipoUnitaDoc;
+        return this.idTipoUnitaDoc;
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	this.idTipoUnitaDoc = idTipoUnitaDoc;
+        this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     @Column(name = "NI_ALLEG")
     public BigDecimal getNiAlleg() {
-	return this.niAlleg;
+        return this.niAlleg;
     }
 
     public void setNiAlleg(BigDecimal niAlleg) {
-	this.niAlleg = niAlleg;
+        this.niAlleg = niAlleg;
     }
 
     @Column(name = "NI_ANNESSI")
     public BigDecimal getNiAnnessi() {
-	return this.niAnnessi;
+        return this.niAnnessi;
     }
 
     public void setNiAnnessi(BigDecimal niAnnessi) {
-	this.niAnnessi = niAnnessi;
+        this.niAnnessi = niAnnessi;
     }
 
     @Column(name = "NI_ANNOT")
     public BigDecimal getNiAnnot() {
-	return this.niAnnot;
+        return this.niAnnot;
     }
 
     public void setNiAnnot(BigDecimal niAnnot) {
-	this.niAnnot = niAnnot;
+        this.niAnnot = niAnnot;
     }
 
     @Column(name = "NM_SISTEMA_MIGRAZ")
     public String getNmSistemaMigraz() {
-	return this.nmSistemaMigraz;
+        return this.nmSistemaMigraz;
     }
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
-	this.nmSistemaMigraz = nmSistemaMigraz;
+        this.nmSistemaMigraz = nmSistemaMigraz;
     }
 
     @Column(name = "NM_TIPO_DOC_PRINC")
     public String getNmTipoDocPrinc() {
-	return this.nmTipoDocPrinc;
+        return this.nmTipoDocPrinc;
     }
 
     public void setNmTipoDocPrinc(String nmTipoDocPrinc) {
-	this.nmTipoDocPrinc = nmTipoDocPrinc;
+        this.nmTipoDocPrinc = nmTipoDocPrinc;
     }
 
     @Column(name = "NM_TIPO_UNITA_DOC")
     public String getNmTipoUnitaDoc() {
-	return this.nmTipoUnitaDoc;
+        return this.nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     @Column(name = "TI_CONSERVAZIONE")
     public String getTiConservazione() {
-	return this.tiConservazione;
+        return this.tiConservazione;
     }
 
     public void setTiConservazione(String tiConservazione) {
-	this.tiConservazione = tiConservazione;
+        this.tiConservazione = tiConservazione;
     }
 
     @Column(name = "TI_DOC")
     public String getTiDoc() {
-	return tiDoc;
+        return tiDoc;
     }
 
     public void setTiDoc(String tiDoc) {
-	this.tiDoc = tiDoc;
+        this.tiDoc = tiDoc;
     }
 
     @Column(name = "TI_ESITO_VERIF_FIRME")
     public String getTiEsitoVerifFirme() {
-	return this.tiEsitoVerifFirme;
+        return this.tiEsitoVerifFirme;
     }
 
     public void setTiEsitoVerifFirme(String tiEsitoVerifFirme) {
-	this.tiEsitoVerifFirme = tiEsitoVerifFirme;
+        this.tiEsitoVerifFirme = tiEsitoVerifFirme;
     }
 
     @Column(name = "TI_STATO_CONSERVAZIONE")
     public String getTiStatoConservazione() {
-	return this.tiStatoConservazione;
+        return this.tiStatoConservazione;
     }
 
     public void setTiStatoConservazione(String tiStatoConservazione) {
-	this.tiStatoConservazione = tiStatoConservazione;
+        this.tiStatoConservazione = tiStatoConservazione;
     }
 
     @Column(name = "TI_STATO_DOC")
     public String getTiStatoDoc() {
-	return this.tiStatoDoc;
+        return this.tiStatoDoc;
     }
 
     public void setTiStatoDoc(String tiStatoDoc) {
-	this.tiStatoDoc = tiStatoDoc;
+        this.tiStatoDoc = tiStatoDoc;
     }
 
     @Column(name = "TI_STATO_DOC_ELENCO_VERS")
     public String getTiStatoDocElencoVers() {
-	return this.tiStatoDocElencoVers;
+        return this.tiStatoDocElencoVers;
     }
 
     public void setTiStatoDocElencoVers(String tiStatoDocElencoVers) {
-	this.tiStatoDocElencoVers = tiStatoDocElencoVers;
+        this.tiStatoDocElencoVers = tiStatoDocElencoVers;
     }
 
     @Column(name = "TI_STATO_UD_ELENCO_VERS")
     public String getTiStatoUdElencoVers() {
-	return this.tiStatoUdElencoVers;
+        return this.tiStatoUdElencoVers;
     }
 
     public void setTiStatoUdElencoVers(String tiStatoUdElencoVers) {
-	this.tiStatoUdElencoVers = tiStatoUdElencoVers;
+        this.tiStatoUdElencoVers = tiStatoUdElencoVers;
     }
 
 }

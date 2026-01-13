@@ -39,21 +39,21 @@ public class MonVCntVersStrut implements Serializable {
 
     @Column(name = "NI_VERS")
     public BigDecimal getNiVers() {
-	return this.niVers;
+        return this.niVers;
     }
 
     public void setNiVers(BigDecimal niVers) {
-	this.niVers = niVers;
+        this.niVers = niVers;
     }
 
     private MonVCntVersStrutId monVCntVersStrutId;
 
     @EmbeddedId()
     public MonVCntVersStrutId getMonVCntVersStrutId() {
-	return monVCntVersStrutId;
+        return monVCntVersStrutId;
     }
 
     public void setMonVCntVersStrutId(MonVCntVersStrutId monVCntVersStrutId) {
-	this.monVCntVersStrutId = monVCntVersStrutId;
+        this.monVCntVersStrutId = monVCntVersStrutId;
     }
 }

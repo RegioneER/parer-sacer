@@ -36,50 +36,50 @@ import it.eng.parer.web.helper.HelperTest;
 public class AsyncHelperTest extends HelperTest<AsyncHelper> {
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(AsyncHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(
-			Arrays.asList("it.eng.parer.ws.dto", "it.eng.tpi.bean",
-				"it.eng.parer.ws.versamento.dto"),
-			AsyncHelper.class, AsyncHelperTest.class,
+        return HelperTest.createEnterpriseArchive(AsyncHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(
+                        Arrays.asList("it.eng.parer.ws.dto", "it.eng.tpi.bean",
+                                "it.eng.parer.ws.versamento.dto"),
+                        AsyncHelper.class, AsyncHelperTest.class,
 
-			it.eng.parer.job.helper.JobHelper.class,
-			AggiornaStatoArchiviazioneHelper.class, AppServerInstance.class,
-			it.eng.parer.ws.ejb.ControlliSemantici.class,
-			it.eng.parer.ws.ejb.ControlliTpi.class,
-			it.eng.parer.web.helper.ConfigurationHelper.class,
-			it.eng.parer.ws.utils.Costanti.class,
-			it.eng.parer.job.utils.JobConstants.class));
+                        it.eng.parer.job.helper.JobHelper.class,
+                        AggiornaStatoArchiviazioneHelper.class, AppServerInstance.class,
+                        it.eng.parer.ws.ejb.ControlliSemantici.class,
+                        it.eng.parer.ws.ejb.ControlliTpi.class,
+                        it.eng.parer.web.helper.ConfigurationHelper.class,
+                        it.eng.parer.ws.utils.Costanti.class,
+                        it.eng.parer.job.utils.JobConstants.class));
     }
 
     @Test
     void countLock_queryIsOk() {
-	String asyncTask = aString();
-	Long idStrut = aLong();
-	helper.countLock(asyncTask, idStrut);
-	assertTrue(true);
+        String asyncTask = aString();
+        Long idStrut = aLong();
+        helper.countLock(asyncTask, idStrut);
+        assertTrue(true);
     }
 
     @Test
     void getLock_queryIsOk() {
-	String asyncTask = aString();
-	Long idStrut = aLong();
-	try {
-	    helper.getLock(asyncTask, idStrut);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        String asyncTask = aString();
+        Long idStrut = aLong();
+        try {
+            helper.getLock(asyncTask, idStrut);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void lockRecord_queryIsOk() {
-	Long idLock = aLong();
-	try {
-	    helper.lockRecord(idLock);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        Long idLock = aLong();
+        try {
+            helper.lockRecord(idLock);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 }

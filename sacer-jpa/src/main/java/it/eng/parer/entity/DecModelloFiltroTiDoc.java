@@ -53,34 +53,34 @@ public class DecModelloFiltroTiDoc implements Serializable {
 
     @Column(name = "ID_MODELLO_FILTRO_TI_DOC")
     @GenericGenerator(name = "SDEC_MODELLO_FILTRO_TI_DOC_ID_MODELLO_FILTRO_TI_DOC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_MODELLO_FILTRO_TI_DOC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_MODELLO_FILTRO_TI_DOC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_MODELLO_FILTRO_TI_DOC_ID_MODELLO_FILTRO_TI_DOC_GENERATOR")
     public Long getIdModelloFiltroTiDoc() {
-	return this.idModelloFiltroTiDoc;
+        return this.idModelloFiltroTiDoc;
     }
 
     public void setIdModelloFiltroTiDoc(Long idModelloFiltroTiDoc) {
-	this.idModelloFiltroTiDoc = idModelloFiltroTiDoc;
+        this.idModelloFiltroTiDoc = idModelloFiltroTiDoc;
     }
 
     @Column(name = "NM_TIPO_DOC")
     public String getNmTipoDoc() {
-	return this.nmTipoDoc;
+        return this.nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	this.nmTipoDoc = nmTipoDoc;
+        this.nmTipoDoc = nmTipoDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MODELLO_TIPO_SERIE")
     public DecModelloTipoSerie getDecModelloTipoSerie() {
-	return this.decModelloTipoSerie;
+        return this.decModelloTipoSerie;
     }
 
     public void setDecModelloTipoSerie(DecModelloTipoSerie decModelloTipoSerie) {
-	this.decModelloTipoSerie = decModelloTipoSerie;
+        this.decModelloTipoSerie = decModelloTipoSerie;
     }
 
 }

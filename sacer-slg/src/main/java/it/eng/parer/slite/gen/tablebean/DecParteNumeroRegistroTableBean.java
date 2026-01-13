@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class DecParteNumeroRegistroTableBean
-	extends AbstractBaseTable<DecParteNumeroRegistroRowBean> {
+        extends AbstractBaseTable<DecParteNumeroRegistroRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class DecParteNumeroRegistroTableBean
     public static DecParteNumeroRegistroTableDescriptor TABLE_DESCRIPTOR = new DecParteNumeroRegistroTableDescriptor();
 
     public DecParteNumeroRegistroTableBean() {
-	super();
+        super();
     }
 
     protected DecParteNumeroRegistroRowBean createRow() {
-	return new DecParteNumeroRegistroRowBean();
+        return new DecParteNumeroRegistroRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecParteNumeroRegistroRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

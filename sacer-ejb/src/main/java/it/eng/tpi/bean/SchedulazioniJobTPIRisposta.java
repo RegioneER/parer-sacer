@@ -26,8 +26,8 @@ import it.eng.tpi.bean.Esito.EsitoServizio;
 
 @XmlRootElement(name = "SchedulazioniJob")
 @XmlType(propOrder = {
-	"esito", "dtSched", "flPresenzaSitoSecondario", "flMigrazInCorso", "listaJob",
-	"listaJobSecondario" })
+        "esito", "dtSched", "flPresenzaSitoSecondario", "flMigrazInCorso", "listaJob",
+        "listaJobSecondario" })
 public class SchedulazioniJobTPIRisposta {
 
     protected Esito esito;
@@ -38,64 +38,64 @@ public class SchedulazioniJobTPIRisposta {
     protected List<Job> listaJobSecondario = new ArrayList<Job>();
 
     public SchedulazioniJobTPIRisposta() {
-	setEsito(new Esito());
-	getEsito().setCdEsito(EsitoServizio.KO);
+        setEsito(new Esito());
+        getEsito().setCdEsito(EsitoServizio.KO);
     }
 
     @XmlElement(name = "Esito")
     public Esito getEsito() {
-	return esito;
+        return esito;
     }
 
     public void setEsito(Esito esito) {
-	this.esito = esito;
+        this.esito = esito;
     }
 
     @XmlElement(name = "DtVers")
     public Date getDtSched() {
-	return dtSched;
+        return dtSched;
     }
 
     public void setDtSched(Date dtSched) {
-	this.dtSched = dtSched;
+        this.dtSched = dtSched;
     }
 
     @XmlElement(name = "FlPresenzaSitoSecondario")
     public Boolean getFlPresenzaSitoSecondario() {
-	return flPresenzaSitoSecondario;
+        return flPresenzaSitoSecondario;
     }
 
     public void setFlPresenzaSitoSecondario(Boolean flPresenzaSitoSecondario) {
-	this.flPresenzaSitoSecondario = flPresenzaSitoSecondario;
+        this.flPresenzaSitoSecondario = flPresenzaSitoSecondario;
     }
 
     @XmlElement(name = "FlMigrazInCorso")
     public Boolean getFlMigrazInCorso() {
-	return flMigrazInCorso;
+        return flMigrazInCorso;
     }
 
     public void setFlMigrazInCorso(Boolean flMigrazInCorso) {
-	this.flMigrazInCorso = flMigrazInCorso;
+        this.flMigrazInCorso = flMigrazInCorso;
     }
 
     @XmlElement(name = "Job")
     @XmlElementWrapper(name = "ListaJob")
     public List<Job> getListaJob() {
-	return listaJob;
+        return listaJob;
     }
 
     public void setListaJob(List<Job> listaJob) {
-	this.listaJob = listaJob;
+        this.listaJob = listaJob;
     }
 
     @XmlElement(name = "Job")
     @XmlElementWrapper(name = "ListaJobSecondario")
     public List<Job> getListaJobSecondario() {
-	return listaJobSecondario;
+        return listaJobSecondario;
     }
 
     public void setListaJobSecondario(List<Job> listaJobSecondario) {
-	this.listaJobSecondario = listaJobSecondario;
+        this.listaJobSecondario = listaJobSecondario;
     }
 
 }

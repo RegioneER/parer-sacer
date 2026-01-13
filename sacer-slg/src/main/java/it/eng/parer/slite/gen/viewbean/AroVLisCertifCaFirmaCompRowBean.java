@@ -36,217 +36,217 @@ public class AroVLisCertifCaFirmaCompRowBean extends BaseRow implements JEEBaseR
     public static AroVLisCertifCaFirmaCompTableDescriptor TABLE_DESCRIPTOR = new AroVLisCertifCaFirmaCompTableDescriptor();
 
     public AroVLisCertifCaFirmaCompRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdFirmaComp() {
-	return getBigDecimal("id_firma_comp");
+        return getBigDecimal("id_firma_comp");
     }
 
     public void setIdFirmaComp(BigDecimal idFirmaComp) {
-	setObject("id_firma_comp", idFirmaComp);
+        setObject("id_firma_comp", idFirmaComp);
     }
 
     public BigDecimal getIdUsoCertifCaContrComp() {
-	return getBigDecimal("id_uso_certif_ca_contr_comp");
+        return getBigDecimal("id_uso_certif_ca_contr_comp");
     }
 
     public void setIdUsoCertifCaContrComp(BigDecimal idUsoCertifCaContrComp) {
-	setObject("id_uso_certif_ca_contr_comp", idUsoCertifCaContrComp);
+        setObject("id_uso_certif_ca_contr_comp", idUsoCertifCaContrComp);
     }
 
     public BigDecimal getIdContrFirmaComp() {
-	return getBigDecimal("id_contr_firma_comp");
+        return getBigDecimal("id_contr_firma_comp");
     }
 
     public void setIdContrFirmaComp(BigDecimal idContrFirmaComp) {
-	setObject("id_contr_firma_comp", idContrFirmaComp);
+        setObject("id_contr_firma_comp", idContrFirmaComp);
     }
 
     public BigDecimal getPgCertifCa() {
-	return getBigDecimal("pg_certif_ca");
+        return getBigDecimal("pg_certif_ca");
     }
 
     public void setPgCertifCa(BigDecimal pgCertifCa) {
-	setObject("pg_certif_ca", pgCertifCa);
+        setObject("pg_certif_ca", pgCertifCa);
     }
 
     public String getDlDnIssuerCertifCa() {
-	return getString("dl_dn_issuer_certif_ca");
+        return getString("dl_dn_issuer_certif_ca");
     }
 
     public void setDlDnIssuerCertifCa(String dlDnIssuerCertifCa) {
-	setObject("dl_dn_issuer_certif_ca", dlDnIssuerCertifCa);
+        setObject("dl_dn_issuer_certif_ca", dlDnIssuerCertifCa);
     }
 
     public String getDsSerialCertifCa() {
-	return getString("ds_serial_certif_ca");
+        return getString("ds_serial_certif_ca");
     }
 
     public void setDsSerialCertifCa(String dsSerialCertifCa) {
-	setObject("ds_serial_certif_ca", dsSerialCertifCa);
+        setObject("ds_serial_certif_ca", dsSerialCertifCa);
     }
 
     public Timestamp getDtIniValCertifCa() {
-	return getTimestamp("dt_ini_val_certif_ca");
+        return getTimestamp("dt_ini_val_certif_ca");
     }
 
     public void setDtIniValCertifCa(Timestamp dtIniValCertifCa) {
-	setObject("dt_ini_val_certif_ca", dtIniValCertifCa);
+        setObject("dt_ini_val_certif_ca", dtIniValCertifCa);
     }
 
     public Timestamp getDtFinValCertifCa() {
-	return getTimestamp("dt_fin_val_certif_ca");
+        return getTimestamp("dt_fin_val_certif_ca");
     }
 
     public void setDtFinValCertifCa(Timestamp dtFinValCertifCa) {
-	setObject("dt_fin_val_certif_ca", dtFinValCertifCa);
+        setObject("dt_fin_val_certif_ca", dtFinValCertifCa);
     }
 
     public String getDlDnIssuerCrl() {
-	return getString("dl_dn_issuer_crl");
+        return getString("dl_dn_issuer_crl");
     }
 
     public void setDlDnIssuerCrl(String dlDnIssuerCrl) {
-	setObject("dl_dn_issuer_crl", dlDnIssuerCrl);
+        setObject("dl_dn_issuer_crl", dlDnIssuerCrl);
     }
 
     public String getDsSerialCertifCrl() {
-	return getString("ds_serial_certif_crl");
+        return getString("ds_serial_certif_crl");
     }
 
     public void setDsSerialCertifCrl(String dsSerialCertifCrl) {
-	setObject("ds_serial_certif_crl", dsSerialCertifCrl);
+        setObject("ds_serial_certif_crl", dsSerialCertifCrl);
     }
 
     public String getDsSerialCrl() {
-	return getString("ds_serial_crl");
+        return getString("ds_serial_crl");
     }
 
     public void setDsSerialCrl(String dsSerialCrl) {
-	setObject("ds_serial_crl", dsSerialCrl);
+        setObject("ds_serial_crl", dsSerialCrl);
     }
 
     public Timestamp getDtScadCrl() {
-	return getTimestamp("dt_scad_crl");
+        return getTimestamp("dt_scad_crl");
     }
 
     public void setDtScadCrl(Timestamp dtScadCrl) {
-	setObject("dt_scad_crl", dtScadCrl);
+        setObject("dt_scad_crl", dtScadCrl);
     }
 
     public String getDlDnIssuerCertifOcsp() {
-	return getString("dl_dn_issuer_certif_ocsp");
+        return getString("dl_dn_issuer_certif_ocsp");
     }
 
     public void setDlDnIssuerCertifOcsp(String dl_dn_issuer_certif_ocsp) {
-	setObject("dl_dn_issuer_certif_ocsp", dl_dn_issuer_certif_ocsp);
+        setObject("dl_dn_issuer_certif_ocsp", dl_dn_issuer_certif_ocsp);
     }
 
     public String getDsSerialCertifOcsp() {
-	return getString("ds_serial_certif_ocsp");
+        return getString("ds_serial_certif_ocsp");
     }
 
     public void setDsSerialCertifOcsp(String ds_serial_certif_ocsp) {
-	setObject("ds_serial_certif_ocsp", ds_serial_certif_ocsp);
+        setObject("ds_serial_certif_ocsp", ds_serial_certif_ocsp);
     }
 
     public Timestamp getDtIniValCertifOcsp() {
-	return getTimestamp("dt_ini_val_certif_ocsp");
+        return getTimestamp("dt_ini_val_certif_ocsp");
     }
 
     public void setDtIniValCertifOcsp(Timestamp dt_ini_val_certif_ocsp) {
-	setObject("dt_ini_val_certif_ocsp", dt_ini_val_certif_ocsp);
+        setObject("dt_ini_val_certif_ocsp", dt_ini_val_certif_ocsp);
     }
 
     public Timestamp getDtFinValCertifOcsp() {
-	return getTimestamp("dt_fin_val_certif_ocsp");
+        return getTimestamp("dt_fin_val_certif_ocsp");
     }
 
     public void setDtFinValCertifOcsp(Timestamp dt_fin_val_certif_ocsp) {
-	setObject("dt_fin_val_certif_ocsp", dt_fin_val_certif_ocsp);
+        setObject("dt_fin_val_certif_ocsp", dt_fin_val_certif_ocsp);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVLisCertifCaFirmaComp entity = (AroVLisCertifCaFirmaComp) obj;
-	this.setIdFirmaComp(entity.getIdFirmaComp());
-	this.setIdUsoCertifCaContrComp(entity.getIdUsoCertifCaContrComp());
-	this.setIdContrFirmaComp(entity.getIdContrFirmaComp());
-	this.setPgCertifCa(entity.getPgCertifCa());
-	this.setDlDnIssuerCertifCa(entity.getDlDnIssuerCertifCa());
-	this.setDsSerialCertifCa(entity.getDsSerialCertifCa());
-	if (entity.getDtIniValCertifCa() != null) {
-	    this.setDtIniValCertifCa(new Timestamp(entity.getDtIniValCertifCa().getTime()));
-	}
-	if (entity.getDtFinValCertifCa() != null) {
-	    this.setDtFinValCertifCa(new Timestamp(entity.getDtFinValCertifCa().getTime()));
-	}
-	this.setDlDnIssuerCrl(entity.getDlDnIssuerCrl());
-	this.setDsSerialCertifCrl(entity.getDsSerialCertifCrl());
-	this.setDsSerialCrl(entity.getDsSerialCrl());
-	if (entity.getDtScadCrl() != null) {
-	    this.setDtScadCrl(new Timestamp(entity.getDtScadCrl().getTime()));
-	}
-	this.setDlDnIssuerCertifOcsp(entity.getDlDnIssuerCertifOcsp());
-	this.setDsSerialCertifOcsp(entity.getDsSerialCertifOcsp());
-	if (entity.getDtIniValCertifOcsp() != null) {
-	    this.setDtIniValCertifOcsp(new Timestamp(entity.getDtIniValCertifOcsp().getTime()));
-	}
-	if (entity.getDtFinValCertifOcsp() != null) {
-	    this.setDtFinValCertifOcsp(new Timestamp(entity.getDtFinValCertifOcsp().getTime()));
-	}
+        AroVLisCertifCaFirmaComp entity = (AroVLisCertifCaFirmaComp) obj;
+        this.setIdFirmaComp(entity.getIdFirmaComp());
+        this.setIdUsoCertifCaContrComp(entity.getIdUsoCertifCaContrComp());
+        this.setIdContrFirmaComp(entity.getIdContrFirmaComp());
+        this.setPgCertifCa(entity.getPgCertifCa());
+        this.setDlDnIssuerCertifCa(entity.getDlDnIssuerCertifCa());
+        this.setDsSerialCertifCa(entity.getDsSerialCertifCa());
+        if (entity.getDtIniValCertifCa() != null) {
+            this.setDtIniValCertifCa(new Timestamp(entity.getDtIniValCertifCa().getTime()));
+        }
+        if (entity.getDtFinValCertifCa() != null) {
+            this.setDtFinValCertifCa(new Timestamp(entity.getDtFinValCertifCa().getTime()));
+        }
+        this.setDlDnIssuerCrl(entity.getDlDnIssuerCrl());
+        this.setDsSerialCertifCrl(entity.getDsSerialCertifCrl());
+        this.setDsSerialCrl(entity.getDsSerialCrl());
+        if (entity.getDtScadCrl() != null) {
+            this.setDtScadCrl(new Timestamp(entity.getDtScadCrl().getTime()));
+        }
+        this.setDlDnIssuerCertifOcsp(entity.getDlDnIssuerCertifOcsp());
+        this.setDsSerialCertifOcsp(entity.getDsSerialCertifOcsp());
+        if (entity.getDtIniValCertifOcsp() != null) {
+            this.setDtIniValCertifOcsp(new Timestamp(entity.getDtIniValCertifOcsp().getTime()));
+        }
+        if (entity.getDtFinValCertifOcsp() != null) {
+            this.setDtFinValCertifOcsp(new Timestamp(entity.getDtFinValCertifOcsp().getTime()));
+        }
     }
 
     @Override
     public AroVLisCertifCaFirmaComp rowBeanToEntity() {
-	AroVLisCertifCaFirmaComp entity = new AroVLisCertifCaFirmaComp();
-	entity.setIdFirmaComp(this.getIdFirmaComp());
-	entity.setIdUsoCertifCaContrComp(this.getIdUsoCertifCaContrComp());
-	entity.setIdContrFirmaComp(this.getIdContrFirmaComp());
-	entity.setPgCertifCa(this.getPgCertifCa());
-	entity.setDlDnIssuerCertifCa(this.getDlDnIssuerCertifCa());
-	entity.setDsSerialCertifCa(this.getDsSerialCertifCa());
-	entity.setDtIniValCertifCa(this.getDtIniValCertifCa());
-	entity.setDtFinValCertifCa(this.getDtFinValCertifCa());
-	entity.setDlDnIssuerCrl(this.getDlDnIssuerCrl());
-	entity.setDsSerialCertifCrl(this.getDsSerialCertifCrl());
-	entity.setDsSerialCrl(this.getDsSerialCrl());
-	entity.setDtScadCrl(this.getDtScadCrl());
-	entity.setDlDnIssuerCertifOcsp(this.getDlDnIssuerCertifOcsp());
-	entity.setDsSerialCertifOcsp(this.getDsSerialCertifOcsp());
-	entity.setDtIniValCertifOcsp(this.getDtIniValCertifOcsp());
-	entity.setDtFinValCertifOcsp(this.getDtFinValCertifOcsp());
-	return entity;
+        AroVLisCertifCaFirmaComp entity = new AroVLisCertifCaFirmaComp();
+        entity.setIdFirmaComp(this.getIdFirmaComp());
+        entity.setIdUsoCertifCaContrComp(this.getIdUsoCertifCaContrComp());
+        entity.setIdContrFirmaComp(this.getIdContrFirmaComp());
+        entity.setPgCertifCa(this.getPgCertifCa());
+        entity.setDlDnIssuerCertifCa(this.getDlDnIssuerCertifCa());
+        entity.setDsSerialCertifCa(this.getDsSerialCertifCa());
+        entity.setDtIniValCertifCa(this.getDtIniValCertifCa());
+        entity.setDtFinValCertifCa(this.getDtFinValCertifCa());
+        entity.setDlDnIssuerCrl(this.getDlDnIssuerCrl());
+        entity.setDsSerialCertifCrl(this.getDsSerialCertifCrl());
+        entity.setDsSerialCrl(this.getDsSerialCrl());
+        entity.setDtScadCrl(this.getDtScadCrl());
+        entity.setDlDnIssuerCertifOcsp(this.getDlDnIssuerCertifOcsp());
+        entity.setDsSerialCertifOcsp(this.getDsSerialCertifOcsp());
+        entity.setDtIniValCertifOcsp(this.getDtIniValCertifOcsp());
+        entity.setDtFinValCertifOcsp(this.getDtFinValCertifOcsp());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

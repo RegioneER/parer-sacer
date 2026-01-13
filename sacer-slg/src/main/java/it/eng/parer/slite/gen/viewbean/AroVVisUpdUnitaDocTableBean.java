@@ -37,19 +37,19 @@ public class AroVVisUpdUnitaDocTableBean extends AbstractBaseTable<AroVVisUpdUni
     public static AroVVisUpdUnitaDocTableDescriptor TABLE_DESCRIPTOR = new AroVVisUpdUnitaDocTableDescriptor();
 
     public AroVVisUpdUnitaDocTableBean() {
-	super();
+        super();
     }
 
     protected AroVVisUpdUnitaDocRowBean createRow() {
-	return new AroVVisUpdUnitaDocRowBean();
+        return new AroVVisUpdUnitaDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVVisUpdUnitaDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -27,51 +27,51 @@ public class SerVJobContenutoBloccatoId implements Serializable {
 
     @Column(name = "ID_CONTENUTO_VER_SERIE")
     public BigDecimal getIdContenutoVerSerie() {
-	return idContenutoVerSerie;
+        return idContenutoVerSerie;
     }
 
     public void setIdContenutoVerSerie(BigDecimal idContenutoVerSerie) {
-	this.idContenutoVerSerie = idContenutoVerSerie;
+        this.idContenutoVerSerie = idContenutoVerSerie;
     }
 
     private String nmJob;
 
     @Column(name = "NM_JOB")
     public String getNmJob() {
-	return nmJob;
+        return nmJob;
     }
 
     public void setNmJob(String nmJob) {
-	this.nmJob = nmJob;
+        this.nmJob = nmJob;
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 83 * hash + Objects.hashCode(this.idContenutoVerSerie);
-	hash = 83 * hash + Objects.hashCode(this.nmJob);
-	return hash;
+        int hash = 7;
+        hash = 83 * hash + Objects.hashCode(this.idContenutoVerSerie);
+        hash = 83 * hash + Objects.hashCode(this.nmJob);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final SerVJobContenutoBloccatoId other = (SerVJobContenutoBloccatoId) obj;
-	if (!Objects.equals(this.nmJob, other.nmJob)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idContenutoVerSerie, other.idContenutoVerSerie)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SerVJobContenutoBloccatoId other = (SerVJobContenutoBloccatoId) obj;
+        if (!Objects.equals(this.nmJob, other.nmJob)) {
+            return false;
+        }
+        if (!Objects.equals(this.idContenutoVerSerie, other.idContenutoVerSerie)) {
+            return false;
+        }
+        return true;
     }
 
 }

@@ -38,123 +38,123 @@ public class LogJobRowBean extends BaseRow implements JEEBaseRowInterface {
     public static LogJobTableDescriptor TABLE_DESCRIPTOR = new LogJobTableDescriptor();
 
     public LogJobRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdLogJob() {
-	return getBigDecimal("id_log_job");
+        return getBigDecimal("id_log_job");
     }
 
     public void setIdLogJob(BigDecimal idLogJob) {
-	setObject("id_log_job", idLogJob);
+        setObject("id_log_job", idLogJob);
     }
 
     public String getNmJob() {
-	return getString("nm_job");
+        return getString("nm_job");
     }
 
     public void setNmJob(String nmJob) {
-	setObject("nm_job", nmJob);
+        setObject("nm_job", nmJob);
     }
 
     public String getTiRegLogJob() {
-	return getString("ti_reg_log_job");
+        return getString("ti_reg_log_job");
     }
 
     public void setTiRegLogJob(String tiRegLogJob) {
-	setObject("ti_reg_log_job", tiRegLogJob);
+        setObject("ti_reg_log_job", tiRegLogJob);
     }
 
     public Timestamp getDtRegLogJob() {
-	return getTimestamp("dt_reg_log_job");
+        return getTimestamp("dt_reg_log_job");
     }
 
     public void setDtRegLogJob(Timestamp dtRegLogJob) {
-	setObject("dt_reg_log_job", dtRegLogJob);
+        setObject("dt_reg_log_job", dtRegLogJob);
     }
 
     public String getDlMsgErr() {
-	return getString("dl_msg_err");
+        return getString("dl_msg_err");
     }
 
     public void setDlMsgErr(String dlMsgErr) {
-	setObject("dl_msg_err", dlMsgErr);
+        setObject("dl_msg_err", dlMsgErr);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	LogJob entity = (LogJob) obj;
+        LogJob entity = (LogJob) obj;
 
-	this.setIdLogJob(
-		entity.getIdLogJob() == null ? null : BigDecimal.valueOf(entity.getIdLogJob()));
-	this.setNmJob(entity.getNmJob());
-	this.setTiRegLogJob(entity.getTiRegLogJob());
-	if (entity.getDtRegLogJob() != null) {
-	    this.setDtRegLogJob(new Timestamp(entity.getDtRegLogJob().getTime()));
-	}
-	this.setDlMsgErr(entity.getDlMsgErr());
+        this.setIdLogJob(
+                entity.getIdLogJob() == null ? null : BigDecimal.valueOf(entity.getIdLogJob()));
+        this.setNmJob(entity.getNmJob());
+        this.setTiRegLogJob(entity.getTiRegLogJob());
+        if (entity.getDtRegLogJob() != null) {
+            this.setDtRegLogJob(new Timestamp(entity.getDtRegLogJob().getTime()));
+        }
+        this.setDlMsgErr(entity.getDlMsgErr());
 
-	if (entity.getOrgStrut() != null) {
-	    this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
-	}
+        if (entity.getOrgStrut() != null) {
+            this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
+        }
 
     }
 
     @Override
     public LogJob rowBeanToEntity() {
-	LogJob entity = new LogJob();
-	if (this.getIdLogJob() != null) {
-	    entity.setIdLogJob(this.getIdLogJob().longValue());
-	}
-	entity.setNmJob(this.getNmJob());
-	entity.setTiRegLogJob(this.getTiRegLogJob());
-	entity.setDtRegLogJob(this.getDtRegLogJob());
-	entity.setDlMsgErr(this.getDlMsgErr());
-	if (this.getIdStrut() != null) {
-	    if (entity.getOrgStrut() == null) {
-		entity.setOrgStrut(new OrgStrut());
-	    }
-	    entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
-	}
-	return entity;
+        LogJob entity = new LogJob();
+        if (this.getIdLogJob() != null) {
+            entity.setIdLogJob(this.getIdLogJob().longValue());
+        }
+        entity.setNmJob(this.getNmJob());
+        entity.setTiRegLogJob(this.getTiRegLogJob());
+        entity.setDtRegLogJob(this.getDtRegLogJob());
+        entity.setDlMsgErr(this.getDlMsgErr());
+        if (this.getIdStrut() != null) {
+            if (entity.getOrgStrut() == null) {
+                entity.setOrgStrut(new OrgStrut());
+            }
+            entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

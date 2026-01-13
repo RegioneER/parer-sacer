@@ -33,84 +33,84 @@ public class AroVLisDatiSpecDocRowBean extends BaseRow {
     public static AroVLisDatiSpecDocTableDescriptor TABLE_DESCRIPTOR = new AroVLisDatiSpecDocTableDescriptor();
 
     public AroVLisDatiSpecDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdDoc() {
-	return getBigDecimal("id_doc");
+        return getBigDecimal("id_doc");
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	setObject("id_doc", idDoc);
+        setObject("id_doc", idDoc);
     }
 
     public BigDecimal getIdDatiSpecDoc() {
-	return getBigDecimal("id_dati_spec_doc");
+        return getBigDecimal("id_dati_spec_doc");
     }
 
     public void setIdDatiSpecDoc(BigDecimal idDatiSpecDoc) {
-	setObject("id_dati_spec_doc", idDatiSpecDoc);
+        setObject("id_dati_spec_doc", idDatiSpecDoc);
     }
 
     public String getNmAttribTipoDoc() {
-	return getString("nm_attrib_tipo_doc");
+        return getString("nm_attrib_tipo_doc");
     }
 
     public void setNmAttribTipoDoc(String nmAttribTipoDoc) {
-	setObject("nm_attrib_tipo_doc", nmAttribTipoDoc);
+        setObject("nm_attrib_tipo_doc", nmAttribTipoDoc);
     }
 
     public String getDsAttribTipoDoc() {
-	return getString("ds_attrib_tipo_doc");
+        return getString("ds_attrib_tipo_doc");
     }
 
     public void setDsAttribTipoDoc(String dsAttribTipoDoc) {
-	setObject("ds_attrib_tipo_doc", dsAttribTipoDoc);
+        setObject("ds_attrib_tipo_doc", dsAttribTipoDoc);
     }
 
     public String getDlValore() {
-	return getString("dl_valore");
+        return getString("dl_valore");
     }
 
     public void setDlValore(String dlValore) {
-	setObject("dl_valore", dlValore);
+        setObject("dl_valore", dlValore);
     }
 
     public BigDecimal getNiOrdAttrib() {
-	return getBigDecimal("ni_ord_attrib");
+        return getBigDecimal("ni_ord_attrib");
     }
 
     public void setNiOrdAttrib(BigDecimal niOrdAttrib) {
-	setObject("ni_ord_attrib", niOrdAttrib);
+        setObject("ni_ord_attrib", niOrdAttrib);
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

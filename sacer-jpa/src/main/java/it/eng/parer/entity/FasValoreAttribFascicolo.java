@@ -41,67 +41,67 @@ public class FasValoreAttribFascicolo implements Serializable {
     private DecAaTipoFascicolo decAaTipoFascicolo;
 
     public FasValoreAttribFascicolo() {
-	/* hibernate */
+        /* hibernate */
     }
 
     @Id
     @Column(name = "ID_VALORE_ATTRIB_FASCICOLO")
     @XmlID
     public Long getIdValoreAttribFascicolo() {
-	return this.idValoreAttribFascicolo;
+        return this.idValoreAttribFascicolo;
     }
 
     public void setIdValoreAttribFascicolo(Long idValoreAttribFascicolo) {
-	this.idValoreAttribFascicolo = idValoreAttribFascicolo;
+        this.idValoreAttribFascicolo = idValoreAttribFascicolo;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USO_MODELLO_XSD_FASC")
     public DecUsoModelloXsdFasc getDecUsoModelloXsdFasc() {
-	return this.decUsoModelloXsdFasc;
+        return this.decUsoModelloXsdFasc;
     }
 
     public void setDecUsoModelloXsdFasc(DecUsoModelloXsdFasc decUsoModelloXsdFasc) {
-	this.decUsoModelloXsdFasc = decUsoModelloXsdFasc;
+        this.decUsoModelloXsdFasc = decUsoModelloXsdFasc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FASCICOLO")
     public FasFascicolo getFasFascicolo() {
-	return this.fasFascicolo;
+        return this.fasFascicolo;
     }
 
     public void setFasFascicolo(FasFascicolo fasFascicolo) {
-	this.fasFascicolo = fasFascicolo;
+        this.fasFascicolo = fasFascicolo;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ATTRIB_FASCICOLO")
     public DecAttribFascicolo getDecAttribFascicolo() {
-	return this.decAttribFascicolo;
+        return this.decAttribFascicolo;
     }
 
     public void setDecAttribFascicolo(DecAttribFascicolo decAttribFascicolo) {
-	this.decAttribFascicolo = decAttribFascicolo;
+        this.decAttribFascicolo = decAttribFascicolo;
     }
 
     @Column(name = "DL_VALORE")
     public String getDlValore() {
-	return this.dlValore;
+        return this.dlValore;
     }
 
     public void setDlValore(String dlValore) {
-	this.dlValore = dlValore;
+        this.dlValore = dlValore;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_AA_TIPO_FASCICOLO")
     public DecAaTipoFascicolo getDecAaTipoFascicolo() {
-	return this.decAaTipoFascicolo;
+        return this.decAaTipoFascicolo;
     }
 
     public void setDecAaTipoFascicolo(DecAaTipoFascicolo decAaTipoFascicolo) {
-	this.decAaTipoFascicolo = decAaTipoFascicolo;
+        this.decAaTipoFascicolo = decAaTipoFascicolo;
     }
 
 }

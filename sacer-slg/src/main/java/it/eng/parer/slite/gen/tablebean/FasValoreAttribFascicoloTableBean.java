@@ -23,7 +23,7 @@ import java.util.Iterator;
  *
  */
 public class FasValoreAttribFascicoloTableBean
-	extends AbstractBaseTable<FasValoreAttribFascicoloRowBean> {
+        extends AbstractBaseTable<FasValoreAttribFascicoloRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -33,19 +33,19 @@ public class FasValoreAttribFascicoloTableBean
     public static FasValoreAttribFascicoloTableDescriptor TABLE_DESCRIPTOR = new FasValoreAttribFascicoloTableDescriptor();
 
     public FasValoreAttribFascicoloTableBean() {
-	super();
+        super();
     }
 
     protected FasValoreAttribFascicoloRowBean createRow() {
-	return new FasValoreAttribFascicoloRowBean();
+        return new FasValoreAttribFascicoloRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<FasValoreAttribFascicoloRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

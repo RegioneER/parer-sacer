@@ -36,597 +36,597 @@ public class AroVVisMarcaCompRowBean extends BaseRow implements JEEBaseRowInterf
     public static AroVVisMarcaCompTableDescriptor TABLE_DESCRIPTOR = new AroVVisMarcaCompTableDescriptor();
 
     public AroVVisMarcaCompRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public String getNmAmbiente() {
-	return getString("nm_ambiente");
+        return getString("nm_ambiente");
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	setObject("nm_ambiente", nmAmbiente);
+        setObject("nm_ambiente", nmAmbiente);
     }
 
     public String getNmEnte() {
-	return getString("nm_ente");
+        return getString("nm_ente");
     }
 
     public void setNmEnte(String nmEnte) {
-	setObject("nm_ente", nmEnte);
+        setObject("nm_ente", nmEnte);
     }
 
     public String getNmStrut() {
-	return getString("nm_strut");
+        return getString("nm_strut");
     }
 
     public void setNmStrut(String nmStrut) {
-	setObject("nm_strut", nmStrut);
+        setObject("nm_strut", nmStrut);
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public String getCdRegistroKeyUnitaDoc() {
-	return getString("cd_registro_key_unita_doc");
+        return getString("cd_registro_key_unita_doc");
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
+        setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return getBigDecimal("aa_key_unita_doc");
+        return getBigDecimal("aa_key_unita_doc");
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	setObject("aa_key_unita_doc", aaKeyUnitaDoc);
+        setObject("aa_key_unita_doc", aaKeyUnitaDoc);
     }
 
     public String getCdKeyUnitaDoc() {
-	return getString("cd_key_unita_doc");
+        return getString("cd_key_unita_doc");
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	setObject("cd_key_unita_doc", cdKeyUnitaDoc);
+        setObject("cd_key_unita_doc", cdKeyUnitaDoc);
     }
 
     public String getNmTipoUnitaDoc() {
-	return getString("nm_tipo_unita_doc");
+        return getString("nm_tipo_unita_doc");
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	setObject("nm_tipo_unita_doc", nmTipoUnitaDoc);
+        setObject("nm_tipo_unita_doc", nmTipoUnitaDoc);
     }
 
     public BigDecimal getIdDoc() {
-	return getBigDecimal("id_doc");
+        return getBigDecimal("id_doc");
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	setObject("id_doc", idDoc);
+        setObject("id_doc", idDoc);
     }
 
     public String getTiDoc() {
-	return getString("ti_doc");
+        return getString("ti_doc");
     }
 
     public void setTiDoc(String tiDoc) {
-	setObject("ti_doc", tiDoc);
+        setObject("ti_doc", tiDoc);
     }
 
     public BigDecimal getPgDoc() {
-	return getBigDecimal("pg_doc");
+        return getBigDecimal("pg_doc");
     }
 
     public void setPgDoc(BigDecimal pgDoc) {
-	setObject("pg_doc", pgDoc);
+        setObject("pg_doc", pgDoc);
     }
 
     public String getNmTipoDoc() {
-	return getString("nm_tipo_doc");
+        return getString("nm_tipo_doc");
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	setObject("nm_tipo_doc", nmTipoDoc);
+        setObject("nm_tipo_doc", nmTipoDoc);
     }
 
     public String getCdKeyDocVers() {
-	return getString("cd_key_doc_vers");
+        return getString("cd_key_doc_vers");
     }
 
     public void setCdKeyDocVers(String cdKeyDocVers) {
-	setObject("cd_key_doc_vers", cdKeyDocVers);
+        setObject("cd_key_doc_vers", cdKeyDocVers);
     }
 
     public BigDecimal getIdCompDoc() {
-	return getBigDecimal("id_comp_doc");
+        return getBigDecimal("id_comp_doc");
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	setObject("id_comp_doc", idCompDoc);
+        setObject("id_comp_doc", idCompDoc);
     }
 
     public BigDecimal getNiOrdCompDoc() {
-	return getBigDecimal("ni_ord_comp_doc");
+        return getBigDecimal("ni_ord_comp_doc");
     }
 
     public void setNiOrdCompDoc(BigDecimal niOrdCompDoc) {
-	setObject("ni_ord_comp_doc", niOrdCompDoc);
+        setObject("ni_ord_comp_doc", niOrdCompDoc);
     }
 
     public String getNmTipoCompDoc() {
-	return getString("nm_tipo_comp_doc");
+        return getString("nm_tipo_comp_doc");
     }
 
     public void setNmTipoCompDoc(String nmTipoCompDoc) {
-	setObject("nm_tipo_comp_doc", nmTipoCompDoc);
+        setObject("nm_tipo_comp_doc", nmTipoCompDoc);
     }
 
     public String getDsUrnCompCalc() {
-	return getString("ds_urn_comp_calc");
+        return getString("ds_urn_comp_calc");
     }
 
     public void setDsUrnCompCalc(String dsUrnCompCalc) {
-	setObject("ds_urn_comp_calc", dsUrnCompCalc);
+        setObject("ds_urn_comp_calc", dsUrnCompCalc);
     }
 
     public String getNmFormatoCalc() {
-	return getString("nm_formato_calc");
+        return getString("nm_formato_calc");
     }
 
     public void setNmFormatoCalc(String nmFormatoCalc) {
-	setObject("nm_formato_calc", nmFormatoCalc);
+        setObject("nm_formato_calc", nmFormatoCalc);
     }
 
     public BigDecimal getIdMarcaComp() {
-	return getBigDecimal("id_marca_comp");
+        return getBigDecimal("id_marca_comp");
     }
 
     public void setIdMarcaComp(BigDecimal idMarcaComp) {
-	setObject("id_marca_comp", idMarcaComp);
+        setObject("id_marca_comp", idMarcaComp);
     }
 
     public BigDecimal getPgMarca() {
-	return getBigDecimal("pg_marca");
+        return getBigDecimal("pg_marca");
     }
 
     public void setPgMarca(BigDecimal pgMarca) {
-	setObject("pg_marca", pgMarca);
+        setObject("pg_marca", pgMarca);
     }
 
     public Timestamp getTmMarcaTemp() {
-	return getTimestamp("tm_marca_temp");
+        return getTimestamp("tm_marca_temp");
     }
 
     public void setTmMarcaTemp(Timestamp tmMarcaTemp) {
-	setObject("tm_marca_temp", tmMarcaTemp);
+        setObject("tm_marca_temp", tmMarcaTemp);
     }
 
     public String getTiFormatoMarca() {
-	return getString("ti_formato_marca");
+        return getString("ti_formato_marca");
     }
 
     public void setTiFormatoMarca(String tiFormatoMarca) {
-	setObject("ti_formato_marca", tiFormatoMarca);
+        setObject("ti_formato_marca", tiFormatoMarca);
     }
 
     public String getTiEsitoContrConforme() {
-	return getString("ti_esito_contr_conforme");
+        return getString("ti_esito_contr_conforme");
     }
 
     public void setTiEsitoContrConforme(String tiEsitoContrConforme) {
-	setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
+        setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
     }
 
     public String getDsMsgEsitoContrConforme() {
-	return getString("ds_msg_esito_contr_conforme");
+        return getString("ds_msg_esito_contr_conforme");
     }
 
     public void setDsMsgEsitoContrConforme(String dsMsgEsitoContrConforme) {
-	setObject("ds_msg_esito_contr_conforme", dsMsgEsitoContrConforme);
+        setObject("ds_msg_esito_contr_conforme", dsMsgEsitoContrConforme);
     }
 
     public String getTiEsitoVerifMarca() {
-	return getString("ti_esito_verif_marca");
+        return getString("ti_esito_verif_marca");
     }
 
     public void setTiEsitoVerifMarca(String tiEsitoVerifMarca) {
-	setObject("ti_esito_verif_marca", tiEsitoVerifMarca);
+        setObject("ti_esito_verif_marca", tiEsitoVerifMarca);
     }
 
     public String getDsMsgEsitoVerifMarca() {
-	return getString("ds_msg_esito_verif_marca");
+        return getString("ds_msg_esito_verif_marca");
     }
 
     public void setDsMsgEsitoVerifMarca(String dsMsgEsitoVerifMarca) {
-	setObject("ds_msg_esito_verif_marca", dsMsgEsitoVerifMarca);
+        setObject("ds_msg_esito_verif_marca", dsMsgEsitoVerifMarca);
     }
 
     public String getTiMarcaTemp() {
-	return getString("ti_marca_temp");
+        return getString("ti_marca_temp");
     }
 
     public void setTiMarcaTemp(String tiMarcaTemp) {
-	setObject("ti_marca_temp", tiMarcaTemp);
+        setObject("ti_marca_temp", tiMarcaTemp);
     }
 
     public String getDsMarcaBase64() {
-	return getString("ds_marca_base64");
+        return getString("ds_marca_base64");
     }
 
     public void setDsMarcaBase64(String ds_marca_base64) {
-	setObject("ds_marca_base64", ds_marca_base64);
+        setObject("ds_marca_base64", ds_marca_base64);
     }
 
     public String getDsAlgoMarca() {
-	return getString("ds_algo_marca");
+        return getString("ds_algo_marca");
     }
 
     public void setDsAlgoMarca(String dsAlgoMarca) {
-	setObject("ds_algo_marca", dsAlgoMarca);
+        setObject("ds_algo_marca", dsAlgoMarca);
     }
 
     public Timestamp getDtScadMarca() {
-	return getTimestamp("dt_scad_marca");
+        return getTimestamp("dt_scad_marca");
     }
 
     public void setDtScadMarca(Timestamp dtScadMarca) {
-	setObject("dt_scad_marca", dtScadMarca);
+        setObject("dt_scad_marca", dtScadMarca);
     }
 
     public BigDecimal getPgBusta() {
-	return getBigDecimal("pg_busta");
+        return getBigDecimal("pg_busta");
     }
 
     public void setPgBusta(BigDecimal pgBusta) {
-	setObject("pg_busta", pgBusta);
+        setObject("pg_busta", pgBusta);
     }
 
     public String getIssuerCertifTsa() {
-	return getString("issuer_certif_tsa");
+        return getString("issuer_certif_tsa");
     }
 
     public void setIssuerCertifTsa(String issuerCertifTsa) {
-	setObject("issuer_certif_tsa", issuerCertifTsa);
+        setObject("issuer_certif_tsa", issuerCertifTsa);
     }
 
     public BigDecimal getSerialTsa() {
-	return getBigDecimal("serial_tsa");
+        return getBigDecimal("serial_tsa");
     }
 
     public void setSerialTsa(BigDecimal serialTsa) {
-	setObject("serial_tsa", serialTsa);
+        setObject("serial_tsa", serialTsa);
     }
 
     public Timestamp getDtIniValCertifTsa() {
-	return getTimestamp("dt_ini_val_certif_tsa");
+        return getTimestamp("dt_ini_val_certif_tsa");
     }
 
     public void setDtIniValCertifTsa(Timestamp dtIniValCertifTsa) {
-	setObject("dt_ini_val_certif_tsa", dtIniValCertifTsa);
+        setObject("dt_ini_val_certif_tsa", dtIniValCertifTsa);
     }
 
     public Timestamp getDtFinValCertifTsa() {
-	return getTimestamp("dt_fin_val_certif_tsa");
+        return getTimestamp("dt_fin_val_certif_tsa");
     }
 
     public void setDtFinValCertifTsa(Timestamp dtFinValCertifTsa) {
-	setObject("dt_fin_val_certif_tsa", dtFinValCertifTsa);
+        setObject("dt_fin_val_certif_tsa", dtFinValCertifTsa);
     }
 
     public String getEsitoCrittografico() {
-	return getString("esito_crittografico");
+        return getString("esito_crittografico");
     }
 
     public void setEsitoCrittografico(String esitoCrittografico) {
-	setObject("esito_crittografico", esitoCrittografico);
+        setObject("esito_crittografico", esitoCrittografico);
     }
 
     public String getMsgEsitoCrittografico() {
-	return getString("msg_esito_crittografico");
+        return getString("msg_esito_crittografico");
     }
 
     public void setMsgEsitoCrittografico(String msgEsitoCrittografico) {
-	setObject("msg_esito_crittografico", msgEsitoCrittografico);
+        setObject("msg_esito_crittografico", msgEsitoCrittografico);
     }
 
     public BigDecimal getIdContrMarcaCatena() {
-	return getBigDecimal("id_contr_marca_catena");
+        return getBigDecimal("id_contr_marca_catena");
     }
 
     public void setIdContrMarcaCatena(BigDecimal idContrMarcaCatena) {
-	setObject("id_contr_marca_catena", idContrMarcaCatena);
+        setObject("id_contr_marca_catena", idContrMarcaCatena);
     }
 
     public String getEsitoCatena() {
-	return getString("esito_catena");
+        return getString("esito_catena");
     }
 
     public void setEsitoCatena(String esitoCatena) {
-	setObject("esito_catena", esitoCatena);
+        setObject("esito_catena", esitoCatena);
     }
 
     public String getMsgEsitoCatena() {
-	return getString("msg_esito_catena");
+        return getString("msg_esito_catena");
     }
 
     public void setMsgEsitoCatena(String msgEsitoCatena) {
-	setObject("msg_esito_catena", msgEsitoCatena);
+        setObject("msg_esito_catena", msgEsitoCatena);
     }
 
     public String getEsitoCertificato() {
-	return getString("esito_certificato");
+        return getString("esito_certificato");
     }
 
     public void setEsitoCertificato(String esitoCertificato) {
-	setObject("esito_certificato", esitoCertificato);
+        setObject("esito_certificato", esitoCertificato);
     }
 
     public String getMsgEsitoCertificato() {
-	return getString("msg_esito_certificato");
+        return getString("msg_esito_certificato");
     }
 
     public void setMsgEsitoCertificato(String msgEsitoCertificato) {
-	setObject("msg_esito_certificato", msgEsitoCertificato);
+        setObject("msg_esito_certificato", msgEsitoCertificato);
     }
 
     public String getEsitoCrl() {
-	return getString("esito_crl");
+        return getString("esito_crl");
     }
 
     public void setEsitoCrl(String esitoCrl) {
-	setObject("esito_crl", esitoCrl);
+        setObject("esito_crl", esitoCrl);
     }
 
     public String getMsgEsitoCrl() {
-	return getString("msg_esito_crl");
+        return getString("msg_esito_crl");
     }
 
     public void setMsgEsitoCrl(String msgEsitoCrl) {
-	setObject("msg_esito_crl", msgEsitoCrl);
+        setObject("msg_esito_crl", msgEsitoCrl);
     }
 
     public String getIssuerCrl() {
-	return getString("issuer_crl");
+        return getString("issuer_crl");
     }
 
     public void setIssuerCrl(String issuerCrl) {
-	setObject("issuer_crl", issuerCrl);
+        setObject("issuer_crl", issuerCrl);
     }
 
     public BigDecimal getSerialCaCrl() {
-	return getBigDecimal("serial_ca_crl");
+        return getBigDecimal("serial_ca_crl");
     }
 
     public void setSerialCaCrl(BigDecimal serialCaCrl) {
-	setObject("serial_ca_crl", serialCaCrl);
+        setObject("serial_ca_crl", serialCaCrl);
     }
 
     public BigDecimal getSerialCrl() {
-	return getBigDecimal("serial_crl");
+        return getBigDecimal("serial_crl");
     }
 
     public void setSerialCrl(BigDecimal serialCrl) {
-	setObject("serial_crl", serialCrl);
+        setObject("serial_crl", serialCrl);
     }
 
     public Timestamp getDtScadCrl() {
-	return getTimestamp("dt_scad_crl");
+        return getTimestamp("dt_scad_crl");
     }
 
     public void setDtScadCrl(Timestamp dtScadCrl) {
-	setObject("dt_scad_crl", dtScadCrl);
+        setObject("dt_scad_crl", dtScadCrl);
     }
 
     public String getEsitoOcsp() {
-	return getString("esito_ocsp");
+        return getString("esito_ocsp");
     }
 
     public void setEsitoOcsp(String esito_ocsp) {
-	setObject("esito_ocsp", esito_ocsp);
+        setObject("esito_ocsp", esito_ocsp);
     }
 
     public String getMsgEsitoOcsp() {
-	return getString("msg_esito_ocsp");
+        return getString("msg_esito_ocsp");
     }
 
     public void setMsgEsitoOcsp(String msg_esito_ocsp) {
-	setObject("msg_esito_ocsp", msg_esito_ocsp);
+        setObject("msg_esito_ocsp", msg_esito_ocsp);
     }
 
     public String getIdentifierOcsp() {
-	return getString("identifier_ocsp");
+        return getString("identifier_ocsp");
     }
 
     public void setIdentifierOcsp(String identifier_ocsp) {
-	setObject("identifier_ocsp", identifier_ocsp);
+        setObject("identifier_ocsp", identifier_ocsp);
     }
 
     public String getIssuerCertifOcsp() {
-	return getString("issuer_certif_ocsp");
+        return getString("issuer_certif_ocsp");
     }
 
     public void setIssuerCertifOcsp(String issuer_certif_ocsp) {
-	setObject("issuer_certif_ocsp", issuer_certif_ocsp);
+        setObject("issuer_certif_ocsp", issuer_certif_ocsp);
     }
 
     public String getSerialCertifOcsp() {
-	return getString("serial_certif_ocsp");
+        return getString("serial_certif_ocsp");
     }
 
     public void setSerialCertifOcsp(String serial_certif_ocsp) {
-	setObject("serial_certif_ocsp", serial_certif_ocsp);
+        setObject("serial_certif_ocsp", serial_certif_ocsp);
     }
 
     public String getDsNote() {
-	return getString("ds_note");
+        return getString("ds_note");
     }
 
     public void setDsNote(String ds_note) {
-	setObject("ds_note", ds_note);
+        setObject("ds_note", ds_note);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVVisMarcaComp entity = (AroVVisMarcaComp) obj;
-	this.setNmAmbiente(entity.getNmAmbiente());
-	this.setNmEnte(entity.getNmEnte());
-	this.setNmStrut(entity.getNmStrut());
-	this.setIdUnitaDoc(entity.getIdUnitaDoc());
-	this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
-	this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
-	this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
-	this.setNmTipoUnitaDoc(entity.getNmTipoUnitaDoc());
-	this.setIdDoc(entity.getIdDoc());
-	this.setTiDoc(entity.getTiDoc());
-	this.setPgDoc(entity.getPgDoc());
-	this.setNmTipoDoc(entity.getNmTipoDoc());
-	this.setCdKeyDocVers(entity.getCdKeyDocVers());
-	this.setIdCompDoc(entity.getIdCompDoc());
-	this.setNiOrdCompDoc(entity.getNiOrdCompDoc());
-	this.setNmTipoCompDoc(entity.getNmTipoCompDoc());
-	this.setDsUrnCompCalc(entity.getDsUrnCompCalc());
-	this.setNmFormatoCalc(entity.getNmFormatoCalc());
-	this.setIdMarcaComp(entity.getIdMarcaComp());
-	this.setPgMarca(entity.getPgMarca());
-	if (entity.getTmMarcaTemp() != null) {
-	    this.setTmMarcaTemp(new Timestamp(entity.getTmMarcaTemp().getTime()));
-	}
-	this.setTiFormatoMarca(entity.getTiFormatoMarca());
-	this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
-	this.setDsMsgEsitoContrConforme(entity.getDsMsgEsitoContrConforme());
-	this.setTiEsitoVerifMarca(entity.getTiEsitoVerifMarca());
-	this.setDsMsgEsitoVerifMarca(entity.getDsMsgEsitoVerifMarca());
-	this.setTiMarcaTemp(entity.getTiMarcaTemp());
-	this.setDsMarcaBase64(entity.getDsMarcaBase64());
-	this.setDsAlgoMarca(entity.getDsAlgoMarca());
-	if (entity.getDtScadMarca() != null) {
-	    this.setDtScadMarca(new Timestamp(entity.getDtScadMarca().getTime()));
-	}
-	this.setPgBusta(entity.getPgBusta());
-	this.setIssuerCertifTsa(entity.getIssuerCertifTsa());
-	this.setSerialTsa(entity.getSerialTsa());
-	if (entity.getDtIniValCertifTsa() != null) {
-	    this.setDtIniValCertifTsa(new Timestamp(entity.getDtIniValCertifTsa().getTime()));
-	}
-	if (entity.getDtFinValCertifTsa() != null) {
-	    this.setDtFinValCertifTsa(new Timestamp(entity.getDtFinValCertifTsa().getTime()));
-	}
-	this.setEsitoCrittografico(entity.getEsitoCrittografico());
-	this.setMsgEsitoCrittografico(entity.getMsgEsitoCrittografico());
-	this.setIdContrMarcaCatena(entity.getIdContrMarcaCatena());
-	this.setEsitoCatena(entity.getEsitoCatena());
-	this.setMsgEsitoCatena(entity.getMsgEsitoCatena());
-	this.setEsitoCertificato(entity.getEsitoCertificato());
-	this.setMsgEsitoCertificato(entity.getMsgEsitoCertificato());
-	this.setEsitoCrl(entity.getEsitoCrl());
-	this.setMsgEsitoCrl(entity.getMsgEsitoCrl());
-	this.setIssuerCrl(entity.getIssuerCrl());
-	this.setSerialCaCrl(entity.getSerialCaCrl());
-	this.setSerialCrl(entity.getSerialCrl());
-	if (entity.getDtScadCrl() != null) {
-	    this.setDtScadCrl(new Timestamp(entity.getDtScadCrl().getTime()));
-	}
-	this.setEsitoOcsp(entity.getEsitoOcsp());
-	this.setMsgEsitoOcsp(entity.getMsgEsitoOcsp());
-	this.setIdentifierOcsp(entity.getIdentifierOcsp());
-	this.setIssuerCertifOcsp(entity.getIssuerCertifOcsp());
-	this.setSerialCertifOcsp(entity.getSerialCertifOcsp());
-	this.setDsNote(entity.getDsNote());
+        AroVVisMarcaComp entity = (AroVVisMarcaComp) obj;
+        this.setNmAmbiente(entity.getNmAmbiente());
+        this.setNmEnte(entity.getNmEnte());
+        this.setNmStrut(entity.getNmStrut());
+        this.setIdUnitaDoc(entity.getIdUnitaDoc());
+        this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
+        this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
+        this.setNmTipoUnitaDoc(entity.getNmTipoUnitaDoc());
+        this.setIdDoc(entity.getIdDoc());
+        this.setTiDoc(entity.getTiDoc());
+        this.setPgDoc(entity.getPgDoc());
+        this.setNmTipoDoc(entity.getNmTipoDoc());
+        this.setCdKeyDocVers(entity.getCdKeyDocVers());
+        this.setIdCompDoc(entity.getIdCompDoc());
+        this.setNiOrdCompDoc(entity.getNiOrdCompDoc());
+        this.setNmTipoCompDoc(entity.getNmTipoCompDoc());
+        this.setDsUrnCompCalc(entity.getDsUrnCompCalc());
+        this.setNmFormatoCalc(entity.getNmFormatoCalc());
+        this.setIdMarcaComp(entity.getIdMarcaComp());
+        this.setPgMarca(entity.getPgMarca());
+        if (entity.getTmMarcaTemp() != null) {
+            this.setTmMarcaTemp(new Timestamp(entity.getTmMarcaTemp().getTime()));
+        }
+        this.setTiFormatoMarca(entity.getTiFormatoMarca());
+        this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
+        this.setDsMsgEsitoContrConforme(entity.getDsMsgEsitoContrConforme());
+        this.setTiEsitoVerifMarca(entity.getTiEsitoVerifMarca());
+        this.setDsMsgEsitoVerifMarca(entity.getDsMsgEsitoVerifMarca());
+        this.setTiMarcaTemp(entity.getTiMarcaTemp());
+        this.setDsMarcaBase64(entity.getDsMarcaBase64());
+        this.setDsAlgoMarca(entity.getDsAlgoMarca());
+        if (entity.getDtScadMarca() != null) {
+            this.setDtScadMarca(new Timestamp(entity.getDtScadMarca().getTime()));
+        }
+        this.setPgBusta(entity.getPgBusta());
+        this.setIssuerCertifTsa(entity.getIssuerCertifTsa());
+        this.setSerialTsa(entity.getSerialTsa());
+        if (entity.getDtIniValCertifTsa() != null) {
+            this.setDtIniValCertifTsa(new Timestamp(entity.getDtIniValCertifTsa().getTime()));
+        }
+        if (entity.getDtFinValCertifTsa() != null) {
+            this.setDtFinValCertifTsa(new Timestamp(entity.getDtFinValCertifTsa().getTime()));
+        }
+        this.setEsitoCrittografico(entity.getEsitoCrittografico());
+        this.setMsgEsitoCrittografico(entity.getMsgEsitoCrittografico());
+        this.setIdContrMarcaCatena(entity.getIdContrMarcaCatena());
+        this.setEsitoCatena(entity.getEsitoCatena());
+        this.setMsgEsitoCatena(entity.getMsgEsitoCatena());
+        this.setEsitoCertificato(entity.getEsitoCertificato());
+        this.setMsgEsitoCertificato(entity.getMsgEsitoCertificato());
+        this.setEsitoCrl(entity.getEsitoCrl());
+        this.setMsgEsitoCrl(entity.getMsgEsitoCrl());
+        this.setIssuerCrl(entity.getIssuerCrl());
+        this.setSerialCaCrl(entity.getSerialCaCrl());
+        this.setSerialCrl(entity.getSerialCrl());
+        if (entity.getDtScadCrl() != null) {
+            this.setDtScadCrl(new Timestamp(entity.getDtScadCrl().getTime()));
+        }
+        this.setEsitoOcsp(entity.getEsitoOcsp());
+        this.setMsgEsitoOcsp(entity.getMsgEsitoOcsp());
+        this.setIdentifierOcsp(entity.getIdentifierOcsp());
+        this.setIssuerCertifOcsp(entity.getIssuerCertifOcsp());
+        this.setSerialCertifOcsp(entity.getSerialCertifOcsp());
+        this.setDsNote(entity.getDsNote());
     }
 
     @Override
     public AroVVisMarcaComp rowBeanToEntity() {
-	AroVVisMarcaComp entity = new AroVVisMarcaComp();
-	entity.setNmAmbiente(this.getNmAmbiente());
-	entity.setNmEnte(this.getNmEnte());
-	entity.setNmStrut(this.getNmStrut());
-	entity.setIdUnitaDoc(this.getIdUnitaDoc());
-	entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
-	entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
-	entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
-	entity.setNmTipoUnitaDoc(this.getNmTipoUnitaDoc());
-	entity.setIdDoc(this.getIdDoc());
-	entity.setTiDoc(this.getTiDoc());
-	entity.setPgDoc(this.getPgDoc());
-	entity.setNmTipoDoc(this.getNmTipoDoc());
-	entity.setCdKeyDocVers(this.getCdKeyDocVers());
-	entity.setIdCompDoc(this.getIdCompDoc());
-	entity.setNiOrdCompDoc(this.getNiOrdCompDoc());
-	entity.setNmTipoCompDoc(this.getNmTipoCompDoc());
-	entity.setDsUrnCompCalc(this.getDsUrnCompCalc());
-	entity.setNmFormatoCalc(this.getNmFormatoCalc());
-	entity.setIdMarcaComp(this.getIdMarcaComp());
-	entity.setPgMarca(this.getPgMarca());
-	entity.setTmMarcaTemp(this.getTmMarcaTemp());
-	entity.setTiFormatoMarca(this.getTiFormatoMarca());
-	entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
-	entity.setDsMsgEsitoContrConforme(this.getDsMsgEsitoContrConforme());
-	entity.setTiEsitoVerifMarca(this.getTiEsitoVerifMarca());
-	entity.setDsMsgEsitoVerifMarca(this.getDsMsgEsitoVerifMarca());
-	entity.setTiMarcaTemp(this.getTiMarcaTemp());
-	entity.setDsMarcaBase64(this.getDsMarcaBase64());
-	entity.setDsAlgoMarca(this.getDsAlgoMarca());
-	entity.setDtScadMarca(this.getDtScadMarca());
-	entity.setPgBusta(this.getPgBusta());
-	entity.setIssuerCertifTsa(this.getIssuerCertifTsa());
-	entity.setSerialTsa(this.getSerialTsa());
-	entity.setDtIniValCertifTsa(this.getDtIniValCertifTsa());
-	entity.setDtFinValCertifTsa(this.getDtFinValCertifTsa());
-	entity.setEsitoCrittografico(this.getEsitoCrittografico());
-	entity.setMsgEsitoCrittografico(this.getMsgEsitoCrittografico());
-	entity.setIdContrMarcaCatena(this.getIdContrMarcaCatena());
-	entity.setEsitoCatena(this.getEsitoCatena());
-	entity.setMsgEsitoCatena(this.getMsgEsitoCatena());
-	entity.setEsitoCertificato(this.getEsitoCertificato());
-	entity.setMsgEsitoCertificato(this.getMsgEsitoCertificato());
-	entity.setEsitoCrl(this.getEsitoCrl());
-	entity.setMsgEsitoCrl(this.getMsgEsitoCrl());
-	entity.setIssuerCrl(this.getIssuerCrl());
-	entity.setSerialCaCrl(this.getSerialCaCrl());
-	entity.setSerialCrl(this.getSerialCrl());
-	entity.setDtScadCrl(this.getDtScadCrl());
-	entity.setEsitoOcsp(this.getEsitoOcsp());
-	entity.setMsgEsitoOcsp(this.getMsgEsitoOcsp());
-	entity.setIdentifierOcsp(this.getIdentifierOcsp());
-	entity.setIssuerCertifOcsp(this.getIssuerCertifOcsp());
-	entity.setSerialCertifOcsp(this.getSerialCertifOcsp());
-	entity.setDsNote(this.getDsNote());
-	return entity;
+        AroVVisMarcaComp entity = new AroVVisMarcaComp();
+        entity.setNmAmbiente(this.getNmAmbiente());
+        entity.setNmEnte(this.getNmEnte());
+        entity.setNmStrut(this.getNmStrut());
+        entity.setIdUnitaDoc(this.getIdUnitaDoc());
+        entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
+        entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
+        entity.setNmTipoUnitaDoc(this.getNmTipoUnitaDoc());
+        entity.setIdDoc(this.getIdDoc());
+        entity.setTiDoc(this.getTiDoc());
+        entity.setPgDoc(this.getPgDoc());
+        entity.setNmTipoDoc(this.getNmTipoDoc());
+        entity.setCdKeyDocVers(this.getCdKeyDocVers());
+        entity.setIdCompDoc(this.getIdCompDoc());
+        entity.setNiOrdCompDoc(this.getNiOrdCompDoc());
+        entity.setNmTipoCompDoc(this.getNmTipoCompDoc());
+        entity.setDsUrnCompCalc(this.getDsUrnCompCalc());
+        entity.setNmFormatoCalc(this.getNmFormatoCalc());
+        entity.setIdMarcaComp(this.getIdMarcaComp());
+        entity.setPgMarca(this.getPgMarca());
+        entity.setTmMarcaTemp(this.getTmMarcaTemp());
+        entity.setTiFormatoMarca(this.getTiFormatoMarca());
+        entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
+        entity.setDsMsgEsitoContrConforme(this.getDsMsgEsitoContrConforme());
+        entity.setTiEsitoVerifMarca(this.getTiEsitoVerifMarca());
+        entity.setDsMsgEsitoVerifMarca(this.getDsMsgEsitoVerifMarca());
+        entity.setTiMarcaTemp(this.getTiMarcaTemp());
+        entity.setDsMarcaBase64(this.getDsMarcaBase64());
+        entity.setDsAlgoMarca(this.getDsAlgoMarca());
+        entity.setDtScadMarca(this.getDtScadMarca());
+        entity.setPgBusta(this.getPgBusta());
+        entity.setIssuerCertifTsa(this.getIssuerCertifTsa());
+        entity.setSerialTsa(this.getSerialTsa());
+        entity.setDtIniValCertifTsa(this.getDtIniValCertifTsa());
+        entity.setDtFinValCertifTsa(this.getDtFinValCertifTsa());
+        entity.setEsitoCrittografico(this.getEsitoCrittografico());
+        entity.setMsgEsitoCrittografico(this.getMsgEsitoCrittografico());
+        entity.setIdContrMarcaCatena(this.getIdContrMarcaCatena());
+        entity.setEsitoCatena(this.getEsitoCatena());
+        entity.setMsgEsitoCatena(this.getMsgEsitoCatena());
+        entity.setEsitoCertificato(this.getEsitoCertificato());
+        entity.setMsgEsitoCertificato(this.getMsgEsitoCertificato());
+        entity.setEsitoCrl(this.getEsitoCrl());
+        entity.setMsgEsitoCrl(this.getMsgEsitoCrl());
+        entity.setIssuerCrl(this.getIssuerCrl());
+        entity.setSerialCaCrl(this.getSerialCaCrl());
+        entity.setSerialCrl(this.getSerialCrl());
+        entity.setDtScadCrl(this.getDtScadCrl());
+        entity.setEsitoOcsp(this.getEsitoOcsp());
+        entity.setMsgEsitoOcsp(this.getMsgEsitoOcsp());
+        entity.setIdentifierOcsp(this.getIdentifierOcsp());
+        entity.setIssuerCertifOcsp(this.getIssuerCertifOcsp());
+        entity.setSerialCertifOcsp(this.getSerialCertifOcsp());
+        entity.setDsNote(this.getDsNote());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

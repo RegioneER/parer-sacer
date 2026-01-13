@@ -36,25 +36,25 @@ public class MonVCntAggStrutB30 implements Serializable {
     private MonVCntAggStrutB30Id monVCntAggStrutB30Id;
 
     public MonVCntAggStrutB30() {
-	/* hibernate */
+        /* hibernate */
     }
 
     @EmbeddedId
     public MonVCntAggStrutB30Id getMonVCntAggStrutB30Id() {
-	return monVCntAggStrutB30Id;
+        return monVCntAggStrutB30Id;
     }
 
     public void setMonVCntAggStrutB30Id(MonVCntAggStrutB30Id monVCntAggStrutB30Id) {
-	this.monVCntAggStrutB30Id = monVCntAggStrutB30Id;
+        this.monVCntAggStrutB30Id = monVCntAggStrutB30Id;
     }
 
     @Column(name = "NI_AGG")
     public BigDecimal getNiAgg() {
-	return this.niAgg;
+        return this.niAgg;
     }
 
     public void setNiAgg(BigDecimal niAgg) {
-	this.niAgg = niAgg;
+        this.niAgg = niAgg;
     }
 
 }

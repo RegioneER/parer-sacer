@@ -28,7 +28,7 @@ import javax.xml.ws.ResponseWrapper;
  */
 @WebService(targetNamespace = "http://ws.sacerasi.eng.it/", name = "RecStatoOggettoPing")
 @XmlSeeAlso({
-	ObjectFactory.class })
+        ObjectFactory.class })
 public interface RecStatoOggettoPing {
 
     /**
@@ -44,7 +44,7 @@ public interface RecStatoOggettoPing {
     @RequestWrapper(localName = "getStatoOggetto", targetNamespace = "http://ws.sacerasi.eng.it/", className = "pippo.GetStatoOggetto")
     @ResponseWrapper(localName = "getStatoOggettoResponse", targetNamespace = "http://ws.sacerasi.eng.it/", className = "pippo.GetStatoOggettoResponse")
     public RecuperoStatoOggettoRisposta getStatoOggetto(
-	    @WebParam(name = "nmAmbiente", targetNamespace = "") String nmAmbiente,
-	    @WebParam(name = "nmVersatore", targetNamespace = "") String nmVersatore,
-	    @WebParam(name = "cdKeyObject", targetNamespace = "") String cdKeyObject);
+            @WebParam(name = "nmAmbiente", targetNamespace = "") String nmAmbiente,
+            @WebParam(name = "nmVersatore", targetNamespace = "") String nmVersatore,
+            @WebParam(name = "cdKeyObject", targetNamespace = "") String cdKeyObject);
 }

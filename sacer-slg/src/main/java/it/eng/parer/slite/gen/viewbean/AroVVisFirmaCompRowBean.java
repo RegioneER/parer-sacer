@@ -36,1093 +36,1093 @@ public class AroVVisFirmaCompRowBean extends BaseRow implements JEEBaseRowInterf
     public static AroVVisFirmaCompTableDescriptor TABLE_DESCRIPTOR = new AroVVisFirmaCompTableDescriptor();
 
     public AroVVisFirmaCompRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public String getNmAmbiente() {
-	return getString("nm_ambiente");
+        return getString("nm_ambiente");
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	setObject("nm_ambiente", nmAmbiente);
+        setObject("nm_ambiente", nmAmbiente);
     }
 
     public String getNmEnte() {
-	return getString("nm_ente");
+        return getString("nm_ente");
     }
 
     public void setNmEnte(String nmEnte) {
-	setObject("nm_ente", nmEnte);
+        setObject("nm_ente", nmEnte);
     }
 
     public String getNmStrut() {
-	return getString("nm_strut");
+        return getString("nm_strut");
     }
 
     public void setNmStrut(String nmStrut) {
-	setObject("nm_strut", nmStrut);
+        setObject("nm_strut", nmStrut);
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public String getCdRegistroKeyUnitaDoc() {
-	return getString("cd_registro_key_unita_doc");
+        return getString("cd_registro_key_unita_doc");
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
+        setObject("cd_registro_key_unita_doc", cdRegistroKeyUnitaDoc);
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return getBigDecimal("aa_key_unita_doc");
+        return getBigDecimal("aa_key_unita_doc");
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	setObject("aa_key_unita_doc", aaKeyUnitaDoc);
+        setObject("aa_key_unita_doc", aaKeyUnitaDoc);
     }
 
     public String getCdKeyUnitaDoc() {
-	return getString("cd_key_unita_doc");
+        return getString("cd_key_unita_doc");
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	setObject("cd_key_unita_doc", cdKeyUnitaDoc);
+        setObject("cd_key_unita_doc", cdKeyUnitaDoc);
     }
 
     public String getNmTipoUnitaDoc() {
-	return getString("nm_tipo_unita_doc");
+        return getString("nm_tipo_unita_doc");
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	setObject("nm_tipo_unita_doc", nmTipoUnitaDoc);
+        setObject("nm_tipo_unita_doc", nmTipoUnitaDoc);
     }
 
     public Timestamp getDtAnnulUnitaDoc() {
-	return getTimestamp("dt_annul_unita_doc");
+        return getTimestamp("dt_annul_unita_doc");
     }
 
     public void setDtAnnulUnitaDoc(Timestamp dtAnnulUnitaDoc) {
-	setObject("dt_annul_unita_doc", dtAnnulUnitaDoc);
+        setObject("dt_annul_unita_doc", dtAnnulUnitaDoc);
     }
 
     public String getTiAnnulUnitaDoc() {
-	return getString("ti_annul_unita_doc");
+        return getString("ti_annul_unita_doc");
     }
 
     public void setTiAnnulUnitaDoc(String tiAnnulUnitaDoc) {
-	setObject("ti_annul_unita_doc", tiAnnulUnitaDoc);
+        setObject("ti_annul_unita_doc", tiAnnulUnitaDoc);
     }
 
     public String getNtAnnulUnitaDoc() {
-	return getString("nt_annul_unita_doc");
+        return getString("nt_annul_unita_doc");
     }
 
     public void setNtAnnulUnitaDoc(String ntAnnulUnitaDoc) {
-	setObject("nt_annul_unita_doc", ntAnnulUnitaDoc);
+        setObject("nt_annul_unita_doc", ntAnnulUnitaDoc);
     }
 
     public BigDecimal getIdDoc() {
-	return getBigDecimal("id_doc");
+        return getBigDecimal("id_doc");
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	setObject("id_doc", idDoc);
+        setObject("id_doc", idDoc);
     }
 
     public String getCdKeyDocVers() {
-	return getString("cd_key_doc_vers");
+        return getString("cd_key_doc_vers");
     }
 
     public void setCdKeyDocVers(String cdKeyDocVers) {
-	setObject("cd_key_doc_vers", cdKeyDocVers);
+        setObject("cd_key_doc_vers", cdKeyDocVers);
     }
 
     public String getTiDoc() {
-	return getString("ti_doc");
+        return getString("ti_doc");
     }
 
     public void setTiDoc(String tiDoc) {
-	setObject("ti_doc", tiDoc);
+        setObject("ti_doc", tiDoc);
     }
 
     public BigDecimal getPgDoc() {
-	return getBigDecimal("pg_doc");
+        return getBigDecimal("pg_doc");
     }
 
     public void setPgDoc(BigDecimal pgDoc) {
-	setObject("pg_doc", pgDoc);
+        setObject("pg_doc", pgDoc);
     }
 
     public String getNmTipoDoc() {
-	return getString("nm_tipo_doc");
+        return getString("nm_tipo_doc");
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	setObject("nm_tipo_doc", nmTipoDoc);
+        setObject("nm_tipo_doc", nmTipoDoc);
     }
 
     public Timestamp getDtAnnulDoc() {
-	return getTimestamp("dt_annul_doc");
+        return getTimestamp("dt_annul_doc");
     }
 
     public void setDtAnnulDoc(Timestamp dtAnnulDoc) {
-	setObject("dt_annul_doc", dtAnnulDoc);
+        setObject("dt_annul_doc", dtAnnulDoc);
     }
 
     public String getTiAnnulDoc() {
-	return getString("ti_annul_doc");
+        return getString("ti_annul_doc");
     }
 
     public void setTiAnnulDoc(String tiAnnulDoc) {
-	setObject("ti_annul_doc", tiAnnulDoc);
+        setObject("ti_annul_doc", tiAnnulDoc);
     }
 
     public String getNtAnnulDoc() {
-	return getString("nt_annul_doc");
+        return getString("nt_annul_doc");
     }
 
     public void setNtAnnulDoc(String ntAnnulDoc) {
-	setObject("nt_annul_doc", ntAnnulDoc);
+        setObject("nt_annul_doc", ntAnnulDoc);
     }
 
     public BigDecimal getIdCompDoc() {
-	return getBigDecimal("id_comp_doc");
+        return getBigDecimal("id_comp_doc");
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	setObject("id_comp_doc", idCompDoc);
+        setObject("id_comp_doc", idCompDoc);
     }
 
     public BigDecimal getNiOrdCompDoc() {
-	return getBigDecimal("ni_ord_comp_doc");
+        return getBigDecimal("ni_ord_comp_doc");
     }
 
     public void setNiOrdCompDoc(BigDecimal niOrdCompDoc) {
-	setObject("ni_ord_comp_doc", niOrdCompDoc);
+        setObject("ni_ord_comp_doc", niOrdCompDoc);
     }
 
     public String getNmTipoCompDoc() {
-	return getString("nm_tipo_comp_doc");
+        return getString("nm_tipo_comp_doc");
     }
 
     public void setNmTipoCompDoc(String nmTipoCompDoc) {
-	setObject("nm_tipo_comp_doc", nmTipoCompDoc);
+        setObject("nm_tipo_comp_doc", nmTipoCompDoc);
     }
 
     public String getDsUrnCompCalc() {
-	return getString("ds_urn_comp_calc");
+        return getString("ds_urn_comp_calc");
     }
 
     public void setDsUrnCompCalc(String dsUrnCompCalc) {
-	setObject("ds_urn_comp_calc", dsUrnCompCalc);
+        setObject("ds_urn_comp_calc", dsUrnCompCalc);
     }
 
     public String getNmFormatoCalc() {
-	return getString("nm_formato_calc");
+        return getString("nm_formato_calc");
     }
 
     public void setNmFormatoCalc(String nmFormatoCalc) {
-	setObject("nm_formato_calc", nmFormatoCalc);
+        setObject("nm_formato_calc", nmFormatoCalc);
     }
 
     public BigDecimal getIdFirmaComp() {
-	return getBigDecimal("id_firma_comp");
+        return getBigDecimal("id_firma_comp");
     }
 
     public void setIdFirmaComp(BigDecimal idFirmaComp) {
-	setObject("id_firma_comp", idFirmaComp);
+        setObject("id_firma_comp", idFirmaComp);
     }
 
     public BigDecimal getPgFirma() {
-	return getBigDecimal("pg_firma");
+        return getBigDecimal("pg_firma");
     }
 
     public void setPgFirma(BigDecimal pgFirma) {
-	setObject("pg_firma", pgFirma);
+        setObject("pg_firma", pgFirma);
     }
 
     public String getCdFirmatario() {
-	return getString("cd_firmatario");
+        return getString("cd_firmatario");
     }
 
     public void setCdFirmatario(String cdFirmatario) {
-	setObject("cd_firmatario", cdFirmatario);
+        setObject("cd_firmatario", cdFirmatario);
     }
 
     public String getNmCognomeFirmatario() {
-	return getString("nm_cognome_firmatario");
+        return getString("nm_cognome_firmatario");
     }
 
     public void setNmCognomeFirmatario(String nmCognomeFirmatario) {
-	setObject("nm_cognome_firmatario", nmCognomeFirmatario);
+        setObject("nm_cognome_firmatario", nmCognomeFirmatario);
     }
 
     public String getNmFirmatario() {
-	return getString("nm_firmatario");
+        return getString("nm_firmatario");
     }
 
     public void setNmFirmatario(String nmFirmatario) {
-	setObject("nm_firmatario", nmFirmatario);
+        setObject("nm_firmatario", nmFirmatario);
     }
 
     public String getTiFirma() {
-	return getString("ti_firma");
+        return getString("ti_firma");
     }
 
     public void setTiFirma(String tiFirma) {
-	setObject("ti_firma", tiFirma);
+        setObject("ti_firma", tiFirma);
     }
 
     public String getTiEsitoContrConforme() {
-	return getString("ti_esito_contr_conforme");
+        return getString("ti_esito_contr_conforme");
     }
 
     public void setTiEsitoContrConforme(String tiEsitoContrConforme) {
-	setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
+        setObject("ti_esito_contr_conforme", tiEsitoContrConforme);
     }
 
     public String getDsMsgEsitoContrConforme() {
-	return getString("ds_msg_esito_contr_conforme");
+        return getString("ds_msg_esito_contr_conforme");
     }
 
     public void setDsMsgEsitoContrConforme(String dsMsgEsitoContrConforme) {
-	setObject("ds_msg_esito_contr_conforme", dsMsgEsitoContrConforme);
+        setObject("ds_msg_esito_contr_conforme", dsMsgEsitoContrConforme);
     }
 
     public String getDsAlgoFirma() {
-	return getString("ds_algo_firma");
+        return getString("ds_algo_firma");
     }
 
     public void setDsAlgoFirma(String dsAlgoFirma) {
-	setObject("ds_algo_firma", dsAlgoFirma);
+        setObject("ds_algo_firma", dsAlgoFirma);
     }
 
     public String getTiFormatoFirma() {
-	return getString("ti_formato_firma");
+        return getString("ti_formato_firma");
     }
 
     public void setTiFormatoFirma(String tiFormatoFirma) {
-	setObject("ti_formato_firma", tiFormatoFirma);
+        setObject("ti_formato_firma", tiFormatoFirma);
     }
 
     public BigDecimal getPgBusta() {
-	return getBigDecimal("pg_busta");
+        return getBigDecimal("pg_busta");
     }
 
     public void setPgBusta(BigDecimal pgBusta) {
-	setObject("pg_busta", pgBusta);
+        setObject("pg_busta", pgBusta);
     }
 
     public String getIssuerCertifFirmatario() {
-	return getString("issuer_certif_firmatario");
+        return getString("issuer_certif_firmatario");
     }
 
     public void setIssuerCertifFirmatario(String issuerCertifFirmatario) {
-	setObject("issuer_certif_firmatario", issuerCertifFirmatario);
+        setObject("issuer_certif_firmatario", issuerCertifFirmatario);
     }
 
     public String getDsSerialCertifCa() {
-	return getString("ds_serial_certif_ca");
+        return getString("ds_serial_certif_ca");
     }
 
     public void setDsSerialCertifCa(String dsSerialCertifCa) {
-	setObject("ds_serial_certif_ca", dsSerialCertifCa);
+        setObject("ds_serial_certif_ca", dsSerialCertifCa);
     }
 
     public String getDsSerialCertifFirmatario() {
-	return getString("ds_serial_certif_firmatario");
+        return getString("ds_serial_certif_firmatario");
     }
 
     public void setDsSerialCertifFirmatario(String dsSerialCertifFirmatario) {
-	setObject("ds_serial_certif_firmatario", dsSerialCertifFirmatario);
+        setObject("ds_serial_certif_firmatario", dsSerialCertifFirmatario);
     }
 
     public Timestamp getDtIniValCertifFirmatario() {
-	return getTimestamp("dt_ini_val_certif_firmatario");
+        return getTimestamp("dt_ini_val_certif_firmatario");
     }
 
     public void setDtIniValCertifFirmatario(Timestamp dtIniValCertifFirmatario) {
-	setObject("dt_ini_val_certif_firmatario", dtIniValCertifFirmatario);
+        setObject("dt_ini_val_certif_firmatario", dtIniValCertifFirmatario);
     }
 
     public Timestamp getDtFinValCertifFirmatario() {
-	return getTimestamp("dt_fin_val_certif_firmatario");
+        return getTimestamp("dt_fin_val_certif_firmatario");
     }
 
     public void setDtFinValCertifFirmatario(Timestamp dtFinValCertifFirmatario) {
-	setObject("dt_fin_val_certif_firmatario", dtFinValCertifFirmatario);
+        setObject("dt_fin_val_certif_firmatario", dtFinValCertifFirmatario);
     }
 
     public Timestamp getDtFirma() {
-	return getTimestamp("dt_firma");
+        return getTimestamp("dt_firma");
     }
 
     public void setDtFirma(Timestamp dtFirma) {
-	setObject("dt_firma", dtFirma);
+        setObject("dt_firma", dtFirma);
     }
 
     public Timestamp getTmMarcaTempRiferita() {
-	return getTimestamp("tm_marca_temp_riferita");
+        return getTimestamp("tm_marca_temp_riferita");
     }
 
     public void setTmMarcaTempRiferita(Timestamp tmMarcaTempRiferita) {
-	setObject("tm_marca_temp_riferita", tmMarcaTempRiferita);
+        setObject("tm_marca_temp_riferita", tmMarcaTempRiferita);
     }
 
     public Timestamp getTmRifTempUsato() {
-	return getTimestamp("tm_rif_temp_usato");
+        return getTimestamp("tm_rif_temp_usato");
     }
 
     public void setTmRifTempUsato(Timestamp tmRifTempUsato) {
-	setObject("tm_rif_temp_usato", tmRifTempUsato);
+        setObject("tm_rif_temp_usato", tmRifTempUsato);
     }
 
     public String getTiRifTempUsato() {
-	return getString("ti_rif_temp_usato");
+        return getString("ti_rif_temp_usato");
     }
 
     public void setTiRifTempUsato(String tiRifTempUsato) {
-	setObject("ti_rif_temp_usato", tiRifTempUsato);
+        setObject("ti_rif_temp_usato", tiRifTempUsato);
     }
 
     public String getTiEsitoVerifFirma() {
-	return getString("ti_esito_verif_firma");
+        return getString("ti_esito_verif_firma");
     }
 
     public void setTiEsitoVerifFirma(String tiEsitoVerifFirma) {
-	setObject("ti_esito_verif_firma", tiEsitoVerifFirma);
+        setObject("ti_esito_verif_firma", tiEsitoVerifFirma);
     }
 
     public String getDsMsgEsitoVerifFirma() {
-	return getString("ds_msg_esito_verif_firma");
+        return getString("ds_msg_esito_verif_firma");
     }
 
     public void setDsMsgEsitoVerifFirma(String dsMsgEsitoVerifFirma) {
-	setObject("ds_msg_esito_verif_firma", dsMsgEsitoVerifFirma);
+        setObject("ds_msg_esito_verif_firma", dsMsgEsitoVerifFirma);
     }
 
     public String getTiEsitoVerifFirmaChius() {
-	return getString("ti_esito_verif_firma_chius");
+        return getString("ti_esito_verif_firma_chius");
     }
 
     public void setTiEsitoVerifFirmaChius(String tiEsitoVerifFirmaChius) {
-	setObject("ti_esito_verif_firma_chius", tiEsitoVerifFirmaChius);
+        setObject("ti_esito_verif_firma_chius", tiEsitoVerifFirmaChius);
     }
 
     public String getDsMsgEsitoVerifFirmaChius() {
-	return getString("ds_msg_esito_verif_firma_chius");
+        return getString("ds_msg_esito_verif_firma_chius");
     }
 
     public void setDsMsgEsitoVerifFirmaChius(String dsMsgEsitoVerifFirmaChius) {
-	setObject("ds_msg_esito_verif_firma_chius", dsMsgEsitoVerifFirmaChius);
+        setObject("ds_msg_esito_verif_firma_chius", dsMsgEsitoVerifFirmaChius);
     }
 
     public String getNmCognomeFirmatarioPadre() {
-	return getString("nm_cognome_firmatario_padre");
+        return getString("nm_cognome_firmatario_padre");
     }
 
     public void setNmCognomeFirmatarioPadre(String nmCognomeFirmatarioPadre) {
-	setObject("nm_cognome_firmatario_padre", nmCognomeFirmatarioPadre);
+        setObject("nm_cognome_firmatario_padre", nmCognomeFirmatarioPadre);
     }
 
     public String getNmFirmatarioPadre() {
-	return getString("nm_firmatario_padre");
+        return getString("nm_firmatario_padre");
     }
 
     public void setNmFirmatarioPadre(String nmFirmatarioPadre) {
-	setObject("nm_firmatario_padre", nmFirmatarioPadre);
+        setObject("nm_firmatario_padre", nmFirmatarioPadre);
     }
 
     public String getEsitoCrittografico() {
-	return getString("esito_crittografico");
+        return getString("esito_crittografico");
     }
 
     public void setEsitoCrittografico(String esitoCrittografico) {
-	setObject("esito_crittografico", esitoCrittografico);
+        setObject("esito_crittografico", esitoCrittografico);
     }
 
     public String getMsgEsitoCrittografico() {
-	return getString("msg_esito_crittografico");
+        return getString("msg_esito_crittografico");
     }
 
     public void setMsgEsitoCrittografico(String msgEsitoCrittografico) {
-	setObject("msg_esito_crittografico", msgEsitoCrittografico);
+        setObject("msg_esito_crittografico", msgEsitoCrittografico);
     }
 
     public BigDecimal getIdContrFirmaCatena() {
-	return getBigDecimal("id_contr_firma_catena");
+        return getBigDecimal("id_contr_firma_catena");
     }
 
     public void setIdContrFirmaCatena(BigDecimal idContrFirmaCatena) {
-	setObject("id_contr_firma_catena", idContrFirmaCatena);
+        setObject("id_contr_firma_catena", idContrFirmaCatena);
     }
 
     public String getEsitoCatena() {
-	return getString("esito_catena");
+        return getString("esito_catena");
     }
 
     public void setEsitoCatena(String esitoCatena) {
-	setObject("esito_catena", esitoCatena);
+        setObject("esito_catena", esitoCatena);
     }
 
     public String getMsgEsitoCatena() {
-	return getString("msg_esito_catena");
+        return getString("msg_esito_catena");
     }
 
     public void setMsgEsitoCatena(String msgEsitoCatena) {
-	setObject("msg_esito_catena", msgEsitoCatena);
+        setObject("msg_esito_catena", msgEsitoCatena);
     }
 
     public String getEsitoCertificato() {
-	return getString("esito_certificato");
+        return getString("esito_certificato");
     }
 
     public void setEsitoCertificato(String esitoCertificato) {
-	setObject("esito_certificato", esitoCertificato);
+        setObject("esito_certificato", esitoCertificato);
     }
 
     public String getMsgEsitoCertificato() {
-	return getString("msg_esito_certificato");
+        return getString("msg_esito_certificato");
     }
 
     public void setMsgEsitoCertificato(String msgEsitoCertificato) {
-	setObject("msg_esito_certificato", msgEsitoCertificato);
+        setObject("msg_esito_certificato", msgEsitoCertificato);
     }
 
     public String getEsitoCrl() {
-	return getString("esito_crl");
+        return getString("esito_crl");
     }
 
     public void setEsitoCrl(String esitoCrl) {
-	setObject("esito_crl", esitoCrl);
+        setObject("esito_crl", esitoCrl);
     }
 
     public String getMsgEsitoCrl() {
-	return getString("msg_esito_crl");
+        return getString("msg_esito_crl");
     }
 
     public void setMsgEsitoCrl(String msgEsitoCrl) {
-	setObject("msg_esito_crl", msgEsitoCrl);
+        setObject("msg_esito_crl", msgEsitoCrl);
     }
 
     public String getIssuerCrl() {
-	return getString("issuer_crl");
+        return getString("issuer_crl");
     }
 
     public void setIssuerCrl(String issuerCrl) {
-	setObject("issuer_crl", issuerCrl);
+        setObject("issuer_crl", issuerCrl);
     }
 
     public String getSerialCaCrl() {
-	return getString("serial_ca_crl");
+        return getString("serial_ca_crl");
     }
 
     public void setSerialCaCrl(String serialCaCrl) {
-	setObject("serial_ca_crl", serialCaCrl);
+        setObject("serial_ca_crl", serialCaCrl);
     }
 
     public String getSerialCrl() {
-	return getString("serial_crl");
+        return getString("serial_crl");
     }
 
     public void setSerialCrl(String serialCrl) {
-	setObject("serial_crl", serialCrl);
+        setObject("serial_crl", serialCrl);
     }
 
     public Timestamp getDtScadCrl() {
-	return getTimestamp("dt_scad_crl");
+        return getTimestamp("dt_scad_crl");
     }
 
     public void setDtScadCrl(Timestamp dtScadCrl) {
-	setObject("dt_scad_crl", dtScadCrl);
+        setObject("dt_scad_crl", dtScadCrl);
     }
 
     public String getNmVolumeConserv() {
-	return getString("nm_volume_conserv");
+        return getString("nm_volume_conserv");
     }
 
     public void setNmVolumeConserv(String nmVolumeConserv) {
-	setObject("nm_volume_conserv", nmVolumeConserv);
+        setObject("nm_volume_conserv", nmVolumeConserv);
     }
 
     public String getDsVolumeConserv() {
-	return getString("ds_volume_conserv");
+        return getString("ds_volume_conserv");
     }
 
     public void setDsVolumeConserv(String dsVolumeConserv) {
-	setObject("ds_volume_conserv", dsVolumeConserv);
+        setObject("ds_volume_conserv", dsVolumeConserv);
     }
 
     public String getTiStatoVolumeConserv() {
-	return getString("ti_stato_volume_conserv");
+        return getString("ti_stato_volume_conserv");
     }
 
     public void setTiStatoVolumeConserv(String tiStatoVolumeConserv) {
-	setObject("ti_stato_volume_conserv", tiStatoVolumeConserv);
+        setObject("ti_stato_volume_conserv", tiStatoVolumeConserv);
     }
 
     public Timestamp getDtCreazione() {
-	return getTimestamp("dt_creazione");
+        return getTimestamp("dt_creazione");
     }
 
     public void setDtCreazione(Timestamp dtCreazione) {
-	setObject("dt_creazione", dtCreazione);
+        setObject("dt_creazione", dtCreazione);
     }
 
     public Timestamp getDtChiusVolume() {
-	return getTimestamp("dt_chius_volume");
+        return getTimestamp("dt_chius_volume");
     }
 
     public void setDtChiusVolume(Timestamp dtChiusVolume) {
-	setObject("dt_chius_volume", dtChiusVolume);
+        setObject("dt_chius_volume", dtChiusVolume);
     }
 
     public String getEsitoCrittograficoVol() {
-	return getString("esito_crittografico_vol");
+        return getString("esito_crittografico_vol");
     }
 
     public void setEsitoCrittograficoVol(String esitoCrittograficoVol) {
-	setObject("esito_crittografico_vol", esitoCrittograficoVol);
+        setObject("esito_crittografico_vol", esitoCrittograficoVol);
     }
 
     public String getMsgEsitoCrittograficoVol() {
-	return getString("msg_esito_crittografico_vol");
+        return getString("msg_esito_crittografico_vol");
     }
 
     public void setMsgEsitoCrittograficoVol(String msgEsitoCrittograficoVol) {
-	setObject("msg_esito_crittografico_vol", msgEsitoCrittograficoVol);
+        setObject("msg_esito_crittografico_vol", msgEsitoCrittograficoVol);
     }
 
     public String getEsitoCatenaVol() {
-	return getString("esito_catena_vol");
+        return getString("esito_catena_vol");
     }
 
     public void setEsitoCatenaVol(String esitoCatenaVol) {
-	setObject("esito_catena_vol", esitoCatenaVol);
+        setObject("esito_catena_vol", esitoCatenaVol);
     }
 
     public String getMsgEsitoCatenaVol() {
-	return getString("msg_esito_catena_vol");
+        return getString("msg_esito_catena_vol");
     }
 
     public void setMsgEsitoCatenaVol(String msgEsitoCatenaVol) {
-	setObject("msg_esito_catena_vol", msgEsitoCatenaVol);
+        setObject("msg_esito_catena_vol", msgEsitoCatenaVol);
     }
 
     public String getEsitoCertificatoVol() {
-	return getString("esito_certificato_vol");
+        return getString("esito_certificato_vol");
     }
 
     public void setEsitoCertificatoVol(String esitoCertificatoVol) {
-	setObject("esito_certificato_vol", esitoCertificatoVol);
+        setObject("esito_certificato_vol", esitoCertificatoVol);
     }
 
     public String getMsgEsitoCertificatoVol() {
-	return getString("msg_esito_certificato_vol");
+        return getString("msg_esito_certificato_vol");
     }
 
     public void setMsgEsitoCertificatoVol(String msgEsitoCertificatoVol) {
-	setObject("msg_esito_certificato_vol", msgEsitoCertificatoVol);
+        setObject("msg_esito_certificato_vol", msgEsitoCertificatoVol);
     }
 
     public String getEsitoCrlVol() {
-	return getString("esito_crl_vol");
+        return getString("esito_crl_vol");
     }
 
     public void setEsitoCrlVol(String esitoCrlVol) {
-	setObject("esito_crl_vol", esitoCrlVol);
+        setObject("esito_crl_vol", esitoCrlVol);
     }
 
     public String getMsgEsitoCrlVol() {
-	return getString("msg_esito_crl_vol");
+        return getString("msg_esito_crl_vol");
     }
 
     public void setMsgEsitoCrlVol(String msgEsitoCrlVol) {
-	setObject("msg_esito_crl_vol", msgEsitoCrlVol);
+        setObject("msg_esito_crl_vol", msgEsitoCrlVol);
     }
 
     public String getSerialCrlVol() {
-	return getString("serial_crl_vol");
+        return getString("serial_crl_vol");
     }
 
     public void setSerialCrlVol(String serialCrlVol) {
-	setObject("serial_crl_vol", serialCrlVol);
+        setObject("serial_crl_vol", serialCrlVol);
     }
 
     public Timestamp getDtScadCrlVol() {
-	return getTimestamp("dt_scad_crl_vol");
+        return getTimestamp("dt_scad_crl_vol");
     }
 
     public void setDtScadCrlVol(Timestamp dtScadCrlVol) {
-	setObject("dt_scad_crl_vol", dtScadCrlVol);
+        setObject("dt_scad_crl_vol", dtScadCrlVol);
     }
 
     public String getTiEsitoVerifFirmaDtVers() {
-	return getString("ti_esito_verif_firma_dt_vers");
+        return getString("ti_esito_verif_firma_dt_vers");
     }
 
     public void setTiEsitoVerifFirmaDtVers(String tiEsitoVerifFirmaDtVers) {
-	setObject("ti_esito_verif_firma_dt_vers", tiEsitoVerifFirmaDtVers);
+        setObject("ti_esito_verif_firma_dt_vers", tiEsitoVerifFirmaDtVers);
     }
 
     public String getDsMsgVerifFirmaDtVers() {
-	return getString("ds_msg_verif_firma_dt_vers");
+        return getString("ds_msg_verif_firma_dt_vers");
     }
 
     public void setDsMsgVerifFirmaDtVers(String dsMsgVerifFirmaDtVers) {
-	setObject("ds_msg_verif_firma_dt_vers", dsMsgVerifFirmaDtVers);
+        setObject("ds_msg_verif_firma_dt_vers", dsMsgVerifFirmaDtVers);
     }
 
     public String getEsitoCrittogDtVers() {
-	return getString("esito_crittog_dt_vers");
+        return getString("esito_crittog_dt_vers");
     }
 
     public void setEsitoCrittogDtVers(String esitoCrittogDtVers) {
-	setObject("esito_crittog_dt_vers", esitoCrittogDtVers);
+        setObject("esito_crittog_dt_vers", esitoCrittogDtVers);
     }
 
     public String getMsgEsitoCrittogDtVers() {
-	return getString("msg_esito_crittog_dt_vers");
+        return getString("msg_esito_crittog_dt_vers");
     }
 
     public void setMsgEsitoCrittogDtVers(String msgEsitoCrittogDtVers) {
-	setObject("msg_esito_crittog_dt_vers", msgEsitoCrittogDtVers);
+        setObject("msg_esito_crittog_dt_vers", msgEsitoCrittogDtVers);
     }
 
     public String getEsitoCatenaDtVers() {
-	return getString("esito_catena_dt_vers");
+        return getString("esito_catena_dt_vers");
     }
 
     public void setEsitoCatenaDtVers(String esitoCatenaDtVers) {
-	setObject("esito_catena_dt_vers", esitoCatenaDtVers);
+        setObject("esito_catena_dt_vers", esitoCatenaDtVers);
     }
 
     public String getMsgEsitoCatenaDtVers() {
-	return getString("msg_esito_catena_dt_vers");
+        return getString("msg_esito_catena_dt_vers");
     }
 
     public void setMsgEsitoCatenaDtVers(String msgEsitoCatenaDtVers) {
-	setObject("msg_esito_catena_dt_vers", msgEsitoCatenaDtVers);
+        setObject("msg_esito_catena_dt_vers", msgEsitoCatenaDtVers);
     }
 
     public String getEsitoCertificatoDtVers() {
-	return getString("esito_certificato_dt_vers");
+        return getString("esito_certificato_dt_vers");
     }
 
     public void setEsitoCertificatoDtVers(String esitoCertificatoDtVers) {
-	setObject("esito_certificato_dt_vers", esitoCertificatoDtVers);
+        setObject("esito_certificato_dt_vers", esitoCertificatoDtVers);
     }
 
     public String getMsgEsitoCertificatoDtVers() {
-	return getString("msg_esito_certificato_dt_vers");
+        return getString("msg_esito_certificato_dt_vers");
     }
 
     public void setMsgEsitoCertificatoDtVers(String msgEsitoCertificatoDtVers) {
-	setObject("msg_esito_certificato_dt_vers", msgEsitoCertificatoDtVers);
+        setObject("msg_esito_certificato_dt_vers", msgEsitoCertificatoDtVers);
     }
 
     public String getEsitoCrlDtVers() {
-	return getString("esito_crl_dt_vers");
+        return getString("esito_crl_dt_vers");
     }
 
     public void setEsitoCrlDtVers(String esitoCrlDtVers) {
-	setObject("esito_crl_dt_vers", esitoCrlDtVers);
+        setObject("esito_crl_dt_vers", esitoCrlDtVers);
     }
 
     public String getMsgEsitoCrlDtVers() {
-	return getString("msg_esito_crl_dt_vers");
+        return getString("msg_esito_crl_dt_vers");
     }
 
     public void setMsgEsitoCrlDtVers(String msgEsitoCrlDtVers) {
-	setObject("msg_esito_crl_dt_vers", msgEsitoCrlDtVers);
+        setObject("msg_esito_crl_dt_vers", msgEsitoCrlDtVers);
     }
 
     public String getSerialCrlDtVers() {
-	return getString("serial_crl_dt_vers");
+        return getString("serial_crl_dt_vers");
     }
 
     public void setSerialCrlDtVers(String serialCrlDtVers) {
-	setObject("serial_crl_dt_vers", serialCrlDtVers);
+        setObject("serial_crl_dt_vers", serialCrlDtVers);
     }
 
     public Timestamp getDtScadCrlDtVers() {
-	return getTimestamp("dt_scad_crl_dt_vers");
+        return getTimestamp("dt_scad_crl_dt_vers");
     }
 
     public void setDtScadCrlDtVers(Timestamp dtScadCrlDtVers) {
-	setObject("dt_scad_crl_dt_vers", dtScadCrlDtVers);
+        setObject("dt_scad_crl_dt_vers", dtScadCrlDtVers);
     }
 
     public String getBlFirmaBase64() {
-	return getString("bl_firma_base64");
+        return getString("bl_firma_base64");
     }
 
     public void setBlFirmaBase64(String bl_firma_base64) {
-	setObject("bl_firma_base64", bl_firma_base64);
+        setObject("bl_firma_base64", bl_firma_base64);
     }
 
     public String getEsitoOcsp() {
-	return getString("esito_ocsp");
+        return getString("esito_ocsp");
     }
 
     public void setEsitoOcsp(String esito_ocsp) {
-	setObject("esito_ocsp", esito_ocsp);
+        setObject("esito_ocsp", esito_ocsp);
     }
 
     public String getMsgEsitoOcsp() {
-	return getString("msg_esito_ocsp");
+        return getString("msg_esito_ocsp");
     }
 
     public void setMsgEsitoOcsp(String msg_esito_ocsp) {
-	setObject("msg_esito_ocsp", msg_esito_ocsp);
+        setObject("msg_esito_ocsp", msg_esito_ocsp);
     }
 
     public String getEsitoOcspDtVers() {
-	return getString("esito_ocsp_dt_vers");
+        return getString("esito_ocsp_dt_vers");
     }
 
     public void setEsitoOcspDtVers(String esito_ocsp_dt_vers) {
-	setObject("esito_ocsp_dt_vers", esito_ocsp_dt_vers);
+        setObject("esito_ocsp_dt_vers", esito_ocsp_dt_vers);
     }
 
     public String getMsgEsitoOcspDtVers() {
-	return getString("msg_esito_ocsp_dt_vers");
+        return getString("msg_esito_ocsp_dt_vers");
     }
 
     public void setMsgEsitoOcspDtVers(String msg_esito_ocsp_dt_vers) {
-	setObject("msg_esito_ocsp_dt_vers", msg_esito_ocsp_dt_vers);
+        setObject("msg_esito_ocsp_dt_vers", msg_esito_ocsp_dt_vers);
     }
 
     public String getIdentifierOcsp() {
-	return getString("identifier_ocsp");
+        return getString("identifier_ocsp");
     }
 
     public void setIdentifierOcsp(String identifier_ocsp) {
-	setObject("identifier_ocsp", identifier_ocsp);
+        setObject("identifier_ocsp", identifier_ocsp);
     }
 
     public String getIssuerCertifOcsp() {
-	return getString("issuer_certif_ocsp");
+        return getString("issuer_certif_ocsp");
     }
 
     public void setIssuerCertifOcsp(String issuer_certif_ocsp) {
-	setObject("issuer_certif_ocsp", issuer_certif_ocsp);
+        setObject("issuer_certif_ocsp", issuer_certif_ocsp);
     }
 
     public String getSerialCertifOcsp() {
-	return getString("serial_certif_ocsp");
+        return getString("serial_certif_ocsp");
     }
 
     public void setSerialCertifOcsp(String serial_certif_ocsp) {
-	setObject("serial_certif_ocsp", serial_certif_ocsp);
+        setObject("serial_certif_ocsp", serial_certif_ocsp);
     }
 
     public String getIdentifierOcspDtVers() {
-	return getString("identifier_ocsp_dt_vers");
+        return getString("identifier_ocsp_dt_vers");
     }
 
     public void setIdentifierOcspDtVers(String identifier_ocsp_dt_vers) {
-	setObject("identifier_ocsp_dt_vers", identifier_ocsp_dt_vers);
+        setObject("identifier_ocsp_dt_vers", identifier_ocsp_dt_vers);
     }
 
     public String getIssuerCertifOcspDtVers() {
-	return getString("issuer_certif_ocsp_dt_vers");
+        return getString("issuer_certif_ocsp_dt_vers");
     }
 
     public void setIssuerCertifOcspDtVers(String issuer_certif_ocsp_dt_vers) {
-	setObject("issuer_certif_ocsp_dt_vers", issuer_certif_ocsp_dt_vers);
+        setObject("issuer_certif_ocsp_dt_vers", issuer_certif_ocsp_dt_vers);
     }
 
     public String getSerialCertifOcspDtVers() {
-	return getString("serial_certif_ocsp_dt_vers");
+        return getString("serial_certif_ocsp_dt_vers");
     }
 
     public void setSerialCertifOcspDtVers(String serial_certif_ocsp_dt_vers) {
-	setObject("serial_certif_ocsp_dt_vers", serial_certif_ocsp_dt_vers);
+        setObject("serial_certif_ocsp_dt_vers", serial_certif_ocsp_dt_vers);
     }
 
     public String getDsNote() {
-	return getString("ds_note");
+        return getString("ds_note");
     }
 
     public void setDsNote(String ds_note) {
-	setObject("ds_note", ds_note);
+        setObject("ds_note", ds_note);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVVisFirmaComp entity = (AroVVisFirmaComp) obj;
-	this.setNmAmbiente(entity.getNmAmbiente());
-	this.setNmEnte(entity.getNmEnte());
-	this.setNmStrut(entity.getNmStrut());
-	this.setIdUnitaDoc(entity.getIdUnitaDoc());
-	this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
-	this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
-	this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
-	this.setNmTipoUnitaDoc(entity.getNmTipoUnitaDoc());
-	if (entity.getDtAnnulUnitaDoc() != null) {
-	    this.setDtAnnulUnitaDoc(new Timestamp(entity.getDtAnnulUnitaDoc().getTime()));
-	}
-	this.setTiAnnulUnitaDoc(entity.getTiAnnulUnitaDoc());
-	this.setNtAnnulUnitaDoc(entity.getNtAnnulUnitaDoc());
-	this.setIdDoc(entity.getIdDoc());
-	this.setCdKeyDocVers(entity.getCdKeyDocVers());
-	this.setTiDoc(entity.getTiDoc());
-	this.setPgDoc(entity.getPgDoc());
-	this.setNmTipoDoc(entity.getNmTipoDoc());
-	if (entity.getDtAnnulDoc() != null) {
-	    this.setDtAnnulDoc(new Timestamp(entity.getDtAnnulDoc().getTime()));
-	}
-	this.setTiAnnulDoc(entity.getTiAnnulDoc());
-	this.setNtAnnulDoc(entity.getNtAnnulDoc());
-	this.setIdCompDoc(entity.getIdCompDoc());
-	this.setNiOrdCompDoc(entity.getNiOrdCompDoc());
-	this.setNmTipoCompDoc(entity.getNmTipoCompDoc());
-	this.setDsUrnCompCalc(entity.getDsUrnCompCalc());
-	this.setNmFormatoCalc(entity.getNmFormatoCalc());
-	this.setIdFirmaComp(entity.getIdFirmaComp());
-	this.setPgFirma(entity.getPgFirma());
-	this.setCdFirmatario(entity.getCdFirmatario());
-	this.setNmCognomeFirmatario(entity.getNmCognomeFirmatario());
-	this.setNmFirmatario(entity.getNmFirmatario());
-	this.setTiFirma(entity.getTiFirma());
-	this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
-	this.setDsMsgEsitoContrConforme(entity.getDsMsgEsitoContrConforme());
-	this.setDsAlgoFirma(entity.getDsAlgoFirma());
-	this.setTiFormatoFirma(entity.getTiFormatoFirma());
-	this.setPgBusta(entity.getPgBusta());
-	this.setIssuerCertifFirmatario(entity.getIssuerCertifFirmatario());
-	this.setDsSerialCertifCa(entity.getDsSerialCertifCa());
-	this.setDsSerialCertifFirmatario(entity.getDsSerialCertifFirmatario());
-	if (entity.getDtIniValCertifFirmatario() != null) {
-	    this.setDtIniValCertifFirmatario(
-		    new Timestamp(entity.getDtIniValCertifFirmatario().getTime()));
-	}
-	if (entity.getDtFinValCertifFirmatario() != null) {
-	    this.setDtFinValCertifFirmatario(
-		    new Timestamp(entity.getDtFinValCertifFirmatario().getTime()));
-	}
-	if (entity.getDtFirma() != null) {
-	    this.setDtFirma(new Timestamp(entity.getDtFirma().getTime()));
-	}
-	if (entity.getTmMarcaTempRiferita() != null) {
-	    this.setTmMarcaTempRiferita(new Timestamp(entity.getTmMarcaTempRiferita().getTime()));
-	}
-	if (entity.getTmRifTempUsato() != null) {
-	    this.setTmRifTempUsato(new Timestamp(entity.getTmRifTempUsato().getTime()));
-	}
-	this.setTiRifTempUsato(entity.getTiRifTempUsato());
-	this.setTiEsitoVerifFirma(entity.getTiEsitoVerifFirma());
-	this.setDsMsgEsitoVerifFirma(entity.getDsMsgEsitoVerifFirma());
-	this.setTiEsitoVerifFirmaChius(entity.getTiEsitoVerifFirmaChius());
-	this.setDsMsgEsitoVerifFirmaChius(entity.getDsMsgEsitoVerifFirmaChius());
-	this.setNmCognomeFirmatarioPadre(entity.getNmCognomeFirmatarioPadre());
-	this.setNmFirmatarioPadre(entity.getNmFirmatarioPadre());
-	this.setEsitoCrittografico(entity.getEsitoCrittografico());
-	this.setMsgEsitoCrittografico(entity.getMsgEsitoCrittografico());
-	this.setIdContrFirmaCatena(entity.getIdContrFirmaCatena());
-	this.setEsitoCatena(entity.getEsitoCatena());
-	this.setMsgEsitoCatena(entity.getMsgEsitoCatena());
-	this.setEsitoCertificato(entity.getEsitoCertificato());
-	this.setMsgEsitoCertificato(entity.getMsgEsitoCertificato());
-	this.setEsitoCrl(entity.getEsitoCrl());
-	this.setMsgEsitoCrl(entity.getMsgEsitoCrl());
-	this.setIssuerCrl(entity.getIssuerCrl());
-	this.setSerialCaCrl(entity.getSerialCaCrl());
-	this.setSerialCrl(entity.getSerialCrl());
-	if (entity.getDtScadCrl() != null) {
-	    this.setDtScadCrl(new Timestamp(entity.getDtScadCrl().getTime()));
-	}
-	this.setNmVolumeConserv(entity.getNmVolumeConserv());
-	this.setDsVolumeConserv(entity.getDsVolumeConserv());
-	this.setTiStatoVolumeConserv(entity.getTiStatoVolumeConserv());
-	if (entity.getDtCreazione() != null) {
-	    this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
-	}
-	if (entity.getDtChiusVolume() != null) {
-	    this.setDtChiusVolume(new Timestamp(entity.getDtChiusVolume().getTime()));
-	}
-	this.setEsitoCrittograficoVol(entity.getEsitoCrittograficoVol());
-	this.setMsgEsitoCrittograficoVol(entity.getMsgEsitoCrittograficoVol());
-	this.setEsitoCatenaVol(entity.getEsitoCatenaVol());
-	this.setMsgEsitoCatenaVol(entity.getMsgEsitoCatenaVol());
-	this.setEsitoCertificatoVol(entity.getEsitoCertificatoVol());
-	this.setMsgEsitoCertificatoVol(entity.getMsgEsitoCertificatoVol());
-	this.setEsitoCrlVol(entity.getEsitoCrlVol());
-	this.setMsgEsitoCrlVol(entity.getMsgEsitoCrlVol());
-	this.setSerialCrlVol(entity.getSerialCrlVol());
-	if (entity.getDtScadCrlVol() != null) {
-	    this.setDtScadCrlVol(new Timestamp(entity.getDtScadCrlVol().getTime()));
-	}
-	this.setTiEsitoVerifFirmaDtVers(entity.getTiEsitoVerifFirmaDtVers());
-	this.setDsMsgVerifFirmaDtVers(entity.getDsMsgVerifFirmaDtVers());
-	this.setEsitoCrittogDtVers(entity.getEsitoCrittogDtVers());
-	this.setMsgEsitoCrittogDtVers(entity.getMsgEsitoCrittogDtVers());
-	this.setEsitoCatenaDtVers(entity.getEsitoCatenaDtVers());
-	this.setMsgEsitoCatenaDtVers(entity.getMsgEsitoCatenaDtVers());
-	this.setEsitoCertificatoDtVers(entity.getEsitoCertificatoDtVers());
-	this.setMsgEsitoCertificatoDtVers(entity.getMsgEsitoCertificatoDtVers());
-	this.setEsitoCrlDtVers(entity.getEsitoCrlDtVers());
-	this.setMsgEsitoCrlDtVers(entity.getMsgEsitoCrlDtVers());
-	this.setSerialCrlDtVers(entity.getSerialCrlDtVers());
-	if (entity.getDtScadCrlDtVers() != null) {
-	    this.setDtScadCrlDtVers(new Timestamp(entity.getDtScadCrlDtVers().getTime()));
-	}
-	this.setBlFirmaBase64(entity.getBlFirmaBase64());
-	this.setEsitoOcsp(entity.getEsitoOcsp());
-	this.setMsgEsitoOcsp(entity.getMsgEsitoOcsp());
-	this.setEsitoOcspDtVers(entity.getEsitoOcspDtVers());
-	this.setMsgEsitoOcspDtVers(entity.getMsgEsitoOcspDtVers());
-	this.setIdentifierOcsp(entity.getIdentifierOcsp());
-	this.setIssuerCertifOcsp(entity.getIssuerCertifOcsp());
-	this.setSerialCertifOcsp(entity.getSerialCertifOcsp());
-	this.setIdentifierOcspDtVers(entity.getIdentifierOcspDtVers());
-	this.setIssuerCertifOcspDtVers(entity.getIssuerCertifOcspDtVers());
-	this.setSerialCertifOcspDtVers(entity.getSerialCertifOcspDtVers());
-	this.setDsNote(entity.getDsNote());
+        AroVVisFirmaComp entity = (AroVVisFirmaComp) obj;
+        this.setNmAmbiente(entity.getNmAmbiente());
+        this.setNmEnte(entity.getNmEnte());
+        this.setNmStrut(entity.getNmStrut());
+        this.setIdUnitaDoc(entity.getIdUnitaDoc());
+        this.setCdRegistroKeyUnitaDoc(entity.getCdRegistroKeyUnitaDoc());
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
+        this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
+        this.setNmTipoUnitaDoc(entity.getNmTipoUnitaDoc());
+        if (entity.getDtAnnulUnitaDoc() != null) {
+            this.setDtAnnulUnitaDoc(new Timestamp(entity.getDtAnnulUnitaDoc().getTime()));
+        }
+        this.setTiAnnulUnitaDoc(entity.getTiAnnulUnitaDoc());
+        this.setNtAnnulUnitaDoc(entity.getNtAnnulUnitaDoc());
+        this.setIdDoc(entity.getIdDoc());
+        this.setCdKeyDocVers(entity.getCdKeyDocVers());
+        this.setTiDoc(entity.getTiDoc());
+        this.setPgDoc(entity.getPgDoc());
+        this.setNmTipoDoc(entity.getNmTipoDoc());
+        if (entity.getDtAnnulDoc() != null) {
+            this.setDtAnnulDoc(new Timestamp(entity.getDtAnnulDoc().getTime()));
+        }
+        this.setTiAnnulDoc(entity.getTiAnnulDoc());
+        this.setNtAnnulDoc(entity.getNtAnnulDoc());
+        this.setIdCompDoc(entity.getIdCompDoc());
+        this.setNiOrdCompDoc(entity.getNiOrdCompDoc());
+        this.setNmTipoCompDoc(entity.getNmTipoCompDoc());
+        this.setDsUrnCompCalc(entity.getDsUrnCompCalc());
+        this.setNmFormatoCalc(entity.getNmFormatoCalc());
+        this.setIdFirmaComp(entity.getIdFirmaComp());
+        this.setPgFirma(entity.getPgFirma());
+        this.setCdFirmatario(entity.getCdFirmatario());
+        this.setNmCognomeFirmatario(entity.getNmCognomeFirmatario());
+        this.setNmFirmatario(entity.getNmFirmatario());
+        this.setTiFirma(entity.getTiFirma());
+        this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
+        this.setDsMsgEsitoContrConforme(entity.getDsMsgEsitoContrConforme());
+        this.setDsAlgoFirma(entity.getDsAlgoFirma());
+        this.setTiFormatoFirma(entity.getTiFormatoFirma());
+        this.setPgBusta(entity.getPgBusta());
+        this.setIssuerCertifFirmatario(entity.getIssuerCertifFirmatario());
+        this.setDsSerialCertifCa(entity.getDsSerialCertifCa());
+        this.setDsSerialCertifFirmatario(entity.getDsSerialCertifFirmatario());
+        if (entity.getDtIniValCertifFirmatario() != null) {
+            this.setDtIniValCertifFirmatario(
+                    new Timestamp(entity.getDtIniValCertifFirmatario().getTime()));
+        }
+        if (entity.getDtFinValCertifFirmatario() != null) {
+            this.setDtFinValCertifFirmatario(
+                    new Timestamp(entity.getDtFinValCertifFirmatario().getTime()));
+        }
+        if (entity.getDtFirma() != null) {
+            this.setDtFirma(new Timestamp(entity.getDtFirma().getTime()));
+        }
+        if (entity.getTmMarcaTempRiferita() != null) {
+            this.setTmMarcaTempRiferita(new Timestamp(entity.getTmMarcaTempRiferita().getTime()));
+        }
+        if (entity.getTmRifTempUsato() != null) {
+            this.setTmRifTempUsato(new Timestamp(entity.getTmRifTempUsato().getTime()));
+        }
+        this.setTiRifTempUsato(entity.getTiRifTempUsato());
+        this.setTiEsitoVerifFirma(entity.getTiEsitoVerifFirma());
+        this.setDsMsgEsitoVerifFirma(entity.getDsMsgEsitoVerifFirma());
+        this.setTiEsitoVerifFirmaChius(entity.getTiEsitoVerifFirmaChius());
+        this.setDsMsgEsitoVerifFirmaChius(entity.getDsMsgEsitoVerifFirmaChius());
+        this.setNmCognomeFirmatarioPadre(entity.getNmCognomeFirmatarioPadre());
+        this.setNmFirmatarioPadre(entity.getNmFirmatarioPadre());
+        this.setEsitoCrittografico(entity.getEsitoCrittografico());
+        this.setMsgEsitoCrittografico(entity.getMsgEsitoCrittografico());
+        this.setIdContrFirmaCatena(entity.getIdContrFirmaCatena());
+        this.setEsitoCatena(entity.getEsitoCatena());
+        this.setMsgEsitoCatena(entity.getMsgEsitoCatena());
+        this.setEsitoCertificato(entity.getEsitoCertificato());
+        this.setMsgEsitoCertificato(entity.getMsgEsitoCertificato());
+        this.setEsitoCrl(entity.getEsitoCrl());
+        this.setMsgEsitoCrl(entity.getMsgEsitoCrl());
+        this.setIssuerCrl(entity.getIssuerCrl());
+        this.setSerialCaCrl(entity.getSerialCaCrl());
+        this.setSerialCrl(entity.getSerialCrl());
+        if (entity.getDtScadCrl() != null) {
+            this.setDtScadCrl(new Timestamp(entity.getDtScadCrl().getTime()));
+        }
+        this.setNmVolumeConserv(entity.getNmVolumeConserv());
+        this.setDsVolumeConserv(entity.getDsVolumeConserv());
+        this.setTiStatoVolumeConserv(entity.getTiStatoVolumeConserv());
+        if (entity.getDtCreazione() != null) {
+            this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
+        }
+        if (entity.getDtChiusVolume() != null) {
+            this.setDtChiusVolume(new Timestamp(entity.getDtChiusVolume().getTime()));
+        }
+        this.setEsitoCrittograficoVol(entity.getEsitoCrittograficoVol());
+        this.setMsgEsitoCrittograficoVol(entity.getMsgEsitoCrittograficoVol());
+        this.setEsitoCatenaVol(entity.getEsitoCatenaVol());
+        this.setMsgEsitoCatenaVol(entity.getMsgEsitoCatenaVol());
+        this.setEsitoCertificatoVol(entity.getEsitoCertificatoVol());
+        this.setMsgEsitoCertificatoVol(entity.getMsgEsitoCertificatoVol());
+        this.setEsitoCrlVol(entity.getEsitoCrlVol());
+        this.setMsgEsitoCrlVol(entity.getMsgEsitoCrlVol());
+        this.setSerialCrlVol(entity.getSerialCrlVol());
+        if (entity.getDtScadCrlVol() != null) {
+            this.setDtScadCrlVol(new Timestamp(entity.getDtScadCrlVol().getTime()));
+        }
+        this.setTiEsitoVerifFirmaDtVers(entity.getTiEsitoVerifFirmaDtVers());
+        this.setDsMsgVerifFirmaDtVers(entity.getDsMsgVerifFirmaDtVers());
+        this.setEsitoCrittogDtVers(entity.getEsitoCrittogDtVers());
+        this.setMsgEsitoCrittogDtVers(entity.getMsgEsitoCrittogDtVers());
+        this.setEsitoCatenaDtVers(entity.getEsitoCatenaDtVers());
+        this.setMsgEsitoCatenaDtVers(entity.getMsgEsitoCatenaDtVers());
+        this.setEsitoCertificatoDtVers(entity.getEsitoCertificatoDtVers());
+        this.setMsgEsitoCertificatoDtVers(entity.getMsgEsitoCertificatoDtVers());
+        this.setEsitoCrlDtVers(entity.getEsitoCrlDtVers());
+        this.setMsgEsitoCrlDtVers(entity.getMsgEsitoCrlDtVers());
+        this.setSerialCrlDtVers(entity.getSerialCrlDtVers());
+        if (entity.getDtScadCrlDtVers() != null) {
+            this.setDtScadCrlDtVers(new Timestamp(entity.getDtScadCrlDtVers().getTime()));
+        }
+        this.setBlFirmaBase64(entity.getBlFirmaBase64());
+        this.setEsitoOcsp(entity.getEsitoOcsp());
+        this.setMsgEsitoOcsp(entity.getMsgEsitoOcsp());
+        this.setEsitoOcspDtVers(entity.getEsitoOcspDtVers());
+        this.setMsgEsitoOcspDtVers(entity.getMsgEsitoOcspDtVers());
+        this.setIdentifierOcsp(entity.getIdentifierOcsp());
+        this.setIssuerCertifOcsp(entity.getIssuerCertifOcsp());
+        this.setSerialCertifOcsp(entity.getSerialCertifOcsp());
+        this.setIdentifierOcspDtVers(entity.getIdentifierOcspDtVers());
+        this.setIssuerCertifOcspDtVers(entity.getIssuerCertifOcspDtVers());
+        this.setSerialCertifOcspDtVers(entity.getSerialCertifOcspDtVers());
+        this.setDsNote(entity.getDsNote());
     }
 
     @Override
     public AroVVisFirmaComp rowBeanToEntity() {
-	AroVVisFirmaComp entity = new AroVVisFirmaComp();
-	entity.setNmAmbiente(this.getNmAmbiente());
-	entity.setNmEnte(this.getNmEnte());
-	entity.setNmStrut(this.getNmStrut());
-	entity.setIdUnitaDoc(this.getIdUnitaDoc());
-	entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
-	entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
-	entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
-	entity.setNmTipoUnitaDoc(this.getNmTipoUnitaDoc());
-	entity.setDtAnnulUnitaDoc(this.getDtAnnulUnitaDoc());
-	entity.setTiAnnulUnitaDoc(this.getTiAnnulUnitaDoc());
-	entity.setNtAnnulUnitaDoc(this.getNtAnnulUnitaDoc());
-	entity.setIdDoc(this.getIdDoc());
-	entity.setCdKeyDocVers(this.getCdKeyDocVers());
-	entity.setTiDoc(this.getTiDoc());
-	entity.setPgDoc(this.getPgDoc());
-	entity.setNmTipoDoc(this.getNmTipoDoc());
-	entity.setDtAnnulDoc(this.getDtAnnulDoc());
-	entity.setTiAnnulDoc(this.getTiAnnulDoc());
-	entity.setNtAnnulDoc(this.getNtAnnulDoc());
-	entity.setIdCompDoc(this.getIdCompDoc());
-	entity.setNiOrdCompDoc(this.getNiOrdCompDoc());
-	entity.setNmTipoCompDoc(this.getNmTipoCompDoc());
-	entity.setDsUrnCompCalc(this.getDsUrnCompCalc());
-	entity.setNmFormatoCalc(this.getNmFormatoCalc());
-	entity.setIdFirmaComp(this.getIdFirmaComp());
-	entity.setPgFirma(this.getPgFirma());
-	entity.setCdFirmatario(this.getCdFirmatario());
-	entity.setNmCognomeFirmatario(this.getNmCognomeFirmatario());
-	entity.setNmFirmatario(this.getNmFirmatario());
-	entity.setTiFirma(this.getTiFirma());
-	entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
-	entity.setDsMsgEsitoContrConforme(this.getDsMsgEsitoContrConforme());
-	entity.setDsAlgoFirma(this.getDsAlgoFirma());
-	entity.setTiFormatoFirma(this.getTiFormatoFirma());
-	entity.setPgBusta(this.getPgBusta());
-	entity.setIssuerCertifFirmatario(this.getIssuerCertifFirmatario());
-	entity.setDsSerialCertifCa(this.getDsSerialCertifCa());
-	entity.setDsSerialCertifFirmatario(this.getDsSerialCertifFirmatario());
-	entity.setDtIniValCertifFirmatario(this.getDtIniValCertifFirmatario());
-	entity.setDtFinValCertifFirmatario(this.getDtFinValCertifFirmatario());
-	entity.setDtFirma(this.getDtFirma());
-	entity.setTmMarcaTempRiferita(this.getTmMarcaTempRiferita());
-	entity.setTmRifTempUsato(this.getTmRifTempUsato());
-	entity.setTiRifTempUsato(this.getTiRifTempUsato());
-	entity.setTiEsitoVerifFirma(this.getTiEsitoVerifFirma());
-	entity.setDsMsgEsitoVerifFirma(this.getDsMsgEsitoVerifFirma());
-	entity.setTiEsitoVerifFirmaChius(this.getTiEsitoVerifFirmaChius());
-	entity.setDsMsgEsitoVerifFirmaChius(this.getDsMsgEsitoVerifFirmaChius());
-	entity.setNmCognomeFirmatarioPadre(this.getNmCognomeFirmatarioPadre());
-	entity.setNmFirmatarioPadre(this.getNmFirmatarioPadre());
-	entity.setEsitoCrittografico(this.getEsitoCrittografico());
-	entity.setMsgEsitoCrittografico(this.getMsgEsitoCrittografico());
-	entity.setIdContrFirmaCatena(this.getIdContrFirmaCatena());
-	entity.setEsitoCatena(this.getEsitoCatena());
-	entity.setMsgEsitoCatena(this.getMsgEsitoCatena());
-	entity.setEsitoCertificato(this.getEsitoCertificato());
-	entity.setMsgEsitoCertificato(this.getMsgEsitoCertificato());
-	entity.setEsitoCrl(this.getEsitoCrl());
-	entity.setMsgEsitoCrl(this.getMsgEsitoCrl());
-	entity.setIssuerCrl(this.getIssuerCrl());
-	entity.setSerialCaCrl(this.getSerialCaCrl());
-	entity.setSerialCrl(this.getSerialCrl());
-	entity.setDtScadCrl(this.getDtScadCrl());
-	entity.setNmVolumeConserv(this.getNmVolumeConserv());
-	entity.setDsVolumeConserv(this.getDsVolumeConserv());
-	entity.setTiStatoVolumeConserv(this.getTiStatoVolumeConserv());
-	entity.setDtCreazione(this.getDtCreazione());
-	entity.setDtChiusVolume(this.getDtChiusVolume());
-	entity.setEsitoCrittograficoVol(this.getEsitoCrittograficoVol());
-	entity.setMsgEsitoCrittograficoVol(this.getMsgEsitoCrittograficoVol());
-	entity.setEsitoCatenaVol(this.getEsitoCatenaVol());
-	entity.setMsgEsitoCatenaVol(this.getMsgEsitoCatenaVol());
-	entity.setEsitoCertificatoVol(this.getEsitoCertificatoVol());
-	entity.setMsgEsitoCertificatoVol(this.getMsgEsitoCertificatoVol());
-	entity.setEsitoCrlVol(this.getEsitoCrlVol());
-	entity.setMsgEsitoCrlVol(this.getMsgEsitoCrlVol());
-	entity.setSerialCrlVol(this.getSerialCrlVol());
-	entity.setDtScadCrlVol(this.getDtScadCrlVol());
-	entity.setTiEsitoVerifFirmaDtVers(this.getTiEsitoVerifFirmaDtVers());
-	entity.setDsMsgVerifFirmaDtVers(this.getDsMsgVerifFirmaDtVers());
-	entity.setEsitoCrittogDtVers(this.getEsitoCrittogDtVers());
-	entity.setMsgEsitoCrittogDtVers(this.getMsgEsitoCrittogDtVers());
-	entity.setEsitoCatenaDtVers(this.getEsitoCatenaDtVers());
-	entity.setMsgEsitoCatenaDtVers(this.getMsgEsitoCatenaDtVers());
-	entity.setEsitoCertificatoDtVers(this.getEsitoCertificatoDtVers());
-	entity.setMsgEsitoCertificatoDtVers(this.getMsgEsitoCertificatoDtVers());
-	entity.setEsitoCrlDtVers(this.getEsitoCrlDtVers());
-	entity.setMsgEsitoCrlDtVers(this.getMsgEsitoCrlDtVers());
-	entity.setSerialCrlDtVers(this.getSerialCrlDtVers());
-	entity.setDtScadCrlDtVers(this.getDtScadCrlDtVers());
-	entity.setBlFirmaBase64(this.getBlFirmaBase64());
-	entity.setEsitoOcsp(this.getEsitoOcsp());
-	entity.setMsgEsitoOcsp(this.getMsgEsitoOcsp());
-	entity.setEsitoOcspDtVers(this.getEsitoOcspDtVers());
-	entity.setMsgEsitoOcspDtVers(this.getMsgEsitoOcspDtVers());
-	entity.setIdentifierOcsp(this.getIdentifierOcsp());
-	entity.setIssuerCertifOcsp(this.getIssuerCertifOcsp());
-	entity.setSerialCertifOcsp(this.getSerialCertifOcsp());
-	entity.setIdentifierOcspDtVers(this.getIdentifierOcspDtVers());
-	entity.setIssuerCertifOcspDtVers(this.getIssuerCertifOcspDtVers());
-	entity.setSerialCertifOcspDtVers(this.getSerialCertifOcspDtVers());
-	entity.setDsNote(this.getDsNote());
-	return entity;
+        AroVVisFirmaComp entity = new AroVVisFirmaComp();
+        entity.setNmAmbiente(this.getNmAmbiente());
+        entity.setNmEnte(this.getNmEnte());
+        entity.setNmStrut(this.getNmStrut());
+        entity.setIdUnitaDoc(this.getIdUnitaDoc());
+        entity.setCdRegistroKeyUnitaDoc(this.getCdRegistroKeyUnitaDoc());
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
+        entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
+        entity.setNmTipoUnitaDoc(this.getNmTipoUnitaDoc());
+        entity.setDtAnnulUnitaDoc(this.getDtAnnulUnitaDoc());
+        entity.setTiAnnulUnitaDoc(this.getTiAnnulUnitaDoc());
+        entity.setNtAnnulUnitaDoc(this.getNtAnnulUnitaDoc());
+        entity.setIdDoc(this.getIdDoc());
+        entity.setCdKeyDocVers(this.getCdKeyDocVers());
+        entity.setTiDoc(this.getTiDoc());
+        entity.setPgDoc(this.getPgDoc());
+        entity.setNmTipoDoc(this.getNmTipoDoc());
+        entity.setDtAnnulDoc(this.getDtAnnulDoc());
+        entity.setTiAnnulDoc(this.getTiAnnulDoc());
+        entity.setNtAnnulDoc(this.getNtAnnulDoc());
+        entity.setIdCompDoc(this.getIdCompDoc());
+        entity.setNiOrdCompDoc(this.getNiOrdCompDoc());
+        entity.setNmTipoCompDoc(this.getNmTipoCompDoc());
+        entity.setDsUrnCompCalc(this.getDsUrnCompCalc());
+        entity.setNmFormatoCalc(this.getNmFormatoCalc());
+        entity.setIdFirmaComp(this.getIdFirmaComp());
+        entity.setPgFirma(this.getPgFirma());
+        entity.setCdFirmatario(this.getCdFirmatario());
+        entity.setNmCognomeFirmatario(this.getNmCognomeFirmatario());
+        entity.setNmFirmatario(this.getNmFirmatario());
+        entity.setTiFirma(this.getTiFirma());
+        entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
+        entity.setDsMsgEsitoContrConforme(this.getDsMsgEsitoContrConforme());
+        entity.setDsAlgoFirma(this.getDsAlgoFirma());
+        entity.setTiFormatoFirma(this.getTiFormatoFirma());
+        entity.setPgBusta(this.getPgBusta());
+        entity.setIssuerCertifFirmatario(this.getIssuerCertifFirmatario());
+        entity.setDsSerialCertifCa(this.getDsSerialCertifCa());
+        entity.setDsSerialCertifFirmatario(this.getDsSerialCertifFirmatario());
+        entity.setDtIniValCertifFirmatario(this.getDtIniValCertifFirmatario());
+        entity.setDtFinValCertifFirmatario(this.getDtFinValCertifFirmatario());
+        entity.setDtFirma(this.getDtFirma());
+        entity.setTmMarcaTempRiferita(this.getTmMarcaTempRiferita());
+        entity.setTmRifTempUsato(this.getTmRifTempUsato());
+        entity.setTiRifTempUsato(this.getTiRifTempUsato());
+        entity.setTiEsitoVerifFirma(this.getTiEsitoVerifFirma());
+        entity.setDsMsgEsitoVerifFirma(this.getDsMsgEsitoVerifFirma());
+        entity.setTiEsitoVerifFirmaChius(this.getTiEsitoVerifFirmaChius());
+        entity.setDsMsgEsitoVerifFirmaChius(this.getDsMsgEsitoVerifFirmaChius());
+        entity.setNmCognomeFirmatarioPadre(this.getNmCognomeFirmatarioPadre());
+        entity.setNmFirmatarioPadre(this.getNmFirmatarioPadre());
+        entity.setEsitoCrittografico(this.getEsitoCrittografico());
+        entity.setMsgEsitoCrittografico(this.getMsgEsitoCrittografico());
+        entity.setIdContrFirmaCatena(this.getIdContrFirmaCatena());
+        entity.setEsitoCatena(this.getEsitoCatena());
+        entity.setMsgEsitoCatena(this.getMsgEsitoCatena());
+        entity.setEsitoCertificato(this.getEsitoCertificato());
+        entity.setMsgEsitoCertificato(this.getMsgEsitoCertificato());
+        entity.setEsitoCrl(this.getEsitoCrl());
+        entity.setMsgEsitoCrl(this.getMsgEsitoCrl());
+        entity.setIssuerCrl(this.getIssuerCrl());
+        entity.setSerialCaCrl(this.getSerialCaCrl());
+        entity.setSerialCrl(this.getSerialCrl());
+        entity.setDtScadCrl(this.getDtScadCrl());
+        entity.setNmVolumeConserv(this.getNmVolumeConserv());
+        entity.setDsVolumeConserv(this.getDsVolumeConserv());
+        entity.setTiStatoVolumeConserv(this.getTiStatoVolumeConserv());
+        entity.setDtCreazione(this.getDtCreazione());
+        entity.setDtChiusVolume(this.getDtChiusVolume());
+        entity.setEsitoCrittograficoVol(this.getEsitoCrittograficoVol());
+        entity.setMsgEsitoCrittograficoVol(this.getMsgEsitoCrittograficoVol());
+        entity.setEsitoCatenaVol(this.getEsitoCatenaVol());
+        entity.setMsgEsitoCatenaVol(this.getMsgEsitoCatenaVol());
+        entity.setEsitoCertificatoVol(this.getEsitoCertificatoVol());
+        entity.setMsgEsitoCertificatoVol(this.getMsgEsitoCertificatoVol());
+        entity.setEsitoCrlVol(this.getEsitoCrlVol());
+        entity.setMsgEsitoCrlVol(this.getMsgEsitoCrlVol());
+        entity.setSerialCrlVol(this.getSerialCrlVol());
+        entity.setDtScadCrlVol(this.getDtScadCrlVol());
+        entity.setTiEsitoVerifFirmaDtVers(this.getTiEsitoVerifFirmaDtVers());
+        entity.setDsMsgVerifFirmaDtVers(this.getDsMsgVerifFirmaDtVers());
+        entity.setEsitoCrittogDtVers(this.getEsitoCrittogDtVers());
+        entity.setMsgEsitoCrittogDtVers(this.getMsgEsitoCrittogDtVers());
+        entity.setEsitoCatenaDtVers(this.getEsitoCatenaDtVers());
+        entity.setMsgEsitoCatenaDtVers(this.getMsgEsitoCatenaDtVers());
+        entity.setEsitoCertificatoDtVers(this.getEsitoCertificatoDtVers());
+        entity.setMsgEsitoCertificatoDtVers(this.getMsgEsitoCertificatoDtVers());
+        entity.setEsitoCrlDtVers(this.getEsitoCrlDtVers());
+        entity.setMsgEsitoCrlDtVers(this.getMsgEsitoCrlDtVers());
+        entity.setSerialCrlDtVers(this.getSerialCrlDtVers());
+        entity.setDtScadCrlDtVers(this.getDtScadCrlDtVers());
+        entity.setBlFirmaBase64(this.getBlFirmaBase64());
+        entity.setEsitoOcsp(this.getEsitoOcsp());
+        entity.setMsgEsitoOcsp(this.getMsgEsitoOcsp());
+        entity.setEsitoOcspDtVers(this.getEsitoOcspDtVers());
+        entity.setMsgEsitoOcspDtVers(this.getMsgEsitoOcspDtVers());
+        entity.setIdentifierOcsp(this.getIdentifierOcsp());
+        entity.setIssuerCertifOcsp(this.getIssuerCertifOcsp());
+        entity.setSerialCertifOcsp(this.getSerialCertifOcsp());
+        entity.setIdentifierOcspDtVers(this.getIdentifierOcspDtVers());
+        entity.setIssuerCertifOcspDtVers(this.getIssuerCertifOcspDtVers());
+        entity.setSerialCertifOcspDtVers(this.getSerialCertifOcspDtVers());
+        entity.setDsNote(this.getDsNote());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

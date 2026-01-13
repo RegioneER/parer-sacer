@@ -36,12 +36,12 @@ public class SerVJobContenutoBloccato implements Serializable {
 
     @EmbeddedId
     public SerVJobContenutoBloccatoId getSerVJobContenutoBloccatoId() {
-	return serVJobContenutoBloccatoId;
+        return serVJobContenutoBloccatoId;
     }
 
     public void setSerVJobContenutoBloccatoId(
-	    SerVJobContenutoBloccatoId serVJobContenutoBloccatoId) {
-	this.serVJobContenutoBloccatoId = serVJobContenutoBloccatoId;
+            SerVJobContenutoBloccatoId serVJobContenutoBloccatoId) {
+        this.serVJobContenutoBloccatoId = serVJobContenutoBloccatoId;
     }
 
     public SerVJobContenutoBloccato() {/* Hibernate */
@@ -49,20 +49,20 @@ public class SerVJobContenutoBloccato implements Serializable {
 
     @Column(name = "DL_MSG_JOB_BLOCCATO")
     public String getDlMsgJobBloccato() {
-	return this.dlMsgJobBloccato;
+        return this.dlMsgJobBloccato;
     }
 
     public void setDlMsgJobBloccato(String dlMsgJobBloccato) {
-	this.dlMsgJobBloccato = dlMsgJobBloccato;
+        this.dlMsgJobBloccato = dlMsgJobBloccato;
     }
 
     @Column(name = "FL_JOB_BLOCCATO", columnDefinition = "char(1)")
     public String getFlJobBloccato() {
-	return this.flJobBloccato;
+        return this.flJobBloccato;
     }
 
     public void setFlJobBloccato(String flJobBloccato) {
-	this.flJobBloccato = flJobBloccato;
+        this.flJobBloccato = flJobBloccato;
     }
 
 }

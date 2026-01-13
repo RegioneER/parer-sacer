@@ -37,19 +37,19 @@ public class ElvVRicElencoFascTableBean extends AbstractBaseTable<ElvVRicElencoF
     public static ElvVRicElencoFascTableDescriptor TABLE_DESCRIPTOR = new ElvVRicElencoFascTableDescriptor();
 
     public ElvVRicElencoFascTableBean() {
-	super();
+        super();
     }
 
     protected ElvVRicElencoFascRowBean createRow() {
-	return new ElvVRicElencoFascRowBean();
+        return new ElvVRicElencoFascRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<ElvVRicElencoFascRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

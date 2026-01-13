@@ -46,39 +46,39 @@ public class ElvVLisUdModifElenco implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VERS_MIN")
     public Date getDtVersMin() {
-	return this.dtVersMin;
+        return this.dtVersMin;
     }
 
     public void setDtVersMin(Date dtVersMin) {
-	this.dtVersMin = dtVersMin;
+        this.dtVersMin = dtVersMin;
     }
 
     @Column(name = "ID_ELENCO_VERS")
     public BigDecimal getIdElencoVers() {
-	return this.idElencoVers;
+        return this.idElencoVers;
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-	this.idElencoVers = idElencoVers;
+        this.idElencoVers = idElencoVers;
     }
 
     @Column(name = "DS_URN_UNITA_DOC")
     public String getDsUrnUnitaDoc() {
-	return this.dsUrnUnitaDoc;
+        return this.dsUrnUnitaDoc;
     }
 
     public void setDsUrnUnitaDoc(String dsUrnUnitaDoc) {
-	this.dsUrnUnitaDoc = dsUrnUnitaDoc;
+        this.dsUrnUnitaDoc = dsUrnUnitaDoc;
     }
 
     @Id
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
 }

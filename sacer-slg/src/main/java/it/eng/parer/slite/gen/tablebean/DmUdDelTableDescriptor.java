@@ -1,3 +1,16 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.slite.gen.tablebean;
 
 import it.eng.spagoLite.db.oracle.bean.column.ColumnDescriptor;
@@ -6,7 +19,6 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
 import java.sql.Types;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.annotation.Generated;
 
 /**
  * @author Sloth
@@ -39,37 +51,37 @@ public class DmUdDelTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_AA_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_CD_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, false));
-	map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, false));
-	map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, false));
-	map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 4000, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 4000, false));
-	map.put(COL_ID_UD_DEL_RICHIESTA,
-		new ColumnDescriptor(COL_ID_UD_DEL_RICHIESTA, Types.DECIMAL, 22, false));
-	map.put(COL_DT_STATO_UD_CANCELLATE,
-		new ColumnDescriptor(COL_DT_STATO_UD_CANCELLATE, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_VERSAMENTO,
-		new ColumnDescriptor(COL_DT_VERSAMENTO, Types.TIMESTAMP, 7, false));
-	map.put(COL_TI_STATO_UD_CANCELLATE,
-		new ColumnDescriptor(COL_TI_STATO_UD_CANCELLATE, Types.VARCHAR, 100, false));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_AA_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_CD_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, false));
+        map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, false));
+        map.put(COL_ID_ENTE, new ColumnDescriptor(COL_ID_ENTE, Types.DECIMAL, 22, false));
+        map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 4000, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 4000, false));
+        map.put(COL_ID_UD_DEL_RICHIESTA,
+                new ColumnDescriptor(COL_ID_UD_DEL_RICHIESTA, Types.DECIMAL, 22, false));
+        map.put(COL_DT_STATO_UD_CANCELLATE,
+                new ColumnDescriptor(COL_DT_STATO_UD_CANCELLATE, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_VERSAMENTO,
+                new ColumnDescriptor(COL_DT_VERSAMENTO, Types.TIMESTAMP, 7, false));
+        map.put(COL_TI_STATO_UD_CANCELLATE,
+                new ColumnDescriptor(COL_TI_STATO_UD_CANCELLATE, Types.VARCHAR, 100, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

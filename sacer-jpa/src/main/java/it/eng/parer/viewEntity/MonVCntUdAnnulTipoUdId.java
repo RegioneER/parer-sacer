@@ -36,49 +36,49 @@ public class MonVCntUdAnnulTipoUdId implements Serializable {
 
     @Column(name = "ID_TIPO_UNITA_DOC")
     public BigDecimal getIdTipoUnitaDoc() {
-	return this.idTipoUnitaDoc;
+        return this.idTipoUnitaDoc;
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	this.idTipoUnitaDoc = idTipoUnitaDoc;
+        this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
     @Column(name = "TI_STATO_ANNUL")
     public String getTiStatoAnnul() {
-	return this.tiStatoAnnul;
+        return this.tiStatoAnnul;
     }
 
     public void setTiStatoAnnul(String tiStatoAnnul) {
-	this.tiStatoAnnul = tiStatoAnnul;
+        this.tiStatoAnnul = tiStatoAnnul;
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 41 * hash + Objects.hashCode(this.tiStatoAnnul);
-	hash = 41 * hash + Objects.hashCode(this.idTipoUnitaDoc);
-	return hash;
+        int hash = 7;
+        hash = 41 * hash + Objects.hashCode(this.tiStatoAnnul);
+        hash = 41 * hash + Objects.hashCode(this.idTipoUnitaDoc);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final MonVCntUdAnnulTipoUdId other = (MonVCntUdAnnulTipoUdId) obj;
-	if (!Objects.equals(this.tiStatoAnnul, other.tiStatoAnnul)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idTipoUnitaDoc, other.idTipoUnitaDoc)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MonVCntUdAnnulTipoUdId other = (MonVCntUdAnnulTipoUdId) obj;
+        if (!Objects.equals(this.tiStatoAnnul, other.tiStatoAnnul)) {
+            return false;
+        }
+        if (!Objects.equals(this.idTipoUnitaDoc, other.idTipoUnitaDoc)) {
+            return false;
+        }
+        return true;
     }
 
 }

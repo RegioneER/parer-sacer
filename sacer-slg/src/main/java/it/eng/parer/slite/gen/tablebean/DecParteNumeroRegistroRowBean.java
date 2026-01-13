@@ -36,183 +36,183 @@ public class DecParteNumeroRegistroRowBean extends BaseRow implements JEEBaseRow
     public static DecParteNumeroRegistroTableDescriptor TABLE_DESCRIPTOR = new DecParteNumeroRegistroTableDescriptor();
 
     public DecParteNumeroRegistroRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdParteNumeroRegistro() {
-	return getBigDecimal("id_parte_numero_registro");
+        return getBigDecimal("id_parte_numero_registro");
     }
 
     public void setIdParteNumeroRegistro(BigDecimal idParteNumeroRegistro) {
-	setObject("id_parte_numero_registro", idParteNumeroRegistro);
+        setObject("id_parte_numero_registro", idParteNumeroRegistro);
     }
 
     public BigDecimal getIdAaRegistroUnitaDoc() {
-	return getBigDecimal("id_aa_registro_unita_doc");
+        return getBigDecimal("id_aa_registro_unita_doc");
     }
 
     public void setIdAaRegistroUnitaDoc(BigDecimal idAaRegistroUnitaDoc) {
-	setObject("id_aa_registro_unita_doc", idAaRegistroUnitaDoc);
+        setObject("id_aa_registro_unita_doc", idAaRegistroUnitaDoc);
     }
 
     public String getNmParteNumeroRegistro() {
-	return getString("nm_parte_numero_registro");
+        return getString("nm_parte_numero_registro");
     }
 
     public void setNmParteNumeroRegistro(String nmParteNumeroRegistro) {
-	setObject("nm_parte_numero_registro", nmParteNumeroRegistro);
+        setObject("nm_parte_numero_registro", nmParteNumeroRegistro);
     }
 
     public BigDecimal getNiParteNumeroRegistro() {
-	return getBigDecimal("ni_parte_numero_registro");
+        return getBigDecimal("ni_parte_numero_registro");
     }
 
     public void setNiParteNumeroRegistro(BigDecimal niParteNumeroRegistro) {
-	setObject("ni_parte_numero_registro", niParteNumeroRegistro);
+        setObject("ni_parte_numero_registro", niParteNumeroRegistro);
     }
 
     public String getTiCharParte() {
-	return getString("ti_char_parte");
+        return getString("ti_char_parte");
     }
 
     public void setTiCharParte(String tiCharParte) {
-	setObject("ti_char_parte", tiCharParte);
+        setObject("ti_char_parte", tiCharParte);
     }
 
     public BigDecimal getNiMinCharParte() {
-	return getBigDecimal("ni_min_char_parte");
+        return getBigDecimal("ni_min_char_parte");
     }
 
     public void setNiMinCharParte(BigDecimal niMinCharParte) {
-	setObject("ni_min_char_parte", niMinCharParte);
+        setObject("ni_min_char_parte", niMinCharParte);
     }
 
     public BigDecimal getNiMaxCharParte() {
-	return getBigDecimal("ni_max_char_parte");
+        return getBigDecimal("ni_max_char_parte");
     }
 
     public void setNiMaxCharParte(BigDecimal niMaxCharParte) {
-	setObject("ni_max_char_parte", niMaxCharParte);
+        setObject("ni_max_char_parte", niMaxCharParte);
     }
 
     public String getTiPadSxParte() {
-	return getString("ti_pad_sx_parte");
+        return getString("ti_pad_sx_parte");
     }
 
     public void setTiPadSxParte(String tiPadSxParte) {
-	setObject("ti_pad_sx_parte", tiPadSxParte);
+        setObject("ti_pad_sx_parte", tiPadSxParte);
     }
 
     public String getTiCharSep() {
-	return getString("ti_char_sep");
+        return getString("ti_char_sep");
     }
 
     public void setTiCharSep(String tiCharSep) {
-	setObject("ti_char_sep", tiCharSep);
+        setObject("ti_char_sep", tiCharSep);
     }
 
     public String getDlValoriParte() {
-	return getString("dl_valori_parte");
+        return getString("dl_valori_parte");
     }
 
     public void setDlValoriParte(String dlValoriParte) {
-	setObject("dl_valori_parte", dlValoriParte);
+        setObject("dl_valori_parte", dlValoriParte);
     }
 
     public String getDsParteNumeroRegistro() {
-	return getString("ds_parte_numero_registro");
+        return getString("ds_parte_numero_registro");
     }
 
     public void setDsParteNumeroRegistro(String dsParteNumeroRegistro) {
-	setObject("ds_parte_numero_registro", dsParteNumeroRegistro);
+        setObject("ds_parte_numero_registro", dsParteNumeroRegistro);
     }
 
     public String getTiParte() {
-	return getString("ti_parte");
+        return getString("ti_parte");
     }
 
     public void setTiParte(String tiParte) {
-	setObject("ti_parte", tiParte);
+        setObject("ti_parte", tiParte);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecParteNumeroRegistro entity = (DecParteNumeroRegistro) obj;
+        DecParteNumeroRegistro entity = (DecParteNumeroRegistro) obj;
 
-	this.setIdParteNumeroRegistro(entity.getIdParteNumeroRegistro() == null ? null
-		: BigDecimal.valueOf(entity.getIdParteNumeroRegistro()));
+        this.setIdParteNumeroRegistro(entity.getIdParteNumeroRegistro() == null ? null
+                : BigDecimal.valueOf(entity.getIdParteNumeroRegistro()));
 
-	if (entity.getDecAaRegistroUnitaDoc() != null) {
-	    this.setIdAaRegistroUnitaDoc(
-		    new BigDecimal(entity.getDecAaRegistroUnitaDoc().getIdAaRegistroUnitaDoc()));
-	}
+        if (entity.getDecAaRegistroUnitaDoc() != null) {
+            this.setIdAaRegistroUnitaDoc(
+                    new BigDecimal(entity.getDecAaRegistroUnitaDoc().getIdAaRegistroUnitaDoc()));
+        }
 
-	this.setNmParteNumeroRegistro(entity.getNmParteNumeroRegistro());
-	this.setNiParteNumeroRegistro(entity.getNiParteNumeroRegistro());
-	this.setTiCharParte(entity.getTiCharParte());
-	this.setNiMinCharParte(entity.getNiMinCharParte());
-	this.setNiMaxCharParte(entity.getNiMaxCharParte());
-	this.setTiPadSxParte(entity.getTiPadSxParte());
-	this.setTiCharSep(entity.getTiCharSep());
-	this.setDlValoriParte(entity.getDlValoriParte());
-	this.setDsParteNumeroRegistro(entity.getDsParteNumeroRegistro());
-	this.setTiParte(entity.getTiParte());
+        this.setNmParteNumeroRegistro(entity.getNmParteNumeroRegistro());
+        this.setNiParteNumeroRegistro(entity.getNiParteNumeroRegistro());
+        this.setTiCharParte(entity.getTiCharParte());
+        this.setNiMinCharParte(entity.getNiMinCharParte());
+        this.setNiMaxCharParte(entity.getNiMaxCharParte());
+        this.setTiPadSxParte(entity.getTiPadSxParte());
+        this.setTiCharSep(entity.getTiCharSep());
+        this.setDlValoriParte(entity.getDlValoriParte());
+        this.setDsParteNumeroRegistro(entity.getDsParteNumeroRegistro());
+        this.setTiParte(entity.getTiParte());
     }
 
     @Override
     public DecParteNumeroRegistro rowBeanToEntity() {
-	DecParteNumeroRegistro entity = new DecParteNumeroRegistro();
-	if (this.getIdParteNumeroRegistro() != null) {
-	    entity.setIdParteNumeroRegistro(this.getIdParteNumeroRegistro().longValue());
-	}
-	if (this.getIdAaRegistroUnitaDoc() != null) {
-	    if (entity.getDecAaRegistroUnitaDoc() == null) {
-		entity.setDecAaRegistroUnitaDoc(new DecAaRegistroUnitaDoc());
-	    }
-	    entity.getDecAaRegistroUnitaDoc()
-		    .setIdAaRegistroUnitaDoc(this.getIdAaRegistroUnitaDoc().longValue());
-	}
-	entity.setNmParteNumeroRegistro(this.getNmParteNumeroRegistro());
-	entity.setNiParteNumeroRegistro(this.getNiParteNumeroRegistro());
-	entity.setTiCharParte(this.getTiCharParte());
-	entity.setNiMinCharParte(this.getNiMinCharParte());
-	entity.setNiMaxCharParte(this.getNiMaxCharParte());
-	entity.setTiPadSxParte(this.getTiPadSxParte());
-	entity.setTiCharSep(this.getTiCharSep());
-	entity.setDlValoriParte(this.getDlValoriParte());
-	entity.setDsParteNumeroRegistro(this.getDsParteNumeroRegistro());
-	entity.setTiParte(this.getTiParte());
-	return entity;
+        DecParteNumeroRegistro entity = new DecParteNumeroRegistro();
+        if (this.getIdParteNumeroRegistro() != null) {
+            entity.setIdParteNumeroRegistro(this.getIdParteNumeroRegistro().longValue());
+        }
+        if (this.getIdAaRegistroUnitaDoc() != null) {
+            if (entity.getDecAaRegistroUnitaDoc() == null) {
+                entity.setDecAaRegistroUnitaDoc(new DecAaRegistroUnitaDoc());
+            }
+            entity.getDecAaRegistroUnitaDoc()
+                    .setIdAaRegistroUnitaDoc(this.getIdAaRegistroUnitaDoc().longValue());
+        }
+        entity.setNmParteNumeroRegistro(this.getNmParteNumeroRegistro());
+        entity.setNiParteNumeroRegistro(this.getNiParteNumeroRegistro());
+        entity.setTiCharParte(this.getTiCharParte());
+        entity.setNiMinCharParte(this.getNiMinCharParte());
+        entity.setNiMaxCharParte(this.getNiMaxCharParte());
+        entity.setTiPadSxParte(this.getTiPadSxParte());
+        entity.setTiCharSep(this.getTiCharSep());
+        entity.setDlValoriParte(this.getDlValoriParte());
+        entity.setDsParteNumeroRegistro(this.getDsParteNumeroRegistro());
+        entity.setTiParte(this.getTiParte());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

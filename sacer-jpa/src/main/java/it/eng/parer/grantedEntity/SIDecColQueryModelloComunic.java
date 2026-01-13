@@ -41,46 +41,46 @@ public class SIDecColQueryModelloComunic implements Serializable {
     }
 
     public SIDecColQueryModelloComunic(Long idColQueryModelloComunic) {
-	this.idColQueryModelloComunic = idColQueryModelloComunic;
+        this.idColQueryModelloComunic = idColQueryModelloComunic;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "ID_QUERY_MODELLO_COMUNIC", nullable = false)
     public SIDecQueryModelloComunic getSiDecQueryModelloComunic() {
-	return siDecQueryModelloComunic;
+        return siDecQueryModelloComunic;
     }
 
     public void setSiDecQueryModelloComunic(SIDecQueryModelloComunic siDecQueryModelloComunic) {
-	this.siDecQueryModelloComunic = siDecQueryModelloComunic;
+        this.siDecQueryModelloComunic = siDecQueryModelloComunic;
     }
 
     @Id
     @Column(name = "ID_COL_QUERY_MODELLO_COMUNIC")
     public Long getIdColQueryModelloComunic() {
-	return idColQueryModelloComunic;
+        return idColQueryModelloComunic;
     }
 
     public void setIdColQueryModelloComunic(Long idColQueryModelloComunic) {
-	this.idColQueryModelloComunic = idColQueryModelloComunic;
+        this.idColQueryModelloComunic = idColQueryModelloComunic;
     }
 
     @Basic
     @Column(name = "NM_COL", nullable = false, length = 100)
     public String getNmCol() {
-	return nmCol;
+        return nmCol;
     }
 
     public void setNmCol(String nmCol) {
-	this.nmCol = nmCol;
+        this.nmCol = nmCol;
     }
 
     @Basic
     @Column(name = "PG_POSIZ_COL")
     public Long getPgPosizCol() {
-	return pgPosizCol;
+        return pgPosizCol;
     }
 
     public void setPgPosizCol(Long pgPosizCol) {
-	this.pgPosizCol = pgPosizCol;
+        this.pgPosizCol = pgPosizCol;
     }
 }

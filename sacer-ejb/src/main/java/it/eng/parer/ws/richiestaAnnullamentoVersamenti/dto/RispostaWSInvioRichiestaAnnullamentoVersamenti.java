@@ -35,138 +35,138 @@ public class RispostaWSInvioRichiestaAnnullamentoVersamenti implements IRisposta
     }
 
     public EsitoRichiestaAnnullamentoVersamenti getEsitoRichiestaAnnullamentoVersamenti() {
-	return esitoRichiestaAnnullamentoVersamenti;
+        return esitoRichiestaAnnullamentoVersamenti;
     }
 
     public void setEsitoRichiestaAnnullamentoVersamenti(
-	    EsitoRichiestaAnnullamentoVersamenti esitoRichiestaAnnullamentoVersamenti) {
-	this.esitoRichiestaAnnullamentoVersamenti = esitoRichiestaAnnullamentoVersamenti;
+            EsitoRichiestaAnnullamentoVersamenti esitoRichiestaAnnullamentoVersamenti) {
+        this.esitoRichiestaAnnullamentoVersamenti = esitoRichiestaAnnullamentoVersamenti;
     }
 
     @Override
     public SeverityEnum getSeverity() {
-	return severity;
+        return severity;
     }
 
     @Override
     public void setSeverity(SeverityEnum severity) {
-	this.severity = severity;
+        this.severity = severity;
     }
 
     @Override
     public ErrorTypeEnum getErrorType() {
-	return errorType;
+        return errorType;
     }
 
     @Override
     public void setErrorType(ErrorTypeEnum errorType) {
-	this.errorType = errorType;
+        this.errorType = errorType;
     }
 
     @Override
     public String getErrorMessage() {
-	return errorMessage;
+        return errorMessage;
     }
 
     @Override
     public void setErrorMessage(String errorMessage) {
-	this.errorMessage = errorMessage;
+        this.errorMessage = errorMessage;
     }
 
     @Override
     public String getErrorCode() {
-	return errorCode;
+        return errorCode;
     }
 
     @Override
     public void setErrorCode(String errorCode) {
-	this.errorCode = errorCode;
+        this.errorCode = errorCode;
     }
 
     @Override
     public void setEsitoWsErrBundle(String errCode, Object... params) {
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.setCodiceEsito(CodiceEsitoType.NEGATIVO);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.setMessaggioErrore(MessaggiWSBundle.getString(errCode, params));
-	this.setRispostaWsError();
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .setCodiceEsito(CodiceEsitoType.NEGATIVO);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .setMessaggioErrore(MessaggiWSBundle.getString(errCode, params));
+        this.setRispostaWsError();
     }
 
     @Override
     public void setEsitoWsErrBundle(String errCode) {
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.setCodiceEsito(CodiceEsitoType.NEGATIVO);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.setMessaggioErrore(MessaggiWSBundle.getString(errCode));
-	this.setRispostaWsError();
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .setCodiceEsito(CodiceEsitoType.NEGATIVO);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .setMessaggioErrore(MessaggiWSBundle.getString(errCode));
+        this.setRispostaWsError();
     }
 
     @Override
     public void setEsitoWsWarnBundle(String errCode, Object... params) {
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.setCodiceEsito(CodiceEsitoType.WARNING);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.setMessaggioErrore(MessaggiWSBundle.getString(errCode, params));
-	this.setRispostaWsWarning();
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .setCodiceEsito(CodiceEsitoType.WARNING);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .setMessaggioErrore(MessaggiWSBundle.getString(errCode, params));
+        this.setRispostaWsWarning();
     }
 
     @Override
     public void setEsitoWsWarnBundle(String errCode) {
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.setCodiceEsito(CodiceEsitoType.WARNING);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.setMessaggioErrore(MessaggiWSBundle.getString(errCode));
-	this.setRispostaWsWarning();
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .setCodiceEsito(CodiceEsitoType.WARNING);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .setMessaggioErrore(MessaggiWSBundle.getString(errCode));
+        this.setRispostaWsWarning();
     }
 
     @Override
     public void setEsitoWsError(String errCode, String errMessage) {
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.setCodiceEsito(CodiceEsitoType.NEGATIVO);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setMessaggioErrore(errMessage);
-	this.setRispostaWsError();
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .setCodiceEsito(CodiceEsitoType.NEGATIVO);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setMessaggioErrore(errMessage);
+        this.setRispostaWsError();
     }
 
     @Override
     public void setEsitoWsWarning(String errCode, String errMessage) {
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.setCodiceEsito(CodiceEsitoType.WARNING);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
-	esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setMessaggioErrore(errMessage);
-	this.setRispostaWsWarning();
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .setCodiceEsito(CodiceEsitoType.WARNING);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setCodiceErrore(errCode);
+        esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().setMessaggioErrore(errMessage);
+        this.setRispostaWsWarning();
     }
 
     private void setRispostaWsError() {
-	this.severity = IRispostaWS.SeverityEnum.ERROR;
-	this.errorCode = esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().getCodiceErrore();
-	this.errorMessage = esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.getMessaggioErrore();
+        this.severity = IRispostaWS.SeverityEnum.ERROR;
+        this.errorCode = esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().getCodiceErrore();
+        this.errorMessage = esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .getMessaggioErrore();
     }
 
     private void setRispostaWsWarning() {
-	this.severity = IRispostaWS.SeverityEnum.WARNING;
-	this.errorCode = esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().getCodiceErrore();
-	this.errorMessage = esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
-		.getMessaggioErrore();
+        this.severity = IRispostaWS.SeverityEnum.WARNING;
+        this.errorCode = esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta().getCodiceErrore();
+        this.errorMessage = esitoRichiestaAnnullamentoVersamenti.getEsitoRichiesta()
+                .getMessaggioErrore();
     }
 
     @Override
     public AvanzamentoWs getAvanzamento() {
-	throw new UnsupportedOperationException("Not supported yet."); // To change body of
-								       // generated methods, choose
-								       // Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); // To change body of
+        // generated methods, choose
+        // Tools | Templates.
     }
 
     @Override
     public void setAvanzamento(AvanzamentoWs avanzamento) {
-	throw new UnsupportedOperationException("Not supported yet."); // To change body of
-								       // generated methods, choose
-								       // Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); // To change body of
+        // generated methods, choose
+        // Tools | Templates.
     }
 
 }

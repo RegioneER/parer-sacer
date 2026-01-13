@@ -37,19 +37,19 @@ public class MonVLisSesRecupTableBean extends AbstractBaseTable<MonVLisSesRecupR
     public static MonVLisSesRecupTableDescriptor TABLE_DESCRIPTOR = new MonVLisSesRecupTableDescriptor();
 
     public MonVLisSesRecupTableBean() {
-	super();
+        super();
     }
 
     protected MonVLisSesRecupRowBean createRow() {
-	return new MonVLisSesRecupRowBean();
+        return new MonVLisSesRecupRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVLisSesRecupRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

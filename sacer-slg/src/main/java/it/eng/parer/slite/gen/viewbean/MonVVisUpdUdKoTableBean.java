@@ -37,19 +37,19 @@ public class MonVVisUpdUdKoTableBean extends AbstractBaseTable<MonVVisUpdUdKoRow
     public static MonVVisUpdUdKoTableDescriptor TABLE_DESCRIPTOR = new MonVVisUpdUdKoTableDescriptor();
 
     public MonVVisUpdUdKoTableBean() {
-	super();
+        super();
     }
 
     protected MonVVisUpdUdKoRowBean createRow() {
-	return new MonVVisUpdUdKoRowBean();
+        return new MonVVisUpdUdKoRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVVisUpdUdKoRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

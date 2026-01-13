@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 @SuppressWarnings({
-	"unchecked" })
+        "unchecked" })
 @Stateless(mappedName = "ControlliRecIndiceAipFascicoli")
 @LocalBean
 public class ControlliRecIndiceAipFascicoli {
@@ -48,168 +48,168 @@ public class ControlliRecIndiceAipFascicoli {
     private EntityManager entityManager;
 
     public RispostaControlli leggiXmlVersFascicoliAip(long idXmlVersFascicolo, long idFascicolo) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
 
-	log.debug("Lettura xml di versamento per AIP fascicolo - INIZIO");
-	FasXmlVersFascicolo fasXmlVersFasc = entityManager.find(FasXmlVersFascicolo.class,
-		idXmlVersFascicolo);
+        log.debug("Lettura xml di versamento per AIP fascicolo - INIZIO");
+        FasXmlVersFascicolo fasXmlVersFasc = entityManager.find(FasXmlVersFascicolo.class,
+                idXmlVersFascicolo);
 
-	if (fasXmlVersFasc != null) {
-	    rispostaControlli.setrObject(fasXmlVersFasc);
-	    rispostaControlli.setrBoolean(true);
-	} else {
-	    rispostaControlli.setCodErr("666");
-	    rispostaControlli.setDsErr(
-		    "Errore interno: non sono stati eseguiti versamenti per il fascicolo id="
-			    + idFascicolo);
-	}
+        if (fasXmlVersFasc != null) {
+            rispostaControlli.setrObject(fasXmlVersFasc);
+            rispostaControlli.setrBoolean(true);
+        } else {
+            rispostaControlli.setCodErr("666");
+            rispostaControlli.setDsErr(
+                    "Errore interno: non sono stati eseguiti versamenti per il fascicolo id="
+                            + idFascicolo);
+        }
 
-	log.debug("Lettura xml di versamento per AIP fascicolo - FINE");
-	return rispostaControlli;
+        log.debug("Lettura xml di versamento per AIP fascicolo - FINE");
+        return rispostaControlli;
     }
 
     public RispostaControlli leggiXmlVersamentiAipDaFascicolo(long idFascicolo, String tiXmlVers) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
 
-	log.debug("Lettura xml di versamento per AIP fascicolo - INIZIO");
-	/*
-	 * recupero xml del tipo passato relativo al versamento del fascicolo.
-	 */
-	log.debug("Ricavo xml di versamento per il fascicolo id= {}", idFascicolo);
-	String queryStr = "select t from FasXmlVersFascicolo t "
-		+ "where t.fasFascicolo.idFascicolo = :idFascicolo "
-		+ "and t.tiXmlVers = :tiXmlVers ";
+        log.debug("Lettura xml di versamento per AIP fascicolo - INIZIO");
+        /*
+         * recupero xml del tipo passato relativo al versamento del fascicolo.
+         */
+        log.debug("Ricavo xml di versamento per il fascicolo id= {}", idFascicolo);
+        String queryStr = "select t from FasXmlVersFascicolo t "
+                + "where t.fasFascicolo.idFascicolo = :idFascicolo "
+                + "and t.tiXmlVers = :tiXmlVers ";
 
-	javax.persistence.Query query = entityManager.createQuery(queryStr);
-	query.setParameter("idFascicolo", idFascicolo);
-	query.setParameter("tiXmlVers", tiXmlVers);
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        query.setParameter("idFascicolo", idFascicolo);
+        query.setParameter("tiXmlVers", tiXmlVers);
 
-	List<FasXmlVersFascicolo> xmlList = query.getResultList();
-	if (xmlList.size() > 0) {
-	    rispostaControlli.setrObject(xmlList);
-	    rispostaControlli.setrBoolean(true);
-	} else {
-	    rispostaControlli.setCodErr("666");
-	    rispostaControlli.setDsErr(
-		    "Errore interno: non sono stati eseguiti versamenti per il fascicolo id="
-			    + idFascicolo);
-	}
+        List<FasXmlVersFascicolo> xmlList = query.getResultList();
+        if (xmlList.size() > 0) {
+            rispostaControlli.setrObject(xmlList);
+            rispostaControlli.setrBoolean(true);
+        } else {
+            rispostaControlli.setCodErr("666");
+            rispostaControlli.setDsErr(
+                    "Errore interno: non sono stati eseguiti versamenti per il fascicolo id="
+                            + idFascicolo);
+        }
 
-	log.debug("Lettura xml di versamento per AIP fascicolo - FINE");
-	return rispostaControlli;
+        log.debug("Lettura xml di versamento per AIP fascicolo - FINE");
+        return rispostaControlli;
     }
 
     public RispostaControlli getVersioneSacer() {
-	RispostaControlli rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	String appVersion = it.eng.spagoCore.ConfigSingleton.getInstance().getAppVersion();
-	rispostaControlli.setrString(appVersion);
-	rispostaControlli.setrBoolean(true);
-	return rispostaControlli;
+        RispostaControlli rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        String appVersion = it.eng.spagoCore.ConfigSingleton.getInstance().getAppVersion();
+        rispostaControlli.setrString(appVersion);
+        rispostaControlli.setrBoolean(true);
+        return rispostaControlli;
     }
 
     public RispostaControlli getVersioniPrecedentiAIP(Long idFascicolo) {
-	RispostaControlli rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	try {
-	    // Ricavo tutte le versioni precedenti dell'AIP
-	    String queryStr = "SELECT verAipFascicoloPrec "
-		    + "FROM FasMetaVerAipFascicolo metaVerAipFascicoloPrec JOIN metaVerAipFascicoloPrec.fasVerAipFascicolo verAipFascicoloPrec "
-		    + "WHERE verAipFascicoloPrec.fasFascicolo.idFascicolo = :idFascicolo "
-		    + "AND metaVerAipFascicoloPrec.tiMeta = 'INDICE' "
-		    + "ORDER BY verAipFascicoloPrec.pgVerAipFascicolo DESC ";
+        RispostaControlli rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            // Ricavo tutte le versioni precedenti dell'AIP
+            String queryStr = "SELECT verAipFascicoloPrec "
+                    + "FROM FasMetaVerAipFascicolo metaVerAipFascicoloPrec JOIN metaVerAipFascicoloPrec.fasVerAipFascicolo verAipFascicoloPrec "
+                    + "WHERE verAipFascicoloPrec.fasFascicolo.idFascicolo = :idFascicolo "
+                    + "AND metaVerAipFascicoloPrec.tiMeta = 'INDICE' "
+                    + "ORDER BY verAipFascicoloPrec.pgVerAipFascicolo DESC ";
 
-	    Query query = entityManager.createQuery(queryStr);
-	    query.setParameter("idFascicolo", idFascicolo);
-	    List<FasVerAipFascicolo> versioniPrecedenti = query.getResultList();
-	    rispostaControlli.setrObject(versioniPrecedenti);
-	    rispostaControlli.setrBoolean(true);
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-		    "Eccezione durante il recupero delle versioni precedenti dell'AIP "
-			    + e.getMessage()));
-	    log.error("Eccezione durante il recupero delle versioni precedenti dell'AIP", e);
-	}
-	return rispostaControlli;
+            Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idFascicolo", idFascicolo);
+            List<FasVerAipFascicolo> versioniPrecedenti = query.getResultList();
+            rispostaControlli.setrObject(versioniPrecedenti);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione durante il recupero delle versioni precedenti dell'AIP "
+                            + e.getMessage()));
+            log.error("Eccezione durante il recupero delle versioni precedenti dell'AIP", e);
+        }
+        return rispostaControlli;
     }
 
     public RispostaControlli getVersioneCorrenteMetaFascicolo(Long idVerAipFascicolo) {
-	RispostaControlli rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	try {
-	    // Ricavo i metadati per la versione corrente in elaborazione
-	    String queryStr = "SELECT u FROM FasMetaVerAipFascicolo u "
-		    + "WHERE u.fasVerAipFascicolo.idVerAipFascicolo = :idVerAipFascicolo "
-		    + "AND u.tiMeta = 'FASCICOLO' ";
-	    Query query = entityManager.createQuery(queryStr);
-	    query.setParameter("idVerAipFascicolo", idVerAipFascicolo);
-	    List<FasMetaVerAipFascicolo> versioniCorrenti = query.getResultList();
-	    rispostaControlli.setrObject(versioniCorrenti);
-	    rispostaControlli.setrBoolean(true);
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-		    "Eccezione durante il recupero della versione corrente dei metadati "
-			    + e.getMessage()));
-	    log.error("Eccezione durante il recupero della versione corrente dei metadati", e);
-	}
-	return rispostaControlli;
+        RispostaControlli rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            // Ricavo i metadati per la versione corrente in elaborazione
+            String queryStr = "SELECT u FROM FasMetaVerAipFascicolo u "
+                    + "WHERE u.fasVerAipFascicolo.idVerAipFascicolo = :idVerAipFascicolo "
+                    + "AND u.tiMeta = 'FASCICOLO' ";
+            Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idVerAipFascicolo", idVerAipFascicolo);
+            List<FasMetaVerAipFascicolo> versioniCorrenti = query.getResultList();
+            rispostaControlli.setrObject(versioniCorrenti);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione durante il recupero della versione corrente dei metadati "
+                            + e.getMessage()));
+            log.error("Eccezione durante il recupero della versione corrente dei metadati", e);
+        }
+        return rispostaControlli;
     }
 
     public RispostaControlli getFasContenVerAipFascicolo(long idVerAipFascicolo) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	try {
-	    String queryStr = "SELECT datoAipFasc " + "FROM FasContenVerAipFascicolo datoAipFasc "
-		    + "WHERE datoAipFasc.fasVerAipFascicolo.idVerAipFascicolo = :idVerAipFascicolo ";
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            String queryStr = "SELECT datoAipFasc " + "FROM FasContenVerAipFascicolo datoAipFasc "
+                    + "WHERE datoAipFasc.fasVerAipFascicolo.idVerAipFascicolo = :idVerAipFascicolo ";
 
-	    Query query = entityManager.createQuery(queryStr);
-	    query.setParameter("idVerAipFascicolo", idVerAipFascicolo);
-	    List<FasContenVerAipFascicolo> lstDati = query.getResultList();
-	    rispostaControlli.setrObject(lstDati);
-	    rispostaControlli.setrBoolean(true);
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-		    "Eccezione ControlliRecIndiceAipFascicoli.getFasContenVerAipFascicolo "
-			    + e.getMessage()));
-	    log.error(
-		    "Eccezione nella lettura dei dati riguardanti il File durante i controlli per la creazione dell'indice AIP versione fascicoli",
-		    e);
-	}
-	return rispostaControlli;
+            Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idVerAipFascicolo", idVerAipFascicolo);
+            List<FasContenVerAipFascicolo> lstDati = query.getResultList();
+            rispostaControlli.setrObject(lstDati);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecIndiceAipFascicoli.getFasContenVerAipFascicolo "
+                            + e.getMessage()));
+            log.error(
+                    "Eccezione nella lettura dei dati riguardanti il File durante i controlli per la creazione dell'indice AIP versione fascicoli",
+                    e);
+        }
+        return rispostaControlli;
     }
 
     public RispostaControlli getFasSipVerAipFascicolo(long idVerAipFascicolo) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	try {
-	    String queryStr = "SELECT sip " + "FROM FasSipVerAipFascicolo sip "
-		    + "WHERE sip.fasVerAipFascicolo.idVerAipFascicolo = :idVerAipFascicolo "
-		    + "AND sip.tiSip = 'VERSAMENTO_FASCICOLO' ";
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            String queryStr = "SELECT sip " + "FROM FasSipVerAipFascicolo sip "
+                    + "WHERE sip.fasVerAipFascicolo.idVerAipFascicolo = :idVerAipFascicolo "
+                    + "AND sip.tiSip = 'VERSAMENTO_FASCICOLO' ";
 
-	    Query query = entityManager.createQuery(queryStr);
-	    query.setParameter("idVerAipFascicolo", idVerAipFascicolo);
-	    List<FasSipVerAipFascicolo> lstDati = query.getResultList();
-	    rispostaControlli.setrObject(lstDati);
-	    rispostaControlli.setrBoolean(true);
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-		    "Eccezione ControlliRecIndiceAipFascicoli.getFasSipVerAipFascicolo "
-			    + e.getMessage()));
-	    log.error(
-		    "Eccezione nella lettura dei sip riguardanti il File durante i controlli per la creazione dell'indice AIP versione fascicoli",
-		    e);
-	}
-	return rispostaControlli;
+            Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idVerAipFascicolo", idVerAipFascicolo);
+            List<FasSipVerAipFascicolo> lstDati = query.getResultList();
+            rispostaControlli.setrObject(lstDati);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecIndiceAipFascicoli.getFasSipVerAipFascicolo "
+                            + e.getMessage()));
+            log.error(
+                    "Eccezione nella lettura dei sip riguardanti il File durante i controlli per la creazione dell'indice AIP versione fascicoli",
+                    e);
+        }
+        return rispostaControlli;
     }
 
     // public RispostaControlli getDecModelloFileGroupFileMoreInfo(long idAmbiente) {
@@ -241,32 +241,32 @@ public class ControlliRecIndiceAipFascicoli {
     // }
 
     public RispostaControlli getDecModelloSelfDescMoreInfo(long idAmbiente) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	try {
-	    String queryStr = "SELECT m " + "FROM DecModelloXsdFascicolo m "
-		    + "WHERE m.orgAmbiente.idAmbiente = :idAmbiente "
-		    + "AND m.tiModelloXsd = :tiModelloXsd "
-		    + "AND m.dtIstituz <= :filterDate AND m.dtSoppres >= :filterDate ";
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            String queryStr = "SELECT m " + "FROM DecModelloXsdFascicolo m "
+                    + "WHERE m.orgAmbiente.idAmbiente = :idAmbiente "
+                    + "AND m.tiModelloXsd = :tiModelloXsd "
+                    + "AND m.dtIstituz <= :filterDate AND m.dtSoppres >= :filterDate ";
 
-	    Query query = entityManager.createQuery(queryStr);
-	    query.setParameter("idAmbiente", idAmbiente);
-	    query.setParameter("tiModelloXsd", TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO);
-	    query.setParameter("filterDate", Calendar.getInstance().getTime());
-	    List<DecModelloXsdFascicolo> lstDati = query.getResultList();
-	    rispostaControlli.setrObject(lstDati);
-	    rispostaControlli.setrBoolean(true);
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-		    "Eccezione ControlliRecIndiceAipFascicoli.getDecModelloSelfDescMoreInfo "
-			    + e.getMessage()));
-	    log.error(
-		    "Eccezione nella lettura dei dati riguardanti il modello XSD di tipo AIP_SELF_DESCRIPTION_MORE_INFO durante i controlli per la creazione dell'indice AIP versione fascicoli",
-		    e);
-	}
-	return rispostaControlli;
+            Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idAmbiente", idAmbiente);
+            query.setParameter("tiModelloXsd", TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO);
+            query.setParameter("filterDate", Calendar.getInstance().getTime());
+            List<DecModelloXsdFascicolo> lstDati = query.getResultList();
+            rispostaControlli.setrObject(lstDati);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecIndiceAipFascicoli.getDecModelloSelfDescMoreInfo "
+                            + e.getMessage()));
+            log.error(
+                    "Eccezione nella lettura dei dati riguardanti il modello XSD di tipo AIP_SELF_DESCRIPTION_MORE_INFO durante i controlli per la creazione dell'indice AIP versione fascicoli",
+                    e);
+        }
+        return rispostaControlli;
     }
 
     // MEV#26576
@@ -281,35 +281,35 @@ public class ControlliRecIndiceAipFascicoli {
      * @return lista oggetti di tipo {@link DecModelloXsdFascicolo}
      */
     public RispostaControlli getDecModelloSelfDescMoreInfoV2(long idAmbiente,
-	    String cdVersioneXml) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	try {
-	    String queryStr = "SELECT m " + "FROM DecModelloXsdFascicolo m "
-		    + "WHERE m.orgAmbiente.idAmbiente = :idAmbiente "
-		    + "AND m.tiModelloXsd = :tiModelloXsd "
-		    + "AND m.dtIstituz <= :filterDate AND m.dtSoppres >= :filterDate "
-		    + "AND m.cdXsd = :cdVersioneXml";
+            String cdVersioneXml) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            String queryStr = "SELECT m " + "FROM DecModelloXsdFascicolo m "
+                    + "WHERE m.orgAmbiente.idAmbiente = :idAmbiente "
+                    + "AND m.tiModelloXsd = :tiModelloXsd "
+                    + "AND m.dtIstituz <= :filterDate AND m.dtSoppres >= :filterDate "
+                    + "AND m.cdXsd = :cdVersioneXml";
 
-	    Query query = entityManager.createQuery(queryStr);
-	    query.setParameter("idAmbiente", idAmbiente);
-	    query.setParameter("tiModelloXsd", TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO);
-	    query.setParameter("filterDate", Calendar.getInstance().getTime());
-	    query.setParameter("cdVersioneXml", cdVersioneXml);
-	    List<DecModelloXsdFascicolo> lstDati = query.getResultList();
-	    rispostaControlli.setrObject(lstDati);
-	    rispostaControlli.setrBoolean(true);
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-		    "Eccezione ControlliRecIndiceAipFascicoli.getDecModelloSelfDescMoreInfoV2 "
-			    + e.getMessage()));
-	    log.error(
-		    "Eccezione nella lettura dei dati riguardanti il modello XSD di tipo AIP_SELF_DESCRIPTION_MORE_INFO durante i controlli per la creazione dell'indice AIP versione fascicoli v2",
-		    e);
-	}
-	return rispostaControlli;
+            Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idAmbiente", idAmbiente);
+            query.setParameter("tiModelloXsd", TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO);
+            query.setParameter("filterDate", Calendar.getInstance().getTime());
+            query.setParameter("cdVersioneXml", cdVersioneXml);
+            List<DecModelloXsdFascicolo> lstDati = query.getResultList();
+            rispostaControlli.setrObject(lstDati);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecIndiceAipFascicoli.getDecModelloSelfDescMoreInfoV2 "
+                            + e.getMessage()));
+            log.error(
+                    "Eccezione nella lettura dei dati riguardanti il modello XSD di tipo AIP_SELF_DESCRIPTION_MORE_INFO durante i controlli per la creazione dell'indice AIP versione fascicoli v2",
+                    e);
+        }
+        return rispostaControlli;
     }
     // end MEV#26576
 }

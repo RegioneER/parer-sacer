@@ -46,27 +46,27 @@ public class AroVLisDatiCompTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_DATI_COMP, new ColumnDescriptor(COL_ID_DATI_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_NM_ATTRIB_TIPO_COMP,
-		new ColumnDescriptor(COL_NM_ATTRIB_TIPO_COMP, Types.VARCHAR, 100, true));
-	map.put(COL_DS_ATTRIB_TIPO_COMP,
-		new ColumnDescriptor(COL_DS_ATTRIB_TIPO_COMP, Types.VARCHAR, 254, true));
-	map.put(COL_DL_VALORE, new ColumnDescriptor(COL_DL_VALORE, Types.VARCHAR, 1024, true));
-	map.put(COL_NI_ORD_ATTRIB,
-		new ColumnDescriptor(COL_NI_ORD_ATTRIB, Types.DECIMAL, 22, true));
+        map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_DATI_COMP, new ColumnDescriptor(COL_ID_DATI_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_NM_ATTRIB_TIPO_COMP,
+                new ColumnDescriptor(COL_NM_ATTRIB_TIPO_COMP, Types.VARCHAR, 100, true));
+        map.put(COL_DS_ATTRIB_TIPO_COMP,
+                new ColumnDescriptor(COL_DS_ATTRIB_TIPO_COMP, Types.VARCHAR, 254, true));
+        map.put(COL_DL_VALORE, new ColumnDescriptor(COL_DL_VALORE, Types.VARCHAR, 1024, true));
+        map.put(COL_NI_ORD_ATTRIB,
+                new ColumnDescriptor(COL_NI_ORD_ATTRIB, Types.DECIMAL, 22, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

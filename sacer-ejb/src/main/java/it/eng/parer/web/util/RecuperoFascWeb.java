@@ -57,72 +57,72 @@ public class RecuperoFascWeb {
      * @param tipoEntitaSacer     tipo entita sacer CostantiDB.TipiEntitaRecupero
      */
     public RecuperoFascWeb(RecuperoFascicolo recuperoFasc, User user, BigDecimal idFascicolo,
-	    CostantiDB.TipoSalvataggioFile tipoSalvataggioFile,
-	    CostantiDB.TipiEntitaRecupero tipoEntitaSacer) {
-	this.recuperoFasc = recuperoFasc;
-	this.user = user;
-	this.idFascicolo = idFascicolo;
-	this.tipoSalvataggioFile = tipoSalvataggioFile;
-	// tipoEntita = FASCICOLO o FASC_UNISYNCRO
-	this.tipoEntitaSacer = tipoEntitaSacer;
+            CostantiDB.TipoSalvataggioFile tipoSalvataggioFile,
+            CostantiDB.TipiEntitaRecupero tipoEntitaSacer) {
+        this.recuperoFasc = recuperoFasc;
+        this.user = user;
+        this.idFascicolo = idFascicolo;
+        this.tipoSalvataggioFile = tipoSalvataggioFile;
+        // tipoEntita = FASCICOLO o FASC_UNISYNCRO
+        this.tipoEntitaSacer = tipoEntitaSacer;
     }
 
     public RispostaWSRecuperoFasc recuperaOggettoFasc() throws EMFError {
-	RecuperoFascSync recuperoFascSync;
-	RispostaWSRecuperoFasc rispostaWs;
-	RecuperoFascExt myRecuperoFascExt;
-	AvanzamentoWs tmpAvanzamento;
+        RecuperoFascSync recuperoFascSync;
+        RispostaWSRecuperoFasc rispostaWs;
+        RecuperoFascExt myRecuperoFascExt;
+        AvanzamentoWs tmpAvanzamento;
 
-	rispostaWs = new RispostaWSRecuperoFasc();
-	myRecuperoFascExt = new RecuperoFascExt();
-	WSDescRecAipFasc wsdes = new WSDescRecAipFasc();
+        rispostaWs = new RispostaWSRecuperoFasc();
+        myRecuperoFascExt = new RecuperoFascExt();
+        WSDescRecAipFasc wsdes = new WSDescRecAipFasc();
 
-	myRecuperoFascExt.setDescrizione(wsdes);
+        myRecuperoFascExt.setDescrizione(wsdes);
 
-	tmpAvanzamento = AvanzamentoWs.nuovoAvanzamentoWS("prova",
-		AvanzamentoWs.Funzioni.RecuperoFascWeb);
-	tmpAvanzamento.logAvanzamento();
+        tmpAvanzamento = AvanzamentoWs.nuovoAvanzamentoWS("prova",
+                AvanzamentoWs.Funzioni.RecuperoFascWeb);
+        tmpAvanzamento.logAvanzamento();
 
-	// Recupera l'ejb, se possibile - altrimenti segnala errore
-	try {
-	    recuperoFascSync = (RecuperoFascSync) new InitialContext()
-		    .lookup("java:app/Parer-ejb/RecuperoFascSync");
-	} catch (NamingException ex) {
-	    log.error("Errore nel recupero dell'EJB ", ex);
-	    throw new EMFError(EMFError.ERROR, "Impossibile recuperare l'ejb: " + ex);
-	}
+        // Recupera l'ejb, se possibile - altrimenti segnala errore
+        try {
+            recuperoFascSync = (RecuperoFascSync) new InitialContext()
+                    .lookup("java:app/Parer-ejb/RecuperoFascSync");
+        } catch (NamingException ex) {
+            log.error("Errore nel recupero dell'EJB ", ex);
+            throw new EMFError(EMFError.ERROR, "Impossibile recuperare l'ejb: " + ex);
+        }
 
-	tmpAvanzamento.setFase("EJB recuperato").logAvanzamento();
-	recuperoFascSync.initRispostaWs(rispostaWs, tmpAvanzamento, myRecuperoFascExt);
-	// set versione after initRispostaWs
-	recuperoFasc.setVersione(wsdes.getVersione(myRecuperoFascExt.getWsVersions()));
+        tmpAvanzamento.setFase("EJB recuperato").logAvanzamento();
+        recuperoFascSync.initRispostaWs(rispostaWs, tmpAvanzamento, myRecuperoFascExt);
+        // set versione after initRispostaWs
+        recuperoFasc.setVersione(wsdes.getVersione(myRecuperoFascExt.getWsVersions()));
 
-	if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-	    // Popolo parzialmente RecuperoFascExt con i valori che mi
-	    // serviranno in fase di recupero fascicolo
-	    ParametriRecuperoFasc tmpParametriRecuperoFasc = myRecuperoFascExt
-		    .getParametriRecuperoFasc();
-	    tmpParametriRecuperoFasc.setIdFascicolo(idFascicolo.longValue());
-	    tmpParametriRecuperoFasc.setUtente(user);
-	    tmpParametriRecuperoFasc
-		    .setTipoRichiedente(JobConstants.TipoSessioniRecupEnum.DOWNLOAD);
-	    tmpParametriRecuperoFasc.setTipoEntitaSacer(tipoEntitaSacer);
-	    /*
-	     * VERIFICARE switch (tipoEntitaSacer) { case FASCICOLO: case DOC_FASCICOLO...:
-	     * tmpParametriRecupero.setIdDocumento(idCompDoc.longValue()); break; case COMP: case
-	     * COMP_DIP_ESIBIZIONE: case SUB_COMP:
-	     * tmpParametriRecupero.setIdComponente(idCompDoc.longValue()); break; default: break; }
-	     */
+        if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+            // Popolo parzialmente RecuperoFascExt con i valori che mi
+            // serviranno in fase di recupero fascicolo
+            ParametriRecuperoFasc tmpParametriRecuperoFasc = myRecuperoFascExt
+                    .getParametriRecuperoFasc();
+            tmpParametriRecuperoFasc.setIdFascicolo(idFascicolo.longValue());
+            tmpParametriRecuperoFasc.setUtente(user);
+            tmpParametriRecuperoFasc
+                    .setTipoRichiedente(JobConstants.TipoSessioniRecupEnum.DOWNLOAD);
+            tmpParametriRecuperoFasc.setTipoEntitaSacer(tipoEntitaSacer);
+            /*
+             * VERIFICARE switch (tipoEntitaSacer) { case FASCICOLO: case DOC_FASCICOLO...:
+             * tmpParametriRecupero.setIdDocumento(idCompDoc.longValue()); break; case COMP: case
+             * COMP_DIP_ESIBIZIONE: case SUB_COMP:
+             * tmpParametriRecupero.setIdComponente(idCompDoc.longValue()); break; default: break; }
+             */
 
-	    myRecuperoFascExt.setDatiXml(" ");
-	    myRecuperoFascExt.setStrutturaRecuperoFasc(recuperoFasc);
-	    myRecuperoFascExt.setVersioneWsChiamata("---");
-	    myRecuperoFascExt.setTipoSalvataggioFile(tipoSalvataggioFile);
-	    // prepara risposta
-	    recuperoFascSync.recuperaOggettoFasc(rispostaWs, myRecuperoFascExt,
-		    System.getProperty("java.io.tmpdir"));
-	}
+            myRecuperoFascExt.setDatiXml(" ");
+            myRecuperoFascExt.setStrutturaRecuperoFasc(recuperoFasc);
+            myRecuperoFascExt.setVersioneWsChiamata("---");
+            myRecuperoFascExt.setTipoSalvataggioFile(tipoSalvataggioFile);
+            // prepara risposta
+            recuperoFascSync.recuperaOggettoFasc(rispostaWs, myRecuperoFascExt,
+                    System.getProperty("java.io.tmpdir"));
+        }
 
-	return rispostaWs;
+        return rispostaWs;
     }
 }

@@ -30,51 +30,51 @@ public class VdCQuery_11_Bean {
     private String dsAutore;
 
     public Long getIdVerSerie() {
-	return idVerSerie;
+        return idVerSerie;
     }
 
     public void setIdVerSerie(Long idVerSerie) {
-	this.idVerSerie = idVerSerie;
+        this.idVerSerie = idVerSerie;
     }
 
     public String getCdTipoNotaSerie() {
-	return cdTipoNotaSerie;
+        return cdTipoNotaSerie;
     }
 
     public void setCdTipoNotaSerie(String cdTipoNotaSerie) {
-	this.cdTipoNotaSerie = cdTipoNotaSerie;
+        this.cdTipoNotaSerie = cdTipoNotaSerie;
     }
 
     public BigDecimal getPgNotaVerSerie() {
-	return pgNotaVerSerie;
+        return pgNotaVerSerie;
     }
 
     public void setPgNotaVerSerie(BigDecimal pgNotaVerSerie) {
-	this.pgNotaVerSerie = pgNotaVerSerie;
+        this.pgNotaVerSerie = pgNotaVerSerie;
     }
 
     public String getDsNota() {
-	return dsNota;
+        return dsNota;
     }
 
     public void setDsNota(String dsNota) {
-	this.dsNota = dsNota;
+        this.dsNota = dsNota;
     }
 
     public Date getDtNota() {
-	return dtNota;
+        return dtNota;
     }
 
     public void setDtNota(Date dtNota) {
-	this.dtNota = dtNota;
+        this.dtNota = dtNota;
     }
 
     public String getDsAutore() {
-	return dsAutore;
+        return dsAutore;
     }
 
     public void setDsAutore(String dsAutore) {
-	this.dsAutore = dsAutore;
+        this.dsAutore = dsAutore;
     }
 
 }

@@ -53,90 +53,90 @@ public class DecUsoModelloXsdFasc implements Serializable {
 
     @Column(name = "ID_USO_MODELLO_XSD_FASC")
     @GenericGenerator(name = "SDEC_USO_MODELLO_XSD_FASC_ID_USO_MODELLO_XSD_FASC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_USO_MODELLO_XSD_FASC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_USO_MODELLO_XSD_FASC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_USO_MODELLO_XSD_FASC_ID_USO_MODELLO_XSD_FASC_GENERATOR")
     public Long getIdUsoModelloXsdFasc() {
-	return this.idUsoModelloXsdFasc;
+        return this.idUsoModelloXsdFasc;
     }
 
     public void setIdUsoModelloXsdFasc(Long idUsoModelloXsdFasc) {
-	this.idUsoModelloXsdFasc = idUsoModelloXsdFasc;
+        this.idUsoModelloXsdFasc = idUsoModelloXsdFasc;
     }
 
     @Column(name = "FL_STANDARD", columnDefinition = "char(1)")
     public String getFlStandard() {
-	return this.flStandard;
+        return this.flStandard;
     }
 
     public void setFlStandard(String flStandard) {
-	this.flStandard = flStandard;
+        this.flStandard = flStandard;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_AA_TIPO_FASCICOLO")
     @XmlInverseReference(mappedBy = "decUsoModelloXsdFascs")
     public DecAaTipoFascicolo getDecAaTipoFascicolo() {
-	return this.decAaTipoFascicolo;
+        return this.decAaTipoFascicolo;
     }
 
     public void setDecAaTipoFascicolo(DecAaTipoFascicolo decAaTipoFascicolo) {
-	this.decAaTipoFascicolo = decAaTipoFascicolo;
+        this.decAaTipoFascicolo = decAaTipoFascicolo;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MODELLO_XSD_FASCICOLO")
     public DecModelloXsdFascicolo getDecModelloXsdFascicolo() {
-	return this.decModelloXsdFascicolo;
+        return this.decModelloXsdFascicolo;
     }
 
     public void setDecModelloXsdFascicolo(DecModelloXsdFascicolo decModelloXsdFascicolo) {
-	this.decModelloXsdFascicolo = decModelloXsdFascicolo;
+        this.decModelloXsdFascicolo = decModelloXsdFascicolo;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ISTITUZ")
     public Date getDtIstituz() {
-	return this.dtIstituz;
+        return this.dtIstituz;
     }
 
     public void setDtIstituz(Date dtIstituz) {
-	this.dtIstituz = dtIstituz;
+        this.dtIstituz = dtIstituz;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SOPPRES")
     public Date getDtSoppres() {
-	return this.dtSoppres;
+        return this.dtSoppres;
     }
 
     public void setDtSoppres(Date dtSoppres) {
-	this.dtSoppres = dtSoppres;
+        this.dtSoppres = dtSoppres;
     }
 
     @OneToMany(mappedBy = "decUsoModelloXsdFasc", cascade = CascadeType.REMOVE)
     public List<FasValoreAttribFascicolo> getFasValoreAttribFascicolos() {
-	return this.fasValoreAttribFascicolos;
+        return this.fasValoreAttribFascicolos;
     }
 
     public void setFasValoreAttribFascicolos(
-	    List<FasValoreAttribFascicolo> fasValoreAttribFascicolos) {
-	this.fasValoreAttribFascicolos = fasValoreAttribFascicolos;
+            List<FasValoreAttribFascicolo> fasValoreAttribFascicolos) {
+        this.fasValoreAttribFascicolos = fasValoreAttribFascicolos;
     }
 
     public FasValoreAttribFascicolo addFasValoreAttribFascicolo(
-	    FasValoreAttribFascicolo fasValoreAttribFascicolo) {
-	getFasValoreAttribFascicolos().add(fasValoreAttribFascicolo);
-	fasValoreAttribFascicolo.setDecUsoModelloXsdFasc(this);
+            FasValoreAttribFascicolo fasValoreAttribFascicolo) {
+        getFasValoreAttribFascicolos().add(fasValoreAttribFascicolo);
+        fasValoreAttribFascicolo.setDecUsoModelloXsdFasc(this);
 
-	return fasValoreAttribFascicolo;
+        return fasValoreAttribFascicolo;
     }
 
     public FasValoreAttribFascicolo removeFasValoreAttribFascicolo(
-	    FasValoreAttribFascicolo fasValoreAttribFascicolo) {
-	getFasValoreAttribFascicolos().remove(fasValoreAttribFascicolo);
-	fasValoreAttribFascicolo.setDecUsoModelloXsdFasc(null);
+            FasValoreAttribFascicolo fasValoreAttribFascicolo) {
+        getFasValoreAttribFascicolos().remove(fasValoreAttribFascicolo);
+        fasValoreAttribFascicolo.setDecUsoModelloXsdFasc(null);
 
-	return fasValoreAttribFascicolo;
+        return fasValoreAttribFascicolo;
     }
 }

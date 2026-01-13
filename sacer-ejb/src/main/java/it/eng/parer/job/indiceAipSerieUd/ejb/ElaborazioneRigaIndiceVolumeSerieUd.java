@@ -70,7 +70,7 @@ import it.eng.parer.ws.utils.MessaggiWSFormat;
 @Stateless(mappedName = "ElaborazioneRigaIndiceVolumeSerieUd")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class ElaborazioneRigaIndiceVolumeSerieUd {
 
     @EJB
@@ -85,232 +85,232 @@ public class ElaborazioneRigaIndiceVolumeSerieUd {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void creaVolumeVerSerie(Long idVerSerie, BigDecimal niUnitaDocVol,
-	    BigDecimal numeroTotaleVolumi)
-	    throws DatatypeConfigurationException, IOException, JAXBException,
-	    NoSuchAlgorithmException, NamingException, ParseException, ParerInternalError {
-	String sistemaConservazione = configurationHelper
-		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
-	boolean indiceCreato = false;
-	int progressivoVolume = 0;
+            BigDecimal numeroTotaleVolumi)
+            throws DatatypeConfigurationException, IOException, JAXBException,
+            NoSuchAlgorithmException, NamingException, ParseException, ParerInternalError {
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
+        boolean indiceCreato = false;
+        int progressivoVolume = 0;
 
-	SerVerSerie verSerie = civsudHelper.findById(SerVerSerie.class, idVerSerie);
-	String ambiente = verSerie.getSerSerie().getOrgStrut().getOrgEnte().getOrgAmbiente()
-		.getNmAmbiente();
-	String ente = verSerie.getSerSerie().getOrgStrut().getOrgEnte().getNmEnte();
-	String struttura = verSerie.getSerSerie().getOrgStrut().getNmStrut();
-	long idStrut = verSerie.getSerSerie().getOrgStrut().getIdStrut();
+        SerVerSerie verSerie = civsudHelper.findById(SerVerSerie.class, idVerSerie);
+        String ambiente = verSerie.getSerSerie().getOrgStrut().getOrgEnte().getOrgAmbiente()
+                .getNmAmbiente();
+        String ente = verSerie.getSerSerie().getOrgStrut().getOrgEnte().getNmEnte();
+        String struttura = verSerie.getSerSerie().getOrgStrut().getNmStrut();
+        long idStrut = verSerie.getSerSerie().getOrgStrut().getIdStrut();
 
-	/*
-	 * Determina le unità documentarie appartenenti al contenuto di tipo EFFETTIVO della
-	 * versione serie per le quali la foreign key al volume sia null (in pratica quelle ancora
-	 * non appartenenti ad un volume...), ordinandole
-	 */
-	List<AroUdAppartVerSerie> udAppartList = civsudHelper.getUdEffettiveSenzaVolume(idVerSerie);
+        /*
+         * Determina le unità documentarie appartenenti al contenuto di tipo EFFETTIVO della
+         * versione serie per le quali la foreign key al volume sia null (in pratica quelle ancora
+         * non appartenenti ad un volume...), ordinandole
+         */
+        List<AroUdAppartVerSerie> udAppartList = civsudHelper.getUdEffettiveSenzaVolume(idVerSerie);
 
-	if (!udAppartList.isEmpty()) {
-	    /* Crea volume per la versione serie */
-	    log.info(
-		    "{} --- Creazione Indice Aip Versione Serie Ud --- Creazione Volume Versione Serie ",
-		    ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName());
-	    SerVolVerSerie volVerSerie = civsudHelper.registraVolVerSerie(idVerSerie);
+        if (!udAppartList.isEmpty()) {
+            /* Crea volume per la versione serie */
+            log.info(
+                    "{} --- Creazione Indice Aip Versione Serie Ud --- Creazione Volume Versione Serie ",
+                    ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName());
+            SerVolVerSerie volVerSerie = civsudHelper.registraVolVerSerie(idVerSerie);
 
-	    boolean primaAppartenenzaInserita = false;
+            boolean primaAppartenenzaInserita = false;
 
-	    for (AroUdAppartVerSerie udAppart : udAppartList) {
-		// Se è la PRIMA APPARTENENZA dell'ud al contenuto serie
-		CSVersatore versatore = this.getVersatoreUd(udAppart.getAroUnitaDoc(),
-			sistemaConservazione);
-		CSChiave chiave = this.getChiaveUd(udAppart.getAroUnitaDoc());
-		/*
-		 *
-		 * Gestione KEY NORMALIZED / URN PREGRESSI
-		 *
-		 *
-		 */
-		// 1. se il numero normalizzato sull’unità doc nel DB è nullo ->
-		// il sistema aggiorna ARO_UNITA_DOC
-		DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
-		String dataInizioParam = configurationHelper.getValoreParamApplicByApplic(
-			CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN);
-		Date dataInizio = dateFormat.parse(dataInizioParam);
+            for (AroUdAppartVerSerie udAppart : udAppartList) {
+                // Se è la PRIMA APPARTENENZA dell'ud al contenuto serie
+                CSVersatore versatore = this.getVersatoreUd(udAppart.getAroUnitaDoc(),
+                        sistemaConservazione);
+                CSChiave chiave = this.getChiaveUd(udAppart.getAroUnitaDoc());
+                /*
+                 *
+                 * Gestione KEY NORMALIZED / URN PREGRESSI
+                 *
+                 *
+                 */
+                // 1. se il numero normalizzato sull’unità doc nel DB è nullo ->
+                // il sistema aggiorna ARO_UNITA_DOC
+                DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
+                String dataInizioParam = configurationHelper.getValoreParamApplicByApplic(
+                        CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN);
+                Date dataInizio = dateFormat.parse(dataInizioParam);
 
-		// controllo : dtCreazione <= dataInizioCalcNuoviUrn
-		AroVerIndiceAipUd aroVerIndiceAipUd = civsudHelper.findById(AroVerIndiceAipUd.class,
-			udAppart.getIdVerIndiceAipUd().longValue());
-		if (!aroVerIndiceAipUd.getDtCreazione().after(dataInizio)) {
+                // controllo : dtCreazione <= dataInizioCalcNuoviUrn
+                AroVerIndiceAipUd aroVerIndiceAipUd = civsudHelper.findById(AroVerIndiceAipUd.class,
+                        udAppart.getIdVerIndiceAipUd().longValue());
+                if (!aroVerIndiceAipUd.getDtCreazione().after(dataInizio)) {
 
-		    // controllo : dtVersMax <= dataInizioCalcNuoviUrn
-		    AroVDtVersMaxByUnitaDoc aroVDtVersMaxByUd = civsudHelper
-			    .getAroVDtVersMaxByUd(udAppart.getAroUnitaDoc().getIdUnitaDoc());
-		    if (!aroVDtVersMaxByUd.getDtVersMax().after(dataInizio) && StringUtils
-			    .isBlank(udAppart.getAroUnitaDoc().getCdKeyUnitaDocNormaliz())) {
-			// calcola e verifica la chiave normalizzata
-			String cdKeyNormalized = MessaggiWSFormat
-				.normalizingKey(udAppart.getAroUnitaDoc().getCdKeyUnitaDoc()); // base
-			if (urnHelper.existsCdKeyNormalized(
-				udAppart.getAroUnitaDoc().getDecRegistroUnitaDoc()
-					.getIdRegistroUnitaDoc(),
-				udAppart.getAroUnitaDoc().getAaKeyUnitaDoc(),
-				udAppart.getAroUnitaDoc().getCdKeyUnitaDoc(), cdKeyNormalized)) {
-			    // urn normalizzato già presente su sistema
-			    throw new ParerInternalError(
-				    "Il numero normalizzato per l'unità documentaria "
-					    + MessaggiWSFormat.formattaUrnPartUnitaDoc(chiave)
-					    + " della struttura " + versatore.getEnte() + "/"
-					    + versatore.getStruttura()
-					    + " contenuta in un fascicolo è già presente");
-			} else {
-			    // cd key normalized (se calcolato)
-			    if (StringUtils.isBlank(
-				    udAppart.getAroUnitaDoc().getCdKeyUnitaDocNormaliz())) {
-				udAppart.getAroUnitaDoc().setCdKeyUnitaDocNormaliz(cdKeyNormalized);
-			    }
-			}
-		    }
+                    // controllo : dtVersMax <= dataInizioCalcNuoviUrn
+                    AroVDtVersMaxByUnitaDoc aroVDtVersMaxByUd = civsudHelper
+                            .getAroVDtVersMaxByUd(udAppart.getAroUnitaDoc().getIdUnitaDoc());
+                    if (!aroVDtVersMaxByUd.getDtVersMax().after(dataInizio) && StringUtils
+                            .isBlank(udAppart.getAroUnitaDoc().getCdKeyUnitaDocNormaliz())) {
+                        // calcola e verifica la chiave normalizzata
+                        String cdKeyNormalized = MessaggiWSFormat
+                                .normalizingKey(udAppart.getAroUnitaDoc().getCdKeyUnitaDoc()); // base
+                        if (urnHelper.existsCdKeyNormalized(
+                                udAppart.getAroUnitaDoc().getDecRegistroUnitaDoc()
+                                        .getIdRegistroUnitaDoc(),
+                                udAppart.getAroUnitaDoc().getAaKeyUnitaDoc(),
+                                udAppart.getAroUnitaDoc().getCdKeyUnitaDoc(), cdKeyNormalized)) {
+                            // urn normalizzato già presente su sistema
+                            throw new ParerInternalError(
+                                    "Il numero normalizzato per l'unità documentaria "
+                                            + MessaggiWSFormat.formattaUrnPartUnitaDoc(chiave)
+                                            + " della struttura " + versatore.getEnte() + "/"
+                                            + versatore.getStruttura()
+                                            + " contenuta in un fascicolo è già presente");
+                        } else {
+                            // cd key normalized (se calcolato)
+                            if (StringUtils.isBlank(
+                                    udAppart.getAroUnitaDoc().getCdKeyUnitaDocNormaliz())) {
+                                udAppart.getAroUnitaDoc().setCdKeyUnitaDocNormaliz(cdKeyNormalized);
+                            }
+                        }
+                    }
 
-		    // 2. verifica pregresso
-		    // A. check data massima versamento recuperata in precedenza rispetto parametro
-		    // su db
-		    if (!aroVDtVersMaxByUd.getDtVersMax().after(dataInizio)) {
-			// B. eseguo registra urn comp pregressi
-			urnHelper.scriviUrnCompPreg(udAppart.getAroUnitaDoc(), versatore, chiave);
-			// C. eseguo registra urn sip pregressi
-			// C.1. eseguo registra urn sip pregressi ud
-			urnHelper.scriviUrnSipUdPreg(udAppart.getAroUnitaDoc(), versatore, chiave);
-			// C.2. eseguo registra urn sip pregressi documenti aggiunti
-			urnHelper.scriviUrnSipDocAggPreg(udAppart.getAroUnitaDoc(), versatore,
-				chiave);
-			// C.3. eseguo registra urn pregressi upd
-			urnHelper.scriviUrnSipUpdPreg(udAppart.getAroUnitaDoc(), versatore, chiave);
-		    }
+                    // 2. verifica pregresso
+                    // A. check data massima versamento recuperata in precedenza rispetto parametro
+                    // su db
+                    if (!aroVDtVersMaxByUd.getDtVersMax().after(dataInizio)) {
+                        // B. eseguo registra urn comp pregressi
+                        urnHelper.scriviUrnCompPreg(udAppart.getAroUnitaDoc(), versatore, chiave);
+                        // C. eseguo registra urn sip pregressi
+                        // C.1. eseguo registra urn sip pregressi ud
+                        urnHelper.scriviUrnSipUdPreg(udAppart.getAroUnitaDoc(), versatore, chiave);
+                        // C.2. eseguo registra urn sip pregressi documenti aggiunti
+                        urnHelper.scriviUrnSipDocAggPreg(udAppart.getAroUnitaDoc(), versatore,
+                                chiave);
+                        // C.3. eseguo registra urn pregressi upd
+                        urnHelper.scriviUrnSipUpdPreg(udAppart.getAroUnitaDoc(), versatore, chiave);
+                    }
 
-		    // 3. eseguo registra urn aip pregressi
-		    urnHelper.scriviUrnAipUdPreg(udAppart.getAroUnitaDoc(), versatore, chiave);
-		}
-		if (!primaAppartenenzaInserita) {
-		    volVerSerie.setIdFirstUdAppartVol(
-			    new BigDecimal(udAppart.getIdUdAppartVerSerie()));
-		    primaAppartenenzaInserita = true;
-		}
+                    // 3. eseguo registra urn aip pregressi
+                    urnHelper.scriviUrnAipUdPreg(udAppart.getAroUnitaDoc(), versatore, chiave);
+                }
+                if (!primaAppartenenzaInserita) {
+                    volVerSerie.setIdFirstUdAppartVol(
+                            new BigDecimal(udAppart.getIdUdAppartVerSerie()));
+                    primaAppartenenzaInserita = true;
+                }
 
-		if (volVerSerie.getAroUdAppartVerSeries() == null) {
-		    volVerSerie.setAroUdAppartVerSeries(new ArrayList<>());
-		}
+                if (volVerSerie.getAroUdAppartVerSeries() == null) {
+                    volVerSerie.setAroUdAppartVerSeries(new ArrayList<>());
+                }
 
-		// Registro l'unità documentaria appartenente al contenuto di tipo effettivo
-		volVerSerie.getAroUdAppartVerSeries().add(udAppart);
-		// Incremento di 1 il numero di unità documentarie
-		volVerSerie.setNiUnitaDocVol(volVerSerie.getNiUnitaDocVol().add(BigDecimal.ONE));
-		udAppart.setSerVolVerSerie(volVerSerie);
+                // Registro l'unità documentaria appartenente al contenuto di tipo effettivo
+                volVerSerie.getAroUdAppartVerSeries().add(udAppart);
+                // Incremento di 1 il numero di unità documentarie
+                volVerSerie.setNiUnitaDocVol(volVerSerie.getNiUnitaDocVol().add(BigDecimal.ONE));
+                udAppart.setSerVolVerSerie(volVerSerie);
 
-		/*
-		 * Se per il volume corrente, il numero di unità doc appartenenti al volume corrente
-		 * è pari al numero di unità doc con cui creare i volumi
-		 */
-		if (volVerSerie.getNiUnitaDocVol().compareTo(niUnitaDocVol) == 0) {
-		    volVerSerie
-			    .setIdLastUdAppartVol(new BigDecimal(udAppart.getIdUdAppartVerSerie()));
+                /*
+                 * Se per il volume corrente, il numero di unità doc appartenenti al volume corrente
+                 * è pari al numero di unità doc con cui creare i volumi
+                 */
+                if (volVerSerie.getNiUnitaDocVol().compareTo(niUnitaDocVol) == 0) {
+                    volVerSerie
+                            .setIdLastUdAppartVol(new BigDecimal(udAppart.getIdUdAppartVerSerie()));
 
-		    progressivoVolume = creaIndice(volVerSerie.getIdVolVerSerie(),
-			    numeroTotaleVolumi, ambiente, ente, struttura,
-			    volVerSerie.getSerVerSerie().getSerSerie().getCdCompositoSerie(),
-			    idStrut);
-		    indiceCreato = true;
-		    break;
-		}
-	    } // Fine appartenenza ud al contenuto serie
+                    progressivoVolume = creaIndice(volVerSerie.getIdVolVerSerie(),
+                            numeroTotaleVolumi, ambiente, ente, struttura,
+                            volVerSerie.getSerVerSerie().getSerSerie().getCdCompositoSerie(),
+                            idStrut);
+                    indiceCreato = true;
+                    break;
+                }
+            } // Fine appartenenza ud al contenuto serie
 
-	    if (!indiceCreato) {
-		AroUdAppartVerSerie lastUdAppartVerSerie = udAppartList
-			.get(udAppartList.size() - 1);
-		volVerSerie.setIdLastUdAppartVol(
-			new BigDecimal(lastUdAppartVerSerie.getIdUdAppartVerSerie()));
-		progressivoVolume = creaIndice(volVerSerie.getIdVolVerSerie(), numeroTotaleVolumi,
-			ambiente, ente, struttura,
-			volVerSerie.getSerVerSerie().getSerSerie().getCdCompositoSerie(), idStrut);
-	    }
-	}
-	log.info(
-		"{} --- Creazione Indice Aip Versione Serie Ud --- Volume numero {} e relativo indice creati con successo!",
-		ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName(), progressivoVolume);
+            if (!indiceCreato) {
+                AroUdAppartVerSerie lastUdAppartVerSerie = udAppartList
+                        .get(udAppartList.size() - 1);
+                volVerSerie.setIdLastUdAppartVol(
+                        new BigDecimal(lastUdAppartVerSerie.getIdUdAppartVerSerie()));
+                progressivoVolume = creaIndice(volVerSerie.getIdVolVerSerie(), numeroTotaleVolumi,
+                        ambiente, ente, struttura,
+                        volVerSerie.getSerVerSerie().getSerSerie().getCdCompositoSerie(), idStrut);
+            }
+        }
+        log.info(
+                "{} --- Creazione Indice Aip Versione Serie Ud --- Volume numero {} e relativo indice creati con successo!",
+                ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName(), progressivoVolume);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public int creaIndice(long idVolVerSerie, BigDecimal numeroTotaleVolumi, String ambiente,
-	    String ente, String struttura, String cdCompositoSerie, long idStrut)
-	    throws NamingException, IOException, JAXBException, NoSuchAlgorithmException,
-	    DatatypeConfigurationException {
-	CreazioneIndiceVolumeSerieUdUtil indiceVolumeSerieUtil = new CreazioneIndiceVolumeSerieUdUtil();
+            String ente, String struttura, String cdCompositoSerie, long idStrut)
+            throws NamingException, IOException, JAXBException, NoSuchAlgorithmException,
+            DatatypeConfigurationException {
+        CreazioneIndiceVolumeSerieUdUtil indiceVolumeSerieUtil = new CreazioneIndiceVolumeSerieUdUtil();
 
-	log.info("{} --- Creazione Indice Aip Versione Serie Ud --- Creazione XML Volume",
-		ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName());
+        log.info("{} --- Creazione Indice Aip Versione Serie Ud --- Creazione XML Volume",
+                ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName());
 
-	// Recupero il volume versione serie per il quale creare l'indice
-	SerVCreaIxVolSerieUd creaVol = civsudHelper.getSerVCreaIxVolSerieUd(idVolVerSerie);
+        // Recupero il volume versione serie per il quale creare l'indice
+        SerVCreaIxVolSerieUd creaVol = civsudHelper.getSerVCreaIxVolSerieUd(idVolVerSerie);
 
-	IndiceVolumeSerie indiceVolumeSerie = indiceVolumeSerieUtil.generaIndiceVolumeSerie(creaVol,
-		numeroTotaleVolumi);
+        IndiceVolumeSerie indiceVolumeSerie = indiceVolumeSerieUtil.generaIndiceVolumeSerie(creaVol,
+                numeroTotaleVolumi);
 
-	Long progressivoVolume = indiceVolumeSerie.getProgressivoVolume().longValue();
+        Long progressivoVolume = indiceVolumeSerie.getProgressivoVolume().longValue();
 
-	/* Eseguo il marshalling degli oggetti creati nell'util per salvarli */
-	StringWriter tmpWriter = new StringWriter();
-	Marshaller tmpMarshaller = xmlContextCache
-		.getCreazioneIndiceVolumeSerieCtx_IndiceVolumeSerie().createMarshaller();
-	tmpMarshaller.marshal(indiceVolumeSerie, tmpWriter);
-	tmpMarshaller.setSchema(xmlContextCache.getSchemaOfcreazioneIndiceVolumeSerie());
+        /* Eseguo il marshalling degli oggetti creati nell'util per salvarli */
+        StringWriter tmpWriter = new StringWriter();
+        Marshaller tmpMarshaller = xmlContextCache
+                .getCreazioneIndiceVolumeSerieCtx_IndiceVolumeSerie().createMarshaller();
+        tmpMarshaller.marshal(indiceVolumeSerie, tmpWriter);
+        tmpMarshaller.setSchema(xmlContextCache.getSchemaOfcreazioneIndiceVolumeSerie());
 
-	/* Calcolo l'hash in SHA-256 ed hexBinary */
-	String hash = new HashCalculator().calculateHashSHAX(tmpWriter.toString(), TipiHash.SHA_256)
-		.toHexBinary();
+        /* Calcolo l'hash in SHA-256 ed hexBinary */
+        String hash = new HashCalculator().calculateHashSHAX(tmpWriter.toString(), TipiHash.SHA_256)
+                .toHexBinary();
 
-	log.info("{} --- Creazione Indice Aip Versione Serie Ud --- Registrazione Indice Volume",
-		ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName());
-	/* Persisto nella tabella relativa all'indice volume, vale a dire SER_IX_VOL_VER_SERIE */
-	SerIxVolVerSerie serIxVolVerSerie = civsudHelper.registraSerIxVolVerSerie(idVolVerSerie,
-		indiceVolumeSerie.getVersioneXSDIndiceVolumeSerie(), tmpWriter.toString(), hash,
-		new BigDecimal(idStrut));
-	// EVO#16492
-	CSVersatore csv = new CSVersatore();
-	csv.setStruttura(struttura);
-	csv.setEnte(ente);
-	csv.setAmbiente(ambiente);
-	// sistema (new URN)
-	String sistemaConservazione = configurationHelper
-		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
-	csv.setSistemaConservazione(sistemaConservazione);
+        log.info("{} --- Creazione Indice Aip Versione Serie Ud --- Registrazione Indice Volume",
+                ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName());
+        /* Persisto nella tabella relativa all'indice volume, vale a dire SER_IX_VOL_VER_SERIE */
+        SerIxVolVerSerie serIxVolVerSerie = civsudHelper.registraSerIxVolVerSerie(idVolVerSerie,
+                indiceVolumeSerie.getVersioneXSDIndiceVolumeSerie(), tmpWriter.toString(), hash,
+                new BigDecimal(idStrut));
+        // EVO#16492
+        CSVersatore csv = new CSVersatore();
+        csv.setStruttura(struttura);
+        csv.setEnte(ente);
+        csv.setAmbiente(ambiente);
+        // sistema (new URN)
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
+        csv.setSistemaConservazione(sistemaConservazione);
 
-	// calcolo parte urn NORMALIZZATO
-	String tmpUrnNorm = MessaggiWSFormat.formattaUrnPartVersatore(csv, true,
-		Costanti.UrnFormatter.VERS_FMT_STRING);
+        // calcolo parte urn NORMALIZZATO
+        String tmpUrnNorm = MessaggiWSFormat.formattaUrnPartVersatore(csv, true,
+                Costanti.UrnFormatter.VERS_FMT_STRING);
 
-	/* Calcolo e persisto urn del volume della serie */
-	String urnBaseNorm = MessaggiWSFormat.formattaBaseUrnSerie(tmpUrnNorm,
-		MessaggiWSFormat.normalizingKey(cdCompositoSerie));
+        /* Calcolo e persisto urn del volume della serie */
+        String urnBaseNorm = MessaggiWSFormat.formattaBaseUrnSerie(tmpUrnNorm,
+                MessaggiWSFormat.normalizingKey(cdCompositoSerie));
 
-	urnHelper.scriviSerUrnIxVolVerSerie(serIxVolVerSerie, creaVol.getDsIdSerie(), urnBaseNorm,
-		creaVol.getCdVerSerie(), progressivoVolume.intValue());
+        urnHelper.scriviSerUrnIxVolVerSerie(serIxVolVerSerie, creaVol.getDsIdSerie(), urnBaseNorm,
+                creaVol.getCdVerSerie(), progressivoVolume.intValue());
 
-	return progressivoVolume.intValue();
+        return progressivoVolume.intValue();
     }
 
     public CSChiave getChiaveUd(AroUnitaDoc ud) {
-	CSChiave csc = new CSChiave();
-	csc.setTipoRegistro(ud.getCdRegistroKeyUnitaDoc());
-	csc.setAnno(ud.getAaKeyUnitaDoc().longValue());
-	csc.setNumero(ud.getCdKeyUnitaDoc());
+        CSChiave csc = new CSChiave();
+        csc.setTipoRegistro(ud.getCdRegistroKeyUnitaDoc());
+        csc.setAnno(ud.getAaKeyUnitaDoc().longValue());
+        csc.setNumero(ud.getCdKeyUnitaDoc());
 
-	return csc;
+        return csc;
     }
 
     public CSVersatore getVersatoreUd(AroUnitaDoc ud, String sistemaConservazione) {
-	CSVersatore csv = new CSVersatore();
-	csv.setStruttura(ud.getOrgStrut().getNmStrut());
-	csv.setEnte(ud.getOrgStrut().getOrgEnte().getNmEnte());
-	csv.setAmbiente(ud.getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
-	// sistema (new URN)
-	csv.setSistemaConservazione(sistemaConservazione);
+        CSVersatore csv = new CSVersatore();
+        csv.setStruttura(ud.getOrgStrut().getNmStrut());
+        csv.setEnte(ud.getOrgStrut().getOrgEnte().getNmEnte());
+        csv.setAmbiente(ud.getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
+        // sistema (new URN)
+        csv.setSistemaConservazione(sistemaConservazione);
 
-	return csv;
+        return csv;
     }
 }

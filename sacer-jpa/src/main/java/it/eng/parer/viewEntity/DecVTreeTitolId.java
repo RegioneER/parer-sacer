@@ -32,49 +32,49 @@ public class DecVTreeTitolId implements Serializable {
 
     @Column(name = "ID_VAL_VOCE_TITOL")
     public BigDecimal getIdValVoceTitol() {
-	return this.idValVoceTitol;
+        return this.idValVoceTitol;
     }
 
     public void setIdValVoceTitol(BigDecimal idValVoceTitol) {
-	this.idValVoceTitol = idValVoceTitol;
+        this.idValVoceTitol = idValVoceTitol;
     }
 
     @Column(name = "ID_VOCE_TITOL")
     public BigDecimal getIdVoceTitol() {
-	return this.idVoceTitol;
+        return this.idVoceTitol;
     }
 
     public void setIdVoceTitol(BigDecimal idVoceTitol) {
-	this.idVoceTitol = idVoceTitol;
+        this.idVoceTitol = idVoceTitol;
     }
 
     @Override
     public int hashCode() {
-	int hash = 5;
-	hash = 29 * hash + Objects.hashCode(this.idValVoceTitol);
-	hash = 29 * hash + Objects.hashCode(this.idVoceTitol);
-	return hash;
+        int hash = 5;
+        hash = 29 * hash + Objects.hashCode(this.idValVoceTitol);
+        hash = 29 * hash + Objects.hashCode(this.idVoceTitol);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final DecVTreeTitolId other = (DecVTreeTitolId) obj;
-	if (!Objects.equals(this.idValVoceTitol, other.idValVoceTitol)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idVoceTitol, other.idVoceTitol)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DecVTreeTitolId other = (DecVTreeTitolId) obj;
+        if (!Objects.equals(this.idValVoceTitol, other.idValVoceTitol)) {
+            return false;
+        }
+        if (!Objects.equals(this.idVoceTitol, other.idVoceTitol)) {
+            return false;
+        }
+        return true;
     }
 
 }

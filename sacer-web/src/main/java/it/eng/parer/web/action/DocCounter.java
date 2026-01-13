@@ -43,21 +43,21 @@ public class DocCounter {
 
     @PostConstruct
     public void init() {
-	try {
-	    monitoraggioHelper = (MonitoraggioHelper) new InitialContext()
-		    .lookup("java:app/Parer-ejb/MonitoraggioHelper");
-	} catch (NamingException ex) {
-	    logger.error("Errore nel recupero dell'EJB ConfigurationHelper ", ex);
-	    throw new IllegalStateException(ex);
-	}
+        try {
+            monitoraggioHelper = (MonitoraggioHelper) new InitialContext()
+                    .lookup("java:app/Parer-ejb/MonitoraggioHelper");
+        } catch (NamingException ex) {
+            logger.error("Errore nel recupero dell'EJB ConfigurationHelper ", ex);
+            throw new IllegalStateException(ex);
+        }
     }
 
     @RequestMapping(value = "/docounter", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CounterResultBean> countDocs() throws EMFError {
-	CounterResultBean result = monitoraggioHelper.getTotalMonTotSacer();
-	ResponseEntity<CounterResultBean> response = new ResponseEntity<CounterResultBean>(result,
-		HttpStatus.OK);
-	return response;
+        CounterResultBean result = monitoraggioHelper.getTotalMonTotSacer();
+        ResponseEntity<CounterResultBean> response = new ResponseEntity<CounterResultBean>(result,
+                HttpStatus.OK);
+        return response;
     }
 
 }

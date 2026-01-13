@@ -47,8 +47,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "recuperoStatoOggettoRisposta", propOrder = {
-	"cdEsito", "cdErr", "dlErr", "nmAmbiente", "nmVersatore", "cdKeyObject", "statoOggetto",
-	"descrizioneStatoOggetto" })
+        "cdEsito", "cdErr", "dlErr", "nmAmbiente", "nmVersatore", "cdKeyObject", "statoOggetto",
+        "descrizioneStatoOggetto" })
 public class RecuperoStatoOggettoRisposta {
 
     protected EsitoServizio cdEsito;
@@ -67,7 +67,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public EsitoServizio getCdEsito() {
-	return cdEsito;
+        return cdEsito;
     }
 
     /**
@@ -77,7 +77,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public void setCdEsito(EsitoServizio value) {
-	this.cdEsito = value;
+        this.cdEsito = value;
     }
 
     /**
@@ -87,7 +87,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public String getCdErr() {
-	return cdErr;
+        return cdErr;
     }
 
     /**
@@ -97,7 +97,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public void setCdErr(String value) {
-	this.cdErr = value;
+        this.cdErr = value;
     }
 
     /**
@@ -107,7 +107,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public String getDlErr() {
-	return dlErr;
+        return dlErr;
     }
 
     /**
@@ -117,7 +117,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public void setDlErr(String value) {
-	this.dlErr = value;
+        this.dlErr = value;
     }
 
     /**
@@ -127,7 +127,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public String getNmAmbiente() {
-	return nmAmbiente;
+        return nmAmbiente;
     }
 
     /**
@@ -137,7 +137,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public void setNmAmbiente(String value) {
-	this.nmAmbiente = value;
+        this.nmAmbiente = value;
     }
 
     /**
@@ -147,7 +147,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public String getNmVersatore() {
-	return nmVersatore;
+        return nmVersatore;
     }
 
     /**
@@ -157,7 +157,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public void setNmVersatore(String value) {
-	this.nmVersatore = value;
+        this.nmVersatore = value;
     }
 
     /**
@@ -167,7 +167,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public String getCdKeyObject() {
-	return cdKeyObject;
+        return cdKeyObject;
     }
 
     /**
@@ -177,7 +177,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public void setCdKeyObject(String value) {
-	this.cdKeyObject = value;
+        this.cdKeyObject = value;
     }
 
     /**
@@ -187,7 +187,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public String getStatoOggetto() {
-	return statoOggetto;
+        return statoOggetto;
     }
 
     /**
@@ -197,7 +197,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public void setStatoOggetto(String value) {
-	this.statoOggetto = value;
+        this.statoOggetto = value;
     }
 
     /**
@@ -207,7 +207,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public String getDescrizioneStatoOggetto() {
-	return descrizioneStatoOggetto;
+        return descrizioneStatoOggetto;
     }
 
     /**
@@ -217,7 +217,7 @@ public class RecuperoStatoOggettoRisposta {
      *
      */
     public void setDescrizioneStatoOggetto(String value) {
-	this.descrizioneStatoOggetto = value;
+        this.descrizioneStatoOggetto = value;
     }
 
 }

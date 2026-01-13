@@ -26,42 +26,42 @@ public class VdCQuery_7_Bean {
     private String dsListaVersioniXsd;
 
     public Long getIdFiltroSelUdAttb() {
-	return idFiltroSelUdAttb;
+        return idFiltroSelUdAttb;
     }
 
     public void setIdFiltroSelUdAttb(Long idFiltroSelUdAttb) {
-	this.idFiltroSelUdAttb = idFiltroSelUdAttb;
+        this.idFiltroSelUdAttb = idFiltroSelUdAttb;
     }
 
     public String getTiEntitaSacer() {
-	return tiEntitaSacer;
+        return tiEntitaSacer;
     }
 
     public void setTiEntitaSacer(String tiEntitaSacer) {
-	this.tiEntitaSacer = tiEntitaSacer;
+        this.tiEntitaSacer = tiEntitaSacer;
     }
 
     public String getNmTipoUnitaDoc() {
-	return nmTipoUnitaDoc;
+        return nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     public String getNmTipoDoc() {
-	return nmTipoDoc;
+        return nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	this.nmTipoDoc = nmTipoDoc;
+        this.nmTipoDoc = nmTipoDoc;
     }
 
     public String getDsListaVersioniXsd() {
-	return dsListaVersioniXsd;
+        return dsListaVersioniXsd;
     }
 
     public void setDsListaVersioniXsd(String dsListaVersioniXsd) {
-	this.dsListaVersioniXsd = dsListaVersioniXsd;
+        this.dsListaVersioniXsd = dsListaVersioniXsd;
     }
 }

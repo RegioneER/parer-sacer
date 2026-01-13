@@ -46,59 +46,59 @@ public class IamValoreParamApplic implements Serializable {
     @Id
     @Column(name = "ID_VALORE_PARAM_APPLIC")
     public Long getIdValoreParamApplic() {
-	return this.idValoreParamApplic;
+        return this.idValoreParamApplic;
     }
 
     public void setIdValoreParamApplic(Long idValoreParamApplic) {
-	this.idValoreParamApplic = idValoreParamApplic;
+        this.idValoreParamApplic = idValoreParamApplic;
     }
 
     @Column(name = "DS_VALORE_PARAM_APPLIC")
     public String getDsValoreParamApplic() {
-	return this.dsValoreParamApplic;
+        return this.dsValoreParamApplic;
     }
 
     public void setDsValoreParamApplic(String dsValoreParamApplic) {
-	this.dsValoreParamApplic = dsValoreParamApplic;
+        this.dsValoreParamApplic = dsValoreParamApplic;
     }
 
     @Column(name = "TI_APPART")
     public String getTiAppart() {
-	return this.tiAppart;
+        return this.tiAppart;
     }
 
     public void setTiAppart(String tiAppart) {
-	this.tiAppart = tiAppart;
+        this.tiAppart = tiAppart;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PARAM_APPLIC")
     public IamParamApplic getIamParamApplic() {
-	return this.iamParamApplic;
+        return this.iamParamApplic;
     }
 
     public void setIamParamApplic(IamParamApplic iamParamApplic) {
-	this.iamParamApplic = iamParamApplic;
+        this.iamParamApplic = iamParamApplic;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_AMBIENTE_ENTE_CONVENZ")
     public SIOrgAmbienteEnteConvenz getOrgAmbienteEnteConvenz() {
-	return this.orgAmbienteEnteConvenz;
+        return this.orgAmbienteEnteConvenz;
     }
 
     public void setOrgAmbienteEnteConvenz(SIOrgAmbienteEnteConvenz orgAmbienteEnteConvenz) {
-	this.orgAmbienteEnteConvenz = orgAmbienteEnteConvenz;
+        this.orgAmbienteEnteConvenz = orgAmbienteEnteConvenz;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ENTE_CONVENZ")
     public SIOrgEnteSiam getOrgEnteSiam() {
-	return this.orgEnteSiam;
+        return this.orgEnteSiam;
     }
 
     public void setOrgEnteSiam(SIOrgEnteSiam orgEnteSiam) {
-	this.orgEnteSiam = orgEnteSiam;
+        this.orgEnteSiam = orgEnteSiam;
     }
 
 }
