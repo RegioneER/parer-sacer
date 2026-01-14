@@ -30,15 +30,14 @@ import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.db.base.BaseRowInterface;
+import it.eng.spagoLite.db.decodemap.DecodeMapIF;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.security.Secure;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
-import java.util.logging.Level;
 import javax.ejb.EJB;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +60,13 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
     private AmbienteEjb ambienteEjb;
     @EJB(mappedName = "java:app/Parer-ejb/StruttureEjb")
     private StruttureEjb struttureEjb;
+
+    // Costanti per il salvataggio sicuro dei filtri in Sessione
+    private static final String SESSION_KEY_SAFE_AMBIENTE = "SAFE_AMB";
+    private static final String SESSION_KEY_SAFE_ENTE = "SAFE_ENTE";
+    private static final String SESSION_KEY_SAFE_STRUTTURA = "SAFE_STRUT";
+    private static final String SESSION_KEY_SAFE_TIPO_UNITA_DOC = "SAFE_TIPO";
+    private static final String SESSION_KEY_SAFE_PUBLISHER = "SAFE_PUBLISHER_NAME";
 
     @Override
     public void initOnClick() throws EMFError {
@@ -224,23 +230,79 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
 
     @Override
     public void reloadAfterGoBack(String publisher) {
-        try {
-            BigDecimal idAmbiente = getForm().getRiepilogoVersamentiSintetico().getId_ambiente()
-                    .parse();
-            BigDecimal idEnte = getForm().getRiepilogoVersamentiSintetico().getId_ente().parse();
-            BigDecimal idStruttura = getForm().getRiepilogoVersamentiSintetico().getId_strut()
-                    .parse();
-            BigDecimal idTipoUnitaDoc = getForm().getRiepilogoVersamentiSintetico()
-                    .getId_tipo_unita_doc().parse();
+        if (publisher.equals(Application.Publisher.MONITORAGGIO_RIEPILOGO_VERS_SINTETICO)) {
+            try {
+                String idAmbiente = recuperaValoreSafe(null, SESSION_KEY_SAFE_AMBIENTE);
+                String idEnte = recuperaValoreSafe(null, SESSION_KEY_SAFE_ENTE);
+                String idStruttura = recuperaValoreSafe(null, SESSION_KEY_SAFE_STRUTTURA);
+                String idTipoUnitaDoc = recuperaValoreSafe(null, SESSION_KEY_SAFE_TIPO_UNITA_DOC);
 
-            if (idTipoUnitaDoc != null) {
-                getRequest().setAttribute("Id_tipo_unita_doc", idTipoUnitaDoc.intValue());
+                BigDecimal idAmbienteBD = StringUtils.isNotBlank(idAmbiente)
+                        ? new BigDecimal(idAmbiente)
+                        : null;
+                BigDecimal idEnteBD = StringUtils.isNotBlank(idEnte) ? new BigDecimal(idEnte)
+                        : null;
+                BigDecimal idStrutturaBD = StringUtils.isNotBlank(idStruttura)
+                        ? new BigDecimal(idStruttura)
+                        : null;
+                BigDecimal idTipoUnitaDocBD = StringUtils.isNotBlank(idTipoUnitaDoc)
+                        ? new BigDecimal(idTipoUnitaDoc)
+                        : null;
+
+                // Inizializzo le combo settando la struttura corrente
+                // Ricavo i valori della combo AMBIENTE dalla tabella ORG_AMBIENTE
+                OrgAmbienteTableBean tmpTableBeanAmbiente = ambienteEjb
+                        .getAmbientiAbilitati(getUser().getIdUtente());
+                getForm().getRiepilogoVersamentiSintetico().getId_ambiente()
+                        .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanAmbiente,
+                                "id_ambiente", "nm_ambiente"));
+                getForm().getRiepilogoVersamentiSintetico().getId_ambiente().setValue(idAmbiente);
+
+                // Ricavo i valori della combo ENTE
+                OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(
+                        getUser().getIdUtente(), Long.parseLong(idAmbiente), Boolean.TRUE);
+                getForm().getRiepilogoVersamentiSintetico().getId_ente().setDecodeMap(
+                        DecodeMap.Factory.newInstance(tmpTableBeanEnte, "id_ente", "nm_ente"));
+
+                // Ricavo i valori della combo STRUTTURA
+                OrgStrutTableBean tmpTableBeanStruttura = null;
+                if (StringUtils.isNotEmpty(idEnte)) {
+                    getForm().getRiepilogoVersamentiSintetico().getId_ente().setValue(idEnte);
+                    tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(
+                            getUser().getIdUtente(), new BigDecimal(idEnte), Boolean.TRUE);
+                    getForm().getRiepilogoVersamentiSintetico().getId_strut()
+                            .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanStruttura,
+                                    "id_strut", "nm_strut"));
+                }
+
+                // Ricavo i valori della combo TIPO UNITA' DOC.
+                DecTipoUnitaDocTableBean tmpTableBeanTUD = null;
+                if (StringUtils.isNotEmpty(idStruttura)) {
+                    getForm().getRiepilogoVersamentiSintetico().getId_strut().setValue(idStruttura);
+                    tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(
+                            getUser().getIdUtente(), new BigDecimal(idStruttura));
+                    getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc()
+                            .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanTUD,
+                                    "id_tipo_unita_doc", "nm_tipo_unita_doc"));
+                }
+
+                if (StringUtils.isNotEmpty(idTipoUnitaDoc)) {
+                    getForm().getRiepilogoVersamentiSintetico().getId_strut()
+                            .setValue(idTipoUnitaDoc);
+                }
+
+                // Imposto le combo in editMode
+                getForm().getRiepilogoVersamentiSintetico().setEditMode();
+                getForm().getCalcolaTotaliButtonList().setEditMode();
+                calcolaRiepilogoSinteticoGlobale(idAmbienteBD, idEnteBD, idStrutturaBD,
+                        idTipoUnitaDocBD);
+                // Eseguo forward alla stessa pagina
+                forwardToPublisher(Application.Publisher.MONITORAGGIO_RIEPILOGO_VERS_SINTETICO);
+            } catch (ParerUserError | EMFError e) {
+                log.error("Errore nel ricaricamento del riepilogo versamenti sintetico", e);
+                getMessageBox()
+                        .addError("Errore nel ricaricamento del riepilogo versamenti sintetico");
             }
-
-            calcolaRiepilogoSinteticoGlobale(idAmbiente, idEnte, idStruttura, idTipoUnitaDoc);
-        } catch (EMFError e) {
-            log.error("Errore nel ricaricamento del riepilogo versamenti sintetico", e);
-            getMessageBox().addError("Errore nel ricaricamento del riepilogo versamenti sintetico");
         }
     }
 
@@ -252,10 +314,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
     @Secure(action = "Menu.Monitoraggio.RiepilogoVersamentiSintetico")
     public void loadRiepilogoVersamentiSintetico() throws EMFError {
         try {
-            // BigDecimal idStrut = new BigDecimal(getRequest().getParameter("idStrut") != null ?
-            // (String)
-            // getRequest().getParameter("idStrut") : "0");
-
             getUser().getMenu().reset();
             getUser().getMenu().select("Menu.Monitoraggio.RiepilogoVersamentiSintetico");
 
@@ -268,31 +326,31 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             BigDecimal idEnte = monitSintEjb.getEnte(idStruttura);
             BigDecimal idAmbiente = monitSintEjb.getAmbiente(idEnte);
 
-            System.out.println("Inizio calcolo ambienti abilitati");
+            log.debug("Inizio calcolo ambienti abilitati");
 
             // Inizializzo le combo settando la struttura corrente
             // Ricavo i valori della combo AMBIENTE dalla tabella ORG_AMBIENTE
             OrgAmbienteTableBean tmpTableBeanAmbiente = ambienteEjb
                     .getAmbientiAbilitati(getUser().getIdUtente());
 
-            System.out.println("Fine calcolo ambienti abilitati");
-            System.out.println("Inizio calcolo enti abilitati");
+            log.debug("Fine calcolo ambienti abilitati");
+            log.debug("Inizio calcolo enti abilitati");
             // Ricavo i valori della combo ENTE
             OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(
                     getUser().getIdUtente(), idAmbiente.longValue(), Boolean.TRUE);
 
-            System.out.println("Fine calcolo enti abilitati");
-            System.out.println("Inizio calcolo strutture abilitate");
+            log.debug("Fine calcolo enti abilitati");
+            log.debug("Inizio calcolo strutture abilitate");
             // Ricavo i valori della combo STRUTTURA
             OrgStrutTableBean tmpTableBeanStruttura = struttureEjb
                     .getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
-            System.out.println("Fine calcolo strutture abilitate");
-            System.out.println("Inizio calcolo tipi ud abilitate");
+            log.debug("Fine calcolo strutture abilitate");
+            log.debug("Inizio calcolo tipi ud abilitate");
             // Ricavo i valori della combo TIPO UNITA' DOC.
             DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb
                     .getTipiUnitaDocAbilitati(getUser().getIdUtente(), idStruttura);
 
-            System.out.println("Fine calcolo tipi ud abilitate");
+            log.debug("Fine calcolo tipi ud abilitate");
 
             getForm().getRiepilogoVersamentiSintetico().getId_ambiente()
                     .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanAmbiente, "id_ambiente",
@@ -329,8 +387,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
                     ? (String) getRequest().getParameter("idStrut")
                     : "0");
 
-            // getUser().getMenu().reset();
-            // getUser().getMenu().select("Menu.Monitoraggio.RiepilogoVersamentiSintetico");
             // Resetto tutti i campi di riepilogo versamenti (filtri e totali)
             getForm().getRiepilogoVersamentiSintetico().reset();
             getSession().removeAttribute(WebConstants.PARAMETER_SESSION_GET_CNT);
@@ -412,6 +468,38 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
                 .copyFromBean(formMap.get(getForm().getDocDaVersFalliti().getName()));
         getForm().getUnitaDocAnnul()
                 .copyFromBean(formMap.get(getForm().getUnitaDocAnnul().getName()));
+
+        // MAC #39404
+        // Salvo i valori in sessione ogni volta che calcolo il riepilogo con successo.
+        // Così ho sempre un "backup" fresco dei filtri usati per generare la tabella.
+        salvaFiltriInSessione(idAmbiente, idEnte, idStruttura, idTipoUnitaDoc);
+        getSession().setAttribute(SESSION_KEY_SAFE_PUBLISHER,
+                Application.Publisher.MONITORAGGIO_RIEPILOGO_VERS_SINTETICO);
+    }
+
+    // MAC #39404: override del metodo backPublisher per gestione Indietro a seguito di alterazione
+    // della navigazione via Browser
+    @Override
+    public void backPublisher() {
+        // 1. Provo a leggere dal parametro (funzionamento "normale")
+        String publisherName = getRequest().getParameter("name");
+
+        // 2. Se è NULL o VUOTO (Caso Click->Stop->Click), uso il salvagente in Sessione
+        if (publisherName == null || publisherName.trim().isEmpty()) {
+            publisherName = (String) getSession().getAttribute(SESSION_KEY_SAFE_PUBLISHER);
+        }
+
+        // 3. FALLBACK DI ESTREMA SICUREZZA
+        // Se anche in sessione è null (mai entrato prima?), forzo il nome fisso
+        if (publisherName == null) {
+            publisherName = Application.Publisher.MONITORAGGIO_RIEPILOGO_VERS_SINTETICO;
+        }
+
+        // 4. Chiamo il metodo di reload passando il nome corretto
+        reloadAfterGoBack(publisherName);
+
+        // 5. Chiamo il forward passando il nome corretto (NON PIÙ NULL)
+        super.forwardToPublisher(publisherName);
     }
 
     public void listaDocumentiDaMenu() throws EMFError {
@@ -472,6 +560,92 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
         listaDocumenti();
     }
 
+    public MonitoraggioForm getMonitoraggioFormFiltri() {
+        MonitoraggioForm form = new MonitoraggioForm();
+        try {
+            // MAC #39404: cerco di leggere dal form di provenienza. Se è vuoto (caso stop via
+            // browser), pesca dalla sessione.
+            String idAmbiente = recuperaValoreSafe(
+                    getForm().getRiepilogoVersamentiSintetico().getId_ambiente().getValue(),
+                    SESSION_KEY_SAFE_AMBIENTE);
+            String idEnte = recuperaValoreSafe(
+                    getForm().getRiepilogoVersamentiSintetico().getId_ente().getValue(),
+                    SESSION_KEY_SAFE_ENTE);
+            String idStrut = recuperaValoreSafe(
+                    getForm().getRiepilogoVersamentiSintetico().getId_strut().getValue(),
+                    SESSION_KEY_SAFE_STRUTTURA);
+            String idTipo = recuperaValoreSafe(
+                    getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc().getValue(),
+                    SESSION_KEY_SAFE_TIPO_UNITA_DOC);
+
+            // Ambiente: prendo la combo dalla pagina di Riepilogo Versamento Sintetico se presente,
+            // altrimenti la ricreo
+            DecodeMapIF mapAmbiente = getForm().getRiepilogoVersamentiSintetico().getId_ambiente()
+                    .getDecodeMap();
+            if (mapAmbiente == null || mapAmbiente.isEmpty()) {
+                OrgAmbienteTableBean tmpTableBeanAmbiente = ambienteEjb
+                        .getAmbientiAbilitati(getUser().getIdUtente());
+                mapAmbiente = DecodeMap.Factory.newInstance(tmpTableBeanAmbiente, "id_ambiente",
+                        "nm_ambiente");
+            }
+            form.getRiepilogoVersamenti().getId_ambiente().setDecodeMap(mapAmbiente);
+            // Setto il valore di ambiente recuperato (originale o "safe")
+            form.getRiepilogoVersamenti().getId_ambiente().setValue(idAmbiente);
+
+            // Ente: prendo la combo dalla pagina di Riepilogo Versamento Sintetico se presente,
+            // altrimenti la ricreo
+            DecodeMapIF mapEnte = getForm().getRiepilogoVersamentiSintetico().getId_ente()
+                    .getDecodeMap();
+            if (mapEnte == null || mapEnte.isEmpty()) {
+                OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(
+                        getUser().getIdUtente(), Long.parseLong(idAmbiente), Boolean.TRUE);
+                mapEnte = DecodeMap.Factory.newInstance(tmpTableBeanEnte, "id_ente", "nm_ente");
+            }
+            form.getRiepilogoVersamenti().getId_ente().setDecodeMap(mapEnte);
+            // Setto il valore di ente recuperato (originale o "safe")
+            form.getRiepilogoVersamenti().getId_ente().setValue(idEnte);
+
+            // Struttura: prendo la combo dalla pagian di Riepilogo Versamento Sintetico se presente
+            DecodeMapIF mapStrut = getForm().getRiepilogoVersamentiSintetico().getId_strut()
+                    .getDecodeMap();
+            if (mapStrut == null || mapStrut.isEmpty()) {
+                // Se era stato settato un ente, popolo creo la combo struttura
+                if (idEnte != null) {
+                    OrgStrutTableBean tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(
+                            getUser().getIdUtente(), new BigDecimal(idEnte), Boolean.TRUE);
+                    mapStrut = DecodeMap.Factory.newInstance(tmpTableBeanStruttura, "id_strut",
+                            "nm_strut");
+                }
+            }
+            form.getRiepilogoVersamenti().getId_strut().setDecodeMap(mapStrut);
+            // Setto il valore di struttura (originale o "safe")
+            form.getRiepilogoVersamenti().getId_strut().setValue(idStrut);
+
+            // Tipo Unita Doc: prendo la combo dalla pagian di Riepilogo Versamento Sintetico se
+            // presente
+            DecodeMapIF mapTipo = getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc()
+                    .getDecodeMap();
+            if (mapTipo == null || mapTipo.isEmpty()) {
+                if (idStrut != null) {
+                    DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb
+                            .getTipiUnitaDocAbilitati(getUser().getIdUtente(),
+                                    new BigDecimal(idStrut));
+                    mapTipo = DecodeMap.Factory.newInstance(tmpTableBeanTUD, "id_tipo_unita_doc",
+                            "nm_tipo_unita_doc");
+                }
+            }
+            form.getRiepilogoVersamenti().getId_tipo_unita_doc().setDecodeMap(mapTipo);
+            // Setto il valore di Tipo unita doc (originale o "safe")
+            form.getRiepilogoVersamenti().getId_tipo_unita_doc().setValue(idTipo);
+            // end MAC #39404
+        } catch (ParerUserError ex) {
+            getMessageBox()
+                    .addError("Errore inatteso nel recupero dei filtri di ricerca monitoraggio");
+            forwardToPublisher(getLastPublisher());
+        }
+        return form;
+    }
+
     /**
      * Metodo che esegue una redirectToAction a Monitoraggio - lista documenti in base ai parametri
      * selezionati
@@ -479,26 +653,7 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
      * @throws EMFError errore generico
      */
     public void listaDocumenti() throws EMFError {
-        MonitoraggioForm form = new MonitoraggioForm();
-        form.getRiepilogoVersamenti().getId_ambiente().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_ambiente().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_ambiente()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_ambiente().getValue());
-
-        form.getRiepilogoVersamenti().getId_ente().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_ente().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_ente()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_ente().getValue());
-
-        form.getRiepilogoVersamenti().getId_strut().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_strut().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_strut()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_strut().getValue());
-
-        form.getRiepilogoVersamenti().getId_tipo_unita_doc().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_tipo_unita_doc().setValue(
-                getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc().getValue());
+        MonitoraggioForm form = getMonitoraggioFormFiltri();
 
         String stato = getRequest().getParameter(WebConstants.PARAMETER_STATO);
         String tiCreazione = getRequest().getParameter(WebConstants.PARAMETER_CREAZIONE);
@@ -536,7 +691,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
                             "Parametro inaspettato nella sezione di monitoraggio riepilogo versamenti sintetico");
                 }
             }
-            // Monitoraggio.html?operation=monitoraggioListe&tipoDoc=1&periodo=OGGI&pagina=1
             // Prepara la form per eseguire la redirectToAction a Monitoraggio
             redirectToAction(Application.Actions.MONITORAGGIO,
                     "?operation=monitoraggioListe&pagina=1" + additionalParams.toString(), form);
@@ -552,25 +706,8 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
     public void listaVersamentiFalliti() throws EMFError {
         MonitoraggioForm form = new MonitoraggioForm();
         form.getFiltriDocumenti().setEditMode();
-        form.getRiepilogoVersamenti().getId_ambiente().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_ambiente().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_ambiente()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_ambiente().getValue());
 
-        form.getRiepilogoVersamenti().getId_ente().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_ente().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_ente()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_ente().getValue());
-
-        form.getRiepilogoVersamenti().getId_strut().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_strut().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_strut()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_strut().getValue());
-
-        form.getRiepilogoVersamenti().getId_tipo_unita_doc().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_tipo_unita_doc().setValue(
-                getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc().getValue());
+        form = getMonitoraggioFormFiltri();
 
         String stato = getRequest().getParameter(WebConstants.PARAMETER_STATO);
         String tiCreazione = getRequest().getParameter(WebConstants.PARAMETER_CREAZIONE);
@@ -583,7 +720,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             case WebConstants.PARAMETER_STATO_TUTTI:
                 break;
             default:
-                // Verifico che lo stato sia definito nell'enum
                 VolumeEnums.VersStatusEnum status = VolumeEnums.VersStatusEnum.valueOf(stato);
                 switch (status) {
                 case RISOLTO:
@@ -632,8 +768,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
                 throw new IllegalArgumentException(
                         "Parametro inaspettato nella sezione di monitoraggio riepilogo versamenti sintetico");
             }
-            // Monitoraggio.html?operation=monitoraggioListe&periodo=OGGI&pagina=2
-            // Prepara la form per eseguire la redirectToAction a Monitoraggio
             redirectToAction(Application.Actions.MONITORAGGIO,
                     "?operation=monitoraggioListe&pagina=2" + additionalParams.toString(), form);
         }
@@ -648,25 +782,8 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
     public void listaDocDaVersFalliti() throws EMFError {
         MonitoraggioForm form = new MonitoraggioForm();
         form.getFiltriDocumenti().setEditMode();
-        form.getRiepilogoVersamenti().getId_ambiente().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_ambiente().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_ambiente()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_ambiente().getValue());
 
-        form.getRiepilogoVersamenti().getId_ente().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_ente().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_ente()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_ente().getValue());
-
-        form.getRiepilogoVersamenti().getId_strut().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_strut().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_strut()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_strut().getValue());
-
-        form.getRiepilogoVersamenti().getId_tipo_unita_doc().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_tipo_unita_doc().setValue(
-                getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc().getValue());
+        form = getMonitoraggioFormFiltri();
 
         String stato = getRequest().getParameter(WebConstants.PARAMETER_STATO);
         String tipo = getRequest().getParameter(WebConstants.PARAMETER_TIPO);
@@ -677,7 +794,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             case WebConstants.PARAMETER_STATO_TUTTI:
                 break;
             default:
-                // Verifico che lo stato sia definito nell'enum
                 VolumeEnums.VersStatusEnum status = VolumeEnums.VersStatusEnum.valueOf(stato);
                 switch (status) {
                 case RISOLTO:
@@ -700,8 +816,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             }
 
             additionalParams.append("&tipoLista=" + tipo);
-            // Monitoraggio.html?operation=monitoraggioListe&pagina=3
-            // Prepara la form per eseguire la redirectToAction a Monitoraggio
             redirectToAction(Application.Actions.MONITORAGGIO,
                     "?operation=monitoraggioListe&pagina=3" + additionalParams.toString(), form);
         }
@@ -710,25 +824,8 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
     public void listaDocAnnullati() throws EMFError {
         MonitoraggioForm form = new MonitoraggioForm();
         form.getFiltriDocumenti().setEditMode();
-        form.getRiepilogoVersamenti().getId_ambiente().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_ambiente().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_ambiente()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_ambiente().getValue());
 
-        form.getRiepilogoVersamenti().getId_ente().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_ente().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_ente()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_ente().getValue());
-
-        form.getRiepilogoVersamenti().getId_strut().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_strut().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_strut()
-                .setValue(getForm().getRiepilogoVersamentiSintetico().getId_strut().getValue());
-
-        form.getRiepilogoVersamenti().getId_tipo_unita_doc().setDecodeMap(
-                getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc().getDecodeMap());
-        form.getRiepilogoVersamenti().getId_tipo_unita_doc().setValue(
-                getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc().getValue());
+        form = getMonitoraggioFormFiltri();
 
         String stato = getRequest().getParameter(WebConstants.PARAMETER_STATO);
         String tipo = getRequest().getParameter(WebConstants.PARAMETER_TIPO);
@@ -748,7 +845,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
 
             VolumeEnums.TipoVersAnnul tipoVers = VolumeEnums.TipoVersAnnul.valueOf(tipo);
             additionalParams.append("&tipoVers=" + tipoVers.name());
-            // Monitoraggio.html?operation=monitoraggioListe&pagina=4
             // Prepara la form per eseguire la redirectToAction a Monitoraggio
             redirectToAction(Application.Actions.MONITORAGGIO,
                     "?operation=monitoraggioListe&pagina=4" + additionalParams.toString(), form);
@@ -768,11 +864,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             BigDecimal idTipoUnitaDoc = getForm().getRiepilogoVersamentiSintetico()
                     .getId_tipo_unita_doc().parse();
             calcolaRiepilogoSinteticoGlobale(idAmbiente, idEnte, idStruttura, idTipoUnitaDoc);
-            // BaseRowInterface row = monitSintEjb.calcolaTot(getUser().getIdUtente(), idAmbiente,
-            // idEnte, idStruttura,
-            // idTipoUnitaDoc, MonitoraggioSinteticoEjb.fieldSetToPopulate.UNITA_DOC_VERSATE,
-            // false);
-            // getForm().getUnitaDocVersate().copyFromBean(row);
         }
     }
 
@@ -789,10 +880,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             BigDecimal idTipoUnitaDoc = getForm().getRiepilogoVersamentiSintetico()
                     .getId_tipo_unita_doc().parse();
             calcolaRiepilogoSinteticoGlobale(idAmbiente, idEnte, idStruttura, idTipoUnitaDoc);
-            // BaseRowInterface row = monitSintEjb.calcolaTot(getUser().getIdUtente(), idAmbiente,
-            // idEnte, idStruttura,
-            // idTipoUnitaDoc, MonitoraggioSinteticoEjb.fieldSetToPopulate.DOC_AGGIUNTI, false);
-            // getForm().getDocAggiunti().copyFromBean(row);
         }
     }
 
@@ -809,10 +896,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             BigDecimal idTipoUnitaDoc = getForm().getRiepilogoVersamentiSintetico()
                     .getId_tipo_unita_doc().parse();
             calcolaRiepilogoSinteticoGlobale(idAmbiente, idEnte, idStruttura, idTipoUnitaDoc);
-            // BaseRowInterface row = monitSintEjb.calcolaTot(getUser().getIdUtente(), idAmbiente,
-            // idEnte, idStruttura,
-            // idTipoUnitaDoc, MonitoraggioSinteticoEjb.fieldSetToPopulate.VERS_FALLITI, false);
-            // getForm().getVersamentiFalliti().copyFromBean(row);
         }
     }
 
@@ -830,11 +913,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             BigDecimal idTipoUnitaDoc = getForm().getRiepilogoVersamentiSintetico()
                     .getId_tipo_unita_doc().parse();
             calcolaRiepilogoSinteticoGlobale(idAmbiente, idEnte, idStruttura, idTipoUnitaDoc);
-            // BaseRowInterface row = monitSintEjb.calcolaTot(getUser().getIdUtente(), idAmbiente,
-            // idEnte, idStruttura,
-            // idTipoUnitaDoc, MonitoraggioSinteticoEjb.fieldSetToPopulate.AGGIUNTE_DOC_FALLITE,
-            // false);
-            // getForm().getAggiunteDocumentiFallite().copyFromBean(row);
         }
     }
 
@@ -852,11 +930,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             BigDecimal idTipoUnitaDoc = getForm().getRiepilogoVersamentiSintetico()
                     .getId_tipo_unita_doc().parse();
             calcolaRiepilogoSinteticoGlobale(idAmbiente, idEnte, idStruttura, idTipoUnitaDoc);
-            // BaseRowInterface row = monitSintEjb.calcolaTot(getUser().getIdUtente(), idAmbiente,
-            // idEnte, idStruttura,
-            // idTipoUnitaDoc, MonitoraggioSinteticoEjb.fieldSetToPopulate.UNITA_DOC_VERS_FALLITI,
-            // false);
-            // getForm().getUnitaDocDaVersFalliti().copyFromBean(row);
         }
     }
 
@@ -923,10 +996,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             BigDecimal idTipoUnitaDoc = getForm().getRiepilogoVersamentiSintetico()
                     .getId_tipo_unita_doc().parse();
             calcolaRiepilogoSinteticoGlobale(idAmbiente, idEnte, idStruttura, idTipoUnitaDoc);
-            // BaseRowInterface row = monitSintEjb.calcolaTot(getUser().getIdUtente(), idAmbiente,
-            // idEnte, idStruttura,
-            // idTipoUnitaDoc, MonitoraggioSinteticoEjb.fieldSetToPopulate.UNITA_DOC_VERSATE, true);
-            // getForm().getUnitaDocVersate().copyFromBean(row);
         }
     }
 
@@ -943,10 +1012,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             BigDecimal idTipoUnitaDoc = getForm().getRiepilogoVersamentiSintetico()
                     .getId_tipo_unita_doc().parse();
             calcolaRiepilogoSinteticoGlobale(idAmbiente, idEnte, idStruttura, idTipoUnitaDoc);
-            // BaseRowInterface row = monitSintEjb.calcolaTot(getUser().getIdUtente(), idAmbiente,
-            // idEnte, idStruttura,
-            // idTipoUnitaDoc, MonitoraggioSinteticoEjb.fieldSetToPopulate.DOC_AGGIUNTI,true);
-            // getForm().getDocAggiunti().copyFromBean(row);
         }
     }
 
@@ -963,10 +1028,6 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             BigDecimal idTipoUnitaDoc = getForm().getRiepilogoVersamentiSintetico()
                     .getId_tipo_unita_doc().parse();
             calcolaRiepilogoSinteticoGlobale(idAmbiente, idEnte, idStruttura, idTipoUnitaDoc);
-            // BaseRowInterface row = monitSintEjb.calcolaTot(getUser().getIdUtente(), idAmbiente,
-            // idEnte, idStruttura,
-            // idTipoUnitaDoc, MonitoraggioSinteticoEjb.fieldSetToPopulate.VERS_FALLITI, true);
-            // getForm().getVersamentiFalliti().copyFromBean(row);
         }
     }
 
@@ -984,11 +1045,54 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             BigDecimal idTipoUnitaDoc = getForm().getRiepilogoVersamentiSintetico()
                     .getId_tipo_unita_doc().parse();
             calcolaRiepilogoSinteticoGlobale(idAmbiente, idEnte, idStruttura, idTipoUnitaDoc);
-            // BaseRowInterface row = monitSintEjb.calcolaTot(getUser().getIdUtente(), idAmbiente,
-            // idEnte, idStruttura,
-            // idTipoUnitaDoc,
-            // MonitoraggioSinteticoEjb.fieldSetToPopulate.AGGIUNTE_DOC_FALLITE,true);
-            // getForm().getAggiunteDocumentiFallite().copyFromBean(row);
         }
     }
+
+    ////
+    //// MAC #39404: salva i filtri critici nella Sessione HTTP per sopravvivere a
+    //// Stop/Reload/Indietro
+    ////
+
+    /**
+     * Salva i filtri in sessione sincronizzandoli con il form. Se un filtro è vuoto, VIENE RIMOSSO
+     * dalla sessione per evitare "fantasmi" di ricerche precedenti.
+     */
+    private void salvaFiltriInSessione(Object idAmbiente, Object idEnte, Object idStrut,
+            Object idTipo) {
+        aggiornaSessione(SESSION_KEY_SAFE_AMBIENTE, idAmbiente);
+        aggiornaSessione(SESSION_KEY_SAFE_ENTE, idEnte);
+        aggiornaSessione(SESSION_KEY_SAFE_STRUTTURA, idStrut);
+        aggiornaSessione(SESSION_KEY_SAFE_TIPO_UNITA_DOC, idTipo);
+    }
+
+    /**
+     * Metodo helper che imposta o rimuove l'attributo dalla sessione
+     */
+    private void aggiornaSessione(String key, Object value) {
+        if (value != null && StringUtils.isNotBlank(value.toString())) {
+            // Se il valore esiste, lo salvo/sovrascrivo
+            getSession().setAttribute(key, value.toString());
+        } else {
+            // FONDAMENTALE: Se il valore è null o vuoto (l'utente l'ha deselezionato),
+            // devo RIMUOVERLO dalla sessione, altrimenti rimane quello vecchio!
+            getSession().removeAttribute(key);
+        }
+    }
+
+    /**
+     * Tenta di recuperare un valore: prima dal Form corrente, se fallisce usa la Sessione
+     */
+    private String recuperaValoreSafe(Object valoreForm, String keySessione) {
+        // 1. Se il form ha il valore, lo uso e AGGIORNO la sessione (così è fresca)
+        if (valoreForm != null && StringUtils.isNotBlank(valoreForm.toString())) {
+            getSession().setAttribute(keySessione, valoreForm.toString());
+            return valoreForm.toString();
+        }
+
+        // 2. Se il form è vuoto (caso BUG), recupero dalla sessione
+        Object valSessione = getSession().getAttribute(keySessione);
+        return (valSessione != null) ? valSessione.toString() : null;
+    }
+
+    // end MAC #39404
 }

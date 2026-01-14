@@ -325,10 +325,16 @@ public class DataMartEjb {
         return udTableBean;
     }
 
-    public int insertUdDataMartAnnulVersCentroStella(long idRichiesta, String cdRichiesta,
+    public int insertUdDataMartAnnulVersCentroStella(BigDecimal idRichiesta, String cdRichiesta,
             String tiMotCancellazione, String tiModDel) {
-        return dataMartHelper.populateDataMartUdCentroStella(idRichiesta, cdRichiesta,
+        return dataMartHelper.populateDataMartUdCentroStellaAnnulVers(idRichiesta, cdRichiesta,
                 tiMotCancellazione, tiModDel);
+    }
+
+    public int insertUdDataMartRestArchCentroStella(BigDecimal idRichiesta, String cdRichiesta,
+            String tiModDel) {
+        return dataMartHelper.populateDataMartUdCentroStellaRestArch(idRichiesta, cdRichiesta,
+                tiModDel);
     }
 
     public void insertUdDataMartAnnulVersSatelliti(long idUdDelRichiesta) {
@@ -604,7 +610,8 @@ public class DataMartEjb {
                         && !CostantiDB.TiStatoInternoRich.PRONTA_PER_FISICA.name()
                                 .equals(statoAttualeApp)) {
                     nuovoStatoDaImpostare = CostantiDB.TiStatoInternoRich.PRONTA_PER_FISICA.name();
-                } else if ("1".equals(statoMS.getFlRichInElaborazione())
+                } else if (("1".equals(statoMS.getFlRichInElaborazione())
+                        || !dataMartHelper.isLavoroKafkaCompletato(idUdDelRichiesta))
                         && !CostantiDB.TiStatoInternoRich.IN_ELABORAZIONE_LOGICA.name()
                                 .equals(statoAttualeApp)) {
                     nuovoStatoDaImpostare = CostantiDB.TiStatoInternoRich.IN_ELABORAZIONE_LOGICA

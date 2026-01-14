@@ -49,6 +49,7 @@ import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.constraint.AroAipRestituzioneArchivio.TiStatoAroAipRa;
 import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
 import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.grantedEntity.SIOrgEnteConvenzOrg;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.grantedEntity.SIUsrOrganizIam;
 import it.eng.parer.restArch.dto.RicercaRichRestArchBean;
@@ -191,11 +192,25 @@ public class RestituzioneArchivioEjb {
      *
      * @return true se esiste
      */
+    @Deprecated
     public boolean checkEnteConvenzExisting(BigDecimal idStrut) {
         /* Ricavo la struttura */
         OrgStrut struttura = entityManager.find(OrgStrut.class, idStrut.longValue());
 
         return struttura.getIdEnteConvenz() != null;
+    }
+
+    /**
+     * Verifica l'esistenza di almeno un ente convenzionato in capo alla struttura (controllo in
+     * ORG_ENTE_CONVENZ_ORG)
+     *
+     * @param idStrut id struttura
+     *
+     * @return true se esiste
+     */
+    public boolean checkEnteConvenzExistingOrgEnteConvenzOrg(BigDecimal idStrut) {
+        List<SIOrgEnteConvenzOrg> enteConvenzOrg = helper.getOrgEnteConvenzOrgList(idStrut);
+        return !enteConvenzOrg.isEmpty();
     }
 
     /**

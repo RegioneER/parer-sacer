@@ -127,10 +127,12 @@ import it.eng.parer.slite.gen.viewbean.AroVLisDocTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisElvVerTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisFascRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisFascTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisItemRichAnnvrsTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisLinkUnitaDocRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisLinkUnitaDocTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisNotaUnitaDocRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisNotaUnitaDocTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisStatoRichAnnvrsTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisUpdCompUnitaDocTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisUpdDocUnitaDocTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisUpdKoRisoltiTableBean;
@@ -142,6 +144,7 @@ import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocTableDescriptor;
 import it.eng.parer.slite.gen.viewbean.AroVVisDocIamRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisDocIamTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisNotaUnitaDocRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVVisRichAnnvrsRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisUnitaDocIamRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisUpdUnitaDocRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisUpdUnitaDocTableBean;
@@ -151,6 +154,7 @@ import it.eng.parer.slite.gen.viewbean.SerVRicSerieUdTableBean;
 import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
 import it.eng.parer.viewEntity.AroVDtVersMaxByUnitaDoc;
 import it.eng.parer.volume.utils.VolumeEnums;
+import it.eng.parer.web.action.UnitaDocumentarieAction.ButtonVisibilityState;
 import it.eng.parer.web.dto.DecCriterioAttribBean;
 import it.eng.parer.web.dto.DecCriterioDatiSpecBean;
 import it.eng.parer.web.dto.DefinitoDaBean;
@@ -222,6 +226,8 @@ import it.eng.parer.slite.gen.tablebean.DmUdDelRichiesteTableBean;
 import it.eng.parer.slite.gen.tablebean.DmUdDelTableBean;
 import it.eng.parer.web.helper.DataMartHelper;
 import it.eng.parer.ws.utils.CostantiDB.TipoRichiesta;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import java.util.stream.Collectors;
@@ -236,6 +242,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
     private static final String ECCEZIONE_RECUPERO_RAPPORTO_VERSAMENTO = "Eccezione nel recupero del Rapporto di versamento: ";
     private static final String ECCEZIONE_RECUPERO_INDICE_AIP = "Errore non gestito nel recupero del file";
+    private static final String UD_DETAIL_SOURCE_PAGE = "UD_DETAIL_SOURCE_PAGE";
 
     private static Logger log = LoggerFactory.getLogger(UnitaDocumentarieAction.class.getName());
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
@@ -318,7 +325,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
      *
      * @throws EMFError errore generico
      */
-    @Secure(action = "Menu.UnitaDocumentarie.UnitaDocumentarieRicercaSempliceNuova")
+    @Secure(action = "Menu.UnitaDocumentarie.UnitaDocumentarieRicercaSemplice")
     public void unitaDocumentarieRicercaSemplice() throws EMFError {
         unitaDocumentarieRicercaSempliceComune(WebConstants.tipoRicercaSemplice.SEMPLICE);
     }
@@ -339,15 +346,16 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         case SEMPLICE_NEW:
             getUser().getMenu()
                     .select("Menu.UnitaDocumentarie.UnitaDocumentarieRicercaSempliceNuova");
+            getSession().setAttribute(UnitaDocAttributes.TIPORICERCA.name(),
+                    TipoRicercaAttribute.SEMPLICE_NEW.name());
             break;
         case SEMPLICE:
         default:
             getUser().getMenu().select("Menu.UnitaDocumentarie.UnitaDocumentarieRicercaSemplice");
+            getSession().setAttribute(UnitaDocAttributes.TIPORICERCA.name(),
+                    TipoRicercaAttribute.SEMPLICE.name());
             break;
         }
-
-        getSession().setAttribute(UnitaDocAttributes.TIPORICERCA.name(),
-                TipoRicercaAttribute.SEMPLICE.name());
 
         // Pulisco i filtri di ricerca unità documentarie semplice
         getForm().getFiltriUnitaDocumentarieSemplice().reset();
@@ -489,7 +497,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         }
 
         getSession().setAttribute(UnitaDocAttributes.TIPORICERCA.name(),
-                TipoRicercaAttribute.AVANZATA.name());
+                TipoRicercaAttribute.DATI_SPEC.name());
         setUnitaDocumentarieRicercaDatiSpec();
         // getForm().getFiltriUnitaDocumentarieDatiSpec().getFl_unita_doc_annul().setValue("0");
         postLoad();
@@ -861,7 +869,20 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     public void process() throws EMFError {
     }
 
-    private void ricercaEDownload(boolean effettuaDownload) throws EMFError {
+    private void ricercaEDownload(boolean effettuaDownload, boolean eseguiPost) throws EMFError {
+        // MEV #11912: salvo lo stato corrente
+        int savedPageSize = 10;
+        int savedRowIndex = 0; // Default alla prima riga
+        boolean devoRipristinare = false;
+
+        // Se NON devo fare la post (sto rinfrescando la lista) e la tabella esiste già
+        if (!eseguiPost && getForm().getUnitaDocumentarieList().getTable() != null) {
+            savedPageSize = getForm().getUnitaDocumentarieList().getTable().getPageSize();
+            savedRowIndex = getForm().getUnitaDocumentarieList().getTable().getCurrentRowIndex();
+            devoRipristinare = true;
+        }
+        // end MEV #11912
+
         // Controllo se la ricerca unità documentaria è semplice o avanzata
         // RICERCA UNITA' DOCUMENTARIE SEMPLICE
         if (getLastPublisher().equals(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_SEMPLICE)
@@ -872,15 +893,21 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             getSession().setAttribute("idUdStack", new ArrayList<BigDecimal>());
             UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice filtri = getForm()
                     .getFiltriUnitaDocumentarieSemplice();
-            // Esegue la post dei filtri compilati
-            filtri.post(getRequest());
-            /*
-             * Nella Ricerca semplice UD DEVO mettere a null questi due campi perché hanno lo stesso
-             * nome di quelli che comopaiono nella lista dei risultati e il framework prende il
-             * valore "0" alternativamente facendo una ricerca e poi rifacendla di nuovo.
-             */
-            filtri.getFl_forza_accettazione().setValue(null);
-            filtri.getFl_forza_conservazione().setValue(null);
+
+            // MEV #11912
+            if (eseguiPost) {
+                // Esegue la post dei filtri compilati
+                filtri.post(getRequest());
+                /*
+                 * Nella Ricerca semplice UD DEVO mettere a null questi due campi perché hanno lo
+                 * stesso nome di quelli che comopaiono nella lista dei risultati e il framework
+                 * prende il valore "0" alternativamente facendo una ricerca e poi rifacendla di
+                 * nuovo.
+                 */
+                filtri.getFl_forza_accettazione().setValue(null);
+                filtri.getFl_forza_conservazione().setValue(null);
+            }
+            // end MEV #11912
 
             // Valida i filtri per verificare quelli obbligatori
             String pageToForward = getLastPublisher();
@@ -976,17 +1003,29 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                         subStruttureAbilitateAllUtente, getLastPublisher().equals(
                                                 Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_SEMPLICE_NUOVA));
                         if (!getMessageBox().hasError()) {
-                            File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                                    "Contenuto_ricerca_unita_documentarie.csv");
+                            // MAC#39494 - Correzione metodo di generazione file in fase di
+                            // esportazione di una ricerca
+                            // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
+                            // "Contenuto_ricerca_unita_documentarie.csv");
                             try {
+                                Path tmpPath = Files.createTempFile(
+                                        "Contenuto_ricerca_unita_documentarie_", ".csv");
+                                File tmpFile = tmpPath.toFile();
                                 ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
                                         AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                                 getRequest().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                         getControllerName());
+
+                                // MAC#39494 - Correzione metodo di generazione file in fase di
+                                // esportazione di una ricerca
+                                String nomeFile = tmpFile.getName();
+                                String nomeFinale = nomeFile.substring(0,
+                                        nomeFile.lastIndexOf("_") - 1) + ".csv";
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
-                                        tmpFile.getName());
+                                        nomeFinale);
+
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(),
                                         tmpFile.getPath());
@@ -1025,13 +1064,40 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                                 Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_SEMPLICE_NUOVA));
                         // Carico la tabella con i filtri impostati\
                         getForm().getUnitaDocumentarieList().setTable(tb);
-                        getForm().getUnitaDocumentarieList().getTable().setPageSize(10);
-                        // Aggiungo alla lista una regola di ordinamento
-                        getForm().getUnitaDocumentarieList().getTable().addSortingRule(
-                                AroVRicUnitaDocTableDescriptor.COL_DS_KEY_ORD, SortingRule.ASC);
+                        // --- 3. RIPRISTINO STATO O RESET ---
+                        if (devoRipristinare) {
+                            // 1. Ripristino la dimensione pagina
+                            getForm().getUnitaDocumentarieList().getTable()
+                                    .setPageSize(savedPageSize);
 
-                        // Workaround in modo che la lista punti al primo record, non all'ultimo
-                        getForm().getUnitaDocumentarieList().getTable().first();
+                            // 2. Controllo di sicurezza ("Bounds Check") sull'indice riga
+                            int totalRows = getForm().getUnitaDocumentarieList().getTable().size();
+
+                            if (totalRows > 0) {
+                                // Se l'indice salvato è fuori dai limiti (es. ho cancellato
+                                // l'ultimo record)
+                                // mi posiziono sull'ultimo record disponibile.
+                                if (savedRowIndex >= totalRows) {
+                                    savedRowIndex = totalRows - 1;
+                                }
+                                // Se per assurdo fosse negativo (non dovrebbe succedere, ma per
+                                // sicurezza)
+                                if (savedRowIndex < 0) {
+                                    savedRowIndex = 0;
+                                }
+
+                                // 3. Ripristino la riga corrente -> Il framework visualizzerà la
+                                // pagina corretta
+                                getForm().getUnitaDocumentarieList().getTable()
+                                        .setCurrentRowIndex(savedRowIndex);
+                            }
+                        } else {
+                            // NUOVA RICERCA (Reset standard)
+                            getForm().getUnitaDocumentarieList().getTable().setPageSize(10);
+                            getForm().getUnitaDocumentarieList().getTable().addSortingRule(
+                                    AroVRicUnitaDocTableDescriptor.COL_DS_KEY_ORD, SortingRule.ASC);
+                            getForm().getUnitaDocumentarieList().getTable().first();
+                        }
                     }
 
                 }
@@ -1060,8 +1126,12 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             int numTipiDocAbil = getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_tipo_doc()
                     .getDecodeMap().keySet().size();
 
-            // Esegue la post dei filtri compilati
-            filtri.post(getRequest());
+            // MEV #11912
+            if (eseguiPost) {
+                // Esegue la post dei filtri compilati
+                filtri.post(getRequest());
+            }
+            // end MEV #11912
 
             boolean almenoUnTipoUdSelPerRicercaDatiSpec = false;
             boolean almenoUnTipoDocSelPerRicercaDatiSpec = false;
@@ -1181,17 +1251,31 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                         almenoUnTipoUdSelPerRicercaDatiSpec,
                                         almenoUnTipoDocSelPerRicercaDatiSpec);
                         if (!getMessageBox().hasError()) {
-                            File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                                    "Contenuto_ricerca_unita_documentarie.csv");
+                            // MAC#39494 - Correzione metodo di generazione file in fase di
+                            // esportazione di una ricerca
+                            // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
+                            // "Contenuto_ricerca_unita_documentarie.csv");
                             try {
+                                // MAC#39494 - Correzione metodo di generazione file in fase di
+                                // esportazione di una ricerca
+                                Path tmpPath = Files.createTempFile(
+                                        "Contenuto_ricerca_unita_documentarie_", ".csv");
+                                File tmpFile = tmpPath.toFile();
                                 ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
                                         AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                                 getRequest().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                         getControllerName());
+
+                                // MAC#39494 - Correzione metodo di generazione file in fase di
+                                // esportazione di una ricerca
+                                String nomeFile = tmpFile.getName();
+                                String nomeFinale = nomeFile.substring(0,
+                                        nomeFile.lastIndexOf("_") - 1) + ".csv";
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
-                                        tmpFile.getName());
+                                        nomeFinale);
+
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(),
                                         tmpFile.getPath());
@@ -1226,16 +1310,29 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                         almenoUnTipoDocSelPerRicercaDatiSpec);
                         // Carico la tabella con i filtri impostati
                         getForm().getUnitaDocumentarieList().setTable(tb);
-                        getForm().getUnitaDocumentarieList().getTable().setPageSize(10);
-                        // Aggiungo alla lista una regola di ordinamento
-                        getForm().getUnitaDocumentarieList().getTable().addSortingRule(
-                                AroVRicUnitaDocTableDescriptor.COL_DS_KEY_ORD, SortingRule.ASC);
-
-                        /* Salvo i filtri per eventuale creazione criteri di raggruppamento */
                         getSession().setAttribute("filtriUD", filtri);
+                        // --- 3. RIPRISTINO STATO O RESET ---
+                        if (devoRipristinare) {
+                            getForm().getUnitaDocumentarieList().getTable()
+                                    .setPageSize(savedPageSize);
 
-                        // Workaround in modo che la lista punti al primo record, non all'ultimo
-                        getForm().getUnitaDocumentarieList().getTable().first();
+                            int totalRows = getForm().getUnitaDocumentarieList().getTable().size();
+                            if (totalRows > 0) {
+                                if (savedRowIndex >= totalRows) {
+                                    savedRowIndex = totalRows - 1;
+                                }
+                                if (savedRowIndex < 0) {
+                                    savedRowIndex = 0;
+                                }
+                                getForm().getUnitaDocumentarieList().getTable()
+                                        .setCurrentRowIndex(savedRowIndex);
+                            }
+                        } else {
+                            getForm().getUnitaDocumentarieList().getTable().setPageSize(10);
+                            getForm().getUnitaDocumentarieList().getTable().addSortingRule(
+                                    AroVRicUnitaDocTableDescriptor.COL_DS_KEY_ORD, SortingRule.ASC);
+                            getForm().getUnitaDocumentarieList().getTable().first();
+                        }
                     }
                 }
             }
@@ -1265,12 +1362,18 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     .getFiltriComponentiUnitaDocumentarie();
             final FiltriFascicoliUnitaDocumentarie fascfiltri = getForm()
                     .getFiltriFascicoliUnitaDocumentarie();
-            // Esegue la post dei filtri compilati
-            filtri.post(getRequest());
-            filtriCollegamenti.post(getRequest());
-            filtriFirmatari.post(getRequest());
-            compfiltri.post(getRequest());
-            fascfiltri.post(getRequest());
+
+            // MEV #11912
+            if (eseguiPost) {
+                // Esegue la post dei filtri compilati
+                filtri.post(getRequest());
+                filtriCollegamenti.post(getRequest());
+                filtriFirmatari.post(getRequest());
+                compfiltri.post(getRequest());
+                fascfiltri.post(getRequest());
+            }
+            // end MEV #11912
+
             String pageToRedirect = Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA;
             // Valida i filtri per verificare quelli obbligatori e che siano del tipo corretto
             if (filtri.validate(getMessageBox()) && filtriCollegamenti.validate(getMessageBox())
@@ -1467,17 +1570,32 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                         dateUnitaDocValidate, dateCreazioneComp, getIdStrut(),
                                         addSerie || addRichAnnulVers);
                         if (!getMessageBox().hasError()) {
-                            File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                                    "Contenuto_ricerca_unita_documentarie.csv");
+                            // MAC#39494 - Correzione metodo di generazione file in fase di
+                            // esportazione di una ricerca
+                            // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
+                            // "Contenuto_ricerca_unita_documentarie.csv");
                             try {
+                                // MAC#39494 - Correzione metodo di generazione file in fase di
+                                // esportazione di una ricerca
+                                Path tmpPath = Files.createTempFile(
+                                        "Contenuto_ricerca_unita_documentarie_", ".csv");
+                                File tmpFile = tmpPath.toFile();
+
                                 ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
                                         AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                                 getRequest().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                         getControllerName());
+
+                                // MAC#39494 - Correzione metodo di generazione file in fase di
+                                // esportazione di una ricerca
+                                String nomeFile = tmpFile.getName();
+                                String nomeFinale = nomeFile.substring(0,
+                                        nomeFile.lastIndexOf("_") - 1) + ".csv";
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
-                                        tmpFile.getName());
+                                        nomeFinale);
+
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(),
                                         tmpFile.getPath());
@@ -1512,16 +1630,29 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                         addSerie || addRichAnnulVers);
                         // Carico la tabella con i filtri impostati
                         getForm().getUnitaDocumentarieList().setTable(tb);
-                        getForm().getUnitaDocumentarieList().getTable().setPageSize(10);
-                        // Aggiungo alla lista una regola di ordinamento
-                        getForm().getUnitaDocumentarieList().getTable().addSortingRule(
-                                AroVRicUnitaDocTableDescriptor.COL_DS_KEY_ORD, SortingRule.ASC);
-
-                        /* Salvo i filtri per eventuale creazione criteri di raggruppamento */
                         getSession().setAttribute("filtriUD", filtri);
+                        // MEV #11912
+                        if (devoRipristinare) {
+                            getForm().getUnitaDocumentarieList().getTable()
+                                    .setPageSize(savedPageSize);
 
-                        // Workaround in modo che la lista punti al primo record, non all'ultimo
-                        getForm().getUnitaDocumentarieList().getTable().first();
+                            int totalRows = getForm().getUnitaDocumentarieList().getTable().size();
+                            if (totalRows > 0) {
+                                if (savedRowIndex >= totalRows) {
+                                    savedRowIndex = totalRows - 1;
+                                }
+                                if (savedRowIndex < 0) {
+                                    savedRowIndex = 0;
+                                }
+                                getForm().getUnitaDocumentarieList().getTable()
+                                        .setCurrentRowIndex(savedRowIndex);
+                            }
+                        } else {
+                            getForm().getUnitaDocumentarieList().getTable().setPageSize(10);
+                            getForm().getUnitaDocumentarieList().getTable().addSortingRule(
+                                    AroVRicUnitaDocTableDescriptor.COL_DS_KEY_ORD, SortingRule.ASC);
+                            getForm().getUnitaDocumentarieList().getTable().first();
+                        }
                     }
                 }
             }
@@ -1539,7 +1670,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
      */
     @Override
     public void ricercaUD() throws EMFError {
-        ricercaEDownload(false);
+        ricercaEDownload(false, true);
     }
 
     /**
@@ -2019,6 +2150,30 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             if (getRequest().getParameter("table")
                     .equals(getForm().getUnitaDocumentarieList().getName())) {
                 // UNITA' DOCUMENTARIA
+                // MEV #11912
+                getSession().removeAttribute(UD_DETAIL_SOURCE_PAGE);
+                String currentPage = getLastPublisher();
+                // Definisco l'elenco delle pagine che fanno parte del "mondo" del dettaglio ud
+                // Se vengo da una di queste, NON devo perdere la memoria della lista originale.
+                List<String> detailContextPages = Arrays.asList(
+                        Application.Publisher.UNITA_DOCUMENTARIE_DETAIL,
+                        Application.Publisher.DOCUMENTI_UNITA_DOCUMENTARIE_DETAIL,
+                        Application.Publisher.NOTA_UD_DETAIL,
+                        Application.Publisher.AGGIORNAMENTI_METADATI_UDDETAIL,
+                        Application.Publisher.INDICE_AIP_DETAIL,
+                        Application.Publisher.UNITA_DOCUMENTARIE_DETAIL_ANNUL_UD,
+                        Application.Publisher.UNITA_DOCUMENTARIE_ASSEGNA_PROGR);
+
+                // Controllo e sovrascrivo la provenienza SOLO se vengo da pagine di ricerca ud
+                // Se currentPage è uguale a "" significa che arrivo da altre Action (Monitoraggio,
+                // Elenchi Versamento...)
+                // e quindi anche in questo caso non sovrascrivo...
+                // TODO: andrebbe gestisto il recupero del getLastPublisher provenendo da quelle
+                // Action
+                if (!detailContextPages.contains(currentPage) && !currentPage.equals("")) {
+                    getSession().setAttribute(UD_DETAIL_SOURCE_PAGE, currentPage);
+                }
+
                 BigDecimal idUnitaDoc = getForm().getUnitaDocumentarieList().getTable()
                         .getCurrentRow().getBigDecimal("id_unita_doc");
                 if (idUnitaDoc != null) {
@@ -2507,6 +2662,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         // Ottengo l'id dell'unitÃ documentaria
         getSession().setAttribute("idud", idUnitDoc);
+        getSession().setAttribute("row_ud_to_annul",
+                getForm().getUnitaDocumentarieList().getTable().getCurrentRowIndex());
         // Dall'id dell'unitÃ documentaria vado a prendere l'AroVVisUnitaDocRowBean
         AroVVisUnitaDocIamRowBean udRB = udHelper.getAroVVisUnitaDocIamRowBean(idUnitDoc);
         // Dall'id dell'unitÃ documentaria vado a prendere gli AroVLisDocTableBean
@@ -2548,6 +2705,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getUnitaDocumentarieDetail().getScarica_sip_ud().setEditMode();
         getForm().getUnitaDocumentarieDetail().getScarica_sip_ud().setDisableHourGlass(true);
 
+        // Imposto visibile il bottone per annullare l'unità documentaria
+        getForm().getUnitaDocumentarieDetail().getAnnulla_ud().setEditMode();
+        getForm().getUnitaDocumentarieDetail().getAnnulla_ud().setDisableHourGlass(true);
         if (!listIndiciAIPTB.isEmpty()) {
             getForm().getUnitaDocumentarieDetail().getScarica_xml_unisincro().setHidden(false);
             getForm().getUnitaDocumentarieDetail().getScarica_xml_unisincro().setEditMode();
@@ -2974,6 +3134,128 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 }
             } else {
                 forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_ASSEGNA_PROGR);
+            }
+        } else if (getLastPublisher()
+                .equals(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL_ANNUL_UD)) {
+            // Gestione salvataggio richiesta annullamento UD
+            getForm().getUnitaDocumentarieDetailAnnulUd().post(getRequest());
+
+            if (getForm().getUnitaDocumentarieDetailAnnulUd().validate(getMessageBox())) {
+                try {
+                    // Recupero i parametri dal form
+                    final String cdRichAnnulVers = getForm().getUnitaDocumentarieDetailAnnulUd()
+                            .getCd_rich_annul_vers().parse();
+                    final String dsRichAnnulVers = getForm().getUnitaDocumentarieDetailAnnulUd()
+                            .getDs_rich_annul_vers().parse();
+                    final String ntRichAnnulVers = getForm().getUnitaDocumentarieDetailAnnulUd()
+                            .getNt_rich_annul_vers().parse();
+                    final String tiRichAnnulVers = getForm().getUnitaDocumentarieDetailAnnulUd()
+                            .getTi_rich_annul_vers().parse();
+                    final String flForzaAnnul = getForm().getUnitaDocumentarieDetailAnnulUd()
+                            .getFl_forza_annul().parse();
+                    final String tiAnnullamento = getForm().getUnitaDocumentarieDetailAnnulUd()
+                            .getTi_annullamento().parse() != null
+                                    ? getForm().getUnitaDocumentarieDetailAnnulUd()
+                                            .getTi_annullamento().parse()
+                                    : CostantiDB.TipoAnnullamento.ANNULLAMENTO_VERSAMENTO.name();
+
+                    // Recupero l'id dell'unità documentaria dalla sessione
+                    BigDecimal idUnitaDoc = (BigDecimal) getSession()
+                            .getAttribute("idUnitaDocToAnnul");
+
+                    if (idUnitaDoc == null) {
+                        getMessageBox().addError(
+                                "Errore nel recupero dell'unità documentaria da annullare");
+                        forwardToPublisher(
+                                Application.Publisher.UNITA_DOCUMENTARIE_DETAIL_ANNUL_UD);
+                        return;
+                    }
+
+                    // Verifico che il codice richiesta non esista già
+                    if (annulVersEjb.checkCdRichAnnulVersExisting(cdRichAnnulVers,
+                            getUser().getIdOrganizzazioneFoglia())) {
+                        getMessageBox().addError(
+                                "Codice richiesta già utilizzato per un'altra richiesta di annullamento");
+                        forwardToPublisher(
+                                Application.Publisher.UNITA_DOCUMENTARIE_DETAIL_ANNUL_UD);
+                        return;
+                    }
+
+                    // Salvo gli attributi in sessione per la conferma
+                    Object[] attributi = {
+                            idUnitaDoc, cdRichAnnulVers, dsRichAnnulVers, ntRichAnnulVers,
+                            tiRichAnnulVers, flForzaAnnul, tiAnnullamento };
+
+                    // Mostro i pulsanti di conferma/annulla
+                    // getForm().getUnitaDocumentarieDetail().getConfermaCreaRichAnnulUd()
+                    // .setEditMode();
+                    // getForm().getUnitaDocumentarieDetail().getAnnullaCreaRichAnnulUd()
+                    // .setEditMode();
+
+                    // getRequest().setAttribute("customBoxCreaRichAnnulUd", true);
+                    // getMessageBox().addWarning(
+                    // "Confermare la creazione della richiesta di annullamento versamento?");
+                    if (!getMessageBox().hasError()) {
+
+                        // Eseguo il salvataggio effettivo
+                        eseguiCreaRichAnnulUd((BigDecimal) attributi[0], // idUnitaDoc
+                                (String) attributi[1], // cdRichAnnulVers
+                                (String) attributi[2], // dsRichAnnulVers
+                                (String) attributi[3], // ntRichAnnulVers
+                                (String) attributi[4], // tiRichAnnulVers
+                                (String) attributi[5], // flForzaAnnul
+                                (String) attributi[6] // tiAnnullamento
+                        );
+
+                        // Gestione ritorno a Ricerca UD
+                        if (!getMessageBox().hasError()) {
+
+                            // Recupero la pagina da cui ero arrivato se sono nel mondo delle
+                            // ricerche ud
+                            String sourcePage = (String) getSession()
+                                    .getAttribute(UD_DETAIL_SOURCE_PAGE);
+
+                            if (sourcePage != null
+                                    && (Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_SEMPLICE
+                                            .equals(sourcePage)
+                                            || Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_SEMPLICE_NUOVA
+                                                    .equals(sourcePage)
+                                            || Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA
+                                                    .equals(sourcePage)
+                                            || Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_DATI_SPEC
+                                                    .equals(sourcePage))) {
+
+                                setLastPublisher(sourcePage);
+                                // CASO 1: Vengo da una delle RICERCHE UD
+                                ricercaEDownload(false, false);
+                            } else {
+                                // CASO 2: Vengo da altri "mondi"
+                                // TODO: bisognerebbe discernere tutti i casi (Monitoraggio,
+                                // elenchi di versamento...) per ricaricare il loro contenuto
+                                // (conteggi monitoraggio,
+                                // lista ud presenti nell'elenco...) a seguito dell'annullamento
+                                // di questa ud
+                                elencoOnClick();
+                            }
+
+                        } else {
+                            forwardToPublisher(
+                                    Application.Publisher.UNITA_DOCUMENTARIE_DETAIL_ANNUL_UD);
+                        }
+                    } else {
+                        forwardToPublisher(
+                                Application.Publisher.UNITA_DOCUMENTARIE_DETAIL_ANNUL_UD);
+                    }
+
+                } catch (Exception ex) {
+                    log.error("Errore nella preparazione della richiesta di annullamento: "
+                            + ExceptionUtils.getRootCauseMessage(ex), ex);
+                    getMessageBox().addError(
+                            "Errore inatteso nella preparazione della richiesta di annullamento");
+                    forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL_ANNUL_UD);
+                }
+            } else {
+                forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL_ANNUL_UD);
             }
         } else if (getLastPublisher().equals(Application.Publisher.NOTA_UD_DETAIL)) {
             BigDecimal idUnitaDoc = getForm().getUnitaDocumentarieDetail().getId_unita_doc()
@@ -6562,12 +6844,12 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
     @Override
     public void downloadContenuto() throws Throwable {
-        ricercaEDownload(true);
+        ricercaEDownload(true, true);
     }
 
     @Override
     public void downloadContenutoAnnullate() throws Throwable {
-        ricercaEDownloadAnnullate(true);
+        ricercaEDownloadAnnullate(true, true);
     }
 
     @Override
@@ -6709,10 +6991,24 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
     @Override
     public void ricercaUDAnnullate() throws Throwable {
-        ricercaEDownloadAnnullate(false);
+        ricercaEDownloadAnnullate(false, true);
     }
 
-    private void ricercaEDownloadAnnullate(boolean effettuaDownload) throws EMFError {
+    private void ricercaEDownloadAnnullate(boolean effettuaDownload, boolean eseguiPost)
+            throws EMFError {
+        // MEV #11912
+        int savedPageSize = 10;
+        int savedRowIndex = 0;
+        boolean devoRipristinare = false;
+
+        if (!eseguiPost && getForm().getUnitaDocumentarieAnnullateList().getTable() != null) {
+            savedPageSize = getForm().getUnitaDocumentarieAnnullateList().getTable().getPageSize();
+            savedRowIndex = getForm().getUnitaDocumentarieAnnullateList().getTable()
+                    .getCurrentRowIndex();
+            devoRipristinare = true;
+        }
+        // end MEV #11912
+
         // /* Resetto la lista per evitare conflitti tra la ricerca avanzata (con selectedList)
         // e la ricerca versamenti annullati (lista "normale") aolo sw non sto facendo download
         // altrimenti
@@ -6722,8 +7018,10 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         String pageToRedirect = Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_UDANNULLATE;
         final UnitaDocumentarieForm.FiltriUnitaDocumentarieAnnullate filtri = getForm()
                 .getFiltriUnitaDocumentarieAnnullate();
-        // Esegue la post dei filtri compilati
-        filtri.post(getRequest());
+        if (eseguiPost) {
+            // Esegue la post dei filtri compilati
+            filtri.post(getRequest());
+        }
         // Valida i filtri per verificare quelli obbligatori e che siano del tipo corretto
         if (filtri.validate(getMessageBox())) {
             // Valida i campi di ricerca
@@ -6811,17 +7109,32 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                     dateAnnulValidate);
                     // Carico la tabella con i risultati nella lista usata per buildare il CSV
                     if (!getMessageBox().hasError()) {
-                        File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                                "Contenuto_ricerca_unita_documentarie.csv");
+                        // MAC#39494 - Correzione metodo di generazione file in fase di esportazione
+                        // di una ricerca
+                        // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
+                        // "Contenuto_ricerca_unita_documentarie.csv");
                         try {
+                            // MAC#39494 - Correzione metodo di generazione file in fase di
+                            // esportazione di una ricerca
+                            Path tmpPath = Files.createTempFile(
+                                    "Contenuto_ricerca_unita_documentarie_", ".csv");
+                            File tmpFile = tmpPath.toFile();
+
                             ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
                                     AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                             getRequest().setAttribute(
                                     WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                     getControllerName());
+
+                            // MAC#39494 - Correzione metodo di generazione file in fase di
+                            // esportazione di una ricerca
+                            String nomeFile = tmpFile.getName();
+                            String nomeFinale = nomeFile.substring(0, nomeFile.lastIndexOf("_") - 1)
+                                    + ".csv";
                             getSession().setAttribute(
                                     WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
-                                    tmpFile.getName());
+                                    nomeFinale);
+
                             getSession().setAttribute(
                                     WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(),
                                     tmpFile.getPath());
@@ -6853,13 +7166,40 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                             dateAcquisizioneValidate, dateUnitaDocValidate, dateAnnulValidate);
                     // Carico la tabella con i filtri impostati
                     getForm().getUnitaDocumentarieAnnullateList().setTable(tb);
-                    getForm().getUnitaDocumentarieAnnullateList().getTable().setPageSize(10);
-                    // Aggiungo alla lista una regola di ordinamento
-                    getForm().getUnitaDocumentarieAnnullateList().getTable().addSortingRule(
-                            AroVRicUnitaDocTableDescriptor.COL_DS_KEY_ORD, SortingRule.ASC);
+                    // MEV #11912
+                    if (devoRipristinare) {
+                        // Ripristino la dimensione pagina
+                        getForm().getUnitaDocumentarieAnnullateList().getTable()
+                                .setPageSize(savedPageSize);
 
-                    // Workaround in modo che la lista punti al primo record, non all'ultimo
-                    getForm().getUnitaDocumentarieAnnullateList().getTable().first();
+                        // Controllo Bounds Check sull'indice riga
+                        int totalRows = getForm().getUnitaDocumentarieAnnullateList().getTable()
+                                .size();
+
+                        if (totalRows > 0) {
+                            // Se l'indice salvato è oltre l'ultimo elemento disponibile
+                            // (es. ho cancellato l'ultimo record della lista), torno all'ultimo
+                            // disponibile.
+                            if (savedRowIndex >= totalRows) {
+                                savedRowIndex = totalRows - 1;
+                            }
+                            // Sicurezza per indici negativi
+                            if (savedRowIndex < 0) {
+                                savedRowIndex = 0;
+                            }
+
+                            // Ripristino la riga corrente: il framework calcolerà la pagina
+                            // corretta da mostrare
+                            getForm().getUnitaDocumentarieAnnullateList().getTable()
+                                    .setCurrentRowIndex(savedRowIndex);
+                        }
+                    } else {
+                        // RESET STANDARD (Nuova Ricerca)
+                        getForm().getUnitaDocumentarieAnnullateList().getTable().setPageSize(10);
+                        getForm().getUnitaDocumentarieAnnullateList().getTable().addSortingRule(
+                                AroVRicUnitaDocTableDescriptor.COL_DS_KEY_ORD, SortingRule.ASC);
+                        getForm().getUnitaDocumentarieAnnullateList().getTable().first();
+                    }
                 }
             }
         }
@@ -7337,6 +7677,112 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         }
 
         forwardToPublisher(Application.Publisher.RICERCA_DATA_MART);
+    }
+
+    @Override
+    public void annulla_ud() throws EMFError {
+        // Recupero i dati dell'unità documentaria corrente
+        BaseRowInterface udRowBean = getForm().getUnitaDocumentarieList().getTable()
+                .getCurrentRow();
+        BigDecimal idUnitaDoc = udRowBean.getBigDecimal("id_unita_doc");
+        AroUnitaDoc aroUnitaDoc = udHelper.findById(AroUnitaDoc.class, idUnitaDoc);
+
+        // Verifico che l'UD non sia già annullata
+        if (aroUnitaDoc.getDtAnnul().before(new Date())
+                || aroUnitaDoc.getDtAnnul().equals(new Date())) {
+            getMessageBox().addError("L'unità documentaria è già annullata");
+            forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL);
+            return;
+        }
+
+        // Verifico che l'UD non sia già presente in una richiesta di annullamento aperta
+        if (annulVersEjb.isUdInRichAnnulVers(idUnitaDoc)) {
+            getMessageBox().addError(
+                    "L'unità documentaria è già presente in una richiesta di annullamento");
+            forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL);
+            return;
+        }
+
+        // Preparo il form per la creazione della richiesta
+        getForm().getUnitaDocumentarieDetailAnnulUd().reset();
+        getForm().getUnitaDocumentarieDetailAnnulUd().setEditMode();
+
+        // Imposto il tipo richiesta
+        getForm().getUnitaDocumentarieDetailAnnulUd().getTi_rich_annul_vers()
+                .setValue(CostantiDB.TiRichAnnulVers.UNITA_DOC.name());
+
+        // Salvo in sessione l'id dell'unità documentaria
+        getSession().setAttribute("idUnitaDocToAnnul", idUnitaDoc);
+
+        // Popolo le combo
+        getForm().getUnitaDocumentarieDetailAnnulUd().getFl_forza_annul()
+                .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        getForm().getUnitaDocumentarieDetailAnnulUd().getTi_annullamento()
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_annullamento",
+                        CostantiDB.TipoAnnullamento.values()));
+
+        // Imposto valori di default
+        getForm().getUnitaDocumentarieDetailAnnulUd().getFl_forza_annul().setValue("0");
+        getForm().getUnitaDocumentarieDetailAnnulUd().getTi_annullamento()
+                .setValue(CostantiDB.TipoAnnullamento.ANNULLAMENTO_VERSAMENTO.name());
+
+        getForm().getUnitaDocumentarieDetailAnnulUd().setStatus(BaseElements.Status.update);
+
+        // Forward alla pagina di creazione richiesta annullamento UD
+        forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL_ANNUL_UD);
+    }
+
+    private void eseguiCreaRichAnnulUd(BigDecimal idUnitaDoc, String cdRichAnnulVers,
+            String dsRichAnnulVers, String ntRichAnnulVers, String tiRichAnnulVers,
+            String flForzaAnnul, String tiAnnullamento) {
+
+        try {
+            // Recupero i dati dell'unità documentaria
+            AroVVisUnitaDocIamRowBean udRowBean = udHelper.getAroVVisUnitaDocIamRowBean(idUnitaDoc);
+
+            if (udRowBean == null) {
+                getMessageBox().addError("Errore nel recupero dei dati dell'unità documentaria");
+                return;
+            }
+
+            // Creo la richiesta di annullamento
+            Long idRichAnnulVers = annulVersEjb.saveRichAnnulVersImmediata(getUser().getIdUtente(),
+                    cdRichAnnulVers, dsRichAnnulVers, ntRichAnnulVers, "1", // flImmediata = true
+                    getUser().getIdOrganizzazioneFoglia(), flForzaAnnul, tiAnnullamento,
+                    tiRichAnnulVers);
+
+            if (idRichAnnulVers != null) {
+                // Aggiungo l'item alla richiesta
+                BigDecimal progressivo = BigDecimal.ONE;
+
+                annulVersEjb.addUnitaDocToRichAnnulVers(BigDecimal.valueOf(idRichAnnulVers),
+                        udRowBean.getCdRegistroKeyUnitaDoc(), udRowBean.getAaKeyUnitaDoc(),
+                        udRowBean.getCdKeyUnitaDoc(), progressivo.intValue(),
+                        getUser().getIdUtente());
+
+                // Rimuovo dalla sessione l'id dell'unità documentaria
+                getSession().removeAttribute("idUnitaDocToAnnul");
+
+                // Resetto lo stato del form
+                getForm().getUnitaDocumentarieDetailAnnulUd().setStatus(BaseElements.Status.view);
+
+                annulVersEjb.annullamentoVersamento(idRichAnnulVers);
+
+                getMessageBox().addInfo("Richiesta di annullamento versamento evasa con successo");
+                getMessageBox().setViewMode(MessageBox.ViewMode.plain);
+
+            } else {
+                getMessageBox().addError("Errore nella creazione della richiesta di annullamento");
+            }
+
+        } catch (ParerUserError ex) {
+            getMessageBox().addError(ex.getDescription());
+        } catch (Exception ex) {
+            log.error("Errore nella creazione della richiesta di annullamento: "
+                    + ExceptionUtils.getRootCauseMessage(ex), ex);
+            getMessageBox()
+                    .addError("Errore inatteso nella creazione della richiesta di annullamento");
+        }
     }
 
     /**

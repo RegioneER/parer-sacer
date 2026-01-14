@@ -77,6 +77,8 @@
                 <sl:newLine />
                 <slf:lblField name="<%=MonitoraggioForm.ContenutoSacerTotaliUdDocComp.DIM_BYTES%>" colSpan="2" />
                 <sl:newLine />
+                <slf:lblField name="<%=MonitoraggioForm.ContenutoSacerTotaliUdDocComp.DIM_TERABYTES%>" colSpan="2" />
+                <sl:newLine />
             </slf:fieldSet>
             <sl:newLine skipLine="true" />
 

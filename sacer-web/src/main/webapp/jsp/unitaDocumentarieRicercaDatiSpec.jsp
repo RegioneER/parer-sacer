@@ -145,7 +145,8 @@
             <!-- piazzo i bottoni ricerca e pulisci -->
             <sl:pulsantiera>
                 <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.RICERCA_UD%>" colSpan="3" />
-                <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.PULISCI_UD%>" colSpan="3" />               
+                <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.PULISCI_UD%>" colSpan="3" />  
+                <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.DOWNLOAD_CONTENUTO%>" colSpan="3" />
             </sl:pulsantiera>
             <div><slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentariePerSerie.ID_CONTENUTO_SERIE%>" colSpan="1" /></div>
             <div><slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentariePerRichAnnulVers.ID_RICH_ANNUL_VERS%>" colSpan="1" /></div>

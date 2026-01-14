@@ -140,16 +140,17 @@ public class RecuperoSync {
 
     public void verificaCredenziali(String loginName, String password, String indirizzoIp,
             RispostaWSRecupero rispostaWs, RecuperoExt rec) {
-        verificaCredenziali(loginName, password, indirizzoIp, rispostaWs, rec, null);
+        verificaCredenziali(loginName, password, indirizzoIp, rispostaWs, rec, null, false);
     }
 
     public void verificaCredenziali(String loginName, String password, String indirizzoIp,
-            RispostaWSRecupero rispostaWs, RecuperoExt rec, String certCommonName) {
+            RispostaWSRecupero rispostaWs, RecuperoExt rec, String certCommonName,
+            boolean accessToken) {
         StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
         RispostaControlli tmpRispostaControlli = null;
 
         tmpRispostaControlli = myControlliWs.checkCredenziali(loginName, password, indirizzoIp,
-                TipiWSPerControlli.VERSAMENTO_RECUPERO, certCommonName);
+                TipiWSPerControlli.VERSAMENTO_RECUPERO, certCommonName, accessToken);
         if (!tmpRispostaControlli.isrBoolean()) {
             rispostaWs.setSeverity(SeverityEnum.ERROR);
             rispostaWs.setEsitoWsError(tmpRispostaControlli.getCodErr(),

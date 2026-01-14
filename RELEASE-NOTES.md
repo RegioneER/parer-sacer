@@ -1,19 +1,16 @@
-## 10.12.0 (21-11-2025)
+## 10.13.0 (14-01-2026)
 
-### Bugfix: 7
-- [#39305](https://parermine.regione.emilia-romagna.it/issues/39305) Correzione fIle scaricati da DIPS con estensione .null
-- [#39261](https://parermine.regione.emilia-romagna.it/issues/39261) Correzione del contatore RIEPILOGO ANNULLAMENTI nella pagina monitoraggio per struttura
-- [#39257](https://parermine.regione.emilia-romagna.it/issues/39257) Correzione errore critico pagina Elenchi di versamento fascicolo da validare
-- [#39022](https://parermine.regione.emilia-romagna.it/issues/39022) Correzioni relative all'AIP del fascicolo
-- [#39020](https://parermine.regione.emilia-romagna.it/issues/39020) Rendere possibile il caricamento dell'xsd del modello indice aip unisincro v2
-- [#38971](https://parermine.regione.emilia-romagna.it/issues/38971) Correzione gestione mancanza sistema versante in fase di importa parametri
-- [#38778](https://parermine.regione.emilia-romagna.it/issues/38778) Tabella automi versatori mostra automa_sacer_verso nel disciplinare tecnico
+### Bugfix: 5
+- [#39662](https://parermine.regione.emilia-romagna.it/issues/39662) Correzione dell'errata visualizzazione di UD annullate nella ricerca componenti
+- [#39656](https://parermine.regione.emilia-romagna.it/issues/39656) Correzione vista ARO_V_CHK_AIP_REST_ARCH_UD per gestione corretta dello stato della richiesta di restituzione archivio
+- [#39564](https://parermine.regione.emilia-romagna.it/issues/39564) Correzione casting in fase di creazione richiesta restituzione archivio sul campo id_Strut
+- [#39443](https://parermine.regione.emilia-romagna.it/issues/39443) Correzione annullamento fascicoli con aggiunta dell'eliminazione dei fascicoli da elaborare
+- [#39404](https://parermine.regione.emilia-romagna.it/issues/39404) Correzione recupero filtri a seguito di accesso al dettaglio versamenti
 
-### Novità: 7
-- [#39302](https://parermine.regione.emilia-romagna.it/issues/39302) Modifica voce di menu da "Informazioni su" a "Informazioni" esottovoce da "Info privacy" a "Trattamento dati personali".
-- [#39288](https://parermine.regione.emilia-romagna.it/issues/39288) Recupero componente tramite urn 
-- [#39278](https://parermine.regione.emilia-romagna.it/issues/39278) Patch di sicurezza per interventi legati a CVE
-- [#39183](https://parermine.regione.emilia-romagna.it/issues/39183) Possibilità di configurare un solo Tipo modello fascicolo standard per ambiente
-- [#38975](https://parermine.regione.emilia-romagna.it/issues/38975) Consentire la cancellazione delle richieste di annullamento in stato CHIUSA
-- [#38961](https://parermine.regione.emilia-romagna.it/issues/38961) Recupero componente unzippato
-- [#38689](https://parermine.regione.emilia-romagna.it/issues/38689) Modifica pagina Ricerca unità documentarie
+### Novità: 6
+- [#39416](https://parermine.regione.emilia-romagna.it/issues/39416) Introduzione dell'autenticazione con token nei servizi di recupero
+- [#39374](https://parermine.regione.emilia-romagna.it/issues/39374) Aggiunta dimensione in terabyte nell'Esame contenuto Sacer
+- [#38675](https://parermine.regione.emilia-romagna.it/issues/38675) Dettaglio struttura: aggiunta sezione Documenti del processo di conservazione
+- [#34861](https://parermine.regione.emilia-romagna.it/issues/34861) Adeguamento per invocazione servizio di estrazione (sbustamento) documento P7M per Trasformazione
+- [#31341](https://parermine.regione.emilia-romagna.it/issues/31341) Adeguamento funzionalità di restituzione archivio per gestione cancellazione UD.
+- [#11912](https://parermine.regione.emilia-romagna.it/issues/11912) Pulsante di annullamento del versamento in Dettaglio unità documentaria

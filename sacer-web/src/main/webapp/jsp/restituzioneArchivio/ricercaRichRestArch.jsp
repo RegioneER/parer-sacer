@@ -30,14 +30,22 @@
             <c:if test="${!empty requestScope.customBoxAssociazioniScaduteRestArch}">
                 <div class="messages customBoxAssociazioniScaduteRestArch ">
                     <ul>
-                        <li class="message warning ">Attenzione:</li>
+                        <li class="message warning ">Attenzione: la richiesta di restituzione archivio che si intende creare coinvolge le seguenti strutture:</li>
+                        <c:forEach items="${requestScope.associazioniCoinvolte}" var="elem">
+                               <li>${elem}</li>
+                        </c:forEach>
                     </ul>
+                    <br>
+                    <br>
                     <c:if test="${!empty requestScope.associazioniScadute}">            
                         Le seguenti strutture presentano un'associazione non valida con l'ente convenzionato:                        
                         <ul>
-                            <c:forTokens items = "${requestScope.associazioniScadute}" delims = "," var = "associazioniScadute">
+                            <%--<c:forTokens items = "${requestScope.associazioniScadute}" delims = "," var = "associazioniScadute">
                                 <li><c:out value = "${associazioniScadute}"/></li>
-                            </c:forTokens>
+                            </c:forTokens>--%>
+                            <c:forEach items="${requestScope.associazioniScadute}" var="elem">
+                               <li>${elem}</li>
+                            </c:forEach>
                         </ul>
                     </c:if>
                     <br>
@@ -53,7 +61,7 @@
                         </c:forEach>
                         </ul>
                     </c:if>
-                    Si desidera proseguire con il salvataggio?
+                    E' necessario verificare le associazioni prima di procedere con la creazione della richiesta.
                 </div>
             </c:if>
             <c:if test="${!empty requestScope.creaRichRestArchBox}">

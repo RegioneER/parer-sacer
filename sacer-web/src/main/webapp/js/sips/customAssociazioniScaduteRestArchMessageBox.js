@@ -22,13 +22,8 @@ function CMessagesAlertBox() {
         resizable: false,
         dialogClass: "alertBox",
         buttons : {
-            "Si" : function() {
-                $(this).dialog("close");                
-                window.location = "RestituzioneArchivio.html?operation=confermaCreazioneRichiestaRestituzioneArchivio";
-            },
-            "No" : function() {
-                $(this).dialog("close");                
-                window.location = "RestituzioneArchivio.html?operation=annullaCreazioneRichiestaRestituzioneArchivio";
+            "Ok" : function() {
+                $(this).dialog("close");
             }
         }
     });

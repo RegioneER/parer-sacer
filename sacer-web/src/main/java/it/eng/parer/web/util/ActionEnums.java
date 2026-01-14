@@ -37,7 +37,7 @@ public class ActionEnums {
 
     public enum TipoRicercaAttribute {
 
-        SEMPLICE, AVANZATA, VERS_ANNULLATI, DATA_MART
+        SEMPLICE, SEMPLICE_NEW, AVANZATA, DATI_SPEC, VERS_ANNULLATI, DATA_MART
     }
 
     public enum DichAutor {

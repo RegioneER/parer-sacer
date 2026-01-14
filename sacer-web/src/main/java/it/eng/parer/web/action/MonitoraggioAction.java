@@ -16,10 +16,7 @@ package it.eng.parer.web.action;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.ejb.TipoFascicoloEjb;
 import it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm;
 import it.eng.parer.web.ejb.MonitoraggioAggMetaEjb;
-import org.joda.time.DateTime;
 import it.eng.parer.slite.gen.form.MonitoraggioAggMetaForm;
-import it.eng.parer.web.validator.TypeValidator.ChiaveBean;
-import it.eng.parer.web.validator.MonitoraggioAggMetaValidator;
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneSottoStrutture.ejb.SottoStruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
@@ -38,11 +35,6 @@ import it.eng.parer.slite.gen.form.MonitoraggioForm.*;
 import it.eng.parer.slite.gen.tablebean.*;
 import it.eng.parer.slite.gen.viewbean.*;
 import it.eng.parer.volume.utils.VolumeEnums;
-import static it.eng.parer.web.action.MonitoraggioFascicoliAction.PAR_TI_CREAZIONE;
-import static it.eng.parer.web.action.MonitoraggioFascicoliAction.TI_CREAZIONE_30GG;
-import static it.eng.parer.web.action.MonitoraggioFascicoliAction.TI_CREAZIONE_B30GG;
-import static it.eng.parer.web.action.MonitoraggioFascicoliAction.TI_CREAZIONE_OGGI;
-import static it.eng.parer.web.action.MonitoraggioFascicoliAction.TI_TOTALE;
 import it.eng.parer.web.dto.MonitoraggioAttributiVersFallitiDaDocNonVersati;
 import it.eng.parer.web.dto.MonitoraggioFiltriListaDocBean;
 import it.eng.parer.web.dto.MonitoraggioFiltriListaVersFallitiBean;
@@ -134,7 +126,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STPageOrientation;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblLayoutType;
-import it.eng.parer.web.ejb.MonitoraggioAggMetaEjb.StatoGenerazioneIndiceAip;
 
 /**
  *

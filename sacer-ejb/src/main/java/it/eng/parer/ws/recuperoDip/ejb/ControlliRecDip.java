@@ -71,13 +71,7 @@ import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.CostantiDB.StatoFileTrasform;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -87,7 +81,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -104,7 +97,7 @@ public class ControlliRecDip {
     public static final String REG_EXP_VERSIONE = "^DefaultVER([0-9]{6}+)\\s*$";
     public static final int PAD_NUM_VERSIONE = 6;
 
-    private static final String P7MEXTRACTOR_CONTEXT = "/api/file-xml";
+    private static final String P7MEXTRACTOR_CONTEXT = "/api/unsigned-p7m";
     //
     private static final Logger log = LoggerFactory.getLogger(ControlliRecDip.class);
     @Resource
@@ -683,7 +676,7 @@ public class ControlliRecDip {
                         new File(System.getProperty("java.io.tmpdir")));
                 MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
                 FileUtils.copyInputStreamToFile(parametriTrasf.getFileXml(), xmlp7m);
-                body.add("xml-p7m", new FileSystemResource(xmlp7m));
+                body.add("signed-p7m", new FileSystemResource(xmlp7m));
 
                 HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body,
                         headers);

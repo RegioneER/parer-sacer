@@ -148,16 +148,17 @@ public class RecuperoFascSync {
 
     public void verificaCredenziali(String loginName, String password, String indirizzoIp,
             RispostaWSRecuperoFasc rispostaWsFasc, RecuperoFascExt recFasc) {
-        verificaCredenziali(loginName, password, indirizzoIp, rispostaWsFasc, recFasc, null);
+        verificaCredenziali(loginName, password, indirizzoIp, rispostaWsFasc, recFasc, null, false);
     }
 
     public void verificaCredenziali(String loginName, String password, String indirizzoIp,
-            RispostaWSRecuperoFasc rispostaWsFasc, RecuperoFascExt recFasc, String certCommonName) {
+            RispostaWSRecuperoFasc rispostaWsFasc, RecuperoFascExt recFasc, String certCommonName,
+            boolean accessToken) {
         StatoConservazioneFasc myEsito = rispostaWsFasc.getIstanzaEsito();
         RispostaControlli tmpRispostaControlli = null;
 
         tmpRispostaControlli = myControlliWs.checkCredenziali(loginName, password, indirizzoIp,
-                TipiWSPerControlli.VERSAMENTO_RECUPERO_FASC, certCommonName);
+                TipiWSPerControlli.VERSAMENTO_RECUPERO_FASC, certCommonName, accessToken);
         if (!tmpRispostaControlli.isrBoolean()) {
             rispostaWsFasc.setSeverity(SeverityEnum.ERROR);
             rispostaWsFasc.setEsitoWsError(tmpRispostaControlli.getCodErr(),

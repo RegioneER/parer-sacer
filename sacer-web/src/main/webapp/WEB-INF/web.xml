@@ -43,6 +43,15 @@
     <filter-mapping>
         <filter-name>keycloak</filter-name>
         <url-pattern>/InvioRichiestaAnnullamentoVersamenti</url-pattern>
+        <url-pattern>/RecUniDocMultiMedia</url-pattern>
+        <url-pattern>/RecPCUniDocMultiMedia</url-pattern>
+        <url-pattern>/RecDIPUnitaDocumentariaSync</url-pattern>
+        <url-pattern>/RecDIPEsibizioneSync</url-pattern>
+        <url-pattern>/RecAIPUnitaDocumentariaSync</url-pattern>
+        <url-pattern>/RecDIPComponenteTrasformatoSync</url-pattern>
+        <url-pattern>/RecDIPRapportiVersSync</url-pattern>
+        <url-pattern>/RecDIPStatoConservazioneSync</url-pattern>
+        <url-pattern>/RecDIPProveConservSync</url-pattern>        
     </filter-mapping>
 
     <!-- QUESTE LE LASCIO !! -->

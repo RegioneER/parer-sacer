@@ -257,6 +257,8 @@
                 <sl:newLine />
                 <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieDetail.ASSEGNA_PROGRESSIVO%>"  width="w20" labelWidth="w40" controlWidth="w60" />
                 <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieDetail.VISUALIZZA_UD_ANNUL%>" width="w20" labelWidth="w40" controlWidth="w60"  />
+                <sl:newLine />
+                <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieDetail.ANNULLA_UD%>" width="w20" labelWidth="w40" controlWidth="w60"  />
             </slf:fieldSet>
             <sl:newLine skipLine="true"/>
 

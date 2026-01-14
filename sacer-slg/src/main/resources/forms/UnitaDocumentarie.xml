@@ -430,6 +430,8 @@
         <Button Description="Scarica rapporto di versamento" Name="scarica_rv" Type="STRING"/>
         <!-- Bottone visualizza ud annullata -->
         <Button Description="Visualizza ud annullata" Name="visualizza_ud_annul" Type="STRING"/>
+        <!-- Bottone annulla ud  -->
+        <Button Description="Annulla ud" Name="annulla_ud" Type="STRING"/>
         <Input Description="idUnitaDocAnnullata" Name="id_unita_doc_annullata" Type="INTEGER"/>
         <!-- Bottone visualizza ud versata -->
         <Button Description="Visualizza nuovo versamento" Name="visualizza_ud_versata" Type="STRING"/>
@@ -1018,5 +1020,14 @@
         <Input Description="Data versamento" Name="dt_versamento" Type="DATETIME"/>
         <Input Description="Stato ud" Name="ti_stato_ud_cancellate" Type="STRING"/>
     </List>
+
+    <Fields Name="UnitaDocumentarieDetailAnnulUd" Description="Creazione richiesta di annullamento ud">
+        <Input Name="ti_rich_annul_vers" Description="Tipo richiesta" Type="STRING" Hidden="true" />
+        <Input Name="cd_rich_annul_vers" Description="Richiesta" Type="STRING" Required="true" MaxLength="100"/>
+        <Input Name="ds_rich_annul_vers" Description="Descrizione" Type="STRING" Required="true" MaxLength="254"/>
+        <TextArea Name="nt_rich_annul_vers" Description="Motivazione" Type="STRING" Required="true" Rows="20" Cols="100" MaxLength="2000"/>
+        <ComboBox Name="fl_forza_annul" Description="Forza annullamento" Type="STRING" Required="true"/>
+        <ComboBox Name="ti_annullamento" Description="Tipo annullamento" Type="STRING"/>
+    </Fields>
     
 </Form>
