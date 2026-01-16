@@ -678,6 +678,7 @@
         <Input Type="INTEGER" Description="Numero documenti" Name="num_doc" Readonly="true" GroupingDecimal="true"/>
         <Input Type="INTEGER" Description="Numero componenti" Name="num_comp" Readonly="true" GroupingDecimal="true"/>
         <Input Type="INTEGER" Description="Dimensione in bytes" Name="dim_bytes" Readonly="true" GroupingDecimal="true"/>
+        <Input Type="DECIMAL" Description="Dimensione in terabytes" Name="dim_terabytes" Readonly="true" GroupingDecimal="true"/>
     </Fields>
 
     <!-- Contenuto Sacer Lista -->

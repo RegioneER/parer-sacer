@@ -564,13 +564,13 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
      * @param indirizzoIp indirizzo IP
      * @param rispostaWs  bean RispostaWSInvioRichiestaAnnullamentoVersamenti
      * @param ravExt      bean InvioRichiestaAnnullamentoVersamentiExt
-     * @param isOAuth2    flag isOAuth2
+     * @param accessToken flag accessToken
      */
     public void verificaCredenziali(String loginName, String password, String indirizzoIp,
             RispostaWSInvioRichiestaAnnullamentoVersamenti rispostaWs,
-            InvioRichiestaAnnullamentoVersamentiExt ravExt, boolean isOAuth2) {
+            InvioRichiestaAnnullamentoVersamentiExt ravExt, boolean accessToken) {
         RispostaControlli tmpRispostaControlli = controlliWS.checkCredenziali(loginName, password,
-                indirizzoIp, TipiWSPerControlli.ANNULLAMENTO, isOAuth2);
+                indirizzoIp, TipiWSPerControlli.ANNULLAMENTO, accessToken);
         if (!tmpRispostaControlli.isrBoolean()) {
             rispostaWs.setSeverity(SeverityEnum.ERROR);
             rispostaWs.setEsitoWsError(tmpRispostaControlli.getCodErr(),

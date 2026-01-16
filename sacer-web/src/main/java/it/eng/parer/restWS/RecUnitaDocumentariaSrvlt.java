@@ -27,13 +27,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
@@ -62,8 +63,7 @@ import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.versamento.dto.SyncFakeSessn;
 import it.eng.parer.ws.xml.versRespStato.StatoConservazione;
 import it.eng.spagoCore.ConfigSingleton;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import it.eng.spagoLite.security.KeycloakAuthorizationServlet;
 
 /**
  *
@@ -71,7 +71,7 @@ import java.util.zip.ZipInputStream;
  */
 @WebServlet(urlPatterns = {
         "/RecDIPUnitaDocumentariaSync" }, asyncSupported = true)
-public class RecUnitaDocumentariaSrvlt extends HttpServlet {
+public class RecUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(RecUnitaDocumentariaSrvlt.class);
@@ -163,7 +163,6 @@ public class RecUnitaDocumentariaSrvlt extends HttpServlet {
         // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai servizi di
         // recupero con certificato
         sessioneFinta.setCertCommonName(myRequestPrsr.leggiCertCommonName(request));
-        // log.info("Request, indirizzo IP di provenienza: " + sessioneFinta.getIpChiamante());
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             // Check that we have a file upload request
@@ -198,8 +197,16 @@ public class RecUnitaDocumentariaSrvlt extends HttpServlet {
                     // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai
                     // servizi di recupero con
                     // certificato
-                    fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig, null,
-                            sessioneFinta.getCertCommonName() == null ? false : true);
+                    // Oauth2 - Verifica se la richiesta è autenticata con token Oauth2
+                    boolean hasAuthHeader = hasAuthorizationHeader(request);
+
+                    if (hasAuthHeader) {
+                        fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig,
+                                getAccessToken(request));
+                    } else {
+                        fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig,
+                                sessioneFinta.getCertCommonName() == null ? false : true);
+                    }
                     //
                     if (rispostaWs.getSeverity() != SeverityEnum.OK) {
                         rispostaWs.setEsitoWsError(rispostaWs.getErrorCode(),
@@ -231,7 +238,8 @@ public class RecUnitaDocumentariaSrvlt extends HttpServlet {
                         tmpAvanzamento.setFase("verifica credenziali").logAvanzamento();
                         recuperoSync.verificaCredenziali(sessioneFinta.getLoginName(),
                                 sessioneFinta.getPassword(), sessioneFinta.getIpChiamante(),
-                                rispostaWs, myRecuperoExt, sessioneFinta.getCertCommonName());
+                                rispostaWs, myRecuperoExt, sessioneFinta.getCertCommonName(),
+                                hasAuthHeader);
                     }
 
                     // verifica formale e semantica dell'XML di versamento

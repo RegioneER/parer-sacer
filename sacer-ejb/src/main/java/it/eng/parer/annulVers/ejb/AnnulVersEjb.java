@@ -325,6 +325,93 @@ public class AnnulVersEjb {
     }
 
     /**
+     * Esegue il salvataggio in transazione del nuovo record di richiesta annullamento immediato del
+     * versamento anche senza fileByteArray
+     *
+     * @param idUserIam       utente che crea la richiesta di annullamento
+     * @param cdRichAnnulVers codice richiesta
+     * @param dsRichAnnulVers descrizione richiesta
+     * @param ntRichAnnulVers nota richiesta
+     * @param flImmediata     flag di richiesta immediata
+     * @param idStrut         la struttura per cui viene creata la serie
+     * @param flForzaAnnul    flag forzatura annullamento
+     *
+     * @param tiAnnullamento  tipo di annullamento
+     *
+     * @param tiRichAnnulVers tipo richiesta annullamento
+     *
+     *
+     * @return id richiesta
+     *
+     * @throws ParerUserError errore generico
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Long saveRichAnnulVersImmediata(long idUserIam, String cdRichAnnulVers,
+            String dsRichAnnulVers, String ntRichAnnulVers, String flImmediata, BigDecimal idStrut,
+            String flForzaAnnul, String tiAnnullamento, String tiRichAnnulVers)
+            throws ParerUserError {
+        logger.info("Eseguo il salvataggio della richiesta di annullamento");
+        Date now = Calendar.getInstance().getTime();
+        Long idRich = null;
+        try {
+            OrgStrut strut = helper.findById(OrgStrut.class, idStrut);
+            IamUser user = helper.findById(IamUser.class, idUserIam);
+            if (user.getAroStatoRichAnnulVers() == null) {
+                user.setAroStatoRichAnnulVers(new ArrayList<>());
+            }
+
+            // Preparo la richiesta da registrare
+            AroRichAnnulVers rich = new AroRichAnnulVers();
+            rich.setCdRichAnnulVers(cdRichAnnulVers);
+            rich.setDsRichAnnulVers(dsRichAnnulVers);
+            rich.setNtRichAnnulVers(ntRichAnnulVers);
+            rich.setTiRichAnnulVers(tiRichAnnulVers);
+            rich.setDtCreazioneRichAnnulVers(now);
+            rich.setTiCreazioneRichAnnulVers(CostantiDB.TipoCreazioneRichAnnulVers.ON_LINE.name());
+            rich.setFlImmediata(flImmediata);
+            rich.setFlForzaAnnul(flForzaAnnul);
+            rich.setTiAnnullamento(tiAnnullamento);
+            rich.setFlRichPing("0");
+            rich.setOrgStrut(strut);
+            if (rich.getAroFileRichAnnulVers() == null) {
+                rich.setAroFileRichAnnulVers(new ArrayList<>());
+            }
+            if (rich.getAroItemRichAnnulVers() == null) {
+                rich.setAroItemRichAnnulVers(new ArrayList<>());
+            }
+            if (rich.getAroStatoRichAnnulVers() == null) {
+                rich.setAroStatoRichAnnulVers(new ArrayList<>());
+            }
+
+            helper.insertEntity(rich, true);
+
+            // Preparo lo stato da registrare
+            String stato = CostantiDB.StatoRichAnnulVers.CHIUSA.name();
+            AroStatoRichAnnulVers statoRichAnnulVers = context.getBusinessObject(AnnulVersEjb.class)
+                    .createAroStatoRichAnnulVers(rich, stato, now, null, user);
+
+            helper.insertEntity(statoRichAnnulVers, true);
+
+            // Aggiorno l’identificatore dello stato corrente della richiesta assegnando
+            // l’identificatore dello stato
+            // inserito
+            rich.setIdStatoRichAnnulVersCor(
+                    new BigDecimal(statoRichAnnulVers.getIdStatoRichAnnulVers()));
+
+            logger.info("Salvataggio della richiesta annullamento completato");
+            idRich = rich.getIdRichAnnulVers();
+        } catch (Exception ex) {
+            logger.error(
+                    "Errore imprevisto durante il salvataggio della richiesta di annullamento del versamento : "
+                            + ExceptionUtils.getRootCauseMessage(ex),
+                    ex);
+            throw new ParerUserError(
+                    "Eccezione imprevista durante il salvataggio della richiesta di annullamento del versamento");
+        }
+        return idRich;
+    }
+
+    /**
      * Esegue il salvataggio in transazione del nuovo record di richiesta annullamento versamento
      *
      * @param idUserIam            id user Iam
@@ -1124,6 +1211,28 @@ public class AnnulVersEjb {
         logger.info("{} Esecuzione job terminata con successo!", LOG_MESSAGE_ANNULLA_UD);
     }
 
+    public void annullamentoVersamento(long idRichAnnulVers) {
+        AroRichAnnulVers richiestaAnnullamento = helper.findById(AroRichAnnulVers.class,
+                idRichAnnulVers);
+
+        if (richiestaAnnullamento != null) {
+            // Determino l'utente che ha definito lo stato corrente della richiesta
+            long idUserIam = getUserFirstStateRich(
+                    BigDecimal.valueOf(richiestaAnnullamento.getIdRichAnnulVers()));
+            context.getBusinessObject(AnnulVersEjb.class).elaboraRichiestaAnnullamento(
+                    richiestaAnnullamento.getIdRichAnnulVers(), idUserIam,
+                    Constants.WS_ANNULLAMENTO);
+        }
+
+        /*
+         * Scrivo in LogJob la fine corretta dell'esecuzione del job di Annullamento Versamenti
+         * Unit\u00E0 Documentarie
+         */
+        jobHelper.writeAtomicLogJob(JobConstants.JobEnum.EVASIONE_RICH_ANNUL_VERS.name(),
+                JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
+        logger.info("{} Esecuzione job terminata con successo!", LOG_MESSAGE_ANNULLA_UD);
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void elaboraRichiestaAnnullamento(long idRichAnnulVers, long idUserIam,
             String modalita) {
@@ -1584,8 +1693,8 @@ public class AnnulVersEjb {
             String tipoCancellazione = configurationHelper.getAplValoreParamApplic(
                     CostantiDB.ParametroAppl.TI_CANCELLAZIONE_MS_UD_DEL,
                     AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
-            int totaliDataMart = dataMartEjb.insertUdDataMartAnnulVersCentroStella(idRichAnnulVers,
-                    richiestaAnnullamento.getCdRichAnnulVers(),
+            int totaliDataMart = dataMartEjb.insertUdDataMartAnnulVersCentroStella(
+                    BigDecimal.valueOf(idRichAnnulVers), richiestaAnnullamento.getCdRichAnnulVers(),
                     CostantiDB.TiMotCancellazione.A.name(), tipoCancellazione);
             logger.info("Gestione DataMart Annullamento Versamenti: inserite {} ud in DM_UD_DEL",
                     totaliDataMart);
@@ -1734,6 +1843,17 @@ public class AnnulVersEjb {
                 richiestaAnnullamento.getNtRichAnnulVers());
         // Modifico i collegamenti ai fascicoli corrispondenti agli item
         helper.updateCollegamentiFasc(idRichAnnulVers);
+        // MAC #39443 - elimina gli eventuali record corrispondenti ai fascicoli per i quali creare
+        // l’indice AIP presenti nella tabella FAS_AIP_FASCICOLO_DA_ELAB
+        logger.debug(
+                "Annullamento Versamenti Fascicoli - Elimina i record relativi ai fascicoli presenti in FAS_AIP_FASCICOLO_DA_ELAB per i quali calcolare l'indice AIP della richiesta avente id: {}",
+                idRichAnnulVers);
+        List<Long> idFascicoloListForAipDaElabToDelete = helper.getFascicoliItem(idRichAnnulVers);
+        if (!idFascicoloListForAipDaElabToDelete.isEmpty()) {
+            helper.deleteFasAipFascicoloDaElab(idFascicoloListForAipDaElabToDelete);
+        }
+        // end MAC #39443
+
         // MAC#22156
         logger.debug(
                 "Annullamento Versamenti Fascicoli - Aggiorna le unit\u00E0 doc appartenenti ai fascicoli della richiesta, assegnando stato = AIP_GENERATO o AIP_FIRMATO, purch\u00E8 tali unit\u00E0 doc non appartengano ad altro fascicolo con stato = VERSAMENTO_IN_ARCHIVIO o IN_ARCHIVIO");

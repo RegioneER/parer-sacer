@@ -34,6 +34,7 @@ import it.eng.parer.entity.constraint.AroRichiestaRa;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.firma.crypto.verifica.SpringTikaSingleton;
 import it.eng.parer.firma.crypto.verifica.VerFormatiEnums;
+import it.eng.parer.grantedEntity.SIOrgEnteConvenzOrg;
 import it.eng.parer.restArch.ejb.RestituzioneArchivioEjb;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
@@ -113,6 +114,8 @@ import it.eng.parer.slite.gen.tablebean.OrgSubStrutRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgUsoSistemaMigrazRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgUsoSistemaMigrazTableBean;
 import it.eng.parer.slite.gen.tablebean.SIOrgEnteConvenzOrgRowBean;
+import it.eng.parer.slite.gen.viewbean.DecDocProcessoConservRowBean;
+import it.eng.parer.slite.gen.viewbean.DecDocProcessoConservTableBean;
 import it.eng.parer.slite.gen.viewbean.DecVRicCriterioRaggrRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVRicCriterioRaggrTableBean;
 import it.eng.parer.slite.gen.viewbean.OrgVRicEnteTableBean;
@@ -148,6 +151,9 @@ import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -168,12 +174,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.ejb.EJB;
 import javax.xml.bind.JAXBException;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -186,10 +194,10 @@ public class StruttureAction extends StruttureAbstractAction {
 
     private static final String ERRORE_CARICAMENTO_STRUTTURA = "Errore durante il caricamento della struttura";
     private static final String WARN_VALORE_STRUTTURA_ASSENTE = "Valore sulla struttura non presente: nessuna cancellazione effettuata";
-    private static final String ECCEZIONE_IMPORT_TIPO_UD = "Eccezione nell'import del tipo unità documentaria";
-    private static final String ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_SUCCESSIVA_FINE = "Errore di compilazione form: la data di inizio validità è successiva a quella di fine validità</br>";
-    private static final String ERRORE_COMPILAZIONE_DATA_FINE_VALIDITA_ASSENTE = "Errore di compilazione form: data fine validità non inserita</br>";
-    private static final String ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_ASSENTE = "Errore di compilazione form: data inizio validità non inserita</br>";
+    private static final String ECCEZIONE_IMPORT_TIPO_UD = "Eccezione nell'import del tipo unitÃ  documentaria";
+    private static final String ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_SUCCESSIVA_FINE = "Errore di compilazione form: la data di inizio validitÃ  Ã¨ successiva a quella di fine validitÃ </br>";
+    private static final String ERRORE_COMPILAZIONE_DATA_FINE_VALIDITA_ASSENTE = "Errore di compilazione form: data fine validitÃ  non inserita</br>";
+    private static final String ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_ASSENTE = "Errore di compilazione form: data inizio validitÃ  non inserita</br>";
     private static final String ERRORE_COMPILAZIONE_ENTE_CONVENZIONATO_ASSENTE = "Errore di compilazione form: ente convenzionato non inserito</br>";
     private static final String ERRORE_COMPILAZIONE_AMBIENTE_ASSENTE = "Errore di compilazione form: ambiente ente convenzionato non inserito</br>";
     private static final String ERRORE_COMPILAZIONE_STRUTTURA_ASSENTE = "Errore di compilazione form: Nome struttura non inserito</br>";
@@ -500,6 +508,11 @@ public class StruttureAction extends StruttureAbstractAction {
                     } else {
                         getForm().getXsdDatiSpecList().setUserOperations(true, true, true, true);
                     }
+                } else if (lista.equals(getForm().getDocumentiProcessoConservList().getName())) {
+                    initDocumentoProcessoConservDetail();
+                    DecDocProcessoConservRowBean currentRow = (DecDocProcessoConservRowBean) getForm()
+                            .getDocumentiProcessoConservList().getTable().getCurrentRow();
+                    loadDettaglioDocumentoProcessoConserv(currentRow.getIdDocProcessoConserv());
                 }
             }
         } catch (ParerUserError e) {
@@ -648,7 +661,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     /**
-     * Metodo per il salvataggio e la modifica di un'entità "Struttura"
+     * Metodo per il salvataggio e la modifica di un'entitÃ  "Struttura"
      *
      * @throws EMFError errore generico
      */
@@ -687,7 +700,7 @@ public class StruttureAction extends StruttureAbstractAction {
             if (struttura.getDt_ini_val_strut().parse()
                     .after(struttura.getDt_fine_val_strut().parse())) {
                 getMessageBox().addError(
-                        "Errore di compilazione form: la data di inizio validità struttura è successiva a quella di fine validità</br>");
+                        "Errore di compilazione form: la data di inizio validità  struttura è successiva a quella di fine validità</br>");
             }
 
             if (!struttura.getStatus().equals(Status.update)) {
@@ -1369,7 +1382,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     /**
-     * Metodo per il salvataggio o la modifica di un'entità DecTipoRapprComp
+     * Metodo per il salvataggio o la modifica di un'entitÃ  DecTipoRapprComp
      *
      * @throws EMFError errore generico
      */
@@ -1758,6 +1771,9 @@ public class StruttureAction extends StruttureAbstractAction {
                 getForm().getCategorieEnti().getCd_categ_ente().setDescription(cdDescription);
                 getForm().getCategorieEnti().getDs_categ_ente().setDescription(dsDescription);
                 forwardToPublisher(Application.Publisher.CATEGORIE_ENTI_DETAIL);
+            } else if (lista.equals(getForm().getDocumentiProcessoConservList().getName())
+                    && action.equals(ListAction.NE_DETTAGLIO_VIEW)) {
+                forwardToPublisher(Application.Publisher.DETTAGLIO_DOCUMENTO_PROCESSO_CONSERV);
             }
         }
     }
@@ -1861,7 +1877,7 @@ public class StruttureAction extends StruttureAbstractAction {
 
     /*
      * Questo metodo viene chiamato quaando nella form di dettaglio si punta ad un unico record
-     * presente nella lista chiamante, quando ce ne sono più di uno viene chiamato il metodo
+     * presente nella lista chiamante, quando ce ne sono piÃ¹ di uno viene chiamato il metodo
      * deleteStruttureList()
      */
     @Override
@@ -3527,6 +3543,12 @@ public class StruttureAction extends StruttureAbstractAction {
                     indMap.put("corrPingPS",
                             getForm().getCorrispondenzePingList().getTable().getPageSize());
                 }
+                if (getForm().getDocumentiProcessoConservList().getTable() != null) {
+                    indMap.put("docProcCons", getForm().getDocumentiProcessoConservList().getTable()
+                            .getCurrentRowIndex());
+                    indMap.put("docProcConsPS",
+                            getForm().getDocumentiProcessoConservList().getTable().getPageSize());
+                }
             }
 
             // Lista registri
@@ -3623,6 +3645,24 @@ public class StruttureAction extends StruttureAbstractAction {
             getForm().getEnteConvenzOrgList().getTable().addSortingRule("dt_ini_val",
                     SortingRule.DESC);
             getForm().getEnteConvenzOrgList().getTable().sort();
+
+            SIOrgEnteConvenzOrg orgEnteConvenzOrg = ambienteEjb
+                    .getOrgEnteConvenzOrgMostRecent(idStrut);
+
+            if (orgEnteConvenzOrg != null) {
+                try {
+                    getForm().getDocumentiProcessoConservList()
+                            .setTable(struttureEjb.getDecDocProcessoConservByEnteTableBean(
+                                    new BigDecimal(orgEnteConvenzOrg.getSiOrgEnteConvenz()
+                                            .getIdEnteSiam().longValue())));
+                } catch (ParerUserError ex) {
+                    java.util.logging.Logger.getLogger(StruttureAction.class.getName())
+                            .log(Level.SEVERE, null, ex);
+                }
+            }
+
+            getForm().getDocumentiProcessoConservList().getTable().setPageSize(10);
+            getForm().getDocumentiProcessoConservList().getTable().first();
             try {
                 // Lista parametri
                 // loadListeParametriStruttura(idStrut, null, false, false, false, false, true);
@@ -3813,7 +3853,7 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getTipoUnitaDocList().getTable().setCurrentRowIndex(nr);
         /*
          * Propago l'idStruttura che ho salvato in memoria, per passarlo con la nuova form che
-         * porterò nella nuova action
+         * porterà nella nuova action
          */
         BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
         BigDecimal idStrut = rowBean.getBigDecimal("id_strut");
@@ -3866,7 +3906,7 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getTipoDocList().getTable().setCurrentRowIndex(nr);
         /*
          * Propago l'idStruttura che ho salvato in memoria, per passarlo con la nuova form che
-         * porterò nella nuova action
+         * porterà nella nuova action
          */
         BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
         BigDecimal idStrut = rowBean.getBigDecimal("id_strut");
@@ -4569,7 +4609,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     private void redirectToSubStrutPage(String action) throws EMFError {
-        // Qualsiasi azione sia, la gestirò nell'action
+        // Qualsiasi azione sia, la gestirà nell'action
         SubStruttureForm form = new SubStruttureForm();
 
         form.getSubStrutList().setTable(getForm().getSubStrutList().getTable());
@@ -4873,7 +4913,8 @@ public class StruttureAction extends StruttureAbstractAction {
                             + row.toString());
             form.getXsdDatiSpecList().setTable(getForm().getXsdDatiSpecList().getTable());
 
-            // Non controllo il publisher da cui arrivo perché sono sicuro di essere in quello della
+            // Non controllo il publisher da cui arrivo perchè sono sicuro di essere in quello
+            // della
             // migrazione
             // controllo invece quale tabella di strutture ha richiamato la funzione, se quella
             // normale o quella di
@@ -5896,7 +5937,7 @@ public class StruttureAction extends StruttureAbstractAction {
             importaParametriButton();
         } else {
             getMessageBox()
-                    .addError("E’ necessario selezionare le strutture ove eseguire l’importazione");
+                    .addError("E' necessario selezionare le strutture ove eseguire l'importazione");
             forwardToPublisher(Application.Publisher.STRUTTURA_RICERCA);
         }
     }
@@ -5913,7 +5954,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     /**
-     * Chiusura primo step: - Verifica se è stato caricato il file XML, quindi carica il secondo
+     * Chiusura primo step: - Verifica se Ã¨ stato caricato il file XML, quindi carica il secondo
      * step, altrimenti mostra il messaggio di errore validazione
      *
      * @return true se i dati sono validati
@@ -5926,7 +5967,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     /**
-     * Carica il secondo step: - carico la combo con le tipologie unità documentarie e la combo con
+     * Carica il secondo step: - carico la combo con le tipologie unitÃ  documentarie e la combo con
      * i tipi fascicolo
      *
      * @throws EMFError errore generico
@@ -5979,9 +6020,9 @@ public class StruttureAction extends StruttureAbstractAction {
                     UUID uuid = (UUID) getSession().getAttribute("uuid");
 
                     /*
-                     * Se il flag “Includi registri collegati” è true viene verificato se almeno un
+                     * Se il flag "Includi registri collegati" è true viene verificato se almeno un
                      * registro da importare cui il tipo Ud è collegato presenta il flag
-                     * “fl_tipo_serie_mult” a 1 ed in caso lancio un messaggio di warning
+                     * "fl_tipo_serie_mult" a 1 ed in caso lancio un messaggio di warning
                      */
                     boolean existRegistriDaImportareConFlTipoSerieMultAlzato = struttureEjb
                             .registriDaImportareConTipoSerieMult(uuid,
@@ -6246,7 +6287,7 @@ public class StruttureAction extends StruttureAbstractAction {
 
                 // Preparo il report
                 getMessageBox()
-                        .addInfo("Esecuzione dell’importazione del tipo di unità documentaria "
+                        .addInfo("Esecuzione dell'importazione del tipo di unità documentaria "
                                 + tipoUdDaImportare + "<br>");
                 getMessageBox().addInfo("Numero delle strutture selezionate: "
                         + struttureDaElaborare.size() + "<br>");
@@ -6651,7 +6692,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     /*
-     * Carica le liste dei parametri a video dal Database oppure dall'entità orgStrut importata se
+     * Carica le liste dei parametri a video dal Database oppure dall'entitÃ  orgStrut importata se
      * diversa da null.
      */
     private void loadListeParametriStrutturaPerDupImp(OrgStrutRowBean orgStrutRowBean,
@@ -6701,7 +6742,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     /**
-     * Al clic del bottone popolo una combo degli ambienti cui l'utente è abilitato, setto
+     * Al clic del bottone popolo una combo degli ambienti cui l'utente Ã¨ abilitato, setto
      * l'attributo che mi dice di visualizzare la finestrella ed infine redireziono alla pagina
      * stessa che deve essere ricaricata per recepire codeste direttive
      *
@@ -6852,7 +6893,7 @@ public class StruttureAction extends StruttureAbstractAction {
                         try {
                             /*
                              * a questo metodo come LogParam viene passato null in quanto non serve
-                             * perché non dovrà loggare applicativamente la struttura in caso di
+                             * perchÃ© non dovrÃ  loggare applicativamente la struttura in caso di
                              * Template.
                              */
                             struttureEjb.insertOrgStruttura(null, struttura, true);
@@ -6993,7 +7034,7 @@ public class StruttureAction extends StruttureAbstractAction {
             String riga = getRequest().getParameter("riga");
             Integer numeroRiga = Integer.parseInt(riga);
             getForm().getRegistroUnitaDocList().getTable().setCurrentRowIndex(numeroRiga);
-            // Siccome me devo spostà nell'altra action (StrutTipiForm), la quale gestisce il
+            // Siccome me devo spostÃ  nell'altra action (StrutTipiForm), la quale gestisce il
             // dettaglio del registro, mi
             // preparo per il trasloco
             StrutTipiForm form = prepareRedirectToStrutTipi();
@@ -7084,7 +7125,7 @@ public class StruttureAction extends StruttureAbstractAction {
                             .getIdAmbiente();
                     // Se esiste una richiesta di restituzione archivio con stati ESTRATTO o
                     // VERIFICATO o RESTITUITO
-                    // oppure il parametro è valorizzato a true
+                    // oppure il parametro Ã¨ valorizzato a true
                     String abilitaFlArkRestituitoNoRich = configurationHelper
                             .getValoreParamApplicByStrut(
                                     CostantiDB.ParametroAppl.ABILITA_FL_ARK_RESTITUITO_NO_RICH,
@@ -7131,6 +7172,38 @@ public class StruttureAction extends StruttureAbstractAction {
             } else {
                 getForm().getInsStruttura().getCessaStruttura().setViewMode();
                 getForm().getInsStruttura().getCessaStruttura().setHidden(true);
+            }
+
+            // Gestione visibilità pulsante download per documento processo conservazione
+            if (getForm().getDocumentoProcessoConservDetail().getStatus() != null) {
+                if (getForm().getDocumentoProcessoConservDetail().getStatus().equals(Status.view)) {
+                    // Nascondo il campo per caricare il file
+                    getForm().getDocumentoProcessoConservDetail().getBl_doc_processo_conserv()
+                            .setHidden(true);
+
+                    // Gestisco la visibilità del bottone di download del file
+                    try {
+                        if (getForm().getDocumentoProcessoConservDetail()
+                                .getNm_file_doc_processo_conserv().parse() != null
+                                && !getForm().getDocumentoProcessoConservDetail()
+                                        .getNm_file_doc_processo_conserv().parse().isEmpty()) {
+                            // Se c'è un file, visualizzo il bottone di download
+                            getForm().getDocumentoProcessoConservDetail()
+                                    .getDownloadFileDocProcesso().setHidden(false);
+                            getForm().getDocumentoProcessoConservDetail()
+                                    .getDownloadFileDocProcesso().setEditMode();
+                        } else {
+                            // Se non c'è un file, nascondo il bottone di download
+                            getForm().getDocumentoProcessoConservDetail()
+                                    .getDownloadFileDocProcesso().setHidden(true);
+                            getForm().getDocumentoProcessoConservDetail()
+                                    .getDownloadFileDocProcesso().setViewMode();
+                        }
+                    } catch (EMFError ex) {
+                        java.util.logging.Logger.getLogger(StruttureAction.class.getName())
+                                .log(Level.SEVERE, null, ex);
+                    }
+                }
             }
         }
     }
@@ -7227,7 +7300,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 .getEnteConvenzOrgList().getTable().getCurrentRow();
         BigDecimal idEnteConvenzOrg = row.getIdEnteConvenzOrg();
         int riga = getForm().getEnteConvenzOrgList().getTable().getCurrentRowIndex();
-        // Controllo che l'associazione non sia l'unica presente. In tal caso, l'eliminazione non è
+        // Controllo che l'associazione non sia l'unica presente. In tal caso, l'eliminazione non Ã¨
         // consentita
         if (getForm().getEnteConvenzOrgList().getTable().size() == 1) {
             getMessageBox().addError(
@@ -7265,7 +7338,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     private void redirectToEnteConvenzPage(String action) throws EMFError {
-        // Qualsiasi azione sia, la gestirò nell'action
+        // Qualsiasi azione sia, la gestirÃ² nell'action
         EntiConvenzionatiForm form = new EntiConvenzionatiForm();
         form.getEnteConvenzOrgList().setTable(getForm().getEnteConvenzOrgList().getTable());
         int riga = getForm().getEnteConvenzOrgList().getTable().getCurrentRowIndex();
@@ -7308,7 +7381,7 @@ public class StruttureAction extends StruttureAbstractAction {
         String nmStrut = getForm().getInsStruttura().getNm_strut().parse();
         if (nmStrut != null) {
             String cdStrutNormaliz = Utils.getNormalizedUDCode(nmStrut);
-            // MAC#18134 - Introdotto controllo di univocità sul codice normalizzato
+            // MAC#18134 - Introdotto controllo di univocitÃ  sul codice normalizzato
             cdStrutNormaliz = struttureEjb.getCodStrutturaNormalizzatoUnivoco(cdStrutNormaliz);
             getForm().getInsStruttura().getCd_strut_normaliz().setValue(cdStrutNormaliz);
         }
@@ -7873,6 +7946,249 @@ public class StruttureAction extends StruttureAbstractAction {
         param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
         datiSpecificiEjb.deactivateXsdAndLog(param, idXsdDatiSpec);
+    }
+
+    @Override
+    public void downloadFileDocProcesso() throws EMFError {
+        downloadFileDocProcessoConserv();
+    }
+
+    public void downloadFileDocProcDaLista() throws EMFError {
+        log.debug(">>>DOWNLOAD documento processo conservazione da Lista");
+        setTableName(getForm().getDocumentiProcessoConservList().getName());
+        setRiga(getRequest().getParameter("riga"));
+        getForm().getDocumentiProcessoConservList().getTable()
+                .setCurrentRowIndex(Integer.parseInt(getRiga()));
+        DecDocProcessoConservRowBean row = (DecDocProcessoConservRowBean) getForm()
+                .getDocumentiProcessoConservList().getTable().getCurrentRow();
+        BigDecimal idDocProcessoConserv = row.getIdDocProcessoConserv();
+        downloadFileCommonDocProcessoConserv(idDocProcessoConserv);
+    }
+
+    public void downloadFileDocProcessoConserv() throws EMFError {
+        BigDecimal idDocProcessoConserv = getForm().getDocumentoProcessoConservDetail()
+                .getId_doc_processo_conserv().parse();
+        downloadFileCommonDocProcessoConserv(idDocProcessoConserv);
+    }
+
+    private void downloadFileCommonDocProcessoConserv(BigDecimal idDocProcessoConserv)
+            throws EMFError {
+        File tmpFile = null;
+        FileOutputStream out = null;
+        try {
+            Object[] rec = struttureEjb.getFileDocumentoProcessoConserv(idDocProcessoConserv);
+            // Controllo per scrupolo
+            if (rec[1] == null) {
+                getMessageBox().addError("Non c'\u00E8 alcun file da scaricare<br/>");
+            } else {
+                String nmFileDocProcessoConserv = (String) rec[0];
+                byte[] blDocProcessoConserv = (byte[]) rec[1];
+                String mimeType = (String) rec[2]; // Nuovo mimetype dal database
+
+                tmpFile = new File(System.getProperty("java.io.tmpdir"), nmFileDocProcessoConserv);
+                out = new FileOutputStream(tmpFile);
+                IOUtils.write(blDocProcessoConserv, out);
+
+                getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
+                        getControllerName());
+                getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
+                        tmpFile.getName());
+                getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(),
+                        tmpFile.getPath());
+                getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_DELETEFILE.name(),
+                        Boolean.toString(true));
+
+                // Usa il mimetype corretto dal database, se disponibile
+                String contentType = (mimeType != null && !mimeType.isEmpty()) ? mimeType
+                        : "application/octet-stream";
+                getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(),
+                        contentType);
+            }
+        } catch (Exception ex) {
+            log.error("Errore in download documento processo conservazione "
+                    + ExceptionUtils.getRootCauseMessage(ex), ex);
+            getMessageBox().addError("Errore inatteso nella preparazione del download<br/>");
+        } finally {
+            IOUtils.closeQuietly(out);
+        }
+
+        if (getMessageBox().hasError()) {
+            forwardToPublisher(getLastPublisher());
+        } else {
+            forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
+        }
+
+    }
+
+    private StruttureForm initDocumentoProcessoConservDetail() throws EMFError {
+        try {
+            BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable()
+                    .getCurrentRow()).getBigDecimal("id_strut");
+            String[] ambEnteStrut = struttureEjb.getAmbienteEnteStrutturaDesc(idStrut);
+            SIOrgEnteConvenzOrg orgEnteConvenzOrg = ambienteEjb
+                    .getOrgEnteConvenzOrgMostRecent(idStrut);
+            getForm().getDocumentoProcessoConservDetail().getCd_registro_doc_processo_conserv()
+                    .setDecodeMap(
+                            DecodeMap.Factory.newInstance(
+                                    registroEjb.getRegistriUnitaDocAbilitati(
+                                            getUser().getIdUtente(), idStrut),
+                                    "cd_registro", "cd_registro"));
+            getForm().getDocumentoProcessoConservDetail().getId_organiz_iam()
+                    .setDecodeMap(DecodeMap.Factory.newInstance(
+                            struttureEjb.getOrgEnteConvenzOrgTableBean(new BigDecimal(
+                                    orgEnteConvenzOrg.getSiUsrOrganizIam().getIdOrganizApplic())),
+                            "id_organiz_iam", "nm_organiz_strut_completo"));
+            getForm().getDocumentoProcessoConservDetail().getId_tipo_doc_processo_conserv()
+                    .setDecodeMap(DecodeMap.Factory.newInstance(
+                            struttureEjb.getDecTipoDocProcessoConservTableBean(idStrut),
+                            "id_tipo_doc_processo_conserv", "nm_tipo_doc"));
+            getForm().getEnteConvenzionatoDetail().getId_ente_siam()
+                    .setValue(orgEnteConvenzOrg.getSiOrgEnteConvenz().getIdEnteSiam().toString());
+            getForm().getEnteConvenzionatoDetail().getNm_ente_siam()
+                    .setValue(orgEnteConvenzOrg.getSiOrgEnteConvenz().getNmEnteSiam());
+            getForm().getEnteConvenzionatoDetail().getCd_ente_convenz()
+                    .setValue(orgEnteConvenzOrg.getSiOrgEnteConvenz().getCdEnteConvenz());
+            getForm().getEnteConvenzionatoDetail().getTi_cd_ente_convenz()
+                    .setValue(orgEnteConvenzOrg.getSiOrgEnteConvenz().getTiCdEnteConvenz());
+
+            // Carico i valori precompilati
+            getForm().getDocumentoProcessoConservDetail().getEnte_doc_processo_conserv()
+                    .setValue(ambEnteStrut[1]);
+            getForm().getDocumentoProcessoConservDetail().getStruttura_doc_processo_conserv()
+                    .setValue(ambEnteStrut[2]);
+
+            // Calcolo del progressivo automatico (massimo esistente + 1)
+            DecDocProcessoConservTableBean documentiTable = struttureEjb
+                    .getDecDocProcessoConservByEnteTableBean(new BigDecimal(
+                            orgEnteConvenzOrg.getSiOrgEnteConvenz().getIdEnteSiam()));
+            BigDecimal progressivoMassimo = BigDecimal.ZERO;
+
+            if (documentiTable != null) {
+                for (int i = 0; i < documentiTable.size(); i++) {
+                    BaseRow row = documentiTable.getRow(i);
+                    BigDecimal pgDocumento = row.getBigDecimal("pg_doc_processo_conserv");
+                    if (pgDocumento != null && pgDocumento.compareTo(progressivoMassimo) > 0) {
+                        progressivoMassimo = pgDocumento;
+                    }
+                }
+            }
+
+            // Imposto il progressivo come massimo + 1
+            BigDecimal nuovoProgressivo = progressivoMassimo.add(BigDecimal.ONE);
+            getForm().getDocumentoProcessoConservDetail().getPg_doc_processo_conserv()
+                    .setValue(nuovoProgressivo.toString());
+        } catch (ParerUserError ex) {
+            java.util.logging.Logger.getLogger(StruttureAction.class.getName()).log(Level.SEVERE,
+                    null, ex);
+        }
+        return getForm();
+    }
+
+    private void loadDettaglioDocumentoProcessoConserv(BigDecimal idDocProcessoConserv)
+            throws ParerUserError, EMFError {
+        // Carico il dettaglio documento processo conservazione
+        DecDocProcessoConservRowBean detailRow = struttureEjb
+                .getDecDocProcessoConservRowBean(idDocProcessoConserv);
+
+        getForm().getDocumentoProcessoConservDetail().copyFromBean(detailRow);
+
+        getForm().getDocumentoProcessoConservDetail().setViewMode();
+        getForm().getDocumentoProcessoConservDetail().setStatus(Status.view);
+        getForm().getDocumentiProcessoConservList().setStatus(Status.view);
+    }
+
+    private void redirectToDocumentiProcessoConservPage() throws EMFError {
+        if (!NE_DETTAGLIO_INSERT.equals(getNavigationEvent())) {
+            try {
+                // Non Ã¨ un tentativo di inserimento, quindi reindirizzo alla pagina di dettaglio
+                // (non
+                // si puÃ² inserire questa entitÃ  da Sacer, ma il controllo lo metto ugualmente per
+                // eventuali sviluppi futuri)
+                StruttureForm form = initDocumentoProcessoConservDetail();
+                /*
+                 * Se non Ã¨ un tentativo d'inserimento di un nuovo Tipo unita documentaria mantengo
+                 * il valore dell'id in modo da poterlo riusare nella gestione del dettaglio
+                 */
+                DecDocProcessoConservRowBean currentRow = (DecDocProcessoConservRowBean) getForm()
+                        .getDocumentiProcessoConservList().getTable().getCurrentRow();
+                loadDettaglioDocumentoProcessoConserv(currentRow.getIdDocProcessoConserv());
+                String riga = getRequest().getParameter("riga");
+                Integer nr = Integer.parseInt(riga);
+                redirectToAction(Application.Actions.STRUTTURE,
+                        "?operation=listNavigationOnClick&navigationEvent=" + getNavigationEvent()
+                                + "&table=" + form.getDocumentiProcessoConservList().getName()
+                                + "&riga=" + nr,
+                        form);
+            } catch (ParerUserError ex) {
+                java.util.logging.Logger.getLogger(StruttureAction.class.getName())
+                        .log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void download() throws EMFError {
+        log.debug(">>>DOWNLOAD");
+        String filename = (String) getSession()
+                .getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name());
+        String path = (String) getSession()
+                .getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name());
+        Boolean deleteFile = Boolean.parseBoolean((String) getSession()
+                .getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_DELETEFILE.name()));
+        String contentType = (String) getSession()
+                .getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name());
+        if (path != null && filename != null) {
+            File fileToDownload = new File(path);
+            if (fileToDownload.exists()) {
+                /*
+                 * Definiamo l'output previsto che sarà un file in formato zip di cui si occuperà la
+                 * servlet per fare il download
+                 */
+                OutputStream outUD = getServletOutputStream();
+                getResponse().setContentType(
+                        StringUtils.isBlank(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name())
+                                ? WebConstants.MIME_TYPE_GENERIC
+                                : WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name());
+                getResponse().setHeader("Content-Disposition",
+                        "attachment; filename=\"" + filename);
+
+                FileInputStream inputStream = null;
+                try {
+                    getResponse().setHeader("Content-Length",
+                            String.valueOf(fileToDownload.length()));
+                    inputStream = new FileInputStream(fileToDownload);
+                    byte[] bytes = new byte[8000];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(bytes)) != -1) {
+                        outUD.write(bytes, 0, bytesRead);
+                    }
+                    outUD.flush();
+                } catch (IOException e) {
+                    log.error("Eccezione nel recupero del documento ", e);
+                    getMessageBox().addError("Eccezione nel recupero del documento");
+                } finally {
+                    IOUtils.closeQuietly(inputStream);
+                    IOUtils.closeQuietly(outUD);
+                    inputStream = null;
+                    outUD = null;
+                    freeze();
+                }
+                // Nel caso sia stato richiesto, elimina il file
+                if (deleteFile) {
+                    fileToDownload.delete();
+                }
+            } else {
+                getMessageBox()
+                        .addError("Errore durante il tentativo di download. File non trovato");
+                forwardToPublisher(getLastPublisher());
+            }
+        } else {
+            getMessageBox().addError("Errore durante il tentativo di download. File non trovato");
+            forwardToPublisher(getLastPublisher());
+        }
+        getSession().removeAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name());
+        getSession().removeAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name());
+        getSession().removeAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_DELETEFILE.name());
+        getSession().removeAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name());
     }
 
 }

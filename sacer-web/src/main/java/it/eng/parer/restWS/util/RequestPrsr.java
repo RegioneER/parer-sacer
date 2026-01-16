@@ -138,6 +138,16 @@ public class RequestPrsr extends AbsRequestPrsr {
     }
 
     public List<FileItem> parse(IRispostaWS rispostaWs, ReqPrsrConfig configurazione,
+            AccessToken accessToken) throws FileUploadException {
+        return parse(rispostaWs, configurazione, accessToken, false);
+    }
+
+    public List<FileItem> parse(IRispostaWS rispostaWs, ReqPrsrConfig configurazione,
+            boolean commonNamePassato) throws FileUploadException {
+        return parse(rispostaWs, configurazione, null, commonNamePassato);
+    }
+
+    public List<FileItem> parse(IRispostaWS rispostaWs, ReqPrsrConfig configurazione,
             AccessToken accessToken, boolean commonNamePassato) throws FileUploadException {
         Iterator<FileItem> tmpIterator = null;
         DiskFileItem tmpFileItem = null;

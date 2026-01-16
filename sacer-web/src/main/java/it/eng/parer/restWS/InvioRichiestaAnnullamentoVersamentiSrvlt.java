@@ -57,7 +57,7 @@ import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.versamento.dto.SyncFakeSessn;
 import it.eng.parer.ws.xml.esitoRichAnnullVers.EsitoRichiestaAnnullamentoVersamenti;
 import it.eng.spagoCore.ConfigSingleton;
-import it.eng.spagoCore.util.Oauth2Srvlt;
+import it.eng.spagoLite.security.KeycloakAuthorizationServlet;
 
 /**
  *
@@ -65,11 +65,12 @@ import it.eng.spagoCore.util.Oauth2Srvlt;
  */
 @WebServlet(urlPatterns = {
         "/InvioRichiestaAnnullamentoVersamenti" }, asyncSupported = true)
-public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
+public class InvioRichiestaAnnullamentoVersamentiSrvlt extends KeycloakAuthorizationServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory
             .getLogger(InvioRichiestaAnnullamentoVersamentiSrvlt.class);
+
     private String uploadDir;
     private String instanceName;
     // Percorso del file XSD di risposta
@@ -140,7 +141,6 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
         // Recupero l'ip del chiamante
         HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(request);
         sessioneFinta.setIpChiamante(myRequestPrsr.leggiIpVersante(wrapper));
-        // log.info("Request, indirizzo IP di provenienza: " + sessioneFinta.getIpChiamante());
 
         if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
             // Verifico che la richiesta sia multipart/formdata
@@ -168,11 +168,12 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
                     /*
                      * ///////////////////////// VERIFICA SIGNATURE WS // ////////////////////////
                      */
+                    // Oauth2 - Verifica se la richiesta è autenticata con token Oauth2
+                    boolean hasAuthHeader = hasAuthorizationHeader(wrapper);
 
-                    if (isOauth2Request(wrapper)) {
-                        super.doPost(request, response);
+                    if (hasAuthHeader) {
                         fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig,
-                                super.session.getToken(), false);
+                                getAccessToken(wrapper));
                     } else {
                         fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig);
                     }
@@ -199,8 +200,7 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
                         tmpAvanzamento.setFase("verifica credenziali").logAvanzamento();
                         invioRichiestaAnnullamentoVersamentiEjb.verificaCredenziali(
                                 sessioneFinta.getLoginName(), sessioneFinta.getPassword(),
-                                sessioneFinta.getIpChiamante(), rispostaWs, ravExt,
-                                isOauth2Request(request));
+                                sessioneFinta.getIpChiamante(), rispostaWs, ravExt, hasAuthHeader);
                     }
 
                     /* CONTROLLI VERSIONE XSD (RICH_ANN_VERS_003) */

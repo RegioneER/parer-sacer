@@ -4166,7 +4166,8 @@ public class MonitoraggioHelper implements Serializable {
                 "SELECT sum(mon.niUnitaDocVers) - sum(mon.niUnitaDocAnnul) AS num_ud, "
                         + "sum(mon.niDocVers) + sum(mon.niDocAgg) - sum(mon.niDocAnnulUd) AS num_doc, "
                         + "sum(mon.niCompVers) + sum(mon.niCompAgg) - sum(mon.niCompAnnulUd) AS num_comp, "
-                        + "sum(mon.niSizeVers) + sum(mon.niSizeAgg) - sum(mon.niSizeAnnulUd) AS dim_bytes "
+                        + "sum(mon.niSizeVers) + sum(mon.niSizeAgg) - sum(mon.niSizeAnnulUd) AS dim_bytes, "
+                        + "round((sum(mon.niSizeVers) + sum(mon.niSizeAgg) - sum(mon.niSizeAnnulUd)) / 1000000000000, 2) AS dim_terabytes "
                         + "FROM MonVRicContaUdDocComp mon, SIOrgEnteSiam enteConvenz, "
                         + "OrgSubStrut subStrut " + "JOIN subStrut.orgStrut strut "
                         + "JOIN strut.orgEnte ente " + "JOIN ente.orgCategEnte categEnte "
@@ -4337,6 +4338,7 @@ public class MonitoraggioHelper implements Serializable {
             riga.setBigDecimal("num_doc", (BigDecimal) totali[1]);
             riga.setBigDecimal("num_comp", (BigDecimal) totali[2]);
             riga.setBigDecimal("dim_bytes", (BigDecimal) totali[3]);
+            riga.setBigDecimal("dim_terabytes", (BigDecimal) totali[4]);
 
         } catch (Exception e) {
             log.error(e.getMessage());

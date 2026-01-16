@@ -13,6 +13,7 @@
 
 package it.eng.parer.job.calcoloEstrazione;
 
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
 import static it.eng.parer.util.Utils.createEmptyDir;
 
 import java.io.File;
@@ -48,6 +49,7 @@ import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.LogJob;
 import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.constraint.AplValoreParamApplic;
 import it.eng.parer.entity.constraint.AroAipRestituzioneArchivio.TiStatoAroAipRa;
 import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
 import it.eng.parer.exception.ParerInternalError;
@@ -56,7 +58,10 @@ import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.viewEntity.AroVChkAipRestArchUd;
+import it.eng.parer.viewEntity.AroVRicRichRa;
+import it.eng.parer.web.ejb.DataMartEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.web.helper.DataMartHelper;
 import it.eng.parer.web.helper.UserHelper;
 import it.eng.parer.web.util.RecuperoWeb;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
@@ -83,9 +88,17 @@ public class RestituzioneArchivioJob {
     @EJB
     private CalcoloEstrazioneHelper calcoloHelper;
     @EJB
+    private AmbientiHelper ambientiHelper;
+    @EJB
     private ConfigurationHelper configurationHelper;
     @EJB(mappedName = "java:app/Parer-ejb/UserHelper")
     UserHelper userHelper;
+    // MEV #31341
+    @EJB
+    private DataMartEjb dataMartEjb;
+    @EJB(mappedName = "java:app/Parer-ejb/DataMartHelper")
+    DataMartHelper dataMartHelper;
+    // end MEV #31341
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestituzioneArchivioJob.class);
 
@@ -141,6 +154,19 @@ public class RestituzioneArchivioJob {
         List<AroRichiestaRa> richiesteRaRest = calcoloHelper.retrieveRichiesteRaRestituite();
         for (AroRichiestaRa richiesta : richiesteRaRest) {
             svuotaCartelleStruttura(rootFolderEcRaPath, richiesta);
+            // MEV #31341: creo la richiesta data-mart
+            AroVRicRichRa richRa = ambientiHelper.findViewById(AroVRicRichRa.class,
+                    BigDecimal.valueOf(richiesta.getIdRichiestaRa()));
+            String tipoCancellazione = configurationHelper.getAplValoreParamApplic(
+                    CostantiDB.ParametroAppl.TI_CANCELLAZIONE_MS_UD_DEL,
+                    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
+            int totaliDataMart = dataMartEjb.insertUdDataMartRestArchCentroStella(
+                    BigDecimal.valueOf(richiesta.getIdRichiestaRa()),
+                    "Restituzione archivio dell'ente convenzionato " + richRa.getNmEnteConvenz(),
+                    tipoCancellazione);
+            LOGGER.info("Gestione DataMart Restituzione archivio: inserite {} ud in DM_UD_DEL",
+                    totaliDataMart);
+            // end MEV #31341: creo la richiesta data-mart
         }
 
         /*
@@ -594,13 +620,13 @@ public class RestituzioneArchivioJob {
         if (chkAipRestArchUd.getFlEstratto().equals("1")) {
             // il sistema assegna alla richiesta stato = ESTRATTO nella tabella ARO_RICHIESTA_RA
             richiesta.setTiStato(AroRichiestaTiStato.ESTRATTO);
-        } else if (chkAipRestArchUd.getFlErrore().equals("1")) {
-            // il sistema assegna alla richiesta stato = ERRORE nella tabella ARO_RICHIESTA_RA
-            richiesta.setTiStato(AroRichiestaTiStato.ERRORE);
         } else if (chkAipRestArchUd.getFlDaElaborare().equals("1")) {
             // il sistema assegna alla richiesta stato = ESTRAZIONE_IN_CORSO nella tabella
             // ARO_RICHIESTA_RA
             richiesta.setTiStato(AroRichiestaTiStato.ESTRAZIONE_IN_CORSO);
+        } else if (chkAipRestArchUd.getFlErrore().equals("1")) {
+            // il sistema assegna alla richiesta stato = ERRORE nella tabella ARO_RICHIESTA_RA
+            richiesta.setTiStato(AroRichiestaTiStato.ERRORE);
         }
     }
 

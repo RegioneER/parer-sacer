@@ -31,6 +31,7 @@ public class WebConstants extends Constants {
     public static final int CRITERIO_INSERT = 0;
     public static final int CRITERIO_EDIT = 1;
     public static final String FORMATO_DATA = "(gg/mm/aaaa)";
+    public static final String MIME_TYPE_GENERIC = "application/octet-stream";
 
     public enum Organizzazione {
 

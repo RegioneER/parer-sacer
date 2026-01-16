@@ -786,9 +786,11 @@ public class AmbientiHelper extends GenericHelper {
     public List<SIOrgEnteConvenzOrg> retrieveSIOrgEnteConvenzOrg(BigDecimal idStrut) {
         Query query = getEntityManager()
                 .createQuery("SELECT enteOrg FROM SIOrgEnteConvenzOrg enteOrg "
-                        + "WHERE enteOrg.siUsrOrganizIam.idOrganizApplic = :idStrut "
-                        + "AND enteOrg.siUsrOrganizIam.siAplTipoOrganiz.nmTipoOrganiz = 'STRUTTURA' "
-                        + "AND enteOrg.siUsrOrganizIam.sIAplApplic.nmApplic = 'SACER' ORDER BY enteOrg.dtIniVal DESC ");
+                        + "JOIN FETCH enteOrg.siOrgEnteConvenz e "
+                        + "JOIN FETCH enteOrg.siUsrOrganizIam organizIam "
+                        + "WHERE organizIam.idOrganizApplic = :idStrut "
+                        + "AND organizIam.siAplTipoOrganiz.nmTipoOrganiz = 'STRUTTURA' "
+                        + "AND organizIam.sIAplApplic.nmApplic = 'SACER' ORDER BY enteOrg.dtIniVal DESC ");
         query.setParameter("idStrut", longFromBigDecimal(idStrut));
         return (List<SIOrgEnteConvenzOrg>) query.getResultList();
     }

@@ -53,6 +53,7 @@ import it.eng.parer.viewEntity.ElvVLisUdAnnulByElenco;
 import it.eng.parer.viewEntity.VolVLisUdAnnulByVolume;
 import it.eng.parer.viewEntity.VolVLisVolumeUdAnnul;
 import it.eng.parer.ws.utils.CostantiDB;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -508,6 +509,17 @@ public class AnnulVersHelper extends GenericHelper {
     }
     // end MEV #31162
 
+    // MAC #39443
+    public List<Long> getFascicoliItem(long idRichAnnulVers) {
+        TypedQuery<Long> q = getEntityManager().createQuery(
+                "SELECT fascicolo.idFascicolo FROM FasFascicolo fascicolo "
+                        + "WHERE EXISTS (SELECT 1 FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.fasFascicolo.idFascicolo = fascicolo.idFascicolo AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' ) ",
+                Long.class);
+        q.setParameter("idRichAnnulVers", idRichAnnulVers);
+        return q.getResultList();
+    }
+    // end MAC #39443
+
     public void updateUpdUnitaDocumentarieItem(long idRichAnnulVers, Date dtAnnul, String ntAnnul) {
         Query q = getEntityManager().createQuery(
                 "UPDATE AroUpdUnitaDoc updUnitaDoc SET updUnitaDoc.dtAnnul = :dtAnnul, updUnitaDoc.ntAnnul = :ntAnnul "
@@ -584,6 +596,16 @@ public class AnnulVersHelper extends GenericHelper {
         q.setParameter("idFascicolo", idFascicolo);
         q.executeUpdate();
     }
+
+    // MAC #39443
+    public void deleteFasAipFascicoloDaElab(List<Long> idFascicoloList) {
+        Query q = getEntityManager()
+                .createQuery("DELETE FROM FasAipFascicoloDaElab aipFascicoloDaElab "
+                        + "WHERE aipFascicoloDaElab.fasFascicolo.idFascicolo IN :idFascicoloList ");
+        q.setParameter("idFascicoloList", idFascicoloList);
+        q.executeUpdate();
+    }
+    // end MAC #39443
 
     // <editor-fold defaultstate="collapsed" desc="Query per funzioni online">
     public List<AroVRicRichAnnvrs> retrieveAroVRicRichAnnvrs(long idUser,

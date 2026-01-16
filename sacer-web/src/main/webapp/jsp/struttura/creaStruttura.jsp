@@ -339,6 +339,10 @@
                           <slf:list name="<%= StruttureForm.CorrispondenzePingList.NAME%>" />
                           <slf:listNavBar  name="<%= StruttureForm.CorrispondenzePingList.NAME%>" />
                       </slf:section> 
+                      <slf:section name="<%=StruttureForm.DocumentiProcessoConservSection.NAME%>" styleClass="importantContainer">
+                          <slf:list name="<%= StruttureForm.DocumentiProcessoConservList.NAME%>" />
+                          <slf:listNavBar  name="<%= StruttureForm.DocumentiProcessoConservList.NAME%>" />
+                      </slf:section> 
                       <slf:section name="<%=StruttureForm.RegistriTab.NAME%>" styleClass="importantContainer"> 
                           <slf:listNavBar name="<%= StruttureForm.RegistroUnitaDocList.NAME%>" pageSizeRelated="true"/>
                           <slf:list name="<%= StruttureForm.RegistroUnitaDocList.NAME%>"  />

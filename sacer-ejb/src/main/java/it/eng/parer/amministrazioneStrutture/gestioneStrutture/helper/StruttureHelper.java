@@ -36,7 +36,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import it.eng.parer.entity.AplSistemaMigraz;
 import it.eng.parer.entity.DecCriterioFiltroMultiplo;
+import it.eng.parer.entity.DecDocProcessoConserv;
 import it.eng.parer.entity.DecSelCriterioRaggrFasc;
+import it.eng.parer.entity.DecTipoDocProcessoConserv;
 import it.eng.parer.entity.IamEnteConvenzDaAllinea;
 import it.eng.parer.entity.OrgCategStrut;
 import it.eng.parer.entity.OrgEnte;
@@ -1362,6 +1364,65 @@ public class StruttureHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idEnteConvenz", idEnteConvenz);
         return query.getResultList();
+    }
+
+    /**
+     * Ritorna la lista dei documenti del processo di conservazione per un ente
+     *
+     * @param idEnteSiam id ente
+     *
+     * @return lista documenti processo conservazione
+     */
+    public List<DecDocProcessoConserv> getDecDocProcessoConservListByEnte(BigDecimal idEnteSiam) {
+        String queryStr = "SELECT doc FROM DecDocProcessoConserv doc "
+                + "LEFT JOIN FETCH doc.decTipoDocProcessoConserv tipo "
+                + "WHERE doc.siOrgEnteSiam.idEnteSiam = :idEnteSiam "
+                + "ORDER BY doc.dtDocProcessoConserv DESC, tipo.nmTipoDoc ASC";
+
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idEnteSiam", longFromBigDecimal(idEnteSiam));
+
+        return query.getResultList();
+    }
+
+    /**
+     * Recupera la lista dei tipi documento processo conservazione per una struttura
+     *
+     * @param idStrut id della struttura
+     *
+     * @return lista tipi documento processo conservazione
+     */
+    public List<DecTipoDocProcessoConserv> getDecTipoDocProcessoConservByIdStrut(
+            BigDecimal idStrut) {
+        String queryStr = "SELECT tipo FROM DecTipoDocProcessoConserv tipo "
+                + "WHERE tipo.orgStrut.idStrut = :idStrut "
+                + "AND (tipo.dtSoppres IS NULL OR tipo.dtSoppres > :dataCorrente) "
+                + "ORDER BY tipo.nmTipoDoc";
+
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        query.setParameter("dataCorrente", new Date());
+
+        return query.getResultList();
+    }
+
+    /**
+     * Ritorna un documento del processo di conservazione per ID
+     *
+     * @param idDocProcessoConserv id documento
+     *
+     * @return entity documento processo conservazione
+     */
+    public DecDocProcessoConserv getDecDocProcessoConservById(BigDecimal idDocProcessoConserv) {
+        String queryStr = "SELECT doc FROM DecDocProcessoConserv doc "
+                + "JOIN FETCH doc.decTipoDocProcessoConserv tipo "
+                + "JOIN FETCH doc.siOrgEnteSiam ente " + "JOIN FETCH doc.siUsrOrganizIam org "
+                + "WHERE doc.idDocProcessoConserv = :idDocProcessoConserv";
+
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idDocProcessoConserv", longFromBigDecimal(idDocProcessoConserv));
+
+        return (DecDocProcessoConserv) query.getSingleResult();
     }
 
 }

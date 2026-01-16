@@ -38,7 +38,7 @@
         <Input Name="totali" Description="Aip da estrarre" Type="INTEGER" />
         <Input Name="estratti" Description="Aip estratti" Type="INTEGER" />
         <Input Name="errori" Description="Aip in errore" Type="INTEGER" />
-        <Input Name="estratti_totali" Description="% aip estratti" Type="INTEGER" />
+        <Input Name="estratti_totali" Description="% aip estratti" Type="DECIMAL" Format="#.######" GroupingDecimal="true" />
         <Input Name="sum_dim" Description="Dimesione aip estratti (MegaByte)" Type="DECIMAL" Format="#.######" GroupingDecimal="true" />
         <Input Name="max_dt_estrazione" Description="Data ultima estrazione" Type="DATETIME"/>
         <Input Name="ti_stato" Description="Stato corrente" Type="STRING"/>                

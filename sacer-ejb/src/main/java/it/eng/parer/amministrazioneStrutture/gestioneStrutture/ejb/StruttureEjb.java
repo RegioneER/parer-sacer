@@ -12,6 +12,7 @@
  */
 package it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb;
 
+import it.eng.parer.entity.DecTipoDocProcessoConserv;
 import it.eng.integriam.client.ws.IAMSoapClients;
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.helper.DatiSpecificiHelper;
@@ -103,6 +104,10 @@ import it.eng.parer.entity.OrgUsoSistemaMigraz;
 import it.eng.parer.fascicoli.helper.CriteriRaggrFascicoliHelper;
 import it.eng.parer.fascicoli.helper.ModelliFascicoliHelper;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import javax.xml.XMLConstants;
 import javax.xml.ws.BindingProvider;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -5809,6 +5814,298 @@ public class StruttureEjb {
         }
 
         return corrPingTableBean;
+    }
+
+    public Object[] getFileDocumentoProcessoConserv(BigDecimal idDocProcessoConserv) {
+        DecDocProcessoConserv docProcessoConserv = struttureHelper
+                .findById(DecDocProcessoConserv.class, idDocProcessoConserv);
+        Object[] dt = new Object[3];
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
+        String data = formatter.format(docProcessoConserv.getDtDocProcessoConserv());
+        data = data.replace(":", "_");
+
+        // Determina l'estensione del file dal mimetype
+        String estensione = null;
+        if (docProcessoConserv.getMimeType() != null) {
+            switch (docProcessoConserv.getMimeType()) {
+            case "application/pdf":
+                estensione = ".pdf";
+                break;
+            case "application/xml":
+                estensione = ".xml";
+                break;
+            case "application/msword":
+                estensione = ".doc";
+                break;
+            case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                estensione = ".docx";
+                break;
+            case "application/vnd.ms-excel":
+                estensione = ".xls";
+                break;
+            case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                estensione = ".xlsx";
+                break;
+            case "text/plain":
+                estensione = ".txt";
+                break;
+            case "image/jpeg":
+                estensione = ".jpg";
+                break;
+            case "image/png":
+                estensione = ".png";
+                break;
+            default:
+                estensione = ".bin";
+                break;
+            }
+        }
+
+        dt[0] = "documento_processo_conservazione_"
+                + docProcessoConserv.getSiUsrOrganizIam().getNmOrganiz() + "_"
+                + docProcessoConserv.getSiUsrOrganizIam().getNmOrganiz() + "_" + data + estensione;
+        dt[1] = docProcessoConserv.getBlDocProcessoConserv();
+        dt[2] = docProcessoConserv.getMimeType();
+        return dt;
+    }
+
+    /**
+     * Restituisce i tipi documento processo conservazione per una struttura
+     *
+     * @param idStrut id della struttura
+     *
+     * @return BaseTable con i tipi documento processo conservazione
+     *
+     * @throws ParerUserError errore generico
+     */
+    public BaseTable getDecTipoDocProcessoConservTableBean(BigDecimal idStrut)
+            throws ParerUserError {
+        BaseTable table = new BaseTable();
+        List<DecTipoDocProcessoConserv> list = struttureHelper
+                .getDecTipoDocProcessoConservByIdStrut(idStrut);
+        if (list != null && !list.isEmpty()) {
+            try {
+                for (DecTipoDocProcessoConserv tipoDoc : list) {
+                    BaseRow rowBean = new BaseRow();
+                    rowBean.setBigDecimal("id_tipo_doc_processo_conserv",
+                            BigDecimal.valueOf(tipoDoc.getIdTipoDocProcessoConserv()));
+                    rowBean.setString("nm_tipo_doc", tipoDoc.getNmTipoDoc());
+                    rowBean.setString("ds_tipo_doc", tipoDoc.getDsTipoDoc());
+                    table.add(rowBean);
+                }
+            } catch (Exception ex) {
+                String msg = "Errore durante il recupero della lista dei tipi documento processo conservazione per la struttura "
+                        + ExceptionUtils.getRootCauseMessage(ex);
+                logger.error(msg, ex);
+                throw new ParerUserError(msg);
+            }
+        }
+        table.addSortingRule("nm_tipo_doc");
+        table.sort();
+        return table;
+    }
+
+    /**
+     * Restituisce il tablebean rappresentante la lista dei documenti del processo di conservazione
+     * per ente convenzionato.
+     *
+     * @param idEnteConvenz id ente convenzionato
+     *
+     * @return il tablebean
+     *
+     * @throws ParerUserError errore generico
+     */
+    public DecDocProcessoConservTableBean getDecDocProcessoConservByEnteTableBean(
+            BigDecimal idEnteConvenz) throws ParerUserError {
+        DecDocProcessoConservTableBean docProcessoConservTableBean = new DecDocProcessoConservTableBean();
+        SIOrgEnteSiam enteConvenz = struttureHelper.findById(SIOrgEnteSiam.class, idEnteConvenz);
+        List<DecDocProcessoConserv> docProcessoConservList = struttureHelper
+                .getDecDocProcessoConservListByEnte(
+                        BigDecimal.valueOf(enteConvenz.getIdEnteSiam()));
+        if (!docProcessoConservList.isEmpty()) {
+            try {
+                for (DecDocProcessoConserv docProcessoConserv : docProcessoConservList) {
+                    DecDocProcessoConservRowBean docProcessoConservRowBean = new DecDocProcessoConservRowBean();
+                    if (docProcessoConserv.getSiUsrOrganizIam() != null) {
+                        docProcessoConservRowBean.setString("nm_organiz_iam",
+                                docProcessoConserv.getSiUsrOrganizIam().getNmOrganiz());
+                    }
+                    docProcessoConservRowBean.setBigDecimal("id_doc_processo_conserv",
+                            BigDecimal.valueOf(docProcessoConserv.getIdDocProcessoConserv()));
+                    if (docProcessoConserv.getDecTipoDocProcessoConserv() != null) {
+                        docProcessoConservRowBean.setString("nm_tipo_doc",
+                                docProcessoConserv.getDecTipoDocProcessoConserv().getNmTipoDoc());
+                    }
+                    docProcessoConservRowBean.setString("cd_registro_doc_processo_conserv",
+                            docProcessoConserv.getCdRegistroDocProcessoConserv());
+                    docProcessoConservRowBean.setBigDecimal("aa_doc_processo_conserv",
+                            docProcessoConserv.getAaDocProcessoConserv());
+                    docProcessoConservRowBean.setString("cd_key_doc_processo_conserv",
+                            docProcessoConserv.getCdKeyDocProcessoConserv());
+                    docProcessoConservRowBean.setBigDecimal("pg_doc_processo_conserv",
+                            docProcessoConserv.getPgDocProcessoConserv());
+                    docProcessoConservRowBean.setTimestamp("dt_doc_processo_conserv",
+                            new Timestamp(docProcessoConserv.getDtDocProcessoConserv().getTime()));
+                    docProcessoConservRowBean.setString("ds_doc_processo_conserv",
+                            docProcessoConserv.getDsDocProcessoConserv());
+                    docProcessoConservRowBean.setString("registro_anno_numero",
+                            (docProcessoConserv.getCdRegistroDocProcessoConserv() == null ? ""
+                                    : docProcessoConserv.getCdRegistroDocProcessoConserv())
+                                    + "/"
+                                    + (docProcessoConserv.getAaDocProcessoConserv() == null ? ""
+                                            : docProcessoConserv.getAaDocProcessoConserv())
+                                    + "/"
+                                    + (docProcessoConserv.getCdKeyDocProcessoConserv() == null ? ""
+                                            : docProcessoConserv.getCdKeyDocProcessoConserv()));
+                    docProcessoConservRowBean.setNmFileDocProcessoConserv(
+                            docProcessoConserv.getNmFileDocProcessoConserv());
+
+                    // Verifica se esiste il file per mostrare il link di download
+                    if (docProcessoConserv.getBlDocProcessoConserv() != null
+                            && docProcessoConserv.getBlDocProcessoConserv().length > 0) {
+                        docProcessoConservRowBean.setString("download", "download");
+                        docProcessoConservRowBean.setString("download_visibile", "1");
+                    } else {
+                        docProcessoConservRowBean.setString("download_visibile", "0");
+                    }
+
+                    docProcessoConservTableBean.add(docProcessoConservRowBean);
+                }
+            } catch (Exception e) {
+                logger.error(
+                        "Errore durante il recupero dei documenti del processo di conservazione sull'ente convenzionato avente id "
+                                + enteConvenz.getIdEnteSiam() + " "
+                                + ExceptionUtils.getRootCauseMessage(e),
+                        e);
+                throw new ParerUserError(
+                        "Errore durante il recupero dei documenti del processo di conservazione sull'ente convenzionato avente id "
+                                + enteConvenz.getIdEnteSiam());
+            }
+        }
+        return docProcessoConservTableBean;
+    }
+
+    /**
+     * Ritorna il RowBean di un documento del processo di conservazione
+     *
+     * @param idDocProcessoConserv id documento
+     *
+     * @return row bean del documento
+     *
+     * @throws ParerUserError errore generico
+     */
+    public DecDocProcessoConservRowBean getDecDocProcessoConservRowBean(
+            BigDecimal idDocProcessoConserv) throws ParerUserError {
+        DecDocProcessoConservRowBean rowBean = new DecDocProcessoConservRowBean();
+        DecDocProcessoConserv doc = struttureHelper
+                .getDecDocProcessoConservById(idDocProcessoConserv);
+
+        if (doc == null) {
+            throw new ParerUserError("Documento processo conservazione non trovato");
+        }
+
+        try {
+            // Copia tutti i campi
+            rowBean.setIdDocProcessoConserv(new BigDecimal(doc.getIdDocProcessoConserv()));
+            if (doc.getDecTipoDocProcessoConserv() != null) {
+                rowBean.setIdTipoDocProcessoConserv(new BigDecimal(
+                        doc.getDecTipoDocProcessoConserv().getIdTipoDocProcessoConserv()));
+                rowBean.setNmTipoDoc(doc.getDecTipoDocProcessoConserv().getNmTipoDoc());
+            }
+            rowBean.setCdRegistroDocProcessoConserv(doc.getCdRegistroDocProcessoConserv());
+            rowBean.setAaDocProcessoConserv(doc.getAaDocProcessoConserv());
+            rowBean.setCdKeyDocProcessoConserv(doc.getCdKeyDocProcessoConserv());
+            rowBean.setPgDocProcessoConserv(doc.getPgDocProcessoConserv());
+            rowBean.setTimestamp("dt_doc_processo_conserv",
+                    new Timestamp(doc.getDtDocProcessoConserv().getTime()));
+            rowBean.setDsDocProcessoConserv(doc.getDsDocProcessoConserv());
+            rowBean.setNmFileDocProcessoConserv(doc.getNmFileDocProcessoConserv());
+            rowBean.setEnteDocProcessoConserv(doc.getEnteDocProcessoConserv());
+            rowBean.setStrutturaDocProcessoConserv(doc.getStrutturaDocProcessoConserv());
+            rowBean.setMimeType(doc.getMimeType());
+
+            if (doc.getSiOrgEnteSiam() != null) {
+                rowBean.setIdEnteSiam(new BigDecimal(doc.getSiOrgEnteSiam().getIdEnteSiam()));
+            }
+
+            if (doc.getSiUsrOrganizIam() != null) {
+                rowBean.setIdOrganizIam(new BigDecimal(doc.getSiUsrOrganizIam().getIdOrganizIam()));
+            }
+
+        } catch (Exception e) {
+            logger.error("Errore durante il recupero del documento processo conservazione", e);
+            throw new ParerUserError(
+                    "Errore durante il recupero del documento processo conservazione");
+        }
+
+        return rowBean;
+    }
+
+    /**
+     * Ritorna il tableBean contenente per l'ente convenzionato dato in input la lista di strutture
+     * versanti
+     *
+     * @param idEnteConvenz id ente convenzionato
+     *
+     * @return il tableBean della lista
+     *
+     * @throws ParerUserError errore generico
+     */
+    public SIOrgEnteConvenzOrgTableBean getOrgEnteConvenzOrgTableBean(BigDecimal idEnteConvenz)
+            throws ParerUserError {
+        SIOrgEnteConvenzOrgTableBean table = new SIOrgEnteConvenzOrgTableBean();
+        List<SIOrgEnteConvenzOrg> list = ambienteHelper.retrieveSIOrgEnteConvenzOrg(idEnteConvenz);
+        if (list != null && !list.isEmpty()) {
+            try {
+                for (SIOrgEnteConvenzOrg enteConvenzOrg : list) {
+                    SIOrgEnteConvenzOrgRowBean rowBean = (SIOrgEnteConvenzOrgRowBean) Transform
+                            .entity2RowBean(enteConvenzOrg);
+                    SIUsrOrganizIam organiz = enteConvenzOrg.getSiUsrOrganizIam();
+                    if (organiz.getSiAplTipoOrganiz().getNmTipoOrganiz().equals("STRUTTURA")) {
+                        SIUsrOrganizIam strutOrganiz = enteConvenzOrg.getSiUsrOrganizIam();
+                        SIUsrOrganizIam enteOrganiz = strutOrganiz.getSiUsrOrganizIam();
+                        SIUsrOrganizIam ambienteOrganiz = enteOrganiz.getSiUsrOrganizIam();
+                        rowBean.setBigDecimal("id_organiz_applic",
+                                new BigDecimal(strutOrganiz.getIdOrganizApplic().longValue()));
+                        rowBean.setBigDecimal("id_organiz_iam",
+                                BigDecimal.valueOf(strutOrganiz.getIdOrganizIam()));
+                        rowBean.setString("nm_organiz_ambiente",
+                                enteOrganiz.getSiUsrOrganizIam().getNmOrganiz());
+                        rowBean.setString("nm_organiz_strut",
+                                enteOrganiz.getNmOrganiz() + " - " + strutOrganiz.getNmOrganiz());
+                        rowBean.setString("nm_organiz_strut_completo",
+                                ambienteOrganiz.getNmOrganiz() + " - " + enteOrganiz.getNmOrganiz()
+                                        + " - " + strutOrganiz.getNmOrganiz());
+                        rowBean.setString("ds_organiz", strutOrganiz.getDsOrganiz());
+                    } else {
+                        SIUsrOrganizIam versOrganiz = enteConvenzOrg.getSiUsrOrganizIam();
+                        SIUsrOrganizIam ambienteOrganiz = versOrganiz.getSiUsrOrganizIam();
+                        rowBean.setBigDecimal("id_organiz_applic",
+                                new BigDecimal(versOrganiz.getIdOrganizApplic().longValue()));
+                        rowBean.setBigDecimal("id_organiz_iam",
+                                BigDecimal.valueOf(versOrganiz.getIdOrganizIam()));
+                        rowBean.setString("nm_organiz_ambiente", ambienteOrganiz.getNmOrganiz());
+                        rowBean.setString("nm_organiz_vers", versOrganiz.getNmOrganiz());
+                        rowBean.setString("nm_organiz_strut_completo",
+                                ambienteOrganiz.getNmOrganiz() + " - "
+                                        + versOrganiz.getNmOrganiz());
+                        rowBean.setString("ds_organiz", versOrganiz.getDsOrganiz());
+                    }
+                    table.add(rowBean);
+                }
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException ex) {
+                String msg = "Errore durante il recupero della lista di organizzazioni versanti dell'ente convenzionato "
+                        + ExceptionUtils.getRootCauseMessage(ex);
+                logger.error(msg, ex);
+                throw new ParerUserError(msg);
+            }
+        }
+        table.addSortingRule("nm_organiz_strut");
+        table.addSortingRule("nm_organiz_vers");
+        table.sort();
+        return table;
     }
 
 }

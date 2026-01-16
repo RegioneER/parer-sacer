@@ -33,7 +33,6 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
@@ -62,6 +61,7 @@ import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.versamento.dto.SyncFakeSessn;
 import it.eng.parer.ws.xml.versRespStatoFasc.StatoConservazioneFasc;
 import it.eng.spagoCore.ConfigSingleton;
+import it.eng.spagoLite.security.KeycloakAuthorizationServlet;
 
 /**
  *
@@ -69,7 +69,7 @@ import it.eng.spagoCore.ConfigSingleton;
  */
 @WebServlet(urlPatterns = {
         "/RecAIPFascicoloSync" }, asyncSupported = true)
-public class RecAIPFascicoloSrvlt extends HttpServlet {
+public class RecAIPFascicoloSrvlt extends KeycloakAuthorizationServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(RecAIPFascicoloSrvlt.class);
@@ -139,7 +139,6 @@ public class RecAIPFascicoloSrvlt extends HttpServlet {
         // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai servizi di
         // recupero con certificato
         sessioneFinta.setCertCommonName(myRequestPrsr.leggiCertCommonName(request));
-        // log.info("Request, indirizzo IP di provenienza: " + sessioneFinta.getIpChiamante());
 
         if (rispostaWsFasc.getSeverity() == SeverityEnum.OK) {
             // Check that we have a file upload request
@@ -174,8 +173,16 @@ public class RecAIPFascicoloSrvlt extends HttpServlet {
                     // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai
                     // servizi di recupero con
                     // certificato
-                    fileItems = myRequestPrsr.parse(rispostaWsFasc, tmpPrsrConfig, null,
-                            sessioneFinta.getCertCommonName() == null ? false : true);
+                    // Oauth2 - Verifica se la richiesta è autenticata con token Oauth2
+                    boolean hasAuthHeader = hasAuthorizationHeader(request);
+
+                    if (hasAuthHeader) {
+                        fileItems = myRequestPrsr.parse(rispostaWsFasc, tmpPrsrConfig,
+                                getAccessToken(request));
+                    } else {
+                        fileItems = myRequestPrsr.parse(rispostaWsFasc, tmpPrsrConfig,
+                                sessioneFinta.getCertCommonName() == null ? false : true);
+                    }
 
                     //
                     if (rispostaWsFasc.getSeverity() != SeverityEnum.OK) {
@@ -209,7 +216,7 @@ public class RecAIPFascicoloSrvlt extends HttpServlet {
                         recuperoFascSync.verificaCredenziali(sessioneFinta.getLoginName(),
                                 sessioneFinta.getPassword(), sessioneFinta.getIpChiamante(),
                                 rispostaWsFasc, myRecuperoFascExt,
-                                sessioneFinta.getCertCommonName());
+                                sessioneFinta.getCertCommonName(), hasAuthHeader);
                     }
 
                     // verifica formale e semantica dell'XML di versamento

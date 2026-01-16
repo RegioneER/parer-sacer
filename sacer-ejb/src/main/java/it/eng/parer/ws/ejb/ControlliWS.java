@@ -138,8 +138,8 @@ public class ControlliWS {
     }
 
     public RispostaControlli checkCredenziali(String loginName, String password, String indirizzoIP,
-            TipiWSPerControlli tipows, boolean isOAuth2) {
-        return checkCredenziali(loginName, password, indirizzoIP, tipows, null, isOAuth2);
+            TipiWSPerControlli tipows, boolean accessToken) {
+        return checkCredenziali(loginName, password, indirizzoIP, tipows, null, accessToken);
     }
 
     public RispostaControlli checkCredenziali(String loginName, String password, String indirizzoIP,
@@ -148,7 +148,7 @@ public class ControlliWS {
     }
 
     public RispostaControlli checkCredenziali(String loginName, String password, String indirizzoIP,
-            TipiWSPerControlli tipows, String certCommonName, boolean isOAuth2) {
+            TipiWSPerControlli tipows, String certCommonName, boolean accessToken) {
         User utente = null;
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
@@ -193,7 +193,7 @@ public class ControlliWS {
             if (certCommonName != null && !certCommonName.isEmpty()) {
                 WSLoginHandler.login(certCommonName, entityManager);
             } else {
-                WSLoginHandler.login(loginName, password, indirizzoIP, entityManager, isOAuth2);
+                WSLoginHandler.login(loginName, password, indirizzoIP, entityManager, accessToken);
             }
             // se l'autenticazione riesce, non va in eccezione.
             // passo quindi a leggere i dati dell'utente dal db

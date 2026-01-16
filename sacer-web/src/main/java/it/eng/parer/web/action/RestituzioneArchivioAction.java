@@ -81,10 +81,12 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
 
     @Override
     public void initOnClick() throws EMFError {
+        //
     }
 
     @Override
     public void insertDettaglio() throws EMFError {
+        //
     }
 
     @Override
@@ -245,7 +247,6 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
                     getForm().getRichRestArchList().getTable().setCurrentRowIndex(rowIndex);
                 }
                 getForm().getRichRestArchList().setHideUpdateButton(false);
-                // getForm().getRichRestArchList().setHideDeleteButton(false);
             } else if (publisherName.equals(Application.Publisher.RICH_REST_ARCH_DETAIL)) {
                 BigDecimal idRichRestArch = getForm().getRichRestArchDetail().getId_richiesta_ra()
                         .parse();
@@ -327,79 +328,81 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
         getForm().getCreazioneRichRestArch().postAndValidate(getRequest(), getMessageBox());
         try {
             // NOTA: essendo il bottone attualmente associato solo alla richieste di restituzione
-            // archivio delle ud,
-            // per ora il parametro è sempre UNITA_DOC
+            // archivio delle ud, per ora il parametro è sempre UNITA_DOC
             final String tiRichRestArch = getForm().getCreazioneRichRestArch()
                     .getTi_rich_rest_arch().parse();
 
             BigDecimal idStrut = getForm().getFiltriRicercaRichRestArch().getId_strut().parse();
 
-            if (!getMessageBox().hasError()) {
-                if (!restArchEjb.checkEnteConvenzExisting(idStrut)) {
-                    getMessageBox().addError(
-                            "Non \u00E8 presente nessun ente convenzionato in capo alla struttura corrente");
-                }
-            }
-            if (!getMessageBox().hasError()) {
-                if (restArchEjb.checkRichRestArchExisting(idStrut)) {
-                    getMessageBox().addError(
-                            "Per l'ente convenzionato della struttura corrente \u00E8 gi\u00E0 presente una richiesta di restituzione archivio");
-                }
-            }
-            if (!getMessageBox().hasError()) {
-                if (restArchEjb.checkRichRestArchExistingRestituito(idStrut)) {
-                    getMessageBox().addError(
-                            "Per l'ente convenzionato della struttura corrente \u00E8 gi\u00E0 presente una richiesta di restituzione archivio in attesa di pulizia area FTP. Attendere la prossima esecuzione del JOB di Evasione Richieste Restituzione Archivio ");
-                }
-            }
-            if (!getMessageBox().hasError()) {
-                if (!restArchEjb.checkDirectoriesRa(idStrut)) {
-                    getMessageBox().addError(
-                            "Cartella per l’estrazione degli AIP non definita o non si hanno i permessi in lettura/scrittura");
-                }
-            }
-
             // MEV #32535 - Recupero le informazioni sulle associazioni con gli enti convenzionati
-            // delle strutture
-            // soggette alla restituzione archivio
-            // String listaAssocazioniScadute = "";
-            // String listaAssocazioniScaduteConFuture = "";
+            // delle strutture soggette alla restituzione archivio
+            List<String> listaAssocazioniCoinvolte = new ArrayList<>();
             List<String> listaAssocazioniScadute = new ArrayList<>();
             List<String> listaAssocazioniScaduteConFuture = new ArrayList<>();
+            // Attraverso la struttura "capofila" recupero tutte le eventuali altre strutture
+            // coinvolte nella restituzione archivio
             List<OrgVRicOrganizRestArch> strutturePerRestArch = restArchEjb
                     .retrieveOrgVRcOrganizRestArchList(idStrut);
+            // Controllo se vi sono situazioni particolari bloccanti
             for (OrgVRicOrganizRestArch strutturaPerRestArch : strutturePerRestArch) {
+                String struttura = restArchEjb
+                        .getStrutturaDaOrganizIam(strutturaPerRestArch.getIdOrganizIam());
+                listaAssocazioniCoinvolte.add(struttura);
+                // Verifico se l'associazione è da inserire tra le scadute o scadute con future
                 if (strutturaPerRestArch.getFlAssociazioneScaduta() != null
                         && strutturaPerRestArch.getFlAssociazioneScaduta().equals("1")
                         && strutturaPerRestArch.getFlAssociazioniFuture() != null
                         && strutturaPerRestArch.getFlAssociazioniFuture().equals("0")) {
-                    restArchEjb.getStrutturaDaOrganizIam(strutturaPerRestArch.getIdOrganizIam());
-                    listaAssocazioniScadute.add(restArchEjb
-                            .getStrutturaDaOrganizIam(strutturaPerRestArch.getIdOrganizIam()));
+                    listaAssocazioniScadute.add(struttura);
                 } else if (strutturaPerRestArch.getFlAssociazioneScaduta() != null
                         && strutturaPerRestArch.getFlAssociazioneScaduta().equals("1")
                         && strutturaPerRestArch.getFlAssociazioniFuture() != null
                         && strutturaPerRestArch.getFlAssociazioniFuture().equals("1")) {
-                    restArchEjb.getStrutturaDaOrganizIam(strutturaPerRestArch.getIdOrganizIam());
-                    listaAssocazioniScaduteConFuture.add(restArchEjb
-                            .getStrutturaDaOrganizIam(strutturaPerRestArch.getIdOrganizIam()));
+                    listaAssocazioniScaduteConFuture.add(struttura);
                 }
             }
 
-            // if (!listaAssocazioniScadute.equals("") ||
-            // !listaAssocazioniScaduteConFuture.equals("")) {
+            // Se vi sono associazioni non valide, blocco il processo
             if (!listaAssocazioniScadute.isEmpty() || !listaAssocazioniScaduteConFuture.isEmpty()) {
                 Object[] attributiAssociazioniScadute = new Object[2];
                 attributiAssociazioniScadute[0] = idStrut;
                 attributiAssociazioniScadute[1] = tiRichRestArch;
                 getSession().setAttribute("attributiAssociazioniScadute",
                         attributiAssociazioniScadute);
+                getRequest().setAttribute("associazioniCoinvolte", listaAssocazioniCoinvolte);
                 getRequest().setAttribute("associazioniScadute", listaAssocazioniScadute);
                 getRequest().setAttribute("associazioniScaduteConFuture",
                         listaAssocazioniScaduteConFuture);
                 getRequest().setAttribute("customBoxAssociazioniScaduteRestArch", true);
             } else {
+                // ... altrimenti effettuo ulteriori controlli aggiuntivi
+                if (!getMessageBox().hasError()) {
+                    // if (!restArchEjb.checkEnteConvenzExisting(idStrut)) {
+                    if (!restArchEjb.checkEnteConvenzExistingOrgEnteConvenzOrg(idStrut)) {
+                        getMessageBox().addError(
+                                "Non \u00E8 presente nessun ente convenzionato in capo alla struttura corrente");
+                    }
+                }
+                if (!getMessageBox().hasError()) {
+                    if (restArchEjb.checkRichRestArchExisting(idStrut)) {
+                        getMessageBox().addError(
+                                "Per l'ente convenzionato della struttura corrente \u00E8 gi\u00E0 presente una richiesta di restituzione archivio");
+                    }
+                }
+                if (!getMessageBox().hasError()) {
+                    if (restArchEjb.checkRichRestArchExistingRestituito(idStrut)) {
+                        getMessageBox().addError(
+                                "Per l'ente convenzionato della struttura corrente \u00E8 gi\u00E0 presente una richiesta di restituzione archivio in attesa di pulizia area FTP. Attendere la prossima esecuzione del JOB di Evasione Richieste Restituzione Archivio ");
+                    }
+                }
+                if (!getMessageBox().hasError()) {
+                    if (!restArchEjb.checkDirectoriesRa(idStrut)) {
+                        getMessageBox().addError(
+                                "Cartella per l’estrazione degli AIP non definita o non si hanno i permessi in lettura/scrittura");
+                    }
+                }
                 if (!getMessageBox().hasError() && !getMessageBox().hasWarning()) {
+                    // Se tutti i controlli sono stati superati, procedo
                     eseguiCreazioneRichiestaRestituzioneArchivio(idStrut, tiRichRestArch);
                 }
             }
@@ -456,8 +459,8 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
         if (tiRichRestArch.equals("UNITA_DOC")) {
             List<AroVChkRaUd> chkRaUdViewList = restArchEjb.retrieveChkRaUnitaDocList(idStrut);
             // I controlli fanno riferimento all'ente convenzionato associato alla struttura passata
-            // in ingresso
-            // dunque si possono ricavare informazioni anche riguardanti le altre strutture
+            // in ingresso dunque si possono ricavare informazioni anche riguardanti le altre
+            // strutture
             // associate
             String messaggio1 = "Richiesta annullata - ci sono unità documentarie non inserite in un elenco di versamento in: <br>";
             String messaggio2 = "Richiesta annullata - Il processo di conservazione delle unità documentarie presenti in archivio non è ancora completato in: <br>";
@@ -560,7 +563,6 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
         getForm().getFiltriRicercaRichRestArch().setEditMode();
 
         initFiltriStrut(getForm().getFiltriRicercaRichRestArch().getName());
-        // initFiltriRicercaRestituzioneArchivio(getForm().getFiltriRicercaRichRestArch().getName());
 
         getForm().getRichRestArchList().setTable(new AroVRicRichRaTableBean());
 
@@ -856,8 +858,20 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
             String elencoStrutture = "";
 
             if (!struttureInteressate.isEmpty()) {
+                // 1. Inizializzare un StringBuilder prima del ciclo
+                StringBuilder elencoBuilder = new StringBuilder();
+
+                // 2. Usare il metodo append() all'interno del ciclo
                 for (AroVRicRichRaRowBean strutturaInteressata : struttureInteressate) {
-                    elencoStrutture = elencoStrutture + strutturaInteressata.getNmEnteStrut() + ",";
+                    elencoBuilder.append(strutturaInteressata.getNmEnteStrut()).append(",");
+                }
+
+                // 3. Convertire in Stringa dopo il ciclo
+                elencoStrutture = elencoBuilder.toString();
+
+                // Opzionale: rimuovere l'ultima virgola se presente
+                if (elencoStrutture.length() > 0) {
+                    elencoStrutture = elencoStrutture.substring(0, elencoStrutture.length() - 1);
                 }
             } else {
                 elencoStrutture = "attendere qualche secondo per il recupero delle strutture interessate una volta eseguiti i calcoli sugli AIP";

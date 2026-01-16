@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.OrgEnte;
 import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.ws.utils.CostantiDB;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -452,30 +453,17 @@ public class DataMartHelper extends GenericHelper {
     }
 
     @Transactional
-    public int populateDataMartUdCentroStella(long idRichiesta, String cdRichiesta,
+    public int populateDataMartUdCentroStellaAnnulVers(BigDecimal idRichiesta, String cdRichiesta,
             String tiMotCancellazione, String tiModDel) {
         // --- PASSAGGIO 1: Creare e salvare la riga master in DM_UD_DEL_RICHIESTE ---
+        Long idUdDelRichiesta = createDmUdDelRichieste(idRichiesta, cdRichiesta,
+                CostantiDB.TiMotCancellazione.A.name(),
+                CostantiDB.TiStatoRichiesta.DA_EVADERE.name(),
+                CostantiDB.TiStatoInternoRich.INIZIALE.name(), tiModDel);
 
-        DmUdDelRichieste nuovaRichiesta = new DmUdDelRichieste();
-        nuovaRichiesta.setIdRichiesta(BigDecimal.valueOf(idRichiesta));
-        nuovaRichiesta.setCdRichiesta(cdRichiesta);
-        nuovaRichiesta.setTiMotCancellazione(tiMotCancellazione);
-        nuovaRichiesta.setTiStatoRichiesta("DA_EVADERE"); // Stato utente iniziale
-        nuovaRichiesta.setTiStatoInternoRich("INIZIALE"); // Stato tecnico iniziale
-        nuovaRichiesta.setTiModDel(tiModDel); // Stato tecnico iniziale
-        nuovaRichiesta.setDtCreazione(new Date()); // Imposta la data corrente
-
-        // Persisti l'entità. Dopo questa chiamata, JPA/Hibernate si occuperà
-        // di eseguire l'INSERT e di popolare il campo ID con il valore generato dal DB.
-        getEntityManager().persist(nuovaRichiesta);
-
-        Long idUdDelRichiesta = nuovaRichiesta.getIdUdDelRichiesta();
-
-        // ID della richiesta corrente, da passare come parametro
         int numRecordDmUdDel = 0;
-
         // ======================================================================
-        // PASSAGGIO 1: Popolamento massivo della tabella padre DM_UD_DEL per Annullamento
+        // PASSAGGIO 2: Popolamento massivo della tabella figlia DM_UD_DEL per Annullamento
         // Versamenti
         // ======================================================================
         String insertParentSql = "INSERT /*+ APPEND */ INTO DM_UD_DEL ( "
@@ -495,6 +483,65 @@ public class DataMartHelper extends GenericHelper {
 
         return numRecordDmUdDel;
 
+    }
+
+    //
+    @Transactional
+    public int populateDataMartUdCentroStellaRestArch(BigDecimal idRichiesta, String cdRichiesta,
+            String tiModDel) {
+        // --- PASSAGGIO 1: Creare e salvare la riga master in DM_UD_DEL_RICHIESTE ---
+        Long idUdDelRichiesta = createDmUdDelRichieste(idRichiesta, cdRichiesta,
+                CostantiDB.TiMotCancellazione.R.name(),
+                CostantiDB.TiStatoRichiesta.DA_EVADERE.name(),
+                CostantiDB.TiStatoInternoRich.INIZIALE.name(), tiModDel);
+
+        int numRecordDmUdDel = 0;
+
+        // Recupero l'id_strutroot
+        String queryRootstrut = "SELECT u.orgStrut.idStrut FROM AroRichiestaRa u WHERE u.idRichiestaRa = :idRichiesta ";
+        Long idRootstrut = (Long) getEntityManager().createQuery(queryRootstrut)
+                .setParameter("idRichiesta", idRichiesta.longValue()).getSingleResult();
+
+        // ======================================================================
+        // PASSAGGIO 2: Popolamento massivo della tabella figlia DM_UD_DEL per Restituzione
+        // Archivio
+        // ======================================================================
+        String insertParentSql = "INSERT /*+ APPEND */ INTO DM_UD_DEL ( "
+                + "    ID_UNITA_DOC, AA_KEY_UNITA_DOC, CD_KEY_UNITA_DOC, CD_REGISTRO_KEY_UNITA_DOC, DT_VERSAMENTO, ID_ENTE, NM_ENTE, ID_STRUT, NM_STRUT, ID_UD_DEL_RICHIESTA, TI_STATO_UD_CANCELLATE, DT_STATO_UD_CANCELLATE) "
+                + " SELECT DISTINCT "
+                + "    ud.ID_UNITA_DOC, ud.AA_KEY_UNITA_DOC, ud.CD_KEY_UNITA_DOC, ud.CD_REGISTRO_KEY_UNITA_DOC, ud.DT_CREAZIONE, ente.ID_ENTE, ente.NM_ENTE, strut.ID_STRUT, strut.NM_STRUT, :idUdDelRichiesta, 'DA_CANCELLARE', SYSDATE "
+                + "FROM ARO_V_SEL_UD_SER_FASC_BY_ENTE_X_DM item_rich "
+                + "JOIN ORG_STRUT strut ON strut.ID_STRUT = item_rich.ID_STRUT "
+                + "JOIN ORG_ENTE ente ON ente.ID_ENTE = strut.ID_ENTE "
+                + "JOIN ARO_UNITA_DOC ud ON item_rich.ID_STRUT = ud.ID_STRUT "
+                + "WHERE item_rich.ID_ROOTSTRUT = :idRootstrut AND item_rich.ti_ele = '01_UNI_DOC' ";
+
+        // Esegui la query nativa, legando il valore di idRichiesta al parametro :idRichiesta
+        numRecordDmUdDel = getEntityManager().createNativeQuery(insertParentSql)
+                .setParameter("idRootstrut", idRootstrut)
+                .setParameter("idUdDelRichiesta", idUdDelRichiesta).executeUpdate();
+
+        return numRecordDmUdDel;
+
+    }
+
+    public Long createDmUdDelRichieste(BigDecimal idRichiesta, String cdRichiesta,
+            String tiMotCancellazione, String tiStatoRichiesta, String tiStatoInternoRich,
+            String tiModDel) {
+        DmUdDelRichieste nuovaRichiesta = new DmUdDelRichieste();
+        nuovaRichiesta.setIdRichiesta(idRichiesta);
+        nuovaRichiesta.setCdRichiesta(cdRichiesta);
+        nuovaRichiesta.setTiMotCancellazione(tiMotCancellazione);
+        nuovaRichiesta.setTiStatoRichiesta(tiStatoRichiesta);
+        nuovaRichiesta.setTiStatoInternoRich(tiStatoInternoRich);
+        nuovaRichiesta.setTiModDel(tiModDel);
+        nuovaRichiesta.setDtCreazione(new Date());
+
+        // Persisti l'entità. Dopo questa chiamata, JPA/Hibernate si occuperà
+        // di eseguire l'INSERT e di popolare il campo ID con il valore generato dal DB.
+        getEntityManager().persist(nuovaRichiesta);
+
+        return nuovaRichiesta.getIdUdDelRichiesta();
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)

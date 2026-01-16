@@ -32,6 +32,7 @@ import it.eng.parer.entity.AroRichiestaRa;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.constraint.AroAipRestituzioneArchivio.TiStatoAroAipRa;
 import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
+import it.eng.parer.grantedEntity.SIOrgEnteConvenzOrg;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.restArch.dto.RicercaRichRestArchBean;
 import it.eng.parer.viewEntity.AroVChkRaUd;
@@ -402,4 +403,16 @@ public class RestituzioneArchivioHelper extends GenericHelper {
     }
 
     // end MEV #32535
+
+    public List<SIOrgEnteConvenzOrg> getOrgEnteConvenzOrgList(BigDecimal idStrut) {
+        Query q = getEntityManager().createQuery(
+                "SELECT enteConvenzOrg FROM SIOrgEnteConvenzOrg enteConvenzOrg JOIN enteConvenzOrg.siUsrOrganizIam organizIam "
+                        + "WHERE organizIam.idOrganizApplic = :idOrganizIam "
+                        + "AND organizIam.sIAplApplic.nmApplic = 'SACER' "
+                        + "AND organizIam.siAplTipoOrganiz.nmTipoOrganiz = 'STRUTTURA' "
+                        + "ORDER BY enteConvenzOrg.dtIniVal DESC");
+        q.setParameter("idOrganizIam", longFromBigDecimal(idStrut));
+        List<SIOrgEnteConvenzOrg> list = q.getResultList();
+        return list;
+    }
 }

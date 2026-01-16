@@ -83,7 +83,6 @@ public class SIOrgEnteConvenzOrg implements Serializable {
     }
 
     @Id
-
     @Column(name = "ID_ENTE_CONVENZ_ORG")
     @GenericGenerator(name = "SORG_ENTE_CONVENZ_ORG_ID_ENTE_CONVENZ_ORG_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = PersistentIdentifierGenerator.SCHEMA, value = "SACER_IAM"),

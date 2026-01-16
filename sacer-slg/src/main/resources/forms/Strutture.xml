@@ -50,6 +50,7 @@
     <Section Name="parametriConservazioneSection" Description="" Legend="Parametri di conservazione" ShowButton="true" LoadOpened="false"/>
     <Section Name="parametriGestioneSection" Description="" Legend="Parametri di gestione" ShowButton="true" LoadOpened="false"/>
     <Section Name="corrispondenzePingSection" Description="" Legend="Corrispondenze in PING" ShowButton="true" LoadOpened="true"/>
+    <Section Name="documentiProcessoConservSection" Description="" Legend="Documenti processo di conservazione" ShowButton="true" LoadOpened="false"/>
     
     <Section Name="importaParametriTipiUdSection" Description="" Legend="Tipologie unità documentaria" ShowButton="false" LoadOpened="true"/>
     <Section Name="importaParametriTipiFascicoloSection" Description="" Legend="Tipi fascicolo" ShowButton="false" LoadOpened="true"/>
@@ -553,4 +554,39 @@
         <Input Name="vers" Description="Versatore" Type="STRING" />
         <Input Name="ti_corrispondenza" Description="Nota" Type="STRING" />   
     </List>
+
+    <!-- Lista dei documenti processo di conservazione -->
+    <List Name="DocumentiProcessoConservList" Description="Documenti processo di conservazione" hideUpdateButton="true" hideDeleteButton="true">
+        <Input Name="nm_tipo_doc" Description="Tipo documento" Type="STRING" />
+        <Input Name="registro_anno_numero" Description="Registro/Anno/Numero" Type="STRING" />
+        <Input Name="pg_doc_processo_conserv" Description="Identificativo" Type="INTEGER" />
+        <Input Name="dt_doc_processo_conserv" Description="Data" Type="DATE" />
+        <Input Name="ds_doc_processo_conserv" Description="Descrizione" Type="STRING" />
+        <Link Name="download" Description="Download file" Type="STRING" Tooltip="Download file" isTargetList="false" Target="downloadFileDocProcDaLista" VisibilityProperty="download_visibile"/>
+    </List>
+    
+    <!-- Dettaglio documento processo di conservazione -->
+    <Fields Name="DocumentoProcessoConservDetail" Description="Dettaglio documento processo di conservazione">
+        <Input Name="id_doc_processo_conserv" Description="Identificativo documento processo conservazione" Type="INTEGER" Hidden="true"/>
+        <ComboBox Name="id_organiz_iam" Description="Organizzazione versante" Type="INTEGER" />
+        <ComboBox Name="id_tipo_doc_processo_conserv" Description="Tipo documento" Type="INTEGER" Required="true"/>
+        <Input Name="pg_doc_processo_conserv" Description="Identificativo" Type="INTEGER" Readonly="true" Required="true"/>
+        <Input Name="ente_doc_processo_conserv" Description="Ente" Type="STRING" Readonly="true"/>
+        <Input Name="struttura_doc_processo_conserv" Description="Struttura" Type="STRING" Readonly="true"/>
+        <ComboBox Name="cd_registro_doc_processo_conserv" Description="Registro" Type="STRING" />
+        <Input Name="aa_doc_processo_conserv" Description="Anno" Type="INTEGER" MaxLength="4" />
+        <Input Name="cd_key_doc_processo_conserv" Description="Numero" Type="STRING" MaxLength="100"/>
+        <Input Name="dt_doc_processo_conserv" Description="Data" Type="DATE" Required="true"/>
+        <TextArea Name="ds_doc_processo_conserv" Description="Descrizione" Type="STRING" Rows="20" Cols="100" MaxLength="4000" Required="true"/>
+        <Input Name="bl_doc_processo_conserv" Description="File" Type="FILE" />
+        <Input Name="nm_file_doc_processo_conserv" Description="Nome file" Type="STRING" Hidden="true"/>
+        <Button Name="downloadFileDocProcesso" Description="Download file" Type="STRING"/>
+    </Fields>
+
+    <Fields Name="EnteConvenzionatoDetail" Description="Dettaglio ente convenzionato">
+        <Input Name="id_ente_siam" Description="ID ente" Type="INTEGER" Readonly="true" />
+        <Input Name="cd_ente_convenz" Description="Codice ente" Type="STRING" Readonly="true" />
+        <Input Name="ti_cd_ente_convenz" Description="Tipo codice" Type="STRING" Readonly="true" />
+        <Input Name="nm_ente_siam" Description="Denominazione" Type="STRING" MaxLength="254" Readonly="true"/>
+    </Fields>
 </Form>
