@@ -222,6 +222,8 @@ import it.eng.parer.slite.gen.tablebean.DmUdDelRichiesteTableBean;
 import it.eng.parer.slite.gen.tablebean.DmUdDelTableBean;
 import it.eng.parer.web.helper.DataMartHelper;
 import it.eng.parer.ws.utils.CostantiDB.TipoRichiesta;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import java.util.stream.Collectors;
@@ -976,17 +978,29 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                         subStruttureAbilitateAllUtente, getLastPublisher().equals(
                                                 Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_SEMPLICE_NUOVA));
                         if (!getMessageBox().hasError()) {
-                            File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                                    "Contenuto_ricerca_unita_documentarie.csv");
+                            // MAC#39494 - Correzione metodo di generazione file in fase di
+                            // esportazione di una ricerca
+                            // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
+                            // "Contenuto_ricerca_unita_documentarie.csv");
                             try {
+                                Path tmpPath = Files.createTempFile(
+                                        "Contenuto_ricerca_unita_documentarie_", ".csv");
+                                File tmpFile = tmpPath.toFile();
                                 ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
                                         AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                                 getRequest().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                         getControllerName());
+
+                                // MAC#39494 - Correzione metodo di generazione file in fase di
+                                // esportazione di una ricerca
+                                String nomeFile = tmpFile.getName();
+                                String nomeFinale = nomeFile.substring(0,
+                                        nomeFile.lastIndexOf("_") - 1) + ".csv";
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
-                                        tmpFile.getName());
+                                        nomeFinale);
+
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(),
                                         tmpFile.getPath());
@@ -1181,17 +1195,31 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                         almenoUnTipoUdSelPerRicercaDatiSpec,
                                         almenoUnTipoDocSelPerRicercaDatiSpec);
                         if (!getMessageBox().hasError()) {
-                            File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                                    "Contenuto_ricerca_unita_documentarie.csv");
+                            // MAC#39494 - Correzione metodo di generazione file in fase di
+                            // esportazione di una ricerca
+                            // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
+                            // "Contenuto_ricerca_unita_documentarie.csv");
                             try {
+                                // MAC#39494 - Correzione metodo di generazione file in fase di
+                                // esportazione di una ricerca
+                                Path tmpPath = Files.createTempFile(
+                                        "Contenuto_ricerca_unita_documentarie_", ".csv");
+                                File tmpFile = tmpPath.toFile();
                                 ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
                                         AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                                 getRequest().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                         getControllerName());
+
+                                // MAC#39494 - Correzione metodo di generazione file in fase di
+                                // esportazione di una ricerca
+                                String nomeFile = tmpFile.getName();
+                                String nomeFinale = nomeFile.substring(0,
+                                        nomeFile.lastIndexOf("_") - 1) + ".csv";
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
-                                        tmpFile.getName());
+                                        nomeFinale);
+
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(),
                                         tmpFile.getPath());
@@ -1467,17 +1495,32 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                         dateUnitaDocValidate, dateCreazioneComp, getIdStrut(),
                                         addSerie || addRichAnnulVers);
                         if (!getMessageBox().hasError()) {
-                            File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                                    "Contenuto_ricerca_unita_documentarie.csv");
+                            // MAC#39494 - Correzione metodo di generazione file in fase di
+                            // esportazione di una ricerca
+                            // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
+                            // "Contenuto_ricerca_unita_documentarie.csv");
                             try {
+                                // MAC#39494 - Correzione metodo di generazione file in fase di
+                                // esportazione di una ricerca
+                                Path tmpPath = Files.createTempFile(
+                                        "Contenuto_ricerca_unita_documentarie_", ".csv");
+                                File tmpFile = tmpPath.toFile();
+
                                 ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
                                         AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                                 getRequest().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                         getControllerName());
+
+                                // MAC#39494 - Correzione metodo di generazione file in fase di
+                                // esportazione di una ricerca
+                                String nomeFile = tmpFile.getName();
+                                String nomeFinale = nomeFile.substring(0,
+                                        nomeFile.lastIndexOf("_") - 1) + ".csv";
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
-                                        tmpFile.getName());
+                                        nomeFinale);
+
                                 getSession().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(),
                                         tmpFile.getPath());
@@ -6811,17 +6854,32 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                     dateAnnulValidate);
                     // Carico la tabella con i risultati nella lista usata per buildare il CSV
                     if (!getMessageBox().hasError()) {
-                        File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                                "Contenuto_ricerca_unita_documentarie.csv");
+                        // MAC#39494 - Correzione metodo di generazione file in fase di esportazione
+                        // di una ricerca
+                        // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
+                        // "Contenuto_ricerca_unita_documentarie.csv");
                         try {
+                            // MAC#39494 - Correzione metodo di generazione file in fase di
+                            // esportazione di una ricerca
+                            Path tmpPath = Files.createTempFile(
+                                    "Contenuto_ricerca_unita_documentarie_", ".csv");
+                            File tmpFile = tmpPath.toFile();
+
                             ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
                                     AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                             getRequest().setAttribute(
                                     WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                     getControllerName());
+
+                            // MAC#39494 - Correzione metodo di generazione file in fase di
+                            // esportazione di una ricerca
+                            String nomeFile = tmpFile.getName();
+                            String nomeFinale = nomeFile.substring(0, nomeFile.lastIndexOf("_") - 1)
+                                    + ".csv";
                             getSession().setAttribute(
                                     WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
-                                    tmpFile.getName());
+                                    nomeFinale);
+
                             getSession().setAttribute(
                                     WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(),
                                     tmpFile.getPath());

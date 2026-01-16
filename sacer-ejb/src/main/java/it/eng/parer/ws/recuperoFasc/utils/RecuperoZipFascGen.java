@@ -283,8 +283,10 @@ public class RecuperoZipFascGen {
                 DIRECTORY_REC_FASC_CONTEN_UD, it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR);
         /* Definisco il nome e l'estensione del file */
         // 1. Sostituisco la parte fissa "_IndiceAIP-UD" con "_AIP-UD"
-        String fileNameSenzaIndice = tmpConten.getNomeFileCompleto().replace("_IndiceAIP-UD", "_AIP-UD");
-        // 2. Rimuovo il riferimento all'eventuale versione alla fine della stringa usando una regular expression
+        String fileNameSenzaIndice = tmpConten.getNomeFileCompleto().replace("_IndiceAIP-UD",
+                "_AIP-UD");
+        // 2. Rimuovo il riferimento all'eventuale versione alla fine della stringa usando una
+        // regular expression
         String fileNameSenzaVersione = fileNameSenzaIndice.replaceAll("-[\\d.]+$", "");
         String fileName = it.eng.parer.async.utils.IOUtils.getFilename(fileNameSenzaVersione,
                 it.eng.parer.async.utils.IOUtils.CONTENT_TYPE.ZIP.getFileExt());

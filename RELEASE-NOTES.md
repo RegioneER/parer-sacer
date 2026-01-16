@@ -1,3 +1,9 @@
+## 10.12.1 (11-12-2025)
+
+### Bugfix: 2
+- [#39516](https://parermine.regione.emilia-romagna.it/issues/39516) Correzione vista per estrazione strutture coinvolte nella creazione della richiesta di restituzione arichivio.
+- [#39494](https://parermine.regione.emilia-romagna.it/issues/39494) Correzione metodo di generazione file in fase di esportazione di una ricerca
+
 ## 10.12.0 (21-11-2025)
 
 ### Bugfix: 7
@@ -17,3 +23,4 @@
 - [#38975](https://parermine.regione.emilia-romagna.it/issues/38975) Consentire la cancellazione delle richieste di annullamento in stato CHIUSA
 - [#38961](https://parermine.regione.emilia-romagna.it/issues/38961) Recupero componente unzippato
 - [#38689](https://parermine.regione.emilia-romagna.it/issues/38689) Modifica pagina Ricerca unità documentarie
+
