@@ -1006,6 +1006,7 @@
         <Input Description="Ente / struttura" Name="nm_ente_strut" Type="STRING" />
         <Input Description="Raggruppamento stato" Name="ti_stato_ud_cancellate" Type="STRING"/>
         <Input Description="Numero ud per stato" Name="ni_ud_stato" Type="INTEGER" GroupingDecimal="true" />        
+        <Input Description="Di cui annullate" Name="ni_ud_stato_annullate" Type="INTEGER" GroupingDecimal="true" />        
         <Input Description="Id strut" Name="id_strut" Type="INTEGER" Hidden="true"/>
         <Input Description="Tipo motivo cancellazione" Name="ti_mot_cancellazione" Type="STRING" Hidden="true" />
     </List>
@@ -1018,6 +1019,7 @@
         <Input Description="Anno" Name="aa_key_unita_doc" Type="INTEGER"/>
         <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
         <Input Description="Data versamento" Name="dt_versamento" Type="DATETIME"/>
+        <CheckBox Description="Annullata" Name="fl_annul" Type="STRING" Readonly="true"/>
         <Input Description="Stato ud" Name="ti_stato_ud_cancellate" Type="STRING"/>
     </List>
 

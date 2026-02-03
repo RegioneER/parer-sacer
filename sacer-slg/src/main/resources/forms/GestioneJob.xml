@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Form Description="Gestione Job" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema">
-    
+
     <!-- NUOVA GESTIONE JOB -->
     <Section Description="" Legend="Filtri ricerca" LoadOpened="true" Name="FiltriRicercaJobSection" ShowButton="false"/>
     <Section Description="" Legend="Informazioni job" LoadOpened="true" Name="InfoRiassuntiveJobSection" ShowButton="false"/>

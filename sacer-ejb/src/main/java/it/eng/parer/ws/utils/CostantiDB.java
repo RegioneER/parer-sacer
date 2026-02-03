@@ -176,7 +176,6 @@ public class CostantiDB {
         public static final String NUM_FASC_CRITERIO_STD = "NUM_FASC_CRITERIO_STD";
         public static final String NUM_GG_SCAD_CRITERIO_FASC_STD = "NUM_GG_SCAD_CRITERIO_FASC_STD";
         //
-        public static final String NUM_MAX_UD_IN_CODA_VERIFICA_FIRME_DT_VERS = "NUM_MAX_UD_IN_CODA_VERIFICA_FIRME_DT_VERS";
         public static final String NUM_GG_RESET_STATO_IN_ELENCO = "NUM_GG_RESET_STATO_IN_ELENCO";
         //
         public static final String FL_ABILITA_JOB_ELENCHI_BATCH = "FL_ABILITA_JOB_ELENCHI_BATCH";
@@ -433,7 +432,7 @@ public class CostantiDB {
         // end EVO#20972
         //
         // EVO#13993
-        FASCICOLO("Fascicolo"),
+        FASCICOLO("Fascicolo"), FASC_STATO_CONSERV("Stato di conservazione fascicolo"),
         //
         FASC_UNISYNCRO("Fascicolo UniSyncro");
         // end EVO#13993
@@ -1373,10 +1372,10 @@ public class CostantiDB {
 
     public enum TiStatoInternoRich {
 
-        INIZIALE, INVIATA_A_MS, IN_ELABORAZIONE_LOGICA, ERRORE_INVIO_MS,
-        ERRORE_LOGICO_RIPRISTINABILE, ERRORE_LOGICO, PRONTA_PER_FISICA, IN_PREPARAZIONE_FISICA,
-        ERRORE_PREPARAZIONE, IN_CODA_CANCELLAZIONE, ERRORE_AVVIO_JOB, IN_CANCELLAZIONE_FISICA,
-        ERRORE_FISICO_CRITICO, ERRORE_FISICO_PARZIALE, COMPLETATA
+        INIZIALE, INVIATA_A_MS, IN_ELABORAZIONE_LOGICA, ERRORE_INVIO_MS, ERRORE_LOGICO,
+        ERRORE_LOGICO_GESTITO, ERRORE_LOGICO_RIPRISTINABILE, PRONTA_PER_FISICA,
+        IN_PREPARAZIONE_FISICA, ERRORE_PREPARAZIONE, IN_CODA_CANCELLAZIONE, ERRORE_AVVIO_JOB,
+        IN_CANCELLAZIONE_FISICA, ERRORE_FISICO_CRITICO, ERRORE_FISICO_PARZIALE, COMPLETATA
 
     }
 
@@ -1400,6 +1399,43 @@ public class CostantiDB {
 
         public String getDescrizione() {
             return descrizione;
+        }
+    }
+
+    // MEV #37229
+    public enum TipoCreazioneRichScartoVers {
+        UPLOAD_FILE
+    }
+
+    public enum StatoRichScartoVers {
+
+        APERTA, CHIUSA, EVASA
+    }
+
+    public enum TipoFileRichScartoVers {
+
+        FILE_UD_SCARTO // , XML_RICH, XML_RISP, FILE_FASC_ANNUL
+    }
+
+    public enum StatoItemRichScartoVers {
+
+        SCARTATO, DA_SCARTARE, NON_SCARTABILE
+    }
+
+    public enum TipoErrRichScartoVers {
+
+        ITEM_GIA_PRESENTE, ITEM_IN_CORSO_DI_SCARTO, ITEM_NON_ESISTE, TIPO_UNITA_DOC_NON_ABILITATO,
+        REGISTRO_NON_ABILITATO, TIPO_DOC_PRINC_NON_ABILITATO, ITEM_GIA_SCARTATO;
+
+        public static String[] getStatiControlloItem() {
+            // Ritorna tutti gli stati tranne ITEM_NON_ESISTE e ITEM_GIA_PRESENTE - DA
+            // MODIFICARE IN CASO DI AGGIUNTE
+
+            return new String[] {
+                    TipoErrRichScartoVers.ITEM_IN_CORSO_DI_SCARTO.name(),
+                    TipoErrRichScartoVers.TIPO_UNITA_DOC_NON_ABILITATO.name(),
+                    TipoErrRichScartoVers.REGISTRO_NON_ABILITATO.name(),
+                    TipoErrRichScartoVers.TIPO_DOC_PRINC_NON_ABILITATO.name() };
         }
     }
 

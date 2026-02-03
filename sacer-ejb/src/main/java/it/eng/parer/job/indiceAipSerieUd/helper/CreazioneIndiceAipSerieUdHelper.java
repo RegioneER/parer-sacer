@@ -22,7 +22,11 @@ import javax.interceptor.Interceptors;
 import javax.persistence.Query;
 
 import it.eng.parer.entity.SerVerSerieDaElab;
+import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
 import it.eng.parer.helper.GenericHelper;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 
 /**
  *
@@ -114,5 +118,78 @@ public class CreazioneIndiceAipSerieUdHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idSerie", idSerie);
         return (BigDecimal) query.getSingleResult();
+    }
+
+    /**
+     * Recupera gli ID delle UD che appartengono ad altre entità (elenchi versamento Fascicoli e/o
+     * Serie) che con stato NON idoneo per il passaggio dell'ud allo stato di conservazione
+     * IN_ARCHIVIO
+     *
+     * @param udIds            lista ID delle UD candidate
+     * @param idSerieToExclude ID della Serie corrente (da escludere dai controlli)
+     * @return Lista delle ud che sono "bloccate" in quanto appartenenti ad altre aggregazioni
+     */
+    public List<Long> findUdIdsBlockedForFirmaIndiceAipSerie(List<Long> udIds,
+            Long idSerieToExclude) {
+        if (udIds == null || udIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // Stati Elenco di Versamento Fascicoli che non sono idonei al passaggio dell'ud allo stato
+        // di conservazione IN_ARCHIVIO
+        List<TiStatoElencoFasc> statiElencoBloccanti = Arrays.asList(
+                TiStatoElencoFasc.IN_CODA_CREAZIONE_AIP, TiStatoElencoFasc.AIP_CREATI,
+                TiStatoElencoFasc.ELENCO_INDICI_AIP_CREATO,
+                TiStatoElencoFasc.ELENCO_INDICI_AIP_FIRMA_IN_CORSO);
+
+        // Stati Serie che non sono idonei al passaggio dell'ud allo stato di conservazione
+        // IN_ARCHIVIO
+        List<String> statiSerieBloccanti = Arrays.asList("PRESA_IN_CARICO", "AIP_GENERATO");
+
+        String hql = "SELECT DISTINCT ud.idUnitaDoc FROM AroUnitaDoc ud "
+                + "WHERE ud.idUnitaDoc IN :udIds " + "AND ("
+
+                // 1. Blocco da FASCICOLI (tramite Stato dell'Elenco di versamento fascicoli)
+                + "   EXISTS (SELECT 1 FROM FasUnitaDocFascicolo udf, ElvStatoElencoVersFasc se "
+                + "      JOIN udf.fasFascicolo f " + "      JOIN f.elvElencoVersFasc e "
+                + "      WHERE udf.aroUnitaDoc = ud " + "      AND f.dtAnnull = :defaultAnnull "
+
+                // Join manuale tra Elenco e il suo Stato Corrente
+                + "      AND e.idStatoElencoVersFascCor = se.idStatoElencoVersFasc "
+
+                // Verifica stati elenco bloccanti
+                + "      AND se.tiStato IN :statiElencoBloccanti) "
+
+                + "   OR "
+
+                // 2. Blocco da ALTRE SERIE (tramite Stato Serie)
+                + "   EXISTS (SELECT 1 FROM AroUdAppartVerSerie uds, SerStatoSerie ss "
+                + "      JOIN uds.serContenutoVerSerie c " + "      JOIN c.serVerSerie vs "
+                + "      JOIN vs.serSerie s " + "      WHERE uds.aroUnitaDoc = ud "
+                + "      AND c.tiContenutoVerSerie = 'EFFETTIVO' "
+
+                // Join manuale tra Serie e il suo Stato Corrente
+                + "      AND s.idStatoSerieCor = ss.idStatoSerie "
+
+                // Serie attiva
+                + "      AND s.dtAnnul = :defaultAnnull "
+                // Escludo la serie che sto firmando ora
+                + "      AND s.idSerie != :idSerieToExclude "
+
+                // Verifica stati serie bloccanti
+                + "      AND ss.tiStatoSerie IN :statiSerieBloccanti) " + ")";
+
+        Query query = getEntityManager().createQuery(hql);
+        query.setParameter("udIds", udIds);
+        query.setParameter("idSerieToExclude", idSerieToExclude);
+        query.setParameter("statiElencoBloccanti", statiElencoBloccanti);
+        query.setParameter("statiSerieBloccanti", statiSerieBloccanti);
+
+        Calendar c = Calendar.getInstance();
+        c.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        query.setParameter("defaultAnnull", c.getTime());
+
+        return query.getResultList();
     }
 }

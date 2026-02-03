@@ -245,11 +245,11 @@ public class ElaboraCodaIndiciAipDaElabEjb {
             niResetStatoDoc = niResetStatoDoc.add(BigDecimal.ONE);
             // il sistema aggiorna i documenti appartenenti all'unità doc presenti nell'elenco
             // assegnando stato relativo
-            // all'elenco = IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS
+            // all'elenco = IN_ELENCO_VALIDATO
             evHelper.aggiornaStatoDocInElenco(aud.getIdUnitaDoc(),
                     elencoDaElab.getElvElencoVer().getIdElencoVers(),
-                    ElencoEnums.DocStatusEnum.IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS.name(), null,
-                    lastResetSystemDate, niResetStatoDoc);
+                    ElencoEnums.DocStatusEnum.IN_ELENCO_VALIDATO.name(), null, lastResetSystemDate,
+                    niResetStatoDoc);
             // Recupero l'ultimo valore del numero di reset per gli aggiornamenti metadati relativi
             // all'unità doc
             // presenti nell'elenco
@@ -258,11 +258,11 @@ public class ElaboraCodaIndiciAipDaElabEjb {
             niResetStatoUpd = niResetStatoUpd.add(BigDecimal.ONE);
             // il sistema aggiorna gli aggiornamenti unità doc appartenenti all'unità doc presenti
             // nell'elenco
-            // assegnando stato relativo all'elenco = IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS
+            // assegnando stato relativo all'elenco = IN_ELENCO_VALIDATO
             evHelper.aggiornaStatoUpdInElenco(aud.getIdUnitaDoc(),
                     elencoDaElab.getElvElencoVer().getIdElencoVers(),
-                    AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS.name(),
-                    null, lastResetSystemDate, niResetStatoUpd);
+                    AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_VALIDATO.name(), null,
+                    lastResetSystemDate, niResetStatoUpd);
         }
     }
 

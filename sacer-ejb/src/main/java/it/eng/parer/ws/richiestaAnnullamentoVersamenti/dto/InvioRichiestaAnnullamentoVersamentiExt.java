@@ -137,7 +137,7 @@ public class InvioRichiestaAnnullamentoVersamentiExt {
             this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_TIPO_ANNUL);
             this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
             this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FASC);
-        } else if (versione.equals("1.3")) {
+        } else if (versione.equals("1.3") || versione.equals("1.2")) {
             this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
             this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FASC);
         } else if (!versione.equals("1.0")) {

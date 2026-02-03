@@ -376,6 +376,8 @@
                 <a href="ProvaRecStatoOggetto.jsp">Lancia la pagina di Recupero Stato Oggetto di PING...</a>
                 <br/>
                 <a href="ProvaRecAIPFascicolo.jsp">Lancia la pagina di recupero AIP del fascicolo...</a>
+                <br/>
+                <a href="ProvaRecStatoCFascicolo.jsp">Lancia la pagina di recupero stato conservazione del fascicolo...</a>
             </div>
 
             <div id="others" class="tab">

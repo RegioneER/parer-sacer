@@ -143,6 +143,16 @@ public class RestituzioneArchivioEjb {
 
     // end MEV #32535
 
+    // MEV #39896
+    public BigDecimal getIdStrutturaDaOrganizIam(BigDecimal idOrganizIam) {
+        // ricavo l'organizzazione iam
+        SIUsrOrganizIam organizIam = helper.findById(SIUsrOrganizIam.class, idOrganizIam);
+        OrgStrutRowBean strutRB = struttureEjb
+                .getOrgStrutRowBean(BigDecimal.valueOf(organizIam.getIdOrganizApplic()));
+        return strutRB.getIdStrut();
+    }
+    // end MEV #39896
+
     /**
      * Verifica l'esistenza e i permessi in lettura/scrittura delle cartelle per l’estrazione degli
      * AIP
@@ -230,14 +240,15 @@ public class RestituzioneArchivioEjb {
      * Verifica l'esistenza di una precedente richiesta di restituzione archivio in stato RESTITUITO
      * con flag per la pulizia area FTP impostato a 1
      *
-     * @param idStrut id struttura
+     * @param idStrut     id struttura
+     * @param flSvuotaFtp area ftp da svuotare
      *
      * @return true se esiste gi\u00E0 una richiesta di resituzione archivio
      */
-    public boolean checkRichRestArchExistingRestituito(BigDecimal idStrut) {
+    public boolean checkRichRestArchExistingRestituito(BigDecimal idStrut, String flSvuotaFtp) {
         // ricavo la struttura
         OrgStrut struttura = helper.findById(OrgStrut.class, idStrut);
-        return helper.isRichRestArchExistingRestituito(struttura.getIdEnteConvenz());
+        return helper.isRichRestArchExistingRestituito(struttura.getIdEnteConvenz(), flSvuotaFtp);
     }
 
     /**

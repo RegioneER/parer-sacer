@@ -38,6 +38,7 @@ public class DmUdDel implements Serializable {
     private String nmEnte;
     private String nmStrut;
     private String tiStatoUdCancellate;
+    private String flAnnul;
     private DmUdDelRichieste dmUdDelRichieste;
 
     public DmUdDel() {
@@ -144,6 +145,15 @@ public class DmUdDel implements Serializable {
 
     public void setTiStatoUdCancellate(String tiStatoUdCancellate) {
         this.tiStatoUdCancellate = tiStatoUdCancellate;
+    }
+
+    @Column(name = "FL_ANNUL", columnDefinition = "char(1)")
+    public String getFlAnnul() {
+        return this.flAnnul;
+    }
+
+    public void setFlAnnul(String flAnnul) {
+        this.flAnnul = flAnnul;
     }
 
     // bi-directional many-to-one association to DmUdDelRichieste

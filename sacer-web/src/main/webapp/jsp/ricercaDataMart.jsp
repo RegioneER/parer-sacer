@@ -32,7 +32,7 @@
             #RichiesteDataMartList tbody tr, #NumUdDataMartList tbody tr { cursor: pointer; }
             #RichiesteDataMartList tbody tr:not(.riga-selezionata):hover, #NumUdDataMartList tbody tr:not(.riga-selezionata):hover { background-color: #f0f0f0; }
             #RichiesteDataMartList tbody tr td:nth-child(8), #RichiesteDataMartList thead tr th:nth-child(8),
-            #NumUdDataMartList tbody tr td:nth-child(5), #NumUdDataMartList thead tr th:nth-child(5) { text-align: right; }
+            #NumUdDataMartList tbody tr td:nth-child(5), #NumUdDataMartList thead tr th:nth-child(5), #NumUdDataMartList tbody tr td:nth-child(6), #NumUdDataMartList thead tr th:nth-child(6) { text-align: right; }
         </style>
     </sl:head>
     <sl:body>
@@ -111,6 +111,7 @@
             <input type="hidden" id="isProcessoKafkaAttivo_val" name="isProcessoKafkaAttivo_val_name" value="<c:out value='${isProcessoKafkaAttivo}' default='false'/>" />
             <input type="hidden" id="statoRichiestaSelezionata_val" name="statoRichiestaSelezionata_val_name" value="<c:out value='${statoRichiestaSelezionata}' default=''/>" />
             <input type="hidden" id="statoInternoRichiesta_val" name="statoInternoRichiesta_val_name" value="<c:out value='${statoInternoRichiesta}' default=''/>" />
+            <input type="hidden" id="selectedRigaIdStrut_val" name="selectedRigaIdStrut_val_name" value="<c:out value='${selectedRigaIdStrut}' default=''/>" />
         </sl:content>
         <sl:footer />
     </sl:body>

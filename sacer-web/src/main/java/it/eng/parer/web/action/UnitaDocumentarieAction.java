@@ -127,12 +127,10 @@ import it.eng.parer.slite.gen.viewbean.AroVLisDocTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisElvVerTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisFascRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisFascTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisItemRichAnnvrsTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisLinkUnitaDocRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisLinkUnitaDocTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisNotaUnitaDocRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisNotaUnitaDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisStatoRichAnnvrsTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisUpdCompUnitaDocTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisUpdDocUnitaDocTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisUpdKoRisoltiTableBean;
@@ -144,7 +142,6 @@ import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocTableDescriptor;
 import it.eng.parer.slite.gen.viewbean.AroVVisDocIamRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisDocIamTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisNotaUnitaDocRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVVisRichAnnvrsRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisUnitaDocIamRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisUpdUnitaDocRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisUpdUnitaDocTableBean;
@@ -223,13 +220,14 @@ import it.eng.parer.entity.constraint.AplValoreParamApplic;
 import it.eng.parer.exception.PreparazioneFisicaException;
 import it.eng.parer.slite.gen.tablebean.DmUdDelRichiesteRowBean;
 import it.eng.parer.slite.gen.tablebean.DmUdDelRichiesteTableBean;
+import it.eng.parer.slite.gen.tablebean.DmUdDelRowBean;
 import it.eng.parer.slite.gen.tablebean.DmUdDelTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVChkStatoCorRichSoftDeleteRowBean;
 import it.eng.parer.web.helper.DataMartHelper;
 import it.eng.parer.ws.utils.CostantiDB.TipoRichiesta;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
 import java.util.stream.Collectors;
 
 /**
@@ -7587,7 +7585,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     BigDecimal idUdDelRichiesta = richiesteDataMart.getRow(0).getIdUdDelRichiesta();
                     String tiMotCancellazione = richiesteDataMart.getRow(0).getTiMotCancellazione();
                     // Unica chiamata al metodo "regista"
-                    preparaAttributiPerJSP(idUdDelRichiesta, tiMotCancellazione);
+                    preparaAttributiPerJSP(idUdDelRichiesta, tiMotCancellazione, null);
                 }
             }
         }
@@ -7617,7 +7615,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     .copyFromBaseRow(richiesta);
 
             // Unica chiamata al metodo "regista" che fa tutto il lavoro.
-            preparaAttributiPerJSP(idUdDelRichiesta, clickedMotivoR);
+            preparaAttributiPerJSP(idUdDelRichiesta, clickedMotivoR, null);
 
             getRequest().setAttribute("selectedRigaStatoN", null);
             getRequest().setAttribute("selectedRigaIdForN", null);
@@ -7641,9 +7639,10 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         String idUdDelRichiesta = getRequest().getParameter("idUdDelRichiesta");
         String idRichiesta = getRequest().getParameter("idRichiesta");
         String tiStatoUdCancellate = getRequest().getParameter("tiStatoUdCancellate");
-
         // Dobbiamo recuperare anche il motivo per passarlo al nostro helper
         String tiMotCancellazione = getRequest().getParameter("tiMotCancellazione");
+
+        String idStrut = getRequest().getParameter("idStrut");
 
         // Identificatori per mantenere la selezione della riga padre
         String parentSelectedIdR = getRequest().getParameter("selectedRigaIdR");
@@ -7652,20 +7651,23 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         // Identificatori della riga figlia cliccata
         String clickedStatoN = getRequest().getParameter("selectedRigaStatoN");
         String clickedIdForN = getRequest().getParameter("selectedRigaIdForN");
+        String clickedIdStrutN = getRequest().getParameter("selectedRigaIdStrutN");
 
         // Esegue la logica di business per filtrare la tabella UdDataMartList
         getForm().getUdDataMartSection()
                 .setLegend("Lista unità documentarie in stato " + tiStatoUdCancellate
                         + " per richiesta " + idRichiesta + " di "
                         + dataMartEjb.getDsMotCancellazione(tiMotCancellazione));
-        DmUdDelTableBean udDataMart = dataMartEjb
-                .getDmUdDelTableBeanByStato(new BigDecimal(idUdDelRichiesta), tiStatoUdCancellate);
+        DmUdDelTableBean udDataMart = dataMartEjb.getDmUdDelTableBeanByStato(
+                new BigDecimal(idUdDelRichiesta), tiStatoUdCancellate, new BigDecimal(idStrut));
         getForm().getUdDataMartList().setTable(udDataMart);
         getForm().getUdDataMartList().getTable().setPageSize(10);
         getForm().getUdDataMartList().getTable().first();
 
         // Unica chiamata al metodo "regista" che fa tutto il lavoro.
-        preparaAttributiPerJSP(new BigDecimal(parentSelectedIdR), parentSelectedMotivoR);
+        // preparaAttributiPerJSP(new BigDecimal(parentSelectedIdR), parentSelectedMotivoR);
+        preparaAttributiPerJSP(new BigDecimal(idUdDelRichiesta), tiMotCancellazione,
+                new BigDecimal(idStrut));
 
         // Reimposta gli attributi per l'evidenziazione della riga figlia, ora che
         // quelli della padre sono stati ripristinati.
@@ -7674,6 +7676,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         }
         if (clickedIdForN != null) {
             getRequest().setAttribute("selectedRigaIdForN", clickedIdForN);
+        }
+        if (clickedIdStrutN != null) {
+            getRequest().setAttribute("selectedRigaIdStrut", clickedIdStrutN);
         }
 
         forwardToPublisher(Application.Publisher.RICERCA_DATA_MART);
@@ -7853,6 +7858,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         case INIZIALE:
         case ERRORE_INVIO_MS:
         case ERRORE_LOGICO:
+        case ERRORE_LOGICO_GESTITO:
             isMicroserviceButtonVisible = true;
             break;
 
@@ -8004,61 +8010,94 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 .getTable()).getRow(0).getIdUdDelRichiesta();
         BigDecimal idRichiestaSacer = getForm().getNumUdDataMartList().getTable().getRow(0)
                 .getBigDecimal("id_richiesta");
-        BigDecimal idStrut = ((DmUdDelTableBean) getForm().getNumUdDataMartList().getTable())
-                .getRow(0).getIdStrut();
+
+        List<BigDecimal> idStrutList = new ArrayList<>();
+        for (DmUdDelRowBean udDelRB : (DmUdDelTableBean) getForm().getNumUdDataMartList()
+                .getTable()) {
+            idStrutList.add(udDelRB.getIdStrut());
+        }
+
         String tiMotCancellazione = getForm().getNumUdDataMartList().getTable().getRow(0)
                 .getString("ti_mot_cancellazione");
 
         try {
-            // Logica di business per chiamare il microservizio
-            String tipoRichiesta = TipoRichiesta.valueOf(tiMotCancellazione).getDescrizione();
-            String[] organizzazione = dataMartEjb.getAmbienteEnteStruttura(idStrut);
-            String ambiente = organizzazione[0];
-            String ente = organizzazione[1];
-            String struttura = organizzazione[2];
-            String motivazione = CostantiDB.TiMotCancellazione.valueOf(tiMotCancellazione)
-                    .getDescrizione();
-            String descrizione = "Cancellazione UD a seguito di " + motivazione;
+            for (BigDecimal idStrut : idStrutList) {
 
-            String versione = configurationHelper.getAplValoreParamApplic(
-                    CostantiDB.ParametroAppl.VERSIONE_XML_MS_UD_DEL,
-                    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
-            String loginname = configurationHelper.getAplValoreParamApplic(
-                    CostantiDB.ParametroAppl.USERID_MS_UD_DEL,
-                    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
-            String password = configurationHelper.getAplValoreParamApplic(
-                    CostantiDB.ParametroAppl.PSW_MS_UD_DEL,
-                    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
-            Integer timeout = Integer.valueOf(configurationHelper.getAplValoreParamApplic(
-                    CostantiDB.ParametroAppl.TIMEOUT_MS_UD_DEL,
-                    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null));
-            String url = configurationHelper.getAplValoreParamApplic(
-                    CostantiDB.ParametroAppl.URL_MS_UD_DEL,
-                    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
-            String tiModDel = dataMartHelper.getTiModDelRichiesta(idUdDelRichiestaSacer);
+                // Logica di business per chiamare il microservizio
+                String tipoRichiesta = TipoRichiesta.valueOf(tiMotCancellazione).getDescrizione();
+                String[] organizzazione = dataMartEjb.getAmbienteEnteStruttura(idStrut);
+                String ambiente = organizzazione[0];
+                String ente = organizzazione[1];
+                String struttura = organizzazione[2];
+                String motivazione = CostantiDB.TiMotCancellazione.valueOf(tiMotCancellazione)
+                        .getDescrizione();
+                String descrizione = "Cancellazione UD a seguito di " + motivazione;
 
-            HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-            clientHttpRequestFactory.setConnectTimeout(timeout);
-            RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
+                String versione = configurationHelper.getAplValoreParamApplic(
+                        CostantiDB.ParametroAppl.VERSIONE_XML_MS_UD_DEL,
+                        AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
+                String loginname = configurationHelper.getAplValoreParamApplic(
+                        CostantiDB.ParametroAppl.USERID_MS_UD_DEL,
+                        AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
+                String password = configurationHelper.getAplValoreParamApplic(
+                        CostantiDB.ParametroAppl.PSW_MS_UD_DEL,
+                        AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
+                Integer timeout = Integer.valueOf(configurationHelper.getAplValoreParamApplic(
+                        CostantiDB.ParametroAppl.TIMEOUT_MS_UD_DEL,
+                        AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null));
+                String url = configurationHelper.getAplValoreParamApplic(
+                        CostantiDB.ParametroAppl.URL_MS_UD_DEL,
+                        AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
+                String tiModDel = dataMartHelper.getTiModDelRichiesta(idUdDelRichiestaSacer);
 
-            dataMartEjb.deleteAroRichSoftDelete(idRichiestaSacer,
-                    dataMartEjb.getTiItemRichSoftDelete(tiMotCancellazione));
+                // 1. Definisci una strategia che si fida di tutti i certificati
+                org.apache.http.conn.ssl.TrustStrategy acceptingTrustStrategy = (
+                        java.security.cert.X509Certificate[] chain, String authType) -> true;
 
-            HttpHeaders header = new HttpHeaders();
-            header.setContentType(MediaType.MULTIPART_FORM_DATA);
+                // 2. Crea un SSLContext con quella strategia
+                javax.net.ssl.SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
+                        .loadTrustMaterial(null, acceptingTrustStrategy).build();
 
-            MultiValueMap<String, Object> multipartRequest = new LinkedMultiValueMap<>();
-            multipartRequest.add("VERSIONE", versione);
-            multipartRequest.add("LOGINNAME", loginname);
-            multipartRequest.add("PASSWORD", password);
-            multipartRequest.add("XMLREQ",
-                    getXmlMsDmUdDel(versione, loginname, ambiente, ente, struttura, descrizione,
-                            motivazione, tiModDel, tipoRichiesta, idRichiestaSacer));
+                // 3. Crea una Factory SSL che usa il contesto rilassato e un HostnameVerifier
+                // "Noop" (nessuna operazione/verifica)
+                org.apache.http.conn.ssl.SSLConnectionSocketFactory csf = new org.apache.http.conn.ssl.SSLConnectionSocketFactory(
+                        sslContext, org.apache.http.conn.ssl.NoopHostnameVerifier.INSTANCE);
 
-            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(
-                    multipartRequest, header);
+                // 4. Costruisci l'HttpClient Apache personalizzato
+                org.apache.http.impl.client.CloseableHttpClient httpClient = org.apache.http.impl.client.HttpClients
+                        .custom().setSSLSocketFactory(csf).build();
 
-            restTemplate.exchange(url, HttpMethod.POST, requestEntity, Resource.class);
+                // 5. Passa l'HttpClient alla factory di Spring
+                HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+                clientHttpRequestFactory.setHttpClient(httpClient);
+                clientHttpRequestFactory.setConnectTimeout(timeout); // Manteniamo il tuo timeout
+
+                AroVChkStatoCorRichSoftDeleteRowBean chk = dataMartEjb
+                        .getAroVChkStatoCorRichSoftDeleteRowBean(idRichiestaSacer,
+                                tiMotCancellazione);
+
+                if (chk != null && (chk.getFlRichErrore().equals("1")
+                        || chk.getFlRichEvasaKoGest().equals("1"))) {
+                    dataMartEjb.reinizializzaRichiesta(idRichiestaSacer, tiMotCancellazione,
+                            idUdDelRichiestaSacer);
+                }
+
+                HttpHeaders header = new HttpHeaders();
+                header.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+                MultiValueMap<String, Object> multipartRequest = new LinkedMultiValueMap<>();
+                multipartRequest.add("VERSIONE", versione);
+                multipartRequest.add("LOGINNAME", loginname);
+                multipartRequest.add("PASSWORD", password);
+                multipartRequest.add("XMLREQ",
+                        getXmlMsDmUdDel(versione, loginname, ambiente, ente, struttura, descrizione,
+                                motivazione, tiModDel, tipoRichiesta, idRichiestaSacer));
+
+                HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(
+                        multipartRequest, header);
+
+                restTemplate.exchange(url, HttpMethod.POST, requestEntity, Resource.class);
+            }
 
             // Aggiorniamo lo stato a INVIATA_A_MS
             dataMartEjb.impostaStatoInternoRichiesta(idUdDelRichiestaSacer,
@@ -8076,7 +8115,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     "Si è verificato un errore durante la chiamata al microservizio. Controllare i log.");
         }
 
-        ricaricaPaginaDataMart(idUdDelRichiestaSacer, tiMotCancellazione);
+        ricaricaPaginaDataMart(idUdDelRichiestaSacer, tiMotCancellazione, null);
     }
 
     @Override
@@ -8116,7 +8155,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         }
 
         // Ricarica la pagina per far ripartire il polling.
-        ricaricaPaginaDataMart(idUdDelRichiesta, tiMotCancellazione);
+        ricaricaPaginaDataMart(idUdDelRichiesta, tiMotCancellazione, null);
     }
 
     private String getXmlMsDmUdDel(String versione, String nmUserid, String ambiente, String ente,
@@ -8228,20 +8267,20 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             }
         }
 
-        ricaricaPaginaDataMart(idUdDelRichiesta, tiMotCancellazione);
+        ricaricaPaginaDataMart(idUdDelRichiesta, tiMotCancellazione, null);
     }
 
-    private void ricaricaPaginaDataMart(BigDecimal idUdDelRichiesta, String tiMotCancellazione)
-            throws EMFError {
-        preparaAttributiPerJSP(idUdDelRichiesta, tiMotCancellazione);
+    private void ricaricaPaginaDataMart(BigDecimal idUdDelRichiesta, String tiMotCancellazione,
+            BigDecimal idStrut) throws EMFError {
+        preparaAttributiPerJSP(idUdDelRichiesta, tiMotCancellazione, idStrut);
         forwardToPublisher(getLastPublisher());
     }
 
     /**
      * Centralizza tutta la preparazione della vista di dettaglio.
      */
-    private void preparaAttributiPerJSP(BigDecimal idUdDelRichiesta, String tiMotCancellazione)
-            throws EMFError {
+    private void preparaAttributiPerJSP(BigDecimal idUdDelRichiesta, String tiMotCancellazione,
+            BigDecimal idStrut) throws EMFError {
         CostantiDB.TiMotCancellazione tiMotCancellazioneEnum = CostantiDB.TiMotCancellazione
                 .valueOf(tiMotCancellazione);
 
@@ -8265,6 +8304,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getRequest().setAttribute("idRichiestaPerPolling", richiesta.getIdRichiesta());
         getRequest().setAttribute("selectedRigaIdR", idUdDelRichiesta.toPlainString());
         getRequest().setAttribute("selectedRigaMotivoR", tiMotCancellazione);
+        if (idStrut != null) {
+            getRequest().setAttribute("selectedRigaIdStrut", idStrut.toPlainString());
+        }
 
         // --- 3. LOGICA DI VISIBILITÀ DEI PULSANTI ---
         // Questa chiamata ora si basa sullo stato appena sincronizzato.
@@ -8288,8 +8330,14 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getUdDataMartSection().setHidden(false);
         getForm().getUdDataMartSection().setLegend("Lista unità documentarie per richiesta di "
                 + dsMotCancellazione + ": " + richiesta.getCdRichiesta());
-        DmUdDelTableBean udDataMart = dataMartEjb.getDmUdDelTableBeanByStato(idUdDelRichiesta,
-                tiStatoUdCancellate);
+        DmUdDelTableBean udDataMart = new DmUdDelTableBean();
+        if (idStrut != null) {
+            udDataMart = dataMartEjb.getDmUdDelTableBeanByStato(idUdDelRichiesta,
+                    tiStatoUdCancellate, idStrut);
+        } else {
+            udDataMart = dataMartEjb.getDmUdDelTableBeanByStato(idUdDelRichiesta,
+                    tiStatoUdCancellate);
+        }
         getForm().getUdDataMartList().setTable(udDataMart);
         getForm().getUdDataMartList().getTable().setPageSize(10);
         getForm().getUdDataMartList().getTable().first();

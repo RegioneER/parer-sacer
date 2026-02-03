@@ -194,9 +194,9 @@ public class VolumiValidator extends TypeValidator {
 
     /**
      * Metodo di validazione che controlla che il filtro relativo allo stato elenco contiene
-     * IN_CODA_JMS_GENERA_INDICE_AIP o IN_CODA_JMS_VERIFICA_FIRME_DT_VERS, se non sono definiti
-     * filtri (singoli e range) relativi alla chiave unità documentaria, oppure se è compilato il
-     * filtro “Numero ore in coda JMS”
+     * IN_CODA_JMS_GENERA_INDICE_AIP o IN_CODA_JMS_INDICE_AIP_DA_ELAB, se non sono definiti filtri
+     * (singoli e range) relativi alla chiave unità documentaria, oppure se è compilato il filtro
+     * “Numero ore in coda JMS”
      *
      * @param chiavi          lista chiavi
      * @param numOreInCodaJMS numero ore in coda
@@ -209,20 +209,20 @@ public class VolumiValidator extends TypeValidator {
         if ((tiStatoElenco
                 .contains(ElencoEnums.ElencoStatusEnum.IN_CODA_JMS_GENERA_INDICE_AIP.name())
                 || tiStatoElenco.contains(
-                        ElencoEnums.ElencoStatusEnum.IN_CODA_JMS_VERIFICA_FIRME_DT_VERS.name()))
+                        ElencoEnums.ElencoStatusEnum.IN_CODA_JMS_INDICE_AIP_DA_ELAB.name()))
                 && chiavi != null) {
             getMessageBox().addMessage(new Message(MessageLevel.ERR,
-                    "L'uso degli stati IN_CODA_JMS_GENERA_INDICE_AIP o IN_CODA_JMS_VERIFICA_FIRME_DT_VERS "
+                    "L'uso degli stati IN_CODA_JMS_GENERA_INDICE_AIP o IN_CODA_JMS_INDICE_AIP_DA_ELAB "
                             + "implica che non si usino filtri relativi alle unità documentarie contenute negli elenchi"));
         }
         if (numOreInCodaJMS != null
                 && !tiStatoElenco
                         .contains(ElencoEnums.ElencoStatusEnum.IN_CODA_JMS_GENERA_INDICE_AIP.name())
                 && !tiStatoElenco.contains(
-                        ElencoEnums.ElencoStatusEnum.IN_CODA_JMS_VERIFICA_FIRME_DT_VERS.name())) {
+                        ElencoEnums.ElencoStatusEnum.IN_CODA_JMS_INDICE_AIP_DA_ELAB.name())) {
             getMessageBox().addMessage(new Message(MessageLevel.ERR,
                     "Il filtro “Numero ore in coda JMS” può essere usato solo se il filtro relativo allo stato "
-                            + "è compilato con gli stati IN_CODA_JMS_GENERA_INDICE_AIP o IN_CODA_JMS_VERIFICA_FIRME_DT_VERS"));
+                            + "è compilato con gli stati IN_CODA_JMS_GENERA_INDICE_AIP o IN_CODA_JMS_INDICE_AIP_DA_ELAB"));
         }
     }
 }

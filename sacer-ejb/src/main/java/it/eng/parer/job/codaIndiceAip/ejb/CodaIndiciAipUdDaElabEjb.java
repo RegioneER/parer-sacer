@@ -91,7 +91,7 @@ public class CodaIndiciAipUdDaElabEjb {
         for (OrgVLisStrutPerEle struttura : strutture) {
 
             if (totMessiInCodaFase2 < numMaxUdInCodaFase2) {
-                // Fase 2 elenchi in stato FIRME_VERIFICATE_DT_VERS o IN_CODA_JMS_INDICE_AIP_DA_ELAB
+                // Fase 2 elenchi in stato VALIDATO o IN_CODA_JMS_INDICE_AIP_DA_ELAB
                 totMessiInCodaFase2 = elaboraStrutturaFase2(struttura.getIdStrut().longValue(),
                         totMessiInCodaFase2, numMaxUdInCodaFase2, numGgResetStatoInElenco);
             } else {
@@ -109,16 +109,15 @@ public class CodaIndiciAipUdDaElabEjb {
 
     private Integer elaboraStrutturaFase2(long idStruttura, Integer totMessiInCoda, int numMax,
             int numGgResetStatoInElenco) {
-        // determino gli elenchi appartenenti alla struttura corrente, con stato
-        // FIRME_VERIFICATE_DT_VERS o
+        // determino gli elenchi appartenenti alla struttura corrente, con stato VALIDATO o
         // IN_CODA_JMS_INDICE_AIP_DA_ELAB in modo che si elaborano prima i fiscali, per anno del
         // contenuto descending e
         // per data di firma e poi i non fiscali (tabella ELV_ELENCO_VERS_DA_ELAB)
         List<ElvElencoVersDaElab> elenchiPerAip = evHelper.retrieveElenchi(idStruttura,
-                ElencoEnums.ElencoStatusEnum.FIRME_VERIFICATE_DT_VERS,
+                ElencoEnums.ElencoStatusEnum.VALIDATO,
                 ElencoEnums.ElencoStatusEnum.IN_CODA_JMS_INDICE_AIP_DA_ELAB);
         LOG.info(JOB_NAME + " - struttura id " + idStruttura + ": trovati " + elenchiPerAip.size()
-                + " elenchi da processare con stato FIRME_VERIFICATE_DT_VERS o IN_CODA_JMS_INDICE_AIP_DA_ELAB");
+                + " elenchi da processare con stato VALIDATO o IN_CODA_JMS_INDICE_AIP_DA_ELAB");
 
         // elaboro gli elenchi
         for (ElvElencoVersDaElab elencoDaElab : elenchiPerAip) {
@@ -140,11 +139,11 @@ public class CodaIndiciAipUdDaElabEjb {
                 // all'elenco (sia come
                 // versate, che a seguito di documenti aggiunti, che a seguito di aggiornamenti
                 // metadati) il cui stato
-                // relativo all'elenco sia pari a IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS
+                // relativo all'elenco sia pari a IN_ELENCO_VALIDATO
                 boolean almenoUnaUd = false;
                 for (BigDecimal idUd : evHelper.retrieveUdVersOrAggOrUpdInElencoValidate(
                         elencoDaElab.getElvElencoVer().getIdElencoVers(),
-                        ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS.name(),
+                        ElencoEnums.UdDocStatusEnum.IN_ELENCO_VALIDATO.name(),
                         numGgResetStatoInElenco)) {
                     if (totMessiInCoda < numMax) {
                         me.elaboraUdPerLeFasi(idUd.longValue(), elencoDaElab,
@@ -156,7 +155,7 @@ public class CodaIndiciAipUdDaElabEjb {
                     } else {
                         LOG.info(JOB_NAME + " - struttura id " + idStruttura + ": processate "
                                 + totMessiInCoda + " unità documentarie dei " + elenchiPerAip.size()
-                                + " elenchi trovati da processare con stato FIRME_VERIFICATE_DT_VERS o IN_CODA_JMS_INDICE_AIP_DA_ELAB");
+                                + " elenchi trovati da processare con stato VALIDATO o IN_CODA_JMS_INDICE_AIP_DA_ELAB");
                         return totMessiInCoda;
                     }
                 }
@@ -178,13 +177,13 @@ public class CodaIndiciAipUdDaElabEjb {
             } else {
                 LOG.info(JOB_NAME + " - struttura id " + idStruttura + ": processate "
                         + totMessiInCoda + " unità documentarie dei " + elenchiPerAip.size()
-                        + " elenchi trovati da processare con stato FIRME_VERIFICATE_DT_VERS o IN_CODA_JMS_INDICE_AIP_DA_ELAB");
+                        + " elenchi trovati da processare con stato VALIDATO o IN_CODA_JMS_INDICE_AIP_DA_ELAB");
                 return totMessiInCoda;
             }
         }
-        LOG.info(JOB_NAME + " - struttura id " + idStruttura + ": processati "
-                + elenchiPerAip.size()
-                + " elenchi con stato FIRME_VERIFICATE_DT_VERS o IN_CODA_JMS_INDICE_AIP_DA_ELAB");
+        LOG.info(
+                JOB_NAME + " - struttura id " + idStruttura + ": processati " + elenchiPerAip.size()
+                        + " elenchi con stato VALIDATO o IN_CODA_JMS_INDICE_AIP_DA_ELAB");
         return totMessiInCoda;
     }
 
@@ -218,7 +217,7 @@ public class CodaIndiciAipUdDaElabEjb {
             // MAC#18167: Job PRODUCER_CODA_INDICI_AIP_DA_ELAB: set timestamp su elenchi solo se
             // serve
             if (elencoDaElab.getTiStatoElenco()
-                    .equals(ElencoEnums.ElencoStatusEnum.FIRME_VERIFICATE_DT_VERS.name())) {
+                    .equals(ElencoEnums.ElencoStatusEnum.VALIDATO.name())) {
                 elencoDaElabInNuovaTransazione.setTsStatoElenco(new Date());
             }
             elencoDaElabInNuovaTransazione.getElvElencoVer().setTiStatoElenco(stato);
@@ -246,8 +245,8 @@ public class CodaIndiciAipUdDaElabEjb {
                 ElencoEnums.ElencoStatusEnum.IN_CODA_INDICE_AIP);
         // EVO 19304
         evEjb.registraStatoElencoVersamento(BigDecimal.valueOf(idElencoVers),
-                "ESEGUITA_VERIFICA_FIRMA_DT_VERS",
-                "Tutte le unità documentarie non annullate sono IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS",
+                "ESEGUITA_IN_CODA_INDICE_AIP_DA_ELAB",
+                "Tutte le unità documentarie non annullate sono IN_ELENCO_IN_CODA_INDICE_AIP",
                 ElvStatoElencoVer.TiStatoElenco.IN_CODA_INDICE_AIP, null);
     }
     // end MEV#26288

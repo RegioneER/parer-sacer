@@ -2326,13 +2326,12 @@ public class ElencoVersamentoHelper extends GenericHelper {
         /*
          * select ud.id_unita_doc, '0' fl_solo_doc_aggiunti from ARO_UNITA_DOC ud where
          * ud.id_elenco_vers = <elenco corrente> and ud.dt_annul = '31/12/2444' and
-         * ud.ti_stato_ud_elenco_vers = IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS UNION -- serve per
-         * ottenere una sola volta un id_unita_doc select distinct doc.id_unita_doc, '1'
-         * fl_solo_doc_aggiunti from ARO_DOC doc where doc.id_elenco_vers = <elenco corrente> and
-         * doc.dt_annul = '31/12/2444' and doc.ti_stato_doc_elenco_vers =
-         * IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS and not exists (select * from ARO_UNITA_DOC
-         * ud_vers where ud.id_elenco_vers = doc.id_elenco_vers and ud_vers.id_unita_doc =
-         * doc.id_unita_doc)
+         * ud.ti_stato_ud_elenco_vers = IN_ELENCO_VALIDATO UNION -- serve per ottenere una sola
+         * volta un id_unita_doc select distinct doc.id_unita_doc, '1' fl_solo_doc_aggiunti from
+         * ARO_DOC doc where doc.id_elenco_vers = <elenco corrente> and doc.dt_annul = '31/12/2444'
+         * and doc.ti_stato_doc_elenco_vers = IN_ELENCO_VALIDATO and not exists (select * from
+         * ARO_UNITA_DOC ud_vers where ud.id_elenco_vers = doc.id_elenco_vers and
+         * ud_vers.id_unita_doc = doc.id_unita_doc)
          */
         // </editor-fold>
         TypedQuery<UnitaDocumentariaInElenco> q1 = em.createQuery(
@@ -2340,26 +2339,23 @@ public class ElencoVersamentoHelper extends GenericHelper {
                         + " FROM AroUnitaDoc ud "
                         + " WHERE ud.elvElencoVer.idElencoVers = :idElencoVers "
                         + " AND ud.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') "
-                        + " AND ud.tiStatoUdElencoVers = :firmeVerificate ",
+                        + " AND ud.tiStatoUdElencoVers = :validato ",
                 UnitaDocumentariaInElenco.class);
         q1.setParameter("idElencoVers", idElencoVers);
-        q1.setParameter("firmeVerificate",
-                ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS.name());
+        q1.setParameter("validato", ElencoEnums.UdDocStatusEnum.IN_ELENCO_VALIDATO.name());
 
         TypedQuery<UnitaDocumentariaInElenco> q2 = em.createQuery(
                 "SELECT NEW it.eng.parer.elencoVersamento.utils.UnitaDocumentariaInElenco (doc.aroUnitaDoc.idUnitaDoc, true) "
                         + " FROM AroDoc doc "
                         + " WHERE doc.elvElencoVer.idElencoVers = :idElencoVers "
                         + " AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') "
-                        + " AND doc.tiStatoDocElencoVers = :firmeVerificate "
-                        + " AND NOT EXISTS (  " + "     SELECT udVers "
-                        + "       FROM AroUnitaDoc udVers "
+                        + " AND doc.tiStatoDocElencoVers = :validato " + " AND NOT EXISTS (  "
+                        + "     SELECT udVers " + "       FROM AroUnitaDoc udVers "
                         + "       WHERE udVers.elvElencoVer.idElencoVers = doc.elvElencoVer.idElencoVers"
                         + "       AND  udVers.idUnitaDoc = doc.aroUnitaDoc.idUnitaDoc ) ",
                 UnitaDocumentariaInElenco.class);
         q2.setParameter("idElencoVers", idElencoVers);
-        q2.setParameter("firmeVerificate",
-                ElencoEnums.DocStatusEnum.IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS.name());
+        q2.setParameter("validato", ElencoEnums.DocStatusEnum.IN_ELENCO_VALIDATO.name());
 
         Set<UnitaDocumentariaInElenco> result = new HashSet<>();
         result.addAll(q1.getResultList());
@@ -2416,22 +2412,6 @@ public class ElencoVersamentoHelper extends GenericHelper {
     }
 
     // MEV#26288
-    public boolean checkStatoAllUdInElencoPerVerificaFirmeDtVers(long idElenco, String... stato) {
-        boolean statiOk = false;
-        Query q = em.createQuery("select e " + "from ElvVLisUdByStato e "
-                + "where e.idElencoVers = :idElenco "
-                + "and e.tiStatoElencoVers = 'IN_CODA_JMS_VERIFICA_FIRME_DT_VERS' "
-                + "and not exists (select e1 from ElvVLisUdByStato e1 where e1.idElencoVers = e.idElencoVers and e1.tiStatoUd NOT IN (:stato))");
-        q.setParameter("idElenco", BigDecimal.valueOf(idElenco));
-        q.setParameter("stato", Arrays.asList(stato));
-        List<ElvVLisUdByStato> udInElencoList = q.getResultList();
-        if (!udInElencoList.isEmpty()) {
-            statiOk = true;
-        }
-
-        return statiOk;
-    }
-
     public boolean checkStatoAllUdInElencoPerCodaIndiceAipDaElab(long idElenco, String... stato) {
         boolean statiOk = false;
         Query q = em.createQuery("select e " + "from ElvVLisUdByStato e "
@@ -3043,8 +3023,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idUnitaDoc        id unita doc
      * @param idElencoVers      id elenco versamento
-     * @param stato             stato dell'elenco : IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS nella
-     *                          prima parte del job IN_ELENCO_IN_CODA_INDICE_AIP nella seconda
+     * @param stato             stato dell'elenco: IN_ELENCO_IN_CODA_INDICE_AIP
      * @param tsStatoElencoVers timestamp stato elenco versamento
      * @param tsLastResetStato  timestamp ultimo reset stato
      * @param niResetStato      numero reset
@@ -3083,8 +3062,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idUnitaDoc        id unita doc
      * @param idElencoVers      id elenco versamento
-     * @param stato             stato dell'elenco : IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS nella
-     *                          prima parte del job IN_ELENCO_IN_CODA_INDICE_AIP nella seconda
+     * @param stato             stato dell'elenco: IN_ELENCO_IN_CODA_INDICE_AIP
      * @param tsStatoElencoVers timestamp stato elenco versamento
      * @param tsLastResetStato  timestamp ultimo reset stato
      * @param niResetStato      numero reset
@@ -3118,8 +3096,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idUnitaDoc        id unita doc
      * @param idElencoVers      id elenco versamento
-     * @param stato             stato dell'elenco : IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS nella
-     *                          prima parte del job IN_ELENCO_IN_CODA_INDICE_AIP nella seconda
+     * @param stato             stato dell'elenco: IN_ELENCO_IN_CODA_INDICE_AIP
      * @param tsStatoElencoVers timestamp stato elenco versamento
      * @param tsLastResetStato  timestamp ultimo reset stato
      * @param niResetStato      numero reset
@@ -3146,7 +3123,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
     /**
      * (2) Il sistema aggiorna elenco corrente (ELV_ELENCO_VERS) assegnando stato =
-     * FIRME_VERIFICATE_DT_VERS.
+     * IN_CODA_INDICE_AIP.
      *
      * @param idElencoVers id elenco versamento
      * @param stato        Stato delle elenco
@@ -3159,7 +3136,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
     /**
      * (3) Il sistema aggiorna elenco da elaborare corrente (ELV_ELENCO_VERS_DA_ELAB) assegnando
-     * stato = FIRME_VERIFICATE_DT_VERS
+     * stato = IN_CODA_INDICE_AIP
      *
      * @param idElencoDaEleb id elenco da elaborare
      * @param stato          enum ElencoStatusEnum
@@ -3171,7 +3148,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
     /**
      * (3) Il sistema aggiorna elenco da elaborare corrente (ELV_ELENCO_VERS_DA_ELAB) assegnando
-     * stato = FIRME_VERIFICATE_DT_VERS e se flag = true annulla il timestamp di assunzione stato
+     * stato = IN_CODA_INDICE_AIP e se flag = true annulla il timestamp di assunzione stato
      *
      * @param idElencoDaEleb   id elenco da elaborare
      * @param stato            enum ElencoStatusEnum

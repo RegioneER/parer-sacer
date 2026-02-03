@@ -174,6 +174,8 @@ public class AroUnitaDoc implements Serializable {
 
     private List<AroItemRichAnnulVers> aroItemRichAnnulVers = new ArrayList<>();
 
+    private List<AroItemRichScartoVers> aroItemRichScartoVers = new ArrayList<>();
+
     private List<ElvElencoVersUdAnnul> elvElencoVersUdAnnuls = new ArrayList<>();
 
     private List<VolVolumeVersUdAnnul> volVolumeVersUdAnnuls = new ArrayList<>();
@@ -803,6 +805,29 @@ public class AroUnitaDoc implements Serializable {
         getAroItemRichAnnulVers().remove(aroItemRichAnnulVer);
         aroItemRichAnnulVer.setAroUnitaDoc(null);
         return aroItemRichAnnulVer;
+    }
+
+    @OneToMany(mappedBy = "aroUnitaDoc")
+    public List<AroItemRichScartoVers> getAroItemRichScartoVers() {
+        return this.aroItemRichScartoVers;
+    }
+
+    public void setAroItemRichScartoVers(List<AroItemRichScartoVers> aroItemRichScartoVers) {
+        this.aroItemRichScartoVers = aroItemRichScartoVers;
+    }
+
+    public AroItemRichScartoVers addAroItemRichScartoVer(
+            AroItemRichScartoVers aroItemRichScartoVer) {
+        getAroItemRichScartoVers().add(aroItemRichScartoVer);
+        aroItemRichScartoVer.setAroUnitaDoc(this);
+        return aroItemRichScartoVer;
+    }
+
+    public AroItemRichScartoVers removeAroItemRichScartoVer(
+            AroItemRichScartoVers aroItemRichScartoVer) {
+        getAroItemRichScartoVers().remove(aroItemRichScartoVer);
+        aroItemRichScartoVer.setAroUnitaDoc(null);
+        return aroItemRichScartoVer;
     }
 
     @OneToMany(mappedBy = "aroUnitaDoc")

@@ -78,6 +78,22 @@ public class AroVChkStatoCorRichSoftDeleteRowBean extends BaseRow implements JEE
         setObject("fl_rich_evasa_ok", flRichEvasaOk);
     }
 
+    public String getFlRichEvasaKoRecup() {
+        return getString("fl_rich_evasa_ko_recup");
+    }
+
+    public void setFlRichEvasaKoRecup(String flRichEvasaKoRecup) {
+        setObject("fl_rich_evasa_ko_recup", flRichEvasaKoRecup);
+    }
+
+    public String getFlRichEvasaKoGest() {
+        return getString("fl_rich_evasa_ko_gest");
+    }
+
+    public void setFlRichEvasaKoGest(String flRichEvasaKoGest) {
+        setObject("fl_rich_evasa_ko_gest", flRichEvasaKoGest);
+    }
+
     public String getFlRichInElaborazione() {
         return getString("fl_rich_in_elaborazione");
     }
@@ -91,6 +107,8 @@ public class AroVChkStatoCorRichSoftDeleteRowBean extends BaseRow implements JEE
         AroVChkStatoCorRichSoftDelete entity = (AroVChkStatoCorRichSoftDelete) obj;
         this.setIdRichiestaSacer(entity.getIdRichiestaSacer());
         this.setFlRichAcquisizioneKo(entity.getFlRichAcquisizioneKo());
+        this.setFlRichEvasaKoRecup(entity.getFlRichEvasaKoRecup());
+        this.setFlRichEvasaKoGest(entity.getFlRichEvasaKoGest());
         this.setFlRichErrore(entity.getFlRichErrore());
         this.setFlRichEvasaOk(entity.getFlRichEvasaOk());
         this.setFlRichInElaborazione(entity.getFlRichInElaborazione());
@@ -102,6 +120,8 @@ public class AroVChkStatoCorRichSoftDeleteRowBean extends BaseRow implements JEE
         AroVChkStatoCorRichSoftDelete entity = new AroVChkStatoCorRichSoftDelete();
         entity.setIdRichiestaSacer(this.getIdRichiestaSacer());
         entity.setFlRichAcquisizioneKo(this.getFlRichAcquisizioneKo());
+        entity.setFlRichEvasaKoRecup(this.getFlRichEvasaKoRecup());
+        entity.setFlRichEvasaKoGest(this.getFlRichEvasaKoGest());
         entity.setFlRichErrore(this.getFlRichErrore());
         entity.setFlRichEvasaOk(this.getFlRichEvasaOk());
         entity.setFlRichInElaborazione(this.getFlRichInElaborazione());

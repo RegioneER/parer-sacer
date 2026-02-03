@@ -30,6 +30,7 @@ public class AroVChkStatoCorRichSoftDelete implements Serializable {
     private String flRichErrore;
     private String flRichEvasaOk;
     private String flRichEvasaKoRecup;
+    private String flRichEvasaKoGest;
     private String flRichInElaborazione;
     private BigDecimal idRichiestaSacer;
     private String tiItemRichSoftDelete;
@@ -71,6 +72,15 @@ public class AroVChkStatoCorRichSoftDelete implements Serializable {
 
     public void setFlRichEvasaKoRecup(String flRichEvasaKoRecup) {
         this.flRichEvasaKoRecup = flRichEvasaKoRecup;
+    }
+
+    @Column(name = "FL_RICH_EVASA_KO_GEST", columnDefinition = "char")
+    public String getFlRichEvasaKoGest() {
+        return this.flRichEvasaKoGest;
+    }
+
+    public void setFlRichEvasaKoGest(String flRichEvasaKoGest) {
+        this.flRichEvasaKoGest = flRichEvasaKoGest;
     }
 
     @Column(name = "FL_RICH_IN_ELABORAZIONE", columnDefinition = "char")

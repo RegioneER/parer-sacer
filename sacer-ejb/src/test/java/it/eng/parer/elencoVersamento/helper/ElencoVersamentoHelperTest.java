@@ -1173,12 +1173,6 @@ public class ElencoVersamentoHelperTest extends HelperTest<ElencoVersamentoHelpe
         assertTrue(true);
     }
 
-    @Test
-    void checkStatoAllUdInElencoPerVerificaFirmeDtVers_queryIsOk() {
-        helper.checkStatoAllUdInElencoPerVerificaFirmeDtVers(0L, "STATO1", "STATO2");
-        assertTrue(true);
-    }
-
     private OrgStrut anOrgStrut() {
         OrgStrut struttura = new OrgStrut();
         struttura.setIdStrut(0L);

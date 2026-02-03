@@ -57,16 +57,9 @@ public class JmsTest {
     }
 
     @Test
-    void resourcesIsAvailable() {
+    public void resourcesIsAvailable() {
         assertNotNull(connectionFactory);
-        assertNotNull(verificaFirmeDataVersQueue);
         assertNotNull(indiceAipUnitaDocQueue);
-
-    }
-
-    @Test
-    void verificaFirmeDataVersQueueSendMessage() {
-        testSendMessage(verificaFirmeDataVersQueue);
 
     }
 

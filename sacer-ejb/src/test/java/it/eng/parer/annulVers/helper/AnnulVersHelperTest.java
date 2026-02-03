@@ -158,7 +158,7 @@ public class AnnulVersHelperTest {
     }
 
     @Test
-    void getUpdItem_queryIsOk() {
+    public void getUpdItem_queryIsOk() {
         long idRichAnnulVers = aLong();
         AroUpdUDTiStatoUpdElencoVers[] tiStatoUdElencoVers = {
                 AroUpdUDTiStatoUpdElencoVers.IN_ATTESA_SCHED,
@@ -173,8 +173,6 @@ public class AnnulVersHelperTest {
                 AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO,
                 AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA,
                 AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO,
-                AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS,
-                AroUpdUDTiStatoUpdElencoVers.IN_CODA_JMS_VERIFICA_FIRME_DT_VERS,
                 AroUpdUDTiStatoUpdElencoVers.IN_CODA_JMS_INDICE_AIP_DA_ELAB };
         helper.getUpdItem(idRichAnnulVers, tiStatoUdElencoVers);
         assertTrue(true);

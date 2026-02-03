@@ -246,8 +246,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         if (tiStatoElenco.equals(ElencoEnums.ElencoStatusEnum.CHIUSO.name())
                 || tiStatoElenco.equals(ElencoEnums.ElencoStatusEnum.FIRMA_IN_CORSO.name())
                 || tiStatoElenco.equals(ElencoEnums.ElencoStatusEnum.VALIDATO.name())
-                || tiStatoElenco
-                        .equals(ElencoEnums.ElencoStatusEnum.FIRME_VERIFICATE_DT_VERS.name())
                 || tiStatoElenco.equals(ElencoEnums.ElencoStatusEnum.IN_CODA_INDICE_AIP.name())
                 || tiStatoElenco.equals(ElencoEnums.ElencoStatusEnum.INDICI_AIP_GENERATI.name())
                 || tiStatoElenco
@@ -987,7 +985,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         boolean editable = false;
         if (statoElenco.equals(ElencoStatusEnum.CHIUSO.name())
                 || statoElenco.equals(ElencoStatusEnum.VALIDATO.name())
-                || statoElenco.equals(ElencoStatusEnum.FIRME_VERIFICATE_DT_VERS.name())
                 || statoElenco.equals(ElencoStatusEnum.IN_CODA_INDICE_AIP.name())
                 || statoElenco.equals(ElencoStatusEnum.INDICI_AIP_GENERATI.name())
                 || statoElenco.equals(ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO.name())
@@ -1006,7 +1003,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         if (statoElenco.equals(ElencoStatusEnum.APERTO.name())
                 || statoElenco.equals(ElencoStatusEnum.CHIUSO.name())
                 || statoElenco.equals(ElencoStatusEnum.VALIDATO.name())
-                || statoElenco.equals(ElencoStatusEnum.FIRME_VERIFICATE_DT_VERS.name())
                 || statoElenco.equals(ElencoStatusEnum.IN_CODA_INDICE_AIP.name())
                 || statoElenco.equals(ElencoStatusEnum.INDICI_AIP_GENERATI.name())) {
             getForm().getElenchiVersamentoDetail().getTi_gest_elenco().setEditMode();

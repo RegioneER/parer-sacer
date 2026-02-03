@@ -33,6 +33,7 @@ public class Response405 {
         VERSAMENTO_MM("VersamentoMultiMedia"), VERSAMENTO_FASCICOLO("VersamentoFascicolo"),
         //
         REC_STATO_CONSERVAZIONE_SYNC("RecDIPStatoConservazioneSync"), /**/
+        REC_STATO_CONSERV_FASCICOLO_SYNC("RecAIPStatoConservazioneFascicoloSync"), /**/
         REC_UNITA_DOC_SYNC("RecDIPUnitaDocumentariaSync"),
         REC_PROVE_CONSERV_SYNC("RecDIPProveConservSync"), /**/
         REC_RAPP_VERS_SYNC("RecDIPRapportiVersSync"),

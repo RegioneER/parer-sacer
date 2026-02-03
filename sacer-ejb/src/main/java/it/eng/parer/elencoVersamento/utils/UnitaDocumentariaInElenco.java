@@ -14,7 +14,7 @@
 package it.eng.parer.elencoVersamento.utils;
 
 /**
- * Componente presente in elenco con stato IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS.
+ * Componente presente in elenco con stato IN_ELENCO_VALIDATO.
  *
  * @author Snidero_L
  */

@@ -30,8 +30,7 @@
                             
                             // Mostra/nascondi icona link ud
                             var elemento1 = $("[name='Cd_ti_eve_stato_elenco_vers']").val();
-                            if(elemento1 !== 'IN_CODA_VERIFICA_FIRMA_DT_VERS'
-                            && elemento1 !== 'IN_CODA_INDICE_AIP_DA_ELAB'
+                            if(elemento1 !== 'IN_CODA_INDICE_AIP_DA_ELAB'
                             && elemento1 !== 'ESEGUITA_VERIFICA_FIRMA_DT_VERS'){
                             var elemento2 = $(this).find('td:eq(16)');                            
                                 elemento2.empty();

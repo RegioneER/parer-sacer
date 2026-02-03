@@ -1011,21 +1011,65 @@ public class ElenchiVersFascicoliEjb {
 
                 fasFascicolo.getFasStatoConservFascicoloElencos().add(statoConservFascicolo);
 
+                // MAC #39492
+                // Recupero gli delle UD del fascicolo che sono "candidate" al passaggio di stato di
+                // conservazione da VERSAMENTO_IN_ARCHIVIO a IN_ARCHIVIO
+                // vale a dire tutte quelle del fascicolo che sto considerando
+                List<Long> udCandidatesIds = new ArrayList<>();
                 for (FasUnitaDocFascicolo unitaDocFascicolo : fasFascicolo
                         .getFasUnitaDocFascicolos()) {
-                    if (unitaDocFascicolo.getAroUnitaDoc().getTiStatoConservazione().equals(
-                            CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name())) {
-                        unitaDocFascicolo.getAroUnitaDoc().setTiStatoConservazione(
+                    if (CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name()
+                            .equals(unitaDocFascicolo.getAroUnitaDoc().getTiStatoConservazione())) {
+                        udCandidatesIds.add(unitaDocFascicolo.getAroUnitaDoc().getIdUnitaDoc());
+                    }
+                }
+
+                // Controllo quali di queste sono BLOCCATE da altre entità (elenchi versamento
+                // fascicoli/serie)
+                List<Long> blockedUdIds = new ArrayList<>();
+                if (!udCandidatesIds.isEmpty()) {
+                    blockedUdIds = evfWebHelper.findUdIdsBlockedByAltreEntita(udCandidatesIds,
+                            fasFascicolo.getIdFascicolo());
+                }
+
+                // Eseguo l'aggiornamento dello stato di conservazione solo delle ud idonee
+                for (FasUnitaDocFascicolo unitaDocFascicolo : fasFascicolo
+                        .getFasUnitaDocFascicolos()) {
+                    AroUnitaDoc ud = unitaDocFascicolo.getAroUnitaDoc();
+
+                    // Se l'UD è VERSAMENTO_IN_ARCHIVIO
+                    if (CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name()
+                            .equals(ud.getTiStatoConservazione())) {
+
+                        // Se l'UD è nella lista delle NON idonee, non cambio lo stato di
+                        // conservazione ma registro solamente nel log dello stato conservazione ud
+                        if (blockedUdIds.contains(ud.getIdUnitaDoc())) {
+                            log.debug(
+                                    "Firma Elenco Indici AIP Fascicoli: L'UD id={} rimane in stato di conservazione VERSAMENTO_IN_ARCHIVIO perché esiste un'altra entità (Elenco di Versamento Fascicoli o Serie) ancora in stato non idoneo al passaggio dello stato di conservazione dell'ud a IN_ARCHIVIO.",
+                                    ud.getIdUnitaDoc());
+                            // MEV #31162
+                            udEjb.insertLogStatoConservUd(ud.getIdUnitaDoc(), utente.getNmUserid(),
+                                    Constants.FIRMA_ELENCO_INDICE_AIP_FASC,
+                                    CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO
+                                            .name(),
+                                    Constants.FUNZIONALITA_ONLINE);
+                            // end MEV #31162
+                            continue;
+                        }
+
+                        // Se arrivo qui, l'UD può cambiare stato di conservazione in IN_ARCHIVIO
+                        ud.setTiStatoConservazione(
                                 CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
+
                         // MEV #31162
-                        udEjb.insertLogStatoConservUd(
-                                unitaDocFascicolo.getAroUnitaDoc().getIdUnitaDoc(),
-                                utente.getNmUserid(), Constants.FIRMA_ELENCO_INDICE_AIP_FASC,
+                        udEjb.insertLogStatoConservUd(ud.getIdUnitaDoc(), utente.getNmUserid(),
+                                Constants.FIRMA_ELENCO_INDICE_AIP_FASC,
                                 CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name(),
                                 Constants.FUNZIONALITA_ONLINE);
                         // end MEV #31162
                     }
                 }
+                // end MAC #39492
             }
 
             /* TODO: verificare, Elimina il fascicolo dalla coda dei fascicoli da elaborare */
