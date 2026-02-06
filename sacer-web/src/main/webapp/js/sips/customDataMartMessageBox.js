@@ -35,6 +35,8 @@ $(document).ready(function () {
         var datiDaInviare = {
             operation: "caricaUdDataMartList",
             idUdDelRichiesta: $rigaCliccata.find('input[name="Id_ud_del_richiesta"]').val(),
+            idRichiesta: $rigaCliccata.find('input[name="Id_richiesta"]').val(),
+            idStrut: $rigaCliccata.find('input[name="Id_strut"]').val(),
             tiStatoUdCancellate: $rigaCliccata.find('td').eq(3).text().trim(),
             tiMotCancellazione: $rigaCliccata.find('input[name="Ti_mot_cancellazione"]').val(),
             selectedRigaIdR: $('#selectedRigaIdR_val').val(),
@@ -92,7 +94,7 @@ $(document).ready(function () {
             // Aggiorna sempre la UI (barra e tabella) con i dati ricevuti.
             aggiornaUILogicaCompleta(data);
 
-            const statiFinali = ['PRONTA_PER_FISICA', 'ERRORE_LOGICO', 'ERRORE_INVIO_MS', 'ERRORE_LOGICO_RIPRISTINABILE'];
+            const statiFinali = ['PRONTA_PER_FISICA', 'ERRORE_LOGICO', 'ERRORE_INVIO_MS', 'ERRORE_LOGICO_RIPRISTINABILE', 'ERRORE_LOGICO_GESTITO'];
             
             if (statiFinali.includes(data.statoInternoRichiesta)) {
                 // Il processo è terminato, quindi fermiamo il polling.
@@ -103,7 +105,7 @@ $(document).ready(function () {
                 if (data.statoInternoRichiesta === 'PRONTA_PER_FISICA') {
                     // Successo: mostra il pulsante per la fase successiva.
                     $('input[name="operation__eseguiCancellazioneDataMart"]').show();
-                } else if (data.statoInternoRichiesta === 'ERRORE_LOGICO_RIPRISTINABILE') {
+                } else if ((data.statoInternoRichiesta === 'ERRORE_LOGICO_RIPRISTINABILE')){
                     // Errore: mostra il pulsante "Riprendi cancellazione logica" per permettere un nuovo tentativo.
                     $('input[name="operation__recupCancellazioneLogicaDataMart"]').show().prop('disabled', false);
                 } else{
@@ -220,6 +222,7 @@ $(document).ready(function () {
             const nmEnteStrut = rigaDati.nmEnte + " - " + rigaDati.nmStrut;
             const statoUD = rigaDati.tiStatoUdCancellate;
             const conteggio = rigaDati.conteggio;
+            const conteggioAnnullate = (rigaDati.niUdStatoAnnullate !== undefined) ? rigaDati.niUdStatoAnnullate : 0;
 
             const classeCss = isPari ? "rigaPari rigaCorrente" : "rigaDispari rigaCorrente";
 
@@ -230,6 +233,7 @@ $(document).ready(function () {
                             <td title="${nmEnteStrut}" class="${classeCss}">${nmEnteStrut}</td>
                             <td title="${statoUD}" class="${classeCss}">${statoUD}</td>
                             <td title="${conteggio}" class="${classeCss}">${conteggio}</td>
+                            <td title="${conteggioAnnullate}" class="${classeCss}">${conteggioAnnullate}</td>
                             <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.idStrut}" name="Id_strut"></td>
                             <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.tiMotCancellazione}" name="Ti_mot_cancellazione"></td>
                           </tr>`;
@@ -299,6 +303,7 @@ $(document).ready(function () {
         const nmEnteStrut = rigaDati.nmEnte + " - " + rigaDati.nmStrut;
         const statoUD = rigaDati.tiStatoUdCancellate;
         const conteggio = rigaDati.conteggio;
+        const conteggioAnnullate = (rigaDati.niUdStatoAnnullate !== undefined) ? rigaDati.niUdStatoAnnullate : 0;
 
         const classeCss = isPari ? "rigaPari rigaCorrente" : "rigaDispari rigaCorrente";
 
@@ -309,6 +314,7 @@ $(document).ready(function () {
                         <td title="${nmEnteStrut}" class="${classeCss}">${nmEnteStrut}</td>
                         <td title="${statoUD}" class="${classeCss}">${statoUD}</td>
                         <td title="${conteggio}" class="${classeCss}">${conteggio}</td>
+                        <td title="${conteggioAnnullate}" class="${classeCss}">${conteggioAnnullate}</td>
                         <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.idStrut}" name="Id_strut"></td>
                         <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.tiMotCancellazione}" name="Ti_mot_cancellazione"></td>
                       </tr>`;
@@ -335,13 +341,18 @@ $(document).ready(function () {
         }
         var selStatoN = $('#selectedRigaStatoN_val').val();
         var selIdForN = $('#selectedRigaIdForN_val').val();
+        var selIdStrutN = $('#selectedRigaIdStrut_val').val();
         if (selStatoN && (selIdForN || selIdR)) {
             var idUdDelRichiestaDaCercare = selIdForN || selIdR;
             $('#NumUdDataMartList tbody tr').each(function () {
                 var $riga = $(this);
-                if ($riga.find('td').eq(3).text().trim() === selStatoN && $riga.find('input[name="Id_ud_del_richiesta"]').val() === idUdDelRichiestaDaCercare) {
+                 var idStrutRiga = $riga.find('input[name="Id_strut"]').val();
+                if ($riga.find('td').eq(3).text().trim() === selStatoN && 
+                    $riga.find('input[name="Id_ud_del_richiesta"]').val() === idUdDelRichiestaDaCercare &&
+                    (idStrutRiga === selIdStrutN || !selIdStrutN)) { // Il fallback !selIdStrutN serve se il dato non è ancora in sessione
+                    
                     $riga.addClass('riga-selezionata');
-                    return false;
+                    return false; // Esci dal ciclo: hai trovato la riga corretta
                 }
             });
         }

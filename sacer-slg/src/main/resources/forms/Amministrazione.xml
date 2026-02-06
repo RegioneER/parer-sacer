@@ -13,6 +13,8 @@
         <ComboBox Name="fl_appart_strut_combo" Description="Parametri di struttura" Type="STRING"/>
         <ComboBox Name="fl_appart_tipo_unita_doc_combo" Description="Parametri sul tipo unità documentaria" Type="STRING"/>        
         <ComboBox Name="fl_appart_aa_tipo_fascicolo_combo" Description="Parametri sul periodo di validità del tipo fascicolo" Type="STRING"/>        
+        <ComboBox Name="cd_versione_app_ini" Description="Introdotto con" Type="STRING"/>        
+        <ComboBox Name="cd_versione_app_fine" Description="Cessato con" Type="STRING"/>        
         <Button Name="load_config_list" Description="Carica Configurazione" Type="STRING" />
         <Button Name="edit_config" Description="Modifica" Type="STRING" />
         <Button Name="add_config" Description="Aggiungi Configurazione" Type="STRING" />

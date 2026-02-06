@@ -1977,7 +1977,7 @@ public class SalvataggioBackendHelper {
         return MessageFormat.format(fmt, urnBase, versioneSerie);
     }
 
-    public static String formattaBaseUrnSerieOs(String versatore, String codiceSerie) {
+    private String formattaBaseUrnSerieOs(String versatore, String codiceSerie) {
         return MessageFormat.format(URN_VERS_SERIE_FMT_STRING_OS_KEY, versatore, codiceSerie);
     }
 

@@ -141,6 +141,14 @@ public class DmUdDelRowBean extends BaseRow implements BaseRowInterface, JEEBase
         setObject("id_ud_del_richiesta", idUdDelRichiesta);
     }
 
+    public String getFlAnnul() {
+        return getString("fl_annul");
+    }
+
+    public void setFlAnnul(String flAnnul) {
+        setObject("fl_annul", flAnnul);
+    }
+
     @Override
     public void entityToRowBean(Object obj) {
         DmUdDel entity = (DmUdDel) obj;
@@ -153,6 +161,7 @@ public class DmUdDelRowBean extends BaseRow implements BaseRowInterface, JEEBase
         this.setNmEnte(entity.getNmEnte());
         this.setIdStrut(entity.getIdStrut());
         this.setNmStrut(entity.getNmStrut());
+        this.setFlAnnul(entity.getFlAnnul());
         if (entity.getDtStatoUdCancellate() != null) {
             this.setDtStatoUdCancellate(new Timestamp(entity.getDtStatoUdCancellate().getTime()));
         }
@@ -182,6 +191,7 @@ public class DmUdDelRowBean extends BaseRow implements BaseRowInterface, JEEBase
         entity.setDtStatoUdCancellate(this.getDtStatoUdCancellate());
         entity.setDtVersamento(this.getDtVersamento());
         entity.setTiStatoUdCancellate(this.getTiStatoUdCancellate());
+        entity.setFlAnnul(this.getFlAnnul());
         if (this.getIdUdDelRichiesta() != null) {
             if (entity.getDmUdDelRichieste() == null) {
                 entity.setDmUdDelRichieste(new DmUdDelRichieste());

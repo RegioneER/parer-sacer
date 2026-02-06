@@ -50,7 +50,7 @@ public class AmministrazioneHelperUnitTest {
     public void seNonCiSonoParametriRitornaListaVuota() {
         Mockito.when(query.getResultList()).thenReturn(new ArrayList());
         final List<AplParamApplic> aplParamApplicList = amministrazioneHelper
-                .getAplParamApplicList("", "", "", "", "", "", "");
+                .getAplParamApplicList("", "", "", "", "", "", "", "", "");
         assertEquals(0, aplParamApplicList.size());
     }
 

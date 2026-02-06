@@ -60,7 +60,6 @@ import it.eng.parer.job.timer.RegistraSchedulazioniJobTPITimer;
 import it.eng.parer.job.timer.RestituzioneArchivioTimer;
 import it.eng.parer.job.timer.SigilloTimer;
 import it.eng.parer.job.timer.ValidazioneFascicoliTimer;
-import it.eng.parer.job.timer.VerificaFirmeTimer;
 import it.eng.parer.job.timer.VerificaMassivaVersamentiFallitiTimer;
 import it.eng.parer.job.timer.VerificaMigrazioneSubPartizioneTimer;
 import it.eng.parer.job.timer.VerificaPeriodoRegistroTimer;
@@ -81,8 +80,6 @@ public class TimerRepository {
     private CreateElencoTimer createElencoTimer;
     @EJB
     private CreateIndexTimer createIndiceTimer;
-    @EJB
-    private VerificaFirmeTimer verificaFirmeTimer;
     @EJB
     private ProducerCodaIndiciAipDaElabTimer producerCodaIndiciAipDaElabTimer;
     @EJB
@@ -171,7 +168,6 @@ public class TimerRepository {
         map = new HashMap<>();
         map.put(JobConstants.JobEnum.CREAZIONE_ELENCHI_VERS.name(), createElencoTimer);
         map.put(JobConstants.JobEnum.CREAZIONE_INDICI_ELENCHI_VERS.name(), createIndiceTimer);
-        map.put(JobConstants.JobEnum.VERIFICA_FIRME_A_DATA_VERS.name(), verificaFirmeTimer);
         map.put(JobConstants.JobEnum.PRODUCER_CODA_INDICI_AIP_DA_ELAB.name(),
                 producerCodaIndiciAipDaElabTimer);
         map.put(JobConstants.JobEnum.CALCOLO_CONTENUTO_SACER.name(), calcoloContenutoTimer);

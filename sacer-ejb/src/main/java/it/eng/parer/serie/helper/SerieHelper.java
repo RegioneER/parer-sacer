@@ -1977,4 +1977,26 @@ public class SerieHelper extends GenericHelper {
 
         serFileVerSerie.getSerUrnFileVerSeries().add(tmpSerUrnFileVerSerie);
     }
+
+    // MAC #39491
+    /**
+     * Esegue l'update massivo dello stato di conservazione per una lista di ID.
+     *
+     * @param ids        Lista di ID delle Unità Documentarie
+     * @param nuovoStato Il nuovo stato da assegnare (es. IN_ARCHIVIO)
+     * @return numero di righe aggiornate
+     */
+    public int updateStatoUdMassivo(List<Long> ids, String nuovoStato) {
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
+        Query query = getEntityManager()
+                .createQuery("UPDATE AroUnitaDoc ud SET ud.tiStatoConservazione = :nuovoStato "
+                        + "WHERE ud.idUnitaDoc IN :ids");
+        query.setParameter("nuovoStato", nuovoStato);
+        query.setParameter("ids", ids);
+
+        return query.executeUpdate();
+    }
+    // end MAC #39491
 }

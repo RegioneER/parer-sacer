@@ -371,6 +371,18 @@ public class DataMartHelper extends GenericHelper {
         return q;
     }
 
+    public Query getDmUdDelScartoVersQuery(BigDecimal idRichiesta, String tiStatoUdCancellate) {
+        String queryStr = "SELECT dm FROM DmUdDel dm JOIN dm.dmUdDelRichieste dmRich "
+                + "WHERE dmRich.idRichiesta = :idRichiesta AND dmRich.tiMotCancellazione = 'S' AND dm.tiStatoUdCancellate = :tiStatoUdCancellate "
+                + "ORDER BY dm.nmEnte, dm.nmStrut, dm.cdRegistroKeyUnitaDoc, dm.aaKeyUnitaDoc, dm.cdKeyUnitaDoc ";
+
+        Query q = getEntityManager().createQuery(queryStr);
+        q.setParameter("idRichiesta", idRichiesta);
+        q.setParameter("tiStatoUdCancellate", tiStatoUdCancellate);
+
+        return q;
+    }
+
     public Query getDmUdDelQuery(String tiMotCancellazione, String tiStatoRichiesta,
             BigDecimal idEnte, BigDecimal idStrut, String cdRegistroKeyUnitaDoc,
             BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc, BigDecimal idUdDelRichiesta,
@@ -467,9 +479,9 @@ public class DataMartHelper extends GenericHelper {
         // Versamenti
         // ======================================================================
         String insertParentSql = "INSERT /*+ APPEND */ INTO DM_UD_DEL ( "
-                + "    ID_UNITA_DOC, AA_KEY_UNITA_DOC, CD_KEY_UNITA_DOC, CD_REGISTRO_KEY_UNITA_DOC, DT_VERSAMENTO, ID_ENTE, NM_ENTE, ID_STRUT, NM_STRUT, ID_UD_DEL_RICHIESTA, TI_STATO_UD_CANCELLATE, DT_STATO_UD_CANCELLATE) "
+                + "    ID_UNITA_DOC, AA_KEY_UNITA_DOC, CD_KEY_UNITA_DOC, CD_REGISTRO_KEY_UNITA_DOC, DT_VERSAMENTO, ID_ENTE, NM_ENTE, ID_STRUT, NM_STRUT, ID_UD_DEL_RICHIESTA, TI_STATO_UD_CANCELLATE, DT_STATO_UD_CANCELLATE, FL_ANNUL) "
                 + " SELECT DISTINCT "
-                + "    item_rich.ID_UNITA_DOC, item_rich.AA_KEY_UNITA_DOC, item_rich.CD_KEY_UNITA_DOC, item_rich.CD_REGISTRO_KEY_UNITA_DOC, ud.DT_CREAZIONE, ente.ID_ENTE, ente.NM_ENTE, strut.ID_STRUT, strut.NM_STRUT, :idUdDelRichiesta, 'DA_CANCELLARE', SYSDATE "
+                + "    item_rich.ID_UNITA_DOC, item_rich.AA_KEY_UNITA_DOC, item_rich.CD_KEY_UNITA_DOC, item_rich.CD_REGISTRO_KEY_UNITA_DOC, ud.DT_CREAZIONE, ente.ID_ENTE, ente.NM_ENTE, strut.ID_STRUT, strut.NM_STRUT, :idUdDelRichiesta, 'DA_CANCELLARE', SYSDATE, '1' "
                 + "FROM ARO_ITEM_RICH_ANNUL_VERS item_rich "
                 + "JOIN ARO_UNITA_DOC ud ON (ud.id_unita_doc = item_rich.id_unita_doc) "
                 + "JOIN ORG_STRUT strut ON strut.ID_STRUT = ud.ID_STRUT "
@@ -507,9 +519,9 @@ public class DataMartHelper extends GenericHelper {
         // Archivio
         // ======================================================================
         String insertParentSql = "INSERT /*+ APPEND */ INTO DM_UD_DEL ( "
-                + "    ID_UNITA_DOC, AA_KEY_UNITA_DOC, CD_KEY_UNITA_DOC, CD_REGISTRO_KEY_UNITA_DOC, DT_VERSAMENTO, ID_ENTE, NM_ENTE, ID_STRUT, NM_STRUT, ID_UD_DEL_RICHIESTA, TI_STATO_UD_CANCELLATE, DT_STATO_UD_CANCELLATE) "
+                + "    ID_UNITA_DOC, AA_KEY_UNITA_DOC, CD_KEY_UNITA_DOC, CD_REGISTRO_KEY_UNITA_DOC, DT_VERSAMENTO, ID_ENTE, NM_ENTE, ID_STRUT, NM_STRUT, ID_UD_DEL_RICHIESTA, TI_STATO_UD_CANCELLATE, DT_STATO_UD_CANCELLATE, FL_ANNUL) "
                 + " SELECT DISTINCT "
-                + "    ud.ID_UNITA_DOC, ud.AA_KEY_UNITA_DOC, ud.CD_KEY_UNITA_DOC, ud.CD_REGISTRO_KEY_UNITA_DOC, ud.DT_CREAZIONE, ente.ID_ENTE, ente.NM_ENTE, strut.ID_STRUT, strut.NM_STRUT, :idUdDelRichiesta, 'DA_CANCELLARE', SYSDATE "
+                + "    ud.ID_UNITA_DOC, ud.AA_KEY_UNITA_DOC, ud.CD_KEY_UNITA_DOC, ud.CD_REGISTRO_KEY_UNITA_DOC, ud.DT_CREAZIONE, ente.ID_ENTE, ente.NM_ENTE, strut.ID_STRUT, strut.NM_STRUT, :idUdDelRichiesta, 'DA_CANCELLARE', SYSDATE, CASE WHEN ud.TI_ANNUL = 'ANNULLAMENTO' THEN '1' ELSE '0' END "
                 + "FROM ARO_V_SEL_UD_SER_FASC_BY_ENTE_X_DM item_rich "
                 + "JOIN ORG_STRUT strut ON strut.ID_STRUT = item_rich.ID_STRUT "
                 + "JOIN ORG_ENTE ente ON ente.ID_ENTE = strut.ID_ENTE "
@@ -542,6 +554,52 @@ public class DataMartHelper extends GenericHelper {
         getEntityManager().persist(nuovaRichiesta);
 
         return nuovaRichiesta.getIdUdDelRichiesta();
+    }
+
+    @Transactional
+    public int populateDataMartScartoUdCentroStella(long idRichiesta, String cdRichiesta,
+            String tiMotCancellazione, String tiModDel) {
+        // --- PASSAGGIO 1: Creare e salvare la riga master in DM_UD_DEL_RICHIESTE ---
+
+        DmUdDelRichieste nuovaRichiesta = new DmUdDelRichieste();
+        nuovaRichiesta.setIdRichiesta(BigDecimal.valueOf(idRichiesta));
+        nuovaRichiesta.setCdRichiesta(cdRichiesta);
+        nuovaRichiesta.setTiMotCancellazione(tiMotCancellazione);
+        nuovaRichiesta.setTiStatoRichiesta("DA_EVADERE"); // Stato utente iniziale
+        nuovaRichiesta.setTiStatoInternoRich("INIZIALE"); // Stato tecnico iniziale
+        nuovaRichiesta.setTiModDel(tiModDel); // Stato tecnico iniziale
+        nuovaRichiesta.setDtCreazione(new Date()); // Imposta la data corrente
+
+        // Persisti l'entità. Dopo questa chiamata, JPA/Hibernate si occuperà
+        // di eseguire l'INSERT e di popolare il campo ID con il valore generato dal DB.
+        getEntityManager().persist(nuovaRichiesta);
+
+        Long idUdDelRichiesta = nuovaRichiesta.getIdUdDelRichiesta();
+
+        // ID della richiesta corrente, da passare come parametro
+        int numRecordDmUdDel = 0;
+
+        // ======================================================================
+        // PASSAGGIO 1: Popolamento massivo della tabella padre DM_UD_DEL per Annullamento
+        // Versamenti
+        // ======================================================================
+        String insertParentSql = "INSERT /*+ APPEND */ INTO DM_UD_DEL ( "
+                + "    ID_UNITA_DOC, AA_KEY_UNITA_DOC, CD_KEY_UNITA_DOC, CD_REGISTRO_KEY_UNITA_DOC, DT_VERSAMENTO, ID_ENTE, NM_ENTE, ID_STRUT, NM_STRUT, ID_UD_DEL_RICHIESTA, TI_STATO_UD_CANCELLATE, DT_STATO_UD_CANCELLATE, FL_ANNUL) "
+                + " SELECT DISTINCT "
+                + "    item_rich.ID_UNITA_DOC, item_rich.AA_KEY_UNITA_DOC, item_rich.CD_KEY_UNITA_DOC, item_rich.CD_REGISTRO_KEY_UNITA_DOC, ud.DT_CREAZIONE, ente.ID_ENTE, ente.NM_ENTE, strut.ID_STRUT, strut.NM_STRUT, :idUdDelRichiesta, 'DA_CANCELLARE', SYSDATE, CASE WHEN ud.TI_ANNUL = 'ANNULLAMENTO' THEN '1' ELSE '0' END "
+                + "FROM ARO_ITEM_RICH_SCARTO_VERS item_rich "
+                + "JOIN ARO_UNITA_DOC ud ON (ud.id_unita_doc = item_rich.id_unita_doc) "
+                + "JOIN ORG_STRUT strut ON strut.ID_STRUT = ud.ID_STRUT "
+                + "JOIN ORG_ENTE ente ON ente.ID_ENTE = strut.ID_ENTE "
+                + "WHERE item_rich.ID_RICH_SCARTO_VERS = :idRichiesta AND item_rich.ti_stato_item_scarto = 'SCARTATO' ";
+
+        // Esegui la query nativa, legando il valore di idRichiesta al parametro :idRichiesta
+        numRecordDmUdDel = getEntityManager().createNativeQuery(insertParentSql)
+                .setParameter("idUdDelRichiesta", idUdDelRichiesta)
+                .setParameter("idRichiesta", idRichiesta).executeUpdate();
+
+        return numRecordDmUdDel;
+
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -755,7 +813,8 @@ public class DataMartHelper extends GenericHelper {
                 + "    dmRich.idUdDelRichiesta, dmRich.idRichiesta, "
                 + "    dmRich.tiMotCancellazione, "
                 + "    dm.idEnte, dm.nmEnte, dm.idStrut, dm.nmStrut, " //
-                + "    dm.tiStatoUdCancellate, " + "    COUNT(dm.idUnitaDoc) " + ") " + "FROM "
+                + "    dm.tiStatoUdCancellate, " + "    COUNT(dm.idUnitaDoc), "
+                + "    SUM(CASE WHEN dm.flAnnul = '1' THEN 1L ELSE 0L END) " + ") " + "FROM "
                 + "    DmUdDel dm JOIN dm.dmUdDelRichieste dmRich " + "WHERE "
                 + "    dmRich.idUdDelRichiesta = :idUdDelRichiesta " + "GROUP BY "
                 + "    dmRich.idUdDelRichiesta, dmRich.idRichiesta, dmRich.tiMotCancellazione, dm.idEnte, dm.nmEnte, dm.idStrut, dm.nmStrut, dm.tiStatoUdCancellate "
@@ -770,10 +829,9 @@ public class DataMartHelper extends GenericHelper {
     }
 
     public void deleteAroRichSoftDelete(BigDecimal idRichiesta, String tiItemRichSoftDelete) {
-        String queryStr = "DELETE FROM ARO_RICH_SOFT_DELETE WHERE ID_RICH_SOFT_DELETE = "
-                + "(SELECT item.id_rich_soft_delete FROM ARO_STATO_RICH_SOFT_DELETE stato JOIN ARO_ITEM_RICH_SOFT_DELETE item on (item.id_rich_soft_delete = stato.id_rich_soft_delete) "
-                + "WHERE stato.ti_stato_rich_soft_delete = 'ERRORE' "
-                + "AND item.id_richiesta_sacer = :idRichiesta "
+        String queryStr = "DELETE FROM ARO_RICH_SOFT_DELETE WHERE ID_RICH_SOFT_DELETE IN "
+                + "(SELECT item.id_rich_soft_delete FROM ARO_ITEM_RICH_SOFT_DELETE item "
+                + "WHERE item.id_richiesta_sacer = :idRichiesta "
                 + "and item.ti_item_rich_soft_delete = :tiItemRichSoftDelete) ";
         Query query = getEntityManager().createNativeQuery(queryStr);
         query.setParameter("idRichiesta", idRichiesta);
@@ -880,8 +938,8 @@ public class DataMartHelper extends GenericHelper {
      * @return Il numero di UD elaborate.
      */
     public long getConteggioLogicoElaborati(BigDecimal idRichiesta) {
-        // Questa query è la misura più affidabile del progresso di Kafka.
-        // Conta quante UD uniche della nostra richiesta hanno almeno
+        // Questa query è la misura più affidabile per verificare l'avanzamento di Kafka.
+        // Conta quante UD uniche della richiesta hanno almeno
         // un record nel satellite popolato da Kafka.
         String sql = "SELECT COUNT(DISTINCT d.ID_UNITA_DOC) " + "FROM DM_UD_DEL d "
                 + "WHERE d.ID_RICHIESTA = :idRichiesta AND EXISTS ("
@@ -958,78 +1016,80 @@ public class DataMartHelper extends GenericHelper {
     public void eseguiCorrezionePerRipresaLogica(BigDecimal idRichiesta,
             String tiItemRichSoftDelete, long idUserIam) {
 
-        // --- PRE-REQUISITO: Trovare l'ID_RICH_SOFT_DELETE ---
-        // Se non hai una relazione mappata, usa una query nativa come questa:
+        // PRE-REQUISITO: Trovare l'ID_RICH_SOFT_DELETE ---
         String idSoftDeleteNativeQueryStr = "SELECT ID_RICH_SOFT_DELETE FROM ARO_ITEM_RICH_SOFT_DELETE WHERE ID_RICHIESTA_SACER = :idRichiesta "
                 + "AND TI_ITEM_RICH_SOFT_DELETE = :tiItemRichSoftDelete ";
 
-        BigDecimal idRichSoftDelete = (BigDecimal) getEntityManager()
+        @SuppressWarnings("unchecked")
+        List<BigDecimal> idRichSoftDeleteList = (List<BigDecimal>) getEntityManager()
                 .createNativeQuery(idSoftDeleteNativeQueryStr)
                 .setParameter("idRichiesta", idRichiesta)
-                .setParameter("tiItemRichSoftDelete", tiItemRichSoftDelete).getSingleResult();
+                .setParameter("tiItemRichSoftDelete", tiItemRichSoftDelete).getResultList();
 
-        if (idRichSoftDelete == null) {
+        if (idRichSoftDeleteList == null) {
             throw new IllegalStateException(
                     "Impossibile trovare un ID_RICH_SOFT_DELETE associato alla richiesta Sacer: "
                             + idRichiesta);
         }
 
-        log.info("Eseguo correzione per ID_RICH_SOFT_DELETE: {}", idRichSoftDelete);
+        // Gestisco ogni singola richiesta di cancellazione logica
+        for (BigDecimal idRichSoftDelete : idRichSoftDeleteList) {
 
-        // --- PASSO 1: UPDATE su ARO_ITEM_RICH_SOFT_DELETE ---
-        log.info("Passo 1: Resetto gli item in errore a 'DA_ELABORARE'.");
-        String updateItemsSql = "UPDATE ARO_ITEM_RICH_SOFT_DELETE " + "SET " + "  DT_CLAIM = NULL, "
-                + "  DT_FINE_ELAB = NULL, " + "  CD_INSTANCE_ID = NULL, " + "  CD_ERR_MSG = NULL, "
-                + "  TI_STATO_ITEM = 'DA_ELABORARE' "
-                + "WHERE ID_RICH_SOFT_DELETE = :idRichSoftDelete "
-                + "  AND TI_STATO_ITEM = 'ERRORE_ELABORAZIONE'";
+            log.info("Eseguo correzione per ID_RICH_SOFT_DELETE: {}", idRichSoftDelete);
 
-        int updatedItems = getEntityManager().createNativeQuery(updateItemsSql)
-                .setParameter("idRichSoftDelete", idRichSoftDelete).executeUpdate();
-        log.info("Resettati {} item.", updatedItems);
+            // --- PASSO 1: UPDATE su ARO_ITEM_RICH_SOFT_DELETE ---
+            log.info("Passo 1: Resetto gli item in errore a 'DA_ELABORARE'.");
+            String updateItemsSql = "UPDATE ARO_ITEM_RICH_SOFT_DELETE " + "SET "
+                    + "  DT_CLAIM = NULL, " + "  DT_FINE_ELAB = NULL, "
+                    + "  CD_INSTANCE_ID = NULL, " + "  CD_ERR_MSG = NULL, "
+                    + "  TI_STATO_ITEM = 'DA_ELABORARE' "
+                    + "WHERE ID_RICH_SOFT_DELETE = :idRichSoftDelete "
+                    + "  AND TI_STATO_ITEM = 'ERRORE_ELABORAZIONE' ";
 
-        // --- PASSO 2: INSERT su ARO_STATO_RICH_SOFT_DELETE ---
-        log.info("Passo 2: Inserisco un nuovo stato 'ACQUISITA'.");
+            int updatedItems = getEntityManager().createNativeQuery(updateItemsSql)
+                    .setParameter("idRichSoftDelete", idRichSoftDelete).executeUpdate();
+            log.info("Resettati {} item.", updatedItems);
 
-        // Prima troviamo il PG_STATO_RICH_SOFT_DELETE massimo per incrementarlo
-        String maxPgQueryStr = "SELECT MAX(PG_STATO_RICH_SOFT_DELETE) FROM ARO_STATO_RICH_SOFT_DELETE WHERE ID_RICH_SOFT_DELETE = :idRichSoftDelete";
-        BigDecimal maxPg = (BigDecimal) getEntityManager().createNativeQuery(maxPgQueryStr)
-                .setParameter("idRichSoftDelete", idRichSoftDelete).getSingleResult();
+            // --- PASSO 2: INSERT su ARO_STATO_RICH_SOFT_DELETE ---
+            log.info("Passo 2: Inserisco un nuovo stato 'ACQUISITA'.");
 
-        BigDecimal nuovoPg = (maxPg == null) ? BigDecimal.ONE : maxPg.add(BigDecimal.ONE);
-        // s
-        // Ora eseguiamo l'INSERT
-        // Nota: ID_USER_IAM è hardcodato a 1, cambialo se necessario.
-        String insertStatoSql = "INSERT INTO ARO_STATO_RICH_SOFT_DELETE ("
-                + "  ID_STATO_RICH_SOFT_DELETE, ID_RICH_SOFT_DELETE, PG_STATO_RICH_SOFT_DELETE, "
-                + "  DT_REG_STATO_RICH_SOFT_DELETE, TI_STATO_RICH_SOFT_DELETE, ID_USER_IAM) "
-                + "VALUES (SARO_STATO_RICH_SOFT_DELETE.nextval, :idRichSoftDelete, :nuovoPg, SYSDATE, 'ACQUISITA', :idUserIam)";
+            // Prima troviamo il PG_STATO_RICH_SOFT_DELETE massimo per incrementarlo
+            String maxPgQueryStr = "SELECT MAX(PG_STATO_RICH_SOFT_DELETE) FROM ARO_STATO_RICH_SOFT_DELETE WHERE ID_RICH_SOFT_DELETE = :idRichSoftDelete";
+            BigDecimal maxPg = (BigDecimal) getEntityManager().createNativeQuery(maxPgQueryStr)
+                    .setParameter("idRichSoftDelete", idRichSoftDelete).getSingleResult();
 
-        // Per ottenere l'ID appena inserito, abbiamo bisogno di JDBC o di una logica più complessa.
-        // Per ora, eseguiamo l'insert e poi recuperiamo l'ID.
-        getEntityManager().createNativeQuery(insertStatoSql)
-                .setParameter("idRichSoftDelete", idRichSoftDelete)
-                .setParameter("idUserIam", idUserIam).setParameter("nuovoPg", nuovoPg)
-                .executeUpdate();
+            BigDecimal nuovoPg = (maxPg == null) ? BigDecimal.ONE : maxPg.add(BigDecimal.ONE);
 
-        // Recuperiamo l'ID dello stato appena inserito
-        String newIdStatoQueryStr = "SELECT ID_STATO_RICH_SOFT_DELETE FROM ARO_STATO_RICH_SOFT_DELETE "
-                + "WHERE ID_RICH_SOFT_DELETE = :idRichSoftDelete AND PG_STATO_RICH_SOFT_DELETE = :nuovoPg";
-        BigDecimal nuovoIdStato = (BigDecimal) getEntityManager()
-                .createNativeQuery(newIdStatoQueryStr)
-                .setParameter("idRichSoftDelete", idRichSoftDelete).setParameter("nuovoPg", nuovoPg)
-                .getSingleResult();
-        log.info("Creato nuovo stato con ID: {}", nuovoIdStato);
+            String insertStatoSql = "INSERT INTO ARO_STATO_RICH_SOFT_DELETE ("
+                    + "  ID_STATO_RICH_SOFT_DELETE, ID_RICH_SOFT_DELETE, PG_STATO_RICH_SOFT_DELETE, "
+                    + "  DT_REG_STATO_RICH_SOFT_DELETE, TI_STATO_RICH_SOFT_DELETE, ID_USER_IAM) "
+                    + "VALUES (SARO_STATO_RICH_SOFT_DELETE.nextval, :idRichSoftDelete, :nuovoPg, SYSDATE, 'ACQUISITA', :idUserIam)";
 
-        // --- PASSO 3: UPDATE su ARO_RICH_SOFT_DELETE ---
-        log.info("Passo 3: Allineo la richiesta master con il nuovo stato.");
-        String updateRichiestaSql = "UPDATE ARO_RICH_SOFT_DELETE "
-                + "SET ID_STATO_RICH_SOFT_DELETE_COR = :nuovoIdStato "
-                + "WHERE ID_RICH_SOFT_DELETE = :idRichSoftDelete";
+            // Eseguo l'insert e poi recupero l'ID.
+            getEntityManager().createNativeQuery(insertStatoSql)
+                    .setParameter("idRichSoftDelete", idRichSoftDelete)
+                    .setParameter("idUserIam", idUserIam).setParameter("nuovoPg", nuovoPg)
+                    .executeUpdate();
 
-        getEntityManager().createNativeQuery(updateRichiestaSql)
-                .setParameter("nuovoIdStato", nuovoIdStato)
-                .setParameter("idRichSoftDelete", idRichSoftDelete).executeUpdate();
+            // Recuperiamo l'ID dello stato appena inserito
+            String newIdStatoQueryStr = "SELECT ID_STATO_RICH_SOFT_DELETE FROM ARO_STATO_RICH_SOFT_DELETE "
+                    + "WHERE ID_RICH_SOFT_DELETE = :idRichSoftDelete AND PG_STATO_RICH_SOFT_DELETE = :nuovoPg";
+            BigDecimal nuovoIdStato = (BigDecimal) getEntityManager()
+                    .createNativeQuery(newIdStatoQueryStr)
+                    .setParameter("idRichSoftDelete", idRichSoftDelete)
+                    .setParameter("nuovoPg", nuovoPg).getSingleResult();
+            log.info("Creato nuovo stato con ID: {}", nuovoIdStato);
+
+            // --- PASSO 3: UPDATE su ARO_RICH_SOFT_DELETE ---
+            log.info("Passo 3: Allineo la richiesta master con il nuovo stato.");
+            String updateRichiestaSql = "UPDATE ARO_RICH_SOFT_DELETE "
+                    + "SET ID_STATO_RICH_SOFT_DELETE_COR = :nuovoIdStato "
+                    + "WHERE ID_RICH_SOFT_DELETE = :idRichSoftDelete";
+
+            getEntityManager().createNativeQuery(updateRichiestaSql)
+                    .setParameter("nuovoIdStato", nuovoIdStato)
+                    .setParameter("idRichSoftDelete", idRichSoftDelete).executeUpdate();
+        }
 
         log.info("Correzione completata per la richiesta {}", idRichiesta);
     }
@@ -1042,8 +1102,6 @@ public class DataMartHelper extends GenericHelper {
      * @return true se NON esistono UD da cancellare, false altrimenti.
      */
     public boolean isLavoroKafkaCompletato(BigDecimal idUdDelRichiesta) {
-        // Usiamo una query nativa con un trucco per restituire 1 se esiste almeno un record,
-        // e 0 altrimenti. Questo è un modo standard per mappare EXISTS a un risultato numerico.
         String sql = "SELECT CASE WHEN EXISTS (" + "  SELECT 1 FROM SACER.DM_UD_DEL "
                 + "  WHERE ID_UD_DEL_RICHIESTA = :idUdDelRichiesta AND TI_STATO_UD_CANCELLATE = 'DA_CANCELLARE'"
                 + ") THEN 0 ELSE 1 END FROM DUAL";
@@ -1055,4 +1113,75 @@ public class DataMartHelper extends GenericHelper {
         // completato.
         return result.intValue() == 1;
     }
+
+    public void updateDmUdDelDaCancellare(BigDecimal idUdDelRichiesta) {
+        log.info("Resetto lo stato delle UD in 'DA_CANCELLARE'.");
+        String updateUdsSql = "UPDATE DM_UD_DEL " + "SET TI_STATO_UD_CANCELLATE = 'DA_CANCELLARE' "
+                + "WHERE ID_UD_DEL_RICHIESTA = :idUdDelRichiesta ";
+        int updatedUds = getEntityManager().createNativeQuery(updateUdsSql)
+                .setParameter("idUdDelRichiesta", idUdDelRichiesta).executeUpdate();
+        log.info("Resettati {} item.", updatedUds);
+    }
+
+    // MEV #39896
+    /**
+     * MEV 39896 - Esegue la "foto" (snapshot) della richiesta di restituzione archivio copiando i
+     * dati dalla vista ARO_V_RIC_RICH_RA alla tabella ARO_RIC_RICH_RA_FOTO.
+     *
+     * @param idRichiestaRa Identificativo della richiesta
+     */
+    public void insertAroRichRichRaFoto(BigDecimal idRichiestaRa) {
+        StringBuilder sql = new StringBuilder();
+        // Nota: Ometto la colonna ID_RIC_RICH_RA_FOTO perché essendo una Identity (ISEQ$$...)
+        // verrà popolata automaticamente dal database.
+        sql.append("INSERT INTO ARO_RIC_RICH_RA_FOTO (");
+        sql.append("   ID_ENTE_CONVENZ, NM_ENTE_CONVENZ, NM_ENTE_STRUT, ID_RICHIESTA_RA, ");
+        sql.append("   ID_AMBIENTE, ID_ENTE, ID_STRUT, TOTALI, ESTRATTI, ERRORI, ");
+        sql.append(
+                "   SUM_DIM, MAX_DT_ESTRAZIONE, TI_STATO, ESTRATTI_TOTALI, CD_ERRORE, TS_INIZIO");
+        sql.append(") ");
+        sql.append("SELECT ");
+        sql.append("   v.ID_ENTE_CONVENZ, v.NM_ENTE_CONVENZ, v.NM_ENTE_STRUT, v.ID_RICHIESTA_RA, ");
+        sql.append("   v.ID_AMBIENTE, v.ID_ENTE, v.ID_STRUT, v.TOTALI, v.ESTRATTI, v.ERRORI, ");
+        sql.append(
+                "   v.SUM_DIM, v.MAX_DT_ESTRAZIONE, v.TI_STATO, v.ESTRATTI_TOTALI, v.CD_ERRORE, v.TS_INIZIO ");
+        sql.append("FROM ARO_V_RIC_RICH_RA v ");
+        sql.append("WHERE v.ID_RICHIESTA_RA = :idRichiestaRa");
+
+        Query query = getEntityManager().createNativeQuery(sql.toString());
+        query.setParameter("idRichiestaRa", idRichiestaRa);
+
+        int rows = query.executeUpdate();
+        log.info("Inserita foto ARO_RIC_RICH_RA_FOTO per idRichiestaRa {}: {} righe copiate.",
+                idRichiestaRa, rows);
+    }
+
+    /**
+     * MEV 39896 - Esegue la "foto" (snapshot) degli item della richiesta di restituzione archivio
+     * copiando i dati dalla vista ARO_V_LIS_ITEM_RA alla tabella ARO_LIS_ITEM_RA_FOTO.
+     *
+     * @param idRichiestaRa Identificativo della richiesta
+     */
+    public void insertAroLisItemRaFoto(BigDecimal idRichiestaRa) {
+        StringBuilder sql = new StringBuilder();
+        // Nota: Ometto la colonna ID_LIS_ITEM_RA_FOTO perché gestita automaticamente (Identity)
+        sql.append("INSERT INTO ARO_LIS_ITEM_RA_FOTO (");
+        sql.append("   ID_RICHIESTA_RA, ID_STRUT, ANNO, TOT_UD, NUM_AIP, ");
+        sql.append("   DIMENSIONE, NUM_DOCS, NUM_ERRORI, NUM_ESTRATTI, AVANZAMENTO");
+        sql.append(") ");
+        sql.append("SELECT ");
+        sql.append("   v.ID_RICHIESTA_RA, v.ID_STRUT, v.ANNO, v.TOT_UD, v.NUM_AIP, ");
+        sql.append("   v.DIMENSIONE, v.NUM_DOCS, v.NUM_ERRORI, v.NUM_ESTRATTI, v.AVANZAMENTO ");
+        sql.append("FROM ARO_V_LIS_ITEM_RA v ");
+        sql.append("WHERE v.ID_RICHIESTA_RA = :idRichiestaRa");
+
+        Query query = getEntityManager().createNativeQuery(sql.toString());
+        query.setParameter("idRichiestaRa", idRichiestaRa);
+
+        int rows = query.executeUpdate();
+        log.info("Inserita foto ARO_LIS_ITEM_RA_FOTO per idRichiestaRa {}: {} righe copiate.",
+                idRichiestaRa, rows);
+    }
+
+    // end MEV #39896
 }

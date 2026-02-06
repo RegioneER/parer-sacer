@@ -778,8 +778,7 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato
         // inserito
         if (cdTiEveStatoElencoVers != null
-                && (cdTiEveStatoElencoVers.equals("IN_CODA_VERIFICA_FIRMA_DT_VERS")
-                        || cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
+                && (cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
                         || cdTiEveStatoElencoVers.equals("ESEGUITA_VERIFICA_FIRMA_DT_VERS"))) {
             loadListaUd(idAmbiente, idEnte, idStrut, null, null, null, tiStatoElenco,
                     dateFormattate[0], dateFormattate[1], niGgStatoDa, niGgStatoA,
@@ -787,7 +786,7 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
             forwardToPublisher(Application.Publisher.MONITORAGGIO_UD_INDICE_AIP);
         } else {
             getMessageBox().addError(
-                    "Non è possibile accedere alla lista delle unità documentarie in quanto lo stato è diverso da IN_CODA_VERIFICA_FIRMA_DT_VERS, IN_CODA_INDICE_AIP_DA_ELAB o ESEGUITA_VERIFICA_FIRMA_DT_VERS");
+                    "Non è possibile accedere alla lista delle unità documentarie in quanto lo stato è diverso da IN_CODA_INDICE_AIP_DA_ELAB o ESEGUITA_VERIFICA_FIRMA_DT_VERS");
             forwardToPublisher(getLastPublisher());
         }
     }
@@ -821,8 +820,7 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato
         // inserito
         if (cdTiEveStatoElencoVers != null
-                && (cdTiEveStatoElencoVers.equals("IN_CODA_VERIFICA_FIRMA_DT_VERS")
-                        || cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
+                && (cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
                         || cdTiEveStatoElencoVers.equals("ESEGUITA_VERIFICA_FIRMA_DT_VERS"))) {
             loadListaUd(idAmbiente, idEnte, idStrut, null, null, null, tiStatoElenco,
                     dateFormattate[0], dateFormattate[1], niGgStatoDa, niGgStatoA,
@@ -830,7 +828,7 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
             forwardToPublisher(Application.Publisher.MONITORAGGIO_UD_INDICE_AIP);
         } else {
             getMessageBox().addError(
-                    "Non è possibile accedere alla lista delle unità documentarie in quanto lo stato è diverso da IN_CODA_VERIFICA_FIRMA_DT_VERS, IN_CODA_INDICE_AIP_DA_ELAB o ESEGUITA_VERIFICA_FIRMA_DT_VERS");
+                    "Non è possibile accedere alla lista delle unità documentarie in quanto lo stato è diverso da IN_CODA_INDICE_AIP_DA_ELAB o ESEGUITA_VERIFICA_FIRMA_DT_VERS");
             forwardToPublisher(getLastPublisher());
         }
     }
@@ -872,8 +870,7 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato
         // inserito
-        if (cdTiEveStatoElencoVers.equals("IN_CODA_VERIFICA_FIRMA_DT_VERS")
-                || cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
+        if (cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
                 || cdTiEveStatoElencoVers.equals("ESEGUITA_VERIFICA_FIRMA_DT_VERS")) {//
             loadListaUd(idAmbiente, idEnte, idStrut, null, null, null, tiStatoElenco,
                     dateFormattate[0], dateFormattate[1], niGgStatoDa, niGgStatoA,
@@ -881,7 +878,7 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
             forwardToPublisher(Application.Publisher.MONITORAGGIO_UD_INDICE_AIP);
         } else {
             getMessageBox().addError(
-                    "Non è possibile accedere alla lista delle unità documentarie in quanto lo stato è diverso da IN_CODA_VERIFICA_FIRMA_DT_VERS, IN_CODA_INDICE_AIP_DA_ELAB o ESEGUITA_VERIFICA_FIRMA_DT_VERS");
+                    "Non è possibile accedere alla lista delle unità documentarie in quanto lo stato è diverso da IN_CODA_INDICE_AIP_DA_ELAB o ESEGUITA_VERIFICA_FIRMA_DT_VERS");
             forwardToPublisher(getLastPublisher());
         }
     }
@@ -1480,13 +1477,12 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 
             // Calcolo subito la lista senza filtri
             if (cdTiEveStatoElencoVers != null
-                    && (!cdTiEveStatoElencoVers.equals("IN_CODA_VERIFICA_FIRMA_DT_VERS")
-                            && !cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
+                    && (!cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
                             && !cdTiEveStatoElencoVers.equals("ESEGUITA_VERIFICA_FIRMA_DT_VERS"))) {
                 if (idAmbiente == null || idEnte == null || idStrut == null
                         || idElencoVers == null) {
                     getMessageBox().addError(
-                            "I campi Ambiente, Ente, Struttura ed ID elenco sono obbligatori in quanto lo stato elenco è diverso da IN_CODA_VERIFICA_FIRMA_DT_VERS, IN_CODA_INDICE_AIP_DA_ELAB e ESEGUITA_VERIFICA_FIRMA_DT_VERS");
+                            "I campi Ambiente, Ente, Struttura ed ID elenco sono obbligatori in quanto lo stato elenco è diverso da IN_CODA_INDICE_AIP_DA_ELAB e ESEGUITA_VERIFICA_FIRMA_DT_VERS");
                 } else {
                     calcolaUdProcessoGenerazioneIndiceAIP(idAmbiente, idEnte, idStrut,
                             cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, tiStatoElenco,

@@ -81,11 +81,12 @@ public class AmministrazioneEjb {
 
     public AplParamApplicTableBean getAplParamApplicTableBean(String tiParamApplic,
             String tiGestioneParam, String flAppartApplic, String flAppartAmbiente,
-            String flAppartStrut, String flAppartTipoUnitaDoc, String flAppartAaTipoFascicolo) {
+            String flAppartStrut, String flAppartTipoUnitaDoc, String flAppartAaTipoFascicolo,
+            String cdVersioneAppIni, String cdVersioneAppFine) {
         AplParamApplicTableBean paramApplicTableBean = new AplParamApplicTableBean();
         List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicList(
                 tiParamApplic, tiGestioneParam, flAppartApplic, flAppartAmbiente, flAppartStrut,
-                flAppartTipoUnitaDoc, flAppartAaTipoFascicolo);
+                flAppartTipoUnitaDoc, flAppartAaTipoFascicolo, cdVersioneAppIni, cdVersioneAppFine);
 
         try {
             if (paramApplicList != null && !paramApplicList.isEmpty()) {
@@ -112,11 +113,12 @@ public class AmministrazioneEjb {
     public AplParamApplicTableBean getAplParamApplicTableBean(String tiParamApplic,
             String tiGestioneParam, String flAppartApplic, String flAppartAmbiente,
             String flAppartStrut, String flAppartTipoUnitaDoc, String flAppartAaTipoFascicolo,
-            boolean filterValid) {
+            String cdVersioneAppIni, String cdVersioneAppFine, boolean filterValid) {
         AplParamApplicTableBean paramApplicTableBean = new AplParamApplicTableBean();
         List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicList(
                 tiParamApplic, tiGestioneParam, flAppartApplic, flAppartAmbiente, flAppartStrut,
-                flAppartTipoUnitaDoc, flAppartAaTipoFascicolo, filterValid);
+                flAppartTipoUnitaDoc, flAppartAaTipoFascicolo, cdVersioneAppIni, cdVersioneAppFine,
+                filterValid);
 
         try {
             if (paramApplicList != null && !paramApplicList.isEmpty()) {
@@ -249,6 +251,40 @@ public class AmministrazioneEjb {
                 for (String row : tiParamApplicList) {
                     BaseRowInterface r = new BaseRow();
                     r.setString(AplParamApplicTableDescriptor.COL_TI_PARAM_APPLIC, row);
+                    table.add(r);
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        return table;
+    }
+
+    public BaseTable getCdVersioneAppIniBaseTable() {
+        BaseTable table = new BaseTable();
+        List<String> cdVersioneAppIniList = amministrazioneHelper.getCdVersioneAppIni();
+        if (cdVersioneAppIniList != null && !cdVersioneAppIniList.isEmpty()) {
+            try {
+                for (String row : cdVersioneAppIniList) {
+                    BaseRowInterface r = new BaseRow();
+                    r.setString(AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_INI, row);
+                    table.add(r);
+                }
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        return table;
+    }
+
+    public BaseTable getCdVersioneAppFineBaseTable() {
+        BaseTable table = new BaseTable();
+        List<String> cdVersioneAppFineList = amministrazioneHelper.getCdVersioneAppFine();
+        if (cdVersioneAppFineList != null && !cdVersioneAppFineList.isEmpty()) {
+            try {
+                for (String row : cdVersioneAppFineList) {
+                    BaseRowInterface r = new BaseRow();
+                    r.setString(AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_FINE, row);
                     table.add(r);
                 }
             } catch (Exception e) {

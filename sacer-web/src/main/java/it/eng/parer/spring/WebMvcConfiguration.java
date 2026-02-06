@@ -320,6 +320,12 @@ public class WebMvcConfiguration extends SpagoliteWebMvcConfiguration implements
         return new AnnulVersAction();
     }
 
+    @Bean(value = "/Scarto.html")
+    @Scope("prototype")
+    ScartoAction scartoAction() {
+        return new ScartoAction();
+    }
+
     @Bean(value = "/ModelliSerie.html")
     @Scope("prototype")
     ModelliSerieAction modelliSerieAction() {

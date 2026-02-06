@@ -69,7 +69,6 @@ e aggiungere le seguenti destinazioni
 
 Name | JNDI 
 --- | --- 
-VerificaFirmeDataVersQueue | java:/jms/queue/VerificaFirmeDataVersQueue |
 IndiceAipUnitaDocQueue | java:/jms/queue/IndiceAipUnitaDocQueue |
 OggettiDaMigrareQueue | java:/jms/queue/OggettiDaMigrareQueue java:/jboss/exported/jms/queue/OggettiDaMigrareQueue |
 OggettiMigratiQueue | java:/jboss/exported/jms/queue/OggettiMigratiQueue
@@ -81,8 +80,6 @@ ElenchiDaElabQueue | java:/jms/queue/ElenchiDaElabQueue |
 #### Configurazione tramite CLI
 
 ```bash
-jms-queue add --queue-address=VerificaFirmeDataVersQueue --entries=[java:/jms/queue/VerificaFirmeDataVersQueue]
-
 jms-queue add --queue-address=IndiceAipUnitaDocQueue --entries=[java:/jms/queue/IndiceAipUnitaDocQueue]
 
 jms-queue add --queue-address=OggettiDaMigrareQueue --entries=[java:/jms/queue/OggettiDaMigrareQueue /jboss/exported/jms/queue/OggettiDaMigrareQueue] 

@@ -25,10 +25,11 @@ public class ConteggioStatoUdDto {
     private String nmStrut;
     private String tiStatoUdCancellate;
     private long conteggio; // COUNT restituisce un Long in JPA
+    private long niUdStatoAnnullate;
 
     public ConteggioStatoUdDto(Long idUdDelRichiesta, BigDecimal idRichiesta,
             String tiMotCancellazione, BigDecimal idEnte, String nmEnte, BigDecimal idStrut,
-            String nmStrut, String tiStatoUdCancellate, long conteggio) {
+            String nmStrut, String tiStatoUdCancellate, long conteggio, long niUdStatoAnnullate) {
         this.idUdDelRichiesta = idUdDelRichiesta;
         this.idRichiesta = idRichiesta;
         this.tiMotCancellazione = tiMotCancellazione;
@@ -38,6 +39,7 @@ public class ConteggioStatoUdDto {
         this.nmStrut = nmStrut;
         this.tiStatoUdCancellate = tiStatoUdCancellate;
         this.conteggio = conteggio;
+        this.niUdStatoAnnullate = niUdStatoAnnullate;
     }
 
     public Long getIdUdDelRichiesta() {
@@ -110,6 +112,14 @@ public class ConteggioStatoUdDto {
 
     public void setNmStrut(String nmStrut) {
         this.nmStrut = nmStrut;
+    }
+
+    public long getNiUdStatoAnnullate() {
+        return niUdStatoAnnullate;
+    }
+
+    public void setNiUdStatoAnnullate(long niUdStatoAnnullate) {
+        this.niUdStatoAnnullate = niUdStatoAnnullate;
     }
 
 }

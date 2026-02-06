@@ -1763,17 +1763,19 @@ public class ElenchiVersamentoEjb {
     }
 
     private boolean isElencoFirmato(ElvElencoVer elenco, DecCriterioRaggr criterio) {
-        String elencoFirmaInCorso = ElencoStatusEnum.FIRMA_IN_CORSO.name();
-        String elencoValidato = ElencoStatusEnum.VALIDATO.name();
-        String elencoFirmeVerificateDtVers = ElencoStatusEnum.FIRME_VERIFICATE_DT_VERS.name();
-        String elencoInCodaIndiceAip = ElencoStatusEnum.IN_CODA_INDICE_AIP.name();
-        String elencoIndiciAipGenerati = ElencoStatusEnum.INDICI_AIP_GENERATI.name();
-        String elencoElencoIndiciAipCreato = ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO.name();
-        String elencoElencoIndiciAipFirmaInCorso = ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMA_IN_CORSO
+        String elencoFirmaInCorso = ElencoEnums.ElencoStatusEnum.FIRMA_IN_CORSO.name();
+        String elencoValidato = ElencoEnums.ElencoStatusEnum.VALIDATO.name();
+        String elencoInCodaIndiceAip = ElencoEnums.ElencoStatusEnum.IN_CODA_INDICE_AIP.name();
+        String elencoIndiciAipGenerati = ElencoEnums.ElencoStatusEnum.INDICI_AIP_GENERATI.name();
+        String elencoElencoIndiciAipCreato = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO
                 .name();
-        String elencoElencoIndiciAipFirmato = ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO.name();
-        String elencoElencoIndiciAipErrMarca = ElencoStatusEnum.ELENCO_INDICI_AIP_ERR_MARCA.name();
-        String elencoCompletato = ElencoStatusEnum.COMPLETATO.name();
+        String elencoElencoIndiciAipFirmaInCorso = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMA_IN_CORSO
+                .name();
+        String elencoElencoIndiciAipFirmato = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO
+                .name();
+        String elencoElencoIndiciAipErrMarca = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_ERR_MARCA
+                .name();
+        String elencoCompletato = ElencoEnums.ElencoStatusEnum.COMPLETATO.name();
 
         boolean firma = (elenco.getTiValidElenco() != null)
                 ? elenco.getTiValidElenco().name()
@@ -1782,7 +1784,6 @@ public class ElenchiVersamentoEjb {
 
         return (elenco.getTiStatoElenco().equals(elencoFirmaInCorso)
                 || elenco.getTiStatoElenco().equals(elencoValidato)
-                || elenco.getTiStatoElenco().equals(elencoFirmeVerificateDtVers)
                 || elenco.getTiStatoElenco().equals(elencoInCodaIndiceAip)
                 || elenco.getTiStatoElenco().equals(elencoIndiciAipGenerati)
                 || elenco.getTiStatoElenco().equals(elencoElencoIndiciAipCreato)

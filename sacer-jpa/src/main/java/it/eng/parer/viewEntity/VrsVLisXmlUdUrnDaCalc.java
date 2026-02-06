@@ -45,6 +45,7 @@ public class VrsVLisXmlUdUrnDaCalc implements Serializable {
     private String cdKeyUnitaDoc;
     private String cdEnteNormaliz;
     private BigDecimal aaKeyUnitaDoc;
+    private BigDecimal aaChiusuraSess;
 
     public VrsVLisXmlUdUrnDaCalc() {/* Hibernate */
     }
@@ -165,6 +166,15 @@ public class VrsVLisXmlUdUrnDaCalc implements Serializable {
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
         this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+    }
+
+    @Column(name = "AA_CHIUSURA_SESS")
+    public BigDecimal getAaChiusuraSess() {
+        return aaChiusuraSess;
+    }
+
+    public void setAaChiusuraSess(BigDecimal aaChiusuraSess) {
+        this.aaChiusuraSess = aaChiusuraSess;
     }
 
 }

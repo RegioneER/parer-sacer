@@ -25,6 +25,7 @@ import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import it.eng.parer.async.utils.UdSerFascObj;
 import it.eng.parer.entity.AroAipRestituzioneArchivio;
@@ -65,6 +66,7 @@ public class RestituzioneArchivioHelper extends GenericHelper {
         query.setParameter("idEnteConvenz", idEnteConvenz);
         query.setParameter("tiStato",
                 Arrays.asList(AroRichiestaTiStato.ANNULLATO, AroRichiestaTiStato.RESTITUITO));
+        // query.setParameter("tiStato", AroRichiestaTiStato.ANNULLATO);
         Long count = (Long) query.getSingleResult();
         return count > 0L;
     }
@@ -74,14 +76,16 @@ public class RestituzioneArchivioHelper extends GenericHelper {
      * <code>idEnteConvenz</code>
      *
      * @param idEnteConvenz id ente convenzionato
+     * @param flSvuotaFtp   area ftp da svuotare
      *
      * @return true se esiste
      */
-    public boolean isRichRestArchExistingRestituito(BigDecimal idEnteConvenz) {
+    public boolean isRichRestArchExistingRestituito(BigDecimal idEnteConvenz, String flSvuotaFtp) {
         Query query = getEntityManager().createQuery("SELECT COUNT(r) FROM AroRichiestaRa r "
                 + "WHERE r.orgStrut.idEnteConvenz = :idEnteConvenz " + "AND r.tsFine IS NOT NULL "
-                + "AND r.tiStato = 'RESTITUITO' AND r.flSvuotaFtp = '1' ");
+                + "AND r.tiStato = 'RESTITUITO' AND r.flSvuotaFtp = :flSvuotaFtp ");
         query.setParameter("idEnteConvenz", idEnteConvenz);
+        query.setParameter("flSvuotaFtp", flSvuotaFtp);
         Long count = (Long) query.getSingleResult();
         return count > 0L;
     }
@@ -414,5 +418,14 @@ public class RestituzioneArchivioHelper extends GenericHelper {
         q.setParameter("idOrganizIam", longFromBigDecimal(idStrut));
         List<SIOrgEnteConvenzOrg> list = q.getResultList();
         return list;
+    }
+
+    public AroVRicRichRa getAroVRicRichRa(BigDecimal idRichiestaRa) {
+        TypedQuery<AroVRicRichRa> q = getEntityManager().createQuery(
+                "SELECT r FROM AroVRicRichRa r WHERE r.idRichiestaRa = :idRichiestaRa",
+                AroVRicRichRa.class);
+        q.setParameter("idRichiestaRa", idRichiestaRa);
+        List<AroVRicRichRa> list = q.getResultList();
+        return list.get(0);
     }
 }

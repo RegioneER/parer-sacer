@@ -294,32 +294,8 @@ public class InvioRichiestaAnnullamentoVersamentiParser {
             }
         }
 
-        /* CONTROLLO TAG RICHIESTADAPREINGEST (RICH_ANN_VERS_019) */
-        if (rispostaWs.getSeverity() != SeverityEnum.ERROR) {
-            Optional<VersamentoDaAnnullareType> optVersamento = richiesta.getVersamentiDaAnnullare()
-                    .getVersamentoDaAnnullare().stream().findFirst();
-            if (optVersamento.isPresent()) {
-                VersamentoDaAnnullareType versamentoDaAnnullare = optVersamento.get();
-                if (versamentoDaAnnullare.getTipoVersamento().value()
-                        .equals(TipoVersamentoType.FASCICOLO.value())) {
-                    if (ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta()
-                            .isRichiestaDaPreIngest() != null
-                            && ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta()
-                                    .isRichiestaDaPreIngest()) {
-                        // Richiesta da PreIngest definita ma il Tipo Versamento specificato non lo
-                        // supporta
-                        rispostaWs.setSeverity(SeverityEnum.ERROR);
-                        rispostaWs.setEsitoWsError(MessaggiWSBundle.RICH_ANN_VERS_019,
-                                MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_019));
-                        // Popolo i tag da dare in risposta in questo caso
-                        // popolaVersioniEDataEsito(myEsito, ravExt.getVersioneCalc(),
-                        // ravExt.getDataElaborazione());
-                        // popolaVersatoreRichiestaEsito(myEsito, ravExt);
-                        // rispostaWs.setEsitoRichiestaAnnullamentoVersamenti(myEsito);
-                    }
-                }
-            }
-        }
+        // MAC#39789 - RICH_ANN_VERS_019 rimosso per allineare fascicoli a UD
+        // Il controllo bloccava annullamento fascicoli da Ping.
 
         // RICH_ANN_VERS_020
         // RICH_ANN_VERS_021
