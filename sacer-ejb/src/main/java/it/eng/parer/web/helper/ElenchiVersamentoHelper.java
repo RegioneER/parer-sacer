@@ -494,9 +494,9 @@ public class ElenchiVersamentoHelper extends GenericHelper {
                 filtri.getTiStatoElenco()
                         .add("IN_CODA_JMS_GENERA_INDICE_AIP (IN_CODA_JMS_GENERA_INDICE_AIP)");
             }
-            if (filtri.getTiStatoElenco().contains("IN_CODA_JMS_VERIFICA_FIRME_DT_VERS")) {
-                filtri.getTiStatoElenco().add(
-                        "IN_CODA_JMS_VERIFICA_FIRME_DT_VERS (IN_CODA_JMS_VERIFICA_FIRME_DT_VERS)");
+            if (filtri.getTiStatoElenco().contains("IN_CODA_JMS_INDICE_AIP_DA_ELAB")) {
+                filtri.getTiStatoElenco()
+                        .add("IN_CODA_JMS_INDICE_AIP_DA_ELAB (IN_CODA_JMS_INDICE_AIP_DA_ELAB)");
             }
             query.setParameter("tiStatoElenco", filtri.getTiStatoElenco());
         }
@@ -657,11 +657,7 @@ public class ElenchiVersamentoHelper extends GenericHelper {
         if (!filtri.getTiStatoElenco().isEmpty()) {
             if (filtri.getTiStatoElenco().contains("IN_CODA_JMS_GENERA_INDICE_AIP")) {
                 filtri.getTiStatoElenco()
-                        .add("IN_CODA_JMS_GENERA_INDICE_AIP (IN_CODA_JMS_GENERA_INDICE_AIP)");
-            }
-            if (filtri.getTiStatoElenco().contains("IN_CODA_JMS_VERIFICA_FIRME_DT_VERS")) {
-                filtri.getTiStatoElenco().add(
-                        "IN_CODA_JMS_VERIFICA_FIRME_DT_VERS (IN_CODA_JMS_VERIFICA_FIRME_DT_VERS)");
+                        .add("IN_CODA_JMS_INDICE_AIP_DA_ELAB (IN_CODA_JMS_INDICE_AIP_DA_ELAB)");
             }
             query.setParameter("tiStatoElenco", filtri.getTiStatoElenco());
         }

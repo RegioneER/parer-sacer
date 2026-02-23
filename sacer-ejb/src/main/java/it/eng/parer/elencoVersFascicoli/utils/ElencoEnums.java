@@ -56,7 +56,7 @@ public class ElencoEnums {
 
         COMPLETATO, APERTO, CHIUSO, DA_CHIUDERE, ELENCO_INDICI_AIP_CREATO,
         ELENCO_INDICI_AIP_FIRMA_IN_CORSO, FIRMATO, FIRMA_IN_CORSO, IN_CODA_CREAZIONE_AIP,
-        AIP_CREATI, VALIDATO;
+        AIP_CREATI;
 
         public static ElencoStatusEnum[] getEnums(ElencoStatusEnum... vals) {
             return vals;
@@ -65,7 +65,7 @@ public class ElencoEnums {
         public static ElencoStatusEnum[] getComboMappaStatoElencoRicerca() {
             return getEnums(APERTO, DA_CHIUDERE, CHIUSO, FIRMATO, FIRMA_IN_CORSO,
                     ELENCO_INDICI_AIP_CREATO, IN_CODA_CREAZIONE_AIP,
-                    ELENCO_INDICI_AIP_FIRMA_IN_CORSO, AIP_CREATI, COMPLETATO, VALIDATO);
+                    ELENCO_INDICI_AIP_FIRMA_IN_CORSO, AIP_CREATI, COMPLETATO);
         }
 
         public static ElencoStatusEnum[] getStatoElencoDeletable() {
@@ -78,8 +78,8 @@ public class ElencoEnums {
         IN_ATTESA_MEMORIZZAZIONE, IN_ATTESA_SCHED, IN_ELENCO_APERTO, IN_ELENCO_CHIUSO,
         IN_ELENCO_COMPLETATO, IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO,
         IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA, IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO,
-        IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS, IN_ELENCO_CON_INDICI_AIP_GENERATI,
-        IN_ELENCO_DA_CHIUDERE, IN_ELENCO_FIRMATO, IN_ELENCO_IN_CODA_INDICE_AIP, NON_SELEZ_SCHED;
+        IN_ELENCO_CON_INDICI_AIP_GENERATI, IN_ELENCO_DA_CHIUDERE, IN_ELENCO_FIRMATO,
+        IN_ELENCO_IN_CODA_INDICE_AIP, NON_SELEZ_SCHED;
 
         public static FascStatusEnum[] getEnums(FascStatusEnum... vals) {
             return vals;

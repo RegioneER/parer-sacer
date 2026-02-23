@@ -47,6 +47,7 @@ public class DmUdDelTableDescriptor extends TableDescriptor {
     public static final String COL_DT_STATO_UD_CANCELLATE = "dt_stato_ud_cancellate";
     public static final String COL_DT_VERSAMENTO = "dt_versamento";
     public static final String COL_TI_STATO_UD_CANCELLATE = "ti_stato_ud_cancellate";
+    public static final String COL_FL_ANNUL = "fl_annul";
 
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
@@ -70,6 +71,7 @@ public class DmUdDelTableDescriptor extends TableDescriptor {
                 new ColumnDescriptor(COL_DT_VERSAMENTO, Types.TIMESTAMP, 7, false));
         map.put(COL_TI_STATO_UD_CANCELLATE,
                 new ColumnDescriptor(COL_TI_STATO_UD_CANCELLATE, Types.VARCHAR, 100, false));
+        map.put(COL_FL_ANNUL, new ColumnDescriptor(COL_FL_ANNUL, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {

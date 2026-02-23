@@ -70,6 +70,7 @@ public class IamUser implements Serializable {
     private List<VolVolumeConserv> volVolumeConservUserFirmaMarcas = new ArrayList<>();
     private List<VrsSessioneVers> vrsSessioneVers = new ArrayList<>();
     private List<AroStatoRichAnnulVers> aroStatoRichAnnulVers = new ArrayList<>();
+    private List<AroStatoRichScartoVers> aroStatoRichScartoVers = new ArrayList<>();
     private List<MonTipoUnitaDocUserVers> monTipoUnitaDocUserVers = new ArrayList<>();
     private List<HsmSessioneFirma> hsmSessioneFirmas = new ArrayList<>();
     private List<ElvStatoElencoVersFasc> elvStatoElencoVersFascs = new ArrayList<>();
@@ -490,6 +491,15 @@ public class IamUser implements Serializable {
         aroStatoRichAnnulVers.setIamUser(null);
 
         return aroStatoRichAnnulVers;
+    }
+
+    @OneToMany(mappedBy = "iamUser")
+    public List<AroStatoRichScartoVers> getAroStatoRichScartoVers() {
+        return this.aroStatoRichScartoVers;
+    }
+
+    public void setAroStatoRichScartoVers(List<AroStatoRichScartoVers> aroStatoRichScartoVers) {
+        this.aroStatoRichScartoVers = aroStatoRichScartoVers;
     }
 
     @OneToMany(mappedBy = "iamUser")

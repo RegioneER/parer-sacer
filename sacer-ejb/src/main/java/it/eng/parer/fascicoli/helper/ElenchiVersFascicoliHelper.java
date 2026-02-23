@@ -53,6 +53,7 @@ import it.eng.parer.viewEntity.ElvVRicElencoFascByFas;
 import it.eng.parer.viewEntity.ElvVRicElencoFascByStato;
 import it.eng.parer.web.util.StringPadding;
 import it.eng.spagoCore.error.EMFError;
+import java.util.Arrays;
 
 /**
  *
@@ -969,5 +970,84 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
             this.dataFirmaElencoAipA = dataFirmaElencoAipA;
         }
     }
+
+    // MAC #39492
+    /**
+     * Metodo per "filtrare" le ud di un fascicolo, restituendo quelle che hanno legami con altre
+     * entità (elenchi versamento fascicoli e/o serie) con stati "bloccanti" per il passaggio di
+     * stato a IN_ARCHIO dell'ud
+     *
+     * @param udIds       la lista delle ud in ingresso
+     * @param idFascicolo il fascicolo che sto analizzando
+     * @return la lista delle ud "bloccate"
+     */
+    public List<Long> findUdIdsBlockedByAltreEntita(List<Long> udIds, Long idFascicolo) {
+        if (udIds == null || udIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // Stati Elenco di versamento fascicoli che bloccano il passaggio ud da
+        // VERSAMENTO_IN_ARCHIVIO a IN_ARCHIVIO
+        List<TiStatoElencoFasc> statiElencoBloccanti = Arrays.asList(
+                TiStatoElencoFasc.IN_CODA_CREAZIONE_AIP, TiStatoElencoFasc.AIP_CREATI,
+                TiStatoElencoFasc.ELENCO_INDICI_AIP_CREATO,
+                TiStatoElencoFasc.ELENCO_INDICI_AIP_FIRMA_IN_CORSO);
+
+        // Stati Serie che bloccano il passaggio ud da VERSAMENTO_IN_ARCHIVIO a IN_ARCHIVIO
+        List<String> statiSerieBloccanti = Arrays.asList("PRESA_IN_CARICO", "AIP_GENERATO");
+
+        String hql = "SELECT DISTINCT ud.idUnitaDoc FROM AroUnitaDoc ud "
+                + "WHERE ud.idUnitaDoc IN :udIds " + "AND ("
+
+                // 1. Blocco da ALTRI FASCICOLI (tramite Stato dell'Elenco di versamento fascicoli)
+                // Join: UD -> Fascicolo -> Elenco -> Stato Elenco Corrente
+                + "   EXISTS (SELECT 1 FROM FasUnitaDocFascicolo udf, ElvStatoElencoVersFasc se "
+                + "      JOIN udf.fasFascicolo f " + "      JOIN f.elvElencoVersFasc e "
+                + "      WHERE udf.aroUnitaDoc = ud "
+
+                // Escludo il fascicolo corrente
+                + "      AND f.idFascicolo != :idFascicolo "
+                + "      AND f.dtAnnull = :defaultAnnull "
+
+                // Join manuale tra Elenco e il suo Stato Corrente
+                + "      AND e.idStatoElencoVersFascCor = se.idStatoElencoVersFasc "
+
+                // Verifica stati elenco bloccanti
+                + "      AND se.tiStato IN :statiElencoBloccanti) "
+
+                + "   OR "
+
+                // 2. Blocco da SERIE (tramite Stato Serie)
+                // Join: UD -> Appartenenza -> Contenuto -> Versione -> Serie -> Stato Serie
+                // Corrente
+                + "   EXISTS (SELECT 1 FROM AroUdAppartVerSerie uds, SerStatoSerie ss "
+                + "      JOIN uds.serContenutoVerSerie c " + "      JOIN c.serVerSerie vs "
+                + "      JOIN vs.serSerie s " + "      WHERE uds.aroUnitaDoc = ud "
+                + "      AND c.tiContenutoVerSerie = 'EFFETTIVO' "
+
+                // Join manuale tra Serie e il suo Stato Corrente
+                + "      AND s.idStatoSerieCor = ss.idStatoSerie "
+
+                // Serie attiva
+                + "      AND s.dtAnnul = :defaultAnnull "
+
+                // Verifica stati serie bloccanti
+                + "      AND ss.tiStatoSerie IN :statiSerieBloccanti) " + ")";
+
+        Query query = getEntityManager().createQuery(hql);
+        query.setParameter("udIds", udIds);
+        query.setParameter("idFascicolo", idFascicolo);
+        query.setParameter("statiElencoBloccanti", statiElencoBloccanti);
+        query.setParameter("statiSerieBloccanti", statiSerieBloccanti);
+
+        Calendar c = Calendar.getInstance();
+        c.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        query.setParameter("defaultAnnull", c.getTime());
+
+        return query.getResultList();
+    }
+
+    // end MAC #39492
 
 }

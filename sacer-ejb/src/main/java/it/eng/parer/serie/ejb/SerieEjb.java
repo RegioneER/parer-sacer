@@ -6189,33 +6189,68 @@ public class SerieEjb {
             /* Aggiorna la versione serie da elaborare in FIRMATA */
             verSerieDaElab.setTiStatoVerSerie(CostantiDB.StatoVersioneSerie.FIRMATA.name());
 
-            /*
-             * Aggiorna tutte le unit doc appartenenti al contenuto di tipo EFFETTIVO della versione
-             * serie con stato = AIP_GENERATO, assegnando stato conservazione = IN_ARCHIVIO
-             */
+            // *************************************************************************
+            // MAC #39491
+            // L'UD passa a IN_ARCHIVIO solo se non è "bloccata" da altre aggregazioni:
+            // 1. Altri Fascicoli in VERSAMENTO_IN_ARCHIVIO
+            // 2. Altre Serie in AIP_GENERATO
+            // *************************************************************************
+
             SerContenutoVerSerie contenutoVerSerie = helper.getSerContenutoVerSerie(idVerSerie,
                     CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
 
-            // MEV #31162
-            List<Long> idUnitaDocList = helper.getStatoConservazioneAroUnitaDocInContenuto(
+            IamUser utente = helper.findById(IamUser.class, idUtente);
+
+            // Identifico le UD candidate (quelle in VERSAMENTO_IN_ARCHIVIO nel contenuto EFFETTIVO
+            // della serie corrente)
+            List<Long> udCandidatesIds = helper.getStatoConservazioneAroUnitaDocInContenuto(
                     contenutoVerSerie.getIdContenutoVerSerie(),
                     CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
-            // end MEV #31162
 
-            helper.updateStatoConservazioneAroUnitaDocInContenuto(
-                    contenutoVerSerie.getIdContenutoVerSerie(),
-                    CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
-                    CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
-
-            // MEV #31162
-            IamUser utente = helper.findById(IamUser.class, idUtente);
-            for (Long idUnitaDoc : idUnitaDocList) {
-                udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
-                        Constants.FIRMA_SERIE,
-                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name(),
-                        Constants.FUNZIONALITA_ONLINE);
+            // Controllo quali sono "bloccate" da altre aggregazioni
+            List<Long> blockedUdIds = new ArrayList<>();
+            if (!udCandidatesIds.isEmpty()) {
+                blockedUdIds = ciasudHelper.findUdIdsBlockedForFirmaIndiceAipSerie(udCandidatesIds,
+                        verSerie.getSerSerie().getIdSerie());
             }
-            // end MEV #31162
+
+            // Filtro la lista: tengo solo quelle NON bloccate
+            List<Long> udToPromote = new ArrayList<>();
+            List<Long> udNonCambiaStato = new ArrayList<>();
+            for (Long idUd : udCandidatesIds) {
+                if (!blockedUdIds.contains(idUd)) {
+                    udToPromote.add(idUd);
+                } else {
+                    udNonCambiaStato.add(idUd);
+                    logger.debug(
+                            "Firma Indice AIP Serie: L'UD id={} rimane in VERSAMENTO_IN_ARCHIVIO perché presente in altra entità (Elenco di Versamento Fascicoli o Serie) in stato non idoneo al passaggio dell'ud allo stato di conservazione IN_ARCHIVIO",
+                            idUd);
+                }
+            }
+
+            if (!udToPromote.isEmpty()) {
+                helper.updateStatoUdMassivo(udToPromote,
+                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
+                for (Long idUnitaDoc : udToPromote) {
+                    udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
+                            Constants.FIRMA_SERIE,
+                            CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name(),
+                            Constants.FUNZIONALITA_ONLINE);
+                }
+            }
+
+            // Sicuramente per quelle scartate lo stato registrato per il log è nuovamente
+            // VERSAMENTO_IN_ARCHIVIO in quanto le ho selezionate proprio così poco sopra
+            if (!udNonCambiaStato.isEmpty()) {
+                for (Long idUnitaDoc : udToPromote) {
+                    udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
+                            Constants.FIRMA_SERIE,
+                            CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
+                            Constants.FUNZIONALITA_ONLINE);
+                }
+            }
+            // end MAC #39491
+
         }
 
         /*

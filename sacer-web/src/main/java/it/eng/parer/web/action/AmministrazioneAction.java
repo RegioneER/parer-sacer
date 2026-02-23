@@ -42,6 +42,8 @@ import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.base.BaseElements.Status;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value.Str;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -53,6 +55,8 @@ import javax.ejb.EJB;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.codahale.metrics.MetricRegistryListener.Base;
 
 public class AmministrazioneAction extends AmministrazioneAbstractAction {
 
@@ -103,6 +107,8 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         getForm().getConfiguration().getFl_appart_strut_combo().setEditMode();
         getForm().getConfiguration().getFl_appart_tipo_unita_doc_combo().setEditMode();
         getForm().getConfiguration().getFl_appart_aa_tipo_fascicolo_combo().setEditMode();
+        getForm().getConfiguration().getCd_versione_app_ini().setEditMode();
+        getForm().getConfiguration().getCd_versione_app_fine().setEditMode();
 
         getForm().getConfiguration().getLoad_config_list().setEditMode();
 
@@ -130,6 +136,8 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                 .getFl_appart_tipo_unita_doc_combo().parse();
         String flAppartAaTipoFascicolo = getForm().getConfiguration()
                 .getFl_appart_aa_tipo_fascicolo_combo().parse();
+        String cdVersioneAppIni = getForm().getConfiguration().getCd_versione_app_ini().parse();
+        String cdVersioneAppFine = getForm().getConfiguration().getCd_versione_app_fine().parse();
 
         getForm().getConfigurationList().getTi_gestione_param()
                 .setDecodeMap(ComboGetter.getMappaTiGestioneParam());
@@ -140,7 +148,7 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         AplParamApplicTableBean paramApplicTableBean = amministrazioneEjb
                 .getAplParamApplicTableBean(tiParamApplic, tiGestioneParam, flAppartApplic,
                         flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc,
-                        flAppartAaTipoFascicolo);
+                        flAppartAaTipoFascicolo, cdVersioneAppIni, cdVersioneAppFine);
 
         getForm().getConfigurationList().setTable(paramApplicTableBean);
         getForm().getConfigurationList().getTable().setPageSize(300);
@@ -197,6 +205,8 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                 .getFl_appart_tipo_unita_doc_combo().parse();
         String flAppartAaTipoFascicolo = getForm().getConfiguration()
                 .getFl_appart_aa_tipo_fascicolo_combo().parse();
+        String cdVersioneAppIni = getForm().getConfiguration().getCd_versione_app_ini().parse();
+        String cdVersioneAppFine = getForm().getConfiguration().getCd_versione_app_fine().parse();
 
         getForm().getConfigurationList().getTi_gestione_param()
                 .setDecodeMap(ComboGetter.getMappaTiGestioneParam());
@@ -207,7 +217,7 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         AplParamApplicTableBean paramApplicTableBean = amministrazioneEjb
                 .getAplParamApplicTableBean(tiParamApplic, tiGestioneParam, flAppartApplic,
                         flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc,
-                        flAppartAaTipoFascicolo,
+                        flAppartAaTipoFascicolo, cdVersioneAppIni, cdVersioneAppFine,
                         getForm().getConfigurationList().isFilterValidRecords());
 
         paramApplicTableBean = obfuscatePasswordParamApplic(paramApplicTableBean);
@@ -464,7 +474,17 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         DecodeMap mappaTiParamApplic = DecodeMap.Factory.newInstance(tiParamApplic,
                 AplParamApplicTableDescriptor.COL_TI_PARAM_APPLIC,
                 AplParamApplicTableDescriptor.COL_TI_PARAM_APPLIC);
+        BaseTable cdVersioniAppIni = amministrazioneEjb.getCdVersioneAppIniBaseTable();
+        DecodeMap mappaCdVersioniAppIni = DecodeMap.Factory.newInstance(cdVersioniAppIni,
+                AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_INI,
+                AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_INI);
+        BaseTable cdVersioniAppFine = amministrazioneEjb.getCdVersioneAppFineBaseTable();
+        DecodeMap mappaCdVersioniAppFine = DecodeMap.Factory.newInstance(cdVersioniAppFine,
+                AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_FINE,
+                AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_FINE);
         getForm().getConfiguration().getTi_param_applic_combo().setDecodeMap(mappaTiParamApplic);
+        getForm().getConfiguration().getCd_versione_app_ini().setDecodeMap(mappaCdVersioniAppIni);
+        getForm().getConfiguration().getCd_versione_app_fine().setDecodeMap(mappaCdVersioniAppFine);
 
         getForm().getConfiguration().getTi_gestione_param_combo()
                 .setDecodeMap(ComboGetter.getMappaTiGestioneParam());
@@ -843,12 +863,14 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                 .getFl_appart_tipo_unita_doc_combo().parse();
         String flAppartAaTipoFascicolo = getForm().getConfiguration()
                 .getFl_appart_aa_tipo_fascicolo_combo().parse();
+        String cdVersioneAppIni = getForm().getConfiguration().getCd_versione_app_ini().parse();
+        String cdVersioneAppFine = getForm().getConfiguration().getCd_versione_app_fine().parse();
 
         // Carico i valori della lista configurazioni
         AplParamApplicTableBean paramApplicTableBean = amministrazioneEjb
                 .getAplParamApplicTableBean(tiParamApplic, tiGestioneParam, flAppartApplic,
                         flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc,
-                        flAppartAaTipoFascicolo,
+                        flAppartAaTipoFascicolo, cdVersioneAppIni, cdVersioneAppFine,
                         getForm().getConfigurationList().isFilterValidRecords());
 
         paramApplicTableBean = obfuscatePasswordParamApplic(paramApplicTableBean);

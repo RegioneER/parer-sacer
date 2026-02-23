@@ -42,8 +42,8 @@ import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
 
 /**
- * Session Bean implementation class AmministrazioneHelper Contiene i metodi, per la gestione della
- * persistenza su DB per le operazioni CRUD
+ * Session Bean implementation class AmministrazioneHelper. Contiene i metodi per la gestione della
+ * persistenza su DB per le operazioni CRUD sui parametri applicativi.
  *
  */
 @SuppressWarnings("unchecked")
@@ -82,8 +82,8 @@ public class AmministrazioneHelper extends GenericHelper {
     }
 
     /**
-     * Metodo che ritorna i parametri di configurazione dell'applicazione dato l'idApplicazione e il
-     * tipo di parametro da ricercare
+     * Metodo che ritorna i parametri di configurazione dell'applicazione dato il tipo di parametro
+     * da ricercare
      *
      * @param tipoParam tipo parametro
      *
@@ -148,17 +148,20 @@ public class AmministrazioneHelper extends GenericHelper {
      *
      * @param tiParamApplic           tipo parametro applicativo
      * @param tiGestioneParam         tipo gestione parametro
-     * @param flAppartApplic          flag 1/0 (true/false)
-     * @param flAppartStrut           flag 1/0 (true/false)
-     * @param flAppartTipoUnitaDoc    flag 1/0 (true/false)
-     * @param flAppartAaTipoFascicolo flag 1/0 (true/false)
-     * @param flAppartAmbiente        flag 1/0 (true/false)
+     * @param flAppartApplic          flag 1/0 (true/false) appartenenza applicazione
+     * @param flAppartAmbiente        flag 1/0 (true/false) appartenenza ambiente
+     * @param flAppartStrut           flag 1/0 (true/false) appartenenza struttura
+     * @param flAppartTipoUnitaDoc    flag 1/0 (true/false) appartenenza tipo unità documentaria
+     * @param flAppartAaTipoFascicolo flag 1/0 (true/false) appartenenza anno tipo fascicolo
+     * @param cdVersioneAppIni        codice versione applicativo inizio
+     * @param cdVersioneAppFine       codice versione applicativo fine
      *
      * @return lista oggetti di tipo {@link AplParamApplic}
      */
     public List<AplParamApplic> getAplParamApplicList(String tiParamApplic, String tiGestioneParam,
             String flAppartApplic, String flAppartAmbiente, String flAppartStrut,
-            String flAppartTipoUnitaDoc, String flAppartAaTipoFascicolo) {
+            String flAppartTipoUnitaDoc, String flAppartAaTipoFascicolo, String cdVersioneAppIni,
+            String cdVersioneAppFine) {
         StringBuilder queryStr = new StringBuilder(
                 "SELECT paramApplic FROM AplParamApplic paramApplic ");
         String whereWord = " WHERE ";
@@ -190,6 +193,15 @@ public class AmministrazioneHelper extends GenericHelper {
         if (flAppartAaTipoFascicolo != null) {
             queryStr.append(whereWord)
                     .append("paramApplic.flAppartAaTipoFascicolo = :flAppartAaTipoFascicolo ");
+            whereWord = "AND ";
+        }
+        if (cdVersioneAppIni != null) {
+            queryStr.append(whereWord).append("paramApplic.cdVersioneAppIni = :cdVersioneAppIni ");
+            whereWord = "AND ";
+        }
+        if (cdVersioneAppFine != null) {
+            queryStr.append(whereWord)
+                    .append("paramApplic.cdVersioneAppFine = :cdVersioneAppFine ");
         }
         queryStr.append("ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic ");
         Query q = getEntityManager().createQuery(queryStr.toString());
@@ -214,27 +226,36 @@ public class AmministrazioneHelper extends GenericHelper {
         if (flAppartAaTipoFascicolo != null) {
             q.setParameter("flAppartAaTipoFascicolo", flAppartAaTipoFascicolo);
         }
+        if (cdVersioneAppIni != null) {
+            q.setParameter("cdVersioneAppIni", cdVersioneAppIni);
+        }
+        if (cdVersioneAppFine != null) {
+            q.setParameter("cdVersioneAppFine", cdVersioneAppFine);
+        }
         return q.getResultList();
     }
 
     /**
-     * Metodo che ritorna i parametri di configurazione
+     * Metodo che ritorna i parametri di configurazione con filtro opzionale sulla validità
      *
      * @param tiParamApplic           tipo parametro applicativo
      * @param tiGestioneParam         tipo gestione parametro
-     * @param flAppartApplic          flag 1/0 (true/false)
-     * @param flAppartStrut           flag 1/0 (true/false)
-     * @param flAppartTipoUnitaDoc    flag 1/0 (true/false)
-     * @param flAppartAaTipoFascicolo flag 1/0 (true/false)
-     * @param flAppartAmbiente        flag 1/0 (true/false)
-     * @param filterValid             true o false per filtrare i parametri attivi (sulla base della
-     *                                versione applicativo
+     * @param flAppartApplic          flag 1/0 (true/false) appartenenza applicazione
+     * @param flAppartAmbiente        flag 1/0 (true/false) appartenenza ambiente
+     * @param flAppartStrut           flag 1/0 (true/false) appartenenza struttura
+     * @param flAppartTipoUnitaDoc    flag 1/0 (true/false) appartenenza tipo unità documentaria
+     * @param flAppartAaTipoFascicolo flag 1/0 (true/false) appartenenza anno tipo fascicolo
+     * @param cdVersioneAppIni        codice versione applicativo inizio
+     * @param cdVersioneAppFine       codice versione applicativo fine
+     * @param filterValid             true per filtrare solo i parametri attivi (sulla base della
+     *                                versione applicativo)
      *
      * @return lista oggetti di tipo {@link AplParamApplic}
      */
     public List<AplParamApplic> getAplParamApplicList(String tiParamApplic, String tiGestioneParam,
             String flAppartApplic, String flAppartAmbiente, String flAppartStrut,
-            String flAppartTipoUnitaDoc, String flAppartAaTipoFascicolo, boolean filterValid) {
+            String flAppartTipoUnitaDoc, String flAppartAaTipoFascicolo, String cdVersioneAppIni,
+            String cdVersioneAppFine, boolean filterValid) {
         StringBuilder queryStr = new StringBuilder(
                 "SELECT paramApplic FROM AplParamApplic paramApplic ");
         String whereWord = " WHERE ";
@@ -266,6 +287,16 @@ public class AmministrazioneHelper extends GenericHelper {
         if (flAppartAaTipoFascicolo != null) {
             queryStr.append(whereWord)
                     .append("paramApplic.flAppartAaTipoFascicolo = :flAppartAaTipoFascicolo ");
+            whereWord = "AND ";
+        }
+        if (cdVersioneAppIni != null) {
+            queryStr.append(whereWord).append("paramApplic.cdVersioneAppIni = :cdVersioneAppIni ");
+            whereWord = "AND ";
+        }
+        if (cdVersioneAppFine != null) {
+            queryStr.append(whereWord)
+                    .append("paramApplic.cdVersioneAppFine = :cdVersioneAppFine ");
+            whereWord = "AND ";
         }
         if (filterValid) {
             queryStr.append(whereWord).append("paramApplic.cdVersioneAppFine IS NULL ");
@@ -294,9 +325,23 @@ public class AmministrazioneHelper extends GenericHelper {
         if (flAppartAaTipoFascicolo != null) {
             q.setParameter("flAppartAaTipoFascicolo", flAppartAaTipoFascicolo);
         }
+        if (cdVersioneAppIni != null) {
+            q.setParameter("cdVersioneAppIni", cdVersioneAppIni);
+        }
+        if (cdVersioneAppFine != null) {
+            q.setParameter("cdVersioneAppFine", cdVersioneAppFine);
+        }
         return q.getResultList();
     }
 
+    /**
+     * Verifica se esiste un parametro applicativo con il nome specificato, escludendo l'id fornito
+     *
+     * @param nmParamApplic nome parametro applicativo
+     * @param idParamApplic id parametro applicativo da escludere
+     *
+     * @return true se esiste un parametro con il nome specificato
+     */
     public boolean existsAplParamApplic(String nmParamApplic, BigDecimal idParamApplic) {
         Query q = getEntityManager()
                 .createQuery("SELECT paramApplic FROM AplParamApplic paramApplic "
@@ -307,6 +352,14 @@ public class AmministrazioneHelper extends GenericHelper {
         return !q.getResultList().isEmpty();
     }
 
+    /**
+     * Recupera il valore di un parametro applicativo dato l'id del parametro e il tipo appartenenza
+     *
+     * @param idParamApplic id parametro applicativo
+     * @param tiAppart      tipo appartenenza
+     *
+     * @return valore parametro applicativo o null se non trovato
+     */
     public AplValoreParamApplic getAplValoreParamApplic(long idParamApplic, String tiAppart) {
         Query q = getEntityManager()
                 .createQuery("SELECT valoreParamApplic FROM AplValoreParamApplic valoreParamApplic "
@@ -322,9 +375,9 @@ public class AmministrazioneHelper extends GenericHelper {
     }
 
     /**
-     * Metodo che ritorna i tipi di parametri di configurazione
+     * Metodo che ritorna la lista dei tipi di parametri di configurazione
      *
-     * @return il tablebean contenente la lista di tipi parametri di configurazione
+     * @return lista dei tipi parametri di configurazione
      */
     public List<String> getTiParamApplic() {
         String queryStr = "SELECT DISTINCT config.tiParamApplic FROM AplParamApplic config ORDER BY config.tiParamApplic ";
@@ -332,6 +385,36 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Metodo che ritorna le versioni di inizio dei parametri di configurazione
+     *
+     * @return lista delle versioni di inizio dei parametri di configurazione
+     */
+    public List<String> getCdVersioneAppIni() {
+        String queryStr = "SELECT DISTINCT config.cdVersioneAppIni FROM AplParamApplic config WHERE config.cdVersioneAppIni IS NOT NULL ORDER BY config.cdVersioneAppIni ";
+        Query q = getEntityManager().createQuery(queryStr);
+        return q.getResultList();
+    }
+
+    /**
+     * Metodo che ritorna le versioni di fine dei parametri di configurazione
+     *
+     * @return lista delle versioni di fine dei parametri di configurazione
+     */
+    public List<String> getCdVersioneAppFine() {
+        String queryStr = "SELECT DISTINCT config.cdVersioneAppFine FROM AplParamApplic config WHERE config.cdVersioneAppFine IS NOT NULL ORDER BY config.cdVersioneAppFine ";
+        Query q = getEntityManager().createQuery(queryStr);
+        return q.getResultList();
+    }
+
+    /**
+     * Recupera i parametri applicativi appartenenti all'ambiente, filtrati opzionalmente per
+     * funzione
+     *
+     * @param funzione lista delle funzioni da filtrare (opzionale)
+     *
+     * @return lista parametri applicativi ambiente
+     */
     public List<AplParamApplic> getAplParamApplicListAmbiente(List<String> funzione) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
                 + "WHERE paramApplic.flAppartAmbiente = '1' ";
@@ -349,6 +432,15 @@ public class AmministrazioneHelper extends GenericHelper {
 
     }
 
+    /**
+     * Recupera i parametri applicativi appartenenti all'ambiente, con opzione di filtrare solo
+     * quelli validi
+     *
+     * @param funzione    lista delle funzioni da filtrare (opzionale)
+     * @param filterValid true per filtrare solo i parametri validi
+     *
+     * @return lista parametri applicativi ambiente
+     */
     public List<AplParamApplic> getAplParamApplicListAmbiente(List<String> funzione,
             boolean filterValid) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
@@ -370,6 +462,16 @@ public class AmministrazioneHelper extends GenericHelper {
 
     }
 
+    /**
+     * Recupera i parametri applicativi appartenenti all'ambiente, filtrati per funzione, tipo
+     * gestione e validità
+     *
+     * @param funzione        lista delle funzioni da filtrare (opzionale)
+     * @param tiGestioneParam tipo gestione parametro (opzionale)
+     * @param filterValid     true per filtrare solo i parametri validi
+     *
+     * @return lista parametri applicativi ambiente
+     */
     public List<AplParamApplic> getAplParamApplicListAmbiente(List<String> funzione,
             String tiGestioneParam, boolean filterValid) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
@@ -397,6 +499,14 @@ public class AmministrazioneHelper extends GenericHelper {
 
     }
 
+    /**
+     * Recupera i parametri applicativi appartenenti alla struttura, filtrati opzionalmente per
+     * funzione
+     *
+     * @param funzione lista delle funzioni da filtrare (opzionale)
+     *
+     * @return lista parametri applicativi struttura
+     */
     public List<AplParamApplic> getAplParamApplicListStruttura(List<String> funzione) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
                 + "WHERE paramApplic.flAppartStrut = '1' ";
@@ -413,6 +523,15 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera i parametri applicativi appartenenti alla struttura, con opzione di filtrare solo
+     * quelli validi
+     *
+     * @param funzione    lista delle funzioni da filtrare (opzionale)
+     * @param filterValid true per filtrare solo i parametri validi
+     *
+     * @return lista parametri applicativi struttura
+     */
     public List<AplParamApplic> getAplParamApplicListStruttura(List<String> funzione,
             boolean filterValid) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
@@ -433,6 +552,16 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera i parametri applicativi appartenenti alla struttura, filtrati per funzione, tipo
+     * gestione e validità
+     *
+     * @param funzione        lista delle funzioni da filtrare (opzionale)
+     * @param tiGestioneParam tipo gestione parametro (opzionale)
+     * @param filterValid     true per filtrare solo i parametri validi
+     *
+     * @return lista parametri applicativi struttura
+     */
     public List<AplParamApplic> getAplParamApplicListStruttura(List<String> funzione,
             String tiGestioneParam, boolean filterValid) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
@@ -459,6 +588,14 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera i parametri applicativi appartenenti al tipo unità documentaria, filtrati
+     * opzionalmente per funzione
+     *
+     * @param funzione lista delle funzioni da filtrare (opzionale)
+     *
+     * @return lista parametri applicativi tipo unità documentaria
+     */
     public List<AplParamApplic> getAplParamApplicListTipoUd(List<String> funzione) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
                 + "WHERE paramApplic.flAppartTipoUnitaDoc = '1' ";
@@ -475,6 +612,15 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera i parametri applicativi appartenenti al tipo unità documentaria, con opzione di
+     * filtrare solo quelli validi
+     *
+     * @param funzione    lista delle funzioni da filtrare (opzionale)
+     * @param filterValid true per filtrare solo i parametri validi
+     *
+     * @return lista parametri applicativi tipo unità documentaria
+     */
     public List<AplParamApplic> getAplParamApplicListTipoUd(List<String> funzione,
             boolean filterValid) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
@@ -495,6 +641,16 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera i parametri applicativi appartenenti al tipo unità documentaria, filtrati per
+     * funzione, tipo gestione e validità
+     *
+     * @param funzione        lista delle funzioni da filtrare (opzionale)
+     * @param tiGestioneParam tipo gestione parametro (opzionale)
+     * @param filterValid     true per filtrare solo i parametri validi
+     *
+     * @return lista parametri applicativi tipo unità documentaria
+     */
     public List<AplParamApplic> getAplParamApplicListTipoUd(List<String> funzione,
             String tiGestioneParam, boolean filterValid) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
@@ -521,6 +677,14 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera i parametri applicativi appartenenti all'anno tipo fascicolo, filtrati opzionalmente
+     * per funzione
+     *
+     * @param funzione lista delle funzioni da filtrare (opzionale)
+     *
+     * @return lista parametri applicativi anno tipo fascicolo
+     */
     public List<AplParamApplic> getAplParamApplicListAaTipoFascicolo(List<String> funzione) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
                 + "WHERE paramApplic.flAppartAaTipoFascicolo = '1' ";
@@ -537,6 +701,15 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera i parametri applicativi appartenenti all'anno tipo fascicolo, con opzione di
+     * filtrare solo quelli validi
+     *
+     * @param funzione    lista delle funzioni da filtrare (opzionale)
+     * @param filterValid true per filtrare solo i parametri validi
+     *
+     * @return lista parametri applicativi anno tipo fascicolo
+     */
     public List<AplParamApplic> getAplParamApplicListAaTipoFascicolo(List<String> funzione,
             boolean filterValid) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
@@ -557,6 +730,16 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera i parametri applicativi appartenenti all'anno tipo fascicolo, filtrati per funzione,
+     * tipo gestione e validità
+     *
+     * @param funzione        lista delle funzioni da filtrare (opzionale)
+     * @param tiGestioneParam tipo gestione parametro (opzionale)
+     * @param filterValid     true per filtrare solo i parametri validi
+     *
+     * @return lista parametri applicativi anno tipo fascicolo
+     */
     public List<AplParamApplic> getAplParamApplicListAaTipoFascicolo(List<String> funzione,
             String tiGestioneParam, boolean filterValid) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
@@ -583,6 +766,11 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera i parametri applicativi multi-valore appartenenti all'ambiente
+     *
+     * @return lista parametri applicativi multi-valore ambiente
+     */
     public List<AplParamApplic> getAplParamApplicMultiListAmbiente() {
         Query q = getEntityManager()
                 .createQuery("SELECT paramApplic FROM AplParamApplic paramApplic "
@@ -592,6 +780,14 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera i parametri applicativi multi-valore appartenenti all'ambiente, con opzione di
+     * filtrare solo quelli validi
+     *
+     * @param filterValid true per filtrare solo i parametri validi
+     *
+     * @return lista parametri applicativi multi-valore ambiente
+     */
     public List<AplParamApplic> getAplParamApplicMultiListAmbiente(boolean filterValid) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
                 + "WHERE paramApplic.flAppartAmbiente = '1' " + "AND paramApplic.flMulti = '1' ";
@@ -603,6 +799,20 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera il valore di un parametro applicativo dato l'id del parametro, il tipo appartenenza
+     * e gli identificativi opzionali di ambiente, struttura, tipo unità documentaria e anno tipo
+     * fascicolo
+     *
+     * @param idParamApplic     id parametro applicativo
+     * @param tiAppart          tipo appartenenza
+     * @param idAmbiente        id ambiente (opzionale)
+     * @param idStrut           id struttura (opzionale)
+     * @param idTipoUnitaDoc    id tipo unità documentaria (opzionale)
+     * @param idAaTipoFascicolo id anno tipo fascicolo (opzionale)
+     *
+     * @return valore parametro applicativo o null se non trovato
+     */
     public AplValoreParamApplic getAplValoreParamApplic(BigDecimal idParamApplic, String tiAppart,
             BigDecimal idAmbiente, BigDecimal idStrut, BigDecimal idTipoUnitaDoc,
             BigDecimal idAaTipoFascicolo) {
@@ -649,6 +859,14 @@ public class AmministrazioneHelper extends GenericHelper {
         return null;
     }
 
+    /**
+     * Recupera la lista dei valori multi-valore di un parametro applicativo per un ambiente
+     *
+     * @param idParamApplic id parametro applicativo
+     * @param idAmbiente    id ambiente (opzionale)
+     *
+     * @return lista valori multi-valore del parametro
+     */
     public List<AplValParamApplicMulti> getAplValParamApplicMultiList(BigDecimal idParamApplic,
             BigDecimal idAmbiente) {
         StringBuilder queryStr = new StringBuilder(
@@ -669,6 +887,16 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera uno specifico valore multi-valore di un parametro applicativo per un ambiente e un
+     * token
+     *
+     * @param idParamApplic id parametro applicativo
+     * @param idAmbiente    id ambiente
+     * @param token         valore del token da cercare
+     *
+     * @return valore multi-valore del parametro o null se non trovato
+     */
     public AplValParamApplicMulti getAplValParamApplicMulti(BigDecimal idParamApplic,
             BigDecimal idAmbiente, String token) {
         String queryStr = "SELECT valoreParamApplicMulti FROM AplValParamApplicMulti valoreParamApplicMulti "

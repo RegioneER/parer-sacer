@@ -1614,8 +1614,8 @@ public class RecuperoZipGen {
                 String nmEnte = fileElencoVers.getElvElencoVer().getOrgStrut().getOrgEnte()
                         .getNmEnte();
                 String nmStrut = fileElencoVers.getElvElencoVer().getOrgStrut().getNmStrut();
-                String fileName = prefisso + "-UD:" + nmAmbiente + ":" + nmEnte + ":" + nmStrut
-                        + ":" + fileElencoVers.getElvElencoVer().getIdElencoVers();
+                String fileName = prefisso + "-UD_" + nmAmbiente + "_" + nmEnte + "_" + nmStrut
+                        + "_" + fileElencoVers.getElvElencoVer().getIdElencoVers();
                 ZipArchiveEntry zae = new ZipArchiveEntry(fileName + estensione);
                 this.filterZipEntry(zae);
                 zipOutputStream.putArchiveEntry(zae);
@@ -1794,7 +1794,6 @@ public class RecuperoZipGen {
                         String ambiente = strut.getOrgEnte().getOrgAmbiente().getNmAmbiente();
                         String ente = strut.getOrgEnte().getNmEnte();
                         String struttura = strut.getNmStrut();
-                        BigDecimal anno = unitaDocFascicolo.getFasFascicolo().getAaFascicolo();
                         String numero = MessaggiWSFormat.bonificaUrnPerNomeFile(
                                 unitaDocFascicolo.getFasFascicolo().getCdKeyFascicolo());
 
@@ -1806,8 +1805,7 @@ public class RecuperoZipGen {
                         if (meta != null) {
                             BigDecimal versione = meta.getFasMetaVerAipFascicolo()
                                     .getFasVerAipFascicolo().getPgVerAipFascicolo();
-                            String urnMeta = "IndiceAIPFascicolo-" + versione + ":" + ambiente + ":"
-                                    + ente + ":" + struttura + ":" + anno + ":" + numero;
+                            String urnMeta = "PIndexFA";
                             ZipArchiveEntry zaeMeta = new ZipArchiveEntry(
                                     urnZipArchive + urnMeta + ".xml");
                             this.filterZipEntry(zaeMeta);
@@ -1850,8 +1848,8 @@ public class RecuperoZipGen {
                                 long idElencoVersFasc = unitaDocFascicolo.getFasFascicolo()
                                         .getElvElencoVersFasc().getIdElencoVersFasc();
 
-                                prefisso = "ElencoIndiciAIP-Fasc:" + ambiente + ":" + ente + ":"
-                                        + struttura + ":" + idElencoVersFasc;
+                                prefisso = "ElencoIndiciAIP-Fasc_" + ambiente + "_" + ente + "_"
+                                        + struttura + "_" + idElencoVersFasc;
                                 ZipArchiveEntry zaeElenco = new ZipArchiveEntry(
                                         urnZipArchive + prefisso + ".xml.p7m");
                                 this.filterZipEntry(zaeElenco);

@@ -130,16 +130,8 @@ public class MonitoraggioIndiceAIPHelper extends GenericHelper {
             + "extract( HOUR FROM (current_timestamp - (stato_ele.ts_stato_elenco_vers))) as hh_permanenza_stato, "
             + "extract( MINUTE FROM (current_timestamp - (stato_ele.ts_stato_elenco_vers))) as mm_permanenza_stato, "
             + "case "
-            + "when ud.ti_stato_ud_elenco_vers in ('IN_ATTESA_SCHED','NON_SELEZ_SCHED','IN_ELENCO_APERTO','IN_ELENCO_DA_CHIUDERE','IN_ELENCO_CHIUSO','IN_ELENCO_VALIDATO') "
-            + "then 0 "
-            + "when ud.ti_stato_ud_elenco_vers in ('IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS','IN_CODA_JMS_INDICE_AIP_DA_ELAB','IN_ELENCO_IN_CODA_INDICE_AIP', 'IN_ELENCO_CON_INDICI_AIP_GENERATI',	 "
-            + "'IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA','IN_ELENCO_COMPLETATO') "
-            + "then 1 "
-            + "when ud.ti_stato_ud_elenco_vers  = 'IN_CODA_JMS_VERIFICA_FIRME_DT_VERS' then :thenOne "
-            + "end fl_verifica_firma_eseguita, " + " " + " " + "case "
             + "when ud.ti_stato_ud_elenco_vers in ('IN_ATTESA_SCHED','NON_SELEZ_SCHED','IN_ELENCO_APERTO','IN_ELENCO_DA_CHIUDERE','IN_ELENCO_CHIUSO','IN_ELENCO_VALIDATO', "
-            + "'IN_CODA_JMS_VERIFICA_FIRME_DT_VERS','IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS', 'IN_CODA_JMS_INDICE_AIP_DA_ELAB') "
-            + "then 0 "
+            + "'IN_CODA_JMS_INDICE_AIP_DA_ELAB') " + "then 0 "
             + "when ud.ti_stato_ud_elenco_vers in ( 'IN_ELENCO_CON_INDICI_AIP_GENERATI',	 "
             + "'IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA','IN_ELENCO_COMPLETATO') "
             + "then 1 " + "when ud.ti_stato_ud_elenco_vers  = 'IN_CODA_INDICE_AIP' then :thenTwo "
@@ -184,16 +176,8 @@ public class MonitoraggioIndiceAIPHelper extends GenericHelper {
             + "extract( HOUR FROM (current_timestamp - (stato_ele.ts_stato_elenco_vers))) as hh_permanenza_stato, "
             + "extract( MINUTE FROM (current_timestamp - (stato_ele.ts_stato_elenco_vers))) as mm_permanenza_stato, "
             + "case "
-            + "when ud.ti_stato_ud_elenco_vers in ('IN_ATTESA_SCHED','NON_SELEZ_SCHED','IN_ELENCO_APERTO','IN_ELENCO_DA_CHIUDERE','IN_ELENCO_CHIUSO','IN_ELENCO_VALIDATO') "
-            + "then 0 "
-            + "when ud.ti_stato_ud_elenco_vers in ('IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS','IN_CODA_JMS_INDICE_AIP_DA_ELAB','IN_ELENCO_IN_CODA_INDICE_AIP', 'IN_ELENCO_CON_INDICI_AIP_GENERATI',	 "
-            + "'IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA','IN_ELENCO_COMPLETATO') "
-            + "then 1 "
-            + "when ud.ti_stato_ud_elenco_vers  = 'IN_CODA_JMS_VERIFICA_FIRME_DT_VERS' then :thenOne "
-            + "end fl_verifica_firma_eseguita, " + " " + " " + "case "
             + "when ud.ti_stato_ud_elenco_vers in ('IN_ATTESA_SCHED','NON_SELEZ_SCHED','IN_ELENCO_APERTO','IN_ELENCO_DA_CHIUDERE','IN_ELENCO_CHIUSO','IN_ELENCO_VALIDATO', "
-            + "'IN_CODA_JMS_VERIFICA_FIRME_DT_VERS','IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS', 'IN_CODA_JMS_INDICE_AIP_DA_ELAB') "
-            + "then 0 "
+            + "'IN_CODA_JMS_INDICE_AIP_DA_ELAB') " + "then 0 "
             + "when ud.ti_stato_ud_elenco_vers in ( 'IN_ELENCO_CON_INDICI_AIP_GENERATI',	 "
             + "'IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA','IN_ELENCO_COMPLETATO') "
             + "then 1 " + "when ud.ti_stato_ud_elenco_vers  = 'IN_CODA_INDICE_AIP' then :thenTwo "
@@ -248,16 +232,8 @@ public class MonitoraggioIndiceAIPHelper extends GenericHelper {
             + "extract( HOUR FROM (current_timestamp - (stato_ele.ts_stato_elenco_vers))) as hh_permanenza_stato, "
             + "extract( MINUTE FROM (current_timestamp - (stato_ele.ts_stato_elenco_vers))) as mm_permanenza_stato, "
             + "case "
-            + "when ud.ti_stato_ud_elenco_vers in ('IN_ATTESA_SCHED','NON_SELEZ_SCHED','IN_ELENCO_APERTO','IN_ELENCO_DA_CHIUDERE','IN_ELENCO_CHIUSO','IN_ELENCO_VALIDATO') "
-            + "then 0 "
-            + "when ud.ti_stato_ud_elenco_vers in ('IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS','IN_CODA_JMS_INDICE_AIP_DA_ELAB','IN_ELENCO_IN_CODA_INDICE_AIP', 'IN_ELENCO_CON_INDICI_AIP_GENERATI',	 "
-            + "'IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA','IN_ELENCO_COMPLETATO') "
-            + "then 1 "
-            + "when ud.ti_stato_ud_elenco_vers  = 'IN_CODA_JMS_VERIFICA_FIRME_DT_VERS' then :thenOne "
-            + "end fl_verifica_firma_eseguita, " + " " + " " + "case "
             + "when ud.ti_stato_ud_elenco_vers in ('IN_ATTESA_SCHED','NON_SELEZ_SCHED','IN_ELENCO_APERTO','IN_ELENCO_DA_CHIUDERE','IN_ELENCO_CHIUSO','IN_ELENCO_VALIDATO', "
-            + "'IN_CODA_JMS_VERIFICA_FIRME_DT_VERS','IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS', 'IN_CODA_JMS_INDICE_AIP_DA_ELAB') "
-            + "then 0 "
+            + "'IN_CODA_JMS_INDICE_AIP_DA_ELAB') " + "then 0 "
             + "when ud.ti_stato_ud_elenco_vers in ( 'IN_ELENCO_CON_INDICI_AIP_GENERATI',	 "
             + "'IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA','IN_ELENCO_COMPLETATO') "
             + "then 1 " + "when ud.ti_stato_ud_elenco_vers  = 'IN_CODA_INDICE_AIP' then :thenTwo "
@@ -298,16 +274,6 @@ public class MonitoraggioIndiceAIPHelper extends GenericHelper {
             + "and ud.ti_stato_ud_elenco_vers = :tiStatoUdElencoVers "
             + "order by gg_permanenza_stato, hh_permanenza_stato, mm_permanenza_stato desc";
     // + "order by stato_ele.ts_stato_elenco_vers ";
-
-    String queryUd = "(select count (firma.id_comp_doc) " + " " + "from aro_unita_doc ud1 "
-            + "join aro_doc doc " + "	on (doc.id_unita_doc = ud1.id_unita_doc "
-            + "	and doc.ti_creazione = 'VERSAMENTO_UNITA_DOC') " + "join aro_strut_doc strut_doc "
-            + "	on (strut_doc.id_doc = doc.id_doc) " + "join aro_comp_doc comp "
-            + "	on (comp.id_strut_doc = strut_doc.id_strut_doc) " + "join aro_firma_comp firma "
-            + "	on (firma.id_comp_doc = comp.id_comp_doc) " + "	 "
-            + "where ud1.id_unita_doc = :idUnitaDoc " + "and comp.fl_comp_firmato = '1' "
-            + "and exists (select * " + "			from aro_verif_firma_dt_vers verif "
-            + "			where verif.id_firma_comp = firma.id_firma_comp " + "			))";
 
     String queryUd2 = "(select count(*) " + "from ARO_INDICE_AIP_UD "
             + "where id_unita_doc = :idUnitaDoc )";
@@ -552,20 +518,17 @@ public class MonitoraggioIndiceAIPHelper extends GenericHelper {
         List<Object[]> risultatiList = getRisultati4List(query4, idAmbiente, idEnte, idStrut,
                 cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, tiStatoElenco,
                 dtCreazioneElencoDa, dtCreazioneElencoA, niGgStatoDa, niGgStatoA,
-                cdTiEveStatoElencoVers, fiscali, idElencoVers, tiStatoUdElencoVers, queryUd,
-                queryUd2);
+                cdTiEveStatoElencoVers, fiscali, idElencoVers, tiStatoUdElencoVers, queryUd2);
 
         List<Object[]> risultati1List = getRisultati4List(query4UdAgg, idAmbiente, idEnte, idStrut,
                 cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, tiStatoElenco,
                 dtCreazioneElencoDa, dtCreazioneElencoA, niGgStatoDa, niGgStatoA,
-                cdTiEveStatoElencoVers, fiscali, idElencoVers, tiStatoUdElencoVers, queryUd,
-                queryUd2);
+                cdTiEveStatoElencoVers, fiscali, idElencoVers, tiStatoUdElencoVers, queryUd2);
 
         List<Object[]> risultati2List = getRisultati4List(query4UdDocAgg, idAmbiente, idEnte,
                 idStrut, cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, tiStatoElenco,
                 dtCreazioneElencoDa, dtCreazioneElencoA, niGgStatoDa, niGgStatoA,
-                cdTiEveStatoElencoVers, fiscali, idElencoVers, tiStatoUdElencoVers, queryUd,
-                queryUd2);
+                cdTiEveStatoElencoVers, fiscali, idElencoVers, tiStatoUdElencoVers, queryUd2);
 
         List<List<Object[]>> output = new ArrayList<>();
 
@@ -581,10 +544,9 @@ public class MonitoraggioIndiceAIPHelper extends GenericHelper {
             String cdKeyUnitaDoc, String tiStatoElenco, String dtCreazioneElencoDa,
             String dtCreazioneElencoA, BigDecimal niGgStatoDa, BigDecimal niGgStatoA,
             String cdTiEveStatoElencoVers, String fiscali, BigDecimal idElencoVers,
-            String tiStatoUdElencoVers, String queryUd, String queryUd2) {
+            String tiStatoUdElencoVers, String queryUd2) {
         String queryStr = query4;
 
-        queryStr = StringUtils.replace(queryStr, ":thenOne ", queryUd);
         queryStr = StringUtils.replace(queryStr, ":idUnitaDoc ", "ud.id_unita_doc ");
         queryStr = StringUtils.replace(queryStr, ":thenTwo ", queryUd2);
         queryStr = StringUtils.replace(queryStr, ":idUnitaDoc ", "ud.id_unita_doc ");

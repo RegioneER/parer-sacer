@@ -9,11 +9,6 @@
                   impl-version="2.0">
     
     <assembly-descriptor>
-        <!-- MDB della verifica Firme Data Versamento -->
-        <p:pool>
-            <ejb-name>ConsumerCodaVerificaFirmeMdb</ejb-name>
-            <p:bean-instance-pool-ref>coda-verifica-firme-pool</p:bean-instance-pool-ref>
-        </p:pool>
         <!-- MDB della Coda indici AIP unità documentarie da elaborare -->
         <p:pool>
             <ejb-name>ConsumerCodaIndiciAipDaElabMdb</ejb-name>
@@ -53,19 +48,6 @@
             <resource-env-ref>
                 <resource-env-ref-name>jms/queue/OggettiDaMigrareQueue</resource-env-ref-name>
                 <jndi-name>java:/jms/queue/OggettiDaMigrareQueue</jndi-name>
-            </resource-env-ref>
-        </session>
-        <!-- Riferimenti alle code per l'ejb session di verifica firme -->
-        <session>
-            <ejb-name>VerificaFirmeEjb</ejb-name>
-            <ejb-class>it.eng.parer.firma.crypto.verifica.VerificaFirmeEjb</ejb-class>
-            <resource-env-ref>
-                <resource-env-ref-name>jms/ProducerConnectionFactory</resource-env-ref-name>
-                <jndi-name>java:/SacerJmsXA</jndi-name>
-            </resource-env-ref>
-            <resource-env-ref>
-                <resource-env-ref-name>jms/queue/VerificaFirmeDataVersQueue</resource-env-ref-name>
-                <jndi-name>java:/jms/queue/VerificaFirmeDataVersQueue</jndi-name>
             </resource-env-ref>
         </session>
         <!-- Riferimenti alle code per l'ejb session di coda indici aip da elaborare -->

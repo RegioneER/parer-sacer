@@ -1582,11 +1582,6 @@ public class MessaggiWSBundle {
     public static final String RICH_ANN_VERS_018 = "RICH-ANN-VERS-018";
 
     /**
-     * Richiesta da PreIngest definita ma il Tipo Versamento specificato non lo supporta
-     */
-    public static final String RICH_ANN_VERS_019 = "RICH-ANN-VERS-019";
-
-    /**
      * Per almeno un fascicolo definito nella richiesta è presente il Tipo Registro ma non è
      * previsto
      */

@@ -171,8 +171,7 @@ public class MonitoraggioIndiceAIPEjb {
             BigDecimal ore = (BigDecimal) objArr[12];
             BigDecimal minuti = (BigDecimal) objArr[13];
             riga.setString("permanenza", giorni + "-" + ore + "-" + minuti);
-            riga.setString("fl_verifica_firma_eseguita", "" + (BigDecimal) objArr[14]);
-            riga.setString("fl_indice_aip_creato", "" + (BigDecimal) objArr[15]);
+            riga.setString("fl_indice_aip_creato", "" + (BigDecimal) objArr[14]);
             tabella.add(riga);
         }
 
@@ -195,8 +194,7 @@ public class MonitoraggioIndiceAIPEjb {
             BigDecimal ore = (BigDecimal) objArr[12];
             BigDecimal minuti = (BigDecimal) objArr[13];
             riga.setString("permanenza", giorni + "-" + ore + "-" + minuti);
-            riga.setString("fl_verifica_firma_eseguita", "" + (BigDecimal) objArr[14]);
-            riga.setString("fl_indice_aip_creato", "" + (BigDecimal) objArr[15]);
+            riga.setString("fl_indice_aip_creato", "" + (BigDecimal) objArr[14]);
             tabella1.add(riga);
         }
         listaTabelle.add(tabella1);
@@ -217,10 +215,9 @@ public class MonitoraggioIndiceAIPEjb {
             BigDecimal ore = (BigDecimal) objArr[12];
             BigDecimal minuti = (BigDecimal) objArr[13];
             riga.setString("permanenza", giorni + "-" + ore + "-" + minuti);
-            riga.setString("fl_verifica_firma_eseguita", "" + (BigDecimal) objArr[14]);
-            riga.setString("fl_indice_aip_creato", "" + (BigDecimal) objArr[15]);
-            riga.setBigDecimal("id_doc", (BigDecimal) objArr[16]);
-            riga.setString("dl_doc", (String) objArr[17]);
+            riga.setString("fl_indice_aip_creato", "" + (BigDecimal) objArr[14]);
+            riga.setBigDecimal("id_doc", (BigDecimal) objArr[15]);
+            riga.setString("dl_doc", (String) objArr[16]);
             tabella2.add(riga);
         }
         listaTabelle.add(tabella2);

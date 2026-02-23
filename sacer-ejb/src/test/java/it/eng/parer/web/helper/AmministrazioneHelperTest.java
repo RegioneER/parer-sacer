@@ -68,8 +68,11 @@ public class AmministrazioneHelperTest {
         String flAppartStrut = aString();
         String flAppartTipoUnitaDoc = aString();
         String flAppartAaTipoFascicolo = aString();
+        String cdVersioneAppIni = aString();
+        String cdVersioneAppFine = aString();
         assertNotNull(helper.getAplParamApplicList(tiParamApplic, tiGestioneParam, flAppartApplic,
-                flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc, flAppartAaTipoFascicolo));
+                flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc, flAppartAaTipoFascicolo,
+                cdVersioneAppIni, cdVersioneAppFine));
     }
 
     @Test

@@ -36,8 +36,9 @@ public class AvanzamentoWs implements java.io.Serializable {
         RichiestaStato, Restituzione, VersamentoAsyncInit, VersamentoAsyncFile,
         VersamentoAsyncChiusura, RecuperoWeb,
         // EVO#13993
-        RecuperoFascWeb
+        RecuperoFascWeb,
         // end EVO#13993
+        RecStatoConservFascicoloSync
     }
 
     public enum CheckPoints {

@@ -384,15 +384,21 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
                     }
                 }
                 if (!getMessageBox().hasError()) {
-                    if (restArchEjb.checkRichRestArchExisting(idStrut)) {
+                    if (restArchEjb.checkRichRestArchExistingRestituito(idStrut, "0")) {
                         getMessageBox().addError(
-                                "Per l'ente convenzionato della struttura corrente \u00E8 gi\u00E0 presente una richiesta di restituzione archivio");
+                                "Per l'ente convenzionato della struttura corrente \u00E8 gi\u00E0 stato RESTITUITO l'archivio e pulita l'area FTP. Impossibile procedere.");
                     }
                 }
                 if (!getMessageBox().hasError()) {
-                    if (restArchEjb.checkRichRestArchExistingRestituito(idStrut)) {
+                    if (restArchEjb.checkRichRestArchExistingRestituito(idStrut, "1")) {
                         getMessageBox().addError(
                                 "Per l'ente convenzionato della struttura corrente \u00E8 gi\u00E0 presente una richiesta di restituzione archivio in attesa di pulizia area FTP. Attendere la prossima esecuzione del JOB di Evasione Richieste Restituzione Archivio ");
+                    }
+                }
+                if (!getMessageBox().hasError()) {
+                    if (restArchEjb.checkRichRestArchExisting(idStrut)) {
+                        getMessageBox().addError(
+                                "Per l'ente convenzionato della struttura corrente \u00E8 gi\u00E0 presente una richiesta di restituzione archivio");
                     }
                 }
                 if (!getMessageBox().hasError()) {

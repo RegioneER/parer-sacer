@@ -66,7 +66,9 @@
                 <slf:lblField name="<%= AmministrazioneForm.Configuration.FL_APPART_AMBIENTE_COMBO%>" colSpan="2" /><sl:newLine/>
                 <slf:lblField name="<%= AmministrazioneForm.Configuration.FL_APPART_STRUT_COMBO%>" colSpan="2" /><sl:newLine/>                
                 <slf:lblField name="<%= AmministrazioneForm.Configuration.FL_APPART_TIPO_UNITA_DOC_COMBO%>" colSpan="2" /><sl:newLine/>                
-                <slf:lblField name="<%= AmministrazioneForm.Configuration.FL_APPART_AA_TIPO_FASCICOLO_COMBO%>" colSpan="2" /><sl:newLine/>                
+                <slf:lblField name="<%= AmministrazioneForm.Configuration.FL_APPART_AA_TIPO_FASCICOLO_COMBO%>" colSpan="2" /><sl:newLine/>  
+                <slf:lblField name="<%= AmministrazioneForm.Configuration.CD_VERSIONE_APP_INI%>" colSpan="2" /><sl:newLine/>                
+                <slf:lblField name="<%= AmministrazioneForm.Configuration.CD_VERSIONE_APP_FINE%>" colSpan="2" /><sl:newLine/>  
                 <sl:newLine skipLine="true"/>
                 <slf:lblField name="<%= AmministrazioneForm.Configuration.LOG_EVENTI_REGISTRO_PARAMETRI%>" colSpan="2" /><sl:newLine/>                
             </slf:fieldSet>

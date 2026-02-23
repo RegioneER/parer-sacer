@@ -130,7 +130,6 @@
         <Input Type="STRING" Description="Stato unità documentaria" Name="stato_ud" />
         <Input Type="DATETIME" Description="Timestamp stato" Name="timestamp_stato" />
         <Input Type="STRING" Description="Numero giorni-ore-minuti permanenza nello stato" Name="permanenza" />
-        <CheckBox Type="STRING" Description="Verifica firme a data versamento" Name="fl_verifica_firma_eseguita" Readonly="true" />
         <CheckBox Type="STRING" Description="Indice AIP creato" Name="fl_indice_aip_creato" Readonly="true" />
         <!--<Link Name="unitaDoc"  Description="" Type="STRING" Target="UnitaDocumentarieList" Tooltip="Dettaglio unità documentaria" />        -->
     </List>
@@ -148,7 +147,6 @@
         <Input Type="STRING" Description="Stato unità documentaria" Name="stato_ud" />
         <Input Type="DATETIME" Description="Timestamp stato" Name="timestamp_stato" />
         <Input Type="STRING" Description="Numero giorni-ore-minuti permanenza nello stato" Name="permanenza" />
-        <CheckBox Type="STRING" Description="Verifica firme a data versamento" Name="fl_verifica_firma_eseguita" Readonly="true" />
         <CheckBox Type="STRING" Description="Indice AIP creato" Name="fl_indice_aip_creato" Readonly="true" />
     </List>
     
@@ -167,8 +165,7 @@
         <Input Type="STRING" Description="Stato unità documentaria" Name="stato_ud" />
         <Input Type="DATETIME" Description="Timestamp stato" Name="timestamp_stato" />
         <Input Type="STRING" Description="Numero giorni-ore-minuti permanenza nello stato" Name="permanenza" />
-        <CheckBox Type="STRING" Description="Verifica firme a data versamento" Name="fl_verifica_firma_eseguita" Readonly="true" />
-        <CheckBox Type="STRING" Description="Indice AIP creato" Name="fl_indice_aip_creato" Readonly="true" />        
+        <CheckBox Type="STRING" Description="Indice AIP creato" Name="fl_indice_aip_creato" Readonly="true" />
     </List>
     
     <List Name="ConteggioMonitoraggioIndiceAIPList" Description="Risultato conteggio" >

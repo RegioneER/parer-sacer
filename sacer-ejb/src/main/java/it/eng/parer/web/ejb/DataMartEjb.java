@@ -265,12 +265,27 @@ public class DataMartEjb {
         return lazyListHelper.getTableBean(query, this::geDmUdDelTableBeanFromResultList);
     }
 
+    public DmUdDelTableBean getDmUdDelTableBeanByStato(BigDecimal idUdDelRichiesta,
+            String tiStatoUdCancellate, BigDecimal idStrut) throws EMFError {
+        Query query = dataMartHelper.getDmUdDelQuery(null, null, null, idStrut, null, null, null,
+                idUdDelRichiesta, tiStatoUdCancellate);
+        return lazyListHelper.getTableBean(query, this::geDmUdDelTableBeanFromResultList);
+    }
+
     public DmUdDelTableBean getDmUdDelAnnulVersTableBean(BigDecimal idRichiestaAnnulVers,
             String tiStatoUdCancellate) throws EMFError {
         Query query = dataMartHelper.getDmUdDelAnnulVersQuery(idRichiestaAnnulVers,
                 tiStatoUdCancellate);
         return lazyListHelper.getTableBean(query,
                 this::geUdDataMartTableBeanAnnulVersFromResultList);
+    }
+
+    public DmUdDelTableBean getDmUdDelScartoVersTableBean(BigDecimal idRichiestaScartoVers,
+            String tiStatoUdCancellate) throws EMFError {
+        Query query = dataMartHelper.getDmUdDelScartoVersQuery(idRichiestaScartoVers,
+                tiStatoUdCancellate);
+        return lazyListHelper.getTableBean(query,
+                this::geUdDataMartTableBeanScartoVersFromResultList);
     }
 
     private DmUdDelTableBean geUdDataMartTableBeanFromResultList(List<DmUdDel> udList) {
@@ -307,6 +322,25 @@ public class DataMartEjb {
         return udTableBean;
     }
 
+    private DmUdDelTableBean geUdDataMartTableBeanScartoVersFromResultList(List<DmUdDel> udList) {
+        DmUdDelTableBean udTableBean = new DmUdDelTableBean();
+        int progressivo = 1;
+        for (DmUdDel ud : udList) {
+            DmUdDelRowBean udRowBean = new DmUdDelRowBean();
+            udRowBean.setBigDecimal("pg_item_rich_scarto_vers_cancellati",
+                    BigDecimal.valueOf(progressivo));
+            udRowBean.setString("ds_key_item_cancellato", ud.getCdRegistroKeyUnitaDoc() + "-"
+                    + ud.getAaKeyUnitaDoc() + "-" + ud.getCdKeyUnitaDoc());
+            if (ud.getDtVersamento() != null) {
+                udRowBean.setTimestamp("dt_versamento",
+                        new Timestamp(ud.getDtVersamento().getTime()));
+            }
+            progressivo++;
+            udTableBean.add(udRowBean);
+        }
+        return udTableBean;
+    }
+
     private DmUdDelTableBean geDmUdDelTableBeanFromResultList(List<DmUdDel> udList) {
         DmUdDelTableBean udTableBean = new DmUdDelTableBean();
         for (DmUdDel ud : udList) {
@@ -320,6 +354,7 @@ public class DataMartEjb {
                 udRowBean.setDtVersamento(new Timestamp(ud.getDtVersamento().getTime()));
             }
             udRowBean.setTiStatoUdCancellate(ud.getTiStatoUdCancellate());
+            udRowBean.setFlAnnul(ud.getFlAnnul());
             udTableBean.add(udRowBean);
         }
         return udTableBean;
@@ -333,8 +368,20 @@ public class DataMartEjb {
 
     public int insertUdDataMartRestArchCentroStella(BigDecimal idRichiesta, String cdRichiesta,
             String tiModDel) {
+        logger.info("Avvio creazione snapshot (foto) per richiesta RA: {}", idRichiesta);
+        // MEV 39896 - inserisco le "foto" dei record che finiranno del datamart per la
+        // cancellazione, in maniera tale da non "perdere" i dati
+        dataMartHelper.insertAroRichRichRaFoto(idRichiesta);
+        dataMartHelper.insertAroLisItemRaFoto(idRichiesta);
+
         return dataMartHelper.populateDataMartUdCentroStellaRestArch(idRichiesta, cdRichiesta,
                 tiModDel);
+    }
+
+    public int insertUdDataMartScartoVersCentroStella(long idRichiesta, String cdRichiesta,
+            String tiMotCancellazione, String tiModDel) {
+        return dataMartHelper.populateDataMartScartoUdCentroStella(idRichiesta, cdRichiesta,
+                tiMotCancellazione, tiModDel);
     }
 
     public void insertUdDataMartAnnulVersSatelliti(long idUdDelRichiesta) {
@@ -423,6 +470,8 @@ public class DataMartEjb {
             riga.setString("nm_ente_strut", dto.getNmEnte() + " - " + dto.getNmStrut());
             riga.setString("ti_stato_ud_cancellate", dto.getTiStatoUdCancellate());
             riga.setBigDecimal("ni_ud_stato", new BigDecimal(dto.getConteggio()));
+            riga.setBigDecimal("ni_ud_stato_annullate",
+                    new BigDecimal(dto.getNiUdStatoAnnullate()));
             numUdDataMart.add(riga);
         }
         return numUdDataMart;
@@ -444,6 +493,8 @@ public class DataMartEjb {
             riga.setString("nm_ente_strut", dto.getNmEnte() + " - " + dto.getNmStrut());
             riga.setTiStatoUdCancellate(dto.getTiStatoUdCancellate());
             riga.setBigDecimal("ni_ud_stato", new BigDecimal(dto.getConteggio()));
+            riga.setBigDecimal("ni_ud_stato_annullate",
+                    new BigDecimal(dto.getNiUdStatoAnnullate()));
             numUdDataMart.add(riga);
         }
         return numUdDataMart;
@@ -605,6 +656,13 @@ public class DataMartEjb {
                                 .equals(statoAttualeApp)) {
                     nuovoStatoDaImpostare = CostantiDB.TiStatoInternoRich.ERRORE_LOGICO_RIPRISTINABILE
                             .name();
+                    // NUOVO CASO: Errore gestito (es. flag archivio restituito sulla
+                    // struttura a false)
+                } else if ("1".equals(statoMS.getFlRichEvasaKoGest())
+                        && !CostantiDB.TiStatoInternoRich.ERRORE_LOGICO_GESTITO.name()
+                                .equals(statoAttualeApp)) {
+                    nuovoStatoDaImpostare = CostantiDB.TiStatoInternoRich.ERRORE_LOGICO_GESTITO
+                            .name();
                 } else if ("1".equals(statoMS.getFlRichEvasaOk())
                         && dataMartHelper.isLavoroKafkaCompletato(idUdDelRichiesta)
                         && !CostantiDB.TiStatoInternoRich.PRONTA_PER_FISICA.name()
@@ -665,10 +723,12 @@ public class DataMartEjb {
                             dtoRiga.getIdRichiesta(), dtoRiga.getTiMotCancellazione(),
                             dtoRiga.getIdEnte(), dtoRiga.getNmEnte(), dtoRiga.getIdStrut(),
                             dtoRiga.getNmStrut(), "CANCELLABILE", // Forza lo stato finale
-                            0L);
+                            0L, 0L);
                     raggruppati.put(chiave, rigaAggregata);
                 }
                 rigaAggregata.setConteggio(rigaAggregata.getConteggio() + dtoRiga.getConteggio());
+                rigaAggregata.setNiUdStatoAnnullate(
+                        rigaAggregata.getNiUdStatoAnnullate() + dtoRiga.getNiUdStatoAnnullate());
             }
             dto.setConteggiDettagliati(new ArrayList<>(raggruppati.values()));
         }
@@ -725,10 +785,12 @@ public class DataMartEjb {
                             dtoRiga.getIdRichiesta(), dtoRiga.getTiMotCancellazione(),
                             dtoRiga.getIdEnte(), dtoRiga.getNmEnte(), dtoRiga.getIdStrut(),
                             dtoRiga.getNmStrut(), "CANCELLATA_DB_SACER", // Forza lo stato finale
-                            0L);
+                            0L, 0L);
                     raggruppati.put(chiave, rigaAggregata);
                 }
                 rigaAggregata.setConteggio(rigaAggregata.getConteggio() + dtoRiga.getConteggio());
+                rigaAggregata.setNiUdStatoAnnullate(
+                        rigaAggregata.getNiUdStatoAnnullate() + dtoRiga.getNiUdStatoAnnullate());
             }
             dto.setConteggiDettagliati(new ArrayList<>(raggruppati.values()));
         }
@@ -747,5 +809,17 @@ public class DataMartEjb {
             String tiItemRichSoftDelete, long idUserIam) {
         dataMartHelper.eseguiCorrezionePerRipresaLogica(idRichiesta, tiItemRichSoftDelete,
                 idUserIam);
+    }
+
+    public void updateDmUdDelDaCancellare(BigDecimal idUdDelRichiesta) {
+        dataMartHelper.updateDmUdDelDaCancellare(idUdDelRichiesta);
+    }
+
+    public void reinizializzaRichiesta(BigDecimal idRichiestaSacer, String tiMotCancellazione,
+            BigDecimal idUdDelRichiestaSacer) {
+        // Cancella richieste o in errore logico o errore logico gestito
+        deleteAroRichSoftDelete(idRichiestaSacer, getTiItemRichSoftDelete(tiMotCancellazione));
+        // Riporta le ud in DA_CANCELLARE
+        updateDmUdDelDaCancellare(idUdDelRichiestaSacer);
     }
 }

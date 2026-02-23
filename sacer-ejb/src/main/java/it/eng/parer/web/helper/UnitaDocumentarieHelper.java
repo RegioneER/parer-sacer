@@ -3601,6 +3601,25 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         }
     }
 
+    public Long getIdUnitaDocVersata(BigDecimal idStrut, String cdRegistroKeyUnitaDoc,
+            BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc) {
+        String queryStr = "SELECT u.idUnitaDoc FROM AroUnitaDoc u "
+                + "WHERE u.orgStrut.idStrut = :idStrut "
+                + "AND u.cdRegistroKeyUnitaDoc = :cdRegistroKeyUnitaDoc "
+                + "AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc " + "AND u.cdKeyUnitaDoc = :cdKeyUnitaDoc ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        query.setParameter("cdRegistroKeyUnitaDoc", cdRegistroKeyUnitaDoc);
+        query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
+        query.setParameter("cdKeyUnitaDoc", cdKeyUnitaDoc);
+        List<Long> listaUdVersate = query.getResultList();
+        if (listaUdVersate != null && !listaUdVersate.isEmpty()) {
+            return listaUdVersate.get(0);
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Controlla che l’unità documentaria identificata dalla struttura versante, registro, anno e
      * numero esista
