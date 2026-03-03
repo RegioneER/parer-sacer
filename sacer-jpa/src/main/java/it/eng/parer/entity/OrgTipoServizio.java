@@ -13,6 +13,7 @@
 
 package it.eng.parer.entity;
 
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
 import it.eng.parer.grantedEntity.OrgServizioErog;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * The persistent class for the ORG_TIPO_SERVIZIO database table.
@@ -58,6 +60,7 @@ public class OrgTipoServizio implements Serializable {
     @Id
     @Column(name = "ID_TIPO_SERVIZIO")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     public Long getIdTipoServizio() {
         return this.idTipoServizio;
     }

@@ -28,7 +28,7 @@
         <sl:content>
             <slf:messageBox  />
             <sl:newLine skipLine="true"/>
-            <sl:contentTitle title="LISTA VERSAMENTI ANNULLATI UNITÀ DOCUMENTARIE"/>
+            <sl:contentTitle title="RIEPILOGO VERSAMENTO SINTETICO"/>
 
             <% User u = (User) request.getSession().getAttribute("###_USER_CONTAINER");
                 int lastIndex = u.getMenu().getSelectedPath("").size() - 1;

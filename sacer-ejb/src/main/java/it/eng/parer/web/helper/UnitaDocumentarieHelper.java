@@ -161,6 +161,7 @@ import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.sorting.SortingRule;
 import it.eng.spagoLite.db.base.table.BaseTable;
 import java.text.SimpleDateFormat;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -1210,13 +1211,14 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             UnitaDocumentarieForm.FiltriComponentiUnitaDocumentarie filtriComponenti,
             UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie filtriFascicoli,
             Date[] dateAcquisizioneValidate, Date[] dateUnitaDocValidate,
-            Date[] dateCreazioneCompValidate, BigDecimal idStruttura, boolean addButton)
+            Date[] dateCreazioneCompValidate, Long idUserIam, BigDecimal idStruttura,
+            boolean addButton)
             throws EMFError {
         final Date dateMetaDa = getDateOrNull(dateUnitaDocValidate, 0);
         final Date dateMetaA = getDateOrNull(dateUnitaDocValidate, 1);
         return getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter(idTipoUnitaDocList,
                 cdRegistroUnitaDocSet, idTipoDocList, listaDatiSpecOnLine, dateAcquisizioneValidate,
-                dateCreazioneCompValidate, idStruttura, addButton,
+                dateCreazioneCompValidate, idUserIam, idStruttura, addButton,
                 new FiltriUnitaDocumentarieAvanzataPlain(filtri, dateMetaDa, dateMetaA),
                 new FiltriCollegamentiUnitaDocumentariePlain(filtriCollegamenti),
                 new FiltriFirmatariUnitaDocumentariePlain(filtriFirmatari),
@@ -1253,6 +1255,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
      * @param dateAcquisizioneValidate  date di acquisizione
      * @param dateUnitaDocValidate      date delle unità documentarie
      * @param dateCreazioneCompValidate date di creazione
+     * @param idUserIam                 id utente che effettua la ricerca
      * @param idStruttura               id della struttura
      * @param addButton                 true, aggiunge il bottone per la UI
      *
@@ -1271,13 +1274,14 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             UnitaDocumentarieForm.FiltriComponentiUnitaDocumentarie filtriComponenti,
             UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie filtriFascicoli,
             Date[] dateAcquisizioneValidate, Date[] dateUnitaDocValidate,
-            Date[] dateCreazioneCompValidate, BigDecimal idStruttura, boolean addButton)
+            Date[] dateCreazioneCompValidate, Long idUserIam, BigDecimal idStruttura,
+            boolean addButton)
             throws EMFError {
         final Date dateMetaDa = getDateOrNull(dateUnitaDocValidate, 0);
         final Date dateMetaA = getDateOrNull(dateUnitaDocValidate, 1);
         return getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter(idTipoUnitaDocList,
                 cdRegistroUnitaDocSet, idTipoDocList, listaDatiSpecOnLine, dateAcquisizioneValidate,
-                dateCreazioneCompValidate, idStruttura, addButton,
+                dateCreazioneCompValidate, idUserIam, idStruttura, addButton,
                 new FiltriUnitaDocumentarieAvanzataPlain(filtri, dateMetaDa, dateMetaA),
                 new FiltriCollegamentiUnitaDocumentariePlain(filtriCollegamenti),
                 new FiltriFirmatariUnitaDocumentariePlain(filtriFirmatari),
@@ -1291,7 +1295,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             List<BigDecimal> idTipoUnitaDocList, Set<String> cdRegistroUnitaDocSet,
             List<BigDecimal> idTipoDocList, List<DecCriterioDatiSpecBean> listaDatiSpecOnLine,
             Date[] dateAcquisizioneValidate, Date[] dateCreazioneCompValidate,
-            BigDecimal idStruttura, boolean addButton, FiltriUnitaDocumentarieAvanzataPlain filtri,
+            Long idUserIam, BigDecimal idStruttura, boolean addButton,
+            FiltriUnitaDocumentarieAvanzataPlain filtri,
             FiltriCollegamentiUnitaDocumentariePlain filtriCollegamenti,
             FiltriFirmatariUnitaDocumentariePlain filtriFirmatari,
             FiltriComponentiUnitaDocumentariePlain filtriComponenti,
@@ -2336,6 +2341,45 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("subStruts", subStruts);
         }
 
+        // MEV #40119 - salvataggio su tabella dei filtri di ricerca sui dati specifici
+        if (listaDatiSpecOnLine != null && !listaDatiSpecOnLine.isEmpty()) {
+            try {
+                // Recupero i dati specifici sotto forma di stringa
+                String temp = filtri.getFiltriDatiSpec();
+                String dsCriteri = (temp != null && temp.length() >= 3) ? temp.substring(3) : "";
+
+                // Controllo e taglio per non superare i 4000 BYTE (calcolati in UTF-8)
+                byte[] stringBytes = dsCriteri.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                if (stringBytes.length > 4000) {
+                    dsCriteri = new String(stringBytes, 0, 3995,
+                            java.nio.charset.StandardCharsets.UTF_8) + "...";
+                }
+
+                Objects.requireNonNull(idStruttura, "idStruttura non può essere null");
+                OrgStrut struttura = getEntityManager().find(OrgStrut.class,
+                        idStruttura.longValue());
+
+                String sqlInsertTrace = "INSERT INTO SACER.TRACE_RIC_UD_DS_TEMP "
+                        + "(ID_AMBIENTE, ID_ENTE, ID_STRUT, ID_USER_IAM, DS_CRITERI_RIC_UD_DS) "
+                        + "VALUES (:idAmbiente, :idEnte, :idStrut, :idUserIam, :dsCriteri)";
+
+                Query insertQuery = getEntityManager().createNativeQuery(sqlInsertTrace);
+                insertQuery.setParameter("idAmbiente",
+                        struttura.getOrgEnte().getOrgAmbiente().getIdAmbiente());
+                insertQuery.setParameter("idEnte", struttura.getOrgEnte().getIdEnte());
+                insertQuery.setParameter("idStrut", idStruttura);
+                insertQuery.setParameter("idUserIam", idUserIam);
+                insertQuery.setParameter("dsCriteri", dsCriteri);
+
+                insertQuery.executeUpdate();
+
+            } catch (Exception e) {
+                // Non rilancio l'eccezione per NON bloccare la ricerca ud in caso di
+                // errori sul tracciamento
+                log.error(e.getMessage(), e);
+            }
+        }
+
         if (lazy) {
             return lazyListHelper.getTableBean(query,
                     getAroVRicUnitaDocTableBeanFromResultListFunction(addButton), "u.idUnitaDoc");
@@ -2640,6 +2684,11 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         try {
             if (rec != null) {
                 dettaglioUD = (AroVVisUnitaDocIamRowBean) Transform.entity2RowBean(rec);
+                String appo = dettaglioUD.getNtAnnul();
+                // MAC#34009 - Correzione della visualizzazione caratteri accentati non corretta
+                String modificata = new String(appo.getBytes("ISO-8859-1"), "UTF-8");
+                //
+                dettaglioUD.setNtAnnul(modificata);
             }
         } catch (Exception e) {
             log.error("Errore nel recupero del dettaglio dell'unita' documentaria" + e.getMessage(),
@@ -5339,6 +5388,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         private List<BigDecimal> nmSubStrut;
         private String cdKeyUnitaDocContiene;
         private String profiloNorm;
+        private String filtriDatiSpec;
 
         FiltriUnitaDocumentarieAvanzataPlain() {
         }
@@ -5385,6 +5435,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             // this.forzaFmtFile = filtri.getFl_forza_fmt_file().parse();
             this.cdVersioneWs = filtri.getCd_versione_ws().parse();
             this.flAggMeta = filtri.getFl_agg_meta().parse();
+            this.filtriDatiSpec = filtri.getFiltri_dati_spec().parse();
         }
 
         FiltriUnitaDocumentarieAvanzataPlain(FiltriUnitaDocumentarieAvanzata filtri) {
@@ -5711,6 +5762,13 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             this.flAggMeta = flAggMeta;
         }
 
+        public String getFiltriDatiSpec() {
+            return filtriDatiSpec;
+        }
+
+        public void setFiltriDAtiSpec(String filtriDatiSpec) {
+            this.filtriDatiSpec = filtriDatiSpec;
+        }
     }
 
     static class FiltriUnitaDocumentarieDatiSpecPlain {

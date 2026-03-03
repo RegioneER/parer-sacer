@@ -13,6 +13,7 @@
 
 package it.eng.parer.entity;
 
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -23,6 +24,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * The persistent class for the FAS_VALORE_ATTRIB_FASCICOLO database table.
@@ -47,6 +49,7 @@ public class FasValoreAttribFascicolo implements Serializable {
     @Id
     @Column(name = "ID_VALORE_ATTRIB_FASCICOLO")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     public Long getIdValoreAttribFascicolo() {
         return this.idValoreAttribFascicolo;
     }

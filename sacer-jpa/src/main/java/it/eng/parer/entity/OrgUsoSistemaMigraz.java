@@ -13,6 +13,7 @@
 
 package it.eng.parer.entity;
 
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import java.io.Serializable;
 
 import javax.persistence.Cacheable;
@@ -26,6 +27,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 import org.hibernate.annotations.GenericGenerator;
@@ -53,7 +55,7 @@ public class OrgUsoSistemaMigraz implements Serializable {
 
     @Id
     @XmlID
-
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     @Column(name = "ID_USO_SISTEMA_MIGRAZ")
     @GenericGenerator(name = "SORG_USO_SISTEMA_MIGRAZ_ID_USO_SISTEMA_MIGRAZ_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_USO_SISTEMA_MIGRAZ"),

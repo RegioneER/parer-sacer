@@ -1565,7 +1565,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                         cdRegistroKeyUnitaDocSetPerRicerca, idTipoDocListPerRicerca,
                                         listaDatiSpecOnLine, filtriCollegamenti, filtriFirmatari,
                                         compfiltri, fascfiltri, dateAcquisizioneValidate,
-                                        dateUnitaDocValidate, dateCreazioneComp, getIdStrut(),
+                                        dateUnitaDocValidate, dateCreazioneComp,
+                                        getUser().getIdUtente(), getIdStrut(),
                                         addSerie || addRichAnnulVers);
                         if (!getMessageBox().hasError()) {
                             // MAC#39494 - Correzione metodo di generazione file in fase di
@@ -1624,7 +1625,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                         cdRegistroKeyUnitaDocSetPerRicerca, idTipoDocListPerRicerca,
                                         listaDatiSpecOnLine, filtriCollegamenti, filtriFirmatari,
                                         compfiltri, fascfiltri, dateAcquisizioneValidate,
-                                        dateUnitaDocValidate, dateCreazioneComp, getIdStrut(),
+                                        dateUnitaDocValidate, dateCreazioneComp,
+                                        getUser().getIdUtente(), getIdStrut(),
                                         addSerie || addRichAnnulVers);
                         // Carico la tabella con i filtri impostati
                         getForm().getUnitaDocumentarieList().setTable(tb);

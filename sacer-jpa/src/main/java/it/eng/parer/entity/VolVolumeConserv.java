@@ -13,6 +13,7 @@
 
 package it.eng.parer.entity;
 
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -132,6 +134,7 @@ public class VolVolumeConserv implements Serializable {
 
     @Column(name = "ID_VOLUME_CONSERV")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     @GenericGenerator(name = "SVOL_VOLUME_CONSERV_ID_VOLUME_CONSERV_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_VOLUME_CONSERV"),
             @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })

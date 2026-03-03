@@ -63,38 +63,12 @@ import it.eng.parer.sacerlog.util.web.SpagoliteLogUtil;
 import it.eng.parer.serie.ejb.ModelliSerieEjb;
 import it.eng.parer.serie.ejb.SerieEjb;
 import it.eng.parer.serie.ejb.TipoSerieEjb;
+import it.eng.parer.serie.ejb.TipoSerieEjb;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.StrutSerieAbstractAction;
 import it.eng.parer.slite.gen.form.StrutSerieForm;
 import it.eng.parer.slite.gen.form.StruttureForm;
-import it.eng.parer.slite.gen.tablebean.DecAttribDatiSpecRowBean;
-import it.eng.parer.slite.gen.tablebean.DecAttribDatiSpecTableBean;
-import it.eng.parer.slite.gen.tablebean.DecAttribDatiSpecTableDescriptor;
-import it.eng.parer.slite.gen.tablebean.DecCampoInpUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecCampoInpUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecCampoOutSelUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecCampoOutSelUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecFiltroSelUdAttbRowBean;
-import it.eng.parer.slite.gen.tablebean.DecFiltroSelUdAttbTableBean;
-import it.eng.parer.slite.gen.tablebean.DecFiltroSelUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecFiltroSelUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecNotaTipoSerieRowBean;
-import it.eng.parer.slite.gen.tablebean.DecNotaTipoSerieTableBean;
-import it.eng.parer.slite.gen.tablebean.DecOutSelUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecOutSelUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecOutSelUdTableDescriptor;
-import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocRowBean;
-import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoDocRowBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoNotaSerieTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoSerieRowBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoSerieTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoSerieUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoSerieUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocRowBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
+import it.eng.parer.slite.gen.tablebean.*;
 import it.eng.parer.slite.gen.viewbean.DecVLisTiUniDocAmsRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVLisTiUniDocAmsTableBean;
 import it.eng.parer.web.dto.DecFiltroSelUdAttbBean;
@@ -130,6 +104,34 @@ import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.codehaus.jettison.json.JSONObject;
+import org.springframework.util.CollectionUtils;
 
 /**
  *
@@ -251,8 +253,14 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
         DecTipoSerieRowBean tipoSerieRowBean = tipoSerieEjb.getDecTipoSerieRowBean(idTipoSerie);
         // Carico le combo e le liste presenti nella pagina di dettaglio Tipologia Serie
         caricaComboListeTipoSerie(idTipoSerie);
+
         // Valorizzo i campi
         tipoSerieDetail.copyFromBean(tipoSerieRowBean);
+
+        // Tipo conservazione: decodeMap per visualizzare il valore, sempre viewMode
+        tipoSerieDetail.getTi_conservazione_serie()
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_conservazione_serie",
+                        CostantiDB.TipoConservazioneSerie.values()));
 
         // Setto i valori delle combo ambiente/ente/struttura
         try {
@@ -807,6 +815,8 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
             tipoSerieDetail.setEditMode();
             tipoSerieDetail.getTi_crea_standard().setViewMode();
             tipoSerieDetail.getNm_modello_tipo_serie().setViewMode();
+            // Tipo conservazione sempre in sola lettura (mostra valore attuale, mai modificabile)
+            tipoSerieDetail.getTi_conservazione_serie().setViewMode();
             tipoSerieDetail.getViewDettaglioSeriePadre().setViewMode();
             tipoSerieDetail.setStatus(BaseElements.Status.update);
             getForm().getTipologieSerieList().setStatus(BaseElements.Status.update);
@@ -1079,6 +1089,8 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
     /**
      * Carica le combo della pagina di dettaglio Tipologia Serie
      *
+     * @param tiConservazioneSerie tipo conservazione corrente del record (può essere null per
+     *                             record nuovi)
      * @throws EMFError errore generico
      */
     private void caricaComboTipoSerie() throws EMFError {
@@ -1114,9 +1126,18 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
                     "id_tipo_serie", "nm_tipo_serie");
             tipoSerieDetail.getId_tipo_serie_padre().setDecodeMap(mappaTipoSeriePadre);
         }
-        tipoSerieDetail.getTi_conservazione_serie()
-                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_conservazione_serie",
-                        CostantiDB.TipoConservazioneSerie.values()));
+
+        // Tipo conservazione: solo IN_ARCHIVIO per nuovi tipi serie
+        // Non sovrascrivere se già impostato (per tipi esistenti)
+        if (tipoSerieDetail.getTi_conservazione_serie().getValue() == null) {
+            tipoSerieDetail.getTi_conservazione_serie()
+                    .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_conservazione_serie",
+                            new CostantiDB.TipoConservazioneSerie[] {
+                                    CostantiDB.TipoConservazioneSerie.IN_ARCHIVIO }));
+            tipoSerieDetail.getTi_conservazione_serie()
+                    .setValue(CostantiDB.TipoConservazioneSerie.IN_ARCHIVIO.name());
+        }
+
         tipoSerieDetail.getTi_stato_ver_serie_autom()
                 .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_stato_ver_serie_autom",
                         CostantiDB.StatoVersioneSerie.getStatiVerSerieAutom()));

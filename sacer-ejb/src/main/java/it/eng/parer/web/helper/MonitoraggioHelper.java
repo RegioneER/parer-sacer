@@ -16,6 +16,8 @@ package it.eng.parer.web.helper;
 import it.eng.paginator.helper.LazyListHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.entity.*;
+import it.eng.parer.entity.dto.LogVpLisIniSchedJobDTO;
+import it.eng.parer.entity.dto.LogVpLisIniSchedJobHistDTO;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.slite.gen.form.MonitoraggioForm;
@@ -2949,39 +2951,119 @@ public class MonitoraggioHelper implements Serializable {
      *
      * @return LogVLisSchedTableBean table bean per la UI
      */
-    public LogVLisSchedTableBean getLogVLisSchedViewBeanPlainFilters(String nomeJob,
+    public BaseTable getLogVLisSchedViewBeanPlainFilters(String nomeJob,
             Date dataOrarioDa, Date dataOrarioA) {
 
         String whereWord = "WHERE ";
-        StringBuilder queryStr = new StringBuilder("SELECT u FROM LogVLisSched u ");
-        // Inserimento nella query del filtro nome job
-        if (nomeJob != null) {
-            queryStr.append(whereWord).append("u.nmJob = :nmJob ");
-            whereWord = "AND ";
-        }
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT u.* FROM TABLE(Log_Vp_Lis_Ini_Sched_Job(:nmJob)) u ");
 
         // Inserimento nella query del filtro data già impostato con data e ora
         if ((dataOrarioDa != null) && (dataOrarioA != null)) {
-            queryStr.append(whereWord).append("(u.dtRegLogJobIni between :datada AND :dataa) ");
+            queryStr.append(whereWord).append("(u.dt_Reg_Log_Job_Ini between :datada AND :dataa) ");
         }
-        queryStr.append("ORDER BY u.dtRegLogJobIni DESC ");
+        queryStr.append("ORDER BY u.dt_Reg_Log_Job_Ini DESC ");
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
-        Query query = entityManager.createQuery(queryStr.toString());
-        if (nomeJob != null) {
-            if (nomeJob.equals("ALLINEAMENTO_LOG")) {
-                nomeJob = "ALLINEAMENTO_LOG_SACER";
-            } else if (nomeJob.equals("INIZIALIZZAZIONE_LOG")) {
-                nomeJob = "INIZIALIZZAZIONE_LOG_SACER";
-            }
-
-            query.setParameter("nmJob", nomeJob);
+        Query query = entityManager.createNativeQuery(queryStr.toString());
+        if (nomeJob.equals("ALLINEAMENTO_LOG")) {
+            nomeJob = "ALLINEAMENTO_LOG_SACER";
+        } else if (nomeJob.equals("INIZIALIZZAZIONE_LOG")) {
+            nomeJob = "INIZIALIZZAZIONE_LOG_SACER";
         }
-        if (dataOrarioDa != null && dataOrarioA != null) {
+
+        query.setParameter("nmJob", nomeJob);
+        if (dataOrarioDa != null && dataOrarioA != null)
+
+        {
             query.setParameter("datada", dataOrarioDa, TemporalType.TIMESTAMP);
             query.setParameter("dataa", dataOrarioA, TemporalType.TIMESTAMP);
         }
-        return lazyListHelper.getTableBean(query, this::getLogVLisSchedTableBeanFrom);
+        return lazyListHelper.getTableBeanForNativeQuery(query,
+                this::resultListDTOToLogVpLisIniSchedJobRowBeans, "u.ID_LOG_JOB",
+                "LogVpLisIniSchedJobDTOMapping");
+    }
+
+    /*
+     * Metodo per convertire la lista dei DTO estratti dalla macro/vista in una struttura generica
+     * BaseTable / BaseRow
+     */
+    private BaseTable resultListDTOToLogVpLisIniSchedJobRowBeans(
+            List<LogVpLisIniSchedJobDTO> listaLogJob) {
+
+        BaseTable tableBean = new BaseTable();
+
+        try {
+            if (listaLogJob != null && !listaLogJob.isEmpty()) {
+                for (LogVpLisIniSchedJobDTO dto : listaLogJob) {
+                    BaseRow rb = new BaseRow();
+
+                    // Impostazione campi base tramite setter generici
+                    rb.setBigDecimal("id_log_job", dto.getIdLogJob());
+                    rb.setString("nm_job", dto.getNmJob());
+                    rb.setString("durata", dto.getDurata());
+                    rb.setString("dl_msg_err", dto.getDlMsgErr());
+
+                    // Gestione conversione Date -> Timestamp con setter generico per i tipi
+                    // Date/Timestamp
+                    rb.setTimestamp("dt_reg_log_job_ini", dto.getDtRegLogJobIni() != null
+                            ? new java.sql.Timestamp(dto.getDtRegLogJobIni().getTime())
+                            : null);
+
+                    rb.setTimestamp("dt_reg_log_job_fine", dto.getDtRegLogJobFine() != null
+                            ? new java.sql.Timestamp(dto.getDtRegLogJobFine().getTime())
+                            : null);
+
+                    // Aggiunge la riga generica alla tabella generica
+                    tableBean.add(rb);
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return tableBean;
+    }
+
+    /*
+     * Metodo per convertire la lista dei DTO estratti dalla macro/vista in una struttura generica
+     * BaseTable / BaseRow
+     */
+    private BaseTable resultListDTOToLogVpLisIniSchedJobHistRowBeans(
+            List<LogVpLisIniSchedJobHistDTO> listaLogJob) {
+
+        BaseTable tableBean = new BaseTable();
+
+        try {
+            if (listaLogJob != null && !listaLogJob.isEmpty()) {
+                for (LogVpLisIniSchedJobHistDTO dto : listaLogJob) {
+                    BaseRow rb = new BaseRow();
+
+                    // Impostazione campi base tramite setter generici
+                    rb.setBigDecimal("id_log_job_hist", dto.getIdLogJobHist());
+                    rb.setString("nm_job", dto.getNmJob());
+                    rb.setString("durata", dto.getDurata());
+                    rb.setString("dl_msg_err", dto.getDlMsgErr());
+
+                    // Gestione conversione Date -> Timestamp con setter generico per i tipi
+                    // Date/Timestamp
+                    rb.setTimestamp("dt_reg_log_job_ini", dto.getDtRegLogJobIni() != null
+                            ? new java.sql.Timestamp(dto.getDtRegLogJobIni().getTime())
+                            : null);
+
+                    rb.setTimestamp("dt_reg_log_job_fine", dto.getDtRegLogJobFine() != null
+                            ? new java.sql.Timestamp(dto.getDtRegLogJobFine().getTime())
+                            : null);
+
+                    // Aggiunge la riga generica alla tabella generica
+                    tableBean.add(rb);
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return tableBean;
     }
 
     /**
@@ -2994,85 +3076,37 @@ public class MonitoraggioHelper implements Serializable {
      *
      * @return LogVLisSchedHistTableBean table bean per la UI
      */
-    public LogVLisSchedHistTableBean getLogVLisSchedHistViewBeanPlainFilters(String nomeJob,
+    public BaseTable getLogVLisSchedHistViewBeanPlainFilters(String nomeJob,
             Date dataOrarioDa, Date dataOrarioA) {
 
         String whereWord = "WHERE ";
-        StringBuilder queryStr = new StringBuilder("SELECT u FROM LogVLisSchedHist u ");
-        // Inserimento nella query del filtro nome job
-        if (nomeJob != null) {
-            queryStr.append(whereWord).append("u.nmJob = :nmJob ");
-            whereWord = "AND ";
-        }
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT u.* FROM TABLE(Log_Vp_Lis_Ini_Sched_Job_Hist(:nmJob)) u ");
 
         // Inserimento nella query del filtro data già impostato con data e ora
         if ((dataOrarioDa != null) && (dataOrarioA != null)) {
-            queryStr.append(whereWord).append("(u.dtRegLogJobIni between :datada AND :dataa) ");
+            queryStr.append(whereWord).append("(u.dt_Reg_Log_Job_Ini between :datada AND :dataa) ");
         }
-        queryStr.append("ORDER BY u.dtRegLogJobIni DESC ");
+        queryStr.append("ORDER BY u.dt_Reg_Log_Job_Ini DESC ");
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
-        Query query = entityManager.createQuery(queryStr.toString());
-        if (nomeJob != null) {
-            if (nomeJob.equals("ALLINEAMENTO_LOG")) {
-                nomeJob = "ALLINEAMENTO_LOG_SACER";
-            } else if (nomeJob.equals("INIZIALIZZAZIONE_LOG")) {
-                nomeJob = "INIZIALIZZAZIONE_LOG_SACER";
-            }
-
-            query.setParameter("nmJob", nomeJob);
+        Query query = entityManager.createNativeQuery(queryStr.toString());
+        if (nomeJob.equals("ALLINEAMENTO_LOG")) {
+            nomeJob = "ALLINEAMENTO_LOG_SACER";
+        } else if (nomeJob.equals("INIZIALIZZAZIONE_LOG")) {
+            nomeJob = "INIZIALIZZAZIONE_LOG_SACER";
         }
-        if (dataOrarioDa != null && dataOrarioA != null) {
+
+        query.setParameter("nmJob", nomeJob);
+        if (dataOrarioDa != null && dataOrarioA != null)
+
+        {
             query.setParameter("datada", dataOrarioDa, TemporalType.TIMESTAMP);
             query.setParameter("dataa", dataOrarioA, TemporalType.TIMESTAMP);
         }
-        return lazyListHelper.getTableBean(query, this::getLogVLisSchedHistTableBeanFrom);
-    }
-
-    private LogVLisSchedTableBean getLogVLisSchedTableBeanFrom(List<LogVLisSched> listaSched) {
-        LogVLisSchedTableBean schedTableBean = new LogVLisSchedTableBean();
-        try {
-            if (listaSched != null && !listaSched.isEmpty()) {
-                schedTableBean = (LogVLisSchedTableBean) Transform.entities2TableBean(listaSched);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-
-        // Creo un nuovo campo concatenandone altri già esistenti
-        for (int i = 0; i < schedTableBean.size(); i++) {
-            LogVLisSchedRowBean row = schedTableBean.getRow(i);
-            if (row.getDtRegLogJobFine() != null) {
-                String durata = row.getDurataGg() + "-" + row.getDurataOre() + ":"
-                        + row.getDurataMin() + ":" + row.getDurataSec();
-                row.setString("durata", durata);
-            }
-        }
-        return schedTableBean;
-    }
-
-    private LogVLisSchedHistTableBean getLogVLisSchedHistTableBeanFrom(
-            List<LogVLisSchedHist> listaSched) {
-        LogVLisSchedHistTableBean schedTableBean = new LogVLisSchedHistTableBean();
-        try {
-            if (listaSched != null && !listaSched.isEmpty()) {
-                schedTableBean = (LogVLisSchedHistTableBean) Transform
-                        .entities2TableBean(listaSched);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-
-        // Creo un nuovo campo concatenandone altri già esistenti
-        for (int i = 0; i < schedTableBean.size(); i++) {
-            LogVLisSchedHistRowBean row = schedTableBean.getRow(i);
-            if (row.getDtRegLogJobFine() != null) {
-                String durata = row.getDurataGg() + "-" + row.getDurataOre() + ":"
-                        + row.getDurataMin() + ":" + row.getDurataSec();
-                row.setString("durata", durata);
-            }
-        }
-        return schedTableBean;
+        return lazyListHelper.getTableBeanForNativeQuery(query,
+                this::resultListDTOToLogVpLisIniSchedJobHistRowBeans, "u.ID_LOG_JOB_HIST",
+                "LogVpLisIniSchedJobHistDTOMapping");
     }
 
     public AbstractBaseTable<?> getLogVLisSchedStrutViewBean(FiltriJobSchedulati filtriJS,

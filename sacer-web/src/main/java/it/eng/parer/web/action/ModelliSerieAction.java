@@ -14,6 +14,8 @@
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
 import it.eng.parer.exception.ParerUserError;
@@ -26,30 +28,11 @@ import it.eng.parer.sacerlog.util.LogParam;
 import it.eng.parer.sacerlog.util.web.SpagoliteLogUtil;
 import it.eng.parer.serie.dto.CreazioneModelloSerieBean;
 import it.eng.parer.serie.ejb.ModelliSerieEjb;
-import static it.eng.parer.serie.ejb.SerieEjb.CD_SERIE_PATTERN;
 import it.eng.parer.serie.ejb.TipoSerieEjb;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.ModelliSerieAbstractAction;
 import it.eng.parer.slite.gen.form.ModelliSerieForm.ModelliTipiSerieDetail;
-import it.eng.parer.slite.gen.tablebean.DecModelloCampoInpUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloCampoInpUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloCampoOutSelUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloCampoOutSelUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloFiltroSelUdattbRowBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloFiltroSelUdattbTableBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloFiltroTiDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloFiltroTiDocTableDescriptor;
-import it.eng.parer.slite.gen.tablebean.DecModelloOutSelUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloOutSelUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloOutSelUdTableDescriptor;
-import it.eng.parer.slite.gen.tablebean.DecModelloTipoSerieRowBean;
-import it.eng.parer.slite.gen.tablebean.DecNotaModelloTipoSerieRowBean;
-import it.eng.parer.slite.gen.tablebean.DecNotaModelloTipoSerieTableBean;
-import it.eng.parer.slite.gen.tablebean.DecUsoModelloTipoSerieRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
+import it.eng.parer.slite.gen.tablebean.*;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.ActionUtils;
 import it.eng.parer.web.util.ComboGetter;
@@ -68,23 +51,21 @@ import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.base.BaseElements.Status;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.ejb.EJB;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.codehaus.jettison.json.JSONObject;
+
+import static it.eng.parer.serie.ejb.SerieEjb.CD_SERIE_PATTERN;
 
 /**
  *
@@ -127,7 +108,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                     || getNavigationEvent().equals(ListAction.NE_NEXT)
                     || getNavigationEvent().equals(ListAction.NE_PREV)) {
                 if (getTableName().equals(getForm().getModelliTipiSerieList().getName())) {
-                    initModelloSerieDetail();
+                    // initModelloSerieDetail();
                     DecModelloTipoSerieRowBean currentRow = (DecModelloTipoSerieRowBean) getForm()
                             .getModelliTipiSerieList().getTable().getCurrentRow();
                     loadDettaglioModello(currentRow.getIdModelloTipoSerie());
@@ -198,6 +179,12 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
         DecModelloTipoSerieRowBean detailRow = modelliSerieEjb
                 .getDecModelloTipoSerieRowBean(idModelloTipoSerie);
         getForm().getModelliTipiSerieDetail().copyFromBean(detailRow);
+
+        // Tipo conservazione: decodeMap per visualizzare il valore, sempre viewMode
+        getForm().getModelliTipiSerieDetail().getTi_conservazione_serie()
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum(
+                        ModelliTipiSerieDetail.ti_conservazione_serie.toLowerCase(),
+                        CostantiDB.TipoConservazioneSerie.values()));
 
         getForm().getModelliTipiSerieDetail().setViewMode();
         getForm().getModelliTipiSerieDetail().setStatus(Status.view);
@@ -314,10 +301,14 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
         ambienteTableBean.sort();
         getForm().getModelliTipiSerieDetail().getId_ambiente().setDecodeMap(
                 DecodeMap.Factory.newInstance(ambienteTableBean, "id_ambiente", "nm_ambiente"));
+        // Tipo conservazione: solo IN_ARCHIVIO per nuovi modelli
         getForm().getModelliTipiSerieDetail().getTi_conservazione_serie()
                 .setDecodeMap(ComboGetter.getMappaSortedGenericEnum(
                         ModelliTipiSerieDetail.ti_conservazione_serie.toLowerCase(),
-                        CostantiDB.TipoConservazioneSerie.values()));
+                        new CostantiDB.TipoConservazioneSerie[] {
+                                CostantiDB.TipoConservazioneSerie.IN_ARCHIVIO }));
+        getForm().getModelliTipiSerieDetail().getTi_conservazione_serie()
+                .setValue(CostantiDB.TipoConservazioneSerie.IN_ARCHIVIO.name());
         getForm().getModelliTipiSerieDetail().getTi_rgl_anni_conserv()
                 .setDecodeMap(ComboGetter.getMappaSortedGenericEnum(
                         ModelliTipiSerieDetail.ti_rgl_anni_conserv.toLowerCase(),
@@ -761,6 +752,8 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
     @Override
     public void updateModelliTipiSerieList() throws EMFError {
         getForm().getModelliTipiSerieDetail().setEditMode();
+        // Tipo conservazione sempre in sola lettura (mostra valore attuale, mai modificabile)
+        getForm().getModelliTipiSerieDetail().getTi_conservazione_serie().setViewMode();
         getForm().getModelliTipiSerieList().setStatus(Status.update);
 
         ActionUtils utile = new ActionUtils();

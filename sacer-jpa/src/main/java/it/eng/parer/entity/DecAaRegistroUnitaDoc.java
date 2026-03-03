@@ -13,6 +13,7 @@
 
 package it.eng.parer.entity;
 
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 import org.hibernate.annotations.GenericGenerator;
@@ -74,6 +76,7 @@ public class DecAaRegistroUnitaDoc implements Serializable {
     @Id
     @Column(name = "ID_AA_REGISTRO_UNITA_DOC")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     @GenericGenerator(name = "SDEC_AA_REGISTRO_UNITA_DOC_ID_AA_REGISTRO_UNITA_DOC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_AA_REGISTRO_UNITA_DOC"),
             @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })

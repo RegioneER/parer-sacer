@@ -13,6 +13,7 @@
 
 package it.eng.parer.entity;
 
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import java.io.Serializable;
 
 import javax.persistence.Cacheable;
@@ -26,6 +27,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 import org.hibernate.annotations.GenericGenerator;
@@ -67,6 +69,7 @@ public class DecCriterioFiltroMultiplo implements Serializable {
 
     @Column(name = "ID_CRITERIO_FILTRO_MULT")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     @GenericGenerator(name = "SDEC_CRITERIO_FILTRO_MULTIPLO_ID_CRITERIO_FILTRO_MULT_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_CRITERIO_FILTRO_MULTIPLO"),
             @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })

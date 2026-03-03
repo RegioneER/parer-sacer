@@ -13,6 +13,7 @@
 
 package it.eng.parer.entity;
 
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 import org.hibernate.annotations.GenericGenerator;
@@ -87,6 +89,7 @@ public class DecAttribDatiSpec implements Serializable {
 
     @Column(name = "ID_ATTRIB_DATI_SPEC")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     @GenericGenerator(name = "SDEC_ATTRIB_DATI_SPEC_ID_ATTRIB_DATI_SPEC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_ATTRIB_DATI_SPEC"),
             @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })

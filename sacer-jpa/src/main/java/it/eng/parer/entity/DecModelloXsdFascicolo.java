@@ -19,10 +19,12 @@ import java.util.List;
 import javax.persistence.*;
 import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd;
 import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiUsoModelloXsd;
+import it.eng.parer.entity.converter.LongToStringAdapter;
 
 import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
 import org.hibernate.annotations.GenericGenerator;
@@ -71,6 +73,7 @@ public class DecModelloXsdFascicolo implements Serializable {
 
     @Column(name = "ID_MODELLO_XSD_FASCICOLO")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     @GenericGenerator(name = "SDEC_MODELLO_XSD_FASCICOLO_ID_MODELLO_XSD_FASCICOLO_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_MODELLO_XSD_FASCICOLO"),
             @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })

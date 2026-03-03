@@ -4984,45 +4984,151 @@ public class SerieEjb {
                                 helper.insertEntity(verSerieDaElab, false);
                                 break;
                             }
-                            logger.debug(SerieEjb.class.getSimpleName()
-                                    + " --- Aggiorna le unit\u00E0 doc appartenenti al contenuto di tipo EFFETTIVO della nuova versione, assegnando stato = AIP_GENERATO, purch\u00E8 tali unit\u00E0 doc non appartengano al contenuto di tipo EFFETTIVO di altra serie con stato = VERSAMENTO_IN_ARCHIVIO o IN_ARCHIVIO o IN_CUSTODIA");
 
                             if (verSerieToUpdate != null) {
-                                // MEV #31162
-                                List<String> statiConservOld = new ArrayList<>();
-                                statiConservOld.add(
-                                        CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO
-                                                .name());
-                                statiConservOld.add(
-                                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
-                                statiConservOld.add(
-                                        CostantiDB.StatoConservazioneUnitaDoc.IN_CUSTODIA.name());
-                                List<Long> idUnitaDocList = helper
-                                        .getStatoConservazioneAroUnitaDocWithoutOtherSeries(idSerie,
-                                                verSerieToUpdate.getIdVerSerie(), statiConservOld);
-                                // end MEV #31162
+                                logger.debug(SerieEjb.class.getSimpleName()
+                                        + " --- Aggiorna lo stato di conservazione delle unit\u00E0 doc appartenenti al contenuto di tipo EFFETTIVO della nuova versione purch\u00E8 tali unit\u00E0 doc non appartengano al contenuto di tipo EFFETTIVO di altra serie o fascicolo, con stato = VERSAMENTO_IN_ARCHIVIO o IN_ARCHIVIO o IN_CUSTODIA");
+                                // *********************************************************************************
+                                // MAC #38538 - GESTIONE STATO UD (Annullamento Serie o
+                                // Aggiornamento Serie)
+                                // Logica Unificata:
+                                // 1. Protezione VERSAMENTO_IN_ARCHIVIO (Fascicolo Elenco Validato /
+                                // Serie PresaCarico+Validata)
+                                // 2. Protezione ARCHIVIO
+                                // 3. Downgrade (Orfani)
+                                // *********************************************************************************
 
-                                helper.updateStatoConservazioneAroUnitaDocWithoutOtherSeries(
-                                        idSerie, verSerieToUpdate.getIdVerSerie(),
-                                        CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
-                                        Arrays.asList(
-                                                CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO
-                                                        .name(),
-                                                CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO
-                                                        .name(),
-                                                CostantiDB.StatoConservazioneUnitaDoc.IN_CUSTODIA
-                                                        .name()));
+                                if (azione.equals(AZIONE_SERIE_ANNULLATA)
+                                        || azione.equals(AZIONE_SERIE_AGGIORNA)) {
 
-                                // MEV #31162
-                                IamUser utente = helper.findById(IamUser.class, idUser);
-                                for (Long idUnitaDoc : idUnitaDocList) {
-                                    udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
-                                            Constants.CAMBIA_STATO_SERIE_ANNUL,
-                                            CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO
+                                    long idSerieLong = idSerie.longValue();
+                                    IamUser utente = helper.findById(IamUser.class, idUser);
+
+                                    // Log constant
+                                    String tipoEventoLog = Constants.CAMBIA_STATO_SERIE_ANNUL;
+
+                                    // Stati interessati (ignoriamo WIP)
+                                    List<String> statiPartenzaInteresse = Arrays.asList(
+                                            CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO
                                                     .name(),
-                                            Constants.FUNZIONALITA_ONLINE);
+                                            CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO
+                                                    .name());
+
+                                    // -----------------------------------------------------------------------------------------
+                                    // FASE 1: Verifico la possibilità di settare lo stato di
+                                    // conservazione delle ud a VERSAMENTO_IN_ARCHIVIO
+                                    // Vince se esiste un'aggregazione "superstite" con determinate
+                                    // caratteristiche
+                                    // -----------------------------------------------------------------------------------------
+                                    List<Long> idsToVersamentoInArchivio = helper
+                                            .findUdTargetVersamentoInArchivioSerie(idSerieLong,
+                                                    statiPartenzaInteresse);
+
+                                    if (!idsToVersamentoInArchivio.isEmpty()) {
+                                        logger.debug("Aggiornamento/Annullamento Serie FASE 1: "
+                                                + idsToVersamentoInArchivio.size()
+                                                + " UD mantengono/assumono stato di conservazione VERSAMENTO_IN_ARCHIVIO ");
+
+                                        // Update Massivo
+                                        helper.updateStatoUdMassivo(idsToVersamentoInArchivio,
+                                                CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO
+                                                        .name());
+
+                                        // log
+                                        for (Long idUd : idsToVersamentoInArchivio) {
+                                            udEjb.insertLogStatoConservUd(idUd,
+                                                    utente.getNmUserid(), tipoEventoLog,
+                                                    CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO
+                                                            .name(),
+                                                    Constants.FUNZIONALITA_ONLINE);
+                                        }
+                                    }
+
+                                    // -----------------------------------------------------------------------------------------
+                                    // FASE 2: Gestisco la possibilità di settare lo stato di
+                                    // conservazione delle ud a IN_ARCHIVIO
+                                    // Vince se NON ricade in Fase 1, ma esiste un'altra
+                                    // aggregazione IN_ARCHIVIO
+                                    // -----------------------------------------------------------------------------------------
+                                    // NB: viene passata la lista degli ID già gestiti in Fase 1 per
+                                    // escluderli
+                                    List<Long> idsToInArchivio = helper.findUdTargetInArchivioSerie(
+                                            idSerieLong, statiPartenzaInteresse,
+                                            idsToVersamentoInArchivio);
+
+                                    if (!idsToInArchivio.isEmpty()) {
+                                        logger.debug("Aggiornamento/Annullamento Serie FASE 2: "
+                                                + idsToInArchivio.size()
+                                                + " UD assumono stato di conservazione IN_ARCHIVIO");
+
+                                        helper.updateStatoUdMassivo(idsToInArchivio,
+                                                CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO
+                                                        .name());
+
+                                        for (Long idUd : idsToInArchivio) {
+                                            udEjb.insertLogStatoConservUd(idUd,
+                                                    utente.getNmUserid(), tipoEventoLog,
+                                                    CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO
+                                                            .name(),
+                                                    Constants.FUNZIONALITA_ONLINE);
+                                        }
+                                    }
+
+                                    // -----------------------------------------------------------------------------------------
+                                    // FASE 3: Downgrade (orfani)
+                                    // Non soddisfano né Fase 1 né Fase 2.
+                                    // -----------------------------------------------------------------------------------------
+                                    // Vengono unite le liste degli ID già gestiti per escluderli
+                                    // tutti
+                                    List<Long> idsGestiti = new ArrayList<>();
+                                    if (idsToVersamentoInArchivio != null)
+                                        idsGestiti.addAll(idsToVersamentoInArchivio);
+                                    if (idsToInArchivio != null)
+                                        idsGestiti.addAll(idsToInArchivio);
+
+                                    // 3a. Downgrade a AIP_FIRMATO (se c'è firma)
+                                    List<Long> idsToAipFirmato = helper.findUdTargetDowngradeSerie(
+                                            idSerieLong, statiPartenzaInteresse, idsGestiti, true);
+                                    if (!idsToAipFirmato.isEmpty()) {
+                                        logger.debug("Aggiornamento/Annullamento Serie FASE 3a: "
+                                                + idsToAipFirmato.size()
+                                                + " UD degradano a stato di conservazione AIP_FIRMATO");
+
+                                        helper.updateStatoUdMassivo(idsToAipFirmato,
+                                                CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO
+                                                        .name());
+
+                                        for (Long idUd : idsToAipFirmato) {
+                                            udEjb.insertLogStatoConservUd(idUd,
+                                                    utente.getNmUserid(), tipoEventoLog,
+                                                    CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO
+                                                            .name(),
+                                                    Constants.FUNZIONALITA_ONLINE);
+                                        }
+                                    }
+
+                                    // 3b. Downgrade a AIP_GENERATO (se no firma)
+                                    List<Long> idsToAipGenerato = helper.findUdTargetDowngradeSerie(
+                                            idSerieLong, statiPartenzaInteresse, idsGestiti, false);
+                                    if (!idsToAipGenerato.isEmpty()) {
+                                        logger.debug("Aggiornamento/Annullamento Serie FASE 3a: "
+                                                + idsToAipGenerato.size()
+                                                + " UD degradano a stato di conservazione AIP_GENERATO");
+
+                                        helper.updateStatoUdMassivo(idsToAipGenerato,
+                                                CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO
+                                                        .name());
+
+                                        for (Long idUd : idsToAipGenerato) {
+                                            udEjb.insertLogStatoConservUd(idUd,
+                                                    utente.getNmUserid(), tipoEventoLog,
+                                                    CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO
+                                                            .name(),
+                                                    Constants.FUNZIONALITA_ONLINE);
+                                        }
+                                    }
                                 }
-                                // end MEV #31162
+                                // end MAC #38537
                             }
                         }
                     } else {
@@ -6277,191 +6383,6 @@ public class SerieEjb {
                     CostantiDB.StatoVersioneSerieDaElab.FIRMATA_NO_MARCA.name());
         }
     }
-
-    // public int marcaturaIndici(long idUtente) throws ParerUserError {
-    // /* Recupero la lista di tutte le versione serie con stato FIRMATO_NO_MARCA appartenente a
-    // qualunque struttura */
-    // byte[] marcaTemporale;
-    // List<SerVerSerieDaElab> verSerieDaMarcareList = helper.getSerVerSerieDaElab(null,
-    // CostantiDB.StatoVersioneSerieDaElab.FIRMATA_NO_MARCA.name());
-    // /* Per ogni versione serie su cui acquisire la marca temporale per la firma */
-    // int signed = 0;
-    // for (SerVerSerieDaElab verSerieDaMarcare : verSerieDaMarcareList) {
-    // /* Recupero il file originale */
-    // byte[] fileVerSerieOriginale =
-    // helper.retrieveFileVerSerie(verSerieDaMarcare.getSerVerSerie(),
-    // CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO.name());
-    // try {
-    // /*
-    // * Il metodo marcaFirma deve essere eseguito in modo atomico (in una nuova transazione
-    // REQUIRES_NEW).
-    // * Per fare cio' devo passare nuovamente dal container quindi utilizzo getBusinessObject per
-    // ottenere un
-    // * nuovo riferimento a SerieEjb
-    // */
-    // SerieEjb serieEjb1 = context.getBusinessObject(SerieEjb.class);
-    // BigDecimal idStrut = verSerieDaMarcare.getIdStrut();
-    // it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma = amministrazioneEjb
-    // .getTipoFirmaPerStruttura(idStrut);
-    // marcaTemporale = serieEjb1.marcaFirma(verSerieDaMarcare.getSerVerSerie().getIdVerSerie(),
-    // fileVerSerieOriginale, verSerieDaMarcareList.size(), idUtente, tipoFirma);
-    // } catch (Exception ex) {
-    // throw new ParerUserError("Errore nella marcatura di una versione serie: marcate " + signed +
-    // " su "
-    // + verSerieDaMarcareList.size());
-    // }
-    //
-    // if (marcaTemporale != null) {
-    // signed++;
-    // } else {
-    // /* Problema nell'acquisizione della marcatura temporale */
-    // throw new ParerUserError("Errore durante l'acquisizione della marca temporale");
-    // }
-    // }
-    // return signed;
-    // }
-
-    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    // public byte[] marcaFirma(long idVerSerie, byte[] fileVerSerie, int serieSize, long idUtente,
-    // ElencoEnums.TipoFirma tipoFirma) throws Exception {
-    // // TimeStampToken tsToken = null;
-    // ParerTST tsToken = null;
-    // byte[] marcaTemporale = null;
-    // /*
-    // * Devo recuperare la serie dal suo id e non utilizzare direttamente l'oggetto perché siamo in
-    // una nuova
-    // * transazione e utilizzando l'oggetto passato in input non avrei il riferimento agli oggetti
-    // figli (la versione
-    // * serie sarebbe detached e non avrei piu il collegamento al db).
-    // */
-    // SerVerSerieDaElab verSerieDaElab = helper.getSerVerSerieDaElabByIdVerSerie(idVerSerie);
-    // List<AroUdAppartVerSerie> udAppartVerSerieList =
-    // helper.getLockAroUdAppartVerSerie(idVerSerie,
-    // CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
-    // /* Richiedo la marca per il file firmato */
-    // tsToken = cryptoInvoker.requestTST(fileVerSerie);
-    // marcaTemporale = tsToken.getEncoded();
-    // /* Verifico l'avvenuta acquisizione della marcatura temporale */
-    // if (marcaTemporale != null) {
-    // logger.info("Marca temporale valida");
-    //
-    // /* Urn marca */
-    // String versioneSerie = verSerieDaElab.getSerVerSerie().getCdVerSerie();
-    // final String sistema = configurationHelper
-    // .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
-    // CSVersatore csVersatore = new CSVersatore();
-    // csVersatore.setAmbiente(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getOrgEnte()
-    // .getOrgAmbiente().getNmAmbiente());
-    // csVersatore.setEnte(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getOrgEnte().getNmEnte());
-    // csVersatore.setStruttura(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getNmStrut());
-    // // sistema (new URN)
-    // csVersatore.setSistemaConservazione(sistema);
-    // String codiceSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getCdCompositoSerie();
-    // String cdVerXsdFile =
-    // verSerieDaElab.getSerVerSerie().getSerFileVerSeries().get(0).getCdVerXsdFile();
-    //
-    // // MEV#30400
-    //
-    // BackendStorage backendIndiciAip = objectStorageService.lookupBackendIndiciAipSerieUD(
-    // verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getIdStrut());
-    //
-    // boolean putOnOs = true;
-    // if
-    // (objectStorageService.isSerFileVerSerieUDOnOs(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
-    // CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name())) {
-    // String md5LocalContent = calculateMd5AsBase64(new String(marcaTemporale,
-    // StandardCharsets.UTF_8));
-    // String eTagFromObjectMetadata = objectStorageService
-    // .getObjectMetadataIndiceAipSerieUD(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
-    // CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name())
-    // .eTag();
-    //
-    // if (md5LocalContent.equals(eTagFromObjectMetadata)) {
-    // putOnOs = false;
-    // }
-    // }
-    //
-    // /* Registra nella tabella SER_FILE_VER_SERIE la marca */
-    // SerFileVerSerie serFileVerSerie = helper.storeFileIntoSerFileVerSerie(idVerSerie,
-    // CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name(), marcaTemporale, cdVerXsdFile,
-    // verSerieDaElab.getIdStrut(), new Date(), putOnOs, tipoFirma);
-    //
-    // // EVO#16492
-    // /* Calcolo e persisto urn dell'indice AIP marcato della serie */
-    // helper.storeSerUrnFileVerSerieMarca(serFileVerSerie, csVersatore, codiceSerie,
-    // versioneSerie);
-    // // end EVO#16492
-    //
-    // ObjectStorageResource indiceAipSuOS;
-    //
-    // if (putOnOs) {
-    // indiceAipSuOS = objectStorageService.createResourcesInIndiciAipSerieUD(serFileVerSerie,
-    // backendIndiciAip.getBackendName(), marcaTemporale,
-    // verSerieDaElab.getSerVerSerie().getIdVerSerie(), verSerieDaElab.getIdStrut(), csVersatore,
-    // codiceSerie, versioneSerie);
-    // logger.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
-    // }
-    //
-    // // end MEV#30400
-    //
-    // /* Registra il nuovo stato di versione della serie */
-    // SerStatoVerSerie statoVerSerie =
-    // context.getBusinessObject(SerieEjb.class).createSerStatoVerSerie(
-    // ciasudHelper.getUltimoProgressivoSerStatoVerSerie(idVerSerie).add(BigDecimal.ONE),
-    // CostantiDB.StatoVersioneSerie.FIRMATA.name(), "Apposizione marca indice AIP serie", null,
-    // idUtente,
-    // new Date(), idVerSerie);
-    //
-    // /* Aggiorna l'identificatore dello stato corrente della versione della serie */
-    // helper.insertEntity(statoVerSerie, false);
-    // verSerieDaElab.getSerVerSerie().setIdStatoVerSerieCor(new
-    // BigDecimal(statoVerSerie.getIdStatoVerSerie()));
-    //
-    // /* Registra un nuovo stato della serie */
-    // long idSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getIdSerie();
-    // SerStatoSerie statoSerie = context.getBusinessObject(SerieEjb.class).createSerStatoSerie(
-    // ciasudHelper.getUltimoProgressivoSerStatoSerie(idSerie).add(BigDecimal.ONE),
-    // CostantiDB.StatoConservazioneSerie.IN_ARCHIVIO.name(), "Firma e marcatura indice AIP serie",
-    // null,
-    // idUtente, new Date(), idSerie);
-    //
-    // /* Aggiorna l'identificatore dello stato corrente della serie */
-    // helper.insertEntity(statoSerie, false);
-    // verSerieDaElab.getSerVerSerie().getSerSerie()
-    // .setIdStatoSerieCor(new BigDecimal(statoSerie.getIdStatoSerie()));
-    //
-    // /* Aggiorna la versione serie da elaborare in FIRMATA */
-    // verSerieDaElab.setTiStatoVerSerie(CostantiDB.StatoVersioneSerie.FIRMATA.name());
-    //
-    // /*
-    // * Aggiorna tutte le unit doc appartenenti al contenuto di tipo EFFETTIVO della versione serie
-    // con stato =
-    // * AIP_GENERATO, assegnando stato conservazione = IN_ARCHIVIO
-    // */
-    // SerContenutoVerSerie contenutoVerSerie = helper.getSerContenutoVerSerie(idVerSerie,
-    // CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
-    //
-    // // MEV #31162
-    // List<Long> idUnitaDocList = helper.getStatoConservazioneAroUnitaDocInContenuto(
-    // contenutoVerSerie.getIdContenutoVerSerie(),
-    // CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
-    // // end MEV #31162
-    //
-    // helper.updateStatoConservazioneAroUnitaDocInContenuto(contenutoVerSerie.getIdContenutoVerSerie(),
-    // CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
-    // CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
-    //
-    // // MEV #31162
-    // IamUser utente = helper.findById(IamUser.class, idUtente);
-    // for (Long idUnitaDoc : idUnitaDocList) {
-    // udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(), Constants.MARCA_FIRMA_SERIE,
-    // CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name(), Constants.FUNZIONALITA_ONLINE);
-    // }
-    // // end MEV #31162
-    //
-    // }
-    // return marcaTemporale;
-    // }
 
     // MEV#30400
     private String calculateMd5AsBase64(String str) {

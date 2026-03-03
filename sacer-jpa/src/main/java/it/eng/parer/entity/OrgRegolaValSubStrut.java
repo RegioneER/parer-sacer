@@ -13,6 +13,7 @@
 
 package it.eng.parer.entity;
 
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,6 +34,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 import org.hibernate.annotations.GenericGenerator;
@@ -68,6 +70,7 @@ public class OrgRegolaValSubStrut implements Serializable {
 
     @Column(name = "ID_REGOLA_VAL_SUB_STRUT")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     @GenericGenerator(name = "SORG_REGOLA_VAL_SUB_STRUT_ID_REGOLA_VAL_SUB_STRUT_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_REGOLA_VAL_SUB_STRUT"),
             @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })

@@ -13,6 +13,7 @@
 
 package it.eng.parer.entity;
 
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -26,6 +27,7 @@ import javax.persistence.ManyToOne;
 
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 import org.hibernate.annotations.GenericGenerator;
@@ -61,6 +63,7 @@ public class OrgCampoValSubStrut implements Serializable {
 
     @Column(name = "ID_CAMPO_VAL_SUB_STRUT")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     @GenericGenerator(name = "SORG_CAMPO_VAL_SUB_STRUT_ID_CAMPO_VAL_SUB_STRUT_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_CAMPO_VAL_SUB_STRUT"),
             @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })

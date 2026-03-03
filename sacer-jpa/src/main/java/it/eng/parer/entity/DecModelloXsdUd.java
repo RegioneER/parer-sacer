@@ -40,8 +40,10 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
 import it.eng.parer.entity.constraint.DecModelloXsdUd.TiModelloXsdUd;
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 
 /**
@@ -79,6 +81,7 @@ public class DecModelloXsdUd implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DEC_MODELLO_XSD_UD_IDMODELLOXSDUD_GENERATOR")
     @Column(name = "ID_MODELLO_XSD_UD")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     public Long getIdModelloXsdUd() {
         return this.idModelloXsdUd;
     }

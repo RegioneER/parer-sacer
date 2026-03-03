@@ -262,6 +262,15 @@ public class SerieUDAction extends SerieUDAbstractAction {
                 if (!getMessageBox().hasError()) {
                     if (idTipoSerie != null) {
                         DecTipoSerieRowBean row = tipoSerieEjb.getDecTipoSerieRowBean(idTipoSerie);
+
+                        // Warning per serie create da tipi serie con conservazione FISCALE
+                        if (row.getTiConservazioneSerie() != null && row.getTiConservazioneSerie()
+                                .equals(CostantiDB.TipoConservazioneSerie.FISCALE.name())) {
+                            getMessageBox().addWarning(
+                                    "Il tipo di serie selezionato ha conservazione FISCALE. "
+                                            + "L'indice AIP della serie non sar\u00E0 marcato temporalmente.");
+                        }
+
                         String dsListaAnniSelSerie = getForm().getCreazioneSerie()
                                 .getDs_lista_anni_sel_serie().parse();
                         serieEjb.checkDecTipoSerieUd(idTipoSerie);

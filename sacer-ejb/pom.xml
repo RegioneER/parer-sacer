@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.15.1-SNAPSHOT</version>
+        <version>10.16.0</version>
     </parent>
 
     <artifactId>sacer-jboss-ejb</artifactId>
@@ -83,6 +83,12 @@
         <dependency>
             <groupId>it.eng.parer</groupId>
             <artifactId>spagofat-middle</artifactId>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-api</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>

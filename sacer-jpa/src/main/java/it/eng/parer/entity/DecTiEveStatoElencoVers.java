@@ -13,6 +13,7 @@
 
 package it.eng.parer.entity;
 
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -24,6 +25,7 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * The persistent class for the DEC_TI_EVE_STATO_ELENCO_VERS database table.
@@ -48,6 +50,7 @@ public class DecTiEveStatoElencoVers implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DEC_TI_EVE_STATO_ELENCO_VERS_IDTIEVESTATOELENCOVERS_GENERATOR")
     @Column(name = "ID_TI_EVE_STATO_ELENCO_VERS")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     public long getIdTiEveStatoElencoVers() {
         return this.idTiEveStatoElencoVers;
     }

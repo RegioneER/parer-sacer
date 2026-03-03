@@ -843,7 +843,7 @@
     </Fields>
     
     <List Name="DocumentiAnnullatiList" Description="Lista Documenti" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
-        <Link Name="unitaDoc"  Tooltip="Dettaglio unità documentaria" Description="" Type="STRING" Target="UnitaDocumentariaList" />
+        <!--<Link Name="unitaDoc"  Tooltip="Dettaglio unità documentaria" Description="" Type="STRING" Target="UnitaDocumentariaList" />-->
         <Input  Type="STRING" Description="Struttura" Name="nm_strut"/>
         <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
         <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>

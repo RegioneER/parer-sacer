@@ -13,6 +13,7 @@
 
 package it.eng.parer.entity;
 
+import it.eng.parer.entity.converter.LongToStringAdapter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -29,6 +30,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * The persistent class for the DEC_ATTRIB_FASCICOLO database table.
@@ -61,6 +63,7 @@ public class DecAttribFascicolo implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DEC_ATTRIB_FASCICOLO_IDATTRIBFASCICOLO_GENERATOR")
     @Column(name = "ID_ATTRIB_FASCICOLO")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     public Long getIdAttribFascicolo() {
         return this.idAttribFascicolo;
     }

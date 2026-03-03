@@ -943,8 +943,7 @@ public class ComponentiHelper extends GenericHelper {
                 + "on (contr_CRL.id_firma_comp = firma.id_firma_comp "
                 + "and contr_CRL.ti_contr = 'CRL') " + "join FIR_CRL crl "
                 + "on (crl.id_crl = contr_CRL.id_crl_usata) " + "join FIR_CERTIF_CA cert "
-                + "on (cert.id_certif_ca = crl.id_certif_ca) " + "join FIR_ISSUER issuer "
-                + "on (issuer.id_issuer = cert.id_issuer) " + "where vol.id_volume_conserv = ? "
+                + "on (cert.id_certif_ca = crl.id_certif_ca) " + "where vol.id_volume_conserv = ? "
                 + "UNION " + "select distinct " + "crl.id_crl nomeFileCRL "
                 + "from VOL_VOLUME_CONSERV vol " + "join VOL_APPART_UNITA_DOC_VOLUME app_ud "
                 + "on (app_ud.id_volume_conserv = vol.id_volume_conserv) "
@@ -960,7 +959,6 @@ public class ComponentiHelper extends GenericHelper {
                 + "on (uso_cert.id_contr_firma_comp = contr_CATENA.id_contr_firma_comp) "
                 + "join FIR_CRL crl " + "on (crl.id_crl = uso_cert.id_crl_usata) "
                 + "join FIR_CERTIF_CA cert " + "on (cert.id_certif_ca = crl.id_certif_ca) "
-                + "join FIR_ISSUER issuer " + "on (issuer.id_issuer = cert.id_issuer) "
                 + "where vol.id_volume_conserv = ? ";
 
         Query q = getEntityManager().createNativeQuery(SELECT_LISTA_CRL);
@@ -994,7 +992,6 @@ public class ComponentiHelper extends GenericHelper {
                 + "join ARO_USO_CERTIF_CA_CONTR_COMP uso_cert "
                 + "on (uso_cert.id_contr_firma_comp = contr_CATENA.id_contr_firma_comp) "
                 + "join FIR_CERTIF_CA cert " + "on (cert.id_certif_ca = uso_cert.id_certif_ca) "
-                + "join FIR_ISSUER issuer " + "on (issuer.id_issuer = cert.id_issuer) "
                 + "where vol.id_volume_conserv = ? ";
 
         Query q = getEntityManager().createNativeQuery(SELECT_LISTA_CERTIFICATI_CA);

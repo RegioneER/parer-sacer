@@ -44,6 +44,8 @@ import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
 import it.eng.parer.entity.constraint.ElvElencoVer.TiModValidElenco;
 import it.eng.parer.entity.constraint.ElvElencoVer.TiValidElenco;
+import it.eng.parer.entity.converter.LongToStringAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * The persistent class for the ELV_ELENCO_VERS database table.
@@ -161,6 +163,7 @@ public class ElvElencoVer implements Serializable {
 
     @Column(name = "ID_ELENCO_VERS")
     @XmlID
+    @XmlJavaTypeAdapter(LongToStringAdapter.class)
     @GenericGenerator(name = "SELV_ELENCO_VERS_ID_ELENCO_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_ELENCO_VERS"),
             @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })

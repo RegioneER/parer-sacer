@@ -992,9 +992,8 @@ public class AnnulVersHelper extends GenericHelper {
                         + "WHERE richAnnulVers_2.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers_2.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
                         + "AND itemRichAnnulVers_2.fasFascicolo != fasc_2 AND ud_2.idUnitaDoc = ud.idUnitaDoc "
                         + "AND fasc_2.dtAnnull = :defaultAnnull) "
-                        + "AND EXISTS (SELECT eleDaElab FROM ElvElencoVersDaElab eleDaElab "
-                        + "JOIN eleDaElab.elvElencoVer elenco "
-                        + "WHERE elenco = ud.elvElencoVer)");
+                        + "AND NOT EXISTS (SELECT fileElencoVer FROM ElvFileElencoVer fileElencoVer "
+                        + "WHERE fileElencoVer.elvElencoVer = ud.elvElencoVer AND fileElencoVer.tiFileElencoVers = 'FIRMA_ELENCO_INDICI_AIP')");
         query.setParameter("idRichAnnulVers", idRichAnnulVers);
         query.setParameter("statiUdExcluded", statiUdExcluded);
 
@@ -1028,9 +1027,8 @@ public class AnnulVersHelper extends GenericHelper {
                         + "WHERE richAnnulVers_2.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers_2.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
                         + "AND itemRichAnnulVers_2.fasFascicolo != fasc_2 AND ud_2.idUnitaDoc = ud.idUnitaDoc "
                         + "AND fasc_2.dtAnnull = :defaultAnnull )"
-                        + "AND NOT EXISTS (SELECT eleDaElab FROM ElvElencoVersDaElab eleDaElab "
-                        + "JOIN eleDaElab.elvElencoVer elenco "
-                        + "WHERE elenco = ud.elvElencoVer)");
+                        + "AND EXISTS (SELECT fileElencoVer FROM ElvFileElencoVer fileElencoVer "
+                        + "WHERE fileElencoVer.elvElencoVer = ud.elvElencoVer AND fileElencoVer.tiFileElencoVers = 'FIRMA_ELENCO_INDICI_AIP')");
         query.setParameter("idRichAnnulVers", idRichAnnulVers);
         query.setParameter("statiUdExcluded", statiUdExcluded);
 
@@ -1050,25 +1048,84 @@ public class AnnulVersHelper extends GenericHelper {
     // end MAC#22156
 
     // MEV #31162
-    public List<Long> getAroUnitaDocWithoutOtherFascicolos(long idRichAnnulVers,
+    public List<Long> getAroUnitaDocWithoutOtherAggregazioni(long idRichAnnulVers,
             List<String> statiUdExcluded, String clause) {
         Query query = getEntityManager().createQuery("SELECT ud.idUnitaDoc FROM AroUnitaDoc ud "
                 + "WHERE ud.tiStatoConservazione IN :statiUdExcluded AND "
+                // 1) l'ud sia presente nel fascicolo oggetto di annullamento
                 + "EXISTS (SELECT udFasc_1 FROM AroItemRichAnnulVers itemRichAnnulVers_1, FasUnitaDocFascicolo udFasc_1 "
                 + "JOIN itemRichAnnulVers_1.aroRichAnnulVers richAnnulVers_1 "
                 + "JOIN udFasc_1.fasFascicolo fasc_1 " + "JOIN udFasc_1.aroUnitaDoc ud_1 "
                 + "WHERE richAnnulVers_1.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers_1.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
                 + "AND itemRichAnnulVers_1.fasFascicolo = fasc_1 AND ud_1 = ud ) "
+                // 2) l'ud non appartenga ad altri fascicoli NON ANNULLATI
                 + "AND NOT EXISTS (SELECT udFasc_2 FROM AroItemRichAnnulVers itemRichAnnulVers_2, FasUnitaDocFascicolo udFasc_2 "
                 + "JOIN itemRichAnnulVers_2.aroRichAnnulVers richAnnulVers_2 "
                 + "JOIN udFasc_2.fasFascicolo fasc_2 " + "JOIN udFasc_2.aroUnitaDoc ud_2 "
                 + "WHERE richAnnulVers_2.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers_2.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
                 + "AND itemRichAnnulVers_2.fasFascicolo != fasc_2 AND ud_2.idUnitaDoc = ud.idUnitaDoc "
-                + "AND fasc_2.dtAnnull = :defaultAnnull) " + "AND " + clause
-                + " EXISTS (SELECT eleDaElab FROM ElvElencoVersDaElab eleDaElab "
-                + "JOIN eleDaElab.elvElencoVer elenco " + "WHERE elenco = ud.elvElencoVer)");
+                + "AND fasc_2.dtAnnull = :defaultAnnull) "
+                // 3) l'ud non appartenga ad altre serie NON ANNULLATE
+                + "AND NOT EXISTS (SELECT udVerSerie FROM AroUdAppartVerSerie udVerSerie "
+                + "JOIN udVerSerie.serContenutoVerSerie contenuto "
+                + "JOIN contenuto.serVerSerie verSerie " + "JOIN verSerie.serSerie serie "
+                + "WHERE udVerSerie.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc "
+                + "AND contenuto.tiContenutoVerSerie = 'EFFETTIVO' "
+                + "AND serie.dtAnnul = :defaultAnnul ) "
+                // 4) controllo se è stato creato o meno l'elenco indici aip firmato
+                + "AND " + clause
+                + " EXISTS (SELECT fileElencoVer FROM ElvFileElencoVer fileElencoVer "
+                + "WHERE fileElencoVer.elvElencoVer = ud.elvElencoVer AND fileElencoVer.tiFileElencoVers = 'FIRMA_ELENCO_INDICI_AIP')");
         query.setParameter("idRichAnnulVers", idRichAnnulVers);
         query.setParameter("statiUdExcluded", statiUdExcluded);
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        c.set(Calendar.YEAR, 2444);
+        c.set(Calendar.MONTH, Calendar.DECEMBER);
+        c.set(Calendar.DATE, 31);
+
+        query.setParameter("defaultAnnull", c.getTime());
+
+        return query.getResultList();
+    }
+
+    public List<Long> getAroUnitaDocBackToInArchivio(long idRichAnnulVers) {
+        Query query = getEntityManager().createQuery("SELECT ud.idUnitaDoc FROM AroUnitaDoc ud "
+                + "WHERE ud.tiStatoConservazione = 'VERSAMENTO_IN_ARCHIVIO' "
+                // 1) l'ud sia presente nel fascicolo oggetto di annullamento
+                + "AND EXISTS (SELECT udFasc_1 FROM AroItemRichAnnulVers itemRichAnnulVers_1, FasUnitaDocFascicolo udFasc_1 "
+                + "JOIN itemRichAnnulVers_1.aroRichAnnulVers richAnnulVers_1 "
+                + "JOIN udFasc_1.fasFascicolo fasc_1 " + "JOIN udFasc_1.aroUnitaDoc ud_1 "
+                + "WHERE richAnnulVers_1.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers_1.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
+                + "AND itemRichAnnulVers_1.fasFascicolo = fasc_1 AND ud_1 = ud ) "
+                // 2) deve essere soddisfatta almeno una delle seguenti dipendenze esterne (A o B)
+                + "AND ( "
+                // (A) L'UD appartiene a un ALTRO fascicolo il cui elenco è stato firmato
+                + "EXISTS (SELECT fileFasc FROM FasUnitaDocFascicolo udfOther "
+                + "JOIN udfOther.fasFascicolo fascOther "
+                + "JOIN fascOther.elvElencoVersFasc elencoFascOther "
+                + "JOIN elencoFascOther.elvFileElencoVersFasc fileFasc "
+                + "WHERE udfOther.aroUnitaDoc = ud "
+                + "AND fileFasc.tiFileElencoVers = 'FIRMA_ELENCO_INDICI_AIP' "
+                // escludendo il fascicolo che fa parte della richiesta di annullamento corrente
+                + "AND fascOther.idFascicolo NOT IN ( "
+                + "SELECT itemFasc.fasFascicolo.idFascicolo FROM AroItemRichAnnulVers itemFasc "
+                + "WHERE itemFasc.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers )) " + "OR "
+                // (B) L'UD appartiene a una SERIE la cui ULTIMA versione ha l'indice AIP firmato
+                + "EXISTS ( " + "SELECT fileSerie FROM AroUdAppartVerSerie appart "
+                + "JOIN appart.serContenutoVerSerie contenuto "
+                + "JOIN contenuto.serVerSerie verSerie "
+                + "JOIN verSerie.serFileVerSeries fileSerie " + "WHERE appart.aroUnitaDoc = ud "
+                + "AND contenuto.tiContenutoVerSerie = 'EFFETTIVO' "
+                + "AND fileSerie.tiFileVerSerie = 'IX_AIP_UNISINCRO_FIRMATO' "
+                // controlla solo l'ULTIMA versione della serie
+                + "AND verSerie.pgVerSerie = (SELECT MAX(vs2.pgVerSerie) FROM SerVerSerie vs2 WHERE vs2.serSerie = verSerie.serSerie)))");
+
+        query.setParameter("idRichAnnulVers", idRichAnnulVers);
 
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, 0);
@@ -1104,4 +1161,200 @@ public class AnnulVersHelper extends GenericHelper {
         query.setParameter("tiXmlRichAnnulVers", tiXmlRichAnnulVers.name());
         return (String) query.getSingleResult();
     }
+
+    // MAC #38537
+    /**
+     * Esegue l'update massivo dello stato di conservazione per una lista di UD.
+     *
+     * @param ids        lista id unità doc
+     * @param nuovoStato nuovo stato di conservazione assunto dalle ud
+     * @return numero di ud cui è stato aggiornato lo stato di conservazione
+     */
+    public int updateStatoUdMassivo(List<Long> ids, String nuovoStato) {
+        if (ids == null || ids.isEmpty())
+            return 0;
+        Query query = getEntityManager()
+                .createQuery("UPDATE AroUnitaDoc ud SET ud.tiStatoConservazione = :nuovoStato "
+                        + "WHERE ud.idUnitaDoc IN :ids");
+        query.setParameter("nuovoStato", nuovoStato);
+        query.setParameter("ids", ids);
+        return query.executeUpdate();
+    }
+
+    /**
+     * Restituisce la data di annullamento che significa che l'entità non è annullata (31/12/2444).
+     */
+    private Date getDefaultAnnullDate() {
+        Calendar c = Calendar.getInstance();
+        c.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c.getTime();
+    }
+
+    /**
+     * Recupera le UD che soddisfano una delle seguenti condizioni per il passaggio a
+     * VERSAMENTO_IN_ARCHIVIO per la FASE 1
+     *
+     * 1. Appartengono ad un'altra aggregazione di tipo Fascicolo in stato IN_ELENCO_VALIDATO le cui
+     * ud sono tutte in stato di conservazione VERSAMENTO_IN_ARCHIVIO 2. Appartengono ad un'altra
+     * aggregazione di tipo Serie esterna PRESA_IN_CARICO + Versione VALIDATA.
+     *
+     * @param idRichAnnulVers la richiesta che contiene l'annullamento fascicoli
+     * @param statiPartenza   stati di conservazione delle ud da considerare (saranno
+     *                        VERSAMENTO_IN_ARCHIVIO e IN_ARCHIVIO)
+     * @return lista delle id unita doc che soddisfano le condizioni per il passaggio/mantenimento
+     *         dello stato di conservazione VERSAMENTO_IN_ARCHIVIO
+     */
+    public List<Long> findUdTargetVersamentoInArchivio(long idRichAnnulVers,
+            List<String> statiPartenza) {
+        String hql = "SELECT DISTINCT ud.idUnitaDoc FROM AroUnitaDoc ud "
+                + "WHERE EXISTS (SELECT 1 FROM AroItemRichAnnulVers item "
+                + "   JOIN item.fasFascicolo fasc JOIN fasc.fasUnitaDocFascicolos udf "
+                + "   WHERE item.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers "
+                + "   AND item.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
+                + "   AND udf.aroUnitaDoc = ud) "
+
+                // Filtro stati partenza delle ud
+                + "AND ud.tiStatoConservazione IN :statiPartenza "
+
+                + "AND ("
+                // CONDIZIONE A: FASCICOLO
+                + "   EXISTS (SELECT 1 FROM FasUnitaDocFascicolo udfExt "
+                + "      JOIN udfExt.fasFascicolo fExt " + "      WHERE udfExt.aroUnitaDoc = ud "
+                + "      AND fExt.dtAnnull = :defaultAnnull "
+                // Escludo il fascicolo oggetto di annullamento
+                + "      AND fExt.idFascicolo NOT IN (SELECT i.fasFascicolo.idFascicolo FROM AroItemRichAnnulVers i WHERE i.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers) "
+                // Controllo che lo stato del fascicolo sia IN_ELENCO_VALIDATO
+                + "      AND fExt.tiStatoFascElencoVers = 'IN_ELENCO_VALIDATO' "
+                // Controllo che tutte le UD delle altre aggregazioni di tipo fascicolo siano in
+                // stato di conservazione VERSAMENTO_IN_ARCHIVIO (in pratica NON esistono diverse da
+                // VERSAMENTO_IN_ARCHIVIO)
+                + "      AND NOT EXISTS (SELECT 1 FROM FasUnitaDocFascicolo subUdf "
+                + "                      JOIN subUdf.aroUnitaDoc subUd "
+                + "                      WHERE subUdf.fasFascicolo = fExt "
+                + "                      AND subUd.tiStatoConservazione != 'VERSAMENTO_IN_ARCHIVIO') "
+                + "   ) "
+
+                + "   OR "
+
+                // CONDIZIONE B: SERIE
+                + "   EXISTS (SELECT 1 FROM AroUdAppartVerSerie udsExt, SerStatoSerie ss, SerStatoVerSerie svs "
+                + "      JOIN udsExt.serContenutoVerSerie cExt JOIN cExt.serVerSerie vsExt JOIN vsExt.serSerie sExt "
+                + "      WHERE udsExt.aroUnitaDoc = ud "
+                + "      AND cExt.tiContenutoVerSerie = 'EFFETTIVO' "
+                + "      AND sExt.dtAnnul = :defaultAnnull "
+                // Join con Stato Serie Corrente (PRESA_IN_CARICO)
+                + "      AND sExt.idStatoSerieCor = ss.idStatoSerie "
+                + "      AND ss.tiStatoSerie = 'PRESA_IN_CARICO' "
+                // Join con Stato Versione Corrente (VALIDATA)
+                + "      AND vsExt.idStatoVerSerieCor = svs.idStatoVerSerie "
+                + "      AND svs.tiStatoVerSerie = 'VALIDATA' " + "   ) " + ")";
+
+        Query query = getEntityManager().createQuery(hql);
+        query.setParameter("idRichAnnulVers", idRichAnnulVers);
+        query.setParameter("statiPartenza", statiPartenza);
+        query.setParameter("defaultAnnull", getDefaultAnnullDate());
+        return query.getResultList();
+    }
+
+    /**
+     * Recupera le UD che soddisfano le seguenti condizioni per il passaggio a IN_ARCHIVIO per la
+     * FASE 2 Condizione: Esiste almeno un'aggregazione esterna IN_ARCHIVIO. Esclusione: Non devono
+     * essere tra quelle già gestite in Fase 1.
+     *
+     * @param idRichAnnulVers la richiesta che contiene l'annullamento fascicoli
+     * @param statiPartenza   stati di conservazione delle ud da considerare (saranno
+     *                        VERSAMENTO_IN_ARCHIVIO e IN_ARCHIVIO)
+     * @param idsExcluded     ud da escludere perchè considerate al passo precedente
+     * @return lista delle id unita doc che soddisfano le condizioni per il passaggio allo stato di
+     *         conservazione IN_ARCHIVIO
+     */
+    public List<Long> findUdTargetInArchivio(long idRichAnnulVers, List<String> statiPartenza,
+            List<Long> idsExcluded) {
+        String hql = "SELECT DISTINCT ud.idUnitaDoc FROM AroUnitaDoc ud "
+                + "WHERE EXISTS (SELECT 1 FROM AroItemRichAnnulVers item "
+                + "   JOIN item.fasFascicolo fasc JOIN fasc.fasUnitaDocFascicolos udf "
+                + "   WHERE item.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers "
+                + "   AND item.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
+                + "   AND udf.aroUnitaDoc = ud) "
+
+                + "AND ud.tiStatoConservazione IN :statiPartenza "
+
+                // Escludo quelle già trovate nel passo precedente
+                + (idsExcluded != null && !idsExcluded.isEmpty()
+                        ? "AND ud.idUnitaDoc NOT IN :idsExcluded "
+                        : "")
+
+                + "AND ("
+                // Fascicolo IN_ARCHIVIO
+                + "   EXISTS (SELECT 1 FROM FasUnitaDocFascicolo udfExt JOIN udfExt.fasFascicolo fExt "
+                + "      WHERE udfExt.aroUnitaDoc = ud "
+                + "      AND fExt.dtAnnull = :defaultAnnull "
+                + "      AND fExt.tiStatoConservazione = 'IN_ARCHIVIO' "
+                + "      AND fExt.idFascicolo NOT IN (SELECT i.fasFascicolo.idFascicolo FROM AroItemRichAnnulVers i WHERE i.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers)) "
+                + "   OR "
+                // Serie IN_ARCHIVIO (tramite Stato Serie)
+                + "   EXISTS (SELECT 1 FROM AroUdAppartVerSerie udsExt, SerStatoSerie ss "
+                + "      JOIN udsExt.serContenutoVerSerie cExt JOIN cExt.serVerSerie vsExt JOIN vsExt.serSerie sExt "
+                + "      WHERE udsExt.aroUnitaDoc = ud "
+                + "      AND cExt.tiContenutoVerSerie = 'EFFETTIVO' "
+                + "      AND sExt.dtAnnul = :defaultAnnull "
+                + "      AND sExt.idStatoSerieCor = ss.idStatoSerie "
+                + "      AND ss.tiStatoSerie = 'IN_ARCHIVIO') " + ")";
+
+        Query query = getEntityManager().createQuery(hql);
+        query.setParameter("idRichAnnulVers", idRichAnnulVers);
+        query.setParameter("statiPartenza", statiPartenza);
+        if (idsExcluded != null && !idsExcluded.isEmpty()) {
+            query.setParameter("idsExcluded", idsExcluded);
+        }
+        query.setParameter("defaultAnnull", getDefaultAnnullDate());
+        return query.getResultList();
+    }
+
+    /**
+     * Recupera le ud da degradare (orfani) per la FASE 3. Condizione: Coinvolte nell'annullamento
+     * ma NON gestite nelle fasi precedenti.
+     *
+     * @param idRichAnnulVers la richiesta che contiene l'annullamento fascicoli
+     * @param statiPartenza   stati di conservazione delle ud da considerare (saranno
+     *                        VERSAMENTO_IN_ARCHIVIO e IN_ARCHIVIO)
+     * @param idsExcluded     ud da escludere perchè considerate ai passi precedenti
+     * @param requireFirma    parametro per verificare o meno la presenza di aip firmato per l'ud
+     * @return lista delle id unita doc che soddisfano le condizioni per il downgrade dello stato di
+     *         conservazione
+     */
+    public List<Long> findUdTargetDowngradeStatoConservazioneUd(long idRichAnnulVers,
+            List<String> statiPartenza, List<Long> idsExcluded, boolean requireFirma) {
+        String operatorFirma = requireFirma ? "EXISTS" : "NOT EXISTS";
+
+        String hql = "SELECT DISTINCT ud.idUnitaDoc FROM AroUnitaDoc ud "
+                + "WHERE EXISTS (SELECT 1 FROM AroItemRichAnnulVers item "
+                + "   JOIN item.fasFascicolo fasc JOIN fasc.fasUnitaDocFascicolos udf "
+                + "   WHERE item.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers "
+                + "   AND item.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
+                + "   AND udf.aroUnitaDoc = ud) "
+
+                + "AND ud.tiStatoConservazione IN :statiPartenza "
+
+                // Escludo tutte quelle che hanno trovato salvezza nelle fasi 1 e 2
+                + (idsExcluded != null && !idsExcluded.isEmpty()
+                        ? "AND ud.idUnitaDoc NOT IN :idsExcluded "
+                        : "")
+
+                // Filtro Firma
+                + "AND " + operatorFirma + " (SELECT 1 FROM ElvFileElencoVer f "
+                + "   WHERE f.elvElencoVer = ud.elvElencoVer AND f.tiFileElencoVers = 'FIRMA_ELENCO_INDICI_AIP')";
+
+        Query query = getEntityManager().createQuery(hql);
+        query.setParameter("idRichAnnulVers", idRichAnnulVers);
+        query.setParameter("statiPartenza", statiPartenza);
+        if (idsExcluded != null && !idsExcluded.isEmpty()) {
+            query.setParameter("idsExcluded", idsExcluded);
+        }
+
+        return query.getResultList();
+    }
+    // end MAC #38537
+
 }

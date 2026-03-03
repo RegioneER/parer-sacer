@@ -1042,6 +1042,12 @@ public class CostantiDB {
 
     public enum TipoConservazioneSerie {
 
+        /**
+         * @deprecated La conservazione fiscale è stata dismessa. Questo valore è mantenuto solo per
+         *             compatibilità con dati esistenti. NON utilizzare per nuove tipologie di
+         *             serie.
+         */
+        @Deprecated
         FISCALE, IN_ARCHIVIO
     }
 

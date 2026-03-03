@@ -1843,59 +1843,112 @@ public class AnnulVersEjb {
                 richiestaAnnullamento.getNtRichAnnulVers());
         // Modifico i collegamenti ai fascicoli corrispondenti agli item
         helper.updateCollegamentiFasc(idRichAnnulVers);
-        // MAC #39443 - elimina gli eventuali record corrispondenti ai fascicoli per i quali creare
-        // l’indice AIP presenti nella tabella FAS_AIP_FASCICOLO_DA_ELAB
-        logger.debug(
-                "Annullamento Versamenti Fascicoli - Elimina i record relativi ai fascicoli presenti in FAS_AIP_FASCICOLO_DA_ELAB per i quali calcolare l'indice AIP della richiesta avente id: {}",
-                idRichAnnulVers);
-        List<Long> idFascicoloListForAipDaElabToDelete = helper.getFascicoliItem(idRichAnnulVers);
-        if (!idFascicoloListForAipDaElabToDelete.isEmpty()) {
-            helper.deleteFasAipFascicoloDaElab(idFascicoloListForAipDaElabToDelete);
-        }
-        // end MAC #39443
-
         // MAC#22156
+
+        // MAC #38537
         logger.debug(
-                "Annullamento Versamenti Fascicoli - Aggiorna le unit\u00E0 doc appartenenti ai fascicoli della richiesta, assegnando stato = AIP_GENERATO o AIP_FIRMATO, purch\u00E8 tali unit\u00E0 doc non appartengano ad altro fascicolo con stato = VERSAMENTO_IN_ARCHIVIO o IN_ARCHIVIO");
-
-        // MEV #31162
-        List<Long> idUnitaDocListAipGenerato = helper.getAroUnitaDocWithoutOtherFascicolos(
-                idRichAnnulVers,
-                Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
-                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()),
-                "");
-
-        List<Long> idUnitaDocListAipFirmato = helper.getAroUnitaDocWithoutOtherFascicolos(
-                idRichAnnulVers,
-                Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
-                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()),
-                "NOT");
-        // end MEV #31162
-
-        helper.updateStatoConsAipGeneratoAroUnitaDocWithoutOtherFascicolos(idRichAnnulVers,
-                Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
-                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()));
-        helper.updateStatoConsAipFirmatoAroUnitaDocWithoutOtherFascicolos(idRichAnnulVers,
-                Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
-                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()));
-        // end MAC#22156
-
-        // MEV #31162
+                "Annullamento Versamenti Fascicoli - Aggiorna le unit\u00E0 doc appartenenti ai fascicoli della richiesta, assegnando gli opportuni stati di conservazione");
+        // Recupero utente per il log
         IamUser utente = helper.findById(IamUser.class, idUserIam);
-        for (Long idUnitaDoc : idUnitaDocListAipGenerato) {
-            udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
-                    Constants.EVASIONE_RICHIESTA_ANNULLAMENTO_FASC,
-                    CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
-                    Constants.FUNZIONALITA_ONLINE);
+
+        // Definiamo gli stati di partenza che ci interessano: ud in stato di conservazione
+        // VERSAMENTO_IN_ARCHIVIO o IN_ARCHIVIO
+        List<String> statiPartenzaInteresse = Arrays.asList(
+                CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
+                CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
+
+        // -----------------------------------------------------------------------------------------
+        // FASE 1: Verifico la possibilità di settare lo stato di conservazione delle ud a
+        // VERSAMENTO_IN_ARCHIVIO
+        // Vince se esiste un'aggregazione "superstite" con determinate caratteristiche
+        // -----------------------------------------------------------------------------------------
+        List<Long> idsToVersamentoInArchivio = helper
+                .findUdTargetVersamentoInArchivio(idRichAnnulVers, statiPartenzaInteresse);
+
+        if (!idsToVersamentoInArchivio.isEmpty()) {
+            logger.debug("Annullamento Versamenti Fascicoli FASE 1: "
+                    + idsToVersamentoInArchivio.size()
+                    + " UD mantengono/assumono stato di conservazione VERSAMENTO_IN_ARCHIVIO ");
+
+            // Update Massivo
+            helper.updateStatoUdMassivo(idsToVersamentoInArchivio,
+                    CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
+
+            // Log
+            for (Long idUd : idsToVersamentoInArchivio) {
+                udEjb.insertLogStatoConservUd(idUd, utente.getNmUserid(),
+                        Constants.EVASIONE_RICHIESTA_ANNULLAMENTO_FASC,
+                        CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
+                        Constants.FUNZIONALITA_ONLINE);
+            }
         }
 
-        for (Long idUnitaDoc : idUnitaDocListAipFirmato) {
-            udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
-                    Constants.EVASIONE_RICHIESTA_ANNULLAMENTO_FASC,
-                    CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name(),
-                    Constants.FUNZIONALITA_ONLINE);
+        // -----------------------------------------------------------------------------------------
+        // FASE 2: Gestisco la possibilità di settare lo stato di conservazione delle ud a
+        // IN_ARCHIVIO
+        // Vince se NON ricade in Fase 1, ma esiste un'altra aggregazione IN_ARCHIVIO
+        // -----------------------------------------------------------------------------------------
+        // NB: viene passata la lista degli ID già gestiti in Fase 1 per escluderli
+        List<Long> idsToInArchivio = helper.findUdTargetInArchivio(idRichAnnulVers,
+                statiPartenzaInteresse, idsToVersamentoInArchivio);
+
+        if (!idsToInArchivio.isEmpty()) {
+            logger.debug("Annullamento Versamenti Fascicoli FASE 2: " + idsToInArchivio.size()
+                    + " UD assumono stato di conservazione IN_ARCHIVIO");
+
+            helper.updateStatoUdMassivo(idsToInArchivio,
+                    CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
+
+            for (Long idUd : idsToInArchivio) {
+                udEjb.insertLogStatoConservUd(idUd, utente.getNmUserid(),
+                        Constants.EVASIONE_RICHIESTA_ANNULLAMENTO_FASC,
+                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name(),
+                        Constants.FUNZIONALITA_ONLINE);
+            }
         }
-        // end MEV #31162
+        // -----------------------------------------------------------------------------------------
+        // FASE 3: Downgrade (orfani)
+        // Non soddisfano né Fase 1 né Fase 2.
+        // -----------------------------------------------------------------------------------------
+        // Vengono unite le liste degli ID già gestiti per escluderli tutti
+        List<Long> idsGestiti = new ArrayList<>();
+        if (idsToVersamentoInArchivio != null)
+            idsGestiti.addAll(idsToVersamentoInArchivio);
+        if (idsToInArchivio != null)
+            idsGestiti.addAll(idsToInArchivio);
+
+        // 3a. Downgrade a AIP_FIRMATO (se c'è firma)
+        List<Long> idsToFirmato = helper.findUdTargetDowngradeStatoConservazioneUd(idRichAnnulVers,
+                statiPartenzaInteresse, idsGestiti, true);
+        if (!idsToFirmato.isEmpty()) {
+            logger.debug("Annullamento Versamenti Fascicoli FASE 3a: " + idsToFirmato.size()
+                    + " UD degradano a stato di conservazione AIP_FIRMATO");
+            helper.updateStatoUdMassivo(idsToFirmato,
+                    CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name());
+            for (Long idUd : idsToFirmato) {
+                udEjb.insertLogStatoConservUd(idUd, utente.getNmUserid(),
+                        Constants.EVASIONE_RICHIESTA_ANNULLAMENTO_FASC,
+                        CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name(),
+                        Constants.FUNZIONALITA_ONLINE);
+            }
+        }
+
+        // 3b. Downgrade a AIP_GENERATO (se no firma)
+        List<Long> idsToGenerato = helper.findUdTargetDowngradeStatoConservazioneUd(idRichAnnulVers,
+                statiPartenzaInteresse, idsGestiti, false);
+        if (!idsToGenerato.isEmpty()) {
+            logger.debug("Annullamento Versamenti Fascicoli FASE 3b: " + idsToGenerato.size()
+                    + " UD degradano a stato di conservazione AIP_GENERATO");
+            helper.updateStatoUdMassivo(idsToGenerato,
+                    CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name());
+            for (Long idUd : idsToGenerato) {
+                udEjb.insertLogStatoConservUd(idUd, utente.getNmUserid(),
+                        Constants.EVASIONE_RICHIESTA_ANNULLAMENTO_FASC,
+                        CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
+                        Constants.FUNZIONALITA_ONLINE);
+            }
+        }
+        // end MAC #38537
 
         logger.debug(
                 "Annullamento Versamenti Fascicoli - Registro il nuovo stato della richiesta avente id: {}",
@@ -1907,8 +1960,7 @@ public class AnnulVersEjb {
                         Calendar.getInstance().getTime(), null, statoRichAnnulVers.getIamUser());
         helper.insertEntity(statoRichAnnulVersNew, false);
         // Aggiorno l'identificatore dello stato corrente della richiesta assegnando
-        // l'identificatore dello stato
-        // inserito
+        // l'identificatore dello stato inserito
         richiestaAnnullamento.setIdStatoRichAnnulVersCor(
                 new BigDecimal(statoRichAnnulVersNew.getIdStatoRichAnnulVers()));
 

@@ -159,6 +159,7 @@ public class UnitaDocumentarieHelperTest {
         List<DecCriterioDatiSpecBean> listaDatiSpecOnLine = Collections.emptyList();
         Date[] dateAcquisizioneValidate = aDateArray(2);
         Date[] dateCreazioneCompValidate = aDateArray(2);
+        Long idUserIam = aLong();
         BigDecimal idStruttura = aBigDecimal();
         UnitaDocumentarieHelper.FiltriCollegamentiUnitaDocumentariePlain filtriCollegamenti = aFiltriCollegamentiUnitaDocumentariePlain();
         UnitaDocumentarieHelper.FiltriUnitaDocumentarieAvanzataPlain filtri = aFiltriUnitaDocumentarieAvanzataPlain();
@@ -169,7 +170,8 @@ public class UnitaDocumentarieHelperTest {
 
         helper.getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter(idTipoUnitaDocList,
                 cdRegistroUnitaDocSet, idTipoDocList, listaDatiSpecOnLine, dateAcquisizioneValidate,
-                dateCreazioneCompValidate, idStruttura, addButton, filtri, filtriCollegamenti,
+                dateCreazioneCompValidate, idUserIam, idStruttura, addButton, filtri,
+                filtriCollegamenti,
                 filtriFirmatari, filtriComponenti, filtriFascicoli, false);
         assertTrue(true);
     }

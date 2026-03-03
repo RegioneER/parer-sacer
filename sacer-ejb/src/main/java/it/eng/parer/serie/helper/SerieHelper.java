@@ -1999,4 +1999,152 @@ public class SerieHelper extends GenericHelper {
         return query.executeUpdate();
     }
     // end MAC #39491
+
+    // MAC #38538
+
+    /**
+     * Restituisce la data di annullamento che significa che l'entità non è annullata (31/12/2444).
+     */
+    private Date getDefaultAnnullDate() {
+        Calendar c = Calendar.getInstance();
+        c.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c.getTime();
+    }
+
+    /**
+     * Recupera le UD che soddisfano una delle seguenti condizioni per il passaggio a
+     * VERSAMENTO_IN_ARCHIVIO per la FASE 1
+     *
+     * 1. Appartengono ad un'altra aggregazione di tipo Fascicolo in stato IN_ELENCO_VALIDATO le cui
+     * ud sono tutte in stato di conservazione VERSAMENTO._IN_ARCHIVIO 2. Appartengono ad un'altra
+     * aggregazione di tipo Serie esterna PRESA_IN_CARICO + Versione VALIDATA.
+     *
+     * @param idSerie       la serie
+     * @param statiPartenza stati di conservazione delle ud da considerare (saranno
+     *                      VERSAMENTO_IN_ARCHIVIO e IN_ARCHIVIO)
+     * @return lista delle id unita doc che soddisfano le condizioni per il passaggio/mantenimento
+     *         dello stato di conservazione VERSAMENTO_IN_ARCHIVIO
+     */
+    public List<Long> findUdTargetVersamentoInArchivioSerie(long idSerie,
+            List<String> statiPartenza) {
+        String hql = "SELECT DISTINCT ud.idUnitaDoc FROM AroUnitaDoc ud "
+                // Selezione UD nella Serie in input (tramite versione effettiva)
+                + "WHERE EXISTS (SELECT 1 FROM AroUdAppartVerSerie uds "
+                + "   JOIN uds.serContenutoVerSerie c JOIN c.serVerSerie vs JOIN vs.serSerie s "
+                + "   WHERE s.idSerie = :idSerie AND c.tiContenutoVerSerie = 'EFFETTIVO' AND uds.aroUnitaDoc = ud) "
+
+                + "AND ud.tiStatoConservazione IN :statiPartenza " + "AND ("
+                // CONDIZIONE A: FASCICOLO
+                // Controllo che lo stato dei fascicoli cui eventualmente l'ud appartiene sia
+                // IN_ELENCO_VALIDATO e che tutte le ud siano in stato VERSAMENTO_IN_ARCHIVIO (in
+                // pratica NON esistono diverse da VERSAMENTO_IN_ARCHIVIO)
+                + "   EXISTS (SELECT 1 FROM FasUnitaDocFascicolo udfExt JOIN udfExt.fasFascicolo fExt "
+                + "      WHERE udfExt.aroUnitaDoc = ud AND fExt.dtAnnull = :defaultAnnull "
+                + "      AND fExt.tiStatoFascElencoVers = 'IN_ELENCO_VALIDATO' "
+                + "      AND NOT EXISTS (SELECT 1 FROM FasUnitaDocFascicolo subUdf JOIN subUdf.aroUnitaDoc subUd "
+                + "                      WHERE subUdf.fasFascicolo = fExt AND subUd.tiStatoConservazione != 'VERSAMENTO_IN_ARCHIVIO') "
+                + "   ) " + "   OR "
+                // CONDIZIONE B: SERIE
+                + "   EXISTS (SELECT 1 FROM AroUdAppartVerSerie udsExt, SerStatoSerie ss, SerStatoVerSerie svs "
+                + "      JOIN udsExt.serContenutoVerSerie cExt JOIN cExt.serVerSerie vsExt JOIN vsExt.serSerie sExt "
+                + "      WHERE udsExt.aroUnitaDoc = ud "
+                + "      AND cExt.tiContenutoVerSerie = 'EFFETTIVO' "
+                + "      AND sExt.dtAnnul = :defaultAnnull "
+                // Escludo la serie lavorata
+                + "      AND sExt.idSerie != :idSerie "
+                // Stato versione serie VALIDATA e stato conservazione PRESA_IN_CARICO
+                + "      AND sExt.idStatoSerieCor = ss.idStatoSerie AND ss.tiStatoSerie = 'PRESA_IN_CARICO' "
+                + "      AND vsExt.idStatoVerSerieCor = svs.idStatoVerSerie AND svs.tiStatoVerSerie = 'VALIDATA' "
+                + "   ) " + ")";
+        Query query = getEntityManager().createQuery(hql);
+        query.setParameter("idSerie", idSerie);
+        query.setParameter("statiPartenza", statiPartenza);
+        query.setParameter("defaultAnnull", getDefaultAnnullDate());
+        return query.getResultList();
+    }
+
+    /**
+     * Recupera le UD che soddisfano le seguenti condizioni per il passaggio a IN_ARCHIVIO per la
+     * FASE 2 Condizione: Esiste almeno un'aggregazione esterna IN_ARCHIVIO. Esclusione: Non devono
+     * essere tra quelle già gestite in Fase 1.
+     *
+     * @param idSerie       la serie
+     * @param statiPartenza stati di conservazione delle ud da considerare (saranno
+     *                      VERSAMENTO_IN_ARCHIVIO e IN_ARCHIVIO)
+     * @param idsExcluded   ud da escludere perchè considerate al passo precedente
+     * @return lista delle id unita doc che soddisfano le condizioni per il passaggio allo stato di
+     *         conservazione IN_ARCHIVIO
+     */
+    public List<Long> findUdTargetInArchivioSerie(long idSerie, List<String> statiPartenza,
+            List<Long> idsExcluded) {
+        String hql = "SELECT DISTINCT ud.idUnitaDoc FROM AroUnitaDoc ud "
+                + "WHERE EXISTS (SELECT 1 FROM AroUdAppartVerSerie uds "
+                + "   JOIN uds.serContenutoVerSerie c JOIN c.serVerSerie vs JOIN vs.serSerie s "
+                + "   WHERE s.idSerie = :idSerie AND c.tiContenutoVerSerie = 'EFFETTIVO' AND uds.aroUnitaDoc = ud) "
+                + "AND ud.tiStatoConservazione IN :statiPartenza "
+                // Esclusione ID già gestiti
+                + (idsExcluded != null && !idsExcluded.isEmpty()
+                        ? "AND ud.idUnitaDoc NOT IN :idsExcluded "
+                        : "")
+                + "AND ("
+                // Fascicoli IN_ARCHIVIO
+                + "   EXISTS (SELECT 1 FROM FasUnitaDocFascicolo udfExt JOIN udfExt.fasFascicolo fExt "
+                + "      WHERE udfExt.aroUnitaDoc = ud AND fExt.dtAnnull = :defaultAnnull AND fExt.tiStatoConservazione = 'IN_ARCHIVIO') "
+                + "   OR "
+                // Serie IN_ARCHIVIO (Escludendo se stessa)
+                + "   EXISTS (SELECT 1 FROM AroUdAppartVerSerie udsExt, SerStatoSerie ss "
+                + "      JOIN udsExt.serContenutoVerSerie cExt JOIN cExt.serVerSerie vsExt JOIN vsExt.serSerie sExt "
+                + "      WHERE udsExt.aroUnitaDoc = ud "
+                + "      AND cExt.tiContenutoVerSerie = 'EFFETTIVO' "
+                + "      AND sExt.dtAnnul = :defaultAnnull "
+                // Escludo la serie interessata
+                + "      AND sExt.idSerie != :idSerie "
+                + "      AND sExt.idStatoSerieCor = ss.idStatoSerie AND ss.tiStatoSerie = 'IN_ARCHIVIO') "
+                + ")";
+        Query query = getEntityManager().createQuery(hql);
+        query.setParameter("idSerie", idSerie);
+        query.setParameter("statiPartenza", statiPartenza);
+        if (idsExcluded != null && !idsExcluded.isEmpty())
+            query.setParameter("idsExcluded", idsExcluded);
+        query.setParameter("defaultAnnull", getDefaultAnnullDate());
+        return query.getResultList();
+    }
+
+    /**
+     * Recupera le ud da degradare (orfani) per la FASE 3. Condizione: Coinvolte nell'annullamento
+     * ma NON gestite nelle fasi precedenti.
+     *
+     * @param idSerie       la serie
+     * @param statiPartenza stati di conservazione delle ud da considerare (saranno
+     *                      VERSAMENTO_IN_ARCHIVIO e IN_ARCHIVIO)
+     * @param idsExcluded   ud da escludere perchè considerate ai passi precedenti
+     * @param requireFirma  parametro per verificare o meno la presenza di aip firmato per l'ud
+     * @return lista delle id unita doc che soddisfano le condizioni per il downgrade dello stato di
+     *         conservazione
+     */
+    public List<Long> findUdTargetDowngradeSerie(long idSerie, List<String> statiPartenza,
+            List<Long> idsExcluded, boolean requireFirma) {
+        String operatorFirma = requireFirma ? "EXISTS" : "NOT EXISTS";
+        String hql = "SELECT DISTINCT ud.idUnitaDoc FROM AroUnitaDoc ud "
+                + "WHERE EXISTS (SELECT 1 FROM AroUdAppartVerSerie uds "
+                + "   JOIN uds.serContenutoVerSerie c JOIN c.serVerSerie vs JOIN vs.serSerie s "
+                + "   WHERE s.idSerie = :idSerie AND c.tiContenutoVerSerie = 'EFFETTIVO' AND uds.aroUnitaDoc = ud) "
+                + "AND ud.tiStatoConservazione IN :statiPartenza "
+                // Esclusione ID già gestiti
+                + (idsExcluded != null && !idsExcluded.isEmpty()
+                        ? "AND ud.idUnitaDoc NOT IN :idsExcluded "
+                        : "")
+                + "AND " + operatorFirma + " (SELECT 1 FROM ElvFileElencoVer f "
+                + "   WHERE f.elvElencoVer = ud.elvElencoVer AND f.tiFileElencoVers = 'FIRMA_ELENCO_INDICI_AIP')";
+        Query query = getEntityManager().createQuery(hql);
+        query.setParameter("idSerie", idSerie);
+        query.setParameter("statiPartenza", statiPartenza);
+        if (idsExcluded != null && !idsExcluded.isEmpty())
+            query.setParameter("idsExcluded", idsExcluded);        
+        return query.getResultList();
+    }
+
+    // end MAC #38538
+
 }

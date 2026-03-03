@@ -91,7 +91,7 @@
 
             <!--  piazzo la lista con i risultati -->
             <slf:listNavBar name="<%= MonitoraggioForm.DocumentiAnnullatiList.NAME%>" pageSizeRelated="true"/>
-<slf:list name="<%= MonitoraggioForm.DocumentiAnnullatiList.NAME%>" />
+            <slf:list name="<%= MonitoraggioForm.DocumentiAnnullatiList.NAME%>" />
             <slf:listNavBar  name="<%= MonitoraggioForm.DocumentiAnnullatiList.NAME%>" />
 
         </sl:content>
