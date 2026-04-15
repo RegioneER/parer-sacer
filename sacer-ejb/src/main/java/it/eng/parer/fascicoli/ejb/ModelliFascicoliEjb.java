@@ -47,6 +47,7 @@ import it.eng.parer.slite.gen.tablebean.DecUsoModelloXsdFascTableBean;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
+import it.eng.parer.xml.xsd.helper.XsdRepositoryHelper;
 
 /**
  *
@@ -64,6 +65,8 @@ public class ModelliFascicoliEjb {
     private ModelliFascicoliHelper helper;
     @EJB
     private SacerLogEjb sacerLogEjb;
+    @EJB
+    private XsdRepositoryHelper xsdRepositoryHelper;
 
     /**
      * Ritorna il tableBean con la lista dei modelli xsd abilitati per l'ambiente
@@ -239,8 +242,13 @@ public class ModelliFascicoliEjb {
         logger.info("Eseguo il salvataggio del modello xsd di tipo fascicolo");
         Long idModelloXsdFascicolo = null;
         try {
-            DecModelloXsdFascicolo modelloXsdFascicolo = (DecModelloXsdFascicolo) Transform
+            DecModelloXsdFascicolo modelloXsdFascicolo;
+
+            // TiModelloXsd è sempre impostato dall'action (incluso RICHIAMABILE)
+            // Usa la conversione standard
+            modelloXsdFascicolo = (DecModelloXsdFascicolo) Transform
                     .rowBean2Entity(modelloXsdFascicoloRowBean);
+
             helper.insertEntity(modelloXsdFascicolo, true);
 
             logger.info("Salvataggio del modello xsd di tipo fascicolo completato");
@@ -294,7 +302,16 @@ public class ModelliFascicoliEjb {
         modelloXsdFasc.setDsXsd(modelloXsdFascicoloRowBean.getDsXsd());
         modelloXsdFasc.setFlDefault(modelloXsdFascicoloRowBean.getFlDefault());
 
-        helper.getEntityManager().flush();
+        // Propaga la data di soppressione alle dipendenze (DecModelloXsdFascRif)
+        List<it.eng.parer.entity.DecModelloXsdFascRif> dipendenze = helper
+                .retrieveDipendenzaXsd(idModelloXsdFascicolo);
+        if (!dipendenze.isEmpty()) {
+            for (it.eng.parer.entity.DecModelloXsdFascRif rif : dipendenze) {
+                rif.setDtSoppres(modelloXsdFascicoloRowBean.getDtSoppres());
+            }
+            logger.info("Propagata data di soppressione a {} dipendenze del modello ID {}",
+                    dipendenze.size(), idModelloXsdFascicolo);
+        }
     }
 
     /**
@@ -345,5 +362,370 @@ public class ModelliFascicoliEjb {
                         && m.getIdModelloXsdFascicolo() != idModelloXsd.longValue()
                         || idModelloXsd == null)
                 .count() != 0;
+    }
+
+    /**
+     * Restituisce la lista delle dipendenze XSD per un modello padre
+     *
+     * @param idPadre id del modello padre
+     *
+     * @return tablebean con le dipendenze
+     *
+     * @throws ParerUserError errore generico
+     */
+    public it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean getDipendenzaXsdTableBean(
+            BigDecimal idPadre) throws ParerUserError {
+        it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean table = new it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean();
+        List<it.eng.parer.entity.DecModelloXsdFascRif> list = helper
+                .retrieveDipendenzaXsdAttive(idPadre);
+        if (list != null && !list.isEmpty()) {
+            try {
+                for (it.eng.parer.entity.DecModelloXsdFascRif rif : list) {
+                    it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifRowBean row = (it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifRowBean) Transform
+                            .entity2RowBean(rif);
+                    // Aggiungi il codice XSD del target per visualizzazione
+                    if (rif.getDecModelloXsdFascicoloTarget() != null) {
+                        row.setCdXsdTarget(rif.getDecModelloXsdFascicoloTarget().getCdXsd());
+                    }
+                    table.add(row);
+                }
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException ex) {
+                String msg = "Errore durante il recupero della lista di dipendenze XSD "
+                        + ExceptionUtils.getRootCauseMessage(ex);
+                logger.error(msg, ex);
+                throw new ParerUserError(msg);
+            }
+        }
+        return table;
+    }
+
+    /**
+     * Restituisce la lista dei modelli XSD richiamabili (ti_modello_xsd='RICHIAMABILE')
+     *
+     * @return tablebean con i modelli richiamabili
+     *
+     * @throws ParerUserError errore generico
+     */
+    public it.eng.parer.slite.gen.tablebean.DecModelloXsdFascicoloTableBean getModelliRichiamabili()
+            throws ParerUserError {
+        it.eng.parer.slite.gen.tablebean.DecModelloXsdFascicoloTableBean table = new it.eng.parer.slite.gen.tablebean.DecModelloXsdFascicoloTableBean();
+        List<DecModelloXsdFascicolo> list = helper.retrieveModelliRichiamabili();
+        if (list != null && !list.isEmpty()) {
+            try {
+                for (DecModelloXsdFascicolo modello : list) {
+                    DecModelloXsdFascicoloRowBean row = (DecModelloXsdFascicoloRowBean) Transform
+                            .entity2RowBean(modello);
+                    table.add(row);
+                }
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException ex) {
+                String msg = "Errore durante il recupero della lista di modelli richiamabili "
+                        + ExceptionUtils.getRootCauseMessage(ex);
+                logger.error(msg, ex);
+                throw new ParerUserError(msg);
+            }
+        }
+        return table;
+    }
+
+    /**
+     * Salva le dipendenze XSD per un modello padre
+     *
+     * @param idPadre    id del modello padre
+     * @param dipendenze tablebean con le dipendenze da salvare
+     *
+     * @throws ParerUserError errore generico
+     */
+
+    /**
+     * Elimina tutte le dipendenze XSD di un modello padre (usato quando si sostituisce l'XSD).
+     *
+     * @param idPadre id del modello XSD padre
+     * @throws ParerUserError errore nel salvataggio
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteAllDipendenze(BigDecimal idPadre) throws ParerUserError {
+        try {
+            List<it.eng.parer.entity.DecModelloXsdFascRif> existingDeps = helper
+                    .retrieveDipendenzaXsd(idPadre);
+            for (it.eng.parer.entity.DecModelloXsdFascRif dep : existingDeps) {
+                helper.removeEntity(dep, true);
+            }
+        } catch (Exception ex) {
+            String msg = "Errore durante l'eliminazione delle dipendenze XSD: "
+                    + ExceptionUtils.getRootCauseMessage(ex);
+            logger.error(msg, ex);
+            throw new ParerUserError(msg);
+        }
+    }
+
+    /**
+     * Elimina una singola dipendenza XSD per id.
+     *
+     * @param idDipendenza id della dipendenza da eliminare
+     * @throws ParerUserError errore nel salvataggio
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteDipendenza(BigDecimal idDipendenza) throws ParerUserError {
+        try {
+            it.eng.parer.entity.DecModelloXsdFascRif rif = helper
+                    .findById(it.eng.parer.entity.DecModelloXsdFascRif.class, idDipendenza);
+            if (rif != null) {
+                helper.removeEntity(rif, true);
+            }
+        } catch (Exception ex) {
+            String msg = "Errore durante l'eliminazione della dipendenza XSD: "
+                    + ExceptionUtils.getRootCauseMessage(ex);
+            logger.error(msg, ex);
+            throw new ParerUserError(msg);
+        }
+    }
+
+    /**
+     * Inserisce una singola dipendenza XSD per il modello padre. La validazione di coerenza tra le
+     * dipendenze e l'XSD e' delegata all'Action.
+     *
+     * @param idPadre id del modello XSD padre
+     * @param dep     singola dipendenza da inserire
+     * @throws ParerUserError errore nel salvataggio
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void saveDipendenze(BigDecimal idPadre,
+            it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifRowBean dep)
+            throws ParerUserError {
+        try {
+            DecModelloXsdFascicolo padre = helper.findById(DecModelloXsdFascicolo.class, idPadre);
+
+            // Parse XSD una sola volta: serve per validare il tipo e per contare i
+            // riferimenti
+            org.w3c.dom.Document xsdDoc = parseXsdDoc(padre.getBlXsd());
+
+            // Valida subito che tiRiferimento corrisponda al tag reale nell'XSD
+            // (IMPORT/INCLUDE)
+            validaTipoRiferimento(xsdDoc, dep.getTiRiferimento(), dep.getSchemaLocation());
+
+            it.eng.parer.entity.DecModelloXsdFascRif rif = new it.eng.parer.entity.DecModelloXsdFascRif();
+            rif.setDecModelloXsdFascicoloPadre(padre);
+
+            DecModelloXsdFascicolo target = helper.findById(DecModelloXsdFascicolo.class,
+                    dep.getIdModelloXsdFascicoloTarget());
+            rif.setDecModelloXsdFascicoloTarget(target);
+
+            rif.setTiRiferimento(it.eng.parer.entity.constraint.DecModelloXsdFascRif.TiRiferimento
+                    .valueOf(dep.getTiRiferimento()));
+            rif.setNamespaceUri(dep.getNamespaceUri());
+            rif.setSchemaLocation(dep.getSchemaLocation());
+            rif.setDtIstituz(dep.getDtIstituz());
+            rif.setDtSoppres(dep.getDtSoppres());
+
+            helper.insertEntity(rif, true);
+            helper.getEntityManager().flush();
+
+            // Chiama il resolver solo se tutte le deps sono configurate.
+            // Il resolver compila l'intero schema e deve risolvere tutti i riferimenti
+            int totaleRiferimentiXsd = contaRiferimentiXsd(xsdDoc);
+            List<it.eng.parer.entity.DecModelloXsdFascRif> depsPresenti = helper
+                    .retrieveDipendenzaXsdAttive(idPadre);
+            if (depsPresenti.size() == totaleRiferimentiXsd) {
+                xsdResourceResolver(padre.getBlXsd(), idPadre.longValue());
+
+                logger.info("Validazione XSD modulare completata con successo per modello ID {}",
+                        idPadre);
+            }
+
+        } catch (IllegalStateException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            String rootMsg = ExceptionUtils.getRootCauseMessage(ex);
+            throw new IllegalStateException(
+                    "Errore durante il salvataggio della dipendenza XSD: " + rootMsg, ex);
+        }
+    }
+
+    /**
+     * Parsa l'XSD in un Document DOM con configurazione sicura (XXE-safe). Restituisce null se il
+     * parsing fallisce.
+     */
+    private org.w3c.dom.Document parseXsdDoc(String blXsd) {
+        if (StringUtils.isBlank(blXsd)) {
+            return null;
+        }
+        try {
+            javax.xml.parsers.DocumentBuilderFactory dbf = javax.xml.parsers.DocumentBuilderFactory
+                    .newInstance();
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
+            dbf.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbf.setNamespaceAware(true);
+            javax.xml.parsers.DocumentBuilder db = dbf.newDocumentBuilder();
+            return db.parse(new java.io.ByteArrayInputStream(
+                    blXsd.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        } catch (Exception e) {
+            logger.warn("Impossibile fare il parsing dell'XSD", e);
+            return null;
+        }
+    }
+
+    /**
+     * Conta xs:import + xs:include dal Document già parsato.
+     */
+    private int contaRiferimentiXsd(org.w3c.dom.Document doc) {
+        if (doc == null) {
+            return 0;
+        }
+        return doc.getElementsByTagNameNS(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI, "import")
+                .getLength()
+                + doc.getElementsByTagNameNS(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI,
+                        "include").getLength();
+    }
+
+    /**
+     * Verifica che tiRiferimento (IMPORT/INCLUDE) corrisponda al tag reale nell'XSD per la
+     * schemaLocation indicata. Lancia IllegalStateException se c'è mismatch o se la schemaLocation
+     * non è dichiarata nell'XSD. Non si usa il namespace per distinguere i tipi perché xs:import
+     * può non averlo.
+     */
+    private void validaTipoRiferimento(org.w3c.dom.Document doc, String tiRiferimento,
+            String schemaLocation) {
+        if (doc == null || StringUtils.isBlank(schemaLocation)) {
+            return;
+        }
+        String locNorm = schemaLocation.trim();
+        String tagTrovato = trovaTipoTagPerSchemaLocation(doc, locNorm);
+        if (tagTrovato == null) {
+            throw new IllegalStateException("La schemaLocation '" + schemaLocation
+                    + "' non è dichiarata in nessun xs:import o xs:include dell'XSD root.");
+        }
+        if (!tagTrovato.equalsIgnoreCase(tiRiferimento)) {
+            throw new IllegalStateException("La schemaLocation '" + schemaLocation
+                    + "' è dichiarata come xs:" + tagTrovato.toLowerCase()
+                    + " nell'XSD.");
+        }
+    }
+
+    /**
+     * Cerca la schemaLocation tra xs:import e xs:include del Document. Restituisce "IMPORT",
+     * "INCLUDE", o null se non trovata.
+     */
+    private String trovaTipoTagPerSchemaLocation(org.w3c.dom.Document doc, String schemaLocation) {
+        if (trovaNeiTag(doc, "import", schemaLocation)) {
+            return "IMPORT";
+        }
+        if (trovaNeiTag(doc, "include", schemaLocation)) {
+            return "INCLUDE";
+        }
+        return null;
+    }
+
+    private boolean trovaNeiTag(org.w3c.dom.Document doc, String localName, String schemaLocation) {
+        org.w3c.dom.NodeList nodes = doc
+                .getElementsByTagNameNS(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI, localName);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            String loc = ((org.w3c.dom.Element) nodes.item(i)).getAttribute("schemaLocation");
+            if (schemaLocation.equals(loc != null ? loc.trim() : "")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Verifica se un modello XSD può essere validato
+     *
+     * @param idModello id del modello XSD da verificare
+     * @return true se il modello può essere validato, false altrimenti
+     * @throws ParerUserError se la validazione del modello fallisce
+     */
+    public boolean isModelloUtilizzabile(BigDecimal idModello) throws ParerUserError {
+        if (idModello == null) {
+            return false;
+        }
+        DecModelloXsdFascicoloRowBean modello = getDecModelloXsdFascicoloRowBean(idModello);
+        if (modello == null) {
+            return false;
+        }
+        // Richiamabile (ti_modello_xsd = RICHIAMABILE): è un modulo, sempre
+        // utilizzabile
+        if (it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd.RICHIAMABILE.name()
+                .equals(modello.getTiModelloXsd())) {
+            return true;
+        }
+        // Non richiamabile: utilizzabile se autonomo o se tutte le deps sono
+        // configurate
+        String blXsd = modello.getBlXsd();
+        int totaleRiferimenti = contaRiferimentiXsd(parseXsdDoc(blXsd));
+        if (totaleRiferimenti == 0) {
+            // Autonomo: nessuna dipendenza richiesta
+            return true;
+        }
+        // Modulare: verifica che tutte le deps siano configurate e attive
+        List<it.eng.parer.entity.DecModelloXsdFascRif> deps = helper
+                .retrieveDipendenzaXsdAttive(idModello);
+        return deps != null && deps.size() == totaleRiferimenti;
+    }
+
+    /**
+     * Valida uno schema XSD modulare con DbXsdResourceResolver
+     *
+     * @param blXsd   contenuto dello schema XSD root da validare
+     * @param idPadre id del modello XSD padre
+     */
+    public void xsdResourceResolver(String blXsd, Long idPadre) { // MODIFICATO
+        if (StringUtils.isBlank(blXsd)) {
+            return;
+        }
+        try {
+            javax.xml.transform.stream.StreamSource xsdSource = new javax.xml.transform.stream.StreamSource(
+                    new java.io.StringReader(blXsd));
+            it.eng.parer.xml.xsd.DbXsdResourceResolver resolver = new it.eng.parer.xml.xsd.DbXsdResourceResolver(
+                    xsdRepositoryHelper, idPadre);
+            it.eng.parer.xml.utils.XmlUtils.getSchemaValidationWithResolver(xsdSource, resolver);
+
+        } catch (org.xml.sax.SAXException ex) {
+            Throwable rootCause = ExceptionUtils.getRootCause(ex);
+            String msg = rootCause != null ? rootCause.getMessage() : ex.getMessage();
+            throw new IllegalStateException(msg, ex);
+        }
+    }
+
+    /**
+     * Verifica se un modello è referenziato come target da altri modelli
+     *
+     * @param idModello id del modello da verificare
+     *
+     * @return true se il modello è referenziato da almeno un altro modello
+     */
+    public boolean isModelloReferenziato(BigDecimal idModello) {
+        return helper.isModelloReferenziato(idModello);
+    }
+
+    /**
+     * Recupera i modelli padre che referenziano un modello target
+     *
+     * @param idModelloTarget id del modello target
+     *
+     * @return lista dei codici XSD dei modelli che referenziano il target
+     */
+    public List<String> retrieveModelliPadreReferenzianti(BigDecimal idModelloTarget) {
+        return helper.retrieveModelliPadreReferenzianti(idModelloTarget);
+    }
+
+    /**
+     * Conta il numero di dipendenze di un modello
+     *
+     * @param idModello id del modello
+     *
+     * @return numero di dipendenze configurate
+     */
+    public int countDipendenze(BigDecimal idModello) {
+        List<it.eng.parer.entity.DecModelloXsdFascRif> dipendenze = helper
+                .retrieveDipendenzaXsdAttive(idModello);
+        return dipendenze != null ? dipendenze.size() : 0;
     }
 }

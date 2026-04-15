@@ -7872,6 +7872,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         case ERRORE_PREPARAZIONE:
         case ERRORE_FISICO_CRITICO:
         case ERRORE_FISICO_PARZIALE:
+        case ERRORE_PULIZIA:
             isDeletionButtonVisible = true;
             break;
 
@@ -8209,7 +8210,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             List<String> statiPerRiavvioJob = List.of(
                     CostantiDB.TiStatoInternoRich.ERRORE_AVVIO_JOB.name(),
                     CostantiDB.TiStatoInternoRich.ERRORE_FISICO_CRITICO.name(),
-                    CostantiDB.TiStatoInternoRich.ERRORE_FISICO_PARZIALE.name());
+                    CostantiDB.TiStatoInternoRich.ERRORE_FISICO_PARZIALE.name(),
+                    CostantiDB.TiStatoInternoRich.ERRORE_PULIZIA.name());
 
             if (statiPerPreparazioneCompleta.contains(statoInterno)) {
                 log.info("Avvio preparazione completa per la richiesta {} (stato attuale: {})",

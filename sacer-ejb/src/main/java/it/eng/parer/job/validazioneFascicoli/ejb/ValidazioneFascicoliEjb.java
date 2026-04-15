@@ -837,7 +837,7 @@ public class ValidazioneFascicoliEjb {
         recXml.getChiave().setNumero(cdKeyUnitaDoc);
         recXml.getChiave().setTipoRegistro(cdRegistroKeyUnitaDoc);
         // MEV#22921 Parametrizzazione servizi di recupero
-        recXml.getChiave().setTipoNomeFile(TokenFileNameType.NOME_FILE_URN_VERSATO);
+        recXml.getParametri().setTipoNomeFile(TokenFileNameType.NOME_FILE_URN_VERSATO);
 
         recupero.setStrutturaRecupero(recXml);
         // end MAC#23726

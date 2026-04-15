@@ -65,6 +65,8 @@
                 <sl:newLine />
                 <slf:lblField name="<%=MonitoraggioForm.FiltriContenutoSacer.DT_RIF_DA%>" colSpan="2" controlWidth="w0" />
                 <slf:lblField name="<%=MonitoraggioForm.FiltriContenutoSacer.DT_RIF_A%>" colSpan="2" controlWidth="w0"/>
+                <sl:newLine />
+                <slf:lblField name="<%=MonitoraggioForm.FiltriContenutoSacer.TIPO_CONTENUTO%>" colSpan="2" controlWidth="w0"/>
             </slf:fieldSet>
             <sl:newLine skipLine="true" />
 

@@ -1959,6 +1959,10 @@ public class TipoFascicoloEjb {
             if (CostantiDB.TiModelloXsd.PROFILO_SPECIFICO_FASCICOLO.name().equals(tiModelloXsd)) {
                 for (int it = 0; it < allElements.getLength(); it++) {
                     Element element = (Element) allElements.item(it);
+                    // xs:element con ref= non hanno l'attributo name: li saltiamo
+                    if (element.getAttributes().getNamedItem("name") == null) {
+                        continue;
+                    }
                     if (!element.getAttributes().getNamedItem("name").getNodeValue()
                             .equals("ProfiloSpecifico") && element.hasAttribute("type")) {
                         String tmpAttrname = element.getAttributes().getNamedItem("name")

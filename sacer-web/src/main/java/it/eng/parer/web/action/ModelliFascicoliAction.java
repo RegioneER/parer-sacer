@@ -48,6 +48,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -70,6 +71,9 @@ import it.eng.parer.slite.gen.action.ModelliFascicoliAbstractAction;
 import it.eng.parer.slite.gen.form.ModelliFascicoliForm;
 import it.eng.parer.slite.gen.form.ModelliFascicoliForm.FiltriModelliXsdTipiFascicolo;
 import it.eng.parer.slite.gen.form.ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail;
+import it.eng.parer.slite.gen.tablebean.AplParamApplicRowBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifRowBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean;
 import it.eng.parer.slite.gen.tablebean.DecModelloXsdFascicoloRowBean;
 import it.eng.parer.slite.gen.tablebean.DecModelloXsdFascicoloTableBean;
 import it.eng.parer.web.helper.ConfigurationHelper;
@@ -84,7 +88,9 @@ import it.eng.spagoCore.ConfigSingleton;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.actions.form.ListAction;
 import it.eng.spagoLite.db.base.BaseTableInterface;
+import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.sorting.SortingRule;
+import it.eng.spagoLite.db.base.table.BaseTable;
 import it.eng.spagoLite.db.decodemap.DecodeMapIF;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.base.BaseElements.Status;
@@ -102,6 +108,12 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 
     private static final Logger log = LoggerFactory.getLogger(ModelliFascicoliAction.class);
 
+    // Costanti per literal duplicati (fix SonarQube)
+    private static final String TI_MODELLO_XSD = "ti_modello_xsd";
+    private static final String TI_RIFERIMENTO = "ti_riferimento";
+    private static final String TIPO_RIFERIMENTO_IMPORT = "IMPORT";
+    private static final String TIPO_RIFERIMENTO_INCLUDE = "INCLUDE";
+
     @EJB(mappedName = "java:app/Parer-ejb/ModelliFascicoliEjb")
     private ModelliFascicoliEjb modelliFascicoliEjb;
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
@@ -114,6 +126,8 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
     private ParamApplicHelper paramApplicHelper;
     @EJB(mappedName = "java:app/Parer-ejb/MonitoraggioHelper")
     private MonitoraggioHelper monitoraggioHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/XsdRepositoryHelper")
+    private it.eng.parer.xml.xsd.helper.XsdRepositoryHelper xsdRepositoryHelper;
 
     @Override
     public void initOnClick() throws EMFError {
@@ -128,6 +142,8 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 
             if (getLastPublisher()
                     .equals(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL)) {
+
+                // Solo per operazioni di salvataggio/annullamento del form principale
                 try {
                     readUploadForm();
                 } catch (ParerUserError ex) {
@@ -173,7 +189,6 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
             DiskFileItem tmpOperation = null;
 
             while (iter.hasNext()) {
-
                 FileItem item = (FileItem) iter.next();
                 if (!item.isFormField()) {
                     tmpFileItem = (DiskFileItem) item;
@@ -203,25 +218,18 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                             .setValue(item.getString());
                 } else if (!item.getFieldName().equals("table")) {
                     String fieldName = item.getFieldName();
-                    if (fieldName.contains(NE_DETTAGLIO_CANCEL)
-                            || fieldName.contains(NE_DETTAGLIO_SAVE)) {
+                    if (fieldName.contains(ListAction.NE_DETTAGLIO_CANCEL)
+                            || fieldName.contains(ListAction.NE_DETTAGLIO_SAVE)) {
                         tmpOperation = (DiskFileItem) item;
                     }
                 }
             }
 
             if (tmpOperation != null) {
-                if (tmpOperation.getFieldName().contains(NE_DETTAGLIO_CANCEL)) {
+                if (tmpOperation.getFieldName().contains(ListAction.NE_DETTAGLIO_CANCEL)) {
                     goBack();
-                } else if (tmpOperation.getFieldName().contains(NE_DETTAGLIO_SAVE)) {
-                    if (getForm().getModelliXsdTipiFascicoloDetail().getStatus()
-                            .equals(Status.insert)) {
-                        // controllo esistenza del file
-                        if (tmpFileItem != null && (StringUtils.isBlank(tmpFileItem.getName())
-                                || tmpFileItem.getSize() == 0)) {
-                            getMessageBox().addError("Nessun file selezionato");
-                        }
-                    }
+                } else if (tmpOperation.getFieldName().contains(ListAction.NE_DETTAGLIO_SAVE)) {
+                    // Verrà letto in saveModelloXsdTipiFasc() con .parse()
                     // controllo ambiente
                     BigDecimal idAmbiente = getForm().getModelliXsdTipiFascicoloDetail()
                             .getId_ambiente().parse();
@@ -229,12 +237,8 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                         getMessageBox().addError("Ambiente non inserito");
                     }
 
-                    // controllo esistenza tipo modello xsd
                     String tiModelloXsd = getForm().getModelliXsdTipiFascicoloDetail()
                             .getTi_modello_xsd().parse();
-                    if (StringUtils.isBlank(tiModelloXsd)) {
-                        getMessageBox().addError("Tipologia non inserita");
-                    }
 
                     // controllo flag standard
                     String flDefault = getForm().getModelliXsdTipiFascicoloDetail().getFl_default()
@@ -285,25 +289,36 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                         }
 
                         if (StringUtils.isNotBlank(clob)) {
-                            // compilazione schema
-                            // 1. Lookup a factory for the W3C XML Schema language
-                            SchemaFactory schemaFactory = SchemaFactory
-                                    .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-                            schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-                            schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-                            // anche in questo caso l'eccezione non deve mai verificarsi, a meno di
-                            // non
-                            // aver caricato
-                            // nel database un xsd danneggiato...
-                            try {
-                                // 2. Compile the schema.
-                                schemaFactory.newSchema(new StreamSource(new StringReader(clob)));
-                            } catch (SAXException e) {
-                                log.error("Eccezione nel parsing dello schema del file xsd", e);
-                                throw new FileUploadException(
-                                        "eccezione nel parsing dello schema del file xsd", e);
+                            // XSD: validazione schema
+                            // Se l'XSD contiene import/include, la validazione nativa fallirebbe
+                            // per mancanza di resolver.
+                            // In quel caso la saltiamo qui (verrà fatta dall'EJB con
+                            // DbXsdResourceResolver).
+                            // Se invece è un XSD autonomo, eseguiamo la validazione sintattica
+                            // standard.
+                            if (!xsdContieneDipendenze(clob)) {
+                                // 1. Lookup a factory for the W3C XML Schema language
+                                SchemaFactory schemaFactory = SchemaFactory
+                                        .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                                schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                                schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+                                try {
+                                    // 2. Compile the schema.
+                                    schemaFactory
+                                            .newSchema(new StreamSource(new StringReader(clob)));
+                                } catch (SAXException e) {
+                                    String saxMsg = e.getMessage() != null ? e.getMessage() : "";
+                                    throw new FileUploadException(
+                                            "Il file XSD non è sintatticamente valido: " + saxMsg,
+                                            e);
+                                }
                             }
                         }
+
+                        // NOTA: In INSERT mode, la lista dipendenze è già in sessione (modificata
+                        // dall'utente tramite il bottone "Aggiungi"). Viene letta direttamente da
+                        // saveModelloXsdTipiFasc() senza bisogno di post esplicito.
+
                         saveModelloXsdTipiFasc(tiModelloXsd, flDefault, cdVersione, dsVersione,
                                 dtIstituz, dtSoppres, clob);
                     }
@@ -315,8 +330,12 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
             }
         } catch (FileUploadException ex) {
             log.error("Eccezione nell'upload dei file", ex);
-            getMessageBox().addError("Eccezione nell'upload dei file: " + ex.getLocalizedMessage(),
-                    ex);
+            String uploadMsg = ex.getLocalizedMessage();
+            if (uploadMsg != null && uploadMsg.startsWith("Il file XSD")) {
+                getMessageBox().addError(uploadMsg);
+            } else {
+                getMessageBox().addError("Eccezione nell'upload dei file: " + uploadMsg);
+            }
             forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
         } catch (Exception ex) {
             if (getForm().getModelliXsdTipiFascicoloDetail().getDs_xsd().parse().length() > 254) {
@@ -391,16 +410,61 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
             String xmlFormatted = formatter
                     .prettyPrintWithDOM3LS(modelloXsdFascicoloRowBean.getBlXsd());
             modelloXsdFascicoloRowBean.setBlXsd(xmlFormatted);
+            // Reinizializza le DecodeMap prima di copyFromBean
+            initModelloXsdTipiFascicoloDetail();
+            // copyFromBean
+            if (it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd.RICHIAMABILE
+                    .name().equals(modelloXsdFascicoloRowBean.getTiModelloXsd())) {
+                BaseTable tiModelloTable = new BaseTable();
+                for (CostantiDB.TiModelloXsd val : CostantiDB.TiModelloXsd.values()) {
+                    BaseRow row = new BaseRow();
+                    row.setString(TI_MODELLO_XSD, val.name());
+                    tiModelloTable.add(row);
+                }
+                BaseRow richiamabileRow = new BaseRow();
+                richiamabileRow.setString(TI_MODELLO_XSD,
+                        it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd.RICHIAMABILE
+                                .name());
+                tiModelloTable.add(richiamabileRow);
+                DecodeMap mappaConRichiamabile = new DecodeMap();
+                mappaConRichiamabile.populatedMap(tiModelloTable, TI_MODELLO_XSD, TI_MODELLO_XSD);
+                getForm().getModelliXsdTipiFascicoloDetail().getTi_modello_xsd()
+                        .setDecodeMap(mappaConRichiamabile);
+            }
             getForm().getModelliXsdTipiFascicoloDetail().copyFromBean(modelloXsdFascicoloRowBean);
             getForm().getModelliXsdTipiFascicoloDetail().setViewMode();
             getForm().getModelliXsdTipiFascicoloDetail().setStatus(Status.view);
             getForm().getModelliXsdTipiFascicoloList().setStatus(Status.view);
+
+            // Carica lista dipendenze XSD in view mode (sempre non editabile)
+            loadDipendenzaXsd(idModelloXsdFascicolo);
+
+            // Avviso visibile sempre in VIEW se l'XSD è modulare ma mancano dipendenze
+            String xsdContent = modelloXsdFascicoloRowBean.getBlXsd();
+            int totaleRiferimenti = contaRiferimentiXsd(xsdContent);
+            if (totaleRiferimenti > 0) {
+                it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean depsCaricate = (it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean) getForm()
+                        .getDipendenzaXsdList().getTable();
+                int depsConfigurate = depsCaricate != null ? depsCaricate.size() : 0;
+                if (depsConfigurate < totaleRiferimenti) {
+                    getMessageBox().addWarning("L'XSD dichiara " + totaleRiferimenti
+                            + " riferimenti (import/include), " + "configurate " + depsConfigurate
+                            + " su " + totaleRiferimenti
+                            + ". Il modello non è ancora utilizzabile per la validazione.");
+                }
+            }
+
+            // La visibilità dei bottoni dipendenze sarà gestita automaticamente da
+            // postLoad()
 
         } catch (ParerUserError ex) {
             getMessageBox().addError(ex.getDescription());
         }
     }
 
+    /**
+     * Inizializza le combo del form di dettaglio modello XSD tipo fascicolo
+     */
     private void initModelloXsdTipiFascicoloDetail() {
         BaseTableInterface ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(
                 getUser().getIdUtente(),
@@ -413,6 +477,10 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
         // Imposto la combo "Tipo modello xsd"
         getForm().getModelliXsdTipiFascicoloDetail().getTi_modello_xsd()
                 .setDecodeMap(ComboGetter.getMappaTiModelloXsd());
+
+        // Imposto la combo "Standard"
+        getForm().getModelliXsdTipiFascicoloDetail().getFl_default()
+                .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
     }
 
     @Override
@@ -432,6 +500,7 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                 getForm().getModelliXsdTipiFascicoloList().setStatus(Status.view);
 
                 forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
+
             } else {
                 goBack();
             }
@@ -443,11 +512,32 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 
     @Override
     public void insertDettaglio() throws EMFError {
-        if (getTableName().equals(getForm().getModelliXsdTipiFascicoloList().getName())) {
+        if (getTableName().equals(getForm().getDipendenzaXsdList().getName())) {
+            // Richiamato quando l'utente clicca "Inserisci" dalla DipendenzaXsdList
+            // Naviga alla pagina di ricerca/selezione modelli
+            BigDecimal idModelloXsdFascicolo = ((DecModelloXsdFascicoloTableBean) getForm()
+                    .getModelliXsdTipiFascicoloList().getTable()).getCurrentRow()
+                    .getIdModelloXsdFascicolo();
+            if (modelliFascicoliEjb.isModelloXsdInUseInTipologieFascicolo(idModelloXsdFascicolo)) {
+                getMessageBox().addError(
+                        "Il modello xsd di tipo fascicolo \u00E8 gi\u00E0 stato utilizzato per gestire delle tipologie di fascicolo: la modifica delle dipendenze non \u00E8 consentita");
+                forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
+                return;
+            }
+
+            initDipendenzaXsdDetail();
+            forwardToPublisher(Application.Publisher.DIPENDENZA_XSD_MODELLO_DETAIL);
+        } else if (getTableName().equals(getForm().getModelliXsdTipiFascicoloList().getName())) {
             getForm().getModelliXsdTipiFascicoloDetail().reset();
             getForm().getModelliXsdTipiFascicoloDetail().setEditMode();
             getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton().setHidden(true);
             getForm().getModelliXsdTipiFascicoloDetail().getLogEventi().setHidden(true);
+
+            // Le dipendenze verranno gestite in view
+            getForm().getDipendenzaXsdList()
+                    .setTable(new it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean());
+            getForm().getDipendenzaXsdList().setStatus(Status.view);
+            getForm().getDipendenzaXsdList().setHidden(true);
 
             // Setta ambiente in base ai valori della pagina di ricerca modelli xsd
             initComboCreaModelloXsdTipiFascicoloFromRicercaModelliXsd();
@@ -469,7 +559,8 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
      * @return l'id dell'ambiente impostato come filtro di ricerca
      */
     private BigDecimal initComboCreaModelloXsdTipiFascicoloFromRicercaModelliXsd() {
-        // Inizializzo la combo ambiente in base ai valori impostati nella pagina di ricerca modelli
+        // Inizializzo la combo ambiente in base ai valori impostati nella pagina di
+        // ricerca modelli
         // xsd
         ComboBox ambienteCombo = getForm().getFiltriModelliXsdTipiFascicolo().getId_ambiente();
         DecodeMapIF mappaAmbiente = ambienteCombo.getDecodeMap();
@@ -507,14 +598,6 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                 .setValue(df.format(cal.getTime()));
     }
 
-    @Override
-    public void saveDettaglio() throws EMFError {
-        if (getTableName().equals(getForm().getModelliXsdTipiFascicoloList().getName())
-                || getTableName().equals(getForm().getModelliXsdTipiFascicoloDetail().getName())) {
-            // saveModelloXsdTipiFasc();
-        }
-    }
-
     private void saveModelloXsdTipiFasc(String tiModelloXsd, String flStandard, String cdVersione,
             String dsVersione, Date dtIstituz, Date dtSoppres, String file) throws EMFError {
         getMessageBox().clear();
@@ -530,30 +613,91 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
         String flDefault = getForm().getModelliXsdTipiFascicoloDetail().getFl_default().parse();
         if (StringUtils.isBlank(flDefault)) {
             getMessageBox().addError("Flag standard non inserito");
-        } else if (getForm().getModelliXsdTipiFascicoloDetail().getFl_default().parse()
-                .equals(CostantiDB.Flag.TRUE)
+        }
+
+        // Leggi flag richiamabile
+        // Carica dipendenze: SEMPRE dalla sessione (modificate dall'utente tramite
+        // Aggiungi/Rimuovi)
+        it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean deps = null;
+        if (getForm().getDipendenzaXsdList().getTable() != null) {
+            deps = (it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean) getForm()
+                    .getDipendenzaXsdList().getTable();
+        }
+
+        // Filtra righe vuote (senza target selezionato)
+        if (deps != null && !deps.isEmpty()) {
+            it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean filteredDeps = new it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean();
+            for (it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifRowBean row : deps) {
+                if (row.getIdModelloXsdFascicoloTarget() != null) {
+                    filteredDeps.add(row);
+                }
+            }
+            deps = filteredDeps;
+        }
+
+        // Un modello è richiamabile se ha tipo modello = RICHIAMABILE
+        boolean isRichiamabile = it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd.RICHIAMABILE
+                .name().equals(tiModelloXsd);
+
+        // Validazioni su ogni dipendenza (se presenti)
+        if (deps != null && !deps.isEmpty()) {
+            for (it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifRowBean row : deps) {
+                // Tipo riferimento obbligatorio
+                if (StringUtils.isBlank(row.getTiRiferimento())) {
+                    getMessageBox()
+                            .addError("Tipo riferimento obbligatorio per tutte le dipendenze");
+                    forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
+                    return;
+                }
+
+                // Per IMPORT, namespace_uri è obbligatorio
+                if (TIPO_RIFERIMENTO_IMPORT.equals(row.getTiRiferimento())
+                        && StringUtils.isBlank(row.getNamespaceUri())) {
+                    getMessageBox()
+                            .addError("Namespace URI obbligatorio per dipendenze di tipo IMPORT");
+                    forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
+                    return;
+                }
+            }
+        }
+
+        boolean contieneDipendenzeXsd = StringUtils.isNotBlank(file) && xsdContieneDipendenze(file);
+
+        // Un modello RICHIAMABILE non può contenere import o include
+        if (isRichiamabile && contieneDipendenzeXsd) {
+            getMessageBox().addError("Un modello RICHIAMABILE non può contenere import o include");
+        }
+
+        // Validazione modello standard duplicate (solo per non richiamabili)
+        if (!isRichiamabile && StringUtils.isNotBlank(tiModelloXsd)
+                && CostantiDB.Flag.TRUE.equals(flDefault)
                 && modelliFascicoliEjb.existAnotherDecModelloXsdStd(
                         getForm().getModelliXsdTipiFascicoloDetail().getId_ambiente().parse(),
-                        idModelloXsdFascicolo,
-                        getForm().getModelliXsdTipiFascicoloDetail().getTi_modello_xsd().parse(),
+                        idModelloXsdFascicolo, tiModelloXsd,
                         CostantiDB.TiUsoModelloXsd.VERS.name())) {
-            getMessageBox().addError("Modello xsd standard gi\u00E0 presente nell'ambiente");
+            getMessageBox().addError("Modello xsd standard già presente nell'ambiente");
         }
-        DecModelloXsdFascicoloRowBean modelloXsdFascicoloRowBean = new DecModelloXsdFascicoloRowBean();
 
+        // Validazione sintassi XSD per tipo (solo se non richiamabile e XSD senza
+        // import/include)
         try {
-            if (StringUtils.isNotBlank(file) && !this.validazioneXsd(tiModelloXsd, file)) {
+            if (StringUtils.isNotBlank(file) && !isRichiamabile && !contieneDipendenzeXsd
+                    && !this.validazioneXsd(tiModelloXsd, file)) {
                 getMessageBox().addError(
                         "Elementi contenuti nel file XSD non conformi alla tipologia richiesta</br>");
             }
 
+            // Per modelli richiamabili e per i modelli modulari con import/include: la
+            // validazione XSD con DbXsdResourceResolver
+            // avviene in saveDipendenze (EJB) quando l'utente configura le dipendenze in
+            // VIEW.
+            DecModelloXsdFascicoloRowBean modelloXsdFascicoloRowBean = new DecModelloXsdFascicoloRowBean();
+
             // Salva il modello
             if (!getMessageBox().hasError()) {
                 checkModelloXsdTipoFascicolo();
-
-                // inizializzo il rowbean
-                BigDecimal idAmbiente = new BigDecimal(getForm().getModelliXsdTipiFascicoloDetail()
-                        .getId_ambiente().parse().intValue());
+                BigDecimal idAmbiente = getForm().getModelliXsdTipiFascicoloDetail()
+                        .getId_ambiente().parse();
 
                 modelloXsdFascicoloRowBean.setCdXsd(cdVersione);
                 if (StringUtils.isNotBlank(file)) {
@@ -565,17 +709,20 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                 modelloXsdFascicoloRowBean.setDsXsd(dsVersione);
                 modelloXsdFascicoloRowBean
                         .setTiUsoModelloXsd(CostantiDB.TiUsoModelloXsd.VERS.name());
+
+                // Tipo sempre dall'utente
                 modelloXsdFascicoloRowBean.setTiModelloXsd(tiModelloXsd);
-                modelloXsdFascicoloRowBean.setFlDefault(flStandard);
+                modelloXsdFascicoloRowBean.setFlDefault(flDefault);
 
                 /*
-                 * Codice aggiuntivo per il logging...
+                 * Codice aggiuntivo per il logging
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
                         configHelper
                                 .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+
                 if (getForm().getModelliXsdTipiFascicoloList().getStatus().equals(Status.insert)) {
                     param.setNomeAzione(SpagoliteLogUtil.getToolbarInsert());
 
@@ -592,22 +739,76 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                     getForm().getModelliXsdTipiFascicoloList().getTable()
                             .add(modelloXsdFascicoloRowBean);
 
+                    if (contieneDipendenzeXsd) {
+                        getMessageBox().addWarning(
+                                "Modello salvato. L'XSD contiene import/include: configurare le dipendenze.");
+                        getMessageBox().setViewMode(ViewMode.plain);
+                        loadDettaglioModelloXsdTipoFascicolo(
+                                new BigDecimal(idModelloXsdFascicoloNew));
+                        postLoad();
+                        forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
+                        return;
+                    } else {
+                        getMessageBox().addInfo("Modello XSD salvato con successo");
+                        getMessageBox().setViewMode(ViewMode.plain);
+                    }
+
                 } else if (getForm().getModelliXsdTipiFascicoloList().getStatus()
                         .equals(Status.update)) {
                     param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
                     BigDecimal idModelloXsdFascicoloUpd = getForm()
                             .getModelliXsdTipiFascicoloDetail().getId_modello_xsd_fascicolo()
                             .parse();
+
+                    boolean nuovoFileXsd = StringUtils.isNotBlank(file);
+
+                    Date oggi = new Date();
+                    boolean disattivazione = dtSoppres != null && dtSoppres.before(oggi);
+
+                    // Blocco: un modello RICHIAMABILE non può essere disattivato
+                    // se è ancora referenziato da un root attivo in DEC_MODELLO_XSD_FASC_RIF
+                    if (disattivazione && isRichiamabile && modelliFascicoliEjb
+                            .isModelloReferenziato(idModelloXsdFascicoloUpd)) {
+                        getMessageBox().addError(
+                                "Il modello RICHIAMABILE è referenziato dai altri modelli attivi e non può essere disattivato");
+                        forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
+                        return;
+                    }
+
+                    // Warning: le dipendenze verranno disattivate insieme al modello root
+                    int numeroDipendenze = modelliFascicoliEjb
+                            .countDipendenze(idModelloXsdFascicoloUpd);
+                    if (!isRichiamabile && numeroDipendenze > 0 && disattivazione) {
+                        getMessageBox()
+                                .addWarning("Attenzione: il modello verrà disattivato insieme a "
+                                        + numeroDipendenze + " dipendenza/e.");
+                    }
+
+                    if (nuovoFileXsd) {
+                        // Nuovo XSD caricato: cancella tutte le dipendenze obsolete
+                        modelliFascicoliEjb.deleteAllDipendenze(idModelloXsdFascicoloUpd);
+
+                        if (contieneDipendenzeXsd) {
+                            getMessageBox().addWarning(
+                                    "XSD aggiornato: le dipendenze precedenti sono state eliminate. "
+                                            + "Se il nuovo XSD contiene import/include, configurare le nuove dipendenze.");
+                        } else {
+                            getMessageBox().addInfo(
+                                    "Modello XSD aggiornato con successo. Se il nuovo XSD contiene import/include, configurare le nuove dipendenze.");
+                        }
+                    }
+                    // Aggiorna campi del modello (sempre)
                     modelliFascicoliEjb.updateModelloXsdFascicolo(param, idModelloXsdFascicoloUpd,
                             modelloXsdFascicoloRowBean);
+                    getMessageBox().setViewMode(ViewMode.plain);
                 }
+
                 reloadAfterGoBack(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
-                getMessageBox().addInfo("Modello xsd salvato con successo");
-                getMessageBox().setViewMode(ViewMode.plain);
             }
         } catch (ParerUserError ex) {
             getMessageBox().addError(ex.getDescription());
         }
+
         forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
     }
 
@@ -616,7 +817,8 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
         ByteArrayInputStream bais = null;
 
         if (!stringaFile.isEmpty()) {
-            bais = new ByteArrayInputStream(stringaFile.getBytes());
+            bais = new ByteArrayInputStream(
+                    stringaFile.getBytes(java.nio.charset.StandardCharsets.UTF_8));
         }
         boolean isValidType = false;
 
@@ -633,13 +835,17 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
             // "XML Schema, DTD, and Entity Attacks" (see reference below)
             dbf.setXIncludeAware(false);
             dbf.setExpandEntityReferences(false);
-            // As stated in the documentation, "Feature for Secure Processing (FSP)" is the central
+            // As stated in the documentation, "Feature for Secure Processing (FSP)" is the
+            // central
             // mechanism that will
-            // help you safeguard XML processing. It instructs XML processors, such as parsers,
+            // help you safeguard XML processing. It instructs XML processors, such as
+            // parsers,
             // validators,
-            // and transformers, to try and process XML securely, and the FSP can be used as an
+            // and transformers, to try and process XML securely, and the FSP can be used as
+            // an
             // alternative to
-            // dbf.setExpandEntityReferences(false); to allow some safe level of Entity Expansion
+            // dbf.setExpandEntityReferences(false); to allow some safe level of Entity
+            // Expansion
             // Exists from JDK6.
             dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             // ... and, per Timothy Morgan:
@@ -758,8 +964,10 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
         }
 
         // MEV#26576
-        // Controllo che non vi sia un’altra versione attiva alla data per lo stesso ambiente.
-        // Se l’entità del modello è FASCICOLO, AIP_SELF_DESCRIPTION_MORE_INFO, AIP_UNISYNCRO
+        // Controllo che non vi sia un'altra versione attiva alla data per lo stesso
+        // ambiente.
+        // Se l'entità del modello è FASCICOLO, AIP_SELF_DESCRIPTION_MORE_INFO,
+        // AIP_UNISYNCRO
         // non è possibile avere più versioni attive alla stessa data
         // if (TiModelloXsd.FASCICOLO.name().equals(tiModelloXsd)
         // || TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO.name().equals(tiModelloXsd)
@@ -774,20 +982,110 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
         // end MEV#26576
     }
 
+    /**
+     * Analizza il contenuto di un file XSD per verificare se contiene import o include
+     *
+     * @param xsdContent contenuto del file XSD come stringa
+     * @return true se l'XSD contiene tag xs:import o xs:include, false altrimenti
+     */
+    private boolean xsdContieneDipendenze(String xsdContent) {
+        if (StringUtils.isBlank(xsdContent)) {
+            return false;
+        }
+
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+
+            // Security settings
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
+
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(new ByteArrayInputStream(
+                    xsdContent.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+
+            // Cerca tag <xs:import> o <xsd:import>
+            NodeList imports = doc.getElementsByTagNameNS(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+                    "import");
+            if (imports.getLength() > 0) {
+                log.info("XSD contiene {} tag <import>", imports.getLength());
+                return true;
+            }
+
+            // Cerca tag <xs:include> o <xsd:include>
+            NodeList includes = doc.getElementsByTagNameNS(XMLConstants.W3C_XML_SCHEMA_NS_URI,
+                    "include");
+            if (includes.getLength() > 0) {
+                log.info("XSD contiene {} tag <include>", includes.getLength());
+                return true;
+            }
+
+            return false;
+
+        } catch (Exception e) {
+            // In caso di errore nel parsing, assume che non ci siano dipendenze
+            // (l'XSD verrà comunque validato da validazioneXsd)
+            log.warn("Errore nell'analisi delle dipendenze XSD", e);
+            return false;
+        }
+    }
+
     @Override
     public void updateModelliXsdTipiFascicoloList() throws EMFError {
         getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton().setViewMode();
 
+        // Recupera il modello corrente
+        DecModelloXsdFascicoloRowBean currentRow = (DecModelloXsdFascicoloRowBean) getForm()
+                .getModelliXsdTipiFascicoloList().getTable().getCurrentRow();
+        BigDecimal idModello = currentRow.getIdModelloXsdFascicolo();
+
+        // Mette in edit mode i campi modificabili del modello (sempre)
         getForm().getModelliXsdTipiFascicoloDetail().setViewMode();
         getForm().getModelliXsdTipiFascicoloDetail().getDs_xsd().setEditMode();
         getForm().getModelliXsdTipiFascicoloDetail().getDt_soppres().setEditMode();
-        getForm().getModelliXsdTipiFascicoloDetail().getBl_xsd().setEditMode();
         getForm().getModelliXsdTipiFascicoloDetail().getFl_default()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getModelliXsdTipiFascicoloDetail().getFl_default().setEditMode();
 
         getForm().getModelliXsdTipiFascicoloDetail().setStatus(Status.update);
         getForm().getModelliXsdTipiFascicoloList().setStatus(Status.update);
+
+        // Carica le dipendenze XSD per mostrarle in modalità VIEW (toolbar
+        // insert/delete)
+        try {
+            // Carica dipendenze esistenti (possono essere 0 o più)
+            it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean deps = modelliFascicoliEjb
+                    .getDipendenzaXsdTableBean(idModello);
+            getForm().getDipendenzaXsdList().setTable(deps);
+            getForm().getDipendenzaXsdList().setStatus(Status.view);
+
+            // Verifica se XSD è modulare e mancano dipendenze
+            DecModelloXsdFascicoloRowBean modelloCompleto = modelliFascicoliEjb
+                    .getDecModelloXsdFascicoloRowBean(idModello);
+            String xsdContent = modelloCompleto.getBlXsd();
+            boolean isModulare = xsdContieneDipendenze(xsdContent);
+
+            if (isModulare && (deps == null || deps.isEmpty())) {
+                getMessageBox().addWarning(
+                        "L'XSD contiene import/include ma non sono state ancora configurate le dipendenze. "
+                                + "Utilizzare il pulsante 'Inserisci' per aggiungere i modelli richiamati.");
+            }
+
+            log.info("UPDATE: caricate {} dipendenze per modello ID={}",
+                    deps != null ? deps.size() : 0, idModello);
+
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore nel caricamento dipendenze: " + ex.getDescription());
+        } catch (Exception e) {
+            log.error("Errore in updateModelliXsdTipiFascicoloList", e);
+            getMessageBox().addError("Errore durante il caricamento del modello XSD");
+        }
+
+        forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
     }
 
     @Override
@@ -798,8 +1096,6 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
         BigDecimal idModelloXsdFascicolo = currentRow.getIdModelloXsdFascicolo();
         int riga = getForm().getModelliXsdTipiFascicoloList().getTable().getCurrentRowIndex();
 
-        // Eseguo giusto un controllo per verificare che io stia prendendo la riga giusta se sono
-        // nel dettaglio
         if (getLastPublisher().equals(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL)) {
             if (!idModelloXsdFascicolo.equals(getForm().getModelliXsdTipiFascicoloDetail()
                     .getId_modello_xsd_fascicolo().parse())) {
@@ -834,6 +1130,16 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 
                     getMessageBox().addInfo("Modello xsd eliminato con successo");
                     getMessageBox().setViewMode(ViewMode.plain);
+                }
+            } catch (javax.ejb.EJBException ex) {
+                Throwable rootCause = ExceptionUtils.getRootCause(ex);
+                String rootMsg = rootCause != null ? rootCause.getMessage() : ex.getMessage();
+                if (rootMsg != null && rootMsg.contains("FK_MDL_XSD_FASC_RIF_TGT")) {
+                    getMessageBox().addError(
+                            "Il modello XSD non pu\u00F2 essere eliminato poich\u00E9 \u00E8 associato a uno o pi\u00F9 modelli.");
+                } else {
+                    getMessageBox()
+                            .addError("Il modello xsd non pu\u00F2 essere eliminato: " + rootMsg);
                 }
             } catch (ParerUserError ex) {
                 getMessageBox().addError(
@@ -947,7 +1253,8 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
         // Imposto tutti i filtri in edit mode
         getForm().getFiltriModelliXsdTipiFascicolo().setEditMode();
 
-        // Imposto come visibile il bottone di ricerca mdoelli xsd tipi Fascicolo e disabilito la
+        // Imposto come visibile il bottone di ricerca mdoelli xsd tipi Fascicolo e
+        // disabilito la
         // clessidra (per IE)
         getForm().getFiltriModelliXsdTipiFascicolo().getRicercaModelliButton().setEditMode();
         getForm().getFiltriModelliXsdTipiFascicolo().getRicercaModelliButton()
@@ -1008,7 +1315,7 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
         if (filtriModelliXsdTipiFascicolo.getId_ambiente().parse() != null) {
             /*
              * Se la combo ambiente è compilata, passo l'ambiente tra quelli a cui l'utente è
-             * abilitato in funzione delle strutture cui l’utente è abilitato
+             * abilitato in funzione delle strutture cui l'utente è abilitato
              */
             idAmbientiToFind.add(filtriModelliXsdTipiFascicolo.getId_ambiente().parse());
         } else {
@@ -1030,7 +1337,9 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                 .getFiltriModelliXsdTipiFascicolo();
         /* Esegue la post dei filtri compilati */
         filtriModelliXsdTipiFasc.post(getRequest());
-        /* Valida i filtri per verificarne la correttezza sintattica e l'obbligatorietà */
+        /*
+         * Valida i filtri per verificarne la correttezza sintattica e l'obbligatorietà
+         */
         if (filtriModelliXsdTipiFasc.validate(getMessageBox())) {
             /* Se la validazione non ha riportato errori */
             if (!getMessageBox().hasError()) {
@@ -1098,19 +1407,58 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 
     @Override
     protected void postLoad() {
-        super.postLoad();
+
         if (getForm().getModelliXsdTipiFascicoloList().getStatus().equals(Status.view)) {
+            // Modalità VIEW: mostra bottoni dettaglio
             getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton().setHidden(false);
             getForm().getModelliXsdTipiFascicoloDetail().getLogEventi().setHidden(false);
             getForm().getModelliXsdTipiFascicoloDetail().getLogEventi().setEditMode();
             getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton().setEditMode();
             getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton()
                     .setDisableHourGlass(true);
+
+            // Mostra sezione dipendenze SOLO se modello è root (non RICHIAMABILE) e ha
+            // import/include
+            boolean hasDipendenze = false;
+            try {
+                String tiModello = getForm().getModelliXsdTipiFascicoloDetail().getTi_modello_xsd()
+                        .parse();
+                boolean isRichiamabile = it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd.RICHIAMABILE
+                        .name().equals(tiModello);
+
+                if (!isRichiamabile) {
+                    String blXsd = getForm().getModelliXsdTipiFascicoloDetail().getBl_xsd().parse();
+                    hasDipendenze = contaRiferimentiXsd(blXsd) > 0;
+                }
+            } catch (Exception e) {
+                log.warn("postLoad: impossibile determinare riferimenti XSD dal form", e);
+            }
+            getForm().getDipendenzaXsdList().setHidden(!hasDipendenze);
+            if (hasDipendenze) {
+                getForm().getDipendenzaXsdList().setUserOperations(false, false, true, true);
+            } else {
+                getForm().getDipendenzaXsdList().setUserOperations(false, false, false, false);
+            }
+            log.debug("postLoad: VIEW mode - hasDipendenze={}", hasDipendenze);
+
+        } else if (getForm().getModelliXsdTipiFascicoloList().getStatus().equals(Status.insert)) {
+            getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton().setHidden(true);
+            getForm().getModelliXsdTipiFascicoloDetail().getLogEventi().setHidden(true);
+            getForm().getModelliXsdTipiFascicoloDetail().getLogEventi().setViewMode();
+            getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton().setViewMode();
+
+            getForm().getDipendenzaXsdList().setHidden(true);
+
         } else {
             getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton().setHidden(true);
             getForm().getModelliXsdTipiFascicoloDetail().getLogEventi().setHidden(true);
             getForm().getModelliXsdTipiFascicoloDetail().getLogEventi().setViewMode();
             getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton().setViewMode();
+
+            // In UPDATE mode, DipendenzaXsdList non è visibile (come in INSERT)
+            getForm().getDipendenzaXsdList().setHidden(true);
+
+            log.debug("postLoad: UPDATE mode - deps nascoste (visibili solo in VIEW)");
         }
     }
 
@@ -1171,7 +1519,7 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
         byte[] data = new byte[1000];
         if (xsdRowBean != null) {
 
-            byte[] blob = xsdRowBean.getBlXsd().getBytes();
+            byte[] blob = xsdRowBean.getBlXsd().getBytes(java.nio.charset.StandardCharsets.UTF_8);
             if (blob != null) {
                 try (InputStream is = new ByteArrayInputStream(blob)) {
                     int count;
@@ -1185,8 +1533,419 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
         }
     }
 
+    @Override
+    public JSONObject triggerDipendenzaXsdDetailId_modello_xsd_fascicoloOnTrigger()
+            throws EMFError {
+        getForm().getDipendenzaXsdDetail().post(getRequest());
+        BigDecimal idModello = getForm().getDipendenzaXsdDetail().getId_modello_xsd_fascicolo()
+                .parse();
+        if (idModello != null) {
+            try {
+                DecModelloXsdFascicoloRowBean modello = modelliFascicoliEjb
+                        .getDecModelloXsdFascicoloRowBean(idModello);
+                if (modello != null) {
+                    String ns = xsdRepositoryHelper.extractTargetNamespace(modello.getBlXsd());
+                    getForm().getDipendenzaXsdDetail().getNamespace_uri()
+                            .setValue(ns != null ? ns : "");
+                    String cdXsd = modello.getCdXsd();
+                    getForm().getDipendenzaXsdDetail().getSchema_location()
+                            .setValue(cdXsd.endsWith(".xsd") ? cdXsd : cdXsd + ".xsd");
+                }
+            } catch (Exception e) {
+                log.warn("Errore nel trigger id_modello_xsd_fascicolo: {}", e.getMessage());
+            }
+        } else {
+            getForm().getDipendenzaXsdDetail().getNamespace_uri().setValue("");
+            getForm().getDipendenzaXsdDetail().getSchema_location().setValue("");
+        }
+        return getForm().getDipendenzaXsdDetail().asJSON();
+    }
+
     public void triggerModelliXsdTipiFascicoloDetailId_ambienteOnTriggerJs() throws EMFError {
         getForm().getModelliXsdTipiFascicoloDetail().getId_ambiente().post(getRequest());
         redirectToAjax(getForm().getModelliXsdTipiFascicoloDetail().asJSON());
+    }
+
+    /**
+     * Carica la lista delle dipendenze XSD (sempre in view mode, non editabile inline)
+     *
+     * @param idPadre id del modello padre
+     *
+     * @throws ParerUserError errore generico
+     */
+    private void loadDipendenzaXsd(BigDecimal idPadre) throws ParerUserError {
+        it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifTableBean table = modelliFascicoliEjb
+                .getDipendenzaXsdTableBean(idPadre);
+
+        // Popola il campo cd_xsd_target per la visualizzazione
+        for (it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifRowBean row : table) {
+            if (row.getIdModelloXsdFascicoloTarget() != null) {
+                try {
+                    it.eng.parer.slite.gen.tablebean.DecModelloXsdFascicoloRowBean modello = modelliFascicoliEjb
+                            .getDecModelloXsdFascicoloRowBean(row.getIdModelloXsdFascicoloTarget());
+                    if (modello != null) {
+                        row.setString("cd_xsd_target", modello.getCdXsd());
+                    }
+                } catch (Exception e) {
+                    log.warn(
+                            "Errore nel recupero del cd_xsd per id_modello_xsd_fascicolo_target={}",
+                            row.getIdModelloXsdFascicoloTarget(), e);
+                }
+            }
+        }
+
+        getForm().getDipendenzaXsdList().setTable(table);
+        getForm().getDipendenzaXsdList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+        getForm().getDipendenzaXsdList().getTable().first();
+        // Lista sempre in VIEW mode: abilita insert e delete tramite toolbar, no inline
+        // edit
+        getForm().getDipendenzaXsdList().setUserOperations(false, false, true, true);
+    }
+
+    /**
+     * Elimina una dipendenza XSD: cancella la riga dalla sessione e, se la dipendenza esisteva già
+     * sul DB, la elimina dal DB.
+     *
+     * @throws EMFError errore generico
+     */
+    @Override
+    public void deleteDipendenzaXsdList() throws EMFError {
+        int rowIndex = getForm().getDipendenzaXsdList().getTable().getCurrentRowIndex();
+        if (rowIndex >= 0 && rowIndex < getForm().getDipendenzaXsdList().getTable().size()) {
+
+            // Se il modello esiste sul DB (ha un id): cancella la dep dal DB
+            BigDecimal idModelloCheck = getForm().getModelliXsdTipiFascicoloDetail()
+                    .getId_modello_xsd_fascicolo().parse();
+
+            if (modelliFascicoliEjb.isModelloXsdInUseInTipologieFascicolo(idModelloCheck)) {
+                getMessageBox().addError(
+                        "Il modello xsd di tipo fascicolo \u00E8 gi\u00E0 stato utilizzato per gestire delle tipologie di fascicolo: la modifica delle dipendenze non \u00E8 consentita");
+                forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
+                return;
+            }
+
+            if (idModelloCheck != null) {
+                eseguiDeleteDipendenza(rowIndex, idModelloCheck);
+            }
+        }
+        forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
+    }
+
+    /**
+     * Esegue la cancellazione effettiva della dipendenza dalla sessione e dal DB.
+     */
+    private void eseguiDeleteDipendenza(int rowIndex, BigDecimal idModelloCheck) {
+        try {
+            it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifRowBean rowDaRimuovere = (it.eng.parer.slite.gen.tablebean.DecModelloXsdFascRifRowBean) getForm()
+                    .getDipendenzaXsdList().getTable().getRow(rowIndex);
+            BigDecimal idDipendenza = rowDaRimuovere.getIdModelloXsdFascRif();
+
+            if (idDipendenza != null) {
+                modelliFascicoliEjb.deleteDipendenza(idDipendenza);
+            }
+
+            getForm().getDipendenzaXsdList().getTable().remove(rowIndex);
+
+            // Rilegge deps aggiornate dal DB e ricontrolla coerenza con XSD
+            DecModelloXsdFascicoloRowBean modello = modelliFascicoliEjb
+                    .getDecModelloXsdFascicoloRowBean(idModelloCheck);
+            String xsdRoot = modello.getBlXsd();
+            DecModelloXsdFascRifTableBean depsAggiornate = modelliFascicoliEjb
+                    .getDipendenzaXsdTableBean(idModelloCheck);
+            int totaleRiferimentiXsd = contaRiferimentiXsd(xsdRoot);
+            int totaleDepsConfigurate = depsAggiornate != null ? depsAggiornate.size() : 0;
+
+            if (totaleDepsConfigurate < totaleRiferimentiXsd) {
+                getMessageBox().addWarning("Dipendenza rimossa. Attenzione: l'XSD dichiara "
+                        + totaleRiferimentiXsd + " riferimenti, configurate "
+                        + totaleDepsConfigurate + " su " + totaleRiferimentiXsd
+                        + ". Aggiungere le dipendenze mancanti.");
+            } else {
+                getMessageBox().addInfo("Dipendenza rimossa con successo");
+            }
+            getMessageBox().setViewMode(ViewMode.plain);
+
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore di validazione: " + ex.getDescription());
+        } catch (Exception ex) {
+            getMessageBox().addError("Errore nel salvataggio delle modifiche: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Inizializza la pagina di dettaglio per l'associazione di dipendenze XSD
+     */
+    private void initDipendenzaXsdDetail() throws EMFError {
+        getForm().getDipendenzaXsdDetail().reset();
+
+        // Recupera il modello corrente
+        BigDecimal idModelloXsdFascicolo = getForm().getModelliXsdTipiFascicoloDetail()
+                .getId_modello_xsd_fascicolo().parse();
+        String cdXsd = getForm().getModelliXsdTipiFascicoloDetail().getCd_xsd().parse();
+        String dsXsd = getForm().getModelliXsdTipiFascicoloDetail().getDs_xsd().parse();
+
+        // Imposta i dati del modello padre in sola lettura (solo per contesto visivo)
+        getForm().getDipendenzaXsdDetail().getCd_xsd().setValue(cdXsd);
+        getForm().getDipendenzaXsdDetail().getDs_xsd().setValue(dsXsd);
+        // La combo getId_modello_xsd_fascicolo parte vuota: l'utente seleziona il
+        // richiamabile
+
+        // Inizializza combo tipo riferimento
+        BaseTable tipoRifTable = new BaseTable();
+        BaseRow rowImport = new BaseRow();
+        BaseRow rowInclude = new BaseRow();
+        rowImport.setString(TI_RIFERIMENTO, TIPO_RIFERIMENTO_IMPORT);
+        rowInclude.setString(TI_RIFERIMENTO, TIPO_RIFERIMENTO_INCLUDE);
+        tipoRifTable.add(rowImport);
+        tipoRifTable.add(rowInclude);
+        DecodeMap mappaTipoRif = DecodeMap.Factory.newInstance(tipoRifTable, TI_RIFERIMENTO,
+                TI_RIFERIMENTO);
+        getForm().getDipendenzaXsdDetail().getTi_riferimento().setDecodeMap(mappaTipoRif);
+
+        // Carica modelli richiamabili per la combo
+        try {
+            DecModelloXsdFascicoloTableBean modelliRichiamabili = modelliFascicoliEjb
+                    .getModelliRichiamabili();
+
+            // Costruisce DecodeMap e JSON per JavaScript
+            BaseTable modelliTable = new BaseTable();
+            StringBuilder jsonBuilder = new StringBuilder("{");
+            boolean first = true;
+
+            for (DecModelloXsdFascicoloRowBean modello : modelliRichiamabili) {
+                // Escludi solo il modello corrente (non può dipendere da se stesso)
+                if (idModelloXsdFascicolo != null
+                        && modello.getIdModelloXsdFascicolo().equals(idModelloXsdFascicolo)) {
+                    continue;
+                }
+
+                // Aggiungi alla DecodeMap
+                BaseRow row = new BaseRow();
+                row.setBigDecimal("id_modello", modello.getIdModelloXsdFascicolo());
+                row.setString("cd_xsd", modello.getCdXsd() + " - " + modello.getDsXsd());
+                modelliTable.add(row);
+
+                // Estrai targetNamespace dall'XSD
+                String targetNamespace = estraiTargetNamespace(modello.getBlXsd());
+
+                // Aggiungi al JSON per JavaScript
+                if (!first) {
+                    jsonBuilder.append(",");
+                }
+                jsonBuilder.append("\"").append(modello.getIdModelloXsdFascicolo()).append("\":{");
+                jsonBuilder.append("\"namespace\":\"").append(targetNamespace.replace("\"", "\\\""))
+                        .append("\",");
+                String cdXsdConExt = modello.getCdXsd().endsWith(".xsd") ? modello.getCdXsd()
+                        : modello.getCdXsd() + ".xsd";
+                jsonBuilder.append("\"schemaLocation\":\"")
+                        .append(cdXsdConExt.replace("\"", "\\\"")).append("\"");
+                jsonBuilder.append("}");
+                first = false;
+            }
+            jsonBuilder.append("}");
+
+            // Imposta la DecodeMap per la combo
+            DecodeMap mappaModelli = DecodeMap.Factory.newInstance(modelliTable, "id_modello",
+                    "cd_xsd");
+            getForm().getDipendenzaXsdDetail().getId_modello_xsd_fascicolo()
+                    .setDecodeMap(mappaModelli);
+
+            // Passa il JSON al JSP tramite request attribute
+            getRequest().setAttribute("modelliJsonData", jsonBuilder.toString());
+
+        } catch (Exception e) {
+            getMessageBox()
+                    .addError("Errore nel caricamento dei modelli richiamabili: " + e.getMessage());
+        }
+
+        getForm().getDipendenzaXsdDetail().setEditMode();
+        getForm().getDipendenzaXsdDetail().setStatus(Status.insert);
+        getForm().getDipendenzaXsdDetail().getCd_xsd().setViewMode();
+        getForm().getDipendenzaXsdDetail().getDs_xsd().setViewMode();
+    }
+
+    /**
+     * Estrae il targetNamespace dall'XSD di un modello richiamabile. Restituisce stringa vuota in
+     * caso di XSD assente o errore di parsing.
+     */
+    private String estraiTargetNamespace(String blXsd) {
+        if (blXsd == null || blXsd.trim().isEmpty()) {
+            return "";
+        }
+        try {
+            String ns = xsdRepositoryHelper.extractTargetNamespace(blXsd);
+            return ns != null ? ns : "";
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
+     * Salva le associazioni selezionate e torna al dettaglio modello
+     */
+    @Override
+    public void saveDettaglio() throws EMFError {
+        // Check if we're coming from the dipendenza detail page
+        if (getTableName().equals(getForm().getDipendenzaXsdDetail().getName())) {
+            saveAssociazioniDipendenzaXsd();
+            return;
+        }
+        if (getForm().getModelliXsdTipiFascicoloList().getStatus().equals(Status.update)) {
+            getForm().getModelliXsdTipiFascicoloDetail().post(getRequest());
+            String tiModelloXsd = getForm().getModelliXsdTipiFascicoloDetail().getTi_modello_xsd()
+                    .parse();
+            String flDefault = getForm().getModelliXsdTipiFascicoloDetail().getFl_default().parse();
+            String cdVersione = getForm().getModelliXsdTipiFascicoloDetail().getCd_xsd().parse();
+            String dsVersione = getForm().getModelliXsdTipiFascicoloDetail().getDs_xsd().parse();
+            Date dtIstituz = getForm().getModelliXsdTipiFascicoloDetail().getDt_istituz().parse();
+            Date dtSoppres = getForm().getModelliXsdTipiFascicoloDetail().getDt_soppres().parse();
+            // Nessun file XSD in questo path: null indica al metodo di non toccare bl_xsd
+            saveModelloXsdTipiFasc(tiModelloXsd, flDefault, cdVersione, dsVersione, dtIstituz,
+                    dtSoppres, null);
+        }
+    }
+
+    /**
+     * Salva le associazioni di dipendenza XSD per il modello corrente, con validazione
+     *
+     * @throws EMFError
+     */
+    private void saveAssociazioniDipendenzaXsd() throws EMFError {
+        if (!getForm().getDipendenzaXsdDetail().postAndValidate(getRequest(), getMessageBox())) {
+            forwardToPublisher(Application.Publisher.DIPENDENZA_XSD_MODELLO_DETAIL);
+            return;
+        }
+
+        try {
+            String tiRiferimento = getForm().getDipendenzaXsdDetail().getTi_riferimento().parse();
+            String namespaceUri = getForm().getDipendenzaXsdDetail().getNamespace_uri().parse();
+            String schemaLocation = getForm().getDipendenzaXsdDetail().getSchema_location().parse();
+            BigDecimal idModelloRichiamabile = getForm().getDipendenzaXsdDetail()
+                    .getId_modello_xsd_fascicolo().parse();
+
+            // Validazione campi obbligatori
+            if (StringUtils.isBlank(tiRiferimento)) {
+                getMessageBox().addError("Tipo riferimento obbligatorio");
+                forwardToPublisher(Application.Publisher.DIPENDENZA_XSD_MODELLO_DETAIL);
+                return;
+            }
+            if (idModelloRichiamabile == null) {
+                getMessageBox().addError("Selezionare un modello richiamabile");
+                forwardToPublisher(Application.Publisher.DIPENDENZA_XSD_MODELLO_DETAIL);
+                return;
+            }
+            if (TIPO_RIFERIMENTO_IMPORT.equals(tiRiferimento)
+                    && StringUtils.isBlank(namespaceUri)) {
+                getMessageBox().addError("Namespace URI obbligatorio per tipo riferimento IMPORT");
+                forwardToPublisher(Application.Publisher.DIPENDENZA_XSD_MODELLO_DETAIL);
+                return;
+            }
+            if (StringUtils.isBlank(schemaLocation)) {
+                getMessageBox().addError("Schema location obbligatorio");
+                forwardToPublisher(Application.Publisher.DIPENDENZA_XSD_MODELLO_DETAIL);
+                return;
+            }
+
+            // Recupera il modello selezionato dal DB
+            DecModelloXsdFascicoloRowBean modelloSelezionato = modelliFascicoliEjb
+                    .getDecModelloXsdFascicoloRowBean(idModelloRichiamabile);
+            if (modelloSelezionato == null) {
+                getMessageBox().addError("Modello selezionato non trovato");
+                forwardToPublisher(Application.Publisher.DIPENDENZA_XSD_MODELLO_DETAIL);
+                return;
+            }
+
+            // Costruisce la nuova dipendenza
+            DecModelloXsdFascRifRowBean newDep = new DecModelloXsdFascRifRowBean();
+            newDep.setIdModelloXsdFascicoloTarget(modelloSelezionato.getIdModelloXsdFascicolo());
+            newDep.setString("cd_xsd_target", modelloSelezionato.getCdXsd());
+            newDep.setTiRiferimento(tiRiferimento);
+            newDep.setNamespaceUri(namespaceUri);
+            newDep.setSchemaLocation(schemaLocation);
+
+            // Imposta le date standard
+            Calendar cal = Calendar.getInstance();
+            newDep.setDtIstituz(new Timestamp(cal.getTimeInMillis()));
+            cal.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            newDep.setDtSoppres(new Timestamp(cal.getTimeInMillis()));
+
+            BigDecimal idModelloXsdFascicolo = getForm().getModelliXsdTipiFascicoloDetail()
+                    .getId_modello_xsd_fascicolo().parse();
+
+            if (idModelloXsdFascicolo == null) {
+                getMessageBox()
+                        .addError("ID modello non trovato: impossibile salvare le dipendenze");
+                forwardToPublisher(Application.Publisher.DIPENDENZA_XSD_MODELLO_DETAIL);
+                return;
+            }
+
+            // Persiste la singola dipendenza sul DB (insert + flush)
+            modelliFascicoliEjb.saveDipendenze(idModelloXsdFascicolo, newDep);
+
+            // Recupera XSD root e deps aggiornate dal DB (inclusa la dep appena inserita)
+            DecModelloXsdFascicoloRowBean modelloEsistente = modelliFascicoliEjb
+                    .getDecModelloXsdFascicoloRowBean(idModelloXsdFascicolo);
+            String xsdRoot = modelloEsistente.getBlXsd();
+            DecModelloXsdFascRifTableBean deps = modelliFascicoliEjb
+                    .getDipendenzaXsdTableBean(idModelloXsdFascicolo);
+            int totaleRiferimentiXsd = contaRiferimentiXsd(xsdRoot);
+            int totaleDepsConfigurate = deps != null ? deps.size() : 0;
+
+            // Mostra il messaggio di successo solo se le dipendenze sono complete
+            if (totaleDepsConfigurate >= totaleRiferimentiXsd) {
+                getMessageBox().addInfo("Dipendenze configurate: " + totaleDepsConfigurate + " su "
+                        + totaleRiferimentiXsd
+                        + ". Il modello è ora utilizzabile per la validazione.");
+            }
+            getMessageBox().setViewMode(ViewMode.plain);
+
+        } catch (javax.ejb.EJBException ex) {
+            // EJBException wrappa IllegalStateException lanciata dall'EJB (es. validazione
+            // XSD fallita)
+            // Il container ha già fatto rollback
+            log.error("Errore nella validazione XSD delle dipendenze", ex);
+            Throwable rootCause = ExceptionUtils.getRootCause(ex);
+            getMessageBox().addError(rootCause != null ? rootCause.getMessage() : ex.getMessage());
+            forwardToPublisher(Application.Publisher.DIPENDENZA_XSD_MODELLO_DETAIL);
+            return;
+        } catch (Exception ex) {
+            log.error("Errore nel salvataggio delle dipendenze XSD", ex);
+            getMessageBox().addError("Errore nel salvataggio delle dipendenze: "
+                    + ExceptionUtils.getRootCauseMessage(ex));
+            forwardToPublisher(Application.Publisher.DIPENDENZA_XSD_MODELLO_DETAIL);
+            return;
+        }
+
+        goBack();
+    }
+
+    /**
+     * Conta il numero totale di xs:import e xs:include dichiarati nell'XSD root.
+     */
+    private int contaRiferimentiXsd(String blXsd) {
+        if (StringUtils.isBlank(blXsd)) {
+            return 0;
+        }
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            dbf.setNamespaceAware(true);
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(new ByteArrayInputStream(
+                    blXsd.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+            return doc.getElementsByTagNameNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "import")
+                    .getLength()
+                    + doc.getElementsByTagNameNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "include")
+                            .getLength();
+        } catch (Exception e) {
+            log.warn("Impossibile contare i riferimenti nell'XSD", e);
+            return 0;
+        }
     }
 }

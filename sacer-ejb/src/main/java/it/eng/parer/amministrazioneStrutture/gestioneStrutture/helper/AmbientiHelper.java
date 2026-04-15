@@ -664,7 +664,7 @@ public class AmbientiHelper extends GenericHelper {
             query.setParameter("idAmbiente", longListFrom(idAmbienteList));
         }
         if (idAmbitoTerritList != null && !idAmbitoTerritList.isEmpty()) {
-            query.setParameter("idAmbitoTerritList", longListFrom(idAmbitoTerritList));
+            query.setParameter("idAmbitoTerritList", idAmbitoTerritList);
         }
         if (idCategEnteList != null && !idCategEnteList.isEmpty()) {
             query.setParameter("idCategEnteList", longListFrom(idCategEnteList));

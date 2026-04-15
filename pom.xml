@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sacer-jboss</artifactId>
-    <version>10.16.1-SNAPSHOT</version>
+    <version>10.17.0</version>
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
@@ -17,7 +17,7 @@
         <!-- Skiptests by default : esecuzione su CI 2.6.0-->
         <skipTests>true</skipTests>
         <!-- Questa è la versione del modulo sacer-xml che dovrà essere inclusa nel progetto -->
-        <sacer.xmlmodule.version>2.13.0</sacer.xmlmodule.version>
+        <sacer.xmlmodule.version>2.15.0</sacer.xmlmodule.version>
         <!-- spagofat bom -->
         <spagofat.version>7.4.0</spagofat.version>
         <verificafirma-crypto-beans.version>2.0.0</verificafirma-crypto-beans.version>

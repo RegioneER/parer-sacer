@@ -307,38 +307,75 @@ public class RecUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
             // invece di strimmare tutto lo zip, viene aperto estratto l'unico file al suo interno
             // e strimmato quello sull'output della servlet con contenuto generico
             // octet/stream
-            if (myRecuperoExt.getStrutturaRecupero().getChiave().isFileUnzippato() != null
-                    && myRecuperoExt.getStrutturaRecupero().getChiave().isFileUnzippato()) {
+            if (myRecuperoExt.getStrutturaRecupero().getParametri() != null
+                    && myRecuperoExt.getStrutturaRecupero().getParametri().isFileUnzippato() != null
+                    && myRecuperoExt.getStrutturaRecupero().getParametri().isFileUnzippato()) {
                 File zipFile = rispostaWs.getRifFileBinario().getFileSuDisco();
                 try (ServletOutputStream out = response.getOutputStream();
                         ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
+
                     ZipEntry entry = zis.getNextEntry();
-                    long entrySize = entry.getSize();
-                    // Determina il tipo MIME del file estratto
-                    String mimeType = "application/octet-stream";
 
-                    // Imposta gli header per il download
-                    response.setContentType(mimeType);
-                    String nomeFileDaScaricare = entry.getName();
-                    int posizioneUltimoSlash = nomeFileDaScaricare.lastIndexOf("/");
-                    if (posizioneUltimoSlash > 0) {
-                        nomeFileDaScaricare = nomeFileDaScaricare
-                                .substring(posizioneUltimoSlash + 1);
+                    // MEV#40093 - Utilizzo del parametro <FileUnzippato> limitato al recupero del
+                    // componente
+                    // Se nello zip generato si trova più di un componente (più file) e si è
+                    // richiesto di unzippare il componente allora genera un errore applicativo
+                    // altrimenti scarica lo zip con tutto dentro.
+                    ZipEntry entry2 = zis.getNextEntry();
+                    if (entry2 != null) {
+                        rispostaWs.setSeverity(SeverityEnum.ERROR);
+                        rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.COMP_003_006,
+                                "Trovati più record per il componente richiesto!");
+                        log.info("Trovati più record per il componente richiesto!");
+
+                        response.setContentType("application/xml; charset=\"utf-8\"");
+
+                        try (OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out,
+                                StandardCharsets.UTF_8);) {
+                            Marshaller marshaller = xmlContextCache
+                                    .getVersRespStatoCtx_StatoConservazione().createMarshaller();
+                            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                            marshaller.marshal(myEsito, tmpStreamWriter);
+                        } catch (JAXBException | IOException e) {
+                            log.error("Eccezione nella servlet recupero sync", e);
+                        }
+                        tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Fine).setFase("")
+                                .logAvanzamento();
+                    } else {
+                        // --------------------------------------------------------------------------------------
+                        zis.close();
+                        try (ServletOutputStream out2 = response.getOutputStream();
+                                ZipInputStream zis2 = new ZipInputStream(
+                                        new FileInputStream(zipFile))) {
+                            entry = zis2.getNextEntry();
+                            long entrySize = entry.getSize();
+                            // Determina il tipo MIME del file estratto
+                            // String mimeType = "application/pdf";
+                            String mimeType = "application/octet-stream";
+
+                            // Imposta gli header per il download
+                            response.setContentType(mimeType);
+                            String nomeFileDaScaricare = entry.getName();
+                            int posizioneUltimoSlash = nomeFileDaScaricare.lastIndexOf("/");
+                            if (posizioneUltimoSlash > 0) {
+                                nomeFileDaScaricare = nomeFileDaScaricare
+                                        .substring(posizioneUltimoSlash + 1);
+                            }
+                            response.setHeader("Content-Disposition",
+                                    "attachment; filename=\"" + nomeFileDaScaricare + "\"");
+                            response.setHeader("Content-Length", String.valueOf(entrySize));
+                            // -------------------------------------------------------------------------------------
+
+                            byte[] buffer = new byte[BUFFERSIZE];
+                            int bytesRead;
+                            while ((bytesRead = zis2.read(buffer)) != -1) {
+                                out2.write(buffer, 0, bytesRead);
+                            }
+                            out2.flush();
+                            zis2.closeEntry();
+                        }
+                        // -------------------------------------------------------------------------------------
                     }
-                    response.setHeader("Content-Disposition",
-                            "attachment; filename=\"" + nomeFileDaScaricare + "\"");
-                    response.setHeader("Content-Length", String.valueOf(entrySize));
-                    // -------------------------------------------------------------------------------------
-
-                    byte[] buffer = new byte[BUFFERSIZE];
-                    int bytesRead;
-                    while ((bytesRead = zis.read(buffer)) != -1) {
-                        out.write(buffer, 0, bytesRead);
-                    }
-                    out.flush();
-                    zis.closeEntry();
-                    // -------------------------------------------------------------------------------------
-
                 } // fine try with resources
 
             } else {

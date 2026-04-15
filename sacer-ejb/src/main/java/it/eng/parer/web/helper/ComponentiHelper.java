@@ -1227,7 +1227,7 @@ public class ComponentiHelper extends GenericHelper {
             // Ricavo l'informazione se la struttura ha più di una sottostruttura
             String queryStrUd = "SELECT u.orgSubStrut.idSubStrut FROM AroUnitaDoc u where u.orgStrut.idStrut = :idStrut ";
             TypedQuery<Long> query = getEntityManager().createQuery(queryStrUd, Long.class);
-            query.setParameter("idStrutParam", idStrut);
+            query.setParameter("idStrut", idStrut);
             query.setMaxResults(1); // <<<=== LIMITA A 1 RISULTATO
             List<Long> risultati = query.getResultList();
             if (!risultati.isEmpty()) {

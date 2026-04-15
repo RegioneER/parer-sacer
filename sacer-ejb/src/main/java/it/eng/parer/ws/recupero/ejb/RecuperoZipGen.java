@@ -857,8 +857,10 @@ public class RecuperoZipGen {
             throws IOException {
         RispostaControlli rispostaControlli = new RispostaControlli();
         Set<String> entryGiaInserite = new HashSet<>();
-        TokenFileNameType tipoNomeFile = recupero.getStrutturaRecupero().getChiave()
-                .getTipoNomeFile();
+        TokenFileNameType tipoNomeFile = recupero.getStrutturaRecupero().getParametri() != null
+                ? recupero.getStrutturaRecupero().getParametri()
+                        .getTipoNomeFile()
+                : null;
         for (ComponenteRec tmpCmp : lstComp) {
             // define file name
             String archiveEntryFinalName = null;
@@ -981,9 +983,11 @@ public class RecuperoZipGen {
             }
 
             // MEV#34239 (define zip entry)
-            boolean invokeUnsignedDocService = recupero.getStrutturaRecupero().getChiave()
-                    .isFileSbustato() != null
-                    && recupero.getStrutturaRecupero().getChiave().isFileSbustato();
+            boolean invokeUnsignedDocService = recupero.getStrutturaRecupero()
+                    .getParametri() != null
+                    && recupero.getStrutturaRecupero().getParametri()
+                            .isFileSbustato() != null
+                    && recupero.getStrutturaRecupero().getParametri().isFileSbustato();
             if (invokeUnsignedDocService) {
                 // MEV#39147 - Modifica delle modalità di calcolo dell'estensione nel recupero di
                 // file sbustati

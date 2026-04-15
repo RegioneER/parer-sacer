@@ -64,7 +64,7 @@ $(document).ready(function () {
         const statoInterno = $('#statoInternoRichiesta_val').val();
         if (statoRichiesta === 'EVASA') { monitorDiv.hide(); return; }
         const statiLogiciInCorso = ['INVIATA_A_MS', 'IN_ELABORAZIONE_LOGICA'];
-        const statiFisiciInCorso = ['IN_PREPARAZIONE_FISICA', 'IN_CODA_CANCELLAZIONE', 'IN_CANCELLAZIONE_FISICA'];
+        const statiFisiciInCorso = ['IN_PREPARAZIONE_FISICA', 'IN_CODA_CANCELLAZIONE', 'IN_CANCELLAZIONE_FISICA', 'IN_PULIZIA_SESSIONI_KO'];
         if (statiLogiciInCorso.includes(statoInterno)) {
             monitorDiv.show();
             startPollingLogico(monitorDiv.data('id-ud-del-richiesta'), monitorDiv.data('id-richiesta'), $('#selectedRigaMotivoR_val').val());
@@ -136,7 +136,7 @@ $(document).ready(function () {
         $.getJSON(url, function(data) {
             aggiornaUIFisica(data);
 
-            const statiInterniDiErrore = ['ERRORE_PREPARAZIONE', 'ERRORE_FISICO_CRITICO', 'ERRORE_FISICO_PARZIALE'];
+            const statiInterniDiErrore = ['ERRORE_PREPARAZIONE', 'ERRORE_FISICO_CRITICO', 'ERRORE_FISICO_PARZIALE', 'ERRORE_PULIZIA'];
             
             // Controlla se il processo è terminato (con successo o con errore)
             if (data.statoRichiesta === 'EVASA' || statiInterniDiErrore.includes(data.statoInternoRichiesta)) {
@@ -281,7 +281,11 @@ $(document).ready(function () {
         ui.barra.css('width', '100%');
         ui.barra.css('background-color', '#198754').removeClass('progress-bar-animated progress-bar-striped');
         ui.testo.text(testoAvanzamento);
-    } else {
+    }  else if (statoInterno === 'IN_PULIZIA_SESSIONI_KO') {
+        ui.barra.css('width', `${percentuale.toFixed(2)}%`);
+        ui.barra.css('background-color', '#0d6efd').addClass('progress-bar-striped progress-bar-animated');
+        ui.testo.text("UD eliminate. Pulizia sessioni KO in corso... (Puoi chiudere la pagina)");
+    }  else {
         // Comportamento normale durante l'avanzamento
         ui.barra.css('width', `${percentuale.toFixed(2)}%`);
         ui.barra.css('background-color', '#0d6efd').addClass('progress-bar-striped progress-bar-animated');

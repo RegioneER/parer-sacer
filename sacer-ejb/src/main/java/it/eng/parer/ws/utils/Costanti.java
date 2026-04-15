@@ -428,8 +428,11 @@ public class Costanti {
 
         TAG_ANNUL_TIPO_ANNUL, // tag di annullamento che abilita il tag opzionale TipoAnnullamento
 
-        TAG_LOG_STATO_CONSERV_UD // tag di annullamento che abilita il tag opzionale
+        TAG_LOG_STATO_CONSERV_UD, // tag di annullamento che abilita il tag opzionale
         // TipoAnnullamento
+
+        TAG_PARAMETRI_RECUPERO_1_3, // tag di recupero che abilita i parametri opzionali
+                                    // TipoNomeFile, FileSbustato, FileUnzippato
     }
 
     public enum CategoriaDocumento {

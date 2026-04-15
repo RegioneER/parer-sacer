@@ -65,6 +65,8 @@ public class DecModelloXsdFascicolo implements Serializable {
 
     private List<FasXsdMetaVerAipFasc> fasXsdMetaVerAipFascs = new ArrayList<>();
     private List<DecModelloXsdAttribFascicolo> decModelloXsdAttribFascicolos = new ArrayList<>();
+    private List<DecModelloXsdFascRif> decModelloXsdFascRifsPadre = new ArrayList<>();
+    private List<DecModelloXsdFascRif> decModelloXsdFascRifsTarget = new ArrayList<>();
 
     public DecModelloXsdFascicolo() {/* Hibernate */
     }
@@ -265,5 +267,55 @@ public class DecModelloXsdFascicolo implements Serializable {
         decModelloXsdAttribFascicolo.setDecModelloXsdFascicolo(null);
 
         return decModelloXsdAttribFascicolo;
+    }
+
+    // bi-directional many-to-one association to DecModelloXsdFascRif (come padre)
+    @OneToMany(mappedBy = "decModelloXsdFascicoloPadre", cascade = CascadeType.ALL, orphanRemoval = true)
+    public List<DecModelloXsdFascRif> getDecModelloXsdFascRifsPadre() {
+        return this.decModelloXsdFascRifsPadre;
+    }
+
+    public void setDecModelloXsdFascRifsPadre(
+            List<DecModelloXsdFascRif> decModelloXsdFascRifsPadre) {
+        this.decModelloXsdFascRifsPadre = decModelloXsdFascRifsPadre;
+    }
+
+    public DecModelloXsdFascRif addDecModelloXsdFascRifPadre(
+            DecModelloXsdFascRif decModelloXsdFascRif) {
+        getDecModelloXsdFascRifsPadre().add(decModelloXsdFascRif);
+        decModelloXsdFascRif.setDecModelloXsdFascicoloPadre(this);
+        return decModelloXsdFascRif;
+    }
+
+    public DecModelloXsdFascRif removeDecModelloXsdFascRifPadre(
+            DecModelloXsdFascRif decModelloXsdFascRif) {
+        getDecModelloXsdFascRifsPadre().remove(decModelloXsdFascRif);
+        decModelloXsdFascRif.setDecModelloXsdFascicoloPadre(null);
+        return decModelloXsdFascRif;
+    }
+
+    // bi-directional many-to-one association to DecModelloXsdFascRif (come target)
+    @OneToMany(mappedBy = "decModelloXsdFascicoloTarget")
+    public List<DecModelloXsdFascRif> getDecModelloXsdFascRifsTarget() {
+        return this.decModelloXsdFascRifsTarget;
+    }
+
+    public void setDecModelloXsdFascRifsTarget(
+            List<DecModelloXsdFascRif> decModelloXsdFascRifsTarget) {
+        this.decModelloXsdFascRifsTarget = decModelloXsdFascRifsTarget;
+    }
+
+    public DecModelloXsdFascRif addDecModelloXsdFascRifTarget(
+            DecModelloXsdFascRif decModelloXsdFascRif) {
+        getDecModelloXsdFascRifsTarget().add(decModelloXsdFascRif);
+        decModelloXsdFascRif.setDecModelloXsdFascicoloTarget(this);
+        return decModelloXsdFascRif;
+    }
+
+    public DecModelloXsdFascRif removeDecModelloXsdFascRifTarget(
+            DecModelloXsdFascRif decModelloXsdFascRif) {
+        getDecModelloXsdFascRifsTarget().remove(decModelloXsdFascRif);
+        decModelloXsdFascRif.setDecModelloXsdFascicoloTarget(null);
+        return decModelloXsdFascRif;
     }
 }

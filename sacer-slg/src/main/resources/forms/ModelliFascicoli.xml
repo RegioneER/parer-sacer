@@ -33,7 +33,7 @@
         <Input Name="id_modello_xsd_fascicolo" Description="Id modello" Type="INTEGER" Hidden="true"/>
         <ComboBox Name="id_ambiente" Description="Ambiente" Type="INTEGER" Required="true" />
         <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" Readonly="true"/>
-        <ComboBox Name="ti_modello_xsd" Description="Tipo modello" Type="STRING" Required="true"/>
+        <ComboBox Name="ti_modello_xsd" Description="Tipo modello" Type="STRING" Required="true" />
         <ComboBox Name="fl_default" Description="Standard" Type="STRING" Required="true" />
         <Input Name="cd_xsd" Description="Codice xsd" Type="STRING" Required="true"/>
         <Input Name="ds_xsd" Description="Descrizione xsd" Type="STRING" Required="true" MaxLength="254" />
@@ -43,4 +43,25 @@
         <Button Name="logEventi" Description="Log eventi" Type="STRING" />
         <Button Name="scaricaXsdButton" Description="Scarica XSD" Type="STRING" />
     </Fields>
+    
+    <!-- Lista dipendenze XSD -->
+    <Section Name="DipendenzaXsdSection" Description="" Legend="Dipendenze XSD" ShowButton="false" LoadOpened="true"/>
+    
+    
+    <List Name="DipendenzaXsdList" Description="Dipendenze XSD" hideDetailButton="true" hideUpdateButton="true">
+        <Input Name="id_modello_xsd_fasc_rif" Description="Id" Type="INTEGER" Hidden="true"/>
+        <Input Name="ti_riferimento" Description="Tipo riferimento" Type="STRING"/>
+        <Input Name="namespace_uri" Description="Namespace URI" Type="STRING" MaxLength="500"/>
+        <Input Name="schema_location" Description="Schema Location" Type="STRING" MaxLength="500"/>
+    </List>
+    
+    <Fields Name="DipendenzaXsdDetail" Description="Associazione modello - dipendenze XSD">
+        <Input Name="cd_xsd" Description="Codice XSD" Type="STRING" Readonly="true"/>
+        <Input Name="ds_xsd" Description="Descrizione XSD" Type="STRING" Readonly="true"/>
+        <ComboBox Name="ti_riferimento" Description="Tipo riferimento" Type="STRING" Required="true"/>
+        <ComboBox Name="id_modello_xsd_fascicolo" Description="Modello richiamabile" Type="INTEGER" Required="true" Trigger="true"/>
+        <Input Name="namespace_uri" Description="Namespace URI" Type="STRING" MaxLength="500"/>
+        <Input Name="schema_location" Description="Schema Location" Type="STRING" MaxLength="500"/>
+    </Fields>
+    
 </Form>

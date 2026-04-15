@@ -482,6 +482,18 @@ public class ComboGetter {
         return mappaTiModelloXsd;
     }
 
+    public static DecodeMap getMappaTiRiferimento() {
+        BaseTable bt = new BaseTable();
+        String key = "ti_riferimento";
+        DecodeMap mappaTiRiferimento = new DecodeMap();
+        for (it.eng.parer.entity.constraint.DecModelloXsdFascRif.TiRiferimento tiRiferimento : sortEnum(
+                it.eng.parer.entity.constraint.DecModelloXsdFascRif.TiRiferimento.values())) {
+            bt.add(createKeyValueBaseRow(key, tiRiferimento.toString()));
+        }
+        mappaTiRiferimento.populatedMap(bt, key, key);
+        return mappaTiRiferimento;
+    }
+
     public static DecodeMap getMappaTiValidElenco() {
         BaseTable bt = new BaseTable();
         String key = "ti_valid_elenco";
@@ -680,6 +692,19 @@ public class ComboGetter {
         }
         mappaTiStatoRichiesta.populatedMap(bt, key, key);
         return mappaTiStatoRichiesta;
+    }
+
+    // MEV #37228
+    public static DecodeMap getMappaTipoContenuto() {
+        BaseTable bt = new BaseTable();
+        String key = "tipo_contenuto";
+        DecodeMap mappaTipoContenuto = new DecodeMap();
+        for (CostantiDB.TipoContenuto tipoContenuto : sortEnum(CostantiDB.TipoContenuto.values())) {
+            BaseRow row = createKeyValueBaseRow(key, tipoContenuto.getDescrizione());
+            bt.add(row);
+        }
+        mappaTipoContenuto.populatedMap(bt, key, key);
+        return mappaTipoContenuto;
     }
 
     /**

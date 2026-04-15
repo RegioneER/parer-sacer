@@ -1,6 +1,8 @@
 /ears/
 /**/nb-configuration.xml
 /**/target/
+/**/bin/
+/*.class
 /**/.settings
 /sacer-web/src/main/webapp/WEB-INF/tld/*
 /ears

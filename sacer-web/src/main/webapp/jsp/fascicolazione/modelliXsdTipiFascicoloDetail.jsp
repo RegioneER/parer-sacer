@@ -16,6 +16,7 @@
  --%>
 
 <%@ page import="it.eng.parer.slite.gen.form.ModelliFascicoliForm" pageEncoding="UTF-8" %>
+<%@ page import="it.eng.parer.slite.gen.form.ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail" %>
 <%@ include file="../../include.jsp"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -80,14 +81,22 @@
                             <slf:lblField name="<%=ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.DS_XSD%>" colSpan="4" controlWidth="w40"/><sl:newLine />
                             <slf:lblField name="<%=ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.DT_ISTITUZ%>" colSpan="4" controlWidth="w10"/><sl:newLine />
                             <slf:lblField name="<%=ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.DT_SOPPRES%>" colSpan="4" controlWidth="w10"/><sl:newLine />
-                            <slf:lblField name="<%=ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.BL_XSD%>" colSpan="4" controlWidth="w100" />
-                            <sl:newLine />
+                            <slf:lblField name="<%=ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.BL_XSD%>" colSpan="4" controlWidth="w100" /><sl:newLine />
                     </slf:fieldSet>      
                     <sl:newLine skipLine="true"/>
                     <sl:pulsantiera>
                         <slf:lblField name="<%=ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.LOG_EVENTI%>" />
                         <slf:lblField name="<%=ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.SCARICA_XSD_BUTTON%>" width="w50" />
                     </sl:pulsantiera>  
+                    
+                    <!-- Sezione Dipendenze XSD (solo VIEW mode, come StrutModelloList in ModelliSerie) -->
+                    <c:if test="${(sessionScope['###_FORM_CONTAINER']['modelliXsdTipiFascicoloList'].status eq 'view') and !(sessionScope['###_FORM_CONTAINER']['dipendenzaXsdList'].hidden)}">
+                        <slf:section name="<%=ModelliFascicoliForm.DipendenzaXsdSection.NAME%>" styleClass="noborder w100">
+                            <slf:listNavBar name="<%= ModelliFascicoliForm.DipendenzaXsdList.NAME%>" pageSizeRelated="true"/>
+                            <slf:list name="<%=ModelliFascicoliForm.DipendenzaXsdList.NAME%>" />
+                            <slf:listNavBar name="<%= ModelliFascicoliForm.DipendenzaXsdList.NAME%>" />
+                        </slf:section>
+                    </c:if>
 				</sl:form> 
                <!--  </form> -->
             </c:if>
@@ -124,7 +133,7 @@
                         <label class="slLabel wlbl" for="BL_XSD" >File Xsd&nbsp;</label>
                         <div class="containerLeft w4ctr">                        
                             <div><input type="file" id="BL_XSD"  name="BL_XSD" size="80" /></div>
-                        </div> 
+                        </div><sl:newLine />
                     </slf:fieldSet>
                   </sl:form>
                <!--  </form> -->
@@ -132,26 +141,19 @@
                 <sl:newLine skipLine="true"/>
             </c:if>
 
-            <c:if test="${(sessionScope['###_FORM_CONTAINER']['modelliXsdTipiFascicoloDetail'].status eq 'update') }"> 
-               <!--  <form id="multipartForm" action="ModelliFascicoli.html" method="post" enctype="multipart/form-data" > -->
+            <c:if test="${(sessionScope['###_FORM_CONTAINER']['modelliXsdTipiFascicoloDetail'].status eq 'update') }">
                 <sl:form id="multipartForm" multipartForm="true">
                     <div><input type="hidden" name="table" value="${fn:escapeXml(param.table)}" /></div>
                     <c:if test="${sessionScope['###_FORM_CONTAINER']['modelliXsdTipiFascicoloList'].table['empty']}">
                         <slf:fieldBarDetailTag name="<%= ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.NAME%>" hideInsertButton="true"/> 
                     </c:if>   
                     <c:if test="${!(sessionScope['###_FORM_CONTAINER']['modelliXsdTipiFascicoloList'].table['empty']) }">
-                        <slf:listNavBarDetail name="<%= ModelliFascicoliForm.ModelliXsdTipiFascicoloList.NAME%>"   />  
+                        <slf:listNavBarDetail name="<%= ModelliFascicoliForm.ModelliXsdTipiFascicoloList.NAME%>" />  
                     </c:if>
                     <sl:newLine />
+                    
                     <slf:fieldSet>
-                        <c:choose>
-                            <c:when test="${sessionScope['###_FORM_CONTAINER']['modelliXsdTipiFascicoloList'].status eq 'update'}">
-                                <slf:lblField name="<%=ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.ID_AMBIENTE%>" colSpan="4" controlWidth="w40"/><sl:newLine />
-                            </c:when>
-                            <c:otherwise>
-                                <slf:lblField name="<%= ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.NM_AMBIENTE%>" colSpan="4" controlWidth="w40"/><sl:newLine />
-                            </c:otherwise>
-                        </c:choose>
+                        <slf:lblField name="<%= ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.NM_AMBIENTE%>" colSpan="4" controlWidth="w40"/><sl:newLine />
                         <sl:newLine skipLine="true" />
                         <h2><font color="#d3101c">Dettaglio XSD</font></h2>
                         <sl:newLine skipLine="true"/>
@@ -161,16 +163,20 @@
                         <slf:lblField name="<%=ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.DS_XSD%>" colSpan="4" controlWidth="w40"/><sl:newLine />
                         <slf:lblField name="<%=ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.DT_ISTITUZ%>" colSpan="4" controlWidth="w10"/><sl:newLine />
                         <slf:lblField name="<%=ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail.DT_SOPPRES%>" colSpan="4" controlWidth="w10"/><sl:newLine />
-                        <label class="slLabel wlbl" for="BL_XSD" >File Xsd&nbsp;</label>
-                        <div class="containerLeft w4ctr">                        
-                            <div><input type="file" id="BL_XSD"  name="BL_XSD" size="80" /></div>
-                        </div> 
+                        
+                        <!-- File XSD: possibilità di sostituirlo tramite upload (se non in uso) -->
+                        <label class="slLabel wlbl" for="BL_XSD">File Xsd&nbsp;</label>
+                        <div class="containerLeft w4ctr">
+                            <input type="file" id="BL_XSD" name="BL_XSD" size="80" />
+                        </div><sl:newLine />
                     </slf:fieldSet>
+                    <sl:newLine skipLine="true"/>
                 </sl:form>
-               <!--  </form> -->
+                
                 <sl:newLine />
                 <sl:newLine skipLine="true"/>
-            </c:if>            
+            </c:if>
+
         </div>
         <sl:footer />
     </sl:body>

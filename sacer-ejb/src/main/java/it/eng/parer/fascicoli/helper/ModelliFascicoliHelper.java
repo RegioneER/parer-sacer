@@ -192,6 +192,10 @@ public class ModelliFascicoliHelper extends GenericHelper {
      */
     public DecModelloXsdFascicolo getDecModelloXsdFascicolo(BigDecimal idAmbiente,
             String tiModelloXsd, String tiUsoModelloXsd, String cdXsd) {
+        // Se tiModelloXsd è null (es. per modelli modulari/richiamabili), non cercare
+        if (StringUtils.isBlank(tiModelloXsd)) {
+            return null;
+        }
         Query query = getEntityManager().createQuery(
                 "SELECT m FROM DecModelloXsdFascicolo m WHERE m.orgAmbiente.idAmbiente = :idAmbiente "
                         + "AND m.tiModelloXsd = :tiModelloXsd AND m.tiUsoModelloXsd = :tiUsoModelloXsd AND m.cdXsd = :cdXsd");
@@ -349,5 +353,91 @@ public class ModelliFascicoliHelper extends GenericHelper {
         public void setTiModelloXsd(String tiModelloXsd) {
             this.tiModelloXsd = tiModelloXsd;
         }
+    }
+
+    /**
+     * Recupera la lista delle dipendenze XSD per un modello padre
+     *
+     * @param idPadre id del modello padre
+     *
+     * @return lista delle dipendenze
+     */
+    public List<it.eng.parer.entity.DecModelloXsdFascRif> retrieveDipendenzaXsd(
+            BigDecimal idPadre) {
+        String queryStr = "SELECT rif FROM DecModelloXsdFascRif rif "
+                + "WHERE rif.decModelloXsdFascicoloPadre.idModelloXsdFascicolo = :idPadre "
+                + "ORDER BY rif.decModelloXsdFascicoloTarget.cdXsd";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idPadre", longFromBigDecimal(idPadre));
+        return query.getResultList();
+    }
+
+    /**
+     * Recupera solo le dipendenze attive per un modello XSD padre
+     *
+     * @param idPadre id del modello padre
+     *
+     * @return lista delle dipendenze attive
+     */
+    public List<it.eng.parer.entity.DecModelloXsdFascRif> retrieveDipendenzaXsdAttive(
+            BigDecimal idPadre) {
+        Date now = new Date();
+        String queryStr = "SELECT rif FROM DecModelloXsdFascRif rif "
+                + "WHERE rif.decModelloXsdFascicoloPadre.idModelloXsdFascicolo = :idPadre "
+                + "AND rif.dtIstituz <= :dataNow " + "AND rif.dtSoppres >= :dataNow "
+                + "ORDER BY rif.decModelloXsdFascicoloTarget.cdXsd";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idPadre", longFromBigDecimal(idPadre));
+        query.setParameter("dataNow", now);
+        return query.getResultList();
+    }
+
+    /**
+     * Recupera la lista dei modelli XSD richiamabili (ti_modello_xsd='RICHIAMABILE') e attivi
+     *
+     * @return lista dei modelli richiamabili
+     */
+    public List<DecModelloXsdFascicolo> retrieveModelliRichiamabili() {
+        Date now = new Date();
+        String queryStr = "SELECT modello FROM DecModelloXsdFascicolo modello "
+                + "WHERE modello.tiModelloXsd = :tiModello " + "AND modello.dtIstituz <= :dataNow "
+                + "AND modello.dtSoppres >= :dataNow " + "ORDER BY modello.cdXsd";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("tiModello",
+                it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd.RICHIAMABILE);
+        query.setParameter("dataNow", now);
+        return query.getResultList();
+    }
+
+    /**
+     * Verifica se un modello è referenziato come target da altri modelli
+     *
+     * @param idModello id del modello da verificare
+     *
+     * @return true se il modello è referenziato da almeno un altro modello
+     */
+    public boolean isModelloReferenziato(BigDecimal idModello) {
+        String queryStr = "SELECT COUNT(rif) FROM DecModelloXsdFascRif rif "
+                + "WHERE rif.decModelloXsdFascicoloTarget.idModelloXsdFascicolo = :idModello";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idModello", longFromBigDecimal(idModello));
+        Long count = (Long) query.getSingleResult();
+        return count > 0;
+    }
+
+    /**
+     * Recupera i modelli padre che referenziano un modello target
+     *
+     * @param idModelloTarget id del modello target
+     *
+     * @return lista dei codici XSD dei modelli che referenziano il target
+     */
+    public List<String> retrieveModelliPadreReferenzianti(BigDecimal idModelloTarget) {
+        String queryStr = "SELECT DISTINCT rif.decModelloXsdFascicoloPadre.cdXsd FROM DecModelloXsdFascRif rif "
+                + "WHERE rif.decModelloXsdFascicoloTarget.idModelloXsdFascicolo = :idModelloTarget "
+                + "ORDER BY rif.decModelloXsdFascicoloPadre.cdXsd";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idModelloTarget", longFromBigDecimal(idModelloTarget));
+        return query.getResultList();
     }
 }

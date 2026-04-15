@@ -902,6 +902,12 @@ public class MessaggiWSBundle {
     public static final String COMP_003_005 = "COMP-003-005";
 
     /**
+     * Non è possibile scaricare il componente unzippato con i parametri forniti, ne sono stati
+     * trovati più di uno.
+     */
+    public static final String COMP_003_006 = "COMP-003-006";
+
+    /**
      * Componente {0}: Se non è valorizzato Tipo Rappresentazione Componente non devono essere
      * presenti sottocomponenti aventi tipo uso CONVERTITORE o RAPPRESENTAZIONE
      */

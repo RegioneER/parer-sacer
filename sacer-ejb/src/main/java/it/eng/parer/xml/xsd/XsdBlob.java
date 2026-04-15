@@ -11,31 +11,42 @@
  * see <https://www.gnu.org/licenses/>.
  */
 
-package it.eng.parer.entity.constraint;
+package it.eng.parer.xml.xsd;
+
+import java.io.Serializable;
 
 /**
- * DecModelloXsdFascicolo's constraint
- *
+ * DTO per trasportare il contenuto di un XSD recuperato dal database.
  */
-public final class DecModelloXsdFascicolo {
+public class XsdBlob implements Serializable {
 
-    private DecModelloXsdFascicolo() {
+    private static final long serialVersionUID = 1L;
+
+    private final String cdXsd;
+    private final String blXsd;
+
+    /**
+     * Costruttore.
+     *
+     * @param cdXsd Codice identificativo dell'XSD
+     * @param blXsd Contenuto dell'XSD come stringa
+     */
+    public XsdBlob(String cdXsd, String blXsd) {
+        this.cdXsd = cdXsd;
+        this.blXsd = blXsd;
     }
 
     /**
-     * Tipo modello Xsd fascicolo
+     * @return Codice identificativo dell'XSD
      */
-    public enum TiModelloXsd {
-        FASCICOLO, PROFILO_GENERALE_FASCICOLO, PROFILO_ARCHIVISTICO_FASCICOLO,
-        PROFILO_SPECIFICO_FASCICOLO, AIP_SELF_DESCRIPTION_MORE_INFO, AIP_UNISYNCRO,
-        PROFILO_NORMATIVO_FASCICOLO, RICHIAMABILE
+    public String getCdXsd() {
+        return cdXsd;
     }
 
     /**
-     * Tipo uso modello Xsd fascicolo
+     * @return Contenuto dell'XSD come stringa
      */
-    public enum TiUsoModelloXsd {
-        MIGRAZ, VERS
+    public String getBlXsd() {
+        return blXsd;
     }
-
 }

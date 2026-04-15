@@ -511,6 +511,12 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
         getForm().getFiltriContenutoSacer().getDt_rif_a().setValue(df.format(cal.getTime()));
 
+        // Tipo contenuto
+        DecodeMap mappaTipoContenuto = ComboGetter.getMappaTipoContenuto();
+        getForm().getFiltriContenutoSacer().getTipo_contenuto().setDecodeMap(mappaTipoContenuto);
+        getForm().getFiltriContenutoSacer().getTipo_contenuto()
+                .setValue(CostantiDB.TipoContenuto.CONSERVATO.getDescrizione());
+
         getForm().getFiltriContenutoSacer().setEditMode();
         forwardToPublisher(Application.Publisher.MONITORAGGIO_CONTENUTO_SACER_RICERCA);
     }

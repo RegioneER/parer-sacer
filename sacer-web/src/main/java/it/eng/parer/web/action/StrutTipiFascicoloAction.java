@@ -111,6 +111,8 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
     private StruttureEjb struttureEjb;
     @EJB(mappedName = "java:app/Parer-ejb/AmministrazioneEjb")
     private AmministrazioneEjb amministrazioneEjb;
+    @EJB(mappedName = "java:app/Parer-ejb/ModelliFascicoliEjb")
+    private it.eng.parer.fascicoli.ejb.ModelliFascicoliEjb modelliFascicoliEjb;
 
     private static final String SEPARATORE = "^[A-Za-z0-9]?$";
     private static final Pattern sepPattern = Pattern.compile(SEPARATORE);
@@ -1531,6 +1533,29 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                                             + cdXsdDaIns);
                             break;
                         }
+                    }
+                }
+
+                // Controllo dipendenze configurate per PROFILO_SPECIFICO_FASCICOLO
+                String tiModelloXsd = getForm().getMetadatiProfiloDetail().getTi_modello_xsd()
+                        .getValue();
+                BigDecimal idModelloXsdFascicolo = getForm().getMetadatiProfiloDetail()
+                        .getId_modello_xsd_fascicolo().parse();
+
+                if (CostantiDB.TiModelloXsd.PROFILO_SPECIFICO_FASCICOLO.name().equals(tiModelloXsd)
+                        && idModelloXsdFascicolo != null) {
+                    try {
+                        // Verifica se il modello è utilizzabile (ha tutte le dipendenze
+                        // configurate)
+                        if (!modelliFascicoliEjb.isModelloUtilizzabile(idModelloXsdFascicolo)) {
+                            getMessageBox().addError(
+                                    "Il modello XSD di tipo PROFILO_SPECIFICO_FASCICOLO selezionato contiene riferimenti (import/include) "
+                                            + "ma non ha tutte le dipendenze configurate. Configurare le dipendenze prima di associarlo al tipo fascicolo.");
+                        }
+                    } catch (Exception ex) {
+                        log.error("Errore nella verifica delle dipendenze del modello XSD", ex);
+                        getMessageBox().addError(
+                                "Errore nella verifica delle dipendenze: " + ex.getMessage());
                     }
                 }
             }

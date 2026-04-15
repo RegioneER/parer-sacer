@@ -667,7 +667,8 @@
         <MultiSelect Type="INTEGER" Description="Tipo unità documentaria" Name="id_tipo_unita_doc" WithSearchComp="true"/>
         <MultiSelect Type="INTEGER" Description="Tipo documento principale" Name="id_tipo_doc" WithSearchComp="true"/>
         <Input Type="DATE" Description="Data riferimento da" Name="dt_rif_da" Required="true"/>
-        <Input Type="DATE" Description="Data riferimento a" Name="dt_rif_a" Required="true"/>       
+        <Input Type="DATE" Description="Data riferimento a" Name="dt_rif_a" Required="true"/>
+        <ComboBox  Type="STRING" Description="Tipo contenuto" Name="tipo_contenuto" Required="true" Hidden="true"/>       
         <Button Name="ricercaContenutoSacer" Description="Ricerca" Type="STRING" />
         <Button Name="pulisciContenutoSacer" Description="Pulisci" Type="STRING" />
     </Fields>
@@ -678,7 +679,7 @@
         <Input Type="INTEGER" Description="Numero documenti" Name="num_doc" Readonly="true" GroupingDecimal="true"/>
         <Input Type="INTEGER" Description="Numero componenti" Name="num_comp" Readonly="true" GroupingDecimal="true"/>
         <Input Type="INTEGER" Description="Dimensione in bytes" Name="dim_bytes" Readonly="true" GroupingDecimal="true"/>
-        <Input Type="DECIMAL" Description="Dimensione in terabytes" Name="dim_terabytes" Readonly="true" GroupingDecimal="true"/>
+        <Input Type="DECIMAL" Description="Dimensione in terabytes" Name="dim_terabytes" Readonly="true" GroupingDecimal="true" Format="#.######"/>
     </Fields>
 
     <!-- Contenuto Sacer Lista -->

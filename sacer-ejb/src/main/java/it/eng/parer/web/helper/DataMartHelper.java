@@ -1184,4 +1184,89 @@ public class DataMartHelper extends GenericHelper {
     }
 
     // end MEV #39896
+
+    // MEV #30416
+    /**
+     * Recupera l'elenco distinto di ID_STRUT associati a una richiesta nel datamart.
+     *
+     * @param idUdDelRichiesta id richiesta datamart
+     * @return l'elenco di strutture associate alla richiesta
+     */
+    public List<BigDecimal> getIdStrutCoinvolti(BigDecimal idUdDelRichiesta) {
+        String sql = "SELECT DISTINCT ID_STRUT FROM DM_UD_DEL WHERE ID_UD_DEL_RICHIESTA = :id";
+        return getEntityManager().createNativeQuery(sql)
+                .setParameter("id", idUdDelRichiesta).getResultList();
+    }
+
+    /**
+     * Cancella un blocco (batch) di record da VRS_SESSIONE_VERS_KO.
+     *
+     * @param idStrutList elenco delle strutture per le quali cancellare le sessioni di versamento
+     * @param batchSize   numero di riga da cancellare
+     * @return numero di righe cancellate
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public int deleteVrsSessioneVersKoBatch(List<BigDecimal> idStrutList, int batchSize) {
+        // Usiamo ROWNUM per limitare la transazione (Oracle)
+        String sql = "DELETE FROM VRS_SESSIONE_VERS_KO WHERE ID_STRUT IN (:idStruts) AND ROWNUM <= :batchSize";
+        return getEntityManager().createNativeQuery(sql).setParameter("idStruts", idStrutList)
+                .setParameter("batchSize", batchSize).executeUpdate();
+    }
+
+    /**
+     * Cancella un blocco (batch) di record da VRS_SESSIONE_VERS_KO_ELIMINATE.
+     *
+     * @param idStrutList elenco delle strutture per le quali cancellare le sessioni di versamento
+     * @param batchSize   numero di riga da cancellare
+     * @return numero di righe cancellate
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public int deleteVrsSessioneVersKoEliminateBatch(List<BigDecimal> idStrutList, int batchSize) {
+        String sql = "DELETE FROM VRS_SESSIONE_VERS_KO_ELIMINATE WHERE ID_STRUT IN (:idStruts) AND ROWNUM <= :batchSize";
+        return getEntityManager().createNativeQuery(sql).setParameter("idStruts", idStrutList)
+                .setParameter("batchSize", batchSize).executeUpdate();
+    }
+
+    /**
+     * Per il Watchdog: recupera le richieste bloccate in cancellazione fisica.
+     *
+     * @return la lista di richieste attive
+     */
+    public List<BigDecimal> getRichiesteFisicheAttive() {
+        String sql = "SELECT ID_UD_DEL_RICHIESTA FROM DM_UD_DEL_RICHIESTE "
+                + "WHERE TI_STATO_INTERNO_RICH IN ('IN_CODA_CANCELLAZIONE', 'IN_CANCELLAZIONE_FISICA')";
+        return getEntityManager().createNativeQuery(sql).getResultList();
+    }
+
+    /**
+     * Cancella un blocco (batch) di record da VRS_DOC_NON_VERS.
+     *
+     * @param idStrutList lista delle strutture coinvolte
+     * @param batchSize   numero di record da trattare
+     * @return numero di record cancellati
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public int deleteVrsDocNonVersBatch(List<BigDecimal> idStrutList, int batchSize) {
+        String sql = "DELETE FROM VRS_DOC_NON_VERS WHERE ID_STRUT IN (:idStruts) AND ROWNUM <= :batchSize";
+        return getEntityManager().createNativeQuery(sql)
+                .setParameter("idStruts", idStrutList)
+                .setParameter("batchSize", batchSize)
+                .executeUpdate();
+    }
+
+    /**
+     * Cancella un blocco (batch) di record da VRS_UNITA_DOC_NON_VERS.
+     *
+     * @param idStrutList lista delle strutture coinvolte
+     * @param batchSize   numero di record da trattare
+     * @return numero di record cancellati
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public int deleteVrsUnitaDocNonVersBatch(List<BigDecimal> idStrutList, int batchSize) {
+        String sql = "DELETE FROM VRS_UNITA_DOC_NON_VERS WHERE ID_STRUT IN (:idStruts) AND ROWNUM <= :batchSize";
+        return getEntityManager().createNativeQuery(sql)
+                .setParameter("idStruts", idStrutList)
+                .setParameter("batchSize", batchSize)
+                .executeUpdate();
+    }
 }

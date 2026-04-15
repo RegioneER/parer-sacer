@@ -2141,7 +2141,7 @@ public class SerieHelper extends GenericHelper {
         query.setParameter("idSerie", idSerie);
         query.setParameter("statiPartenza", statiPartenza);
         if (idsExcluded != null && !idsExcluded.isEmpty())
-            query.setParameter("idsExcluded", idsExcluded);        
+            query.setParameter("idsExcluded", idsExcluded);
         return query.getResultList();
     }
 

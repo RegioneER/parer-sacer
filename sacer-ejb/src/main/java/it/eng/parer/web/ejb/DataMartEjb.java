@@ -59,7 +59,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
+import javax.ejb.SessionContext;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
@@ -76,6 +78,9 @@ public class DataMartEjb {
 
     @EJB
     private DataMartHelper dataMartHelper;
+
+    @Resource
+    private SessionContext context; // Necessario per l'invocazione asincrona interna
 
     @EJB
     private JobCancellazioneFisicaStarterEjb jobCancellazioneFisicaStarterEjb;
@@ -744,37 +749,76 @@ public class DataMartEjb {
      *
      * @return il DTO con i dati sui conteggi della cancellazione fisica
      */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public StatoAvanzamentoCancellazioneFisicaDTO calcolaStatoAvanzamentoCancellazioneFisica(
             BigDecimal idUdDelRichiesta) {
         StatoAvanzamentoCancellazioneFisicaDTO dto = new StatoAvanzamentoCancellazioneFisicaDTO();
 
-        // PASSO 1: Legge gli stati
+        // 1. RECUPERO STATI E CONTEGGI REALI DAL DB
         String statoRichiesta = dataMartHelper.getStatoRichiesta(idUdDelRichiesta);
         String statoInterno = dataMartHelper.getStatoInternoRichiesta(idUdDelRichiesta);
 
-        dto.setStatoRichiesta(statoRichiesta);
-        dto.setStatoInternoRichiesta(statoInterno);
-
+        // Lista dettagliata dei conteggi per Ente/Struttura/Stato
         List<ConteggioStatoUdDto> conteggiList = dataMartHelper
                 .getUdCountsByStatoForRichiestaDtoJPA(idUdDelRichiesta);
-        dto.setConteggiDettagliati(conteggiList);
 
-        long totali = 0;
-        long cancellate = 0;
-        for (ConteggioStatoUdDto conteggioDto : conteggiList) {
-            totali += conteggioDto.getConteggio();
-            if ("CANCELLATA_DB_SACER".equalsIgnoreCase(conteggioDto.getTiStatoUdCancellate())) {
-                cancellate += conteggioDto.getConteggio();
+        long totali = conteggiList.stream().mapToLong(ConteggioStatoUdDto::getConteggio).sum();
+        long cancellateReali = conteggiList.stream()
+                .filter(c -> CostantiDB.TiStatoUdCancellate.CANCELLATA_DB_SACER.name()
+                        .equalsIgnoreCase(c.getTiStatoUdCancellate()))
+                .mapToLong(ConteggioStatoUdDto::getConteggio).sum();
+
+        // Variabile che useremo per pilotare la barra di avanzamento nella UI
+        long cancellatePerUI = cancellateReali;
+
+        // 2. LOGICA DI INNESCO (TRIGGER) PER LA FINALIZZAZIONE
+        boolean isFisicaFinita = (totali > 0 && totali == cancellateReali);
+        boolean isNonEvasa = !CostantiDB.TiStatoRichiesta.EVASA.name().equals(statoRichiesta);
+        boolean isNotCleaning = !CostantiDB.TiStatoInternoRich.IN_PULIZIA_SESSIONI_KO.name()
+                .equals(statoInterno)
+                && !CostantiDB.TiStatoInternoRich.ERRORE_PULIZIA.name().equals(statoInterno);
+
+        if (isFisicaFinita && isNonEvasa && isNotCleaning) {
+            DmUdDelRichiesteRowBean richiesta = getDmUdDelRichiesteForPollingRowBean(
+                    idUdDelRichiesta);
+
+            if ("R".equals(richiesta.getTiMotCancellazione())) {
+                // --- CASO RESTITUZIONE ARCHIVIO ---
+                // Imposto lo stato di pulizia e lancio il thread asincrono
+                dataMartHelper.impostaStatoInternoRichiesta(idUdDelRichiesta,
+                        CostantiDB.TiStatoInternoRich.IN_PULIZIA_SESSIONI_KO.name());
+                statoInterno = CostantiDB.TiStatoInternoRich.IN_PULIZIA_SESSIONI_KO.name();
+
+                context.getBusinessObject(DataMartEjb.class)
+                        .avviaFinalizzazioneAsincrona(idUdDelRichiesta, richiesta.getIdRichiesta());
+            } else {
+                // --- ALTRI CASI (Scarto/Annullamento) ---
+                // Non serve pulizia VRS, chiudo la pratica immediatamente
+                dataMartHelper.impostaStatoRichiesta(richiesta.getIdRichiesta(),
+                        CostantiDB.TiStatoRichiesta.EVASA.name());
+                dataMartHelper.impostaStatoInternoRichiesta(idUdDelRichiesta,
+                        CostantiDB.TiStatoInternoRich.COMPLETATA.name());
+                statoRichiesta = CostantiDB.TiStatoRichiesta.EVASA.name();
+                cancellatePerUI = totali;
             }
         }
-        dto.setTotali(totali);
-        dto.setCancellate(cancellate);
 
-        // GESTIONE DEL CASO FINALE
+        // 3. GESTIONE VISUALIZZAZIONE "SMOOTHING" (BARRA AL 99%)
+        if (CostantiDB.TiStatoInternoRich.IN_PULIZIA_SESSIONI_KO.name().equals(statoInterno)) {
+            // Mentre Java pulisce le tabelle KO, teniamo la barra al 99%
+            cancellatePerUI = (long) (totali * 0.99);
+            if (cancellatePerUI >= totali && totali > 0) {
+                cancellatePerUI = totali - 1;
+            }
+        }
+
+        // 4. GESTIONE DEL CASO FINALE
         if (CostantiDB.TiStatoRichiesta.EVASA.name().equals(statoRichiesta)) {
-            dto.setCancellate(totali);
+            // Se la richiesta è EVASA, la barra deve essere al 100%
+            cancellatePerUI = totali;
 
             // Raggruppa tutti i conteggi per Ente/Struttura sotto lo stato "CANCELLATA_DB_SACER"
+            // per mostrare una tabella di riepilogo pulita all'utente
             Map<String, ConteggioStatoUdDto> raggruppati = new LinkedHashMap<>();
             for (ConteggioStatoUdDto dtoRiga : conteggiList) {
                 String chiave = dtoRiga.getIdEnte() + "-" + dtoRiga.getIdStrut();
@@ -784,7 +828,10 @@ public class DataMartEjb {
                     rigaAggregata = new ConteggioStatoUdDto(dtoRiga.getIdUdDelRichiesta(),
                             dtoRiga.getIdRichiesta(), dtoRiga.getTiMotCancellazione(),
                             dtoRiga.getIdEnte(), dtoRiga.getNmEnte(), dtoRiga.getIdStrut(),
-                            dtoRiga.getNmStrut(), "CANCELLATA_DB_SACER", // Forza lo stato finale
+                            dtoRiga.getNmStrut(),
+                            CostantiDB.TiStatoUdCancellate.CANCELLATA_DB_SACER.name(), // Forziamo
+                                                                                       // lo stato
+                            // visuale finale
                             0L, 0L);
                     raggruppati.put(chiave, rigaAggregata);
                 }
@@ -792,8 +839,18 @@ public class DataMartEjb {
                 rigaAggregata.setNiUdStatoAnnullate(
                         rigaAggregata.getNiUdStatoAnnullate() + dtoRiga.getNiUdStatoAnnullate());
             }
+            // Sostituiamo la lista dettagliata con quella raggruppata per la UI finale
             dto.setConteggiDettagliati(new ArrayList<>(raggruppati.values()));
+        } else {
+            // Se non è ancora EVASA, passiamo la lista così come arriva dal DB (dettagliata)
+            dto.setConteggiDettagliati(conteggiList);
         }
+
+        // 5. SETTAGGIO DATI FINALI NEL DTO
+        dto.setStatoRichiesta(statoRichiesta);
+        dto.setStatoInternoRichiesta(statoInterno);
+        dto.setTotali(totali);
+        dto.setCancellate(cancellatePerUI);
 
         return dto;
     }
@@ -822,4 +879,71 @@ public class DataMartEjb {
         // Riporta le ud in DA_CANCELLARE
         updateDmUdDelDaCancellare(idUdDelRichiestaSacer);
     }
+
+    // MEV #30416
+    /**
+     * Metodo asincrono per innescare la cancellazione delle tabelle di sessione KO al termine della
+     * cancellazione fisica per restituzione archivio.
+     *
+     * @param idUdDelRichiesta la richiesta datamart
+     * @param idRichiestaSacer la richiesta di restituzione aarchivio
+     */
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED) // Transazioni gestite dai singoli
+                                                                  // batch
+    public void avviaFinalizzazioneAsincrona(BigDecimal idUdDelRichiesta,
+            BigDecimal idRichiestaSacer) {
+        try {
+            List<BigDecimal> idStrutList = dataMartHelper.getIdStrutCoinvolti(idUdDelRichiesta);
+            if (idStrutList.isEmpty())
+                return;
+
+            int batchSize = 50000; // Taglia del lotto per non saturare l'Undo Tablespace
+            int deleted;
+
+            logger.info("Avvio pulizia asincrona (4 tabelle VRS) per richiesta {}",
+                    idUdDelRichiesta);
+
+            // Svuoto VRS_DOC_NON_VERS
+            do {
+                deleted = dataMartHelper.deleteVrsDocNonVersBatch(idStrutList, batchSize);
+                logger.info("Batch VRS_DOC_NON_VERS: cancellati {} record...", deleted);
+            } while (deleted > 0);
+
+            // Svuoto VRS_UNITA_DOC_NON_VERS
+            do {
+                deleted = dataMartHelper.deleteVrsUnitaDocNonVersBatch(idStrutList, batchSize);
+                logger.info("Batch VRS_UNITA_DOC_NON_VERS: cancellati {} record...", deleted);
+            } while (deleted > 0);
+
+            // Svuoto VRS_SESSIONE_VERS_KO
+            do {
+                deleted = dataMartHelper.deleteVrsSessioneVersKoBatch(idStrutList, batchSize);
+                logger.info("Batch VRS_SESSIONE_VERS_KO: cancellati {} record...", deleted);
+            } while (deleted > 0);
+
+            // Svuoto VRS_SESSIONE_VERS_KO_ELIMINATE
+            do {
+                deleted = dataMartHelper.deleteVrsSessioneVersKoEliminateBatch(idStrutList,
+                        batchSize);
+                logger.info("Batch VRS_SESSIONE_VERS_KO_ELIMINATE: cancellati {} record...",
+                        deleted);
+            } while (deleted > 0);
+
+            // 3. Finalizzazione (Stato EVASA)
+            dataMartHelper.impostaStatoRichiesta(idRichiestaSacer,
+                    CostantiDB.TiStatoRichiesta.EVASA.name());
+            dataMartHelper.impostaStatoInternoRichiesta(idUdDelRichiesta,
+                    CostantiDB.TiStatoInternoRich.COMPLETATA.name());
+
+            logger.info("Pulizia asincrona completata. Richiesta {} EVASA.", idUdDelRichiesta);
+
+        } catch (Exception e) {
+            logger.error("Errore pulizia batch per richiesta " + idUdDelRichiesta, e);
+            dataMartHelper.impostaStatoInternoRichiesta(idUdDelRichiesta,
+                    CostantiDB.TiStatoInternoRich.ERRORE_PULIZIA.name(),
+                    e.getMessage());
+        }
+    }
+
 }

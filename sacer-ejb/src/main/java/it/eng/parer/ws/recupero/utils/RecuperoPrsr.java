@@ -311,6 +311,19 @@ public class RecuperoPrsr {
             myEsito.getEsitoChiamataWS().setVersioneWSCorretta(ECEsitoPosNegType.NEGATIVO);
         }
 
+        // posso usare il tag IDDocumento?
+        if (rispostaWs.getSeverity() == SeverityEnum.OK
+                && !recupero.getModificatoriWSCalc()
+                        .contains(Costanti.ModificatoriWS.TAG_PARAMETRI_RECUPERO_1_3)
+                && parsedUnitaDoc.getParametri() != null
+                && (parsedUnitaDoc.getParametri().isFileUnzippato() != null
+                        || parsedUnitaDoc.getParametri().isFileSbustato() != null
+                        || parsedUnitaDoc.getParametri().getTipoNomeFile() != null)) {
+            rispostaWs.setSeverity(SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.XSD_011_003, "<Parametri>");
+            myEsito.getEsitoChiamataWS().setVersioneWSCorretta(ECEsitoPosNegType.NEGATIVO);
+        }
+
         // recupera l'ejb dell'autenticazione, se possibile - altrimenti segnala errore
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             try {

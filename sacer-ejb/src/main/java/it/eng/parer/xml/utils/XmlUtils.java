@@ -38,6 +38,7 @@ import javax.xml.xpath.XPathFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
 import javax.xml.XMLConstants;
 
@@ -104,6 +105,63 @@ public class XmlUtils {
         schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         xsdSchema = schemaFactory.newSchema(xsdSource);
         return xsdSchema;
+    }
+
+    /**
+     * Crea uno Schema con supporto per risoluzione di import/include tramite LSResourceResolver.
+     *
+     * Questo metodo permette di validare XSD modulari che referenziano altri XSD tramite
+     * xs:import/xs:include, caricando le dipendenze dal database.
+     *
+     * @param xsdSource Sorgente dello schema XSD root
+     * @param resolver  LSResourceResolver per risolvere import/include
+     * @return Schema compilato con supporto multi-namespace
+     * @throws SAXException Se lo schema non è valido
+     */
+    public static Schema getSchemaValidationWithResolver(Source xsdSource,
+            LSResourceResolver resolver) throws SAXException {
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
+        // Imposta il resolver per xs:import/xs:include
+        schemaFactory.setResourceResolver(resolver);
+
+        Schema xsdSchema = schemaFactory.newSchema(xsdSource);
+        return xsdSchema;
+    }
+
+    /**
+     * Valida un XML rispetto a uno XSD, con supporto per import/include tramite resolver.
+     *
+     * @param xsdSource Sorgente dello schema XSD root
+     * @param xmlSource Sorgente dell'XML da validare
+     * @param resolver  LSResourceResolver per risolvere import/include
+     * @throws SAXException Se la validazione fallisce
+     * @throws IOException  Se ci sono errori di I/O
+     */
+    public static void validateXmlWithResolver(Source xsdSource, Source xmlSource,
+            LSResourceResolver resolver) throws SAXException, IOException {
+        Schema xsdSchema = getSchemaValidationWithResolver(xsdSource, resolver);
+        Validator validator = xsdSchema.newValidator();
+        validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        validator.validate(xmlSource);
+    }
+
+    /**
+     * Valida un XML (String) rispetto a uno XSD (String) con supporto per import/include.
+     *
+     * @param xsd      Contenuto dello schema XSD root
+     * @param xml      Contenuto dell'XML da validare
+     * @param resolver LSResourceResolver per risolvere import/include
+     * @throws SAXException Se la validazione fallisce
+     * @throws IOException  Se ci sono errori di I/O
+     */
+    public static void validateXmlWithResolver(String xsd, String xml, LSResourceResolver resolver)
+            throws SAXException, IOException {
+        validateXmlWithResolver(new StreamSource(new StringReader(xsd)),
+                new StreamSource(new StringReader(xml)), resolver);
     }
 
     public static Document getXmlDocument(String xml) throws SAXException, IOException {

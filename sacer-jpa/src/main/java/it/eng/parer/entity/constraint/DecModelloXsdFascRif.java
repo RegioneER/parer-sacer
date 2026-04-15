@@ -11,18 +11,22 @@
  * see <https://www.gnu.org/licenses/>.
  */
 
-package it.eng.parer.entity.converter;
+package it.eng.parer.entity.constraint;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+/**
+ * DecModelloXsdFascRif's constraint
+ *
+ * @author Mechanical
+ */
+public final class DecModelloXsdFascRif {
 
-public class LongToStringAdapter extends XmlAdapter<String, Long> {
-    @Override
-    public Long unmarshal(String v) {
-        return (v == null ? null : Long.valueOf(v));
+    private DecModelloXsdFascRif() {
     }
 
-    @Override
-    public String marshal(Long v) {
-        return (v == null ? null : v.toString());
+    /**
+     * Tipo di riferimento tra XSD (import/include)
+     */
+    public enum TiRiferimento {
+        IMPORT, INCLUDE
     }
 }

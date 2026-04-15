@@ -2157,6 +2157,34 @@ public class MonitoraggioHelper implements Serializable {
      */
     public BaseTable getMonTotSacerTable(List<BigDecimal> idAmbitoTerritList, long idUserIam,
             FiltriContenutoSacerPlain filtriCS) {
+
+        String tipoContenuto = filtriCS.getTipoContenuto();
+
+        // 1. Impostazioni di Default (per la Vista 'transitate_nel_sistema')
+        String entityName = "MonVRicContaUdDocComp";
+        String monSubStrut = "mon.idSubStrut";
+        String monTipoUd = "mon.idTipoUnitaDoc";
+        String monRegistro = "mon.idRegistroUnitaDoc";
+        String monTipoDocPrinc = "mon.idTipoDocPrinc";
+
+        boolean isAttualmenteConservate = CostantiDB.TipoContenuto.CONSERVATO.getDescrizione()
+                .equals(tipoContenuto);
+        boolean isCancellate = CostantiDB.TipoContenuto.ELIMINATO.getDescrizione()
+                .equals(tipoContenuto);
+
+        // 2. Se siamo in uno dei casi "Entity" (Tabelle vere e proprie), sovrascriviamo i path di
+        // join
+        if (isAttualmenteConservate || isCancellate) {
+            // I percorsi di join sono identici per entrambe le tabelle
+            monSubStrut = "mon.orgSubStrut.idSubStrut";
+            monTipoUd = "mon.decTipoUnitaDoc.idTipoUnitaDoc";
+            monTipoDocPrinc = "mon.decTipoDoc.idTipoDoc";
+            monRegistro = "mon.decRegistroUnitaDoc.idRegistroUnitaDoc";
+
+            entityName = isAttualmenteConservate ? "MonContaUdDocComp"
+                    : "MonContaUdDocCompReadOnly";
+        }
+
         String whereWord = "AND ";
         StringBuilder queryStr = new StringBuilder("SELECT strut.orgEnte.nmEnte, strut.nmStrut, "
                 + "subStrut.nmSubStrut, registroUnitaDoc.cdRegistroUnitaDoc, "
@@ -2168,7 +2196,7 @@ public class MonitoraggioHelper implements Serializable {
                 + "sum(mon.niSizeVers) - sum(mon.niSizeAnnulUd), "
                 + "sum(mon.niDocAgg), sum(mon.niCompAgg), sum(mon.niSizeAgg), "
                 + "sum(mon.niUnitaDocAnnul), sum(mon.niDocAnnulUd), sum(mon.niCompAnnulUd), sum(mon.niSizeAnnulUd) "
-                + "FROM MonVRicContaUdDocComp mon, " + "DecTipoUnitaDoc tipoUnitaDoc, "
+                + "FROM " + entityName + " mon, " + "DecTipoUnitaDoc tipoUnitaDoc, "
                 + "DecRegistroUnitaDoc registroUnitaDoc, " + "DecTipoDoc tipoDoc, "
                 + "OrgSubStrut subStrut " + "JOIN subStrut.orgStrut strut "
                 + "JOIN strut.orgEnte ente " + "JOIN ente.orgCategEnte categEnte "
@@ -2177,11 +2205,11 @@ public class MonitoraggioHelper implements Serializable {
                 + "WHERE iao.iamUser.idUserIam = :idUserIam "
                 + "AND strut.idEnteConvenz = enteConvenz.idEnteSiam "
                 + "AND tree.idCategTipoUnitaDoc = tipoUnitaDoc.decCategTipoUnitaDoc.idCategTipoUnitaDoc "
-                + "AND iao.idOrganizApplic = strut.idStrut "
-                + "AND mon.idTipoUnitaDoc = tipoUnitaDoc.idTipoUnitaDoc "
-                + "AND mon.idSubStrut = subStrut.idSubStrut "
-                + "AND mon.idRegistroUnitaDoc = registroUnitaDoc.idRegistroUnitaDoc "//
-                + "AND mon.idTipoDocPrinc = tipoDoc.idTipoDoc ");
+                + "AND iao.idOrganizApplic = strut.idStrut " + "AND " + monTipoUd
+                + "  = tipoUnitaDoc.idTipoUnitaDoc " + "AND " + monSubStrut
+                + " = subStrut.idSubStrut " + "AND " + monRegistro
+                + " = registroUnitaDoc.idRegistroUnitaDoc "//
+                + "AND " + monTipoDocPrinc + " = tipoDoc.idTipoDoc ");
 
         // Inserimento nella query del filtro id ambiente
         List<BigDecimal> idAmbienteList = filtriCS.getIdAmbienteList();
@@ -2207,7 +2235,15 @@ public class MonitoraggioHelper implements Serializable {
         // Inserimento nella query del filtro registro
         List<BigDecimal> idRegistroUnitaDocList = filtriCS.getIdRegistroUnitaDocList();
         if (!idRegistroUnitaDocList.isEmpty()) {
-            queryStr.append(whereWord).append("mon.idRegistroUnitaDoc IN :idRegistroUnitaDocList ");
+            // queryStr.append(whereWord).append("mon.idRegistroUnitaDoc IN :idRegistroUnitaDocList
+            // ");
+            if (isAttualmenteConservate || isCancellate) {
+                queryStr.append(whereWord)
+                        .append("mon.idDecRegistroUnitaDoc IN (:idRegistroUnitaDocList) ");
+            } else {
+                queryStr.append(whereWord)
+                        .append("mon.idRegistroUnitaDoc IN (:idRegistroUnitaDocList) ");
+            }
         }
         BigDecimal aaKeyUnitaDoc = filtriCS.getAaKeyUnitaDoc();
         if (aaKeyUnitaDoc != null) {
@@ -2216,12 +2252,26 @@ public class MonitoraggioHelper implements Serializable {
         // Inserimento nella query del filtro tipo unità documentaria
         List<BigDecimal> idTipoUnitaDocList = filtriCS.getIdTipoUnitaDocList();
         if (!idTipoUnitaDocList.isEmpty()) {
-            queryStr.append(whereWord).append("mon.idTipoUnitaDoc IN :idTipoUnitaDocList ");
+            // queryStr.append(whereWord).append("mon.idTipoUnitaDoc IN :idTipoUnitaDocList ");
+            if (isAttualmenteConservate || isCancellate) {
+                queryStr.append(whereWord)
+                        .append("mon.idDecTipoUnitaDoc IN (:idTipoUnitaDocList) ");
+            } else {
+                queryStr.append(whereWord)
+                        .append("mon.idTipoUnitaDoc IN (:idTipoUnitaDocList) ");
+            }
         }
         // Inserimento nella query del filtro tipo documento
         List<BigDecimal> idTipoDocList = filtriCS.getIdTipoDocList();
         if (!idTipoDocList.isEmpty()) {
-            queryStr.append(whereWord).append("mon.idTipoDocPrinc IN :idTipoDocList ");
+            // queryStr.append(whereWord).append("mon.idTipoDocPrinc IN :idTipoDocList ");
+            if (isAttualmenteConservate || isCancellate) {
+                queryStr.append(whereWord)
+                        .append("mon.idDecTipoDoc IN (:idTipoDocList) ");
+            } else {
+                queryStr.append(whereWord)
+                        .append("mon.idTipoDocPrinc IN (:idTipoDocList) ");
+            }
         }
         List<BigDecimal> idCategTipoUnitaDocList = filtriCS.getIdCategTipoUnitaDocList();
         List<BigDecimal> idSottocategTipoUnitaDocList = filtriCS.getIdSottocategTipoUnitaDocList();
@@ -2293,7 +2343,12 @@ public class MonitoraggioHelper implements Serializable {
         }
 
         if (!idRegistroUnitaDocList.isEmpty()) {
-            query.setParameter("idRegistroUnitaDocList", idRegistroUnitaDocList);
+            // query.setParameter("idRegistroUnitaDocList", idRegistroUnitaDocList);
+            if (isAttualmenteConservate || isCancellate) {
+                query.setParameter("idRegistroUnitaDocList", longListFrom(idRegistroUnitaDocList));
+            } else {
+                query.setParameter("idRegistroUnitaDocList", idRegistroUnitaDocList);
+            }
         }
 
         if (aaKeyUnitaDoc != null) {
@@ -2301,11 +2356,21 @@ public class MonitoraggioHelper implements Serializable {
         }
 
         if (!idTipoUnitaDocList.isEmpty()) {
-            query.setParameter("idTipoUnitaDocList", idTipoUnitaDocList);
+            // query.setParameter("idTipoUnitaDocList", idTipoUnitaDocList);
+            if (isAttualmenteConservate || isCancellate) {
+                query.setParameter("idTipoUnitaDocList", longListFrom(idTipoUnitaDocList));
+            } else {
+                query.setParameter("idTipoUnitaDocList", idTipoUnitaDocList);
+            }
         }
 
         if (!idTipoDocList.isEmpty()) {
-            query.setParameter("idTipoDocList", idTipoDocList);
+            // query.setParameter("idTipoDocList", idTipoDocList);
+            if (isAttualmenteConservate || isCancellate) {
+                query.setParameter("idTipoDocList", longListFrom(idTipoDocList));
+            } else {
+                query.setParameter("idTipoDocList", idTipoDocList);
+            }
         }
 
         int j = 1;
@@ -2392,16 +2457,15 @@ public class MonitoraggioHelper implements Serializable {
                 + "sum(mon.niCompVers) - sum(mon.niCompAnnulUd), "
                 + "sum(mon.niSizeVers) - sum(mon.niSizeAnnulUd), "
                 + "sum(mon.niDocAgg), sum(mon.niCompAgg), sum(mon.niSizeAgg), "
-                + "categ.cdCategTipoUnitaDoc "
-                + "FROM MonVRicContaUdDocComp mon, OrgSubStrut subStrut "
+                + "categ.cdCategTipoUnitaDoc " + "FROM MonContaUdDocComp mon, OrgSubStrut subStrut "
                 + "JOIN subStrut.orgStrut strut " + "LEFT JOIN strut.orgCategStrut categStrut, "
                 + "DecTipoUnitaDoc tipoUnitaDoc "
                 + "JOIN tipoUnitaDoc.decCategTipoUnitaDoc categ, IamAbilOrganiz iao, DecRegistroUnitaDoc registroUnitaDoc "
                 + "WHERE iao.iamUser.idUserIam = :idUserIam "
                 + "AND iao.idOrganizApplic = strut.idStrut "
-                + "AND mon.idSubStrut = subStrut.idSubStrut "
-                + "AND mon.idTipoUnitaDoc = tipoUnitaDoc.idTipoUnitaDoc "
-                + "AND mon.idRegistroUnitaDoc = registroUnitaDoc.idRegistroUnitaDoc ");
+                + "AND mon.orgSubStrut.idSubStrut = subStrut.idSubStrut "
+                + "AND mon.decTipoUnitaDoc.idTipoUnitaDoc = tipoUnitaDoc.idTipoUnitaDoc "
+                + "AND mon.decRegistroUnitaDoc.idRegistroUnitaDoc = registroUnitaDoc.idRegistroUnitaDoc ");
 
         if (idAmbiente != null) {
             queryStr.append(whereWord)
@@ -4195,14 +4259,40 @@ public class MonitoraggioHelper implements Serializable {
 
     public BaseRow getTotaliUdDocComp(List<BigDecimal> idAmbitoTerritList, long idUserIam,
             FiltriContenutoSacerPlain filtriCS) {
+
+        String tipoContenuto = filtriCS.getTipoContenuto();
+
+        // 1. Impostazioni di Default (per la Vista 'transitate_nel_sistema')
+        String entityName = "MonVRicContaUdDocComp";
+        String monSubStrut = "mon.idSubStrut";
+        String monTipoUd = "mon.idTipoUnitaDoc";
+
+        boolean isAttualmenteConservate = CostantiDB.TipoContenuto.CONSERVATO.getDescrizione()
+                .equals(tipoContenuto);
+        boolean isCancellate = CostantiDB.TipoContenuto.ELIMINATO.getDescrizione()
+                .equals(tipoContenuto);
+
+        // 2. Se siamo in uno dei casi "Entity" (Tabelle vere e proprie), sovrascriviamo i path di
+        // join
+        if (isAttualmenteConservate || isCancellate) {
+            monSubStrut = "mon.orgSubStrut.idSubStrut";
+            monTipoUd = "mon.decTipoUnitaDoc.idTipoUnitaDoc";
+
+            entityName = isAttualmenteConservate ? "MonContaUdDocComp"
+                    : "MonContaUdDocCompReadOnly";
+        }
+
         String whereWord = "AND ";
         StringBuilder queryStr = new StringBuilder(
                 "SELECT sum(mon.niUnitaDocVers) - sum(mon.niUnitaDocAnnul) AS num_ud, "
                         + "sum(mon.niDocVers) + sum(mon.niDocAgg) - sum(mon.niDocAnnulUd) AS num_doc, "
                         + "sum(mon.niCompVers) + sum(mon.niCompAgg) - sum(mon.niCompAnnulUd) AS num_comp, "
-                        + "sum(mon.niSizeVers) + sum(mon.niSizeAgg) - sum(mon.niSizeAnnulUd) AS dim_bytes, "
-                        + "round((sum(mon.niSizeVers) + sum(mon.niSizeAgg) - sum(mon.niSizeAnnulUd)) / 1000000000000, 2) AS dim_terabytes "
-                        + "FROM MonVRicContaUdDocComp mon, SIOrgEnteSiam enteConvenz, "
+                        + "sum(mon.niSizeVers) + sum(mon.niSizeAgg) - sum(mon.niSizeAnnulUd) AS dim_bytes "
+                        // RIGA RIMOSSA: Il calcolo TB è spostato in Java per evitare problemi di
+                        // arrotondamento SQL e divisione intera
+                        // + "round((sum(mon.niSizeVers) + sum(mon.niSizeAgg) -
+                        // sum(mon.niSizeAnnulUd)) / 1000000000000, 2) AS dim_terabytes "
+                        + "FROM " + entityName + " mon, SIOrgEnteSiam enteConvenz, "
                         + "OrgSubStrut subStrut " + "JOIN subStrut.orgStrut strut "
                         + "JOIN strut.orgEnte ente " + "JOIN ente.orgCategEnte categEnte "
                         + "LEFT JOIN strut.orgCategStrut categStrut, "
@@ -4210,9 +4300,9 @@ public class MonitoraggioHelper implements Serializable {
                         + "WHERE iao.iamUser.idUserIam = :idUserIam "
                         + "AND strut.idEnteConvenz = enteConvenz.idEnteSiam "
                         + "AND tree.idCategTipoUnitaDoc = tipoUnitaDoc.decCategTipoUnitaDoc.idCategTipoUnitaDoc "
-                        + "AND iao.idOrganizApplic = strut.idStrut "
-                        + "AND mon.idSubStrut = subStrut.idSubStrut "
-                        + "AND mon.idTipoUnitaDoc = tipoUnitaDoc.idTipoUnitaDoc ");
+                        + "AND iao.idOrganizApplic = strut.idStrut " + "AND " + monSubStrut
+                        + " = subStrut.idSubStrut " + "AND " + monTipoUd
+                        + " = tipoUnitaDoc.idTipoUnitaDoc ");
 
         // Inserimento nella query del filtro id ambiente
         List<BigDecimal> idAmbienteList = filtriCS.getIdAmbienteList();
@@ -4238,8 +4328,13 @@ public class MonitoraggioHelper implements Serializable {
         // Inserimento nella query del filtro registro
         List<BigDecimal> idRegistroUnitaDocList = filtriCS.getIdRegistroUnitaDocList();
         if (!idRegistroUnitaDocList.isEmpty()) {
-            queryStr.append(whereWord)
-                    .append("mon.idRegistroUnitaDoc IN (:idRegistroUnitaDocList) ");
+            if (isAttualmenteConservate || isCancellate) {
+                queryStr.append(whereWord)
+                        .append("mon.idDecRegistroUnitaDoc IN (:idRegistroUnitaDocList) ");
+            } else {
+                queryStr.append(whereWord)
+                        .append("mon.idRegistroUnitaDoc IN (:idRegistroUnitaDocList) ");
+            }
         }
         BigDecimal aaKeyUnitaDoc = filtriCS.getAaKeyUnitaDoc();
         if (aaKeyUnitaDoc != null) {
@@ -4248,12 +4343,26 @@ public class MonitoraggioHelper implements Serializable {
         // Inserimento nella query del filtro tipo unità documentaria
         List<BigDecimal> idTipoUnitaDocList = filtriCS.getIdTipoUnitaDocList();
         if (!idTipoUnitaDocList.isEmpty()) {
-            queryStr.append(whereWord).append("mon.idTipoUnitaDoc IN (:idTipoUnitaDocList) ");
+            // queryStr.append(whereWord).append("mon.idTipoUnitaDoc IN (:idTipoUnitaDocList) ");
+            if (isAttualmenteConservate || isCancellate) {
+                queryStr.append(whereWord)
+                        .append("mon.idDecTipoUnitaDoc IN (:idTipoUnitaDocList) ");
+            } else {
+                queryStr.append(whereWord)
+                        .append("mon.idTipoUnitaDoc IN (:idTipoUnitaDocList) ");
+            }
         }
         // Inserimento nella query del filtro tipo documento
         List<BigDecimal> idTipoDocList = filtriCS.getIdTipoDocList();
         if (!idTipoDocList.isEmpty()) {
-            queryStr.append(whereWord).append("mon.idTipoDocPrinc IN (:idTipoDocList) ");
+            // queryStr.append(whereWord).append("mon.idTipoDocPrinc IN (:idTipoDocList) ");
+            if (isAttualmenteConservate || isCancellate) {
+                queryStr.append(whereWord)
+                        .append("mon.idDecTipoDoc IN (:idTipoDocList) ");
+            } else {
+                queryStr.append(whereWord)
+                        .append("mon.idTipoDocPrinc IN (:idTipoDocList) ");
+            }
         }
         List<BigDecimal> idCategTipoUnitaDocList = filtriCS.getIdCategTipoUnitaDocList();
         List<BigDecimal> idSottocategTipoUnitaDocList = filtriCS.getIdSottocategTipoUnitaDocList();
@@ -4321,7 +4430,11 @@ public class MonitoraggioHelper implements Serializable {
         }
 
         if (!idRegistroUnitaDocList.isEmpty()) {
-            query.setParameter("idRegistroUnitaDocList", idRegistroUnitaDocList);
+            if (isAttualmenteConservate || isCancellate) {
+                query.setParameter("idRegistroUnitaDocList", longListFrom(idRegistroUnitaDocList));
+            } else {
+                query.setParameter("idRegistroUnitaDocList", idRegistroUnitaDocList);
+            }
         }
 
         if (aaKeyUnitaDoc != null) {
@@ -4329,11 +4442,21 @@ public class MonitoraggioHelper implements Serializable {
         }
 
         if (!idTipoUnitaDocList.isEmpty()) {
-            query.setParameter("idTipoUnitaDocList", idTipoUnitaDocList);
+            // query.setParameter("idTipoUnitaDocList", idTipoUnitaDocList);
+            if (isAttualmenteConservate || isCancellate) {
+                query.setParameter("idTipoUnitaDocList", longListFrom(idTipoUnitaDocList));
+            } else {
+                query.setParameter("idTipoUnitaDocList", idTipoUnitaDocList);
+            }
         }
 
         if (!idTipoDocList.isEmpty()) {
-            query.setParameter("idTipoDocList", idTipoDocList);
+            // query.setParameter("idTipoDocList", idTipoDocList);
+            if (isAttualmenteConservate || isCancellate) {
+                query.setParameter("idTipoDocList", longListFrom(idTipoDocList));
+            } else {
+                query.setParameter("idTipoDocList", idTipoDocList);
+            }
         }
 
         int j = 1;
@@ -4371,8 +4494,19 @@ public class MonitoraggioHelper implements Serializable {
             riga.setBigDecimal("num_ud", (BigDecimal) totali[0]);
             riga.setBigDecimal("num_doc", (BigDecimal) totali[1]);
             riga.setBigDecimal("num_comp", (BigDecimal) totali[2]);
-            riga.setBigDecimal("dim_bytes", (BigDecimal) totali[3]);
-            riga.setBigDecimal("dim_terabytes", (BigDecimal) totali[4]);
+            BigDecimal dimBytes = (BigDecimal) totali[3];
+            riga.setBigDecimal("dim_bytes", dimBytes);
+            if (dimBytes != null) {
+                BigDecimal divisoreTb = new BigDecimal("1000000000000");
+                // Usiamo 3 decimali per precisione sui numeri piccoli
+                BigDecimal dimTb = dimBytes.divide(divisoreTb, 3, java.math.RoundingMode.HALF_UP);
+
+                // stripTrailingZeros() rimuove gli zeri finali inutili (es. 0.500000 diventa 0.5)
+                riga.setBigDecimal("dim_terabytes", dimTb.stripTrailingZeros());
+            } else {
+                // Se i bytes sono null, anche i TB devono essere null per apparire vuoti
+                riga.setBigDecimal("dim_terabytes", null);
+            }
 
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -4389,15 +4523,17 @@ public class MonitoraggioHelper implements Serializable {
                         + "sum(mon.niDocVers) + sum(mon.niDocAgg) - sum(mon.niDocAnnulUd) AS num_doc, "
                         + "sum(mon.niCompVers) + sum(mon.niCompAgg) - sum(mon.niCompAnnulUd) AS num_comp, "
                         + "sum(mon.niSizeVers) + sum(mon.niSizeAgg) - sum(mon.niSizeAnnulUd) AS dim_bytes "
-                        + "FROM MonVRicContaUdDocComp mon, " + "OrgSubStrut subStrut "
+                        // MEV #37228 - vai su MonContaUdDocComp per visualizzare solo i totali
+                        // delle UD "CONSERVATE"
+                        + "FROM MonContaUdDocComp mon, " + "OrgSubStrut subStrut "
                         + "JOIN subStrut.orgStrut strut "
                         + "LEFT JOIN strut.orgCategStrut categStrut, "
                         + "DecTipoUnitaDoc tipoUnitaDoc "
                         + "JOIN tipoUnitaDoc.decCategTipoUnitaDoc categ, IamAbilOrganiz iao "
                         + "WHERE iao.iamUser.idUserIam = :idUserIam "
                         + "AND iao.idOrganizApplic = strut.idStrut "
-                        + "AND mon.idTipoUnitaDoc = tipoUnitaDoc.idTipoUnitaDoc "
-                        + "AND mon.idSubStrut = subStrut.idSubStrut ");
+                        + "AND mon.decTipoUnitaDoc.idTipoUnitaDoc = tipoUnitaDoc.idTipoUnitaDoc "
+                        + "AND mon.orgSubStrut.idSubStrut = subStrut.idSubStrut ");
 
         if (idAmbiente != null) {
             queryStr.append(whereWord)
@@ -6651,6 +6787,7 @@ public class MonitoraggioHelper implements Serializable {
         private Timestamp dataRifA;
         private List<BigDecimal> idCategEnteList;
         private List<BigDecimal> idCategStrutList;
+        private String tipoContenuto;
 
         public FiltriContenutoSacerPlain() {
 
@@ -6671,6 +6808,7 @@ public class MonitoraggioHelper implements Serializable {
             this.dataRifA = filtriCS.getDt_rif_a().parse();
             this.idCategEnteList = filtriCS.getId_categ_ente().parse();
             this.idCategStrutList = filtriCS.getId_categ_strut().parse();
+            this.tipoContenuto = filtriCS.getTipo_contenuto().parse();
 
         }
 
@@ -6730,6 +6868,10 @@ public class MonitoraggioHelper implements Serializable {
             return idCategStrutList;
         }
 
+        public String getTipoContenuto() {
+            return tipoContenuto;
+        }
+
         void setIdAmbienteList(List<BigDecimal> idAmbienteList) {
             this.idAmbienteList = idAmbienteList;
         }
@@ -6784,6 +6926,10 @@ public class MonitoraggioHelper implements Serializable {
 
         void setIdCategStrutList(List<BigDecimal> idCategStrutList) {
             this.idCategStrutList = idCategStrutList;
+        }
+
+        void setTipoContenuto(String tipoContenuto) {
+            this.tipoContenuto = tipoContenuto;
         }
     }
 

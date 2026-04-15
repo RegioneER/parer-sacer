@@ -32,6 +32,7 @@ import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
+import it.eng.parer.xml.xsd.XsdValidationService;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -65,6 +66,8 @@ public class ElaborazioneRigaIndiceMetaFascicoli {
     private CreazioneIndiceMetaFascicoliHelper cimfHelper;
     @EJB
     private XmlContextCache xmlContextCache;
+    @EJB
+    private XsdValidationService xsdValidationService;
 
     // MEV#30398
     @EJB
@@ -141,12 +144,14 @@ public class ElaborazioneRigaIndiceMetaFascicoli {
         String indexFile = buildIndexFile(fascicolo, cdVersioneXml);
 
         // Eseguo la validazione dell'xml prodotto con l'xsd recuperato da DEC_MODELLO_XSD_FASCICOLO
+        // Usa XsdValidationService che supporta sia XSD monolitici che modulari (con
+        // import/include)
         log.info(
                 "{} - Eseguo validazione dell'xml con l'xsd recuperato da DEC_MODELLO_XSD_FASCICOLO",
                 desJobMessage);
         try {
-            String xsd = modello.getBlXsd();
-            XmlUtils.validateXml(xsd, indexFile);
+            // Usa il nuovo service che gestisce automaticamente import/include tramite resolver
+            xsdValidationService.validateXmlWithModularXsd(modello, indexFile);
             log.info("{} - Documento validato con successo", desJobMessage);
         } catch (SAXException | IOException ex) {
             log.error(ex.getMessage(), ex);

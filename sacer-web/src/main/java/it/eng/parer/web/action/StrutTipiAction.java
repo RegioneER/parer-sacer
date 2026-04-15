@@ -3117,13 +3117,25 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
 
                         tipoUnitaDocEjb.insertDecTipoUnitaDoc(param, tipoUnitaDocRowBean,
                                 creazioneCriterio.getCriterio_autom_tipo_ud().parse());
+                        // Ricarico il record dal database per ottenere l'ID generato
                         tipoUnitaDocRowBean = tipoUnitaDocEjb.getDecTipoUnitaDocRowBean(
                                 tipoUnitaDocRowBean.getNmTipoUnitaDoc(), idStrut);
+
+                        // Verifico che l'ID sia stato correttamente recuperato
+                        if (tipoUnitaDocRowBean.getIdTipoUnitaDoc() == null) {
+                            throw new ParerUserError(
+                                    "Errore nel recupero dell'ID della tipologia unit\u00E0 documentaria appena creata");
+                        }
+
                         getForm().getTipoUnitaDocAmmessoList().clear();
                         getForm().getTipoStrutUnitaDocList().clear();
                         getMessageBox().addMessage(new Message(MessageLevel.INF,
                                 "Nuova tipologia unit\u00E0 documentaria salvata con successo"));
 
+                        // Copio i dati della tipologia appena creata nel form
+                        getForm().getTipoUnitaDoc().copyFromBean(tipoUnitaDocRowBean);
+
+                        // Creo il tablebean con il record che contiene l'ID
                         DecTipoUnitaDocTableBean table = new DecTipoUnitaDocTableBean();
                         table.add(tipoUnitaDocRowBean);
                         getForm().getTipoUnitaDocList().setTable(table);

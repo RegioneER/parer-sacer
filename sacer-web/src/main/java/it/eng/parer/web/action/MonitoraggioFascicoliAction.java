@@ -494,6 +494,7 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
 
     public void listaFascicoliVersati() throws EMFError {
         getForm().getFiltriFascicoli().reset();
+        getForm().getFiltriFascicoli().setEditMode();
         getForm().getFiltriFascicoli().getId_ambiente().setDecodeMap(
                 getForm().getRiepilogoVersamentiFascicoli().getId_ambiente().getDecodeMap());
         getForm().getFiltriFascicoli().getId_ambiente()
@@ -568,6 +569,7 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
 
     public void listaFascicoliVersamentiFalliti() throws EMFError {
         getForm().getFiltriFascicoli().reset();
+        getForm().getFiltriFascicoli().setEditMode();
         getForm().getFiltriFascicoli().getId_ambiente().setDecodeMap(
                 getForm().getRiepilogoVersamentiFascicoli().getId_ambiente().getDecodeMap());
         getForm().getFiltriFascicoli().getId_ambiente()

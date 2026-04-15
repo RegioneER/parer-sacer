@@ -166,6 +166,7 @@ public class RecuperoExt implements IRecuperoExt {
             this.versioneCalc = "1.3";
             this.modificatoriWS.add(ModificatoriWS.TAG_LOG_STATO_CONSERV_UD);
             this.modificatoriWS.add(ModificatoriWS.TAG_REC_USR_DOC_COMP);
+            this.modificatoriWS.add(ModificatoriWS.TAG_PARAMETRI_RECUPERO_1_3);
         } else if (versione.equals("1.2")) {
             this.versioneCalc = "1.2";
             this.modificatoriWS.add(ModificatoriWS.TAG_REC_USR_DOC_COMP);

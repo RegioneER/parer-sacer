@@ -377,7 +377,7 @@ public class CostantiDB {
         PROFILO_GENERALE_FASCICOLO, PROFILO_ARCHIVISTICO_FASCICOLO, PROFILO_SPECIFICO_FASCICOLO,
         FASCICOLO, AIP_SELF_DESCRIPTION_MORE_INFO,
         // FILE_GROUP_FILE_MORE_INFO,
-        AIP_UNISYNCRO, PROFILO_NORMATIVO_FASCICOLO
+        AIP_UNISYNCRO, PROFILO_NORMATIVO_FASCICOLO, RICHIAMABILE
     }
 
     public enum TiModelloXsdProfilo {
@@ -1381,7 +1381,11 @@ public class CostantiDB {
         INIZIALE, INVIATA_A_MS, IN_ELABORAZIONE_LOGICA, ERRORE_INVIO_MS, ERRORE_LOGICO,
         ERRORE_LOGICO_GESTITO, ERRORE_LOGICO_RIPRISTINABILE, PRONTA_PER_FISICA,
         IN_PREPARAZIONE_FISICA, ERRORE_PREPARAZIONE, IN_CODA_CANCELLAZIONE, ERRORE_AVVIO_JOB,
-        IN_CANCELLAZIONE_FISICA, ERRORE_FISICO_CRITICO, ERRORE_FISICO_PARZIALE, COMPLETATA
+        IN_CANCELLAZIONE_FISICA, ERRORE_FISICO_CRITICO, ERRORE_FISICO_PARZIALE, COMPLETATA,
+
+        // MEV 30416
+        IN_PULIZIA_SESSIONI_KO,
+        ERRORE_PULIZIA
 
     }
 
@@ -1400,6 +1404,22 @@ public class CostantiDB {
         private String descrizione;
 
         private TipoRichiesta(String val) {
+            this.descrizione = val;
+        }
+
+        public String getDescrizione() {
+            return descrizione;
+        }
+    }
+
+    // MEV #37228
+    public enum TipoContenuto {
+
+        CONSERVATO("CONSERVATO"), ELIMINATO("ELIMINATO"), STORICO("STORICO");
+
+        private String descrizione;
+
+        private TipoContenuto(String val) {
             this.descrizione = val;
         }
 

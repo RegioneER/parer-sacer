@@ -79,8 +79,15 @@ public class HomeAction extends HomeAbstractAction {
 
     public void process() throws EMFError {
         try {
-            // Ricerca news
-            findNews();
+            try {
+                // Ricerca news
+                findNews();
+            } catch (Exception exNews) {
+                log.warn(
+                        "Impossibile recuperare le news, procedo col caricamento dei dati Home. Dettaglio: {}",
+                        exNews.getMessage(), exNews);
+            }
+
             // Calcola totali contenuto Sacer
             calcolaTotali();
             if (getUser().getScadenzaPwd() != null) {
