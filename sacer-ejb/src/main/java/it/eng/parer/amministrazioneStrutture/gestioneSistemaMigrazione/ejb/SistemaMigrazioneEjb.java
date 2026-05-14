@@ -23,6 +23,8 @@ import it.eng.parer.slite.gen.tablebean.AplSistemaMigrazRowBean;
 import it.eng.parer.slite.gen.tablebean.AplSistemaMigrazTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgUsoSistemaMigrazRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgUsoSistemaMigrazTableBean;
+import it.eng.parer.slite.gen.viewbean.DecVLisSisVersByTipoUdTableBean;
+import it.eng.parer.viewEntity.DecVLisSisVersByTipoUd;
 import it.eng.parer.web.util.Transform;
 import it.eng.spagoLite.db.base.BaseTableInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
@@ -43,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * EJB di gestione dei dati del sistema di migrazione
+ * EJB di gestione dei dati del sistema di migrazione e dei sistemi versanti
  *
  * {@link it.eng.parer.amministrazioneStrutture.gestioneSistemaMigrazione}
  *
@@ -313,6 +315,33 @@ public class SistemaMigrazioneEjb {
         }
 
         helper.removeEntity(sistemaMigraz, true);
+    }
+
+    /**
+     * Ritorna la lista dei sistemi di migrazione esistenti nell'applicazione non associati alla
+     * struttura
+     *
+     * @param listaTipiUd Lista di tipi UD
+     *
+     * @return il tableBean contenente la lista
+     */
+    public DecVLisSisVersByTipoUdTableBean getDecVLisSisVersByTipoUdTableBean(
+            List<Object> listaTipiUd) {
+        DecVLisSisVersByTipoUdTableBean table = new DecVLisSisVersByTipoUdTableBean();
+
+        List<DecVLisSisVersByTipoUd> list = helper.retrieveDecVLisSisVersByTipoUd(listaTipiUd);
+        if (list != null && !list.isEmpty()) {
+            try {
+                table = (DecVLisSisVersByTipoUdTableBean) Transform.entities2TableBean(list);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException ex) {
+                logger.error("Errore durante il recupero dei sistemi versanti "
+                        + ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalStateException("Errore durante il recupero dei sistemi versanti");
+            }
+        }
+        return table;
     }
 
 }

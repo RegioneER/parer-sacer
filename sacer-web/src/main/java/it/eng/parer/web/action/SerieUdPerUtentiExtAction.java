@@ -624,8 +624,6 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
         }
         if (detailRow.getTiStatoVerSerie().equals(CostantiDB.StatoVersioneSerie.FIRMATA.name())
                 || detailRow.getTiStatoVerSerie()
-                        .equals(CostantiDB.StatoVersioneSerie.IN_CUSTODIA.name())
-                || detailRow.getTiStatoVerSerie()
                         .equals(CostantiDB.StatoVersioneSerie.ANNULLATA.name())) {
             getForm().getSerieDetailButtonList().getDownloadPacchettoArk().setHidden(false);
             getForm().getSerieDetailButtonList().getDownloadPacchettoArk()

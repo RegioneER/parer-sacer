@@ -31,7 +31,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBContext;
@@ -121,43 +123,77 @@ public class VerificaPeriodoRegistroEjb {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public RispostaControlli verificaAnnoNewTrans(Long idRegistroUnitaDoc, long anno,
             List<Long> idSubStruts, KeyOrdUtility tmpKeyOrdUtility) {
+
         RispostaControlli risposta = new RispostaControlli();
         risposta.setrBoolean(true);
+        int count = 0;
 
-        // elabora anno
-        List<AroUnitaDoc> aroUnitaDocs = verificaCompRegHelper
-                .getListaUdDaVerificare(idRegistroUnitaDoc, idSubStruts, anno);
-        for (AroUnitaDoc tmpUd : aroUnitaDocs) {
-            CSChiave tmpCSChiave = new CSChiave();
-            tmpCSChiave.setAnno(tmpUd.getAaKeyUnitaDoc().longValue());
-            tmpCSChiave.setTipoRegistro(tmpUd.getCdRegistroKeyUnitaDoc());
-            tmpCSChiave.setNumero(tmpUd.getCdKeyUnitaDoc());
-            RispostaControlli rispostaControlli = tmpKeyOrdUtility.verificaChiave(tmpCSChiave);
+        // Utilizzo del try-with-resources per garantire la chiusura dello stream e del cursore DB
+        try (Stream<AroUnitaDoc> aroUnitaDocStream = verificaCompRegHelper
+                .getStreamUdDaVerificare(idRegistroUnitaDoc, idSubStruts, anno)) {
 
-            if (rispostaControlli.isrBoolean()) {
-                // salvo la chiave per l'ordinamento
-                KeyOrdUtility.KeyOrdResult keyOrdResult = (KeyOrdUtility.KeyOrdResult) rispostaControlli
-                        .getrObject();
-                // aggiorno tmpUd
-                // aggiorno la chiave di ordinamento calcolata
-                tmpUd.setDsKeyOrd(keyOrdResult.getKeyOrdCalcolata());
-                // aggiorno il progressivo calcolato, estratto dal numero della chiave.. potrebbe
-                // non esistere
-                if (keyOrdResult.getProgressivoCalcolato() != null) {
-                    tmpUd.setPgUnitaDoc(new BigDecimal(keyOrdResult.getProgressivoCalcolato()));
+            log.info("JOB VERIFICA_COMPATIBILITA_REGISTRO: Verifica registro {} per anno {}",
+                    idRegistroUnitaDoc, anno);
+
+            // L'uso dell' Iterator permette di usare il return immediato, cosa che non avremmo
+            // potuto fare con un semplice .forEach() lambda
+            Iterator<AroUnitaDoc> iterator = aroUnitaDocStream.iterator();
+
+            while (iterator.hasNext()) {
+                AroUnitaDoc tmpUd = iterator.next();
+
+                // 1. Esecuzione controlli
+                CSChiave tmpCSChiave = new CSChiave();
+                tmpCSChiave.setAnno(tmpUd.getAaKeyUnitaDoc().longValue());
+                tmpCSChiave.setTipoRegistro(tmpUd.getCdRegistroKeyUnitaDoc());
+                tmpCSChiave.setNumero(tmpUd.getCdKeyUnitaDoc());
+
+                RispostaControlli rispostaControlli = tmpKeyOrdUtility.verificaChiave(tmpCSChiave);
+
+                if (rispostaControlli.isrBoolean()) {
+                    // Successo: aggiorno l'oggetto managed
+                    KeyOrdUtility.KeyOrdResult keyOrdResult = (KeyOrdUtility.KeyOrdResult) rispostaControlli
+                            .getrObject();
+                    tmpUd.setDsKeyOrd(keyOrdResult.getKeyOrdCalcolata());
+
+                    if (keyOrdResult.getProgressivoCalcolato() != null) {
+                        tmpUd.setPgUnitaDoc(new BigDecimal(keyOrdResult.getProgressivoCalcolato()));
+                    } else {
+                        tmpUd.setPgUnitaDoc(null);
+                    }
                 } else {
-                    tmpUd.setPgUnitaDoc(null);
+                    // Errore di validazione: Rollback totale dell'anno e uscita immediata
+                    risposta.setCodErr(rispostaControlli.getCodErr());
+                    risposta.setDsErr(rispostaControlli.getDsErr());
+                    risposta.setrLong(tmpUd.getIdUnitaDoc());
+                    risposta.setrBoolean(false);
+                    log.info(
+                            "JOB VERIFICA_COMPATIBILITA_REGISTRO: Verifica terminata con errore di validazione");
+
+                    ejbContext.setRollbackOnly(); // Annulla tutti i flush fatti finora per questo
+                                                  // anno
+                    return risposta; // col return, abbinato al try-with-resource, esco dal ciclo
+                                     // immediatamente, chiudo lo stream e il cursore sul DB
                 }
-            } else {
-                risposta.setCodErr(rispostaControlli.getCodErr());
-                risposta.setDsErr(rispostaControlli.getDsErr());
-                risposta.setrLong(tmpUd.getIdUnitaDoc());
-                risposta.setrBoolean(false);
-                // in caso di problemi, effettuo il rollback delle modifiche fatte alle UD dell'anno
-                ejbContext.setRollbackOnly();
-                break;
+
+                // Gestione Memoria: ogni 1000 record svuoto il Persistence Context
+                if (++count % 1000 == 0) {
+                    entityManager.flush(); // Invia gli update al DB (ma senza commit)
+                    entityManager.clear(); // Libera la RAM eliminando gli oggetti processati
+                }
             }
+            log.info(
+                    "JOB VERIFICA_COMPATIBILITA_REGISTRO: Verifica dell'anno {} terminata senza errorei di validazione",
+                    anno);
+        } catch (Exception e) {
+            // Gestione errori tecnici imprevisti durante lo streaming
+            log.error("Errore nel processamento dello stream per anno " + anno, e);
+            risposta.setrBoolean(false);
+            risposta.setDsErr("Errore nel processamento dello stream per anno: " + e.getMessage());
+            ejbContext.setRollbackOnly();
+            return risposta;
         }
+
         return risposta;
     }
 

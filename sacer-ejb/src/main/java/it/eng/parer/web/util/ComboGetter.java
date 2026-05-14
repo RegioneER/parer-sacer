@@ -707,6 +707,32 @@ public class ComboGetter {
         return mappaTipoContenuto;
     }
 
+    public static DecodeMap getMappaTiStatoProp() {
+        BaseTable bt = new BaseTable();
+        String key = "ti_stato_prop_scarto_vers";
+        DecodeMap mappaTiStatoPropScartoVers = new DecodeMap();
+        for (CostantiDB.TiStatoPropScartoVers tiStatoPropScartoVers : sortEnum(
+                CostantiDB.TiStatoPropScartoVers.values())) {
+            BaseRow row = createKeyValueBaseRow(key, tiStatoPropScartoVers.name());
+            bt.add(row);
+        }
+        mappaTiStatoPropScartoVers.populatedMap(bt, key, key);
+        return mappaTiStatoPropScartoVers;
+    }
+
+    public static DecodeMap getMappaTiAlertPropScarto() {
+        BaseTable bt = new BaseTable();
+        String key = "ds_alert_sel";
+        DecodeMap mappaTiAlertPropScarto = new DecodeMap();
+        for (Constants.TiAlertPropScarto tiReportUd : sortEnum(
+                Constants.TiAlertPropScarto.values())) {
+            BaseRow row = createKeyValueBaseRow(key, tiReportUd.getColonnaBean());
+            bt.add(row);
+        }
+        mappaTiAlertPropScarto.populatedMap(bt, key, key);
+        return mappaTiAlertPropScarto;
+    }
+
     /**
      * Metodo statico per ordinare un enum tramite il valore
      *

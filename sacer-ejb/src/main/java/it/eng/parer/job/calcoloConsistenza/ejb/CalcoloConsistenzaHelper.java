@@ -75,7 +75,7 @@ public class CalcoloConsistenzaHelper {
             + " JOIN comp.aroStrutDoc strutDoc " + " JOIN strutDoc.aroDoc doc "
             + " JOIN doc.aroUnitaDoc ud, " + " AroDoc docPrinc JOIN docPrinc.aroUnitaDoc ud2 "
             + " WHERE ud.idOrgStrut = :idStrut "
-            + " AND ud.tiStatoConservazione IN ('AIP_GENERATO', 'AIP_FIRMATO', 'VERSAMENTO_IN_ARCHIVIO', 'IN_ARCHIVIO', 'IN_CUSTODIA') "
+            + " AND ud.tiStatoConservazione IN ('AIP_GENERATO', 'AIP_FIRMATO', 'VERSAMENTO_IN_ARCHIVIO', 'IN_ARCHIVIO') "
             + " AND doc.dtCreazione >= :dataDa and doc.dtCreazione < :dataA "
             // + " AND ud.dtCreazione >= :dataDa and ud.dtCreazione < :dataA "
             + " AND docPrinc.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc "

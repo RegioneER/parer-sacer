@@ -1194,8 +1194,8 @@ public class DataMartHelper extends GenericHelper {
      */
     public List<BigDecimal> getIdStrutCoinvolti(BigDecimal idUdDelRichiesta) {
         String sql = "SELECT DISTINCT ID_STRUT FROM DM_UD_DEL WHERE ID_UD_DEL_RICHIESTA = :id";
-        return getEntityManager().createNativeQuery(sql)
-                .setParameter("id", idUdDelRichiesta).getResultList();
+        return getEntityManager().createNativeQuery(sql).setParameter("id", idUdDelRichiesta)
+                .getResultList();
     }
 
     /**
@@ -1248,10 +1248,8 @@ public class DataMartHelper extends GenericHelper {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int deleteVrsDocNonVersBatch(List<BigDecimal> idStrutList, int batchSize) {
         String sql = "DELETE FROM VRS_DOC_NON_VERS WHERE ID_STRUT IN (:idStruts) AND ROWNUM <= :batchSize";
-        return getEntityManager().createNativeQuery(sql)
-                .setParameter("idStruts", idStrutList)
-                .setParameter("batchSize", batchSize)
-                .executeUpdate();
+        return getEntityManager().createNativeQuery(sql).setParameter("idStruts", idStrutList)
+                .setParameter("batchSize", batchSize).executeUpdate();
     }
 
     /**
@@ -1264,9 +1262,7 @@ public class DataMartHelper extends GenericHelper {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int deleteVrsUnitaDocNonVersBatch(List<BigDecimal> idStrutList, int batchSize) {
         String sql = "DELETE FROM VRS_UNITA_DOC_NON_VERS WHERE ID_STRUT IN (:idStruts) AND ROWNUM <= :batchSize";
-        return getEntityManager().createNativeQuery(sql)
-                .setParameter("idStruts", idStrutList)
-                .setParameter("batchSize", batchSize)
-                .executeUpdate();
+        return getEntityManager().createNativeQuery(sql).setParameter("idStruts", idStrutList)
+                .setParameter("batchSize", batchSize).executeUpdate();
     }
 }

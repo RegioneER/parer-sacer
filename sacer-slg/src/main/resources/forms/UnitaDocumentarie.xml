@@ -80,6 +80,7 @@
     </Fields>
     <!-- Filtri di ricerca Unità Documentarie Avanzata -->
     <Fields Description="Filtri unità documentaria ricerca avanzata" Name="FiltriUnitaDocumentarieAvanzata">
+        <CheckBox Name="fl_collegamenti_altre_ud" Description="Collegamento con altre UD" Type="STRING" defaultValue="0" Readonly="false" />
         <MultiSelect Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Trigger="true" Type="INTEGER"/>
         <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_ud" Readonly="true" Type="STRING"/>
         <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_ud" Type="STRING"/>
@@ -106,13 +107,11 @@
         <Input Description="ID documento" Name="cd_key_doc_vers" Type="STRING"/>
         <Input Description="Autore documento" Name="ds_autore_doc" Type="STRING"/>
         <Input Description="Descrizione documento" Name="dl_doc" Type="STRING"/>
+        <ComboBox Description="Sistema versante" Name="id_sistema_versante" Type="INTEGER"/>
         <ComboBox Description="Tipo conservazione" Name="ti_conservazione" Type="STRING"/>
         <ComboBox Description="Forzatura accettazione" Name="fl_forza_accettazione" Type="STRING"/>
         <ComboBox Description="Forzatura conservazione" Name="fl_forza_conservazione" Type="STRING"/>
         <ComboBox Description="Forzatura collegamenti" Name="fl_forza_collegamento" Type="STRING"/>
-        <!--<ComboBox Description="Forzatura hash" Name="fl_forza_hash" Type="STRING"/>
-        <ComboBox Description="Forzatura formato numero" Name="fl_forza_fmt_numero" Type="STRING"/>
-        <ComboBox Description="Forzatura formato file" Name="fl_forza_fmt_file" Type="STRING"/>-->
         <ComboBox Description="Versione servizio versamento" Name="cd_versione_ws" Type="STRING"/>
         <Input Description="Documenti annullati" Hidden="true" Name="fl_doc_annul" Type="STRING"/>
         <Input Description="Versamenti unità documentarie annullate" Hidden="true" Name="fl_unita_doc_annul" Type="STRING"/>
@@ -231,7 +230,6 @@
     <ButtonList Description="Bottoni della ricerca unità documentaria" Name="UnitaDocumentarieRicercaButtonList">
         <Button Description="Ricerca" Name="ricercaUD" Type="STRING"/>
         <!--<Button Name="visualizzaVolume" Description="Visualizza" Type="STRING" />-->
-        <Button Description="Crea criterio di raggruppamento" Name="creaCriterioRaggr" Type="STRING"/>
         <Button Description="Scarica contenuto" Name="downloadContenuto" Type="STRING"/>
         <Button Description="Scarica contenuto" Name="downloadContenutoAnnullate" Type="STRING"/>
         <Button Description="Pulisci" Name="pulisciUD" Type="STRING"/>
@@ -365,7 +363,7 @@
     </List>
     <Tab Description="Unità Documentaria" Name="UnitaDocumentarieTabs">
         <TabElement Description="Filtri Ricerca Avanzata" Name="FiltriRicercaAvanzata"/>
-        <TabElement Description="Filtri Dati Specifici" Name="FiltriDatiSpec"/>
+        <TabElement Description="Filtri Dati Specifici" Name="FiltriDatiSpec" />
     </Tab>
     <!-- PAGINA unità documentarie -->
     <Fields Description="Dettaglio Unità Documentarie" Name="UnitaDocumentarieDetail">

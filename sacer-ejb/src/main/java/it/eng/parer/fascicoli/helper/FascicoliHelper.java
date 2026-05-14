@@ -2363,6 +2363,16 @@ public class FascicoliHelper extends GenericHelper {
         if (filtri.getNmTipoFascicolo() != null) {
             whereClauseStr.append(andClause).append("f.idTipoFascicolo = :idTipoFascicolo ");
         }
+        if (filtri.getDtAnnulDa() != null && filtri.getDtAnnulA() != null) {
+            whereClauseStr.append(andClause).append(
+                    "EXISTS (SELECT ff.idFascicolo FROM FasFascicolo ff WHERE ff.idFascicolo = f.idFascicolo AND ff.dtAnnull BETWEEN :dtAnnul_da AND :dtAnnul_a) ");
+        } else if (filtri.getDtAnnulDa() != null) {
+            whereClauseStr.append(andClause).append(
+                    "EXISTS (SELECT ff.idFascicolo FROM FasFascicolo ff WHERE ff.idFascicolo = f.idFascicolo AND ff.dtAnnull >= :dtAnnul_da) ");
+        } else if (filtri.getDtAnnulA() != null) {
+            whereClauseStr.append(andClause).append(
+                    "EXISTS (SELECT ff.idFascicolo FROM FasFascicolo ff WHERE ff.idFascicolo = f.idFascicolo AND ff.dtAnnull <= :dtAnnul_a) ");
+        }
         if (StringUtils.isNotBlank(filtri.getCdCompositoVoceTitol())) {
             whereClauseStr.append(andClause)
                     .append("UPPER(f.cdCompositoVoceTitol) LIKE :cdCompositoVoceTitol ");
@@ -2398,6 +2408,12 @@ public class FascicoliHelper extends GenericHelper {
         }
         if (filtri.getNmTipoFascicolo() != null) {
             query.setParameter("idTipoFascicolo", filtri.getNmTipoFascicolo());
+        }
+        if (filtri.getDtAnnulDa() != null) {
+            query.setParameter("dtAnnul_da", filtri.getDtAnnulDa());
+        }
+        if (filtri.getDtAnnulA() != null) {
+            query.setParameter("dtAnnul_a", filtri.getDtAnnulA());
         }
         if (StringUtils.isNotBlank(filtri.getCdCompositoVoceTitol())) {
             query.setParameter("cdCompositoVoceTitol",
@@ -3198,6 +3214,8 @@ public class FascicoliHelper extends GenericHelper {
         String cdVersioneWs;
         Date tsVersFascicoloDa;
         Date tsVersFascicoloA;
+        Date dtAnnulDa;
+        Date dtAnnulA;
         String tiEsito;
         String tiStatoConservazione;
         String tiStatoFascElencoVers;
@@ -3256,6 +3274,8 @@ public class FascicoliHelper extends GenericHelper {
             cdVersioneWs = filtri.getCd_versione_ws();
             flUpdAnnulUnitaDoc = filtri.getFlUpdAnnulUnitaDoc();
             flUpdModifUnitaDoc = filtri.getFlUpdModifUnitaDoc();
+            dtAnnulDa = filtri.getDt_annul_da();
+            dtAnnulA = filtri.getDt_annul_a();
         }
 
         public BigDecimal getAaFascicolo() {
@@ -3584,6 +3604,22 @@ public class FascicoliHelper extends GenericHelper {
 
         void setTsVersFascicoloA(Date tsVersFascicoloA) {
             this.tsVersFascicoloA = tsVersFascicoloA;
+        }
+
+        public Date getDtAnnulDa() {
+            return dtAnnulDa;
+        }
+
+        void setDtAnnulDa(Date dtAnnulDa) {
+            this.dtAnnulDa = dtAnnulDa;
+        }
+
+        public Date getDtAnnulA() {
+            return dtAnnulA;
+        }
+
+        void setDtAnnulA(Date dtAnnulA) {
+            this.dtAnnulA = dtAnnulA;
         }
 
         public String getTiEsito() {

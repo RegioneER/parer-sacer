@@ -1448,9 +1448,8 @@ public class SerieUDAction extends SerieUDAbstractAction {
                 getForm().getNoteList().setHideDetailButton(false);
             }
 
-            if (detailRow.getTiStatoVerSerie().equals(CostantiDB.StatoVersioneSerie.FIRMATA.name())
-                    || detailRow.getTiStatoVerSerie()
-                            .equals(CostantiDB.StatoVersioneSerie.IN_CUSTODIA.name())) {
+            if (detailRow.getTiStatoVerSerie()
+                    .equals(CostantiDB.StatoVersioneSerie.FIRMATA.name())) {
                 getForm().getSerieDetailButtonList().getCambiaStatoAnnullata().setHidden(false);
                 getForm().getSerieDetailButtonList().getCambiaStatoAggiorna().setHidden(false);
             }
@@ -1521,8 +1520,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
             getForm().getSerieDetailButtonList().getDownloadAIP().setDisableHourGlass(true);
         }
         if (detailRow.getTiStatoVerSerie().equals(CostantiDB.StatoVersioneSerie.FIRMATA.name())
-                || detailRow.getTiStatoVerSerie()
-                        .equals(CostantiDB.StatoVersioneSerie.IN_CUSTODIA.name())
                 || detailRow.getTiStatoVerSerie()
                         .equals(CostantiDB.StatoVersioneSerie.ANNULLATA.name())) {
             getForm().getSerieDetailButtonList().getDownloadPacchettoArk().setHidden(false);

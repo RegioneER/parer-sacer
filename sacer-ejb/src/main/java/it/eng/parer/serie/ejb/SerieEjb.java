@@ -4619,7 +4619,7 @@ public class SerieEjb {
                             }
                             if (!checkStatoConservazioneUdInContenEff(idVerSerie)) {
                                 throw new ParerUserError(
-                                        "La serie non pu\u00F2 assumere stato = VALIDATA perch\u00E9 alcune unit\u00E0 documentarie hanno stato di conservazione diverso da AIP_GENERATO e da VERSAMENTO_IN_ARCHIVIO e da IN_ARCHIVIO e da IN_CUSTODIA e da IN_VOLUME_DI_CONSERVAZIONE (cio\u00E8 esistono unit\u00E0 documentarie con stato pari a AIP_DA_GENERARE o AIP_IN_AGGIORNAMENTO o PRESA_IN_CARICO)");
+                                        "La serie non pu\u00F2 assumere stato = VALIDATA perch\u00E9 alcune unit\u00E0 documentarie hanno stato di conservazione diverso da AIP_GENERATO e da VERSAMENTO_IN_ARCHIVIO e da IN_ARCHIVIO e da IN_VOLUME_DI_CONSERVAZIONE (cio\u00E8 esistono unit\u00E0 documentarie con stato pari a AIP_DA_GENERARE o AIP_IN_AGGIORNAMENTO o PRESA_IN_CARICO)");
                             }
                             if (checkSerieDaRigenerare(idVerSerie)) {
                                 throw new ParerUserError(
@@ -4987,16 +4987,7 @@ public class SerieEjb {
 
                             if (verSerieToUpdate != null) {
                                 logger.debug(SerieEjb.class.getSimpleName()
-                                        + " --- Aggiorna lo stato di conservazione delle unit\u00E0 doc appartenenti al contenuto di tipo EFFETTIVO della nuova versione purch\u00E8 tali unit\u00E0 doc non appartengano al contenuto di tipo EFFETTIVO di altra serie o fascicolo, con stato = VERSAMENTO_IN_ARCHIVIO o IN_ARCHIVIO o IN_CUSTODIA");
-                                // *********************************************************************************
-                                // MAC #38538 - GESTIONE STATO UD (Annullamento Serie o
-                                // Aggiornamento Serie)
-                                // Logica Unificata:
-                                // 1. Protezione VERSAMENTO_IN_ARCHIVIO (Fascicolo Elenco Validato /
-                                // Serie PresaCarico+Validata)
-                                // 2. Protezione ARCHIVIO
-                                // 3. Downgrade (Orfani)
-                                // *********************************************************************************
+                                        + " --- Aggiorna le unit\u00E0 doc appartenenti al contenuto di tipo EFFETTIVO della nuova versione, assegnando stato = AIP_GENERATO, purch\u00E8 tali unit\u00E0 doc non appartengano al contenuto di tipo EFFETTIVO di altra serie con stato = VERSAMENTO_IN_ARCHIVIO o IN_ARCHIVIO");
 
                                 if (azione.equals(AZIONE_SERIE_ANNULLATA)
                                         || azione.equals(AZIONE_SERIE_AGGIORNA)) {
@@ -5013,7 +5004,13 @@ public class SerieEjb {
                                                     .name(),
                                             CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO
                                                     .name());
-
+                                    /*
+                                     * statiConservOld.add(
+                                     * CostantiDB.StatoConservazioneUnitaDoc.IN_CUSTODIA.name());
+                                     * MEV#38176 - Rimozione dello stato di conservazione IN
+                                     * CUSTODIA
+                                     */
+                                    //
                                     // -----------------------------------------------------------------------------------------
                                     // FASE 1: Verifico la possibilità di settare lo stato di
                                     // conservazione delle ud a VERSAMENTO_IN_ARCHIVIO
@@ -5023,7 +5020,7 @@ public class SerieEjb {
                                     List<Long> idsToVersamentoInArchivio = helper
                                             .findUdTargetVersamentoInArchivioSerie(idSerieLong,
                                                     statiPartenzaInteresse);
-
+                                    // Commento fittizio
                                     if (!idsToVersamentoInArchivio.isEmpty()) {
                                         logger.debug("Aggiornamento/Annullamento Serie FASE 1: "
                                                 + idsToVersamentoInArchivio.size()
@@ -5073,6 +5070,9 @@ public class SerieEjb {
                                                     Constants.FUNZIONALITA_ONLINE);
                                         }
                                     }
+                                    // tolto IN_CUSTODIA dall'update: MEV#38176 - Rimozione dello
+                                    // stato
+                                    // di conservazione IN CUSTODIA
 
                                     // -----------------------------------------------------------------------------------------
                                     // FASE 3: Downgrade (orfani)

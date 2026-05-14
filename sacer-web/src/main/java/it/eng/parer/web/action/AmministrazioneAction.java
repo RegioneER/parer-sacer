@@ -32,6 +32,7 @@ import it.eng.parer.web.helper.AmministrazioneHelper;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.Constants;
+import it.eng.parer.web.util.Constants.ComboValueParamentersType;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
@@ -42,7 +43,6 @@ import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.base.BaseElements.Status;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value.Str;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -55,8 +55,6 @@ import javax.ejb.EJB;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.codahale.metrics.MetricRegistryListener.Base;
 
 public class AmministrazioneAction extends AmministrazioneAbstractAction {
 
@@ -112,9 +110,9 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
 
         getForm().getConfiguration().getLoad_config_list().setEditMode();
 
-        getForm().getConfiguration().getEdit_config().setViewMode();
-        getForm().getConfiguration().getAdd_config().setViewMode();
-        getForm().getConfiguration().getSave_config().setViewMode();
+        getForm().getConfigurationList().setHideInsertButton(false);
+        getForm().getConfigurationList().setHideUpdateButton(false);
+        getForm().getConfigurationList().setHideDeleteButton(false);
         getForm().getConfiguration().getLogEventiRegistroParametri().setEditMode();
 
         getForm().getConfigurationList().setFilterValidRecords(Boolean.TRUE);
@@ -123,9 +121,20 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         forwardToPublisher(Application.Publisher.AMMINISTRAZIONE_CONFIG_LIST);
     }
 
+    /**
+     * Carica la lista dei parametri in base ai filtri scelti
+     *
+     * @throws EMFError errore generico
+     */
     @Override
-    public void edit_config() throws EMFError {
-        // Recupero i valori dai filtri ma NON riparsiamo la request!
+    public void load_config_list() throws EMFError {
+        // Recupero i valori dai filtri
+        getForm().getConfiguration().post(getRequest());
+        reloadConfigurationList();
+    }
+
+    private void reloadConfigurationList() throws EMFError {
+        refreshConfigurationVersionFilters();
         String tiParamApplic = getForm().getConfiguration().getTi_param_applic_combo().parse();
         String tiGestioneParam = getForm().getConfiguration().getTi_gestione_param_combo().parse();
         String flAppartApplic = getForm().getConfiguration().getFl_appart_applic_combo().parse();
@@ -150,97 +159,62 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                         flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc,
                         flAppartAaTipoFascicolo, cdVersioneAppIni, cdVersioneAppFine);
 
-        getForm().getConfigurationList().setTable(paramApplicTableBean);
-        getForm().getConfigurationList().getTable().setPageSize(300);
-        getForm().getConfigurationList().getTable().first();
-
-        // Rendo visibili i bottoni di aggiunta/salvataggio configurazione
-        getForm().getConfiguration().getEdit_config().setViewMode();
-        getForm().getConfiguration().getAdd_config().setEditMode();
-        getForm().getConfiguration().getSave_config().setEditMode();
-
-        // Rendo editabili i campi della lista
-        getForm().getConfigurationList().getTi_param_applic().setEditMode();
-        getForm().getConfigurationList().getTi_gestione_param().setEditMode();
-        getForm().getConfigurationList().getCd_versione_app_ini().setEditMode();
-        getForm().getConfigurationList().getCd_versione_app_fine().setEditMode();
-        getForm().getConfigurationList().getNm_param_applic().setEditMode();
-        getForm().getConfigurationList().getDm_param_applic().setEditMode();
-        getForm().getConfigurationList().getDs_param_applic().setEditMode();
-        getForm().getConfigurationList().getTi_valore_param_applic().setEditMode();
-        getForm().getConfigurationList().getDs_lista_valori_ammessi().setEditMode();
-        getForm().getConfigurationList().getDs_valore_param_applic().setEditMode();
-        getForm().getConfigurationList().getFl_multi().setEditMode();
-        getForm().getConfigurationList().getFl_appart_applic().setEditMode();
-        getForm().getConfigurationList().getFl_appart_ambiente().setEditMode();
-        getForm().getConfigurationList().getFl_appart_strut().setEditMode();
-        getForm().getConfigurationList().getFl_appart_tipo_unita_doc().setEditMode();
-        getForm().getConfigurationList().getFl_appart_aa_tipo_fascicolo().setEditMode();
-        getForm().getConfigurationList().getFl_multi().setReadonly(false);
-        getForm().getConfigurationList().getFl_appart_applic().setReadonly(false);
-        getForm().getConfigurationList().getFl_appart_ambiente().setReadonly(false);
-        getForm().getConfigurationList().getFl_appart_strut().setReadonly(false);
-        getForm().getConfigurationList().getFl_appart_tipo_unita_doc().setReadonly(false);
-        getForm().getConfigurationList().getFl_appart_aa_tipo_fascicolo().setReadonly(false);
-
-        forwardToPublisher(Application.Publisher.AMMINISTRAZIONE_CONFIG_LIST);
-    }
-
-    /**
-     * Carica la lista dei parametri in base ai filtri scelti
-     *
-     * @throws EMFError errore generico
-     */
-    @Override
-    public void load_config_list() throws EMFError {
-        // Recupero i valori dai filtri
-        getForm().getConfiguration().post(getRequest());
-        String tiParamApplic = getForm().getConfiguration().getTi_param_applic_combo().parse();
-        String tiGestioneParam = getForm().getConfiguration().getTi_gestione_param_combo().parse();
-        String flAppartApplic = getForm().getConfiguration().getFl_appart_applic_combo().parse();
-        String flAppartAmbiente = getForm().getConfiguration().getFl_appart_ambiente_combo()
-                .parse();
-        String flAppartStrut = getForm().getConfiguration().getFl_appart_strut_combo().parse();
-        String flAppartTipoUnitaDoc = getForm().getConfiguration()
-                .getFl_appart_tipo_unita_doc_combo().parse();
-        String flAppartAaTipoFascicolo = getForm().getConfiguration()
-                .getFl_appart_aa_tipo_fascicolo_combo().parse();
-        String cdVersioneAppIni = getForm().getConfiguration().getCd_versione_app_ini().parse();
-        String cdVersioneAppFine = getForm().getConfiguration().getCd_versione_app_fine().parse();
-
-        getForm().getConfigurationList().getTi_gestione_param()
-                .setDecodeMap(ComboGetter.getMappaTiGestioneParam());
-        getForm().getConfigurationList().getTi_valore_param_applic()
-                .setDecodeMap(ComboGetter.getTiValoreParamApplicCombo());
-
-        // Carico i valori della lista configurazioni
-        AplParamApplicTableBean paramApplicTableBean = amministrazioneEjb
-                .getAplParamApplicTableBean(tiParamApplic, tiGestioneParam, flAppartApplic,
-                        flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc,
-                        flAppartAaTipoFascicolo, cdVersioneAppIni, cdVersioneAppFine,
-                        getForm().getConfigurationList().isFilterValidRecords());
-
         paramApplicTableBean = obfuscatePasswordParamApplic(paramApplicTableBean);
 
         getForm().getConfigurationList().setTable(paramApplicTableBean);
+        getForm().getConfigurationList().setStatus(Status.view);
 
         setConfigListReadOnly();
-
-        // se non ho trovato risultati nascondo il pulsate "Edita"
-        if (paramApplicTableBean.isEmpty())
-            getForm().getConfiguration().getEdit_config().setViewMode();
 
         forwardToPublisher(Application.Publisher.AMMINISTRAZIONE_CONFIG_LIST);
     }
 
-    private void setConfigListReadOnly() {
-        getForm().getConfigurationList().getTable().setPageSize(300);
-        getForm().getConfigurationList().getTable().first();
+    private void refreshConfigurationVersionFilters() throws EMFError {
+        String selectedCdVersioneAppIni = getForm().getConfiguration().getCd_versione_app_ini()
+                .getValue();
+        String selectedCdVersioneAppFine = getForm().getConfiguration().getCd_versione_app_fine()
+                .getValue();
 
-        // Rendo visibili i bottoni di aggiunta/salvataggio configurazione
-        getForm().getConfiguration().getEdit_config().setEditMode();
-        getForm().getConfiguration().getAdd_config().setViewMode();
-        getForm().getConfiguration().getSave_config().setViewMode();
+        BaseTable cdVersioniAppIni = amministrazioneEjb.getCdVersioneAppIniBaseTable();
+        DecodeMap mappaCdVersioniAppIni = DecodeMap.Factory.newInstance(cdVersioniAppIni,
+                AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_INI,
+                AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_INI);
+        BaseTable cdVersioniAppFine = amministrazioneEjb.getCdVersioneAppFineBaseTable();
+        DecodeMap mappaCdVersioniAppFine = DecodeMap.Factory.newInstance(cdVersioniAppFine,
+                AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_FINE,
+                AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_FINE);
+
+        getForm().getConfiguration().getCd_versione_app_ini().setDecodeMap(mappaCdVersioniAppIni);
+        getForm().getConfiguration().getCd_versione_app_fine().setDecodeMap(mappaCdVersioniAppFine);
+
+        getForm().getConfiguration().getCd_versione_app_ini()
+                .setValue(isValueInTable(cdVersioniAppIni,
+                        AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_INI,
+                        selectedCdVersioneAppIni) ? selectedCdVersioneAppIni : "");
+        getForm().getConfiguration().getCd_versione_app_fine()
+                .setValue(isValueInTable(cdVersioniAppFine,
+                        AplParamApplicTableDescriptor.COL_CD_VERSIONE_APP_FINE,
+                        selectedCdVersioneAppFine) ? selectedCdVersioneAppFine : "");
+    }
+
+    private boolean isValueInTable(BaseTable table, String columnName, String value) {
+        if (StringUtils.isBlank(value)) {
+            return true;
+        }
+
+        for (int index = 0; index < table.size(); index++) {
+            BaseRowInterface row = table.getRow(index);
+            if (value.equals(row.getString(columnName))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void setConfigListReadOnly() {
+        getForm().getConfigurationList().getTable().setPageSize(10);
+        getForm().getConfigurationList().getTable().first();
 
         // Rendo non modificabili i campi della lista
         getForm().getConfigurationList().getTi_param_applic().setViewMode();
@@ -282,18 +256,6 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
     }
 
     /**
-     * Aggiunge un nuovo parametro
-     *
-     * @throws EMFError errore generico
-     */
-    @Override
-    public void add_config() throws EMFError {
-        getForm().getConfigurationList().getTable().last();
-        getForm().getConfigurationList().getTable().add(new AplParamApplicRowBean());
-        forwardToPublisher(Application.Publisher.AMMINISTRAZIONE_CONFIG_LIST);
-    }
-
-    /**
      * Elimina un parametro dalla lista
      *
      * @throws EMFError errore generico
@@ -312,150 +274,21 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                 configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
 
-        param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameDelete(this.getForm(),
-                this.getForm().getConfigurationList()));
+        if (getLastPublisher().equals(Application.Publisher.CONFIGURATION_DETAIL)) {
+            param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
+        } else {
+            param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameDelete(getForm(),
+                    getForm().getConfigurationList()));
+        }
         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
 
         if (row.getIdParamApplic() != null
                 && amministrazioneHelper.deleteAplParamApplicRowBean(param, row)) {
             getMessageBox().addInfo("Configurazione eliminata con successo");
             getMessageBox().setViewMode(ViewMode.plain);
+            reloadConfigurationList();
+            return;
         }
-    }
-
-    /**
-     * Esegue un controllo sui campi e inserisce i parametri nel database
-     *
-     * @throws EMFError errore generico
-     */
-    @Override
-    public void save_config() throws EMFError {
-        String idParamApplicName = getForm().getConfigurationList().getId_param_applic().getName();
-        String tiParamApplicName = getForm().getConfigurationList().getTi_param_applic().getName();
-        String tiGestioneParamName = getForm().getConfigurationList().getTi_gestione_param()
-                .getName();
-        String nmParamApplicName = getForm().getConfigurationList().getNm_param_applic().getName();
-        String dsParamApplicName = getForm().getConfigurationList().getDs_param_applic().getName();
-        String dsListaValoriAmmessiName = getForm().getConfigurationList()
-                .getDs_lista_valori_ammessi().getName();
-        String dsValoreParamApplicName = getForm().getConfigurationList()
-                .getDs_valore_param_applic().getName();
-        String flAppartApplicName = getForm().getConfigurationList().getFl_appart_applic()
-                .getName();
-        String tiValoreParamApplic = getForm().getConfigurationList().getTi_valore_param_applic()
-                .getName();
-        String cdVersioneAppIni = getForm().getConfigurationList().getCd_versione_app_ini()
-                .getName();
-        Set<Integer> completeRows = new HashSet<Integer>();
-        Set<String> nmParamApplicSet = new HashSet<String>();
-        // Tiro su i dati i request di tutti i record della lista
-        getForm().getConfigurationList().post(getRequest());
-        // Scorro tutte le righe della tabella per effettuare i controlli
-        for (int i = 0; i < getForm().getConfigurationList().getTable().size(); i++) {
-            BaseRowInterface r = getForm().getConfigurationList().getTable().getRow(i);
-            BigDecimal idParamApplicValue = r.getBigDecimal(idParamApplicName);
-            String tiParamApplicValue = r.getString(tiParamApplicName);
-            String tiGestioneParamValue = r.getString(tiGestioneParamName);
-            String nmParamApplicValue = r.getString(nmParamApplicName);
-            String dsParamApplicValue = r.getString(dsParamApplicName);
-            String dsListaValoriAmmessiValue = r.getString(dsListaValoriAmmessiName);
-            String dsValoreParamApplicValue = r.getString(dsValoreParamApplicName);
-            String tiValoreParamApplicValue = r.getString(tiValoreParamApplic);
-            String flAppartApplicValue = r.getString(flAppartApplicName);
-            String cdVersioneAppIniValue = r.getString(cdVersioneAppIni);
-            if (StringUtils.isNotBlank(tiParamApplicValue)
-                    && StringUtils.isNotBlank(tiGestioneParamValue)
-                    && StringUtils.isNotBlank(nmParamApplicValue)
-                    && StringUtils.isNotBlank(dsParamApplicValue)
-                    && StringUtils.isNotBlank(tiValoreParamApplicValue)
-                    && StringUtils.isNotBlank(cdVersioneAppIniValue)) {
-                if (StringUtils.isNotBlank(dsValoreParamApplicValue)) {
-                    if (flAppartApplicValue.equals("1")) {
-                        completeRows.add(i);
-                    } else {
-                        getMessageBox().addError(
-                                "Il valore del parametro può essere indicato solo se il parametro ha il flag Applicazione alzato");
-                        getMessageBox().setViewMode(ViewMode.plain);
-                    }
-                } else {
-                    completeRows.add(i);
-                }
-            } else {
-                getMessageBox().addError(
-                        "Almeno un parametro non ha tutti i campi obbligatori valorizzati");
-                getMessageBox().setViewMode(ViewMode.plain);
-            }
-
-            nmParamApplicSet.add(nmParamApplicValue);
-
-            // Controllo che il parametro non esista già su DB
-            if (amministrazioneEjb.checkParamApplic(nmParamApplicValue, idParamApplicValue)) {
-                getMessageBox().addError("Attenzione: parametro " + nmParamApplicValue
-                        + " già presente nel sistema");
-            }
-
-            // Controllo valori possibili su ente
-            if (dsListaValoriAmmessiValue != null && !dsListaValoriAmmessiValue.equals("")) {
-                if (dsValoreParamApplicValue != null && !dsValoreParamApplicValue.equals("")) {
-                    if (!inValoriPossibili(dsValoreParamApplicValue, dsListaValoriAmmessiValue)) {
-                        getMessageBox().addError(
-                                "Il valore del parametro non è compreso tra i valori ammessi sul parametro");
-                    }
-                }
-            }
-        }
-
-        // Controllo che il nome-parametro non sia ripetuto per motivi di univocità
-        if (nmParamApplicSet.size() != getForm().getConfigurationList().getTable().size()) {
-            getMessageBox().addError(
-                    "Attenzione: esistono uno o più parametri con lo stesso nome parametro");
-        }
-
-        if (!getMessageBox().hasError()) {
-            // Codice aggiuntivo per il logging
-            LogParam param = SpagoliteLogUtil.getLogParam(
-                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
-                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
-            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
-            param.setNomeAzione(SpagoliteLogUtil.getButtonActionName(this.getForm(),
-                    this.getForm().getConfiguration(),
-                    this.getForm().getConfiguration().getSave_config().getName()));
-
-            for (Integer rowIndex : completeRows) {
-                AplParamApplicRowBean row = ((AplParamApplicTableBean) getForm()
-                        .getConfigurationList().getTable()).getRow(rowIndex);
-
-                // MEV 26587 - non sovrascrivere con il valore offuscato il valore originale.
-                if (row.getTiValoreParamApplic()
-                        .equals(Constants.ComboValueParamentersType.PASSWORD.name())
-                        && row.getString("ds_valore_param_applic")
-                                .equals(Constants.OBFUSCATED_STRING)) {
-                    continue;
-                }
-
-                if (!amministrazioneEjb.saveConfiguration(row)) {
-                    getMessageBox().addError("Errore durante il salvataggio della configurazione");
-                }
-            }
-            if (!getMessageBox().hasError()) {
-                sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(),
-                        param.getNomeUtente(), param.getNomeAzione(),
-                        SacerLogConstants.TIPO_OGGETTO_REGISTRO_PARAMETRI, BigDecimal.ZERO,
-                        param.getNomePagina());
-                getMessageBox().addInfo("Configurazione salvata con successo");
-                getMessageBox().setViewMode(ViewMode.plain);
-
-                initConfigurationCombo();
-
-                AplParamApplicTableBean paramApplicTableBean = (AplParamApplicTableBean) getForm()
-                        .getConfigurationList().getTable();
-                paramApplicTableBean = obfuscatePasswordParamApplic(paramApplicTableBean);
-                getForm().getConfigurationList().setTable(paramApplicTableBean);
-                setConfigListReadOnly();
-            }
-        }
-
-        forwardToPublisher(Application.Publisher.AMMINISTRAZIONE_CONFIG_LIST);
     }
 
     private boolean inValoriPossibili(String dsValoreParamApplicEnte, String dsListaValoriAmmessi) {
@@ -506,7 +339,18 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
 
     @Override
     public void insertDettaglio() throws EMFError {
-        if (getTableName().equals(getForm().getSistemiMigrazioneList().getName())) {
+        if (getTableName().equals(getForm().getConfigurationList().getName())) {
+            getForm().getConfigurationList().setStatus(Status.insert);
+            getForm().getConfigurationDetail().clear();
+            getForm().getConfigurationDetail().setStatus(Status.insert);
+            getForm().getConfigurationDetail().setEditMode();
+            // Inizializza le decode maps per i campi combo del detail
+            getForm().getConfigurationDetail().getTi_gestione_param()
+                    .setDecodeMap(ComboGetter.getMappaTiGestioneParam());
+            getForm().getConfigurationDetail().getTi_valore_param_applic()
+                    .setDecodeMap(ComboGetter.getTiValoreParamApplicCombo());
+            forwardToPublisher(Application.Publisher.CONFIGURATION_DETAIL);
+        } else if (getTableName().equals(getForm().getSistemiMigrazioneList().getName())) {
             getForm().getDettaglioSistemaMigrazione().clear();
             getForm().getDettaglioSistemaMigrazione().setEditMode();
             getForm().getDettaglioSistemaMigrazione().setStatus(Status.insert);
@@ -521,12 +365,92 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                 || getNavigationEvent().equals(ListAction.NE_DETTAGLIO_UPDATE)
                 || getNavigationEvent().equals(ListAction.NE_NEXT)
                 || getNavigationEvent().equals(ListAction.NE_PREV)) {
-            if (getTableName().equals(getForm().getSistemiMigrazioneList().getName())) {
+            if (getTableName().equals(getForm().getConfigurationList().getName())) {
+                if (getNavigationEvent().equals(ListAction.NE_DETTAGLIO_UPDATE)) {
+                    loadDettaglioConfiguration(true);
+                } else {
+                    loadDettaglioConfiguration(false);
+                }
+                // forwardToPublisher(Application.Publisher.CONFIGURATION_DETAIL);
+            } else if (getTableName().equals(getForm().getSistemiMigrazioneList().getName())) {
                 AplSistemaMigrazRowBean currentRow = (AplSistemaMigrazRowBean) getForm()
                         .getSistemiMigrazioneList().getTable().getCurrentRow();
                 loadDettaglioSistemaMigrazione(currentRow.getIdSistemaMigraz());
             }
         }
+    }
+
+    private void loadDettaglioConfiguration(boolean editMode) throws EMFError {
+        if (getForm().getConfigurationList().getTable() == null
+                || getForm().getConfigurationList().getTable().isEmpty()) {
+            return;
+        }
+
+        if (getForm().getConfigurationList().getTable().getCurrentRow() == null) {
+            getForm().getConfigurationList().getTable().first();
+        }
+
+        // Inizializza le decode maps per i campi combo del detail
+        getForm().getConfigurationDetail().getTi_gestione_param()
+                .setDecodeMap(ComboGetter.getMappaTiGestioneParam());
+        getForm().getConfigurationDetail().getTi_valore_param_applic()
+                .setDecodeMap(ComboGetter.getTiValoreParamApplicCombo());
+
+        AplParamApplicRowBean currentRow = (AplParamApplicRowBean) getForm().getConfigurationList()
+                .getTable().getCurrentRow();
+        if (currentRow.getIdParamApplic() != null) {
+            AplParamApplicRowBean detailRow = amministrazioneEjb
+                    .getAplParamApplicRowBean(currentRow.getIdParamApplic());
+            if (detailRow != null) {
+                // syncConfigurationCurrentRow(detailRow);
+                getForm().getConfigurationDetail().copyFromBean(detailRow);
+            }
+        }
+
+        if (editMode) {
+            getForm().getConfigurationDetail().setStatus(Status.update);
+            getForm().getConfigurationList().setStatus(Status.update);
+            getForm().getConfigurationDetail().setEditMode();
+        } else {
+            getForm().getConfigurationList().setStatus(Status.view);
+            getForm().getConfigurationDetail().setStatus(Status.view);
+            getForm().getConfigurationDetail().setViewMode();
+        }
+    }
+
+    private void syncConfigurationCurrentRow(AplParamApplicRowBean row) {
+        if (row == null || getForm().getConfigurationList().getTable() == null
+                || getForm().getConfigurationList().getTable().isEmpty()) {
+            return;
+        }
+
+        AplParamApplicRowBean currentRow = (AplParamApplicRowBean) getForm().getConfigurationList()
+                .getTable().getCurrentRow();
+        if (currentRow == null) {
+            return;
+        }
+
+        copyConfigurationRow(row, currentRow);
+    }
+
+    private void copyConfigurationRow(AplParamApplicRowBean source, AplParamApplicRowBean target) {
+        target.setIdParamApplic(source.getIdParamApplic());
+        target.setTiParamApplic(source.getTiParamApplic());
+        target.setTiGestioneParam(source.getTiGestioneParam());
+        target.setNmParamApplic(source.getNmParamApplic());
+        target.setDmParamApplic(source.getDmParamApplic());
+        target.setDsParamApplic(source.getDsParamApplic());
+        target.setTiValoreParamApplic(source.getTiValoreParamApplic());
+        target.setDsListaValoriAmmessi(source.getDsListaValoriAmmessi());
+        target.setString("ds_valore_param_applic", source.getString("ds_valore_param_applic"));
+        target.setCdVersioneAppIni(source.getCdVersioneAppIni());
+        target.setCdVersioneAppFine(source.getCdVersioneAppFine());
+        target.setFlMulti(source.getFlMulti());
+        target.setFlAppartApplic(source.getFlAppartApplic());
+        target.setFlAppartAmbiente(source.getFlAppartAmbiente());
+        target.setFlAppartStrut(source.getFlAppartStrut());
+        target.setFlAppartTipoUnitaDoc(source.getFlAppartTipoUnitaDoc());
+        target.setFlAppartAaTipoFascicolo(source.getFlAppartAaTipoFascicolo());
     }
 
     private void loadDettaglioSistemaMigrazione(BigDecimal idSistemaMigraz) throws EMFError {
@@ -540,7 +464,9 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
 
     @Override
     public void undoDettaglio() throws EMFError {
-        if (getLastPublisher().equals(Application.Publisher.DETTAGLIO_SIS_MIGR)
+        if (getLastPublisher().equals(Application.Publisher.CONFIGURATION_DETAIL)) {
+            reloadConfigurationList();
+        } else if (getLastPublisher().equals(Application.Publisher.DETTAGLIO_SIS_MIGR)
                 && (getForm().getSistemiMigrazioneList().getStatus().equals(Status.update))) {
             BaseRowInterface currentRow = getForm().getSistemiMigrazioneList().getTable()
                     .getCurrentRow();
@@ -556,6 +482,11 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
 
     @Override
     public void saveDettaglio() throws EMFError {
+        if (getLastPublisher().equals(Application.Publisher.CONFIGURATION_DETAIL)) {
+            saveConfigurationDettaglio();
+            return;
+        }
+
         if (getForm().getDettaglioSistemaMigrazione().postAndValidate(getRequest(),
                 getMessageBox())) {
             try {
@@ -599,13 +530,181 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         forwardToPublisher(Application.Publisher.DETTAGLIO_SIS_MIGR);
     }
 
+    private void saveConfigurationDettaglio() throws EMFError {
+        getMessageBox().clear();
+
+        AplParamApplicRowBean row = (AplParamApplicRowBean) getForm().getConfigurationList()
+                .getTable().getCurrentRow();
+        if (row == null) {
+            row = new AplParamApplicRowBean();
+            getForm().getConfigurationList().getTable().add(row);
+            getForm().getConfigurationList().getTable().last();
+        }
+
+        populateConfigurationDetailRowFromRequest(row);
+        getForm().getConfigurationDetail().copyFromBean(row);
+
+        validateConfigurationRow(row);
+
+        if (!getMessageBox().hasError()) {
+            try {
+                LogParam param = SpagoliteLogUtil.getLogParam(
+                        configHelper
+                                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                        getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+                param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+                if (getForm().getConfigurationList().getStatus().equals(Status.insert)) {
+                    if (getLastPublisher().equals(Application.Publisher.CONFIGURATION_DETAIL)) {
+                        param.setNomeAzione(SpagoliteLogUtil.getToolbarInsert());
+                    } else {
+                        param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameInsert(getForm(),
+                                getForm().getConfigurationList()));
+                    }
+                } else if (getForm().getConfigurationList().getStatus().equals(Status.update)) {
+                    if (getLastPublisher().equals(Application.Publisher.CONFIGURATION_DETAIL)) {
+                        param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
+                    } else {
+                        param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameEdit(getForm(),
+                                getForm().getConfigurationList()));
+                    }
+                }
+
+                if (!amministrazioneEjb.saveConfiguration(row)) {
+                    getMessageBox().addError("Errore durante il salvataggio della configurazione");
+                }
+
+                if (!getMessageBox().hasError()) {
+                    sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(),
+                            param.getNomeUtente(), param.getNomeAzione(),
+                            SacerLogConstants.TIPO_OGGETTO_REGISTRO_PARAMETRI, BigDecimal.ZERO,
+                            param.getNomePagina());
+
+                    AplParamApplicRowBean detailRow = amministrazioneEjb
+                            .getAplParamApplicRowBean(row.getIdParamApplic());
+                    if (detailRow != null) {
+                        if (ComboValueParamentersType.PASSWORD.name()
+                                .equals(detailRow.getTiValoreParamApplic())) {
+                            detailRow.setString("ds_valore_param_applic",
+                                    Constants.OBFUSCATED_STRING);
+                        }
+                        syncConfigurationCurrentRow(detailRow);
+                        getForm().getConfigurationDetail().copyFromBean(detailRow);
+                    }
+
+                    getForm().getConfigurationDetail().setStatus(Status.view);
+                    getForm().getConfigurationList().setStatus(Status.view);
+                    getForm().getConfigurationDetail().setViewMode();
+                    getMessageBox().addInfo("Configurazione salvata con successo");
+                    getMessageBox().setViewMode(ViewMode.plain);
+                }
+            } catch (Exception ex) {
+                log.error("Errore nel salvataggio della configurazione", ex);
+                getMessageBox().addError("Errore durante il salvataggio della configurazione");
+            }
+        }
+
+        forwardToPublisher(Application.Publisher.CONFIGURATION_DETAIL);
+    }
+
+    private void populateConfigurationDetailRowFromRequest(AplParamApplicRowBean row) {
+        row.setIdParamApplic(parseBigDecimalParameter(
+                getForm().getConfigurationDetail().getId_param_applic().getName()));
+        row.setTiParamApplic(getRequest()
+                .getParameter(getForm().getConfigurationDetail().getTi_param_applic().getName()));
+        row.setTiGestioneParam(getRequest()
+                .getParameter(getForm().getConfigurationDetail().getTi_gestione_param().getName()));
+        row.setNmParamApplic(getRequest()
+                .getParameter(getForm().getConfigurationDetail().getNm_param_applic().getName()));
+        row.setDmParamApplic(getRequest()
+                .getParameter(getForm().getConfigurationDetail().getDm_param_applic().getName()));
+        row.setDsParamApplic(getRequest()
+                .getParameter(getForm().getConfigurationDetail().getDs_param_applic().getName()));
+        row.setTiValoreParamApplic(getRequest().getParameter(
+                getForm().getConfigurationDetail().getTi_valore_param_applic().getName()));
+        row.setDsListaValoriAmmessi(getRequest().getParameter(
+                getForm().getConfigurationDetail().getDs_lista_valori_ammessi().getName()));
+        row.setString("ds_valore_param_applic", getRequest().getParameter(
+                getForm().getConfigurationDetail().getDs_valore_param_applic().getName()));
+        row.setCdVersioneAppIni(getRequest().getParameter(
+                getForm().getConfigurationDetail().getCd_versione_app_ini().getName()));
+        row.setCdVersioneAppFine(getRequest().getParameter(
+                getForm().getConfigurationDetail().getCd_versione_app_fine().getName()));
+        row.setFlMulti(
+                getCheckboxValue(getForm().getConfigurationDetail().getFl_multi().getName()));
+        row.setFlAppartApplic(getCheckboxValue(
+                getForm().getConfigurationDetail().getFl_appart_applic().getName()));
+        row.setFlAppartAmbiente(getCheckboxValue(
+                getForm().getConfigurationDetail().getFl_appart_ambiente().getName()));
+        row.setFlAppartStrut(getCheckboxValue(
+                getForm().getConfigurationDetail().getFl_appart_strut().getName()));
+        row.setFlAppartTipoUnitaDoc(getCheckboxValue(
+                getForm().getConfigurationDetail().getFl_appart_tipo_unita_doc().getName()));
+        row.setFlAppartAaTipoFascicolo(getCheckboxValue(
+                getForm().getConfigurationDetail().getFl_appart_aa_tipo_fascicolo().getName()));
+    }
+
+    private BigDecimal parseBigDecimalParameter(String parameterName) {
+        String value = getRequest().getParameter(parameterName);
+        if (StringUtils.isBlank(value)) {
+            return null;
+        }
+        return new BigDecimal(value);
+    }
+
+    private String getCheckboxValue(String parameterName) {
+        return getRequest().getParameter(parameterName) != null ? "1" : "0";
+    }
+
+    private boolean isDuplicateParamApplic(AplParamApplicRowBean row) {
+        BigDecimal idParamApplic = null;
+        if (getForm().getConfigurationList().getStatus().equals(Status.update)) {
+            idParamApplic = row.getIdParamApplic();
+        }
+        return amministrazioneEjb.checkParamApplic(row.getNmParamApplic(), idParamApplic);
+    }
+
+    private void validateConfigurationRow(AplParamApplicRowBean row) {
+        if (StringUtils.isBlank(row.getTiParamApplic())
+                || StringUtils.isBlank(row.getTiGestioneParam())
+                || StringUtils.isBlank(row.getNmParamApplic())
+                || StringUtils.isBlank(row.getDsParamApplic())
+                || StringUtils.isBlank(row.getTiValoreParamApplic())
+                || StringUtils.isBlank(row.getCdVersioneAppIni())) {
+            getMessageBox()
+                    .addError("Almeno un parametro non ha tutti i campi obbligatori valorizzati");
+            getMessageBox().setViewMode(ViewMode.plain);
+        }
+
+        String dsValoreParamApplicValue = row.getString("ds_valore_param_applic");
+        if (StringUtils.isNotBlank(dsValoreParamApplicValue)
+                && !"1".equals(row.getFlAppartApplic())) {
+            getMessageBox().addError(
+                    "Il valore del parametro può essere indicato solo se il parametro ha il flag Applicazione alzato");
+            getMessageBox().setViewMode(ViewMode.plain);
+        }
+
+        if (isDuplicateParamApplic(row)) {
+            getMessageBox().addError("Attenzione: parametro " + row.getNmParamApplic()
+                    + " già presente nel sistema");
+        }
+
+        if (StringUtils.isNotBlank(row.getDsListaValoriAmmessi())
+                && StringUtils.isNotBlank(dsValoreParamApplicValue)
+                && !inValoriPossibili(dsValoreParamApplicValue, row.getDsListaValoriAmmessi())) {
+            getMessageBox().addError(
+                    "Il valore del parametro non è compreso tra i valori ammessi sul parametro");
+        }
+    }
+
     @Override
     public void dettaglioOnClick() throws EMFError {
         if (getNavigationEvent().equals(ListAction.NE_DETTAGLIO_VIEW)
                 || getNavigationEvent().equals(ListAction.NE_DETTAGLIO_UPDATE)
                 || getNavigationEvent().equals(ListAction.NE_NEXT)
                 || getNavigationEvent().equals(ListAction.NE_PREV)) {
-            if (getTableName().equals(getForm().getSistemiMigrazioneList().getName())) {
+            if (getTableName().equals(getForm().getConfigurationList().getName())) {
+                forwardToPublisher(Application.Publisher.CONFIGURATION_DETAIL);
+            } else if (getTableName().equals(getForm().getSistemiMigrazioneList().getName())) {
                 forwardToPublisher(Application.Publisher.DETTAGLIO_SIS_MIGR);
             }
         }
@@ -878,10 +977,6 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         getForm().getConfigurationList().setTable(paramApplicTableBean);
 
         setConfigListReadOnly();
-
-        // se non ho trovato risultati nascondo il pulsate "Edita"
-        if (paramApplicTableBean.isEmpty())
-            getForm().getConfiguration().getEdit_config().setViewMode();
 
         getForm().getConfigurationList().getTable().setCurrentRowIndex(rowIndex);
         getForm().getConfigurationList().getTable().setPageSize(pageSize);
