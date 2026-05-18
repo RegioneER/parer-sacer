@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sacer-jboss</artifactId>
-    <version>10.18.0</version>
+    <version>10.17.0</version>
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
@@ -19,7 +19,7 @@
         <!-- Questa è la versione del modulo sacer-xml che dovrà essere inclusa nel progetto -->
         <sacer.xmlmodule.version>2.15.0</sacer.xmlmodule.version>
         <!-- spagofat bom -->
-        <spagofat.version>7.5.0</spagofat.version>
+        <spagofat.version>7.4.0</spagofat.version>
         <verificafirma-crypto-beans.version>2.0.0</verificafirma-crypto-beans.version>
         <parer-retry.version>2.3.0</parer-retry.version>
         <idp-jaas-rdbms.version>0.0.9</idp-jaas-rdbms.version>
@@ -28,8 +28,8 @@
         <!-- third party lib -->
         <org.apache.wss4j.version>3.0.5</org.apache.wss4j.version>
         <blob-info.version>1.0.0</blob-info.version>
-        <software.amazon.awssdk.version>2.42.34</software.amazon.awssdk.version>
-        <netty.version>4.1.132.Final</netty.version>
+        <software.amazon.awssdk.version>2.41.20</software.amazon.awssdk.version>
+        <netty.version>4.1.130.Final</netty.version>
         <xadisk.version>1.2.2.5</xadisk.version>
         <ojdbc7.version>12.1.0.1</ojdbc7.version>
         <naming-java.version>0.8</naming-java.version>
@@ -43,7 +43,7 @@
         <pdf-box.version>2.0.32</pdf-box.version>
         <fop.version>2.11</fop.version>
         <jaxws-rt.version>2.3.5</jaxws-rt.version>  
-        <tika.version>3.3.0</tika.version>
+        <tika.version>3.2.3</tika.version>
         <apache-mime4j.version>0.8.12</apache-mime4j.version>
         <mockito-core.version>3.1.0</mockito-core.version>
         <selenium-java.version>2.44.0</selenium-java.version>

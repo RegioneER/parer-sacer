@@ -566,12 +566,10 @@ public class ElencoVersFascicoliEjb {
     // controllo se la data scadenza elenco è <= della sysdate
     private boolean checkElencoExpired(ElvElencoVersFasc elenco) {
         Date actualDate = new Date();
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "Elenco Versamento Fascicoli - Verifico se l'elenco '{}' con data scadenza {} è scaduto all'istante corrente ({})",
-                    elenco.getIdElencoVersFasc(), dateToString(elenco.getDtScadChius()),
-                    dateToString(actualDate));
-        }
+        log.debug(
+                "Elenco Versamento Fascicoli - Verifico se l'elenco '{}' con data scadenza {} è scaduto all'istante corrente ({})",
+                elenco.getIdElencoVersFasc(), dateToString(elenco.getDtScadChius()),
+                dateToString(actualDate));
         if (actualDate.after(elenco.getDtScadChius())) {
             log.debug("Elenco Versamento Fascicoli - Elenco scaduto");
             return true;

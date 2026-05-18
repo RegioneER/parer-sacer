@@ -14,7 +14,6 @@
 package it.eng.parer.viewEntity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -39,7 +38,6 @@ public class DecVLisSisVersByTipoUd implements Serializable {
     private Date dtLastErog;
     private String nmSistemaVersante;
     private DecVLisSisVersByTipoUdId decVLisSisVersByTipoUdId;
-    private BigDecimal idTipoUnitaDoc;
 
     public DecVLisSisVersByTipoUd() {/* Hibernate */
     }
@@ -80,15 +78,6 @@ public class DecVLisSisVersByTipoUd implements Serializable {
 
     public void setNmSistemaVersante(String nmSistemaVersante) {
         this.nmSistemaVersante = nmSistemaVersante;
-    }
-
-    @Column(name = "ID_TIPO_UNITA_DOC", insertable = false, updatable = false)
-    public BigDecimal getIdTipoUnitaDoc() {
-        return idTipoUnitaDoc;
-    }
-
-    public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-        this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
 }

@@ -540,7 +540,7 @@ public class AnnulVersHelper extends GenericHelper {
     public void updateCollegamentiUd(long idRichAnnulVers) {
         Query q = getEntityManager().createQuery(
                 "UPDATE AroLinkUnitaDoc linkUnitaDoc SET linkUnitaDoc.aroUnitaDocLink = null "
-                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND (itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = linkUnitaDoc.aroUnitaDoc.idUnitaDoc OR itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = linkUnitaDoc.aroUnitaDocLink.idUnitaDoc) AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER') ");
+                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = linkUnitaDoc.aroUnitaDoc.idUnitaDoc AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER') ");
         q.setParameter("idRichAnnulVers", idRichAnnulVers);
         q.executeUpdate();
     }

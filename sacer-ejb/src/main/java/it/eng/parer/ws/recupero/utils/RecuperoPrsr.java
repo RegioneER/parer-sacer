@@ -174,6 +174,8 @@ public class RecuperoPrsr {
                                 parsedUnitaDoc.getChiave().getUrn(), true, recupero);
                         if (rispostaControlli.getrLong() < 1) {
                             setRispostaWsError();
+                            // myEsito.getEsitoChiamataWS()
+                            // .setIdentificazioneVersatore(rispostaControlli.getDsErr());
                             rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(),
                                     rispostaControlli.getDsErr());
                         }
@@ -191,6 +193,7 @@ public class RecuperoPrsr {
                         rispostaWs.setEsitoWsError(MessaggiWSBundle.UD_007_001,
                                 MessaggiWSBundle.getString(MessaggiWSBundle.UD_007_001, "",
                                         "Dati obbligatori: Ambiente, Ente, Struttura, Numero, Anno, Tipo Registro"));
+                        // rispostaControlli.setrBoolean(true);
                     }
                 }
 

@@ -29,14 +29,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import it.eng.parer.entity.constraint.AplValoreParamApplic;
-import it.eng.parer.entity.dto.ReportScartoUdDTO;
-import it.eng.parer.scarto.dto.FiltriRicercaUdScartoDto;
 import it.eng.parer.scarto.helper.ScartoHelper;
-import it.eng.parer.slite.gen.tablebean.AroPropScartoVersRowBean;
-import static it.eng.parer.util.Utils.bigDecimalFromLong;
-import it.eng.spagoCore.error.EMFError;
-import it.eng.spagoLite.db.base.row.BaseRow;
-import it.eng.spagoLite.db.base.table.BaseTable;
 
 import javax.annotation.Resource;
 import javax.ejb.*;
@@ -81,538 +74,6 @@ public class ScartoEjb {
 
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
-
-    /**
-     * Ricerca le Proposte di Scarto e mappa i risultati in AroVRicPropScartoVersTableBean
-     *
-     * @param idUserIam                  utente che effettua la ricerca
-     * @param idStrut                    struttura
-     * @param cdPropScartoVers           codice proposta
-     * @param dtCreazionPropScartoVersDa data creazione proposta da
-     * @param dtCreazionPropScartoVersA  data creazione proposta a
-     * @param dtUltimaModScartoVersA     data ultima modifica proposta da
-     * @param dtUltimaModScartoVersDa    data ultima modifica proposta a
-     * @param tiStatoProp                stato proposta
-     * @return AroVRicPropScartoVersTableBean popolato
-     * @throws it.eng.spagoCore.error.EMFError eccezione
-     */
-    public AroVRicPropScartoVersTableBean ricercaProposteScarto(long idUserIam, BigDecimal idStrut,
-            String cdPropScartoVers, Date dtCreazionPropScartoVersDa,
-            Date dtCreazionPropScartoVersA, Date dtUltimaModScartoVersDa,
-            Date dtUltimaModScartoVersA, String tiStatoProp) throws EMFError {
-
-        AroVRicPropScartoVersTableBean proposteTableBean = new AroVRicPropScartoVersTableBean();
-        List<AroVRicPropScartoVers> proposteList = helper.getAroVRicPropScartoVersList(idUserIam,
-                idStrut, cdPropScartoVers, dtCreazionPropScartoVersDa, dtCreazionPropScartoVersA,
-                dtUltimaModScartoVersDa, dtUltimaModScartoVersA, tiStatoProp);
-
-        try {
-            for (AroVRicPropScartoVers propScarto : proposteList) {
-                AroVRicPropScartoVersRowBean propScartoVersRowBean = (AroVRicPropScartoVersRowBean) Transform
-                        .entity2RowBean(propScarto);
-
-                propScartoVersRowBean.setString("amb_ente_strut",
-                        propScartoVersRowBean.getNmAmbiente() + " - "
-                                + propScartoVersRowBean.getNmEnte() + " - "
-                                + propScartoVersRowBean.getNmStrut());
-
-                proposteTableBean.add(propScartoVersRowBean);
-            }
-        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException
-                | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
-            logger.error(e.getMessage(), e);
-            throw new EMFError("Errore nel recupero della lista delle proposte di scarto", e);
-        }
-
-        return proposteTableBean;
-    }
-
-    /**
-     * Crea e salva la testata della Proposta di Scarto e ne inizializza lo stato ad APERTA.
-     *
-     * @param dsPropScartoVers Descrizione della proposta
-     * @param ntPropScartoVers Eventuali note (può essere null)
-     * @param idStrut          ID della struttura dell'utente
-     * @param idUserIam        ID dell'utente loggato che crea la proposta
-     * @return ID della proposta appena creata
-     * @throws ParerUserError In caso di validazioni fallite (es. Codice già esistente)
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Long creaTestataPropostaScarto(String dsPropScartoVers, String ntPropScartoVers,
-            BigDecimal idStrut, long idUserIam) throws ParerUserError {
-
-        Date now = Calendar.getInstance().getTime();
-        int annoCorrente = Calendar.getInstance().get(Calendar.YEAR);
-
-        try {
-            OrgStrut strut = helper.findById(OrgStrut.class, idStrut);
-
-            // 1. Calcolo del nuovo progressivo
-            BigDecimal nuovoPg = helper.getNextPgPropScartoVers(idStrut, annoCorrente);
-
-            // 2. Creazione Entity Proposta (Testata)
-            AroPropScartoVers proposta = new AroPropScartoVers();
-            proposta.setOrgStrut(strut);
-            proposta.setPgPropScartoVers(nuovoPg);
-            // Non setto l'anno perché è una colonna virtuale calcolata dal DB
-            proposta.setDsPropScartoVers(dsPropScartoVers);
-            proposta.setNtPropScartoVers(ntPropScartoVers);
-            proposta.setDtCreazione(now);
-            proposta.setDtUltimaMod(now);
-
-            // 3. Salvo la proposta su DB (genererà ID_PROP_SCARTO_VERS)
-            helper.insertPropostaScarto(proposta);
-
-            IamUser utente = helper.findById(IamUser.class, idUserIam);
-            // 4. Creazione Entity Stato (imposto lo stato iniziale APERTA)
-            AroStatoPropScartoVers stato = new AroStatoPropScartoVers();
-            stato.setAroPropScartoVers(proposta);
-            stato.setPgStatoPropScartoVers(BigDecimal.ONE); // È il primo stato
-            stato.setTiStatoPropScartoVers(CostantiDB.TiStatoPropScartoVers.APERTA.name());
-            stato.setDtRegStatoPropScartoVers(now);
-            stato.setDsNotaPropScartoVers("Creazione proposta di scarto");
-            stato.setIamUser(utente);
-
-            // 5. Salvo lo stato su DB (genererà ID_STATO_PROP_SCARTO_VERS)
-            helper.insertStatoPropostaScarto(stato);
-
-            // 6. Aggiorno la proposta con l'ID dello stato corrente
-            proposta.setIdStatoPropScartoVersCor(
-                    BigDecimal.valueOf(stato.getIdStatoPropScartoVers()));
-
-            return proposta.getIdPropScartoVers();
-        } catch (Exception ex) {
-            logger.error("Errore imprevisto durante la creazione della proposta di scarto : "
-                    + ExceptionUtils.getRootCauseMessage(ex), ex);
-            throw new ParerUserError(
-                    "Errore imprevisto durante la creazione della proposta di scarto.");
-        }
-    }
-
-    /**
-     * Carica il dettaglio proposta di scarto versamenti dato l'id proposta
-     *
-     * @param idPropScartoVers id della proposta
-     *
-     * @return rowBean della vista
-     */
-    public AroPropScartoVersRowBean getAroPropScartoVersRowBean(BigDecimal idPropScartoVers) {
-        AroPropScartoVers proposta = helper.findById(AroPropScartoVers.class, idPropScartoVers);
-        AroPropScartoVersRowBean row = null;
-        if (proposta != null) {
-            try {
-                row = (AroPropScartoVersRowBean) Transform.entity2RowBean(proposta);
-                row.setBigDecimal("id_ambiente", BigDecimal.valueOf(
-                        proposta.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()));
-                row.setBigDecimal("id_ente",
-                        BigDecimal.valueOf(proposta.getOrgStrut().getOrgEnte().getIdEnte()));
-                row.setBigDecimal("id_strut",
-                        BigDecimal.valueOf(proposta.getOrgStrut().getIdStrut()));
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(proposta.getDtCreazione());
-                int anno = cal.get(Calendar.YEAR);
-                row.setString("cd_prop_scarto_vers", anno + "_" + row.getPgPropScartoVers());
-
-                for (AroStatoPropScartoVers stato : proposta.getAroStatoPropScartoVers()) {
-                    if (stato.getIdStatoPropScartoVers() == (proposta.getIdStatoPropScartoVersCor()
-                            .longValue())) {
-                        row.setString("ti_stato_prop_scarto_vers",
-                                stato.getTiStatoPropScartoVers());
-                        break;
-                    }
-                }
-            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-                    | IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException ex) {
-                logger.error("Errore durante il recupero della proposta di scarto versamenti "
-                        + ExceptionUtils.getRootCauseMessage(ex), ex);
-                throw new IllegalStateException(
-                        "Errore durante il recupero della proposta di scarto versamenti");
-            }
-        }
-        return row;
-    }
-
-    /**
-     * Aggiorna i dati anagrafici di una Proposta di Scarto esistente.
-     *
-     * @param idPropScartoVers L'ID della proposta da aggiornare
-     * @param dsPropScartoVers La nuova descrizione
-     * @param ntPropScartoVers Le nuove note
-     * @throws it.eng.parer.exception.ParerUserError errore
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void aggiornaTestataPropostaScarto(BigDecimal idPropScartoVers, String dsPropScartoVers,
-            String ntPropScartoVers) throws ParerUserError {
-        try {
-            // Recupero l'entità esistente dal DB
-            AroPropScartoVers proposta = helper.findById(AroPropScartoVers.class, idPropScartoVers);
-
-            if (proposta == null) {
-                throw new ParerUserError("Errore: Impossibile trovare la proposta da aggiornare.");
-            }
-
-            // Aggiorno solo i campi consentiti
-            proposta.setDsPropScartoVers(dsPropScartoVers);
-            proposta.setNtPropScartoVers(ntPropScartoVers);
-            // Aggiorno data ultima modifica
-            proposta.setDtUltimaMod(Calendar.getInstance().getTime());
-
-            helper.mergeEntity(proposta);
-
-            logger.info("Aggiornata testata Proposta Scarto ID: {}", idPropScartoVers);
-        } catch (ParerUserError ex) {
-            throw ex;
-        } catch (Exception ex) {
-            logger.error("Errore imprevisto durante l'aggiornamento della proposta di scarto: "
-                    + ex.getMessage(), ex);
-            throw new ParerUserError(
-                    "Errore imprevisto durante l'aggiornamento della proposta di scarto.");
-        }
-    }
-
-    /**
-     * Recupera i dati del Report delle UD per le Proposte di Scarto, mappando i risultati della
-     * query nativa nel TableBean per la UI e calcolando i totali per il riepilogo.
-     *
-     * @param filtri         i filtri di ricerca
-     * @param idPropCorrente proposta corrente
-     * @return DTO contenente il TableBean, il totale UD e la stringa degli anni di riferimento
-     */
-    public ReportScartoUdDTO calcolaReportUdPerScarto(FiltriRicercaUdScartoDto filtri,
-            Long idPropCorrente) {
-
-        ReportScartoUdDTO resultDto = new ReportScartoUdDTO();
-        BaseTable tableBean = new BaseTable();
-
-        // 1. Inizializzo la mappa dei totali per colonna (Aggiunto CONFLITTI)
-        Map<String, Long> totaliPerColonna = new HashMap<>();
-        totaliPerColonna.put(Constants.TiAlertPropScarto.RAGGIUNTO.name(), 0L);
-        totaliPerColonna.put(Constants.TiAlertPropScarto.NON_RAGGIUNTO.name(), 0L);
-        totaliPerColonna.put(Constants.TiAlertPropScarto.SENZA_INDICAZIONE.name(), 0L);
-        totaliPerColonna.put(Constants.TiAlertPropScarto.ILLIMITATA.name(), 0L);
-        totaliPerColonna.put(Constants.TiAlertPropScarto.CONFLITTI.name(), 0L);
-        totaliPerColonna.put(Constants.TiAlertPropScarto.IN_ALTRE_PROPOSTE.name(), 0L);
-        totaliPerColonna.put(Constants.TiAlertPropScarto.TOTALE.name(), 0L);
-
-        // 2. Invoco l'Helper per la query Nativa
-        List<Object[]> rawResults = helper.getReportUdScartoNative(filtri, idPropCorrente);
-
-        int counterTotaleUd = 0;
-
-        // 3. Ciclo i risultati nativi e popolo il TableBean e la Mappa
-        if (rawResults != null && !rawResults.isEmpty()) {
-            for (Object[] row : rawResults) {
-
-                // --- ESTRAZIONE DATI SICURA ---
-                // NOTA: Assicurati che questi indici rispecchino l'ordine esatto della SELECT
-                // nell'Helper
-                String valTipologia = (String) row[0];
-                long valTotale = ((Number) row[1]).longValue(); // COUNT
-                long valRaggiunto = ((Number) row[2]).longValue();
-                long valNonRagg = ((Number) row[3]).longValue();
-                long valSenzaInd = ((Number) row[4]).longValue();
-                long valIllimitata = ((Number) row[5]).longValue();
-                long valConflitti = ((Number) row[6]).longValue(); // <--- NUOVA
-                long valInAltre = ((Number) row[7]).longValue(); // SCALATA DI 1
-
-                // --- AGGIORNAMENTO TOTALI GENERALI (Per le intestazioni/pie' di pagina) ---
-                counterTotaleUd += valTotale;
-
-                totaliPerColonna.put(Constants.TiAlertPropScarto.TOTALE.name(),
-                        totaliPerColonna.get(Constants.TiAlertPropScarto.TOTALE.name())
-                                + valTotale);
-                totaliPerColonna.put(Constants.TiAlertPropScarto.RAGGIUNTO.name(),
-                        totaliPerColonna.get(Constants.TiAlertPropScarto.RAGGIUNTO.name())
-                                + valRaggiunto);
-                totaliPerColonna.put(Constants.TiAlertPropScarto.NON_RAGGIUNTO.name(),
-                        totaliPerColonna.get(Constants.TiAlertPropScarto.NON_RAGGIUNTO.name())
-                                + valNonRagg);
-                totaliPerColonna.put(Constants.TiAlertPropScarto.SENZA_INDICAZIONE.name(),
-                        totaliPerColonna.get(Constants.TiAlertPropScarto.SENZA_INDICAZIONE.name())
-                                + valSenzaInd);
-                totaliPerColonna.put(Constants.TiAlertPropScarto.ILLIMITATA.name(),
-                        totaliPerColonna.get(Constants.TiAlertPropScarto.ILLIMITATA.name())
-                                + valIllimitata);
-                totaliPerColonna.put(Constants.TiAlertPropScarto.CONFLITTI.name(),
-                        totaliPerColonna.get(Constants.TiAlertPropScarto.CONFLITTI.name())
-                                + valConflitti); // <--- NUOVA
-                totaliPerColonna.put(Constants.TiAlertPropScarto.IN_ALTRE_PROPOSTE.name(),
-                        totaliPerColonna.get(Constants.TiAlertPropScarto.IN_ALTRE_PROPOSTE.name())
-                                + valInAltre);
-
-                // --- POPOLAMENTO ROW BEAN PER LA JSP ---
-                BaseRow rowBean = new BaseRow();
-
-                rowBean.setString("tipologia_ud", valTipologia);
-                rowBean.setBigDecimal("qta_raggiunto", bigDecimalFromLong(valRaggiunto));
-                rowBean.setBigDecimal("qta_non_raggiunto", bigDecimalFromLong(valNonRagg));
-                rowBean.setBigDecimal("qta_senza_indicazione", bigDecimalFromLong(valSenzaInd));
-                rowBean.setBigDecimal("qta_illimitate", bigDecimalFromLong(valIllimitata));
-                rowBean.setBigDecimal("qta_conflitti", bigDecimalFromLong(valConflitti)); // <---
-                                                                                          // NUOVA
-                                                                                          // COLONNA
-                                                                                          // XML
-                rowBean.setBigDecimal("qta_in_altre_prop", bigDecimalFromLong(valInAltre));
-                rowBean.setBigDecimal("qta_totale", bigDecimalFromLong(valTotale));
-
-                tableBean.add(rowBean);
-            }
-        }
-
-        // 4. Calcolo etichetta Anni di Riferimento in base ai filtri
-        String labelAnni;
-
-        if (filtri.getAnno() != null) {
-            labelAnni = String.valueOf(filtri.getAnno());
-        } else if (filtri.getAnnoDa() != null && filtri.getAnnoA() != null) {
-            labelAnni = (filtri.getAnnoDa().equals(filtri.getAnnoA()))
-                    ? String.valueOf(filtri.getAnnoDa())
-                    : filtri.getAnnoDa() + " - " + filtri.getAnnoA();
-        } else if (filtri.getAnnoDa() != null) {
-            labelAnni = "Dal " + filtri.getAnnoDa();
-        } else if (filtri.getAnnoA() != null) {
-            labelAnni = "Fino al " + filtri.getAnnoA();
-        } else {
-            labelAnni = "Tutti gli anni";
-        }
-
-        // 5. Setto i risultati nel DTO
-        resultDto.setTableBean(tableBean);
-        resultDto.setTotaleUd(counterTotaleUd);
-        resultDto.setAnniRiferimento(labelAnni);
-        resultDto.setTotaliPerColonna(totaliPerColonna);
-
-        return resultDto;
-    }
-
-    /**
-     * Mappa i risultati della query delle UD in ALTRE proposte nel TableBean.
-     *
-     * @param filtri            filtri di ricerca ud per proposta
-     * @param tipologiaCliccata tipologia ud
-     * @param idPropCorrente    proposta corrente
-     * @return lista ud in altre proposte
-     */
-    public BaseTable estraiListaUdInAltreProposte(FiltriRicercaUdScartoDto filtri,
-            String tipologiaCliccata, Long idPropCorrente) {
-        BaseTable tableBean = new BaseTable();
-        List<Object[]> rawResults = helper.getDettaglioUdInAltreProposteNative(filtri,
-                tipologiaCliccata, idPropCorrente);
-
-        if (rawResults != null && !rawResults.isEmpty()) {
-            for (Object[] row : rawResults) {
-                BaseRow rowBean = new BaseRow();
-                Long idUnitaDoc = ((Number) row[0]).longValue();
-
-                rowBean.setBigDecimal("id_unita_doc", bigDecimalFromLong(idUnitaDoc));
-                rowBean.setString("nm_tipo_unita_doc", (String) row[1]);
-                rowBean.setString("cd_registro_key_unita_doc", (String) row[2]);
-                if (row[3] != null) {
-                    rowBean.setBigDecimal("aa_key_unita_doc",
-                            bigDecimalFromLong(((Number) row[3]).longValue()));
-                }
-                rowBean.setString("cd_key_unita_doc", (String) row[4]);
-
-                // Il codice della proposta
-                rowBean.setString("cd_prop_scarto_vers", (String) row[5]);
-
-                rowBean.setString("ds_alert_scarto", (String) row[6]);
-                rowBean.setString("fl_scartabile", (String) row[7]);
-
-                tableBean.add(rowBean);
-            }
-        }
-        return tableBean;
-    }
-
-    /**
-     * Recupera l'elenco di dettaglio delle UD relative a una specifica "cella" del report.
-     *
-     * @param filtri            filtri ricerca ud per proposta
-     * @param tipologiaCliccata tipologia ud
-     * @param colonnaCliccata   tipo colonna
-     * @param idPropCorrente    id proposta corrente
-     * @return lista ud per proposta
-     */
-    public BaseTable estraiListaUdPerScarto(FiltriRicercaUdScartoDto filtri,
-            String tipologiaCliccata, ScartoHelper.ColonnaReportUd colonnaCliccata,
-            BigDecimal idPropCorrente) {
-
-        BaseTable tableBean = new BaseTable();
-        List<Object[]> rawResults = helper.getListaUdScartoNative(filtri, tipologiaCliccata,
-                colonnaCliccata, idPropCorrente);
-
-        if (rawResults != null && !rawResults.isEmpty()) {
-            for (Object[] row : rawResults) {
-                BaseRow rowBean = new BaseRow();
-
-                Long idUnitaDoc = ((Number) row[0]).longValue();
-
-                rowBean.setBigDecimal("id_unita_doc", bigDecimalFromLong(idUnitaDoc));
-
-                rowBean.setString("nm_tipo_unita_doc", (String) row[1]);
-                rowBean.setString("cd_registro_key_unita_doc", (String) row[2]);
-
-                if (row[3] != null) {
-                    rowBean.setBigDecimal("aa_key_unita_doc",
-                            bigDecimalFromLong(((Number) row[3]).longValue()));
-                }
-
-                rowBean.setString("cd_key_unita_doc", (String) row[4]);
-                rowBean.setString("ds_alert_scarto", (String) row[5]);
-                // Mappo il nuovo campo "SI/NO"
-                rowBean.setString("fl_scartabile", (String) row[6]);
-
-                tableBean.add(rowBean);
-            }
-        }
-        return tableBean;
-    }
-
-    public BaseTable getUdItemPropScartoVersTableBean(BigDecimal idPropScartoVers) {
-        BaseTable tableBean = new BaseTable();
-
-        // Chiamo la nuova query nativa che fa le JOIN e calcola l'Alert
-        List<Object[]> rawResults = helper.getUdSalvateConAlertNative(idPropScartoVers.longValue());
-
-        if (rawResults != null && !rawResults.isEmpty()) {
-            for (Object[] row : rawResults) {
-                BaseRow rowBean = new BaseRow();
-
-                // Mappatura Array:
-                // [0] = ID_ITEM_PROP_SCARTO_VERS
-                // [1] = ID_UNITA_DOC
-                // [2] = TIPOLOGIA UD
-                // [3] = REGISTRO
-                // [4] = ANNO
-                // [5] = NUMERO
-                // [6] = ALERT (Ricalcolato in tempo reale!)
-                Long idItem = ((Number) row[0]).longValue();
-                Long idUnitaDoc = ((Number) row[1]).longValue();
-
-                rowBean.setBigDecimal("id_item_prop_scarto_vers", bigDecimalFromLong(idItem));
-                rowBean.setBigDecimal("id_unita_doc", bigDecimalFromLong(idUnitaDoc));
-                rowBean.setString("nm_tipo_unita_doc", (String) row[2]);
-                rowBean.setString("cd_registro_key_unita_doc", (String) row[3]);
-                rowBean.setBigDecimal("aa_key_unita_doc",
-                        bigDecimalFromLong(((Number) row[4]).longValue()));
-                rowBean.setString("cd_key_unita_doc", (String) row[5]);
-
-                // Popolo l'alert fresco di DB
-                rowBean.setString("ds_alert_scarto", (String) row[6]);
-                // Mappo il nuovo campo "SI/NO"
-                rowBean.setString("fl_scartabile", (String) row[7]);
-
-                tableBean.add(rowBean);
-            }
-        }
-        return tableBean;
-    }
-
-    public boolean isPropostaDeletable(BigDecimal idPropScartoVers) {
-        return helper.isPropostaDeletable(idPropScartoVers);
-    }
-
-    /**
-     * Esegue l'eliminazione della proposta di annullamento versamenti
-     *
-     * @param idPropScartoVers id della proposta
-     *
-     * @throws ParerUserError errore generico
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void deletePropScartoVers(BigDecimal idPropScartoVers) throws ParerUserError {
-        AroPropScartoVers propScartoVers = helper.findByIdWithLock(AroPropScartoVers.class,
-                idPropScartoVers);
-        // Verifica lo stato corrente della proposta
-        AroStatoPropScartoVers statoCorrente = helper.findById(AroStatoPropScartoVers.class,
-                propScartoVers.getIdStatoPropScartoVersCor());
-        if (!statoCorrente.getTiStatoPropScartoVers()
-                .equals(CostantiDB.TiStatoPropScartoVers.APERTA.name())) {
-            throw new ParerUserError(
-                    "La proposta non \u00E8 cancellabile perch\u00E9 ha stato corrente diverso da APERTA");
-        }
-        helper.removeEntity(propScartoVers, false);
-    }
-
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public long salvaItemUdProposta(BigDecimal idPropScartoVers, BaseTable listaItemAggiornata) {
-        AroPropScartoVers proposta = helper.findById(AroPropScartoVers.class, idPropScartoVers);
-
-        // Recupero gli item di tipo UNI_DOC attualmente salvati sul DB per questa proposta
-        List<AroItemPropScartoVers> listaItemDB = helper.getAroItemPropScartoVers(
-                idPropScartoVers.longValue(), CostantiDB.TiItemPropScartoVers.UNI_DOC.name());
-
-        // LOGICA DELETE: Quali sono nel DB ma non più nella lista aggiornata?
-        for (AroItemPropScartoVers itemDb : listaItemDB) {
-            boolean trovato = false;
-            for (BaseRow itemAggiornato : listaItemAggiornata) {
-                if (itemAggiornato.getBigDecimal("id_item_prop_scarto_vers") != null
-                        && itemAggiornato.getBigDecimal("id_item_prop_scarto_vers")
-                                .longValue() == (itemDb.getIdItemPropScartoVers())) {
-                    trovato = true;
-                    break;
-                }
-            }
-            if (!trovato) {
-                helper.removeEntity(itemDb, false);
-            }
-        }
-
-        // 3. LOGICA INSERT: Quali sono nuovi (ID null)?
-        int progressivo = helper.getMaxPgItem(idPropScartoVers.longValue()) + 1;
-        for (BaseRow itemRB : listaItemAggiornata) {
-            if (itemRB.getBigDecimal("id_item_prop_scarto_vers") == null) {
-
-                AroItemPropScartoVers item = new AroItemPropScartoVers();
-                item.setAroPropScartoVers(proposta);
-                item.setAroUnitaDoc(
-                        helper.findById(AroUnitaDoc.class, itemRB.getBigDecimal("id_unita_doc")));
-                item.setFasFascicolo(null);
-                item.setTiItemPropScartoVers("UNI_DOC");
-                item.setPgItem(BigDecimal.valueOf(progressivo++));
-                item.setTiStatoItem("INSERITO_IN_PROPOSTA");
-                helper.insertEntity(item, false);
-
-            }
-        }
-
-        // Aggiorno la data di ultima modifica della proposta
-        proposta.setDtUltimaMod(Calendar.getInstance().getTime());
-
-        // Ritorno il nuovo totale da mostrare nella testata
-        return helper.countItemsByTipo(idPropScartoVers.longValue(),
-                CostantiDB.TiItemPropScartoVers.UNI_DOC.name());
-
-    }
-
-    public Set<Long> getUdGiaInAltreProposte(List<Long> idUdDaControllare) {
-        return helper.getUdGiaInAltreProposte(idUdDaControllare);
-    }
-
-    public Set<Long> getUdGiaInAltreProposte(Long idPropScartoVersCorrente,
-            List<Long> idUdDaControllare) {
-        return helper.getUdGiaInAltreProposte(idPropScartoVersCorrente, idUdDaControllare);
-    }
-
-    /**
-     * Aggiorna i contatori (UD, Fascicoli, Serie) sulla testata della proposta. Va chiamato dopo
-     * ogni operazione di inserimento (INSERT in AroItemPropScartoVers).
-     *
-     * @param idPropScartoVers     proposta di scarto
-     * @param tiItemPropScartoVers tipo item proposta
-     * @return numero item in proposta
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public long getNumeroItemProposta(BigDecimal idPropScartoVers, String tiItemPropScartoVers) {
-        // Leggo i totali aggiornati dal DB
-        long numItemInProposta = helper.countItemsByTipo(idPropScartoVers.longValue(),
-                tiItemPropScartoVers);
-        // Long fasc = helper.countItemsByTipo(idPropScartoVers, "FASC");
-        // Long serie = helper.countItemsByTipo(idPropScartoVers, "SERIE");
-        return numItemInProposta;
-    }
 
     // <editor-fold defaultstate="collapsed" desc="Creazione richiesta annullamento
     // versamenti">
@@ -902,6 +363,7 @@ public class ScartoEjb {
         AroUnitaDoc ud = item.getAroUnitaDoc();
 
         // TODO DA VERIFICARE PER LO SCARTO
+
         // Controllo se esiste già un'altra richiesta, diversa da quella corrente, con
         // stato APERTA o CHIUSA che
         // contiene quella unita doc da scartare
@@ -918,6 +380,57 @@ public class ScartoEjb {
                         CostantiDB.TipoErrRichScartoVers.ITEM_IN_CORSO_DI_SCARTO.name(), dsErr,
                         CostantiDB.TipoGravitaErrore.ERRORE.name());
             }
+
+            // TODO DA VERIFICARE PER LO SCARTO
+            // Controllo se l'ud è usata come riferimento da almeno un componente
+            // if (compHelper.isAroUnitaDocReferredByOtherAroCompDocs(ud.getIdUnitaDoc(),
+            // new BigDecimal(ud.getOrgStrut().getIdStrut()))) {
+            // // UD riferita da componenti
+            // String dsErr = "L'unit\u00E0 documentaria " + ud.getCdRegistroKeyUnitaDoc() + "-"
+            // + ud.getAaKeyUnitaDoc().toPlainString() + "-" + ud.getCdKeyUnitaDoc()
+            // + " \u00E8 usata come riferimento da almeno un componente";
+            // createAroErrRichAnnulVers(item, new BigDecimal(progressivoErr++),
+            // CostantiDB.TipoErrRichAnnulVers.ITEM_RIFERITO.name(), dsErr,
+            // CostantiDB.TipoGravitaErrore.ERRORE.name());
+            // }
+
+            // TODO DA VERIFICARE PER LO SCARTO
+            // boolean forzaAnnul = item.getAroRichAnnulVers().getFlForzaAnnul().equals("1");
+            // if ((!forzaAnnul
+            // && !ud.getTiStatoConservazione().equals(
+            // CostantiDB.StatoConservazioneUnitaDoc.IN_VOLUME_DI_CONSERVAZIONE.name())
+            // && !ud.getTiStatoConservazione()
+            // .equals(CostantiDB.StatoConservazioneUnitaDoc.PRESA_IN_CARICO.name())
+            // && !ud.getTiStatoConservazione()
+            // .equals(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name())
+            // && !ud.getTiStatoConservazione()
+            // .equals(CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name())
+            // && !ud.getTiStatoConservazione().equals(
+            // CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name()))
+            // || (forzaAnnul && !ud.getTiStatoConservazione().equals(
+            // CostantiDB.StatoConservazioneUnitaDoc.IN_VOLUME_DI_CONSERVAZIONE.name())
+            // && !ud.getTiStatoConservazione().equals(
+            // CostantiDB.StatoConservazioneUnitaDoc.PRESA_IN_CARICO.name())
+            // && !ud.getTiStatoConservazione().equals(
+            // CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name())
+            // && !ud.getTiStatoConservazione().equals(
+            // CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name())
+            // && !ud.getTiStatoConservazione().equals(
+            // CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO
+            // .name())
+            // && !ud.getTiStatoConservazione().equals(
+            // CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name())
+            // && !ud.getTiStatoConservazione().equals(
+            // CostantiDB.StatoConservazioneUnitaDoc.IN_CUSTODIA.name()))) {
+            // // Stato conservazione errato
+            // String dsErr = "L'unit\u00E0 documentaria " + ud.getCdRegistroKeyUnitaDoc() + "-"
+            // + ud.getAaKeyUnitaDoc().toPlainString() + "-" + ud.getCdKeyUnitaDoc()
+            // + " ha stato di conservazione pari a " + ud.getTiStatoConservazione()
+            // + " e, quindi, non pu\u00F2 essere annullata";
+            // createAroErrRichAnnulVers(item, new BigDecimal(progressivoErr++),
+            // CostantiDB.TipoErrRichAnnulVers.STATO_CONSERV_NON_AMMESSO.name(), dsErr,
+            // CostantiDB.TipoGravitaErrore.ERRORE.name());
+            // }
 
             // Controlla se l'utente in input è abilitato al tipo dato (IAM_ABIL_TIPO_DATO)
             // corrispondente al
@@ -1416,126 +929,4 @@ public class ScartoEjb {
         }
         return row;
     }
-
-    public AroVRicPropScartoVersRowBean getAroVRicPropScartoVersRowBean(BigDecimal idPropScartoVers,
-            long idUserIam) {
-        AroVRicPropScartoVers propScartoVers = helper.getAroVRicPropScartoVersById(idPropScartoVers,
-                idUserIam);
-        AroVRicPropScartoVersRowBean row = new AroVRicPropScartoVersRowBean();
-        try {
-            row = (AroVRicPropScartoVersRowBean) Transform.entity2RowBean(propScartoVers);
-            row.setString("amb_ente_strut",
-                    row.getNmAmbiente() + " - " + row.getNmEnte() + " - " + row.getNmStrut());
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-                | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException ex) {
-            logger.error("Errore durante il recupero della proposta di scarto"
-                    + ExceptionUtils.getRootCauseMessage(ex), ex);
-        }
-        return row;
-    }
-
-    // EJB: Inserimento massivo
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void salvaItemUdInProposta(Long idProp, List<Long> idUds) {
-        int pg = helper.getMaxPgItem(idProp) + 1;
-        AroPropScartoVers prop = helper.findById(AroPropScartoVers.class, idProp);
-
-        for (Long idUd : idUds) {
-            AroItemPropScartoVers item = new AroItemPropScartoVers();
-            item.setAroPropScartoVers(prop);
-            item.setAroUnitaDoc(helper.findById(AroUnitaDoc.class, idUd));
-            item.setTiItemPropScartoVers("UNI_DOC");
-            item.setPgItem(BigDecimal.valueOf(pg++));
-            item.setTiStatoItem("INSERITO_IN_PROPOSTA");
-            helper.insertEntity(item, false);
-        }
-    }
-
-    /**
-     * Rimuove massivamente una lista di Unità Documentarie dalla proposta di scarto.
-     *
-     * @param idProp L'id della proposta
-     * @param idUds  La lista di ID UD da rimuovere
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void rimuoviItemUdDaProposta(Long idProp, List<Long> idUds) {
-        if (idUds == null || idUds.isEmpty()) {
-            return;
-        }
-
-        // Delega all'Helper per l'esecuzione della query di DELETE
-        helper.deleteItemUdDaProposta(idProp, idUds);
-
-        logger.info("Rimosse {} UD dalla proposta ID: {}", idUds.size(), idProp);
-    }
-
-    /**
-     * Estrae dal DB tutte le UD già salvate in una specifica proposta di scarto, calcolando al volo
-     * lo stato di coerenza (Alert) e restituendole come BaseTable formattata per la griglia UI
-     * (UdSelezionatePropScartoList).
-     *
-     * @param idPropScartoVers id proposta
-     * @param idTipoUd         id tipo ud
-     * @param idRegistro       id registro
-     * @param anno             anno ud
-     * @param numero           numero ud
-     * @param flScartabile     flag scartabile
-     * @param dsAlertTesto     testo alert
-     * @return lista ud salvate in proposta
-     */
-    public BaseTable getListaUdSalvateInProposta(BigDecimal idPropScartoVers, BigDecimal idTipoUd,
-            BigDecimal idRegistro, BigDecimal anno, String numero, String flScartabile,
-            String dsAlertTesto) {
-        BaseTable tableBean = new BaseTable();
-
-        // Chiamo la query nativa nell'Helper che fa le JOIN e calcola l'Alert in real-time
-        // List<Object[]> rawResults =
-        // helper.getUdSalvateConAlertNative(idPropScartoVers.longValue());
-        List<Object[]> rawResults = helper.getUdSalvateConAlertNative(idPropScartoVers.longValue(),
-                idTipoUd, idRegistro, anno, numero, flScartabile, dsAlertTesto);
-
-        if (rawResults != null && !rawResults.isEmpty()) {
-            for (Object[] row : rawResults) {
-                BaseRow rowBean = new BaseRow();
-
-                // Mappatura Array restituito dalla query nativa:
-                // [0] = ID_ITEM_PROP_SCARTO_VERS
-                // [1] = ID_UNITA_DOC
-                // [2] = TIPO_UD
-                // [3] = REGISTRO
-                // [4] = ANNO
-                // [5] = NUMERO
-                // [6] = ALERT (Ricalcolato in tempo reale)
-                // [7] = FL_SCARTABILE (SI/NO per i pallini)
-                Long idItem = ((Number) row[0]).longValue();
-                Long idUnitaDoc = ((Number) row[1]).longValue();
-
-                rowBean.setBigDecimal("id_item_prop_scarto_vers", bigDecimalFromLong(idItem));
-                rowBean.setBigDecimal("id_unita_doc", bigDecimalFromLong(idUnitaDoc));
-                rowBean.setString("nm_tipo_unita_doc", (String) row[2]);
-                rowBean.setString("cd_registro_key_unita_doc", (String) row[3]);
-
-                if (row[4] != null) {
-                    rowBean.setBigDecimal("aa_key_unita_doc",
-                            bigDecimalFromLong(((Number) row[4]).longValue()));
-                }
-
-                rowBean.setString("cd_key_unita_doc", (String) row[5]);
-                rowBean.setString("ds_alert_scarto", (String) row[6]);
-                rowBean.setString("fl_scartabile", (String) row[7]);
-
-                tableBean.add(rowBean);
-            }
-        }
-
-        return tableBean;
-    }
-
-    public long contaUdInProposta(Long idPropScartoVers) {
-        // Chiama la COUNT su ARO_ITEM_PROP_SCARTO_VERS filtrata per 'UNI_DOC'
-        return helper.countItemsByTipo(idPropScartoVers,
-                CostantiDB.TiItemPropScartoVers.UNI_DOC.name());
-    }
-
 }

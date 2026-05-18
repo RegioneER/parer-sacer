@@ -953,7 +953,9 @@ public class AnnulVersEjb {
                                     CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO
                                             .name())
                             && !ud.getTiStatoConservazione().equals(
-                                    CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()))) {
+                                    CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name())
+                            && !ud.getTiStatoConservazione().equals(
+                                    CostantiDB.StatoConservazioneUnitaDoc.IN_CUSTODIA.name()))) {
                 // Stato conservazione errato
                 String dsErr = "L'unit\u00E0 documentaria " + ud.getCdRegistroKeyUnitaDoc() + "-"
                         + ud.getAaKeyUnitaDoc().toPlainString() + "-" + ud.getCdKeyUnitaDoc()
@@ -1064,7 +1066,9 @@ public class AnnulVersEjb {
                                     CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO
                                             .name())
                             && !fascicolo.getTiStatoConservazione().name().equals(
-                                    CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()))) {
+                                    CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name())
+                            && !fascicolo.getTiStatoConservazione().name().equals(
+                                    CostantiDB.StatoConservazioneUnitaDoc.IN_CUSTODIA.name()))) {
                 // Stato conservazione errato
                 String dsErr = "Il fascicolo " + fascicolo.getAaFascicolo() + "-"
                         + fascicolo.getCdKeyFascicolo() + " ha stato di conservazione pari a "
@@ -1660,9 +1664,9 @@ public class AnnulVersEjb {
         richiestaAnnullamento.setIdStatoRichAnnulVersCor(
                 new BigDecimal(statoRichAnnulVersNew.getIdStatoRichAnnulVers()));
         /*
-         * Aggiorna la versione serie ( con stato = VALIDATA o DA_FIRMARE o FIRMATA nel cui
-         * contenuto effettivo ci siano ud annullate degli item)settando l'indicatore che segnala
-         * che la serie deve essere ricalcolata a causa di annullamento di almeno una unità
+         * Aggiorna la versione serie ( con stato = VALIDATA o DA_FIRMARE o FIRMATA o IN_CUSTODIA
+         * nel cui contenuto effettivo ci siano ud annullate degli item)settando l'indicatore che
+         * segnala che la serie deve essere ricalcolata a causa di annullamento di almeno una unità
          * documentaria
          */
         List<BigDecimal> idVerSeries = serieHelper.retrieveSerVLisVerserByRichann(idRichAnnulVers);

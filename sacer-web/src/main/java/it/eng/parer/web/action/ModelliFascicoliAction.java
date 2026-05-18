@@ -1656,10 +1656,10 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
             int totaleDepsConfigurate = depsAggiornate != null ? depsAggiornate.size() : 0;
 
             if (totaleDepsConfigurate < totaleRiferimentiXsd) {
-                getMessageBox().addWarning(
-                        "Dipendenza rimossa. Attenzione: l'XSD dichiara " + totaleRiferimentiXsd
-                                + " riferimenti, configurate " + totaleDepsConfigurate + " su "
-                                + totaleRiferimentiXsd + ". Aggiungere le dipendenze mancanti.");
+                getMessageBox().addWarning("Dipendenza rimossa. Attenzione: l'XSD dichiara "
+                        + totaleRiferimentiXsd + " riferimenti, configurate "
+                        + totaleDepsConfigurate + " su " + totaleRiferimentiXsd
+                        + ". Aggiungere le dipendenze mancanti.");
             } else {
                 getMessageBox().addInfo("Dipendenza rimossa con successo");
             }

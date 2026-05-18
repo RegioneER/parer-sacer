@@ -30,8 +30,6 @@ import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Stream;
-import org.hibernate.jpa.QueryHints;
 
 /**
  *
@@ -53,23 +51,26 @@ public class VerificaCompRegHelper {
         return aaRegDaElabList;
     }
 
-    public Stream<AroUnitaDoc> getStreamUdDaVerificare(Long idRegistroUnitaDoc,
-            List<Long> idSubStruts, Long anno) {
-        String queryStr = "select u from AroUnitaDoc u "
-                + "where u.orgSubStrut.idSubStrut in :idSubStruts "
-                + "and u.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDocIn "
-                + "and u.aaKeyUnitaDoc = :aaKeyUnitaDocIn " + "and u.dtAnnul > :dataDiOggiIn"; // escludo
-                                                                                               // le
-                                                                                               // ud
-                                                                                               // annullate
+    public List<AroUnitaDoc> getListaUdDaVerificare(Long idRegistroUnitaDoc, List<Long> idSubStruts,
+            Long anno) {
+        List<AroUnitaDoc> aroUnitaDocs;
 
-        return entityManager.createQuery(queryStr, AroUnitaDoc.class)
-                .setParameter("idSubStruts", idSubStruts)
-                .setParameter("idRegistroUnitaDocIn", idRegistroUnitaDoc)
-                .setParameter("aaKeyUnitaDocIn", new BigDecimal(anno))
-                .setParameter("dataDiOggiIn", new Date())
-                // Hint per evitare che il driver JDBC scarichi 2 milioni di record tutti insieme
-                .setHint(QueryHints.HINT_FETCH_SIZE, "1000").getResultStream();
+        String queryStr = "select u from AroUnitaDoc u " + "where "
+                + "u.orgSubStrut.idSubStrut in :idSubStruts "
+                + "and u.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDocIn "
+                + "and u.aaKeyUnitaDoc = :aaKeyUnitaDocIn " + "and u.dtAnnul > :dataDiOggiIn"; // esclude
+        // dalla
+        // ricerca
+        // le
+        // UD
+        // annullate
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        query.setParameter("idSubStruts", idSubStruts);
+        query.setParameter("idRegistroUnitaDocIn", idRegistroUnitaDoc);
+        query.setParameter("aaKeyUnitaDocIn", new BigDecimal(anno));
+        query.setParameter("dataDiOggiIn", new Date());
+        aroUnitaDocs = query.getResultList();
+        return aroUnitaDocs;
     }
 
     public void sbloccaAaRegistroUnitaDoc(long idAaRegistroUnitaDoc) {

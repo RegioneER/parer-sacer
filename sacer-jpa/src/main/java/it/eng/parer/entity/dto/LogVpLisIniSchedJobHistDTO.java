@@ -40,7 +40,8 @@ public class LogVpLisIniSchedJobHistDTO implements Serializable {
     }
 
     public LogVpLisIniSchedJobHistDTO(BigDecimal idLogJobHist, String nmJob, Date dtRegLogJobIni,
-            Date dtRegLogJobFine, String durata, String dlMsgErr) {
+            Date dtRegLogJobFine,
+            String durata, String dlMsgErr) {
         this.idLogJobHist = idLogJobHist;
         this.nmJob = nmJob;
         this.dtRegLogJobIni = dtRegLogJobIni;

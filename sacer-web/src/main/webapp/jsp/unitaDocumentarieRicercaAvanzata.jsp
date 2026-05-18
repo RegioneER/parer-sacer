@@ -367,6 +367,11 @@
             <sl:pulsantiera>
                 <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.RICERCA_UD%>" colSpan="3" />
                 <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.PULISCI_UD%>" colSpan="3" />
+                <c:if test="${!empty TIPORICERCA && TIPORICERCA == 'AVANZATA'}">
+                    <c:if test="${empty volCorrente}">
+                        <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.CREA_CRITERIO_RAGGR%>" colSpan="3" />
+                    </c:if>
+                </c:if>
                 <slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentarieRicercaButtonList.DOWNLOAD_CONTENUTO%>" colSpan="3" />
             </sl:pulsantiera>
             <div><slf:lblField name="<%=UnitaDocumentarieForm.UnitaDocumentariePerSerie.ID_CONTENUTO_SERIE%>" colSpan="1" /></div>

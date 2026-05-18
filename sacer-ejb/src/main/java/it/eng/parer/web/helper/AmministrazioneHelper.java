@@ -343,17 +343,12 @@ public class AmministrazioneHelper extends GenericHelper {
      * @return true se esiste un parametro con il nome specificato
      */
     public boolean existsAplParamApplic(String nmParamApplic, BigDecimal idParamApplic) {
-        StringBuilder queryStr = new StringBuilder(
-                "SELECT paramApplic FROM AplParamApplic paramApplic "
-                        + "WHERE paramApplic.nmParamApplic = :nmParamApplic ");
-        if (idParamApplic != null) {
-            queryStr.append("AND paramApplic.idParamApplic != :idParamApplic ");
-        }
-        Query q = getEntityManager().createQuery(queryStr.toString());
+        Query q = getEntityManager()
+                .createQuery("SELECT paramApplic FROM AplParamApplic paramApplic "
+                        + "WHERE paramApplic.nmParamApplic = :nmParamApplic "
+                        + "AND paramApplic.idParamApplic != :idParamApplic ");
         q.setParameter("nmParamApplic", nmParamApplic);
-        if (idParamApplic != null) {
-            q.setParameter("idParamApplic", longFromBigDecimal(idParamApplic));
-        }
+        q.setParameter("idParamApplic", longFromBigDecimal(idParamApplic));
         return !q.getResultList().isEmpty();
     }
 

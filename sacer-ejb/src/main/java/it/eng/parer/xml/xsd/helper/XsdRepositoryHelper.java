@@ -80,12 +80,14 @@ public class XsdRepositoryHelper extends GenericHelper {
             String schemaLocation, Long idPadre) {
         try {
             String jpql = "SELECT NEW it.eng.parer.xml.xsd.XsdBlob(tgt.cdXsd, tgt.blXsd) "
-                    + "FROM DecModelloXsdFascRif r " + "JOIN r.decModelloXsdFascicoloTarget tgt "
+                    + "FROM DecModelloXsdFascRif r "
+                    + "JOIN r.decModelloXsdFascicoloTarget tgt "
                     + "WHERE r.tiRiferimento = :tipo "
                     + "AND COALESCE(r.namespaceUri, '-') = COALESCE(:namespaceUri, '-') "
                     + "AND COALESCE(r.schemaLocation, '-') = COALESCE(:schemaLocation, '-') "
                     + "AND r.decModelloXsdFascicoloPadre.idModelloXsdFascicolo = :idPadre "
-                    + "AND r.dtSoppres > :now " + "AND tgt.dtSoppres > :now";
+                    + "AND r.dtSoppres > :now "
+                    + "AND tgt.dtSoppres > :now";
 
             Query query = getEntityManager().createQuery(jpql);
             query.setParameter("tipo", TiRiferimento.valueOf(tipo.toUpperCase()));
@@ -110,10 +112,13 @@ public class XsdRepositoryHelper extends GenericHelper {
     private XsdBlob findByImportNamespaceOnly(String namespaceUri, Long idPadre) {
         try {
             String jpql = "SELECT NEW it.eng.parer.xml.xsd.XsdBlob(tgt.cdXsd, tgt.blXsd) "
-                    + "FROM DecModelloXsdFascRif r " + "JOIN r.decModelloXsdFascicoloTarget tgt "
-                    + "WHERE r.tiRiferimento = :tipo " + "AND r.namespaceUri = :namespaceUri "
+                    + "FROM DecModelloXsdFascRif r "
+                    + "JOIN r.decModelloXsdFascicoloTarget tgt "
+                    + "WHERE r.tiRiferimento = :tipo "
+                    + "AND r.namespaceUri = :namespaceUri "
                     + "AND r.decModelloXsdFascicoloPadre.idModelloXsdFascicolo = :idPadre "
-                    + "AND r.dtSoppres > :now " + "AND tgt.dtSoppres > :now "
+                    + "AND r.dtSoppres > :now "
+                    + "AND tgt.dtSoppres > :now "
                     + "ORDER BY r.idModelloXsdFascRif";
 
             Query query = getEntityManager().createQuery(jpql);
@@ -139,10 +144,13 @@ public class XsdRepositoryHelper extends GenericHelper {
     private XsdBlob findByIncludeLocationOnly(String schemaLocation, Long idPadre) {
         try {
             String jpql = "SELECT NEW it.eng.parer.xml.xsd.XsdBlob(tgt.cdXsd, tgt.blXsd) "
-                    + "FROM DecModelloXsdFascRif r " + "JOIN r.decModelloXsdFascicoloTarget tgt "
-                    + "WHERE r.tiRiferimento = :tipo " + "AND r.schemaLocation = :schemaLocation "
+                    + "FROM DecModelloXsdFascRif r "
+                    + "JOIN r.decModelloXsdFascicoloTarget tgt "
+                    + "WHERE r.tiRiferimento = :tipo "
+                    + "AND r.schemaLocation = :schemaLocation "
                     + "AND r.decModelloXsdFascicoloPadre.idModelloXsdFascicolo = :idPadre "
-                    + "AND r.dtSoppres > :now " + "AND tgt.dtSoppres > :now "
+                    + "AND r.dtSoppres > :now "
+                    + "AND tgt.dtSoppres > :now "
                     + "ORDER BY r.idModelloXsdFascRif";
 
             Query query = getEntityManager().createQuery(jpql);

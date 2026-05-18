@@ -2257,7 +2257,8 @@ public class MonitoraggioHelper implements Serializable {
                 queryStr.append(whereWord)
                         .append("mon.idDecTipoUnitaDoc IN (:idTipoUnitaDocList) ");
             } else {
-                queryStr.append(whereWord).append("mon.idTipoUnitaDoc IN (:idTipoUnitaDocList) ");
+                queryStr.append(whereWord)
+                        .append("mon.idTipoUnitaDoc IN (:idTipoUnitaDocList) ");
             }
         }
         // Inserimento nella query del filtro tipo documento
@@ -2265,9 +2266,11 @@ public class MonitoraggioHelper implements Serializable {
         if (!idTipoDocList.isEmpty()) {
             // queryStr.append(whereWord).append("mon.idTipoDocPrinc IN :idTipoDocList ");
             if (isAttualmenteConservate || isCancellate) {
-                queryStr.append(whereWord).append("mon.idDecTipoDoc IN (:idTipoDocList) ");
+                queryStr.append(whereWord)
+                        .append("mon.idDecTipoDoc IN (:idTipoDocList) ");
             } else {
-                queryStr.append(whereWord).append("mon.idTipoDocPrinc IN (:idTipoDocList) ");
+                queryStr.append(whereWord)
+                        .append("mon.idTipoDocPrinc IN (:idTipoDocList) ");
             }
         }
         List<BigDecimal> idCategTipoUnitaDocList = filtriCS.getIdCategTipoUnitaDocList();
@@ -3012,8 +3015,8 @@ public class MonitoraggioHelper implements Serializable {
      *
      * @return LogVLisSchedTableBean table bean per la UI
      */
-    public BaseTable getLogVLisSchedViewBeanPlainFilters(String nomeJob, Date dataOrarioDa,
-            Date dataOrarioA) {
+    public BaseTable getLogVLisSchedViewBeanPlainFilters(String nomeJob,
+            Date dataOrarioDa, Date dataOrarioA) {
 
         String whereWord = "WHERE ";
         StringBuilder queryStr = new StringBuilder(
@@ -3067,15 +3070,13 @@ public class MonitoraggioHelper implements Serializable {
 
                     // Gestione conversione Date -> Timestamp con setter generico per i tipi
                     // Date/Timestamp
-                    rb.setTimestamp("dt_reg_log_job_ini",
-                            dto.getDtRegLogJobIni() != null
-                                    ? new java.sql.Timestamp(dto.getDtRegLogJobIni().getTime())
-                                    : null);
+                    rb.setTimestamp("dt_reg_log_job_ini", dto.getDtRegLogJobIni() != null
+                            ? new java.sql.Timestamp(dto.getDtRegLogJobIni().getTime())
+                            : null);
 
-                    rb.setTimestamp("dt_reg_log_job_fine",
-                            dto.getDtRegLogJobFine() != null
-                                    ? new java.sql.Timestamp(dto.getDtRegLogJobFine().getTime())
-                                    : null);
+                    rb.setTimestamp("dt_reg_log_job_fine", dto.getDtRegLogJobFine() != null
+                            ? new java.sql.Timestamp(dto.getDtRegLogJobFine().getTime())
+                            : null);
 
                     // Aggiunge la riga generica alla tabella generica
                     tableBean.add(rb);
@@ -3110,15 +3111,13 @@ public class MonitoraggioHelper implements Serializable {
 
                     // Gestione conversione Date -> Timestamp con setter generico per i tipi
                     // Date/Timestamp
-                    rb.setTimestamp("dt_reg_log_job_ini",
-                            dto.getDtRegLogJobIni() != null
-                                    ? new java.sql.Timestamp(dto.getDtRegLogJobIni().getTime())
-                                    : null);
+                    rb.setTimestamp("dt_reg_log_job_ini", dto.getDtRegLogJobIni() != null
+                            ? new java.sql.Timestamp(dto.getDtRegLogJobIni().getTime())
+                            : null);
 
-                    rb.setTimestamp("dt_reg_log_job_fine",
-                            dto.getDtRegLogJobFine() != null
-                                    ? new java.sql.Timestamp(dto.getDtRegLogJobFine().getTime())
-                                    : null);
+                    rb.setTimestamp("dt_reg_log_job_fine", dto.getDtRegLogJobFine() != null
+                            ? new java.sql.Timestamp(dto.getDtRegLogJobFine().getTime())
+                            : null);
 
                     // Aggiunge la riga generica alla tabella generica
                     tableBean.add(rb);
@@ -3141,8 +3140,8 @@ public class MonitoraggioHelper implements Serializable {
      *
      * @return LogVLisSchedHistTableBean table bean per la UI
      */
-    public BaseTable getLogVLisSchedHistViewBeanPlainFilters(String nomeJob, Date dataOrarioDa,
-            Date dataOrarioA) {
+    public BaseTable getLogVLisSchedHistViewBeanPlainFilters(String nomeJob,
+            Date dataOrarioDa, Date dataOrarioA) {
 
         String whereWord = "WHERE ";
         StringBuilder queryStr = new StringBuilder(
@@ -4349,7 +4348,8 @@ public class MonitoraggioHelper implements Serializable {
                 queryStr.append(whereWord)
                         .append("mon.idDecTipoUnitaDoc IN (:idTipoUnitaDocList) ");
             } else {
-                queryStr.append(whereWord).append("mon.idTipoUnitaDoc IN (:idTipoUnitaDocList) ");
+                queryStr.append(whereWord)
+                        .append("mon.idTipoUnitaDoc IN (:idTipoUnitaDocList) ");
             }
         }
         // Inserimento nella query del filtro tipo documento
@@ -4357,9 +4357,11 @@ public class MonitoraggioHelper implements Serializable {
         if (!idTipoDocList.isEmpty()) {
             // queryStr.append(whereWord).append("mon.idTipoDocPrinc IN (:idTipoDocList) ");
             if (isAttualmenteConservate || isCancellate) {
-                queryStr.append(whereWord).append("mon.idDecTipoDoc IN (:idTipoDocList) ");
+                queryStr.append(whereWord)
+                        .append("mon.idDecTipoDoc IN (:idTipoDocList) ");
             } else {
-                queryStr.append(whereWord).append("mon.idTipoDocPrinc IN (:idTipoDocList) ");
+                queryStr.append(whereWord)
+                        .append("mon.idTipoDocPrinc IN (:idTipoDocList) ");
             }
         }
         List<BigDecimal> idCategTipoUnitaDocList = filtriCS.getIdCategTipoUnitaDocList();

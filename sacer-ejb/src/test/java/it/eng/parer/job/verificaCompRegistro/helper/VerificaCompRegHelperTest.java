@@ -49,11 +49,11 @@ public class VerificaCompRegHelperTest {
     }
 
     @Test
-    void getStreamUdDaVerificare_queryIsOk() {
+    void getListaUdDaVerificare_queryIsOk() {
         Long idRegistroUnitaDoc = aLong();
         List<Long> idSubStruts = aListOfLong(2);
         Long anno = aLong();
-        helper.getStreamUdDaVerificare(idRegistroUnitaDoc, idSubStruts, anno);
+        helper.getListaUdDaVerificare(idRegistroUnitaDoc, idSubStruts, anno);
         assertTrue(true);
     }
 

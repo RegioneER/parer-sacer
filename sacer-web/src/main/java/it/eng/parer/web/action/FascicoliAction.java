@@ -1099,7 +1099,6 @@ public class FascicoliAction extends FascicoliAbstractAction {
             FiltriFascicoliAnnullati filtri) throws EMFError {
         RicercaFascicoliBean result = new RicercaFascicoliBean();
         FascicoliValidator validator = new FascicoliValidator(getMessageBox());
-        Date[] obj = null;
 
         // Validazione dei filtri della section FASCICOLI
         validator.validaChiaviFascicoli(result, filtri.getAa_fascicolo(),
@@ -1108,15 +1107,6 @@ public class FascicoliAction extends FascicoliAbstractAction {
                 filtri.getCd_key_fascicolo_a());
 
         result.setNm_tipo_fascicolo(filtri.getNm_tipo_fascicolo().parse());
-
-        obj = validator.validaDate(filtri.getDt_annul_da().parse(), null, null,
-                filtri.getDt_annul_a().parse(), null, null,
-                filtri.getDt_annul_da().getHtmlDescription(),
-                filtri.getDt_annul_a().getHtmlDescription());
-        if (obj != null) {
-            result.setDt_annul_da(obj[0]);
-            result.setDt_annul_a(obj[1]);
-        }
 
         // Validazione dei filtri della section PROFILO ARCHIVISTICO
         result.setCd_composito_voce_titol(filtri.getCd_composito_voce_titol().parse());

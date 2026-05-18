@@ -2769,6 +2769,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                             getSession().removeAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP);
                         }
                         // FINE MAC ---
+                        // getForm().getElenchiIndiciAipSelezionatiList().getTable().clear();
                         break;
 
                     case OK_SECONDA_FASE:
@@ -2790,6 +2791,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                         getSession().removeAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP);
                         throw new AssertionError(resp.name());
                     }
+                    // getSession().removeAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP);
                 } else {
                     result.put("status", "WORKING");
                 }

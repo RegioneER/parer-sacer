@@ -1742,12 +1742,10 @@ public class ElencoVersamentoEjb {
     // controllo se la data scadenza elenco Ã¨ <= della sysdate
     private boolean checkElencoExpired(ElvElencoVer elenco) {
         Date actualDate = new Date();
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "CAV - Verifico se l'elenco '{}' con data scadenza {} Ã¨ scaduto all'istante corrente ({})",
-                    elenco.getNmElenco(), dateToString(elenco.getDtScadChius()),
-                    dateToString(actualDate));
-        }
+        log.debug(
+                "CAV - Verifico se l'elenco '{}' con data scadenza {} Ã¨ scaduto all'istante corrente ({})",
+                elenco.getNmElenco(), dateToString(elenco.getDtScadChius()),
+                dateToString(actualDate));
         if (actualDate.after(elenco.getDtScadChius())) {
             log.debug("CAV - Elenco scaduto");
             return true;

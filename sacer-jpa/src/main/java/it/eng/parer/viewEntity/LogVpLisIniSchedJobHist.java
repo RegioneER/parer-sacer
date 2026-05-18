@@ -47,7 +47,8 @@ import it.eng.parer.entity.dto.LogVpLisIniSchedJobHistDTO;
         @ColumnResult(name = "DT_REG_LOG_JOB_INI", type = Date.class),
         @ColumnResult(name = "DT_REG_LOG_JOB_FINE", type = Date.class),
         @ColumnResult(name = "DURATA", type = String.class),
-        @ColumnResult(name = "DL_MSG_ERR", type = String.class) }))
+        @ColumnResult(name = "DL_MSG_ERR", type = String.class)
+}))
 public class LogVpLisIniSchedJobHist implements Serializable {
 
     private static final long serialVersionUID = 1L;

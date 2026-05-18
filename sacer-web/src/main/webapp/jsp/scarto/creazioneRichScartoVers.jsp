@@ -29,7 +29,7 @@
             <sl:newLine skipLine="true"/>
             <slf:fieldBarDetailTag name="<%=ScartoForm.CreazioneRichScartoVers.NAME%>" hideBackButton="false" />
             <sl:newLine skipLine="true"/>
-            <slf:fieldSet borderHidden="true"> 
+            <slf:fieldSet borderHidden="true">
                 <slf:lblField  name="<%=ScartoForm.CreazioneRichScartoVers.CD_RICH_SCARTO_VERS%>" width="w100" controlWidth="w30" labelWidth="w20" />
                 <sl:newLine />
                 <slf:lblField  name="<%=ScartoForm.CreazioneRichScartoVers.DS_RICH_SCARTO_VERS%>" width="w100" controlWidth="w30" labelWidth="w20" />

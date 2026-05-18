@@ -28,9 +28,6 @@ public final class FasVLisUdInFasc {
      */
     public enum TiStatoConservazione {
         AIP_DA_GENERARE, AIP_FIRMATO, AIP_GENERATO, AIP_IN_AGGIORNAMENTO, ANNULLATA, IN_ARCHIVIO,
-        /*
-         * IN_CUSTODIA, MEV#38176 - Rimozione dello stato di conservazione IN CUSTODIA
-         */
-        IN_VOLUME_DI_CONSERVAZIONE, PRESA_IN_CARICO, VERSAMENTO_IN_ARCHIVIO
+        IN_CUSTODIA, IN_VOLUME_DI_CONSERVAZIONE, PRESA_IN_CARICO, VERSAMENTO_IN_ARCHIVIO
     }
 }

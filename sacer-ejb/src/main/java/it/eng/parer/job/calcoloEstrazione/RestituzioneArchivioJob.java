@@ -690,12 +690,10 @@ public class RestituzioneArchivioJob {
     public boolean checkRichiestaAnnullata(long idRichiestaRa) {
         AroRichiestaRa richiesta = calcoloHelper.retrieveRichiestaById(idRichiestaRa);
         Date actualDate = new Date();
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(
-                    "Verifico se la richiesta '{}' con data inizio {} risulta annullata all'istante corrente ({})",
-                    richiesta.getIdRichiestaRa(), dateToString(richiesta.getTsInizio()),
-                    dateToString(actualDate));
-        }
+        LOGGER.debug(
+                "Verifico se la richiesta '{}' con data inizio {} risulta annullata all'istante corrente ({})",
+                richiesta.getIdRichiestaRa(), dateToString(richiesta.getTsInizio()),
+                dateToString(actualDate));
         if (richiesta.getTiStato().equals(AroRichiestaTiStato.ANNULLATO)) {
             LOGGER.debug("Richiesta annullata");
             return true;

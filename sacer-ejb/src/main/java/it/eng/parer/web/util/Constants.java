@@ -166,21 +166,4 @@ public class Constants {
         JOB, MDB
     }
     // end MAC#28020
-
-    public enum TiAlertPropScarto {
-        RAGGIUNTO("Tempo raggiunto"), NON_RAGGIUNTO("Tempo non raggiunto"),
-        SENZA_INDICAZIONE("Senza indicazione"), ILLIMITATA("Tenuta illimitata"),
-        CONFLITTI("Conflitti"), IN_ALTRE_PROPOSTE("In altre proposte"), TOTALE("Totale");
-
-        private final String colonnaBean;
-
-        TiAlertPropScarto(String colonnaBean) {
-            this.colonnaBean = colonnaBean;
-        }
-
-        public String getColonnaBean() {
-            return colonnaBean;
-        }
-    }
-
 }
