@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import it.eng.parer.entity.AplSistemaMigraz;
 import it.eng.parer.entity.OrgUsoSistemaMigraz;
 import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.viewEntity.DecVLisSisVersByTipoUd;
 
 /**
  * Helper di gestione del sistema di migrazione
@@ -50,6 +51,20 @@ public class SistemaMigrazioneHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT apl FROM AplSistemaMigraz apl WHERE NOT EXISTS (SELECT orgUso FROM OrgUsoSistemaMigraz orgUso WHERE orgUso.orgStrut.idStrut = :idStrut AND orgUso.aplSistemaMigraz = apl)");
         query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        return query.getResultList();
+    }
+
+    /**
+     * Ritorna la lista di sistemi versanti per i tipi ud
+     *
+     * @param listaTipiUd Lista tipi ud
+     *
+     * @return restituisce lista di elementi di tipo DecVLisSisVersByTipoUd
+     */
+    public List<DecVLisSisVersByTipoUd> retrieveDecVLisSisVersByTipoUd(List<Object> listaTipiUd) {
+        Query query = getEntityManager().createQuery(
+                "SELECT o FROM DecVLisSisVersByTipoUd o WHERE o.idTipoUnitaDoc IN (:listaTipiUd)");
+        query.setParameter("listaTipiUd", listaTipiUd);
         return query.getResultList();
     }
 

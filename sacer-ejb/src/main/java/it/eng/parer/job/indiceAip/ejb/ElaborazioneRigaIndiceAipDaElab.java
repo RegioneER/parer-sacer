@@ -824,8 +824,7 @@ public class ElaborazioneRigaIndiceAipDaElab {
                 CostantiDB.StatoVersioneSerie.VALIDAZIONE_IN_CORSO.name(),
                 CostantiDB.StatoVersioneSerie.VALIDATA.name(),
                 CostantiDB.StatoVersioneSerie.DA_FIRMARE.name(),
-                CostantiDB.StatoVersioneSerie.FIRMATA.name(),
-                CostantiDB.StatoVersioneSerie.IN_CUSTODIA.name());
+                CostantiDB.StatoVersioneSerie.FIRMATA.name());
 
         for (SerVerSerie verSerie : verSeries) {
             verSerie.setFlUpdModifUnitaDoc("1");

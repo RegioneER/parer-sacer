@@ -941,8 +941,7 @@ public class DataMartEjb {
         } catch (Exception e) {
             logger.error("Errore pulizia batch per richiesta " + idUdDelRichiesta, e);
             dataMartHelper.impostaStatoInternoRichiesta(idUdDelRichiesta,
-                    CostantiDB.TiStatoInternoRich.ERRORE_PULIZIA.name(),
-                    e.getMessage());
+                    CostantiDB.TiStatoInternoRich.ERRORE_PULIZIA.name(), e.getMessage());
         }
     }
 

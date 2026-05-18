@@ -223,6 +223,7 @@ import it.eng.parer.slite.gen.tablebean.DmUdDelRichiesteTableBean;
 import it.eng.parer.slite.gen.tablebean.DmUdDelRowBean;
 import it.eng.parer.slite.gen.tablebean.DmUdDelTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVChkStatoCorRichSoftDeleteRowBean;
+import it.eng.parer.slite.gen.viewbean.DecVLisSisVersByTipoUdTableDescriptor;
 import it.eng.parer.web.helper.DataMartHelper;
 import it.eng.parer.ws.utils.CostantiDB.TipoRichiesta;
 import java.nio.file.Files;
@@ -241,6 +242,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     private static final String ECCEZIONE_RECUPERO_RAPPORTO_VERSAMENTO = "Eccezione nel recupero del Rapporto di versamento: ";
     private static final String ECCEZIONE_RECUPERO_INDICE_AIP = "Errore non gestito nel recupero del file";
     private static final String UD_DETAIL_SOURCE_PAGE = "UD_DETAIL_SOURCE_PAGE";
+    private static final String CONST_CONTENUTO_RICERCA = "Contenuto_ricerca_unita_documentarie_";
 
     private static Logger log = LoggerFactory.getLogger(UnitaDocumentarieAction.class.getName());
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
@@ -294,6 +296,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     private DecodeMap mappaSisMig;
     private DecodeMap mappaTipoFasc;
     private DecodeMap mappaTipoAnnullamento;
+    private DecodeMap mappaSistVers;
 
     private BigDecimal getIdStrut() {
         return getUser().getIdOrganizzazioneFoglia();
@@ -475,9 +478,37 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
         getSession().setAttribute(UnitaDocAttributes.TIPORICERCA.name(),
                 TipoRicercaAttribute.AVANZATA.name());
-        setUnitaDocumentarieRicercaAvanzata();
+        setUnitaDocumentarieRicercaAvanzata(
+                Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA);
         getForm().getFiltriUnitaDocumentarieAvanzata().getFl_unita_doc_annul().setValue("0");
+        getForm().getUnitaDocumentarieTabs().getFiltriDatiSpec().setHidden(false);
         postLoad();
+    }
+
+    /**
+     * Metodo di inizializzazione form di ricerca unità documentarie avanzata nuova versione
+     * MEV#38690 - Modifiche alla pagina Ricerca avanzata unità documentarie
+     *
+     * @throws EMFError errore generico
+     */
+    @Secure(action = "Menu.UnitaDocumentarie.UnitaDocumentarieRicercaAvanzataNuova")
+    public void unitaDocumentarieRicercaAvanzataNuova() throws EMFError {
+        getUser().getMenu().reset();
+        getUser().getMenu().select("Menu.UnitaDocumentarie.UnitaDocumentarieRicercaAvanzataNuova");
+        String cleanHistory = getRequest().getParameter(CLEAN_HISTORY);
+        if (Boolean.parseBoolean(cleanHistory)) {
+            getForm().getUnitaDocumentariePerSerie().reset();
+        }
+
+        getSession().setAttribute(UnitaDocAttributes.TIPORICERCA.name(),
+                TipoRicercaAttribute.AVANZATA.name());
+        setUnitaDocumentarieRicercaAvanzata(
+                Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA_NUOVA);
+        getForm().getFiltriUnitaDocumentarieAvanzata().getFl_unita_doc_annul().setValue("0");
+        getForm().getUnitaDocumentarieTabs().getFiltriDatiSpec().setHidden(true);
+        postLoad();
+        // // Carico la pagina di ricerca
+        // forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA_NUOVA);
     }
 
     /**
@@ -497,6 +528,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getSession().setAttribute(UnitaDocAttributes.TIPORICERCA.name(),
                 TipoRicercaAttribute.DATI_SPEC.name());
         setUnitaDocumentarieRicercaDatiSpec();
+        getForm().getUnitaDocumentarieTabs().getFiltriDatiSpec().setHidden(false);
         // getForm().getFiltriUnitaDocumentarieDatiSpec().getFl_unita_doc_annul().setValue("0");
         postLoad();
     }
@@ -522,7 +554,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         postLoad();
     }
 
-    public void setUnitaDocumentarieRicercaAvanzata() throws EMFError {
+    public void setUnitaDocumentarieRicercaAvanzata(String nomePublisher) throws EMFError {
         /*
          * Azzero violentamente la UnitaDocumentarieList per evitare problemi di visualizzazione del
          * primo record della lista che si manifesta quando passo da una selectedList (ricerca
@@ -557,6 +589,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         // Setto le varie combo dei FILTRI di ricerca Unità Documentarie
         getForm().getFiltriUnitaDocumentarieAvanzata().getNm_tipo_unita_doc()
                 .setDecodeMap(mappaTipoUD);
+        // Combo dei sistemi versanti
+        getForm().getFiltriUnitaDocumentarieAvanzata().getId_sistema_versante()
+                .setDecodeMap(mappaSistVers);
         getForm().getFiltriUnitaDocumentarieAvanzata().getNm_tipo_doc().setDecodeMap(mappaTipoDoc);
         getForm().getFiltriUnitaDocumentarieAvanzata().getFl_unita_doc_firmato()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
@@ -684,7 +719,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getFiltriFirmatari().setLoadOpened(false);
 
         // Carico la pagina di ricerca
-        forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA);
+        forwardToPublisher(nomePublisher);
 
         // Imposto i filtri in edit mode
         getForm().getFiltriUnitaDocumentarieAvanzata().setEditMode();
@@ -1003,11 +1038,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                         if (!getMessageBox().hasError()) {
                             // MAC#39494 - Correzione metodo di generazione file in fase di
                             // esportazione di una ricerca
-                            // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                            // "Contenuto_ricerca_unita_documentarie.csv");
                             try {
-                                Path tmpPath = Files.createTempFile(
-                                        "Contenuto_ricerca_unita_documentarie_", ".csv");
+                                Path tmpPath = Files.createTempFile(CONST_CONTENUTO_RICERCA,
+                                        ".csv");
                                 File tmpFile = tmpPath.toFile();
                                 ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
                                         AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
@@ -1251,13 +1284,11 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                         if (!getMessageBox().hasError()) {
                             // MAC#39494 - Correzione metodo di generazione file in fase di
                             // esportazione di una ricerca
-                            // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                            // "Contenuto_ricerca_unita_documentarie.csv");
                             try {
                                 // MAC#39494 - Correzione metodo di generazione file in fase di
                                 // esportazione di una ricerca
-                                Path tmpPath = Files.createTempFile(
-                                        "Contenuto_ricerca_unita_documentarie_", ".csv");
+                                Path tmpPath = Files.createTempFile(CONST_CONTENUTO_RICERCA,
+                                        ".csv");
                                 File tmpFile = tmpPath.toFile();
                                 ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
                                         AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
@@ -1372,7 +1403,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             }
             // end MEV #11912
 
-            String pageToRedirect = Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA;
+            String pageToRedirect = getLastPublisher();
+            // String pageToRedirect = Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA;
             // Valida i filtri per verificare quelli obbligatori e che siano del tipo corretto
             if (filtri.validate(getMessageBox()) && filtriCollegamenti.validate(getMessageBox())
                     && compfiltri.validate(getMessageBox())
@@ -1559,29 +1591,48 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                             .getId_rich_annul_vers().parse() != null;
 
                     if (effettuaDownload) {
-                        AroVRicUnitaDocTableBean tb = udHelper
-                                .getAroVRicUnitaDocRicAvanzataViewBeanNoLimit(filtri,
-                                        idTipoUnitaDocListPerRicerca,
-                                        cdRegistroKeyUnitaDocSetPerRicerca, idTipoDocListPerRicerca,
-                                        listaDatiSpecOnLine, filtriCollegamenti, filtriFirmatari,
-                                        compfiltri, fascfiltri, dateAcquisizioneValidate,
-                                        dateUnitaDocValidate, dateCreazioneComp,
-                                        getUser().getIdUtente(), getIdStrut(),
-                                        addSerie || addRichAnnulVers);
+
+                        BaseTableInterface bti = null;
+
+                        if (getLastPublisher().equals(
+                                Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA_NUOVA)) {
+                            pageToRedirect = Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA_NUOVA;
+                            AroVRicUnitaDocTableBean tb = udHelper
+                                    .getAroVRicAdvUnitaDocRicAvanzataViewBeanNoLimit(filtri,
+                                            idTipoUnitaDocListPerRicerca,
+                                            cdRegistroKeyUnitaDocSetPerRicerca,
+                                            idTipoDocListPerRicerca, listaDatiSpecOnLine,
+                                            filtriCollegamenti, filtriFirmatari, compfiltri,
+                                            fascfiltri, dateAcquisizioneValidate,
+                                            dateUnitaDocValidate, dateCreazioneComp, getIdStrut(),
+                                            addSerie || addRichAnnulVers);
+                            bti = tb;
+                        } else {
+                            AroVRicUnitaDocTableBean tb = udHelper
+                                    .getAroVRicUnitaDocRicAvanzataViewBeanNoLimit(filtri,
+                                            idTipoUnitaDocListPerRicerca,
+                                            cdRegistroKeyUnitaDocSetPerRicerca,
+                                            idTipoDocListPerRicerca, listaDatiSpecOnLine,
+                                            filtriCollegamenti, filtriFirmatari, compfiltri,
+                                            fascfiltri, dateAcquisizioneValidate,
+                                            dateUnitaDocValidate, dateCreazioneComp,
+                                            getUser().getIdUtente(), getIdStrut(),
+                                            addSerie || addRichAnnulVers);
+                            bti = tb;
+                        }
+
                         if (!getMessageBox().hasError()) {
                             // MAC#39494 - Correzione metodo di generazione file in fase di
                             // esportazione di una ricerca
-                            // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                            // "Contenuto_ricerca_unita_documentarie.csv");
                             try {
                                 // MAC#39494 - Correzione metodo di generazione file in fase di
                                 // esportazione di una ricerca
-                                Path tmpPath = Files.createTempFile(
-                                        "Contenuto_ricerca_unita_documentarie_", ".csv");
+                                Path tmpPath = Files.createTempFile(CONST_CONTENUTO_RICERCA,
+                                        ".csv");
                                 File tmpFile = tmpPath.toFile();
 
-                                ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
-                                        AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
+                                ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(),
+                                        bti, AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                                 getRequest().setAttribute(
                                         WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                         getControllerName());
@@ -1619,17 +1670,34 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                         }
 
                     } else {
-                        AroVRicUnitaDocTableBean tb = udHelper
-                                .getAroVRicUnitaDocRicAvanzataViewBean(filtri,
-                                        idTipoUnitaDocListPerRicerca,
-                                        cdRegistroKeyUnitaDocSetPerRicerca, idTipoDocListPerRicerca,
-                                        listaDatiSpecOnLine, filtriCollegamenti, filtriFirmatari,
-                                        compfiltri, fascfiltri, dateAcquisizioneValidate,
-                                        dateUnitaDocValidate, dateCreazioneComp,
-                                        getUser().getIdUtente(), getIdStrut(),
-                                        addSerie || addRichAnnulVers);
-                        // Carico la tabella con i filtri impostati
-                        getForm().getUnitaDocumentarieList().setTable(tb);
+                        if (getLastPublisher().equals(
+                                Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA_NUOVA)) {
+                            pageToRedirect = Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA_NUOVA;
+                            AroVRicUnitaDocTableBean tb = udHelper
+                                    .getAroVRicAdvUnitaDocRicAvanzataViewBean(filtri,
+                                            idTipoUnitaDocListPerRicerca,
+                                            cdRegistroKeyUnitaDocSetPerRicerca,
+                                            idTipoDocListPerRicerca, listaDatiSpecOnLine,
+                                            filtriCollegamenti, filtriFirmatari, compfiltri,
+                                            fascfiltri, dateAcquisizioneValidate,
+                                            dateUnitaDocValidate, dateCreazioneComp, getIdStrut(),
+                                            addSerie || addRichAnnulVers);
+                            // Carico la tabella con i filtri impostati
+                            getForm().getUnitaDocumentarieList().setTable(tb);
+                        } else {
+                            AroVRicUnitaDocTableBean tb = udHelper
+                                    .getAroVRicUnitaDocRicAvanzataViewBean(filtri,
+                                            idTipoUnitaDocListPerRicerca,
+                                            cdRegistroKeyUnitaDocSetPerRicerca,
+                                            idTipoDocListPerRicerca, listaDatiSpecOnLine,
+                                            filtriCollegamenti, filtriFirmatari, compfiltri,
+                                            fascfiltri, dateAcquisizioneValidate,
+                                            dateUnitaDocValidate, dateCreazioneComp,
+                                            getUser().getIdUtente(), getIdStrut(),
+                                            addSerie || addRichAnnulVers);
+                            // Carico la tabella con i filtri impostati
+                            getForm().getUnitaDocumentarieList().setTable(tb);
+                        }
                         getSession().setAttribute("filtriUD", filtri);
                         // MEV #11912
                         if (devoRipristinare) {
@@ -3701,6 +3769,17 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         // Setto i valori della combo TIPO ANNULLAMENTO
         mappaTipoAnnullamento = ComboGetter.getMappaSortedGenericEnum("ti_annullamento",
                 CostantiDB.TipoAnnullamento.values());
+
+        // Popolamento combo dei sistemi di migrazione
+        List<Object> tipiUd = tmpTableBeanTipoUD.toList("id_tipo_unita_doc");
+        log.info("lista tipi ud={}", tipiUd);
+        BaseTableInterface tmpTableBeanSisVers = sysMigrazioneEjb
+                .getDecVLisSisVersByTipoUdTableBean(tipiUd);
+        tmpTableBeanSisVers.addSortingRule(
+                DecVLisSisVersByTipoUdTableDescriptor.COL_NM_SISTEMA_VERSANTE, SortingRule.ASC);
+        mappaSistVers = new DecodeMap();
+        mappaSistVers.populatedMap(tmpTableBeanSisVers, "id_sistema_versante",
+                "nm_sistema_versante");
     }
 
     // Gestione DOCUMENTI DETTAGLIO TABS
@@ -4680,173 +4759,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getAggiornamentiDettaglioListsTabs()
                 .setCurrentTab(getForm().getAggiornamentiDettaglioListsTabs().getListaUpdWarning());
         forwardToPublisher(Application.Publisher.AGGIORNAMENTI_METADATI_UDDETAIL);
-    }
-
-    /**
-     * Metodo di caricamento della form di creazione dei criteri di raggruppamento
-     *
-     * @throws EMFError errore generico
-     */
-    @Override
-    public void creaCriterioRaggr() throws EMFError {
-        // Apre pagina di creazione criterio
-        CriteriRaggruppamentoForm criteri = new CriteriRaggruppamentoForm();
-        Fields<Field> filtri;
-        Timestamp dataCreazioneDa = null;
-        BigDecimal oreCreazioneDa = null;
-        BigDecimal minutiCreazioneDa = null;
-        Timestamp dataCreazioneA = null;
-        BigDecimal oreCreazioneA = null;
-        BigDecimal minutiCreazioneA = null;
-        String descDataCreazioneDa = null;
-        String descDataCreazioneA = null;
-        Timestamp dataRegUDDa = null;
-        String descDataRegUDDa = null;
-        Timestamp dataRegUDA = null;
-        String descDataRegUDA = null;
-        Object registro = null;
-        BigDecimal anno = null;
-        String numero = null;
-        // Object regRange = null;
-        BigDecimal annoDa = null;
-        BigDecimal annoA = null;
-        String numeroDa = null;
-        String numeroA = null;
-        String numeroContiene = null;
-        if (getRequest().getParameter("simpleSearch") != null) {
-            filtri = getForm().getFiltriUnitaDocumentarieSemplice();
-        } else {
-            filtri = getForm().getFiltriUnitaDocumentarieAvanzata();
-        }
-        filtri.post(getRequest());
-        if (getRequest().getParameter("simpleSearch") != null) {
-            dataCreazioneDa = getForm().getFiltriUnitaDocumentarieSemplice()
-                    .getDt_acquisizione_unita_doc_da().parse();
-            oreCreazioneDa = getForm().getFiltriUnitaDocumentarieSemplice()
-                    .getOre_dt_acquisizione_unita_doc_da().parse();
-            minutiCreazioneDa = getForm().getFiltriUnitaDocumentarieSemplice()
-                    .getMinuti_dt_acquisizione_unita_doc_da().parse();
-            dataCreazioneA = getForm().getFiltriUnitaDocumentarieSemplice()
-                    .getDt_acquisizione_unita_doc_a().parse();
-            oreCreazioneA = getForm().getFiltriUnitaDocumentarieSemplice()
-                    .getOre_dt_acquisizione_unita_doc_a().parse();
-            minutiCreazioneA = getForm().getFiltriUnitaDocumentarieSemplice()
-                    .getMinuti_dt_acquisizione_unita_doc_a().parse();
-            descDataCreazioneDa = getForm().getFiltriUnitaDocumentarieSemplice()
-                    .getDt_acquisizione_unita_doc_da().getHtmlDescription();
-            descDataCreazioneA = getForm().getFiltriUnitaDocumentarieSemplice()
-                    .getDt_acquisizione_unita_doc_a().getHtmlDescription();
-            dataRegUDDa = getForm().getFiltriUnitaDocumentarieSemplice().getDt_reg_unita_doc_da()
-                    .parse();
-            descDataRegUDDa = getForm().getFiltriUnitaDocumentarieSemplice()
-                    .getDt_reg_unita_doc_da().getHtmlDescription();
-            dataRegUDA = getForm().getFiltriUnitaDocumentarieSemplice().getDt_reg_unita_doc_a()
-                    .parse();
-            descDataRegUDA = getForm().getFiltriUnitaDocumentarieSemplice().getDt_reg_unita_doc_a()
-                    .getHtmlDescription();
-            registro = getForm().getFiltriUnitaDocumentarieSemplice().getCd_registro_key_unita_doc()
-                    .getValue();
-            anno = getForm().getFiltriUnitaDocumentarieSemplice().getAa_key_unita_doc().parse();
-            numero = getForm().getFiltriUnitaDocumentarieSemplice().getCd_key_unita_doc().parse();
-            annoDa = getForm().getFiltriUnitaDocumentarieSemplice().getAa_key_unita_doc_da()
-                    .parse();
-            annoA = getForm().getFiltriUnitaDocumentarieSemplice().getAa_key_unita_doc_a().parse();
-            numeroDa = getForm().getFiltriUnitaDocumentarieSemplice().getCd_key_unita_doc_da()
-                    .parse();
-            numeroA = getForm().getFiltriUnitaDocumentarieSemplice().getCd_key_unita_doc_a()
-                    .parse();
-            numeroContiene = getForm().getFiltriUnitaDocumentarieSemplice()
-                    .getCd_key_unita_doc_contiene().parse();
-        } else {
-            dataCreazioneDa = getForm().getFiltriUnitaDocumentarieAvanzata()
-                    .getDt_acquisizione_unita_doc_da().parse();
-            oreCreazioneDa = getForm().getFiltriUnitaDocumentarieAvanzata()
-                    .getOre_dt_acquisizione_unita_doc_da().parse();
-            minutiCreazioneDa = getForm().getFiltriUnitaDocumentarieAvanzata()
-                    .getMinuti_dt_acquisizione_unita_doc_da().parse();
-            dataCreazioneA = getForm().getFiltriUnitaDocumentarieAvanzata()
-                    .getDt_acquisizione_unita_doc_a().parse();
-            oreCreazioneA = getForm().getFiltriUnitaDocumentarieAvanzata()
-                    .getOre_dt_acquisizione_unita_doc_a().parse();
-            minutiCreazioneA = getForm().getFiltriUnitaDocumentarieAvanzata()
-                    .getMinuti_dt_acquisizione_unita_doc_a().parse();
-            descDataCreazioneDa = getForm().getFiltriUnitaDocumentarieAvanzata()
-                    .getDt_acquisizione_unita_doc_da().getHtmlDescription();
-            descDataCreazioneA = getForm().getFiltriUnitaDocumentarieAvanzata()
-                    .getDt_acquisizione_unita_doc_a().getHtmlDescription();
-            dataRegUDDa = getForm().getFiltriUnitaDocumentarieAvanzata().getDt_reg_unita_doc_da()
-                    .parse();
-            descDataRegUDDa = getForm().getFiltriUnitaDocumentarieAvanzata()
-                    .getDt_reg_unita_doc_da().getHtmlDescription();
-            dataRegUDA = getForm().getFiltriUnitaDocumentarieAvanzata().getDt_reg_unita_doc_a()
-                    .parse();
-            descDataRegUDA = getForm().getFiltriUnitaDocumentarieSemplice().getDt_reg_unita_doc_a()
-                    .getHtmlDescription();
-            registro = getForm().getFiltriUnitaDocumentarieAvanzata().getCd_registro_key_unita_doc()
-                    .getValues();
-            anno = getForm().getFiltriUnitaDocumentarieAvanzata().getAa_key_unita_doc().parse();
-            numero = getForm().getFiltriUnitaDocumentarieAvanzata().getCd_key_unita_doc().parse();
-            annoDa = getForm().getFiltriUnitaDocumentarieAvanzata().getAa_key_unita_doc_da()
-                    .parse();
-            annoA = getForm().getFiltriUnitaDocumentarieAvanzata().getAa_key_unita_doc_a().parse();
-            numeroDa = getForm().getFiltriUnitaDocumentarieAvanzata().getCd_key_unita_doc_da()
-                    .parse();
-            numeroA = getForm().getFiltriUnitaDocumentarieAvanzata().getCd_key_unita_doc_a()
-                    .parse();
-            numeroContiene = getForm().getFiltriUnitaDocumentarieAvanzata()
-                    .getCd_key_unita_doc_contiene().parse();
-        }
-        // Valida i campi di ricerca
-        UnitaDocumentarieValidator validator = new UnitaDocumentarieValidator(getMessageBox());
-        // Valido i filtri data creazione da - a restituendo le date comprensive di orario
-        validator.validaDate(dataCreazioneDa, oreCreazioneDa, minutiCreazioneDa, dataCreazioneA,
-                oreCreazioneA, minutiCreazioneA, descDataCreazioneDa, descDataCreazioneA);
-        // Valido i filtri data dei metadati unitÃ documentaria
-        validator.validaOrdineDateOrari(dataRegUDDa, dataRegUDA, descDataRegUDDa, descDataRegUDA);
-        Object[] chiavi;
-        // Valida i campi di chiavi unitÃ documentaria
-        if (filtri instanceof FiltriUnitaDocumentarieAvanzata) {
-            String[] reg = new String[((Set<String>) registro).size()];
-            ((Set<String>) registro).toArray(reg);
-            chiavi = validator.validaChiaviUnitaDocRicUd(reg, anno, numero, annoDa, annoA, numeroDa,
-                    numeroA, numeroContiene);
-            if (chiavi != null && chiavi.length == 5) {
-                // Nel caso si tratta del range di chiavi risetto i filtri per i valori di default
-                ((FiltriUnitaDocumentarieAvanzata) filtri).getAa_key_unita_doc_da()
-                        .setValue(((BigDecimal) chiavi[1]).toString());
-                ((FiltriUnitaDocumentarieAvanzata) filtri).getAa_key_unita_doc_a()
-                        .setValue(((BigDecimal) chiavi[2]).toString());
-                ((FiltriUnitaDocumentarieAvanzata) filtri).getCd_key_unita_doc_da()
-                        .setValue((String) chiavi[3]);
-                ((FiltriUnitaDocumentarieAvanzata) filtri).getCd_key_unita_doc_a()
-                        .setValue((String) chiavi[4]);
-            }
-        } else if (filtri instanceof FiltriUnitaDocumentarieSemplice) {
-            String reg = (String) registro;
-            chiavi = validator.validaChiaviUnitaDocRicUd(reg, anno, numero, annoDa, annoA, numeroDa,
-                    numeroA, numeroContiene);
-            if (chiavi != null && chiavi.length == 5) {
-                // Nel caso si tratta del range di chiavi risetto i filtri per i valori di default
-                ((FiltriUnitaDocumentarieSemplice) filtri).getAa_key_unita_doc_da()
-                        .setValue(((BigDecimal) chiavi[1]).toString());
-                ((FiltriUnitaDocumentarieSemplice) filtri).getAa_key_unita_doc_a()
-                        .setValue(((BigDecimal) chiavi[2]).toString());
-                ((FiltriUnitaDocumentarieSemplice) filtri).getCd_key_unita_doc_da()
-                        .setValue((String) chiavi[3]);
-                ((FiltriUnitaDocumentarieSemplice) filtri).getCd_key_unita_doc_a()
-                        .setValue((String) chiavi[4]);
-            }
-        }
-
-        if (!getMessageBox().hasError()) {
-            getSession().setAttribute("filtriUD", filtri);
-            redirectToAction(Application.Actions.CRITERI_RAGGRUPPAMENTO,
-                    "?operation=creaCriterioRaggr&provenienza=ricercaUnitaDoc", criteri);
-        } else if (getRequest().getParameter("simpleSearch") != null) {
-            forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_SEMPLICE);
-        } else {
-            forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA);
-        }
     }
 
     /**
@@ -7111,13 +7023,10 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     if (!getMessageBox().hasError()) {
                         // MAC#39494 - Correzione metodo di generazione file in fase di esportazione
                         // di una ricerca
-                        // File tmpFile = new File(System.getProperty("java.io.tmpdir"),
-                        // "Contenuto_ricerca_unita_documentarie.csv");
                         try {
                             // MAC#39494 - Correzione metodo di generazione file in fase di
                             // esportazione di una ricerca
-                            Path tmpPath = Files.createTempFile(
-                                    "Contenuto_ricerca_unita_documentarie_", ".csv");
+                            Path tmpPath = Files.createTempFile(CONST_CONTENUTO_RICERCA, ".csv");
                             File tmpFile = tmpPath.toFile();
 
                             ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,

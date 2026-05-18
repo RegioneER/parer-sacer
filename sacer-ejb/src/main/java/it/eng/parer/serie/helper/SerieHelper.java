@@ -1862,9 +1862,9 @@ public class SerieHelper extends GenericHelper {
     }
 
     /**
-     * Determina le versioni serie correnti con stato = VALIDATA o DA_FIRMARE o FIRMATA o
-     * IN_CUSTODIA, nel cui contenuto di tipo EFFETTIVO siano presenti le unità documentarie degli
-     * item (della richiesta corrente) di tipo UNI_DOC con stato DA_ANNULLARE_IN_SACER
+     * Determina le versioni serie correnti con stato = VALIDATA o DA_FIRMARE o FIRMATA, nel cui
+     * contenuto di tipo EFFETTIVO siano presenti le unità documentarie degli item (della richiesta
+     * corrente) di tipo UNI_DOC con stato DA_ANNULLARE_IN_SACER
      *
      * @param idRichAnnulVers id della richiesta di annullamento
      *

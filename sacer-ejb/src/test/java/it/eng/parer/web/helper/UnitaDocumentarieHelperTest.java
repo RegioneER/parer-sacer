@@ -171,8 +171,7 @@ public class UnitaDocumentarieHelperTest {
         helper.getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter(idTipoUnitaDocList,
                 cdRegistroUnitaDocSet, idTipoDocList, listaDatiSpecOnLine, dateAcquisizioneValidate,
                 dateCreazioneCompValidate, idUserIam, idStruttura, addButton, filtri,
-                filtriCollegamenti,
-                filtriFirmatari, filtriComponenti, filtriFascicoli, false);
+                filtriCollegamenti, filtriFirmatari, filtriComponenti, filtriFascicoli, false);
         assertTrue(true);
     }
 

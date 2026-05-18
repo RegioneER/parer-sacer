@@ -68,6 +68,8 @@ public class RicercaFascicoliBean {
 
     private Date ts_vers_fascicolo_da;
     private Date ts_vers_fascicolo_a;
+    private Date dt_annul_da;
+    private Date dt_annul_a;
     private String ti_esito;
     private String ti_stato_conservazione;
     private String ti_stato_fasc_elenco_vers;
@@ -404,6 +406,22 @@ public class RicercaFascicoliBean {
 
     public void setTs_vers_fascicolo_a(Date ts_vers_fascicolo_a) {
         this.ts_vers_fascicolo_a = ts_vers_fascicolo_a;
+    }
+
+    public Date getDt_annul_da() {
+        return dt_annul_da;
+    }
+
+    public void setDt_annul_da(Date dt_annul_da) {
+        this.dt_annul_da = dt_annul_da;
+    }
+
+    public Date getDt_annul_a() {
+        return dt_annul_a;
+    }
+
+    public void setDt_annul_a(Date dt_annul_a) {
+        this.dt_annul_a = dt_annul_a;
     }
 
     public String getTi_esito() {

@@ -785,7 +785,13 @@ public class CostantiDB {
     public enum StatoVersioneSerie {
 
         APERTA, APERTURA_IN_CORSO, CONTROLLATA, DA_CONTROLLARE, DA_FIRMARE, DA_VALIDARE, FIRMATA,
-        VALIDATA, IN_CUSTODIA, ANNULLATA, VALIDAZIONE_IN_CORSO, FIRMA_IN_CORSO, FIRMATA_NO_MARCA;
+        VALIDATA,
+
+        /*
+         * IN_CUSTODIA, MEV#38176 - Rimozione dello stato di conservazione IN CUSTODIA
+         */
+
+        ANNULLATA, VALIDAZIONE_IN_CORSO, FIRMA_IN_CORSO, FIRMATA_NO_MARCA;
 
         public static StatoVersioneSerie[] getEnums(StatoVersioneSerie... vals) {
             return vals;
@@ -805,18 +811,26 @@ public class CostantiDB {
 
     public enum StatoConservazioneSerie {
 
-        AIP_DA_AGGIORNARE, AIP_GENERATO, AIP_IN_AGGIORNAMENTO, ANNULLATA, IN_ARCHIVIO, IN_CUSTODIA,
+        AIP_DA_AGGIORNARE, AIP_GENERATO, AIP_IN_AGGIORNAMENTO, ANNULLATA, IN_ARCHIVIO,
+        /*
+         * IN_CUSTODIA, MEV#38176 - Rimozione dello stato di conservazione IN CUSTODIA
+         */
         PRESA_IN_CARICO
     }
 
     public enum StatoConservazioneUnitaDoc {
 
         ANNULLATA, AIP_DA_GENERARE, AIP_GENERATO, AIP_FIRMATO, AIP_IN_AGGIORNAMENTO, IN_ARCHIVIO,
-        IN_CUSTODIA, IN_VOLUME_DI_CONSERVAZIONE, PRESA_IN_CARICO, VERSAMENTO_IN_ARCHIVIO
+        /* IN_CUSTODIA, MEV#38176 - Rimozione dello stato di conservazione IN CUSTODIA */
+        IN_VOLUME_DI_CONSERVAZIONE, PRESA_IN_CARICO, VERSAMENTO_IN_ARCHIVIO
     }
 
     public enum StatoConservazioneUnitaDocNonAnnullata {
-        AIP_DA_GENERARE, AIP_GENERATO, AIP_FIRMATO, AIP_IN_AGGIORNAMENTO, IN_ARCHIVIO, IN_CUSTODIA,
+        AIP_DA_GENERARE, AIP_GENERATO, AIP_FIRMATO, AIP_IN_AGGIORNAMENTO, IN_ARCHIVIO,
+        /*
+         * IN_CUSTODIA, MEV#38176 - Rimozione dello stato di conservazione IN CUSTODIA
+         *
+         */
         IN_VOLUME_DI_CONSERVAZIONE, PRESA_IN_CARICO, VERSAMENTO_IN_ARCHIVIO
     }
 
@@ -1384,8 +1398,7 @@ public class CostantiDB {
         IN_CANCELLAZIONE_FISICA, ERRORE_FISICO_CRITICO, ERRORE_FISICO_PARZIALE, COMPLETATA,
 
         // MEV 30416
-        IN_PULIZIA_SESSIONI_KO,
-        ERRORE_PULIZIA
+        IN_PULIZIA_SESSIONI_KO, ERRORE_PULIZIA
 
     }
 
@@ -1428,6 +1441,8 @@ public class CostantiDB {
         }
     }
 
+    // SCARTO
+
     // MEV #37229
     public enum TipoCreazioneRichScartoVers {
         UPLOAD_FILE
@@ -1463,6 +1478,18 @@ public class CostantiDB {
                     TipoErrRichScartoVers.REGISTRO_NON_ABILITATO.name(),
                     TipoErrRichScartoVers.TIPO_DOC_PRINC_NON_ABILITATO.name() };
         }
+    }
+
+    public enum TiStatoPropScartoVers {
+
+        APERTA, CHIUSA;
+
+    }
+
+    public enum TiItemPropScartoVers {
+
+        UNI_DOC, FASC, SERIE;
+
     }
 
 }

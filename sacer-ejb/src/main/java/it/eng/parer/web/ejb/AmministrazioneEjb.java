@@ -146,6 +146,30 @@ public class AmministrazioneEjb {
         return amministrazioneHelper.existsAplParamApplic(nmParamApplic, idParamApplic);
     }
 
+    public AplParamApplicRowBean getAplParamApplicRowBean(BigDecimal idParamApplic) {
+        try {
+            AplParamApplic paramApplic = amministrazioneHelper.findById(AplParamApplic.class,
+                    idParamApplic.longValue());
+            if (paramApplic == null) {
+                return null;
+            }
+
+            AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                    .entity2RowBean(paramApplic);
+            paramApplicRowBean.setString("ds_valore_param_applic", "");
+            for (AplValoreParamApplic valoreParamApplic : paramApplic.getAplValoreParamApplics()) {
+                if (valoreParamApplic.getTiAppart().equals("APPLIC")) {
+                    paramApplicRowBean.setString("ds_valore_param_applic",
+                            valoreParamApplic.getDsValoreParamApplic());
+                }
+            }
+            return paramApplicRowBean;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
     /**
      * Esegue il salvataggio del rowBean del parametro di configurazione
      *

@@ -604,8 +604,7 @@ public class ModelliFascicoliEjb {
         }
         if (!tagTrovato.equalsIgnoreCase(tiRiferimento)) {
             throw new IllegalStateException("La schemaLocation '" + schemaLocation
-                    + "' è dichiarata come xs:" + tagTrovato.toLowerCase()
-                    + " nell'XSD.");
+                    + "' è dichiarata come xs:" + tagTrovato.toLowerCase() + " nell'XSD.");
         }
     }
 
