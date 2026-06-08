@@ -45,7 +45,6 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -299,131 +298,156 @@ public class RecUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
         response.reset();
         response.setStatus(HttpServletResponse.SC_OK);
 
-        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-            String filename = rispostaWs.getNomeFile();
-            // MEV#38961 - Recupero componente unzippato
-            // Se si è chiesto di unzippare l'unico file richiesto (deve essere stato passato l'ID
-            // del documento!)
-            // invece di strimmare tutto lo zip, viene aperto estratto l'unico file al suo interno
-            // e strimmato quello sull'output della servlet con contenuto generico
-            // octet/stream
-            if (myRecuperoExt.getStrutturaRecupero().getParametri() != null
-                    && myRecuperoExt.getStrutturaRecupero().getParametri().isFileUnzippato() != null
-                    && myRecuperoExt.getStrutturaRecupero().getParametri().isFileUnzippato()) {
-                File zipFile = rispostaWs.getRifFileBinario().getFileSuDisco();
-                try (ServletOutputStream out = response.getOutputStream();
-                        ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
+        try {
+            if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+                String filename = rispostaWs.getNomeFile();
+                // MEV#38961 - Recupero componente unzippato
+                // Se si è chiesto di unzippare l'unico file richiesto (deve essere stato passato
+                // l'ID
+                // del documento!)
+                // invece di strimmare tutto lo zip, viene aperto estratto l'unico file al suo
+                // interno
+                // e strimmato quello sull'output della servlet con contenuto generico
+                // octet/stream
+                if (myRecuperoExt.getStrutturaRecupero().getParametri() != null
+                        && myRecuperoExt.getStrutturaRecupero().getParametri()
+                                .isFileUnzippato() != null
+                        && myRecuperoExt.getStrutturaRecupero().getParametri().isFileUnzippato()) {
+                    File zipFile = rispostaWs.getRifFileBinario().getFileSuDisco();
+                    try (ServletOutputStream out = response.getOutputStream();
+                            ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
 
-                    ZipEntry entry = zis.getNextEntry();
+                        ZipEntry entry = zis.getNextEntry();
 
-                    // MEV#40093 - Utilizzo del parametro <FileUnzippato> limitato al recupero del
-                    // componente
-                    // Se nello zip generato si trova più di un componente (più file) e si è
-                    // richiesto di unzippare il componente allora genera un errore applicativo
-                    // altrimenti scarica lo zip con tutto dentro.
-                    ZipEntry entry2 = zis.getNextEntry();
-                    if (entry2 != null) {
-                        rispostaWs.setSeverity(SeverityEnum.ERROR);
-                        rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.COMP_003_006,
-                                "Trovati più record per il componente richiesto!");
-                        log.info("Trovati più record per il componente richiesto!");
+                        // MEV#40093 - Utilizzo del parametro <FileUnzippato> limitato al recupero
+                        // del
+                        // componente
+                        // Se nello zip generato si trova più di un componente (più file) e si è
+                        // richiesto di unzippare il componente allora genera un errore applicativo
+                        // altrimenti scarica lo zip con tutto dentro.
+                        ZipEntry entry2 = zis.getNextEntry();
+                        if (entry2 != null) {
+                            rispostaWs.setSeverity(SeverityEnum.ERROR);
+                            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.COMP_003_006,
+                                    "Trovati più record per il componente richiesto!");
+                            log.info("Trovati più record per il componente richiesto!");
 
-                        response.setContentType("application/xml; charset=\"utf-8\"");
+                            response.setContentType("application/xml; charset=\"utf-8\"");
 
-                        try (OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out,
-                                StandardCharsets.UTF_8);) {
-                            Marshaller marshaller = xmlContextCache
-                                    .getVersRespStatoCtx_StatoConservazione().createMarshaller();
-                            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-                            marshaller.marshal(myEsito, tmpStreamWriter);
-                        } catch (JAXBException | IOException e) {
-                            log.error("Eccezione nella servlet recupero sync", e);
-                        }
-                        tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Fine).setFase("")
-                                .logAvanzamento();
-                    } else {
-                        // --------------------------------------------------------------------------------------
-                        zis.close();
-                        try (ServletOutputStream out2 = response.getOutputStream();
-                                ZipInputStream zis2 = new ZipInputStream(
-                                        new FileInputStream(zipFile))) {
-                            entry = zis2.getNextEntry();
-                            long entrySize = entry.getSize();
-                            // Determina il tipo MIME del file estratto
-                            // String mimeType = "application/pdf";
-                            String mimeType = "application/octet-stream";
-
-                            // Imposta gli header per il download
-                            response.setContentType(mimeType);
-                            String nomeFileDaScaricare = entry.getName();
-                            int posizioneUltimoSlash = nomeFileDaScaricare.lastIndexOf("/");
-                            if (posizioneUltimoSlash > 0) {
-                                nomeFileDaScaricare = nomeFileDaScaricare
-                                        .substring(posizioneUltimoSlash + 1);
+                            try (OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out,
+                                    StandardCharsets.UTF_8);) {
+                                Marshaller marshaller = xmlContextCache
+                                        .getVersRespStatoCtx_StatoConservazione()
+                                        .createMarshaller();
+                                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+                                        Boolean.TRUE);
+                                marshaller.marshal(myEsito, tmpStreamWriter);
+                            } catch (JAXBException | IOException e) {
+                                log.error("Eccezione nella servlet recupero sync", e);
                             }
-                            response.setHeader("Content-Disposition",
-                                    "attachment; filename=\"" + nomeFileDaScaricare + "\"");
-                            response.setHeader("Content-Length", String.valueOf(entrySize));
+                            tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Fine).setFase("")
+                                    .logAvanzamento();
+                        } else {
+                            // --------------------------------------------------------------------------------------
+                            zis.close();
+                            try (ServletOutputStream out2 = response.getOutputStream();
+                                    ZipInputStream zis2 = new ZipInputStream(
+                                            new FileInputStream(zipFile))) {
+                                entry = zis2.getNextEntry();
+                                long entrySize = entry.getSize();
+                                // Determina il tipo MIME del file estratto
+                                // String mimeType = "application/pdf";
+                                String mimeType = "application/octet-stream";
+
+                                // Imposta gli header per il download
+                                response.setContentType(mimeType);
+                                String nomeFileDaScaricare = entry.getName();
+                                int posizioneUltimoSlash = nomeFileDaScaricare.lastIndexOf("/");
+                                if (posizioneUltimoSlash > 0) {
+                                    nomeFileDaScaricare = nomeFileDaScaricare
+                                            .substring(posizioneUltimoSlash + 1);
+                                }
+                                response.setHeader("Content-Disposition",
+                                        "attachment; filename=\"" + nomeFileDaScaricare + "\"");
+                                response.setHeader("Content-Length", String.valueOf(entrySize));
+                                // -------------------------------------------------------------------------------------
+
+                                byte[] buffer = new byte[BUFFERSIZE];
+                                int bytesRead;
+                                while ((bytesRead = zis2.read(buffer)) != -1) {
+                                    out2.write(buffer, 0, bytesRead);
+                                }
+                                out2.flush();
+                                zis2.closeEntry();
+                            } catch (IOException e) {
+                                log.error(
+                                        "Eccezione nella servlet recupero sync (streaming componente unzippato)",
+                                        e);
+                            }
                             // -------------------------------------------------------------------------------------
-
-                            byte[] buffer = new byte[BUFFERSIZE];
-                            int bytesRead;
-                            while ((bytesRead = zis2.read(buffer)) != -1) {
-                                out2.write(buffer, 0, bytesRead);
-                            }
-                            out2.flush();
-                            zis2.closeEntry();
                         }
-                        // -------------------------------------------------------------------------------------
+                    } catch (Exception e) {
+                        log.error(
+                                "Eccezione nella servlet recupero sync (recupero componente unzippato)",
+                                e);
+                    } // fine try with resources
+
+                } else {
+                    // Vecchio ramo che strimma lo zip sulla servlet outpiut...
+                    response.setContentType("application/zip");
+                    response.setHeader("Content-Disposition", "attachment; filename=\"" + filename);
+
+                    try (ServletOutputStream out = response.getOutputStream();
+                            FileInputStream inputStream = new FileInputStream(
+                                    rispostaWs.getRifFileBinario().getFileSuDisco());) {
+
+                        response.setHeader("Content-Length", String
+                                .valueOf(rispostaWs.getRifFileBinario().getFileSuDisco().length()));
+
+                        byte[] buffer = new byte[BUFFERSIZE];
+                        int bytesRead;
+                        while ((bytesRead = inputStream.read(buffer)) != -1) {
+                            out.write(buffer, 0, bytesRead);
+                        }
+                        out.flush();
+                    } catch (IOException e) {
+                        log.error("Eccezione nella servlet recupero sync", e);
                     }
-                } // fine try with resources
+                }
 
             } else {
-                // Vecchio ramo che strimma lo zip sulla servlet outpiut...
-                response.setContentType("application/zip");
-                response.setHeader("Content-Disposition", "attachment; filename=\"" + filename);
+                response.setContentType("application/xml; charset=\"utf-8\"");
 
                 try (ServletOutputStream out = response.getOutputStream();
-                        FileInputStream inputStream = new FileInputStream(
-                                rispostaWs.getRifFileBinario().getFileSuDisco());) {
+                        OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out,
+                                StandardCharsets.UTF_8);) {
 
-                    response.setHeader("Content-Length", String
-                            .valueOf(rispostaWs.getRifFileBinario().getFileSuDisco().length()));
-
-                    byte[] buffer = new byte[BUFFERSIZE];
-                    int bytesRead;
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        out.write(buffer, 0, bytesRead);
-                    }
-                    out.flush();
-                } catch (IOException e) {
+                    Marshaller marshaller = xmlContextCache.getVersRespStatoCtx_StatoConservazione()
+                            .createMarshaller();
+                    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                    marshaller.marshal(myEsito, tmpStreamWriter);
+                } catch (JAXBException | IOException e) {
                     log.error("Eccezione nella servlet recupero sync", e);
                 }
             }
 
-        } else {
-            response.setContentType("application/xml; charset=\"utf-8\"");
-
-            try (ServletOutputStream out = response.getOutputStream();
-                    OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out,
-                            StandardCharsets.UTF_8);) {
-
-                Marshaller marshaller = xmlContextCache.getVersRespStatoCtx_StatoConservazione()
-                        .createMarshaller();
-                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-                marshaller.marshal(myEsito, tmpStreamWriter);
-            } catch (JAXBException | IOException e) {
-                log.error("Eccezione nella servlet recupero sync", e);
+        } finally {
+            // elimina il file zip, in ogni caso
+            if (rispostaWs.getRifFileBinario() != null
+                    && rispostaWs.getRifFileBinario().getFileSuDisco() != null) {
+                File zipDaEliminare = rispostaWs.getRifFileBinario().getFileSuDisco();
+                if (zipDaEliminare != null) {
+                    log.info("CANCELLAZIONE FILE lato servlet: {}",
+                            zipDaEliminare.getAbsolutePath());
+                }
+                if (!zipDaEliminare.delete() && zipDaEliminare.exists()) {
+                    log.warn("Impossibile eliminare il file zip temporaneo: {}",
+                            zipDaEliminare.getAbsolutePath());
+                }
             }
+            tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Fine).setFase("")
+                    .logAvanzamento();
         }
-
-        // elimina il file zip, in ogni caso
-        if (rispostaWs.getRifFileBinario() != null
-                && rispostaWs.getRifFileBinario().getFileSuDisco() != null) {
-            FileUtils.deleteQuietly(rispostaWs.getRifFileBinario().getFileSuDisco());
-        }
-
-        tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Fine).setFase("").logAvanzamento();
     }
 
     /**

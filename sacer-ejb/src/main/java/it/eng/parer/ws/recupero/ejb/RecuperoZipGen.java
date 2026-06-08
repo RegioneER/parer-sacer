@@ -294,12 +294,13 @@ public class RecuperoZipGen {
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             zipDaScaricare = new FileBinario();
             File tmpOutput = File.createTempFile("output_", ".zip", new File(outputPath));
+            log.info("NOME DEL FILE TEMPORANEO: {}", tmpOutput.getPath());
+            // set tmp file before try so the finally block can always clean up on failure
+            zipDaScaricare.setFileSuDisco(tmpOutput);
 
             try (FileOutputStream tmpOutputStream = new FileOutputStream(tmpOutput);
                     ZipArchiveOutputStream tmpZipOutputStream = new ZipArchiveOutputStream(
                             tmpOutputStream);) {
-                // set tmp file
-                zipDaScaricare.setFileSuDisco(tmpOutput);
 
                 if (recuperaDip && rispostaWs.getSeverity() == SeverityEnum.OK) {
                     this.aggiungiComponentiDIP(tmpZipOutputStream, recupero, rispostaWs);
@@ -408,6 +409,8 @@ public class RecuperoZipGen {
                 if (rispostaWs.getSeverity() == SeverityEnum.ERROR
                         && zipDaScaricare.getFileSuDisco() != null) {
                     FileUtils.deleteQuietly(zipDaScaricare.getFileSuDisco());
+                    log.info("CANCELLAZONE FILE TEMPORANEO: {}",
+                            zipDaScaricare.getFileSuDisco().getAbsolutePath());
                     zipDaScaricare.setFileSuDisco(null);
                 }
             }
@@ -1341,60 +1344,59 @@ public class RecuperoZipGen {
                         List<ComponenteRec> lstComp = (List<ComponenteRec>) rispostaControlli
                                 .getrObject();
                         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-                            FileBinario zipDaIncludere = new FileBinario();
                             File tmpFile = Files.createTempFile("output_", ".zip").toFile();
-                            zipDaIncludere.setFileSuDisco(tmpFile);
+                            try {
+                                try (FileOutputStream fos = new FileOutputStream(tmpFile);
+                                        ZipArchiveOutputStream zaos = new ZipArchiveOutputStream(
+                                                fos)) {
 
-                            try (FileOutputStream fos = new FileOutputStream(
-                                    zipDaIncludere.getFileSuDisco());
-                                    ZipArchiveOutputStream zaos = new ZipArchiveOutputStream(fos)) {
+                                    for (ComponenteRec tmpCmp : lstComp) {
+                                        ZipArchiveEntry zae = new ZipArchiveEntry(
+                                                DIRECTORY_REC + "/" + tmpCmp.getNomeFilePerZip());
+                                        this.filterZipEntry(zae);
+                                        zaos.putArchiveEntry(zae);
 
-                                for (ComponenteRec tmpCmp : lstComp) {
-                                    ZipArchiveEntry zae = new ZipArchiveEntry(
-                                            DIRECTORY_REC + "/" + tmpCmp.getNomeFilePerZip());
-                                    this.filterZipEntry(zae);
-                                    zaos.putArchiveEntry(zae);
-
-                                    // recupero documento blob vs obj storage
-                                    // build dto per recupero
-                                    RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(
-                                            TiEntitaSacerObjectStorage.COMP_DOC,
-                                            tmpCmp.getIdCompDoc(), zaos,
-                                            RecBlbOracle.TabellaBlob.BLOB);
-                                    // recupero
-                                    boolean esitoRecupero = recuperoDocumento
-                                            .callRecuperoDocSuStream(csRecuperoDoc);
-                                    rispostaControlli.setrBoolean(esitoRecupero);
-                                    zaos.closeArchiveEntry();
-                                    if (!esitoRecupero) {
-                                        setRispostaWsError(rispostaWs, rispostaControlli);
-                                        rispostaWs.setEsitoWsError(MessaggiWSBundle.ERR_666,
-                                                MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                                                        "Errore nel recupero dei file per lo zip"));
-                                        break; // esce dal ciclo for, se incontra un errore: ormai
-                                               // lo zip è condannato
+                                        // recupero documento blob vs obj storage
+                                        // build dto per recupero
+                                        RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(
+                                                TiEntitaSacerObjectStorage.COMP_DOC,
+                                                tmpCmp.getIdCompDoc(), zaos,
+                                                RecBlbOracle.TabellaBlob.BLOB);
+                                        // recupero
+                                        boolean esitoRecupero = recuperoDocumento
+                                                .callRecuperoDocSuStream(csRecuperoDoc);
+                                        rispostaControlli.setrBoolean(esitoRecupero);
+                                        zaos.closeArchiveEntry();
+                                        if (!esitoRecupero) {
+                                            setRispostaWsError(rispostaWs, rispostaControlli);
+                                            rispostaWs.setEsitoWsError(MessaggiWSBundle.ERR_666,
+                                                    MessaggiWSBundle.getString(
+                                                            MessaggiWSBundle.ERR_666,
+                                                            "Errore nel recupero dei file per lo zip"));
+                                            break; // esce dal ciclo for, se incontra un errore:
+                                                   // ormai lo zip è condannato
+                                        }
                                     }
+                                } catch (IOException ex) {
+                                    rispostaWs.setSeverity(SeverityEnum.ERROR);
+                                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                                            "Errore nella generazione dello zip da includere  "
+                                                    + ex.getMessage());
+                                    log.error("Errore nella generazione dello zip da includere ",
+                                            ex);
                                 }
 
                                 if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-                                    rispostaWs.setRifFileBinario(zipDaIncludere);
+                                    ZipArchiveEntry zae = new ZipArchiveEntry(pathPIndexSource);
+                                    this.filterZipEntry(zae);
+                                    zipOutputStream.putArchiveEntry(zae);
+                                    zipOutputStream.write(FileUtils.readFileToByteArray(tmpFile));
+                                    closeEntry = true;
                                 }
-                            } catch (IOException ex) {
-                                rispostaWs.setSeverity(SeverityEnum.ERROR);
-                                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                                        "Errore nella generazione dello zip da includere  "
-                                                + ex.getMessage());
-                                log.error("Errore nella generazione dello zip da includere ", ex);
+                            } finally {
+                                FileUtils.deleteQuietly(tmpFile);
                             }
                         }
-                    }
-                    if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-                        ZipArchiveEntry zae = new ZipArchiveEntry(pathPIndexSource);
-                        this.filterZipEntry(zae);
-                        zipOutputStream.putArchiveEntry(zae);
-                        zipOutputStream.write(FileUtils.readFileToByteArray(
-                                rispostaWs.getRifFileBinario().getFileSuDisco()));
-                        closeEntry = true;
                     }
                 }
                 if (closeEntry) {
@@ -1454,36 +1456,31 @@ public class RecuperoZipGen {
                             folder, fileName, it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR);
                     //
                     if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-                        FileBinario zipDaIncludere = new FileBinario();
                         File tmpFile = Files.createTempFile("output_", ".zip").toFile();
-                        zipDaIncludere.setFileSuDisco(tmpFile);
+                        try {
+                            try (FileOutputStream fos = new FileOutputStream(tmpFile);
+                                    ZipArchiveOutputStream zaos = new ZipArchiveOutputStream(fos)) {
 
-                        try (FileOutputStream fos = new FileOutputStream(
-                                zipDaIncludere.getFileSuDisco());
-                                ZipArchiveOutputStream zaos = new ZipArchiveOutputStream(fos)) {
+                                this.aggiungiProveConsUd(zaos, fileIndicePrecVersVol);
 
-                            this.aggiungiProveConsUd(zaos, fileIndicePrecVersVol);
+                            } catch (Exception ex) {
+                                rispostaWs.setSeverity(SeverityEnum.ERROR);
+                                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                                        "Errore nella generazione dello zip da includere  "
+                                                + ex.getMessage());
+                                log.error("Errore nella generazione dello zip da includere ", ex);
+                            }
 
-                        } catch (Exception ex) {
-                            rispostaWs.setSeverity(SeverityEnum.ERROR);
-                            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                                    "Errore nella generazione dello zip da includere  "
-                                            + ex.getMessage());
-                            log.error("Errore nella generazione dello zip da includere ", ex);
+                            if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+                                ZipArchiveEntry zae = new ZipArchiveEntry(pathPIndexSource);
+                                this.filterZipEntry(zae);
+                                zipOutputStream.putArchiveEntry(zae);
+                                zipOutputStream.write(FileUtils.readFileToByteArray(tmpFile));
+                                closeEntry = true;
+                            }
+                        } finally {
+                            FileUtils.deleteQuietly(tmpFile);
                         }
-
-                        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-                            rispostaWs.setRifFileBinario(zipDaIncludere);
-                        }
-                    }
-
-                    if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-                        ZipArchiveEntry zae = new ZipArchiveEntry(pathPIndexSource);
-                        this.filterZipEntry(zae);
-                        zipOutputStream.putArchiveEntry(zae);
-                        zipOutputStream.write(FileUtils.readFileToByteArray(
-                                rispostaWs.getRifFileBinario().getFileSuDisco()));
-                        closeEntry = true;
                     }
                 }
                 if (closeEntry) {

@@ -38,6 +38,7 @@ public class DatiSessioneRecupero {
     String errorMessage;
     boolean chiudiSessione = false;
     Date dataFineUsoBlob;
+    Date dtApertura;
 
     public Collection<Date> getDateDocumenti() {
         return dateDocumenti;
@@ -109,5 +110,13 @@ public class DatiSessioneRecupero {
 
     public void setDataFineUsoBlob(Date dataFineUsoBlob) {
         this.dataFineUsoBlob = dataFineUsoBlob;
+    }
+
+    public Date getDtApertura() {
+        return dtApertura;
+    }
+
+    public void setDtApertura(Date dtApertura) {
+        this.dtApertura = dtApertura;
     }
 }

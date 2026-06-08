@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sacer-jboss</artifactId>
-    <version>10.18.1-SNAPSHOT</version>
+    <version>10.18.1</version>
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
@@ -53,19 +53,19 @@
         <jaxp-jdk11.version>0.0.3</jaxp-jdk11.version>
     </properties>
 
-<distributionManagement>
-        <repository>
-          <id>github</id>
-          <url>https://maven.pkg.github.com/RegioneER/parer-sacer</url>
-        </repository>      
-    </distributionManagement>
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/RegioneER/parer-sacer</url>
+    </repository>
+  </distributionManagement>
 
-<repositories>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/RegioneER/parer-framework-parerpom</url>           
-        </repository>          
-     </repositories>
+  <repositories>
+    <repository>
+      <id>github</id>
+      <url>https://maven.pkg.github.com/RegioneER/parer-framework-parerpom</url>
+    </repository>
+  </repositories>
     
     <dependencyManagement>
         <dependencies>
@@ -539,8 +539,8 @@
         <module>sacer-web</module>
         <module>sacer-ear</module>
     </modules>
-<scm>
-        <developerConnection>scm:git:https://github.com/RegioneER/parer-sacer.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
+  <scm>
+    <developerConnection>scm:git:https://github.com/RegioneER/parer-sacer.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
 </project>

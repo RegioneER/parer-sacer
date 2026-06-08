@@ -141,6 +141,7 @@ public class GestSessRecupero {
                 Date date = dateFormat.parse(dataFine);
                 DatiSessioneRecupero datiSessioneRecupero = new DatiSessioneRecupero();
                 recupero.setDatiSessioneRecupero(datiSessioneRecupero);
+                datiSessioneRecupero.setDtApertura(new Date());
                 datiSessioneRecupero.setDataFineUsoBlob(date);
             } catch (ParseException e) {
                 setRispostaWsError();

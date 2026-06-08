@@ -437,7 +437,7 @@ public class ControlliRecTpi {
          * essere sollevata al metodo chiamante, provocando il rollback di tutto.
          */
         RecSessioneRecup tmpRecSessioneRecup = new RecSessioneRecup();
-        tmpRecSessioneRecup.setDtApertura(new Date());
+        tmpRecSessioneRecup.setDtApertura(datiSessioneRecupero.getDtApertura());
         if (datiSessioneRecupero.isChiudiSessione()) {
             tmpRecSessioneRecup.setDtChiusura(new Date());
         }

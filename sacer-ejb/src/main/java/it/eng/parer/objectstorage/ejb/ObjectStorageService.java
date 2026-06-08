@@ -616,9 +616,11 @@ public class ObjectStorageService {
                     link.getDecBackend().getNmBackend(), COMPONENTI_R);
             ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper
                     .getObject(config, link.getNmBucket(), link.getCdKeyFile());
+            log.info("Prima di eseguire la COPY LARGE dall'object storage...");
             IOUtils.copyLarge(object, outputStream);
         } catch (IOException | ObjectStorageException e) {
             // EJB spec (14.2.2 in the EJB 3)
+            log.error("ECCEZIONE NELLA LETTURA DELL'OGGETTO DALL'OBJECT STORAGE!");
             throw new EJBException(e);
         }
     }
