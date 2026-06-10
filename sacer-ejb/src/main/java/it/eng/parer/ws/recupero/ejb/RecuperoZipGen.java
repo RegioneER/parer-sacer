@@ -62,6 +62,7 @@ import it.eng.parerxml.xsd.FileXSDUtil;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipExtraField;
 import org.apache.commons.io.FileUtils;
@@ -78,6 +79,7 @@ import javax.xml.bind.Marshaller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -299,7 +301,7 @@ public class RecuperoZipGen {
             zipDaScaricare.setFileSuDisco(tmpOutput);
 
             try (FileOutputStream tmpOutputStream = new FileOutputStream(tmpOutput);
-                    ZipArchiveOutputStream tmpZipOutputStream = new ZipArchiveOutputStream(
+                    ZipArchiveOutputStream tmpZipOutputStream = newZip64OutputStream(
                             tmpOutputStream);) {
 
                 if (recuperaDip && rispostaWs.getSeverity() == SeverityEnum.OK) {
@@ -408,9 +410,10 @@ public class RecuperoZipGen {
             } finally {
                 if (rispostaWs.getSeverity() == SeverityEnum.ERROR
                         && zipDaScaricare.getFileSuDisco() != null) {
-                    FileUtils.deleteQuietly(zipDaScaricare.getFileSuDisco());
-                    log.info("CANCELLAZONE FILE TEMPORANEO: {}",
-                            zipDaScaricare.getFileSuDisco().getAbsolutePath());
+                    boolean result = FileUtils.deleteQuietly(zipDaScaricare.getFileSuDisco());
+                    log.info("CANCELLAZONE FILE TEMPORANEO: {}, con esito={}",
+                            zipDaScaricare.getFileSuDisco().getAbsolutePath(),
+                            result ? "POSITIVO" : "NEGATIVO");
                     zipDaScaricare.setFileSuDisco(null);
                 }
             }
@@ -481,7 +484,7 @@ public class RecuperoZipGen {
                 zipDaScaricare.setFileSuDisco(
                         File.createTempFile("output_", ".zip", new File(outputPath)));
                 tmpOutputStream = new FileOutputStream(zipDaScaricare.getFileSuDisco());
-                tmpZipOutputStream = new ZipArchiveOutputStream(tmpOutputStream);
+                tmpZipOutputStream = newZip64OutputStream(tmpOutputStream);
 
                 if (volVolumeConserv != null) {
                     this.aggiungiProveConsUd(tmpZipOutputStream, volVolumeConserv);
@@ -550,7 +553,7 @@ public class RecuperoZipGen {
                 zipDaScaricare.setFileSuDisco(
                         File.createTempFile("output_", ".zip", new File(outputPath)));
                 tmpOutputStream = new FileOutputStream(zipDaScaricare.getFileSuDisco());
-                tmpZipOutputStream = new ZipArchiveOutputStream(tmpOutputStream);
+                tmpZipOutputStream = newZip64OutputStream(tmpOutputStream);
 
                 tmpEntry = new ZipArchiveEntry("IndiceProveConservazione.xml");
                 tmpZipOutputStream.putArchiveEntry(tmpEntry);
@@ -645,7 +648,7 @@ public class RecuperoZipGen {
                     zipDaScaricare.setFileSuDisco(
                             File.createTempFile("output_", ".zip", new File(outputPath)));
                     tmpOutputStream = new FileOutputStream(zipDaScaricare.getFileSuDisco());
-                    tmpZipOutputStream = new ZipArchiveOutputStream(tmpOutputStream);
+                    tmpZipOutputStream = newZip64OutputStream(tmpOutputStream);
                     String fileName;
                     int contaRappVers = 1;
                     for (VrsXmlDatiSessioneVers tmpXml : lstVrsXml) {
@@ -767,7 +770,7 @@ public class RecuperoZipGen {
                 zipDaScaricare.setFileSuDisco(
                         File.createTempFile("output_", ".zip", new File(outputPath)));
                 tmpOutputStream = new FileOutputStream(zipDaScaricare.getFileSuDisco());
-                tmpZipOutputStream = new ZipArchiveOutputStream(tmpOutputStream);
+                tmpZipOutputStream = newZip64OutputStream(tmpOutputStream);
 
                 if (rispostaWs.getSeverity() == SeverityEnum.OK) {
                     this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero,
@@ -1347,8 +1350,7 @@ public class RecuperoZipGen {
                             File tmpFile = Files.createTempFile("output_", ".zip").toFile();
                             try {
                                 try (FileOutputStream fos = new FileOutputStream(tmpFile);
-                                        ZipArchiveOutputStream zaos = new ZipArchiveOutputStream(
-                                                fos)) {
+                                        ZipArchiveOutputStream zaos = newZip64OutputStream(fos)) {
 
                                     for (ComponenteRec tmpCmp : lstComp) {
                                         ZipArchiveEntry zae = new ZipArchiveEntry(
@@ -1459,7 +1461,7 @@ public class RecuperoZipGen {
                         File tmpFile = Files.createTempFile("output_", ".zip").toFile();
                         try {
                             try (FileOutputStream fos = new FileOutputStream(tmpFile);
-                                    ZipArchiveOutputStream zaos = new ZipArchiveOutputStream(fos)) {
+                                    ZipArchiveOutputStream zaos = newZip64OutputStream(fos)) {
 
                                 this.aggiungiProveConsUd(zaos, fileIndicePrecVersVol);
 
@@ -2553,5 +2555,18 @@ public class RecuperoZipGen {
         rispostaWs.setSeverity(SeverityEnum.ERROR);
         rispostaWs.setErrorCode(rispostaControlli.getCodErr());
         rispostaWs.setErrorMessage(rispostaControlli.getDsErr());
+    }
+
+    /*
+     * Il metodo newZip64OutputStream è stato creato per gestire correttamente la creazione di file
+     * ZIP di grandi dimensioni, superando il limite dei 4 GB imposto dal formato ZIP tradizionale.
+     * Utilizzando ZipArchiveOutputStream con Zip64Mode.AsNeeded, il sistema può creare file ZIP che
+     * supportano dimensioni superiori a 4 GB, garantendo così la compatibilità con file di grandi
+     * dimensioni senza incorrere in errori o limitazioni legate al formato ZIP standard.
+     */
+    private ZipArchiveOutputStream newZip64OutputStream(OutputStream out) {
+        ZipArchiveOutputStream zaos = new ZipArchiveOutputStream(out);
+        zaos.setUseZip64(Zip64Mode.AsNeeded);
+        return zaos;
     }
 }

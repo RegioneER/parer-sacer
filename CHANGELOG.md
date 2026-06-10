@@ -1,4 +1,9 @@
 
+## 10.19.0 (10-06-2026)
+
+### Novità: 1
+- [#40843](https://parermine.regione.emilia-romagna.it/issues/40843) Ottimizzazione nella gestione creazione di archive file (ZIP) con entry di dimensione superiore a 4Gbyte
+
 ## 10.18.1 (08-06-2026)
 
 ### Bugfix: 2
