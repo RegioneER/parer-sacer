@@ -1,4 +1,9 @@
 
+## 10.19.1 (12-06-2026)
+
+### Bugfix: 1
+- [#40854](https://parermine.regione.emilia-romagna.it/issues/40854) Correzione gestione header ZIP64 nella gestione creazione di archive file (ZIP) con entry di dimensione superiore a 4Gbyte
+
 ## 10.19.0 (10-06-2026)
 
 ### Novità: 1

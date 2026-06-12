@@ -2560,13 +2560,16 @@ public class RecuperoZipGen {
     /*
      * Il metodo newZip64OutputStream è stato creato per gestire correttamente la creazione di file
      * ZIP di grandi dimensioni, superando il limite dei 4 GB imposto dal formato ZIP tradizionale.
-     * Utilizzando ZipArchiveOutputStream con Zip64Mode.AsNeeded, il sistema può creare file ZIP che
-     * supportano dimensioni superiori a 4 GB, garantendo così la compatibilità con file di grandi
-     * dimensioni senza incorrere in errori o limitazioni legate al formato ZIP standard.
+     * Viene utilizzato Zip64Mode.Always poiché la scrittura avviene su uno stream non seekable
+     * (FileOutputStream): con Zip64Mode.AsNeeded le estensioni Zip64 vengono decise al momento di
+     * closeArchiveEntry(), ma su stream non seekable l'header locale è già stato scritto senza di
+     * esse, causando Zip64RequiredException per file superiori a 4 GB. Con Zip64Mode.Always le
+     * estensioni Zip64 vengono incluse fin dall'inizio in ogni entry, garantendo il supporto a file
+     * di qualsiasi dimensione.
      */
     private ZipArchiveOutputStream newZip64OutputStream(OutputStream out) {
         ZipArchiveOutputStream zaos = new ZipArchiveOutputStream(out);
-        zaos.setUseZip64(Zip64Mode.AsNeeded);
+        zaos.setUseZip64(Zip64Mode.Always);
         return zaos;
     }
 }
