@@ -21,14 +21,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
@@ -53,6 +53,9 @@ import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.versamento.dto.FileBinario;
 
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 /**
  *
  * @author Fioravanti_F
@@ -61,6 +64,11 @@ import it.eng.parer.ws.versamento.dto.FileBinario;
 public class GestSessRecDip {
 
     private static final Logger log = LoggerFactory.getLogger(GestSessRecDip.class);
+
+    // Timestamp fisso per gli entry ZIP (1 gennaio 2000)
+    private static final long DEFAULT_ZIP_TIMESTAMP = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0)
+            .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
     private RispostaWSRecupero rispostaWs;
     private HashCalculator hashCalculator;
     // EJB:
@@ -136,6 +144,15 @@ public class GestSessRecDip {
                 log.error("Errore nel recupero dell'EJB dei controlli  recupero DIP ", ex);
             }
         }
+    }
+
+    /**
+     * Crea un nuovo ZipEntry configurato con timestamp standard.
+     */
+    private ZipEntry createZipEntry(String name) {
+        ZipEntry entry = new ZipEntry(name);
+        entry.setTime(DEFAULT_ZIP_TIMESTAMP);
+        return entry;
     }
 
     public void caricaListaComponenti(RecuperoExt recupero) {
@@ -292,8 +309,8 @@ public class GestSessRecDip {
         RispostaControlli rispostaControlli;
         FileBinario fileDaScaricare = new FileBinario();
         FileOutputStream tmpOutputStream = null;
-        ZipArchiveOutputStream tmpZipOutputStream = null;
-        ZipArchiveEntry tmpEntry = null;
+        ZipOutputStream tmpZipOutputStream = null;
+        ZipEntry tmpEntry = null;
         boolean hoConvertitodeiFile = false;
 
         try {
@@ -303,7 +320,7 @@ public class GestSessRecDip {
             fileDaScaricare
                     .setFileSuDisco(File.createTempFile("output_", ".zip", new File(outputPath)));
             tmpOutputStream = new FileOutputStream(fileDaScaricare.getFileSuDisco());
-            tmpZipOutputStream = new ZipArchiveOutputStream(tmpOutputStream);
+            tmpZipOutputStream = new ZipOutputStream(tmpOutputStream);
 
             for (CompRecDip comp : compRecDips.values()) {
                 if (comp.isErroreFormatoContenuto()) {
@@ -320,11 +337,11 @@ public class GestSessRecDip {
                     comp.setErrorMessage(
                             "Il formato di rappresentazione non prevede una trasformazione.");
                 } else {
-                    tmpEntry = new ZipArchiveEntry(comp.getNomeFilePerZip());
-                    tmpZipOutputStream.putArchiveEntry(tmpEntry);
+                    tmpEntry = createZipEntry(comp.getNomeFilePerZip());
+                    tmpZipOutputStream.putNextEntry(tmpEntry);
                     rispostaControlli = this.converti(comp, compRecDips, tmpZipOutputStream,
                             recupero.getDipRootImg());
-                    tmpZipOutputStream.closeArchiveEntry();
+                    tmpZipOutputStream.closeEntry();
                     hoConvertitodeiFile = true;
                     if (!rispostaControlli.isrBoolean()) {
                         if (rispostaControlli.getCodErr() == null) {
@@ -348,6 +365,7 @@ public class GestSessRecDip {
                 }
             }
             tmpZipOutputStream.flush();
+            tmpZipOutputStream.finish();
             //
             if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK && (!hoConvertitodeiFile)) {
                 /*
@@ -382,10 +400,10 @@ public class GestSessRecDip {
         }
     }
 
-    public void recuperaConvInZip(ZipArchiveOutputStream tmpZipOutputStream, RecuperoExt recupero,
+    public void recuperaConvInZip(ZipOutputStream tmpZipOutputStream, RecuperoExt recupero,
             LinkedHashMap<Long, CompRecDip> compRecDips, String prefisso) {
         RispostaControlli rispostaControlli;
-        ZipArchiveEntry tmpEntry = null;
+        ZipEntry tmpEntry = null;
         String tmpSuffisso = "";
         String SUFF_ERRORE = ".err.txt";
         String SUFF_WARNING = ".warn.txt";
@@ -432,11 +450,10 @@ public class GestSessRecDip {
                         }
                     }
                 }
-                tmpEntry = new ZipArchiveEntry(
-                        prefisso + "/" + comp.getNomeFilePerZip() + tmpSuffisso);
-                tmpZipOutputStream.putArchiveEntry(tmpEntry);
+                tmpEntry = createZipEntry(prefisso + "/" + comp.getNomeFilePerZip() + tmpSuffisso);
+                tmpZipOutputStream.putNextEntry(tmpEntry);
                 tmpZipOutputStream.write(bos.toByteArray());
-                tmpZipOutputStream.closeArchiveEntry();
+                tmpZipOutputStream.closeEntry();
                 bos.reset();
             }
             tmpZipOutputStream.flush();

@@ -18,14 +18,14 @@
 package it.eng.parer.ws.recupero.utils;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,9 @@ import it.eng.parer.ws.recupero.ejb.ProduzioneDipEsibizione;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.xml.versReqStato.Recupero;
 
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 /**
  *
  * @author fioravanti_f
@@ -45,6 +48,10 @@ import it.eng.parer.ws.xml.versReqStato.Recupero;
 public class RecuperoTxtGen {
 
     private static final Logger log = LoggerFactory.getLogger(RecuperoTxtGen.class);
+
+    // Timestamp fisso per gli entry ZIP (1 gennaio 2000)
+    private static final long DEFAULT_ZIP_TIMESTAMP = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0)
+            .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
     private RispostaWSRecupero rispostaWs;
     private RispostaControlli rispostaControlli;
@@ -74,7 +81,16 @@ public class RecuperoTxtGen {
         }
     }
 
-    public void generaDipEsibizione(ZipArchiveOutputStream tmpZipOutputStream, RecuperoExt recupero)
+    /**
+     * Crea un nuovo ZipEntry configurato con timestamp standard.
+     */
+    private ZipEntry createZipEntry(String name) {
+        ZipEntry entry = new ZipEntry(name);
+        entry.setTime(DEFAULT_ZIP_TIMESTAMP);
+        return entry;
+    }
+
+    public void generaDipEsibizione(ZipOutputStream tmpZipOutputStream, RecuperoExt recupero)
             throws IOException {
         RispostaControlli rispostaControlli;
 
@@ -133,9 +149,10 @@ public class RecuperoTxtGen {
         String resolvedString = sub.replace(testoModello);
 
         // includo il DIP generato nell'archivio
-        tmpZipOutputStream.putArchiveEntry(new ZipArchiveEntry("dichiarazione_DIP_esibizione.txt"));
-        tmpZipOutputStream.write((byte[]) resolvedString.getBytes("UTF-8"));
-        tmpZipOutputStream.closeArchiveEntry();
+        ZipEntry zipEntry = createZipEntry("dichiarazione_DIP_esibizione.txt");
+        tmpZipOutputStream.putNextEntry(zipEntry);
+        tmpZipOutputStream.write(resolvedString.getBytes("UTF-8"));
+        tmpZipOutputStream.closeEntry();
     }
 
     private void setRispostaWsError() {

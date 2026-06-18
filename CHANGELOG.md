@@ -1,4 +1,9 @@
 
+## 10.19.2 (18-06-2026)
+
+### Bugfix: 1
+- [#40865](https://parermine.regione.emilia-romagna.it/issues/40865) Correzione gestione file archive con intruduzione librerie Java-native
+
 ## 10.19.1 (12-06-2026)
 
 ### Bugfix: 1
