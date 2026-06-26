@@ -720,6 +720,19 @@ public class ComboGetter {
         return mappaTiStatoPropScartoVers;
     }
 
+    public static DecodeMap getMappaTiAutorizzazionePropScarto() {
+        BaseTable bt = new BaseTable();
+        String key = "ti_autorizzazione";
+        DecodeMap mappa = new DecodeMap();
+        for (CostantiDB.TiAutorizzazionePropScartoVers val : sortEnum(
+                CostantiDB.TiAutorizzazionePropScartoVers.values())) {
+            BaseRow row = createKeyValueBaseRow(key, val.name());
+            bt.add(row);
+        }
+        mappa.populatedMap(bt, key, key);
+        return mappa;
+    }
+
     public static DecodeMap getMappaTiAlertPropScarto() {
         BaseTable bt = new BaseTable();
         String key = "ds_alert_sel";

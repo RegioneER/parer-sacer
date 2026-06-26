@@ -74,6 +74,35 @@ public class UnitaDocumentarieEjb {
     public void insertLogStatoConservUd(long idUnitaDoc, String nmAgente, String tiEvento,
             String tiStatoConservazione, String tiMod) {
         AroUnitaDoc unitaDoc = unitaDocumentarieHelper.findById(AroUnitaDoc.class, idUnitaDoc);
+        insertLogStatoConservUd(unitaDoc, nmAgente, tiEvento, tiStatoConservazione, tiMod, true);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void insertLogStatoConservUdNoFlush(AroUnitaDoc unitaDoc, String nmAgente,
+            String tiEvento, String tiStatoConservazione, String tiMod) {
+        insertLogStatoConservUd(unitaDoc, nmAgente, tiEvento, tiStatoConservazione, tiMod, false);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public Long insertLogStatoConservUdAndReturnId(AroUnitaDoc unitaDoc, String nmAgente,
+            String tiEvento, String tiStatoConservazione, String tiMod) {
+        AroLogStatoConservUd logStatoConservUd = insertLogStatoConservUd(unitaDoc, nmAgente,
+                tiEvento, tiStatoConservazione, tiMod, true);
+        return logStatoConservUd != null ? logStatoConservUd.getIdLogStatoConservUd() : null;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteLogStatoConservUd(long idLogStatoConservUd) {
+        AroLogStatoConservUd logStatoConservUd = unitaDocumentarieHelper.getEntityManager()
+                .find(AroLogStatoConservUd.class, idLogStatoConservUd);
+        if (logStatoConservUd != null) {
+            unitaDocumentarieHelper.getEntityManager().remove(logStatoConservUd);
+            unitaDocumentarieHelper.getEntityManager().flush();
+        }
+    }
+
+    private AroLogStatoConservUd insertLogStatoConservUd(AroUnitaDoc unitaDoc, String nmAgente,
+            String tiEvento, String tiStatoConservazione, String tiMod, boolean flushAfterPersist) {
         BigDecimal idAmbiente = BigDecimal
                 .valueOf(unitaDoc.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
         BigDecimal idStrut = BigDecimal.valueOf(unitaDoc.getOrgStrut().getIdStrut());
@@ -103,8 +132,12 @@ public class UnitaDocumentarieEjb {
             }
             unitaDoc.getAroLogStatoConservUds().add(logStatoConservUd);
             unitaDocumentarieHelper.getEntityManager().persist(logStatoConservUd);
-            unitaDocumentarieHelper.getEntityManager().flush();
+            if (flushAfterPersist) {
+                unitaDocumentarieHelper.getEntityManager().flush();
+            }
+            return logStatoConservUd;
         }
+        return null;
     }
     // end MEV #31162
 

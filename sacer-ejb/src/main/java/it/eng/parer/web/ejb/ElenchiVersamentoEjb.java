@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -141,6 +142,42 @@ public class ElenchiVersamentoEjb {
 
     private static final Logger log = LoggerFactory.getLogger(ElenchiVersamentoEjb.class);
     public static final String DATE_FORMAT = "yyyyMMdd";
+    private static final int MAX_COMPLETAMENTI_AIP_PARALLELI = 4;
+
+    public static final class EsitoCompletamentoElencoIndiceAip {
+
+        private final long idElencoVers;
+        private final boolean errore;
+        private final String messaggioErrore;
+
+        private EsitoCompletamentoElencoIndiceAip(long idElencoVers, boolean errore,
+                String messaggioErrore) {
+            this.idElencoVers = idElencoVers;
+            this.errore = errore;
+            this.messaggioErrore = messaggioErrore;
+        }
+
+        private static EsitoCompletamentoElencoIndiceAip ok(long idElencoVers) {
+            return new EsitoCompletamentoElencoIndiceAip(idElencoVers, false, null);
+        }
+
+        private static EsitoCompletamentoElencoIndiceAip errore(long idElencoVers,
+                String messaggioErrore) {
+            return new EsitoCompletamentoElencoIndiceAip(idElencoVers, true, messaggioErrore);
+        }
+    }
+
+    private static final class TaskCompletamentoElencoIndiceAip {
+
+        private final long idElencoVers;
+        private final Future<EsitoCompletamentoElencoIndiceAip> future;
+
+        private TaskCompletamentoElencoIndiceAip(long idElencoVers,
+                Future<EsitoCompletamentoElencoIndiceAip> future) {
+            this.idElencoVers = idElencoVers;
+            this.future = future;
+        }
+    }
 
     @Resource
     private SessionContext context;
@@ -1633,23 +1670,69 @@ public class ElenchiVersamentoEjb {
     private void gestioneCompletamentoFirmaElenchiIndiciAip(Set<Long> struts,
             List<ElvVLisElencoDaMarcare> elenchiDaMarcare, long idUtente)
             throws ParerInternalError {
+        List<TaskCompletamentoElencoIndiceAip> taskInCorso = new ArrayList<>();
         for (ElvVLisElencoDaMarcare elvVLisElencoDaMarcare : elenchiDaMarcare) {
-            try {
-                if (struts != null) {
-                    struts.add(elvVLisElencoDaMarcare.getIdStrut().longValue());
-                }
-                context.getBusinessObject(ElenchiVersamentoEjb.class)
-                        .gestioneCompletamentoElenchiIndiciAip(
-                                elvVLisElencoDaMarcare.getIdElencoVers().longValue(),
-                                elvVLisElencoDaMarcare.getTiGestElenco(), idUtente);
-            } catch (ParerInternalError ex) {
-                // Errore di acquisizione marca temporale, deve essere intercettata e gestita, poi
-                // terminare lo use case
-                context.getBusinessObject(ElenchiVersamentoEjb.class)
-                        .saveErroreMarcaElencoIndiceAip(
-                                elvVLisElencoDaMarcare.getIdElencoVers().longValue(), idUtente);
-                throw ex;
+            if (struts != null) {
+                struts.add(elvVLisElencoDaMarcare.getIdStrut().longValue());
             }
+            long idElencoVers = elvVLisElencoDaMarcare.getIdElencoVers().longValue();
+            Future<EsitoCompletamentoElencoIndiceAip> future = context
+                    .getBusinessObject(ElenchiVersamentoEjb.class)
+                    .gestioneCompletamentoElenchiIndiciAipAsync(idElencoVers,
+                            elvVLisElencoDaMarcare.getTiGestElenco(), idUtente);
+            taskInCorso.add(new TaskCompletamentoElencoIndiceAip(idElencoVers, future));
+            if (taskInCorso.size() >= MAX_COMPLETAMENTI_AIP_PARALLELI) {
+                attendiCompletamentoFirmaElenchiIndiciAip(taskInCorso, idUtente);
+                taskInCorso.clear();
+            }
+        }
+        attendiCompletamentoFirmaElenchiIndiciAip(taskInCorso, idUtente);
+    }
+
+    private void attendiCompletamentoFirmaElenchiIndiciAip(
+            List<TaskCompletamentoElencoIndiceAip> taskInCorso, long idUtente)
+            throws ParerInternalError {
+        for (TaskCompletamentoElencoIndiceAip task : taskInCorso) {
+            try {
+                EsitoCompletamentoElencoIndiceAip esito = task.future.get();
+                if (esito.errore) {
+                    context.getBusinessObject(ElenchiVersamentoEjb.class)
+                            .saveErroreMarcaElencoIndiceAip(esito.idElencoVers, idUtente);
+                    throw new ParerInternalError(StringUtils.defaultIfBlank(esito.messaggioErrore,
+                            "Errore durante la fase di completamento della firma"));
+                }
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                context.getBusinessObject(ElenchiVersamentoEjb.class)
+                        .saveErroreMarcaElencoIndiceAip(task.idElencoVers, idUtente);
+                throw new ParerInternalError(
+                        "Interruzione durante la fase di completamento della firma", ex);
+            } catch (ExecutionException ex) {
+                context.getBusinessObject(ElenchiVersamentoEjb.class)
+                        .saveErroreMarcaElencoIndiceAip(task.idElencoVers, idUtente);
+                throw new ParerInternalError(
+                        "Errore asincrono durante la fase di completamento della firma", ex);
+            }
+        }
+    }
+
+    @Asynchronous
+    public Future<EsitoCompletamentoElencoIndiceAip> gestioneCompletamentoElenchiIndiciAipAsync(
+            long idElencoVers, String tiGestElenco, long idUtente) {
+        try {
+            context.getBusinessObject(ElenchiVersamentoEjb.class)
+                    .gestioneCompletamentoElenchiIndiciAip(idElencoVers, tiGestElenco, idUtente);
+            return new AsyncResult<>(EsitoCompletamentoElencoIndiceAip.ok(idElencoVers));
+        } catch (ParerInternalError ex) {
+            log.error("Errore nel completamento asincrono dell'elenco indice AIP {}", idElencoVers,
+                    ex);
+            return new AsyncResult<>(
+                    EsitoCompletamentoElencoIndiceAip.errore(idElencoVers, ex.getDescription()));
+        } catch (RuntimeException ex) {
+            log.error("Errore runtime nel completamento asincrono dell'elenco indice AIP {}",
+                    idElencoVers, ex);
+            return new AsyncResult<>(
+                    EsitoCompletamentoElencoIndiceAip.errore(idElencoVers, ex.getMessage()));
         }
     }
 
@@ -1680,9 +1763,9 @@ public class ElenchiVersamentoEjb {
                         tiGestioneEnum, tiGestioneEnum.equals(FIRMA) ? Constants.FUNZIONALITA_ONLINE
                                 : Constants.NM_AGENTE_JOB_SACER);
                 // EVO 19304
-                evWebEjb.registraStatoElencoVersamento(BigDecimal.valueOf(elenco.getIdElencoVers()),
-                        "MARCA_ELENCO_INDICI_AIP", "Gestione elenco = " + tiGestioneEnum.name(),
-                        TiStatoElenco.COMPLETATO, null);
+                registraStatoElencoVersamento(elenco, "MARCA_ELENCO_INDICI_AIP",
+                        "Gestione elenco = " + tiGestioneEnum.name(), TiStatoElenco.COMPLETATO,
+                        null);
             } else {
                 log.warn(
                         "Impossibile completare l'elenco indice AIP con id {}, NON è in stato ELENCO_INDICI_AIP_FIRMATO",
@@ -1867,12 +1950,10 @@ public class ElenchiVersamentoEjb {
         /* Registro sul log delle operazioni */
         evHelper.writeLogElencoVers(elenco, orgStrut, idUtente,
                 ElencoEnums.OpTypeEnum.MARCA_ELENCO_INDICI_AIP.name());
-        IamUser user = genericHelper.findById(IamUser.class, idUtente);
         // EVO 19304
-        registraStatoElencoVersamento(BigDecimal.valueOf(elenco.getIdElencoVers()),
-                "MARCA_ELENCO_INDICI_AIP",
+        registraStatoElencoVersamento(elenco, "MARCA_ELENCO_INDICI_AIP",
                 "Marca assunta con successo; gestione elenco = MARCA_FIRMA",
-                TiStatoElenco.COMPLETATO, user.getNmUserid());
+                TiStatoElenco.COMPLETATO, idUtente);
         log.debug("Impostazione stato elenco a COMPLETATO.");
     }
 
@@ -1904,10 +1985,9 @@ public class ElenchiVersamentoEjb {
         evHelper.writeLogElencoVers(elenco, elenco.getOrgStrut(), idUtente,
                 ElencoEnums.OpTypeEnum.MARCA_ELENCO_INDICI_AIP_FALLITA.name());
         // EVO 19304
-        IamUser user = genericHelper.findById(IamUser.class, idUtente);
-        registraStatoElencoVersamento(BigDecimal.valueOf(idElencoVers), "MARCA_ELENCO_INDICI_AIP",
+        registraStatoElencoVersamento(elenco, "MARCA_ELENCO_INDICI_AIP",
                 "Errore nell’assunzione della marca; gestione elenco = MARCA_FIRMA",
-                TiStatoElenco.ELENCO_INDICI_AIP_ERR_MARCA, user.getNmUserid());
+                TiStatoElenco.ELENCO_INDICI_AIP_ERR_MARCA, idUtente);
     }
 
     /**
@@ -2083,18 +2163,37 @@ public class ElenchiVersamentoEjb {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long registraStatoElencoVersamento(BigDecimal idElencoVers, String cdTiEveElencoVers,
             String dsCondStatoElencoVers, TiStatoElenco tiStatoElenco, String nmUserid) {
+        Long idUserIam = null;
+        if (nmUserid != null) {
+            IamUser user = userHelper.findIamUser(nmUserid);
+            idUserIam = user.getIdUserIam();
+        }
+        ElvElencoVer elencoVer = genericHelper.getEntityManager().getReference(ElvElencoVer.class,
+                idElencoVers.longValueExact());
+        return registraStatoElencoVersamento(elencoVer, cdTiEveElencoVers, dsCondStatoElencoVers,
+                tiStatoElenco, idUserIam);
+    }
+
+    private long registraStatoElencoVersamento(ElvElencoVer elencoVer, String cdTiEveElencoVers,
+            String dsCondStatoElencoVers, TiStatoElenco tiStatoElenco, Long idUserIam) {
+        BigDecimal idTiEveStatoElencoVers = evHelper.getIdTiEveStatoElencoVers(cdTiEveElencoVers);
+        return registraStatoElencoVersamento(elencoVer, dsCondStatoElencoVers, tiStatoElenco,
+                idUserIam, idTiEveStatoElencoVers);
+    }
+
+    private long registraStatoElencoVersamento(ElvElencoVer elencoVer, String dsCondStatoElencoVers,
+            TiStatoElenco tiStatoElenco, Long idUserIam, BigDecimal idTiEveStatoElencoVers) {
         ElvStatoElencoVer statoElencoVers = new ElvStatoElencoVer();
         statoElencoVers.setTiStatoElenco(tiStatoElenco);
         statoElencoVers.setPgStatoElencoVers(
-                evHelper.getPgStatoElencoVers(idElencoVers).add(BigDecimal.ONE));
-        if (nmUserid != null) {
-            IamUser user = userHelper.findIamUser(nmUserid);
+                evHelper.getPgStatoElencoVers(BigDecimal.valueOf(elencoVer.getIdElencoVers()))
+                        .add(BigDecimal.ONE));
+        if (idUserIam != null) {
+            IamUser user = genericHelper.getEntityManager().getReference(IamUser.class, idUserIam);
             statoElencoVers.setIamUser(user);
         }
         statoElencoVers.setDsCondStatoElencoVers(dsCondStatoElencoVers);
-        BigDecimal idTiEveStatoElencoVers = evHelper.getIdTiEveStatoElencoVers(cdTiEveElencoVers);
         statoElencoVers.setIdTiEveStatoElencoVers(idTiEveStatoElencoVers);// setElvElencoVer
-        ElvElencoVer elencoVer = genericHelper.findById(ElvElencoVer.class, idElencoVers);
         statoElencoVers.setElvElencoVer(elencoVer);
         statoElencoVers.setTsStatoElencoVers(new Date());
         genericHelper.getEntityManager().persist(statoElencoVers);

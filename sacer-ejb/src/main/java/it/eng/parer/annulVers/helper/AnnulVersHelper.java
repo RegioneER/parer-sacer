@@ -557,6 +557,19 @@ public class AnnulVersHelper extends GenericHelper {
         q.executeUpdate();
     }
 
+    public int deleteAroCompUrnCalcByRichAnnulVers(long idRichAnnulVers) {
+        Query q = getEntityManager().createQuery("DELETE FROM AroCompUrnCalc compUrnCalc "
+                + "WHERE EXISTS ("
+                + "SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers "
+                + "WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers "
+                + "AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' " + "AND ("
+                + "itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = compUrnCalc.aroCompDoc.aroUnitaDoc.idUnitaDoc "
+                + "OR itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = compUrnCalc.aroCompDoc.aroStrutDoc.aroDoc.aroUnitaDoc.idUnitaDoc"
+                + ")" + ")");
+        q.setParameter("idRichAnnulVers", idRichAnnulVers);
+        return q.executeUpdate();
+    }
+
     public void updateStatoItemList(Long idRichAnnulVers, String tiStatoItem) {
         Query q = getEntityManager().createQuery(
                 "UPDATE AroItemRichAnnulVers itemRichAnnulVers SET itemRichAnnulVers.tiStatoItem = :tiStatoItem "

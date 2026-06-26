@@ -104,6 +104,22 @@ public class ElaborazioneElencoIndiceAip {
 
     private static final Logger log = LoggerFactory.getLogger(ElaborazioneElencoIndiceAip.class);
 
+    public static final class EsitoCompletamentoUdIndiceAip {
+
+        private final long idUnitaDoc;
+        private final String tiStatoUdElencoVersPrecedente;
+        private final String tiStatoConservazionePrecedente;
+        private final Long idLogStatoConservUd;
+
+        private EsitoCompletamentoUdIndiceAip(long idUnitaDoc, String tiStatoUdElencoVersPrecedente,
+                String tiStatoConservazionePrecedente, Long idLogStatoConservUd) {
+            this.idUnitaDoc = idUnitaDoc;
+            this.tiStatoUdElencoVersPrecedente = tiStatoUdElencoVersPrecedente;
+            this.tiStatoConservazionePrecedente = tiStatoConservazionePrecedente;
+            this.idLogStatoConservUd = idLogStatoConservUd;
+        }
+    }
+
     @Resource
     private SessionContext context;
     @EJB
@@ -394,58 +410,85 @@ public class ElaborazioneElencoIndiceAip {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void setCompletato(ElvElencoVer elenco, List<String> statiUdDocDaCompletare,
             long idUtente, ElencoEnums.GestioneElencoEnum tiGestioneEnum, String modalitaLog) {
+        String agente;
+        if (modalitaLog.equals(Constants.FUNZIONALITA_ONLINE)) {
+            IamUser utente = ciaHelper.findById(IamUser.class, idUtente);
+            agente = utente.getNmUserid();
+        } else {
+            agente = Constants.JOB_SIGILLO;
+        }
+        String evento = (tiGestioneEnum.equals(FIRMA) || tiGestioneEnum.equals(SIGILLO))
+                ? Constants.FIRMA_ELENCO_INDICE_AIP_UD
+                : Constants.MARCA_ELENCO_INDICE_AIP_UD;
+
+        Set<Long> idUnitaDocSet = elencoHelper
+                .retrieveUdVersOrAggInElenco(elenco.getIdElencoVers());
+        List<EsitoCompletamentoUdIndiceAip> esitiCompletamentoUd = new ArrayList<>();
+        for (Long idUnitaDoc : idUnitaDocSet) {
+            EsitoCompletamentoUdIndiceAip esito = context
+                    .getBusinessObject(ElaborazioneElencoIndiceAip.class)
+                    .setCompletatoSingolaUd(idUnitaDoc, agente, evento, modalitaLog);
+            esitiCompletamentoUd.add(esito);
+            log.debug("setCompletato() UD: {}", idUnitaDoc);
+        }
+        finalizzaSetCompletato(elenco, statiUdDocDaCompletare);
+    }
+
+    private void finalizzaSetCompletato(ElvElencoVer elenco, List<String> statiUdDocDaCompletare) {
         ElvElencoVersDaElab elencoDaElab = elencoHelper.retrieveElencoInQueue(elenco);
         elenco.setTiStatoElenco(ElencoEnums.ElencoStatusEnum.COMPLETATO.name());
-        // Elimino l'elenco da elaborare
         ciaHelper.removeEntity(elencoDaElab, true);
-        //
         ciaHelper.updateDocumentiElencoIndiceAIP(elenco.getIdElencoVers(), statiUdDocDaCompletare,
-                ElencoEnums.UdDocStatusEnum.IN_ELENCO_COMPLETATO.name());
-        ciaHelper.updateUnitaDocElencoIndiceAIP(elenco.getIdElencoVers(), statiUdDocDaCompletare,
                 ElencoEnums.UdDocStatusEnum.IN_ELENCO_COMPLETATO.name());
         ciaHelper.updateAggiornamentiElencoIndiceAIP(elenco.getIdElencoVers(),
                 transformCollection(statiUdDocDaCompletare),
                 AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_COMPLETATO);
+    }
 
-        Set<Long> idUnitaDocSet = elencoHelper
-                .retrieveUdVersOrAggInElenco(elenco.getIdElencoVers());
-        for (Long idUnitaDoc : idUnitaDocSet) {
-            AroUnitaDoc ud = ciaHelper.findById(AroUnitaDoc.class, idUnitaDoc);
-            // MEV #31162
-            // Recupero il nome agente: utente o JOB del Sigillo
-            String agente = "";
-            if (modalitaLog.equals(Constants.FUNZIONALITA_ONLINE)) {
-                IamUser utente = ciaHelper.findById(IamUser.class, idUtente);
-                agente = utente.getNmUserid();
-            } else {
-                agente = Constants.JOB_SIGILLO;
-            }
-            // Recupero se solo firma o firma e marca
-            String evento = (tiGestioneEnum.equals(FIRMA) || tiGestioneEnum.equals(SIGILLO))
-                    ? Constants.FIRMA_ELENCO_INDICE_AIP_UD
-                    : Constants.MARCA_ELENCO_INDICE_AIP_UD;
-            // end MEV #31162
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public EsitoCompletamentoUdIndiceAip setCompletatoSingolaUd(long idUnitaDoc, String agente,
+            String evento, String modalitaLog) {
+        AroUnitaDoc ud = elencoHelper.retrieveAndLockUnitaDocById(idUnitaDoc);
+        String tiStatoUdElencoVersPrecedente = ud.getTiStatoUdElencoVers();
+        String tiStatoConservazionePrecedente = ud.getTiStatoConservazione();
+        ud.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.IN_ELENCO_COMPLETATO.name());
 
-            // Lock su ud
-            elencoHelper.lockUnitaDoc(ud);
-            if (ud.getTiStatoConservazione()
-                    .equals(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name())) {
-                ud.setTiStatoConservazione(
-                        CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name());
-                // MEV #31162
-                udEjb.insertLogStatoConservUd(ud.getIdUnitaDoc(), agente, evento,
-                        CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name(), modalitaLog);
-                // end MEV #31162
-            } // MAC 34839
-            else if (ud.getTiStatoConservazione()
-                    .equals(CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name())) {
-                // MEV #31162
-                udEjb.insertLogStatoConservUd(ud.getIdUnitaDoc(), agente, evento,
-                        CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name(),
-                        modalitaLog);
-                // end MEV #31162
+        Long idLogStatoConservUd = null;
+        if (CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name()
+                .equals(tiStatoConservazionePrecedente)) {
+            ud.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name());
+            idLogStatoConservUd = udEjb.insertLogStatoConservUdAndReturnId(ud, agente, evento,
+                    CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name(), modalitaLog);
+        } else if (CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name()
+                .equals(tiStatoConservazionePrecedente)) {
+            idLogStatoConservUd = udEjb.insertLogStatoConservUdAndReturnId(ud, agente, evento,
+                    CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name(), modalitaLog);
+        }
+
+        return new EsitoCompletamentoUdIndiceAip(idUnitaDoc, tiStatoUdElencoVersPrecedente,
+                tiStatoConservazionePrecedente, idLogStatoConservUd);
+    }
+
+    private void ripristinaSetCompletato(List<EsitoCompletamentoUdIndiceAip> esitiCompletamentoUd) {
+        for (int index = esitiCompletamentoUd.size() - 1; index >= 0; index--) {
+            EsitoCompletamentoUdIndiceAip esito = esitiCompletamentoUd.get(index);
+            try {
+                context.getBusinessObject(ElaborazioneElencoIndiceAip.class)
+                        .ripristinaSetCompletatoSingolaUd(esito);
+            } catch (RuntimeException ex) {
+                log.error("Errore durante il rollback compensativo della UD {} dell'elenco AIP",
+                        esito.idUnitaDoc, ex);
             }
-            log.debug("setCompletato() UD: {}", idUnitaDoc);
+        }
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void ripristinaSetCompletatoSingolaUd(EsitoCompletamentoUdIndiceAip esito) {
+        AroUnitaDoc ud = elencoHelper.retrieveAndLockUnitaDocById(esito.idUnitaDoc);
+        ud.setTiStatoUdElencoVers(esito.tiStatoUdElencoVersPrecedente);
+        ud.setTiStatoConservazione(esito.tiStatoConservazionePrecedente);
+        if (esito.idLogStatoConservUd != null) {
+            udEjb.deleteLogStatoConservUd(esito.idLogStatoConservUd);
         }
     }
 

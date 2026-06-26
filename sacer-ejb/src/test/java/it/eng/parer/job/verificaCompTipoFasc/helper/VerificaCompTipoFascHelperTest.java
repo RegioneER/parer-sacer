@@ -45,7 +45,7 @@ public class VerificaCompTipoFascHelperTest extends HelperTest<VerificaCompTipoF
         long idTipoFascicolo = aLong();
         long idStrut = aLong();
         Long anno = aLong();
-        helper.getListaFasFascicoloDaVerificare(idTipoFascicolo, idStrut, anno);
+        helper.getStreamFasFascicoloDaVerificare(idTipoFascicolo, idStrut, anno);
         assertTrue(true);
     }
 

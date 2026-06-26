@@ -1202,11 +1202,6 @@ public class ScartoHelper extends GenericHelper {
                 + "AND stato.pgStatoPropScartoVers = (SELECT MAX(maxStati.pgStatoPropScartoVers) FROM AroStatoPropScartoVers maxStati WHERE maxStati.aroPropScartoVers.idPropScartoVers = stato.aroPropScartoVers.idPropScartoVers) "
                 + "AND stato.tiStatoPropScartoVers = :tiStatoPropScartoVers ";
         Query query = getEntityManager().createQuery(queryStr);
-        // ElencoStatusEnum[] elencoEnums = ElencoStatusEnum.getStatoElencoDeletable();
-        // List<String> elencoString = new ArrayList<>();
-        // for (ElencoStatusEnum elencoEnum : elencoEnums) {
-        // elencoString.add(elencoEnum.name());
-        // }
         query.setParameter("idPropScartoVers", longFromBigDecimal(idPropScartoVers));
         query.setParameter("tiStatoPropScartoVers", CostantiDB.TiStatoPropScartoVers.APERTA.name());
         return !query.getResultList().isEmpty();
@@ -1333,13 +1328,18 @@ public class ScartoHelper extends GenericHelper {
      * @param idTipoUd         tipo ud
      * @param idRegistro       registro
      * @param anno             anno
+     * @param annoDa           anno da
+     * @param annoA            anno a
      * @param numero           numero
+     * @param numeroDa         numero da
+     * @param numeroA          numero a
      * @param flScartabile     scartabile
      * @param dsAlertTesto     alert
      * @return lista delle ud
      */
     public List<Object[]> getUdSalvateConAlertNative(Long idPropScartoVers, BigDecimal idTipoUd,
-            BigDecimal idRegistro, BigDecimal anno, String numero, String flScartabile,
+            BigDecimal idRegistro, BigDecimal anno, BigDecimal annoDa, BigDecimal annoA,
+            String numero, String numeroDa, String numeroA, String flScartabile,
             String dsAlertTesto) {
 
         StringBuilder sql = new StringBuilder();
@@ -1383,10 +1383,24 @@ public class ScartoHelper extends GenericHelper {
             sql.append(" AND t.ID_TIPO_UNITA_DOC = :idTipoUd ");
         if (idRegistro != null)
             sql.append(" AND u.ID_REGISTRO_UNITA_DOC = :idRegistro ");
-        if (anno != null)
+        // Anno: singolo ha precedenza sul range
+        if (anno != null) {
             sql.append(" AND u.AA_KEY_UNITA_DOC = :anno ");
-        if (StringUtils.isNotBlank(numero))
+        } else {
+            if (annoDa != null)
+                sql.append(" AND u.AA_KEY_UNITA_DOC >= :annoDa ");
+            if (annoA != null)
+                sql.append(" AND u.AA_KEY_UNITA_DOC <= :annoA ");
+        }
+        // Numero: singolo ha precedenza sul range
+        if (StringUtils.isNotBlank(numero)) {
             sql.append(" AND u.CD_KEY_UNITA_DOC = :numero ");
+        } else {
+            if (StringUtils.isNotBlank(numeroDa))
+                sql.append(" AND u.CD_KEY_UNITA_DOC >= :numeroDa ");
+            if (StringUtils.isNotBlank(numeroA))
+                sql.append(" AND u.CD_KEY_UNITA_DOC <= :numeroA ");
+        }
 
         sql.append(") result_set ");
 
@@ -1408,15 +1422,55 @@ public class ScartoHelper extends GenericHelper {
             q.setParameter("idTipoUd", idTipoUd.longValue());
         if (idRegistro != null)
             q.setParameter("idRegistro", idRegistro.longValue());
-        if (anno != null)
+        if (anno != null) {
             q.setParameter("anno", anno);
-        if (StringUtils.isNotBlank(numero))
+        } else {
+            if (annoDa != null)
+                q.setParameter("annoDa", annoDa);
+            if (annoA != null)
+                q.setParameter("annoA", annoA);
+        }
+        if (StringUtils.isNotBlank(numero)) {
             q.setParameter("numero", numero);
+        } else {
+            if (StringUtils.isNotBlank(numeroDa))
+                q.setParameter("numeroDa", numeroDa);
+            if (StringUtils.isNotBlank(numeroA))
+                q.setParameter("numeroA", numeroA);
+        }
         if (StringUtils.isNotBlank(flScartabile))
             q.setParameter("flScartabile", flScartabile);
         if (StringUtils.isNotBlank(dsAlertTesto))
             q.setParameter("dsAlert", "%" + dsAlertTesto + "%");
 
         return q.getResultList();
+    }
+
+    /**
+     * Cancella fisicamente tutti gli item (di qualunque tipo) di una proposta di scarto. Utilizzato
+     * prima della cancellazione della proposta stessa quando lo stato è DA_AUTORIZZARE.
+     *
+     * @param idPropScartoVers L'id della proposta di scarto
+     */
+    public void deleteAllItemsDaProposta(Long idPropScartoVers) {
+        getEntityManager()
+                .createQuery("DELETE FROM AroItemPropScartoVers i "
+                        + "WHERE i.aroPropScartoVers.idPropScartoVers = :idProp")
+                .setParameter("idProp", idPropScartoVers)
+                .executeUpdate();
+    }
+
+    /**
+     * Cancella fisicamente tutti gli stati di una proposta di scarto. Utilizzato prima della
+     * cancellazione della proposta stessa quando lo stato è DA_AUTORIZZARE.
+     *
+     * @param idPropScartoVers L'id della proposta di scarto
+     */
+    public void deleteAllStatiDaProposta(Long idPropScartoVers) {
+        getEntityManager()
+                .createQuery("DELETE FROM AroStatoPropScartoVers s "
+                        + "WHERE s.aroPropScartoVers.idPropScartoVers = :idProp")
+                .setParameter("idProp", idPropScartoVers)
+                .executeUpdate();
     }
 }

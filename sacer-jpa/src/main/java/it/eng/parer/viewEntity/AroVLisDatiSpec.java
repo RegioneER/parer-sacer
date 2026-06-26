@@ -41,10 +41,12 @@ public class AroVLisDatiSpec implements Serializable {
     private Date dtSoppres;
     private BigDecimal idCompDoc;
     private BigDecimal idDoc;
+    private BigDecimal idStrut;
     private BigDecimal idUnitaDoc;
     private BigDecimal idUsoXsdDatiSpec;
     private BigDecimal idValoreAttribDatiSpec;
     private BigDecimal niOrdAttrib;
+    private BigDecimal aaKeyUnitaDoc;
     private String nmAttribDatiSpec;
     private String nmSistemaMigraz;
     private String tiEntitaSacer;
@@ -127,6 +129,15 @@ public class AroVLisDatiSpec implements Serializable {
         this.idDoc = idDoc;
     }
 
+    @Column(name = "ID_STRUT")
+    public BigDecimal getIdStrut() {
+        return this.idStrut;
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        this.idStrut = idStrut;
+    }
+
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
         return this.idUnitaDoc;
@@ -162,6 +173,15 @@ public class AroVLisDatiSpec implements Serializable {
 
     public void setNiOrdAttrib(BigDecimal niOrdAttrib) {
         this.niOrdAttrib = niOrdAttrib;
+    }
+
+    @Column(name = "AA_KEY_UNITA_DOC")
+    public BigDecimal getAaKeyUnitaDoc() {
+        return this.aaKeyUnitaDoc;
+    }
+
+    public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "NM_ATTRIB_DATI_SPEC")

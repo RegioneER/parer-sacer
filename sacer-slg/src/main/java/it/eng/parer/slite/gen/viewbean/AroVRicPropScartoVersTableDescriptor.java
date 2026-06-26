@@ -50,6 +50,18 @@ public class AroVRicPropScartoVersTableDescriptor extends TableDescriptor {
     public static final String COL_DT_CREAZIONE_PROP_SCARTO_VERS = "dt_creazione_prop_scarto_vers";
     public static final String COL_DT_ULTIMA_MOD_PROP_SCARTO_VERS = "dt_ultima_mod_prop_scarto_vers";
     public static final String COL_TI_STATO_PROP_SCARTO_VERS_COR = "ti_stato_prop_scarto_vers_cor";
+    public static final String COL_NT_AUTORITA = "nt_autorita";
+    public static final String COL_CD_REGISTRO_RICH_AUT = "cd_registro_rich_aut";
+    public static final String COL_AA_RICH_AUT = "aa_rich_aut";
+    public static final String COL_CD_RICH_AUT = "cd_rich_aut";
+    public static final String COL_CD_REGISTRO_RISP_AUT = "cd_registro_risp_aut";
+    public static final String COL_AA_RISP_AUT = "aa_risp_aut";
+    public static final String COL_CD_RISP_AUT = "cd_risp_aut";
+    public static final String COL_TI_AUTORIZZAZIONE = "ti_autorizzazione";
+    public static final String COL_CD_REGISTRO_PROVV_SCARTO = "cd_registro_provv_scarto";
+    public static final String COL_AA_PROVV_SCARTO = "aa_provv_scarto";
+    public static final String COL_CD_PROVV_SCARTO = "cd_provv_scarto";
+    public static final String COL_DS_FIRMATO_DA = "ds_firmato_da";
 
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
@@ -75,6 +87,25 @@ public class AroVRicPropScartoVersTableDescriptor extends TableDescriptor {
                 new ColumnDescriptor(COL_DT_ULTIMA_MOD_PROP_SCARTO_VERS, Types.TIMESTAMP, 7, true));
         map.put(COL_TI_STATO_PROP_SCARTO_VERS_COR,
                 new ColumnDescriptor(COL_TI_STATO_PROP_SCARTO_VERS_COR, Types.VARCHAR, 30, true));
+        map.put(COL_NT_AUTORITA, new ColumnDescriptor(COL_NT_AUTORITA, Types.VARCHAR, 2000, true));
+        map.put(COL_CD_REGISTRO_RICH_AUT,
+                new ColumnDescriptor(COL_CD_REGISTRO_RICH_AUT, Types.VARCHAR, 100, true));
+        map.put(COL_AA_RICH_AUT, new ColumnDescriptor(COL_AA_RICH_AUT, Types.DECIMAL, 22, true));
+        map.put(COL_CD_RICH_AUT, new ColumnDescriptor(COL_CD_RICH_AUT, Types.VARCHAR, 100, true));
+        map.put(COL_CD_REGISTRO_RISP_AUT,
+                new ColumnDescriptor(COL_CD_REGISTRO_RISP_AUT, Types.VARCHAR, 100, true));
+        map.put(COL_AA_RISP_AUT, new ColumnDescriptor(COL_AA_RISP_AUT, Types.DECIMAL, 22, true));
+        map.put(COL_CD_RISP_AUT, new ColumnDescriptor(COL_CD_RISP_AUT, Types.VARCHAR, 100, true));
+        map.put(COL_TI_AUTORIZZAZIONE,
+                new ColumnDescriptor(COL_TI_AUTORIZZAZIONE, Types.VARCHAR, 20, true));
+        map.put(COL_CD_REGISTRO_PROVV_SCARTO,
+                new ColumnDescriptor(COL_CD_REGISTRO_PROVV_SCARTO, Types.VARCHAR, 100, true));
+        map.put(COL_AA_PROVV_SCARTO,
+                new ColumnDescriptor(COL_AA_PROVV_SCARTO, Types.DECIMAL, 22, true));
+        map.put(COL_CD_PROVV_SCARTO,
+                new ColumnDescriptor(COL_CD_PROVV_SCARTO, Types.VARCHAR, 100, true));
+        map.put(COL_DS_FIRMATO_DA,
+                new ColumnDescriptor(COL_DS_FIRMATO_DA, Types.VARCHAR, 255, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {

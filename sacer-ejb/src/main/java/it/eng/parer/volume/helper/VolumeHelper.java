@@ -1029,6 +1029,228 @@ public class VolumeHelper {
         return retParams;
     }
 
+    /**
+     * Costruisce la inline view da usare come driving table nella FROM clause della query di
+     * ricerca unità documentarie per dati specifici. Ogni condizione su un dato specifico diventa
+     * un ramo SELECT sulla ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS. I rami che hanno semantica OR (più
+     * tipo_ud per lo stesso attributo) vengono uniti con UNION; i rami che hanno semantica AND (più
+     * attributi per lo stesso tipo_ud) vengono uniti con INTERSECT. I gruppi UNI_DOC e DOC sono a
+     * loro volta combinati con INTERSECT.
+     *
+     * @param datiSpecList        lista criteri dati specifici
+     * @param filtroVersioneDsUd  filtro versione XSD per UNI_DOC (può essere null)
+     * @param filtroVersioneDsDoc filtro versione XSD per DOC (può essere null)
+     * @param annoRangeDa         anno inizio range (viene incorporato come letterale nella SQL)
+     * @param annoRangeA          anno fine range (viene incorporato come letterale nella SQL)
+     * @param idStrut             id struttura (viene incorporato come letterale nella SQL)
+     *
+     * @return ReturnParams con il testo SQL della inline view e la lista dei parametri
+     */
+    public ReturnParams buildInlineViewForRicDatiSpec(List<?> datiSpecList,
+            String filtroVersioneDsUd, String filtroVersioneDsDoc, BigDecimal annoRangeDa,
+            BigDecimal annoRangeA, BigDecimal idStrut) {
+        ReturnParams retParams = new ReturnParams();
+        StringBuilder queryStr = new StringBuilder();
+        String operatore;
+        String filtro;
+        int indiceidattribds = 0;
+        List<DatiSpecQueryParams> mappone = new ArrayList<>();
+        List<DefinitoDaBean> listaDefinitoDa = new ArrayList<>();
+        Set<String> insiemeTipiUnitaDoc = new HashSet<>();
+        Set<String> insiemeTipiDoc = new HashSet<>();
+
+        // Parsing dei dati specifici (stessa logica di buildConditionsForRicDatiSpec)
+        for (Object datiSpecObj : datiSpecList) {
+            if (datiSpecObj instanceof DecCriterioDatiSpecBean) {
+                DecCriterioDatiSpecBean datiSpec = (DecCriterioDatiSpecBean) datiSpecObj;
+                if ((StringUtils.isNotBlank(datiSpec.getTiOper())
+                        && StringUtils.isNotBlank(datiSpec.getDlValore()))
+                        || (datiSpec.getTiOper() != null
+                                && datiSpec.getTiOper()
+                                        .equals(CostantiDB.TipoOperatoreDatiSpec.NULLO.name())
+                                && StringUtils.isWhitespace(datiSpec.getDlValore()))
+                        || (datiSpec.getTiOper() != null
+                                && datiSpec.getTiOper()
+                                        .equals(CostantiDB.TipoOperatoreDatiSpec.NON_NULLO.name())
+                                && StringUtils.isWhitespace(datiSpec.getDlValore()))) {
+
+                    for (DecCriterioAttribBean decCriterioAttrib : datiSpec
+                            .getDecCriterioAttribs()) {
+                        DefinitoDaBean definitoDa = new DefinitoDaBean();
+                        definitoDa.setIdAttribDatiSpec(decCriterioAttrib.getIdAttribDatiSpec());
+                        definitoDa.setTiEntitaSacer(decCriterioAttrib.getTiEntitaSacer());
+                        definitoDa.setNmTipoDoc(decCriterioAttrib.getNmTipoDoc());
+                        definitoDa.setNmTipoUnitaDoc(decCriterioAttrib.getNmTipoUnitaDoc());
+                        definitoDa.setNmSistemaMigraz(decCriterioAttrib.getNmSistemaMigraz());
+                        definitoDa.setNmAttribDatiSpec(datiSpec.getNmAttribDatiSpec());
+                        definitoDa.setTiOper(datiSpec.getTiOper());
+                        definitoDa.setDlValore(datiSpec.getDlValore());
+                        listaDefinitoDa.add(definitoDa);
+                        // Caso UNI_DOC
+                        if (definitoDa.getNmTipoUnitaDoc() != null) {
+                            insiemeTipiUnitaDoc.add(definitoDa.getNmTipoUnitaDoc());
+                        } // Caso DOC
+                        else if (definitoDa.getNmTipoDoc() != null) {
+                            insiemeTipiDoc.add(definitoDa.getNmTipoDoc());
+                        }
+                        // Nota: il caso sistema migrazione non è gestito (coerente con
+                        // buildConditionsForRicDatiSpec)
+                    }
+                }
+            }
+        }
+
+        /////////////////////////////////////////////////////
+        // COSTRUZIONE INLINE VIEW (UNION / INTERSECT) //
+        /////////////////////////////////////////////////////
+
+        boolean hasUniDoc = !insiemeTipiUnitaDoc.isEmpty();
+        boolean hasDoc = !insiemeTipiDoc.isEmpty();
+
+        if (filtroVersioneDsUd != null) {
+            filtroVersioneDsUd = "'" + filtroVersioneDsUd + "'";
+        }
+        if (filtroVersioneDsDoc != null) {
+            filtroVersioneDsDoc = "'" + filtroVersioneDsDoc + "'";
+        }
+
+        // Se ci sono sia UNI_DOC che DOC, i due gruppi vengono combinati con INTERSECT
+        // (semantica AND): aprire la parentesi del gruppo UNI_DOC
+        if (hasUniDoc && hasDoc) {
+            queryStr.append("(");
+        }
+
+        // Rami UNI_DOC: ogni tipo_ud genera un ramo UNION (OR),
+        // più attributi sullo stesso tipo_ud generano INTERSECT (AND)
+        if (hasUniDoc) {
+            boolean firstOrGroup = true;
+            for (String nmTipoUnitaDoc : insiemeTipiUnitaDoc) {
+                List<DefinitoDaBean> definitoDaForGroup = new ArrayList<>();
+                for (DefinitoDaBean definitoDa : listaDefinitoDa) {
+                    if (nmTipoUnitaDoc.equals(definitoDa.getNmTipoUnitaDoc())) {
+                        definitoDaForGroup.add(definitoDa);
+                    }
+                }
+                if (definitoDaForGroup.isEmpty()) {
+                    continue;
+                }
+                if (!firstOrGroup) {
+                    queryStr.append(" UNION ");
+                }
+                firstOrGroup = false;
+
+                boolean needGroupParens = definitoDaForGroup.size() > 1;
+                if (needGroupParens) {
+                    queryStr.append("(");
+                }
+                boolean firstAndBranch = true;
+                for (DefinitoDaBean definitoDa : definitoDaForGroup) {
+                    if (!firstAndBranch) {
+                        queryStr.append(" INTERSECT ");
+                    }
+                    firstAndBranch = false;
+
+                    int j = mappone.size();
+                    Object[] obj = translateFiltroToSql(definitoDa, j);
+                    DatiSpecQueryParams datiSpecQueryParams = (DatiSpecQueryParams) obj[0];
+                    operatore = (String) obj[1];
+                    filtro = (String) obj[2];
+
+                    queryStr.append("SELECT id_Unita_Doc FROM ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS")
+                            .append(" WHERE id_Attrib_Dati_Spec = :idattribdatispecin")
+                            .append(indiceidattribds)
+                            .append(" AND aa_key_unita_doc BETWEEN ").append(annoRangeDa)
+                            .append(" AND ").append(annoRangeA)
+                            .append(" AND id_strut = ").append(idStrut)
+                            .append(" AND ti_Entita_Sacer = 'UNI_DOC'")
+                            .append(" AND dl_Valore ").append(operatore).append(filtro);
+                    if (filtroVersioneDsUd != null) {
+                        queryStr.append(" AND cd_versione_xsd_ud = ").append(filtroVersioneDsUd);
+                    }
+                    mappone.add(datiSpecQueryParams);
+                    indiceidattribds++;
+                }
+                if (needGroupParens) {
+                    queryStr.append(")");
+                }
+            }
+        }
+
+        // Rami DOC: stessa struttura UNION/INTERSECT, ma con ti_Entita_Sacer = 'DOC'.
+        // Per recuperare id_Unita_Doc (non sempre presente direttamente per le righe DOC)
+        // si unisce ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS con sacer.aro_doc tramite id_Doc.
+        if (hasDoc) {
+            if (hasUniDoc) {
+                // Chiude il gruppo UNI_DOC e apre il gruppo DOC per l'INTERSECT esterno
+                queryStr.append(") INTERSECT (");
+            }
+
+            boolean firstOrGroup = true;
+            for (String nmTipoDoc : insiemeTipiDoc) {
+                List<DefinitoDaBean> definitoDaForGroup = new ArrayList<>();
+                for (DefinitoDaBean definitoDa : listaDefinitoDa) {
+                    if (nmTipoDoc.equals(definitoDa.getNmTipoDoc())) {
+                        definitoDaForGroup.add(definitoDa);
+                    }
+                }
+                if (definitoDaForGroup.isEmpty()) {
+                    continue;
+                }
+                if (!firstOrGroup) {
+                    queryStr.append(" UNION ");
+                }
+                firstOrGroup = false;
+
+                boolean needGroupParens = definitoDaForGroup.size() > 1;
+                if (needGroupParens) {
+                    queryStr.append("(");
+                }
+                boolean firstAndBranch = true;
+                for (DefinitoDaBean definitoDa : definitoDaForGroup) {
+                    if (!firstAndBranch) {
+                        queryStr.append(" INTERSECT ");
+                    }
+                    firstAndBranch = false;
+
+                    int j = mappone.size();
+                    Object[] obj = translateFiltroToSql(definitoDa, j);
+                    DatiSpecQueryParams datiSpecQueryParams = (DatiSpecQueryParams) obj[0];
+                    operatore = (String) obj[1];
+                    filtro = (String) obj[2];
+
+                    queryStr.append(
+                            "SELECT doc.id_unita_doc FROM ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS ric")
+                            .append(" JOIN sacer.aro_doc doc ON doc.id_doc = ric.id_doc")
+                            .append(" WHERE ric.id_Attrib_Dati_Spec = :idattribdatispecin")
+                            .append(indiceidattribds)
+                            .append(" AND ric.aa_key_unita_doc BETWEEN ").append(annoRangeDa)
+                            .append(" AND ").append(annoRangeA)
+                            .append(" AND ric.id_strut = ").append(idStrut)
+                            .append(" AND ric.ti_Entita_Sacer = 'DOC'")
+                            .append(" AND ric.dl_Valore ").append(operatore).append(filtro);
+                    if (filtroVersioneDsDoc != null) {
+                        queryStr.append(" AND ric.cd_versione_xsd_doc = ")
+                                .append(filtroVersioneDsDoc);
+                    }
+                    mappone.add(datiSpecQueryParams);
+                    indiceidattribds++;
+                }
+                if (needGroupParens) {
+                    queryStr.append(")");
+                }
+            }
+
+            if (hasUniDoc) {
+                // Chiude il gruppo DOC
+                queryStr.append(")");
+            }
+        }
+
+        retParams.setMappone(mappone);
+        retParams.setQuery(queryStr);
+        return retParams;
+    }
+
     public Object[] translateFiltroToSql(DefinitoDaBean definitoDa, int j) {
         String perc1 = "";
         String perc2 = "";

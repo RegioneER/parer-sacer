@@ -494,11 +494,13 @@ public class UnitaDocumentarieHelperTest {
     @Test
     void getAroVLisDatiSpecTableBean_queryIsOk() {
         BigDecimal identificativo = aBigDecimal();
+        BigDecimal idStrut = aBigDecimal();
+        BigDecimal aaKeyUnitaDoc = aBigDecimal();
         String tipoDatiSpec = aString();
         int maxResults = 100;
         for (Constants.TipoEntitaSacer tipoEntitaSacer : Constants.TipoEntitaSacer.values()) {
             helper.getAroVLisDatiSpecTableBean(identificativo, tipoEntitaSacer, tipoDatiSpec,
-                    maxResults);
+                    idStrut, aaKeyUnitaDoc, maxResults);
             assertTrue(true);
         }
     }

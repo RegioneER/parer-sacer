@@ -289,10 +289,14 @@ public class TipoFascicoloHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
         String risultato;
-        risultato = (String) query.getSingleResult();
-        if (risultato != null) {
-            return risultato;
-        } else {
+        try {
+            risultato = (String) query.getSingleResult();
+            if (risultato != null) {
+                return risultato;
+            } else {
+                return "2";
+            }
+        } catch (Exception e) {
             return "2";
         }
     }

@@ -119,7 +119,7 @@
         <Input Name="id_stato_rich_annul_vers" Description="Id stato richiesta" Type="INTEGER" Hidden="true"/>
         <Input Name="pg_stato_rich_annul_vers" Description="Progressivo" Type="INTEGER" />
         <Input Name="ti_stato_rich_annul_vers" Description="Stato" Type="STRING" />
-        <Input Name="dt_reg_stato_rich_annul_vers" Description="Data registrazione" Type="DATE" />
+        <Input Name="dt_reg_stato_rich_annul_vers" Description="Data registrazione" Type="DATETIME" />
         <Input Name="ds_nota_rich_annul_vers" Description="Note" Type="STRING" />
         <Input Name="nm_userid" Description="Utente" Type="STRING" />
     </List>

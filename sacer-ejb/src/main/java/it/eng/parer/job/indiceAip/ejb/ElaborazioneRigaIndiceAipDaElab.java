@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -88,8 +89,7 @@ import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.parer.ws.xml.usmainResp.IdCType;
 import it.eng.parer.ws.xml.usmainRespV2.PIndex;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 
 /**
  *
@@ -144,6 +144,10 @@ public class ElaborazioneRigaIndiceAipDaElab {
             AGENT_SUBMITTER_RELEVANTDOCUMENT);
 
     private static final String LOG_SALVATAGGIO_OS = "Salvato l'indice aip su Object storage nel bucket {} con chiave {}! ";
+    // MAC#40183
+    private static final String LOG_INDICE_AIP_PRESENTE_OS = "Indice AIP idVerIndiceAip={} già presente su O.S., skip scrittura.";
+    private static final String LOG_INDICE_AIP_NON_PRESENTE_OS = "Indice AIP idVerIndiceAip={} non presente su O.S., verrà scritto.";
+    // end MAC#40183
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void gestisciIndiceAipDaElaborareNelJob(long idUdDaElab)
@@ -459,15 +463,16 @@ public class ElaborazioneRigaIndiceAipDaElab {
             ciaHelper.insertFileVerIndiceAipUd(lastVer, annoMese, tmpWriter.toString());
         } else { // Backend Object storage
             boolean putOnOs = true;
-            if (objectStorageService.isIndiceAipOnOs(lastVer.getIdVerIndiceAip())) {
-                String md5LocalContent = calculateMd5AsBase64(tmpWriter.toString());
-                String eTagFromObjectMetadata = objectStorageService
-                        .getObjectMetadataIndiceAipUd(lastVer.getIdVerIndiceAip()).eTag();
-
-                if (md5LocalContent.equals(eTagFromObjectMetadata)) {
-                    putOnOs = false;
-                }
+            // MAC#40183
+            Optional<HeadObjectResponse> headOpt = objectStorageService.headObjectIndiceAipUd(
+                    lastVer.getIdVerIndiceAip(), backendIndiciAip.getBackendName());
+            if (headOpt.isPresent()) {
+                log.debug(LOG_INDICE_AIP_PRESENTE_OS, lastVer.getIdVerIndiceAip());
+                putOnOs = false;
+            } else {
+                log.debug(LOG_INDICE_AIP_NON_PRESENTE_OS, lastVer.getIdVerIndiceAip());
             }
+            // End MAC#40183
             if (putOnOs) {
                 ObjectStorageResource indiceAipSuOS = objectStorageService
                         .createResourcesInIndiciAipUnitaDoc(backendIndiciAip.getBackendName(),
@@ -666,15 +671,16 @@ public class ElaborazioneRigaIndiceAipDaElab {
             ciaHelper.insertFileVerIndiceAipUd(lastVer, annoMese, tmpWriter.toString());
         } else { // Backend Object storage
             boolean putOnOs = true;
-            if (objectStorageService.isIndiceAipOnOs(lastVer.getIdVerIndiceAip())) {
-                String md5LocalContent = calculateMd5AsBase64(tmpWriter.toString());
-                String eTagFromObjectMetadata = objectStorageService
-                        .getObjectMetadataIndiceAipUd(lastVer.getIdVerIndiceAip()).eTag();
-
-                if (md5LocalContent.equals(eTagFromObjectMetadata)) {
-                    putOnOs = false;
-                }
+            // MAC#40183
+            Optional<HeadObjectResponse> headOpt = objectStorageService.headObjectIndiceAipUd(
+                    lastVer.getIdVerIndiceAip(), backendIndiciAip.getBackendName());
+            if (headOpt.isPresent()) {
+                log.debug(LOG_INDICE_AIP_PRESENTE_OS, lastVer.getIdVerIndiceAip());
+                putOnOs = false;
+            } else {
+                log.debug(LOG_INDICE_AIP_NON_PRESENTE_OS, lastVer.getIdVerIndiceAip());
             }
+            // End MAC#40183
             if (putOnOs) {
                 ObjectStorageResource indiceAipSuOS = objectStorageService
                         .createResourcesInIndiciAipUnitaDoc(backendIndiciAip.getBackendName(),
@@ -781,15 +787,16 @@ public class ElaborazioneRigaIndiceAipDaElab {
             ciaHelper.insertFileVerIndiceAipUd(lastVer, annoMese, tmpWriter.toString());
         } else { // Backend Object storage
             boolean putOnOs = true;
-            if (objectStorageService.isIndiceAipOnOs(lastVer.getIdVerIndiceAip())) {
-                String md5LocalContent = calculateMd5AsBase64(tmpWriter.toString());
-                String eTagFromObjectMetadata = objectStorageService
-                        .getObjectMetadataIndiceAipUd(lastVer.getIdVerIndiceAip()).eTag();
-
-                if (md5LocalContent.equals(eTagFromObjectMetadata)) {
-                    putOnOs = false;
-                }
+            // MAC#40183
+            Optional<HeadObjectResponse> headOpt = objectStorageService.headObjectIndiceAipUd(
+                    lastVer.getIdVerIndiceAip(), backendIndiciAip.getBackendName());
+            if (headOpt.isPresent()) {
+                log.debug(LOG_INDICE_AIP_PRESENTE_OS, lastVer.getIdVerIndiceAip());
+                putOnOs = false;
+            } else {
+                log.debug(LOG_INDICE_AIP_NON_PRESENTE_OS, lastVer.getIdVerIndiceAip());
             }
+            // End MAC#40183
             if (putOnOs) {
                 ObjectStorageResource indiceAipSuOS = objectStorageService
                         .createResourcesInIndiciAipUnitaDoc(backendIndiciAip.getBackendName(),
@@ -844,9 +851,4 @@ public class ElaborazioneRigaIndiceAipDaElab {
         }
     }
 
-    // MEV#30395
-    private String calculateMd5AsBase64(String str) {
-        return Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
-    }
-    // end MEV#30395
 }

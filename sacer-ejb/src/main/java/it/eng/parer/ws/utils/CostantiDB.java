@@ -1445,7 +1445,7 @@ public class CostantiDB {
 
     // MEV #37229
     public enum TipoCreazioneRichScartoVers {
-        UPLOAD_FILE
+        ON_LINE, UPLOAD_FILE, WEB_SERVICE, DA_PROPOSTA
     }
 
     public enum StatoRichScartoVers {
@@ -1466,7 +1466,7 @@ public class CostantiDB {
     public enum TipoErrRichScartoVers {
 
         ITEM_GIA_PRESENTE, ITEM_IN_CORSO_DI_SCARTO, ITEM_NON_ESISTE, TIPO_UNITA_DOC_NON_ABILITATO,
-        REGISTRO_NON_ABILITATO, TIPO_DOC_PRINC_NON_ABILITATO, ITEM_GIA_SCARTATO;
+        REGISTRO_NON_ABILITATO, TIPO_DOC_PRINC_NON_ABILITATO, ITEM_GIA_SCARTATO, ITEM_GIA_ANNULLATO;
 
         public static String[] getStatiControlloItem() {
             // Ritorna tutti gli stati tranne ITEM_NON_ESISTE e ITEM_GIA_PRESENTE - DA
@@ -1482,7 +1482,13 @@ public class CostantiDB {
 
     public enum TiStatoPropScartoVers {
 
-        APERTA, CHIUSA;
+        APERTA, DA_AUTORIZZARE, APERTA_REVISIONE, AUTORIZZATA;
+
+    }
+
+    public enum TiAutorizzazionePropScartoVers {
+
+        COMPLETA, PARZIALE;
 
     }
 

@@ -117,6 +117,11 @@
                 <!-- piazzo i campi del filtro di ricerca -->
                 <slf:section name="<%=UnitaDocumentarieForm.UDRicercaSection.NAME%>" styleClass="importantContainer">
                     <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.CD_REGISTRO_KEY_UNITA_DOC%>" />                    
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.AA_KEY_UNITA_DOC%>" colSpan="1"/>
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.CD_KEY_UNITA_DOC%>" colSpan="1"/>
+                    <sl:newLine />
+                    <div class="slLabel wlbl" >&nbsp;</div>
+                    <div class="containerLeft w2ctr">&nbsp;</div>
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.AA_KEY_UNITA_DOC_DA%>" colSpan="1"/>
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.AA_KEY_UNITA_DOC_A%>" colSpan="1"/>
                     <sl:newLine />

@@ -67,6 +67,22 @@ public class AroVLisDatiSpecRowBean extends BaseRow implements JEEBaseRowInterfa
         setObject("id_comp_doc", idCompDoc);
     }
 
+    public BigDecimal getIdStrut() {
+        return getBigDecimal("id_strut");
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        setObject("id_strut", idStrut);
+    }
+
+    public BigDecimal getAaKeyUnitaDoc() {
+        return getBigDecimal("aa_key_unita_doc");
+    }
+
+    public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+        setObject("aa_key_unita_doc", aaKeyUnitaDoc);
+    }
+
     public String getTiUsoXsd() {
         return getString("ti_uso_xsd");
     }
@@ -177,6 +193,8 @@ public class AroVLisDatiSpecRowBean extends BaseRow implements JEEBaseRowInterfa
         this.setIdUnitaDoc(entity.getIdUnitaDoc());
         this.setIdDoc(entity.getIdDoc());
         this.setIdCompDoc(entity.getIdCompDoc());
+        this.setIdStrut(entity.getIdStrut());
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
         this.setTiUsoXsd(entity.getTiUsoXsd());
         this.setTiEntitaSacer(entity.getTiEntitaSacer());
         this.setIdUsoXsdDatiSpec(entity.getIdUsoXsdDatiSpec());
@@ -202,6 +220,8 @@ public class AroVLisDatiSpecRowBean extends BaseRow implements JEEBaseRowInterfa
         entity.setIdUnitaDoc(this.getIdUnitaDoc());
         entity.setIdDoc(this.getIdDoc());
         entity.setIdCompDoc(this.getIdCompDoc());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
         entity.setTiUsoXsd(this.getTiUsoXsd());
         entity.setTiEntitaSacer(this.getTiEntitaSacer());
         entity.setIdUsoXsdDatiSpec(this.getIdUsoXsdDatiSpec());

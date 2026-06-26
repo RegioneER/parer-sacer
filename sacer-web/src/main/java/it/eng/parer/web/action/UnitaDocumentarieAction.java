@@ -627,7 +627,11 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                         "cd_versione_ws"));
 
         getForm().getFiltriDatiSpecUnitaDocumentarieList().getTi_oper().setDecodeMap(ComboGetter
-                .getMappaSortedGenericEnum("operatore", CostantiDB.TipoOperatoreDatiSpec.values()));
+                .getMappaSortedGenericEnum("operatore",
+                        Arrays.stream(CostantiDB.TipoOperatoreDatiSpec.values())
+                                .filter(v -> v != CostantiDB.TipoOperatoreDatiSpec.NULLO
+                                        && v != CostantiDB.TipoOperatoreDatiSpec.NON_NULLO)
+                                .toArray(CostantiDB.TipoOperatoreDatiSpec[]::new)));
         getForm().getFiltriCollegamentiUnitaDocumentarie().getCon_collegamento()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getFiltriCollegamentiUnitaDocumentarie().getIs_oggetto_collegamento()
@@ -834,7 +838,11 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_sub_strut().setValues(chiavi);
 
         getForm().getFiltriDatiSpecUnitaDocumentarieList().getTi_oper().setDecodeMap(ComboGetter
-                .getMappaSortedGenericEnum("operatore", CostantiDB.TipoOperatoreDatiSpec.values()));
+                .getMappaSortedGenericEnum("operatore",
+                        Arrays.stream(CostantiDB.TipoOperatoreDatiSpec.values())
+                                .filter(v -> v != CostantiDB.TipoOperatoreDatiSpec.NULLO
+                                        && v != CostantiDB.TipoOperatoreDatiSpec.NON_NULLO)
+                                .toArray(CostantiDB.TipoOperatoreDatiSpec[]::new)));
 
         // Carico la pagina di ricerca
         forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_DATI_SPEC);
@@ -1219,6 +1227,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                     .toArray().length,
                             String[].class);
                     chiavi = validator.validaChiaviUnitaDocRicUdDatiSpec(registro,
+                            filtri.getAa_key_unita_doc().parse(),
+                            filtri.getCd_key_unita_doc().parse(),
                             filtri.getAa_key_unita_doc_da().parse(),
                             filtri.getAa_key_unita_doc_a().parse(),
                             filtri.getCd_key_unita_doc_da().parse(),
@@ -2438,6 +2448,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 // Carico la lista dei dati specifici
                 AroVLisDatiSpecTableBean listDatiSpecTB = udHelper.getAroVLisDatiSpecTableBean(
                         iddoc, TipoEntitaSacer.DOC, Constants.TI_USO_XSD_VERS,
+                        getIdStrut(), documentoAaaRB.getAaKeyUnitaDoc(),
                         Integer.parseInt(maxResultStandard));
                 getForm().getDatiSpecificiDocList().setTable(listDatiSpecTB);
                 getForm().getDatiSpecificiDocList().getTable().setPageSize(10);
@@ -2445,7 +2456,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 // Carico la lista dei dati specifici di migrazione
                 AroVLisDatiSpecTableBean listDatiSpecMigrazioneTB = udHelper
                         .getAroVLisDatiSpecTableBean(iddoc, TipoEntitaSacer.DOC,
-                                Constants.TI_USO_XSD_MIGR, Integer.parseInt(maxResultStandard));
+                                Constants.TI_USO_XSD_MIGR, getIdStrut(),
+                                documentoAaaRB.getAaKeyUnitaDoc(),
+                                Integer.parseInt(maxResultStandard));
                 getForm().getDatiSpecificiMigrazioneDocList().setTable(listDatiSpecMigrazioneTB);
                 getForm().getDatiSpecificiMigrazioneDocList().getTable().setPageSize(10);
                 getForm().getDatiSpecificiMigrazioneDocList().getTable().first();
@@ -2745,10 +2758,12 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 .getAroVLisArchivUnitaDocTableBean(idUnitDoc, Integer.parseInt(maxResultStandard));
         // Ricavo la lista dei dati specifici per unità documentaria
         AroVLisDatiSpecTableBean listDatiSpecTB = udHelper.getAroVLisDatiSpecTableBean(idUnitDoc,
-                TipoEntitaSacer.UNI_DOC, Constants.TI_USO_XSD_VERS,
+                TipoEntitaSacer.UNI_DOC, Constants.TI_USO_XSD_VERS, getIdStrut(),
+                udRB.getAaKeyUnitaDoc(),
                 Integer.parseInt(maxResultStandard));
         AroVLisDatiSpecTableBean listDatiSpecMigrazioneTB = udHelper.getAroVLisDatiSpecTableBean(
-                idUnitDoc, TipoEntitaSacer.UNI_DOC, Constants.TI_USO_XSD_MIGR,
+                idUnitDoc, TipoEntitaSacer.UNI_DOC, Constants.TI_USO_XSD_MIGR, getIdStrut(),
+                udRB.getAaKeyUnitaDoc(),
                 Integer.parseInt(maxResultStandard));
         // Ricavo la lista degli indici AIP
         AroVerIndiceAipUdTableBean listIndiciAIPTB = udHelper
@@ -3446,6 +3461,11 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         } else if (getLastPublisher()
                 .equals(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_SEMPLICE_NUOVA)) {
             unitaDocumentarieRicercaSempliceNuova();
+        } else if (getLastPublisher()
+                .equals(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_DATI_SPEC)
+                || TipoRicercaAttribute.DATI_SPEC.name().equals(
+                        getSession().getAttribute(UnitaDocAttributes.TIPORICERCA.name()))) {
+            pulisciRicercaDatiSpec();
         } else if (getSession().getAttribute(UnitaDocAttributes.TIPORICERCA.name()) != null
                 && getSession().getAttribute(UnitaDocAttributes.TIPORICERCA.name())
                         .equals(TipoRicercaAttribute.VERS_ANNULLATI.name())) {
@@ -3453,6 +3473,19 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         } else {
             unitaDocumentarieRicercaAvanzata();
         }
+    }
+
+    private void pulisciRicercaDatiSpec() throws EMFError {
+        getForm().getFiltriUnitaDocumentarieDatiSpec().reset();
+        getForm().getUnitaDocumentarieList().setTable(null);
+        getForm().getUnitaDocumentarieTabs().setCurrentTab(
+                getForm().getUnitaDocumentarieTabs().getFiltriRicercaAvanzata());
+
+        if (getSession().getAttribute("listaDatiSpecOnLine") != null) {
+            getSession().removeAttribute("listaDatiSpecOnLine");
+        }
+
+        forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_DATI_SPEC);
     }
 
     /**

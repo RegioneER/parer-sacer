@@ -266,47 +266,79 @@ public class UnitaDocumentarieValidator extends TypeValidator {
         }
     }
 
-    public Object[] validaChiaviUnitaDocRicUdDatiSpec(String[] registro, BigDecimal anno_da,
-            BigDecimal anno_a, String numero_da, String numero_a) {
-        boolean chiave = false;
-        boolean range = false;
-        boolean num = false;
-        Object[] result = new Object[5];
-        result[0] = registro;
-        // Valori di default
-        result[1] = new BigDecimal(DEFAULT_START_YEAR);
-        result[2] = new BigDecimal(GregorianCalendar.getInstance().get(Calendar.YEAR));
-
-        // Sovrascrivi i valori di default se anno_da e/o anno_a sono presenti
-        if (anno_da != null) {
-            result[1] = anno_da;
-        }
-        if (anno_a != null) {
-            result[2] = anno_a;
+    public Object[] validaChiaviUnitaDocRicUdDatiSpec(String[] registro, BigDecimal anno,
+            String numero, BigDecimal annoDa, BigDecimal annoA, String numeroDa,
+            String numeroA) {
+        if (anno == null && annoDa == null && annoA == null) {
+            getMessageBox().addMessage(new Message(Message.MessageLevel.ERR,
+                    "Almeno uno dei filtri relativo all'anno o al range di anni di chiave unità documentaria deve essere valorizzato</br>"));
+            return null;
         }
 
-        if (numero_da != null && numero_a == null) {
-            result[3] = numero_da;
-            result[4] = MAX_NUMERO_RANGE;
-        } else if (numero_da == null && numero_a != null) {
-            result[3] = MIN_NUMERO_RANGE;
-            result[4] = numero_a;
-        } else {
-            result[3] = numero_da;
-            result[4] = numero_a;
+        if (anno != null && (annoDa != null || annoA != null)) {
+            getMessageBox().addError(
+                    "Sono stati inseriti valori sia nella ricerca per Anno singolo, sia per Anno con range.");
+            return null;
         }
 
-        if ((result[1] != null || result[2] != null)
-                && ((BigDecimal) result[1]).compareTo((BigDecimal) result[2]) > 0) {
+        if (numero != null && (numeroDa != null || numeroA != null)) {
+            getMessageBox().addError(
+                    "Sono stati inseriti valori sia nella ricerca per Numero singolo, sia per Numero con range.");
+            return null;
+        }
+
+        BigDecimal finalAnnoDa = annoDa;
+        BigDecimal finalAnnoA = annoA;
+        String finalNumeroDa = numeroDa;
+        String finalNumeroA = numeroA;
+
+        if (annoDa != null || annoA != null) {
+            if (annoDa != null && annoA == null) {
+                finalAnnoA = new BigDecimal(Calendar.getInstance().get(Calendar.YEAR));
+            } else if (annoDa == null && annoA != null) {
+                finalAnnoDa = new BigDecimal(DEFAULT_START_YEAR);
+            }
+        }
+
+        if (numeroDa != null || numeroA != null) {
+            if (numeroDa != null && numeroA == null) {
+                finalNumeroA = MAX_NUMERO_RANGE;
+            } else if (numeroDa == null && numeroA != null) {
+                finalNumeroDa = MIN_NUMERO_RANGE;
+            }
+        }
+
+        if (finalAnnoDa != null && finalAnnoA != null && finalAnnoDa.compareTo(finalAnnoA) > 0) {
             getMessageBox()
                     .addError("Range di chiavi unità documentaria: Anno Da maggiore di Anno A");
+            return null;
         }
-        if ((result[3] != null || result[4] != null)
-                && ((String) result[3]).compareTo((String) result[4]) > 0) {
+        if (finalNumeroDa != null && finalNumeroA != null
+                && finalNumeroDa.compareTo(finalNumeroA) > 0) {
             getMessageBox()
                     .addError("Range di chiavi unità documentaria: Numero Da maggiore di Numero A");
+            return null;
         }
 
+        boolean isRangeSearch = (annoDa != null || annoA != null || numeroDa != null
+                || numeroA != null);
+        boolean isSingleSearch = (anno != null || numero != null);
+
+        if (isSingleSearch && !isRangeSearch) {
+            // Come ricerca semplice/avanzata: non popolare i campi range quando si usa il singolo.
+            return null;
+        }
+
+        if (!isRangeSearch) {
+            return null;
+        }
+
+        Object[] result = new Object[5];
+        result[0] = registro;
+        result[1] = finalAnnoDa;
+        result[2] = finalAnnoA;
+        result[3] = finalNumeroDa;
+        result[4] = finalNumeroA;
         return result;
     }
 

@@ -68,7 +68,8 @@ public class VerificaCompRegHelper {
                 .setParameter("idRegistroUnitaDocIn", idRegistroUnitaDoc)
                 .setParameter("aaKeyUnitaDocIn", new BigDecimal(anno))
                 .setParameter("dataDiOggiIn", new Date())
-                // Hint per evitare che il driver JDBC scarichi 2 milioni di record tutti insieme
+                // Hint per evitare che il driver JDBC scarichi potenziali milioni di record tutti
+                // insieme
                 .setHint(QueryHints.HINT_FETCH_SIZE, "1000").getResultStream();
     }
 

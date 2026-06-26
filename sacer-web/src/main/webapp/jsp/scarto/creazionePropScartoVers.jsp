@@ -257,6 +257,76 @@
                     </sl:pulsantiera>
                     <sl:newLine />
                 </slf:section>
+
+                <%-- ============================================================== --%>
+                <%-- SEZIONE RICHIESTA DI AUTORIZZAZIONE                             --%>
+                <%-- ============================================================== --%>
+                <c:if test="${isPropostaSalvata}">
+                <slf:section name="<%=ScartoForm.RichiestaAutorizzazioneSection.NAME%>" styleClass="importantContainer">
+                    <sl:pulsantiera>
+                        <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.AVVIA_RICHIESTA_AUTORIZZAZIONE%>" colSpan="1" />
+                    </sl:pulsantiera>
+                    <sl:newLine />
+                </slf:section>
+
+                <%-- ============================================================== --%>
+                <%-- SEZIONE DATI RICHIESTA AUTORIZZAZIONE (display readonly)        --%>
+                <%-- ============================================================== --%>
+                <slf:section name="<%=ScartoForm.DatiRichiestaAutSection.NAME%>" styleClass="importantContainer">
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.NT_AUTORITA%>" colSpan="4" />
+                    <sl:newLine />
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.CD_REGISTRO_RICH_AUT%>" colSpan="3" />
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.AA_RICH_AUT%>" colSpan="3" />
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.CD_RICH_AUT%>" colSpan="3" />
+                    <sl:newLine />
+                </slf:section>
+
+                <%-- ============================================================== --%>
+                <%-- SEZIONE RISPOSTA DELL'AUTORITA' (pulsanti)                      --%>
+                <%-- ============================================================== --%>
+                <slf:section name="<%=ScartoForm.RispostaAutorizzazioneSection.NAME%>" styleClass="importantContainer">
+                    <sl:pulsantiera>
+                        <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.REGISTRA_AUTORIZZAZIONE%>" colSpan="1" />
+                        <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.ANNULLA_PROPOSTA_SCARTO%>" colSpan="1" />
+                    </sl:pulsantiera>
+                    <sl:newLine />
+                </slf:section>
+
+                <%-- ============================================================== --%>
+                <%-- SEZIONE DATI RISPOSTA AUTORIZZAZIONE (display readonly)         --%>
+                <%-- ============================================================== --%>
+                <slf:section name="<%=ScartoForm.DatiRispostaAutSection.NAME%>" styleClass="importantContainer">
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.TI_AUTORIZZAZIONE%>" colSpan="2" />
+                    <sl:newLine />
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.CD_REGISTRO_RISP_AUT%>" colSpan="3" />
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.AA_RISP_AUT%>" colSpan="3" />
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.CD_RISP_AUT%>" colSpan="3" />
+                    <sl:newLine />
+                </slf:section>
+
+                <%-- ============================================================== --%>
+                <%-- SEZIONE PROVVEDIMENTO DI SCARTO (display readonly)              --%>
+                <%-- ============================================================== --%>
+                <slf:section name="<%=ScartoForm.ProvvedimentoScartoDettaglioSection.NAME%>" styleClass="importantContainer">
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.CD_REGISTRO_PROVV_SCARTO%>" colSpan="3" />
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.AA_PROVV_SCARTO%>" colSpan="3" />
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.CD_PROVV_SCARTO%>" colSpan="3" />
+                    <sl:newLine />
+                    <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.DS_FIRMATO_DA%>" colSpan="3" />
+                    <sl:newLine />
+                </slf:section>
+                
+                 <%-- ============================================================== --%>
+                <%-- SEZIONE REVISIONE post-autorizzazione parziale (pulsante)       --%>
+                <%-- ============================================================== --%>
+                <slf:section name="<%=ScartoForm.RevisioneSection.NAME%>" styleClass="importantContainer">
+                    <sl:pulsantiera>
+                        <slf:lblField name="<%=ScartoForm.CreazionePropScartoVers.COMPLETA_REVISIONE_PROPOSTA_SCARTO%>" colSpan="1" />
+                    </sl:pulsantiera>
+                    <sl:newLine />
+                </slf:section>
+
+                </c:if>
             </slf:fieldSet>
             
             <sl:newLine skipLine="true"/>
@@ -349,8 +419,14 @@
                                         <sl:newLine skipLine="true"/>
                                         <slf:section name="<%=ScartoForm.ListaUdSelezionateSection.NAME%>" styleClass="importantContainer"> 
                                             <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.ID_REGISTRO_UNITA_DOC_SEL%>" colSpan="1" />
+                                            <sl:newLine />
                                             <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.ANNO_SEL%>" colSpan="1" />
+                                            <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.ANNO_DA_SEL%>" colSpan="1" />
+                                            <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.ANNO_A_SEL%>" colSpan="1" />
+                                            <sl:newLine />
                                             <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.NUMERO_UD_SEL%>" colSpan="1" />
+                                            <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.NUMERO_DA_SEL%>" colSpan="1" />
+                                            <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.NUMERO_A_SEL%>" colSpan="1" />
                                             <sl:newLine />
                                             <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.ID_TIPO_UNITA_DOC_SEL%>" colSpan="1" />                                            
                                             <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.DS_ALERT_SEL%>" colSpan="1" />
@@ -379,7 +455,25 @@
                                 </slf:tab>
                             </c:when>
                             <c:otherwise>
-                                <slf:section name="<%=ScartoForm.ListaUdSelezionateSection.NAME%>" styleClass="importantContainer"> 
+                                <slf:section name="<%=ScartoForm.ListaUdSelezionateSection.NAME%>" styleClass="importantContainer">
+                                    <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.ID_REGISTRO_UNITA_DOC_SEL%>" colSpan="1" />
+                                    <sl:newLine />
+                                    <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.ANNO_SEL%>" colSpan="1" />
+                                    <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.ANNO_DA_SEL%>" colSpan="1" />
+                                    <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.ANNO_A_SEL%>" colSpan="1" />
+                                    <sl:newLine />
+                                    <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.NUMERO_UD_SEL%>" colSpan="1" />
+                                    <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.NUMERO_DA_SEL%>" colSpan="1" />
+                                    <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.NUMERO_A_SEL%>" colSpan="1" />
+                                    <sl:newLine />
+                                    <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.ID_TIPO_UNITA_DOC_SEL%>" colSpan="1" />
+                                    <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.DS_ALERT_SEL%>" colSpan="1" />
+                                    <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.FL_SCARTABILE_SEL%>" colSpan="1" />
+                                    <sl:newLine skipLine="true" />
+                                    <sl:pulsantiera>
+                                        <slf:lblField name="<%=ScartoForm.FiltriRicercaUdSelezionate.RICERCA_UD_SELEZIONATE%>" colSpan="1" />
+                                    </sl:pulsantiera>
+                                    <sl:newLine skipLine="true" />
                                     <slf:listNavBar name="<%= ScartoForm.UdSelezionatePropScartoList.NAME%>" pageSizeRelated="true"/>
                                     <slf:list name="<%= ScartoForm.UdSelezionatePropScartoList.NAME%>" />
                                     <slf:listNavBar  name="<%= ScartoForm.UdSelezionatePropScartoList.NAME%>" />

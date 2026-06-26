@@ -496,6 +496,7 @@ public class ComponentiAction extends ComponentiAbstractAction {
             // Carico la lista dei dati specifici
             AroVLisDatiSpecTableBean listDatiSpecTB = udHelper.getAroVLisDatiSpecTableBean(idComp,
                     TipoEntitaSacer.COMP, Constants.TI_USO_XSD_VERS,
+                    componenteRB.getIdStrutUnitaDoc(), componenteRB.getAaKeyUnitaDoc(),
                     Integer.parseInt(maxResultStandard));
             getForm().getDatiSpecificiCompList().setTable(listDatiSpecTB);
             getForm().getDatiSpecificiCompList().getTable().setPageSize(10);
@@ -503,7 +504,8 @@ public class ComponentiAction extends ComponentiAbstractAction {
             // Carico la lista dei dati specifici di migrazione
             AroVLisDatiSpecTableBean listDatiSpecMigrazioneTB = udHelper
                     .getAroVLisDatiSpecTableBean(idComp, TipoEntitaSacer.COMP,
-                            Constants.TI_USO_XSD_MIGR, Integer.parseInt(maxResultStandard));
+                            Constants.TI_USO_XSD_MIGR, componenteRB.getIdStrutUnitaDoc(),
+                            componenteRB.getAaKeyUnitaDoc(), Integer.parseInt(maxResultStandard));
             getForm().getDatiSpecificiMigrazioneCompList().setTable(listDatiSpecMigrazioneTB);
             getForm().getDatiSpecificiMigrazioneCompList().getTable().setPageSize(10);
             getForm().getDatiSpecificiMigrazioneCompList().getTable().first();

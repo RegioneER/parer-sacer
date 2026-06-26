@@ -38,6 +38,8 @@ public class AroVLisDatiSpecTableDescriptor extends TableDescriptor {
     public static final String COL_ID_UNITA_DOC = "id_unita_doc";
     public static final String COL_ID_DOC = "id_doc";
     public static final String COL_ID_COMP_DOC = "id_comp_doc";
+    public static final String COL_ID_STRUT = "id_strut";
+    public static final String COL_AA_KEY_UNITA_DOC = "aa_key_unita_doc";
     public static final String COL_TI_USO_XSD = "ti_uso_xsd";
     public static final String COL_TI_ENTITA_SACER = "ti_entita_sacer";
     public static final String COL_ID_USO_XSD_DATI_SPEC = "id_uso_xsd_dati_spec";
@@ -58,6 +60,9 @@ public class AroVLisDatiSpecTableDescriptor extends TableDescriptor {
         map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
         map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
         map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_AA_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, true));
         map.put(COL_TI_USO_XSD, new ColumnDescriptor(COL_TI_USO_XSD, Types.VARCHAR, 20, true));
         map.put(COL_TI_ENTITA_SACER,
                 new ColumnDescriptor(COL_TI_ENTITA_SACER, Types.VARCHAR, 20, true));

@@ -272,6 +272,299 @@ public class ScartoEjb {
     }
 
     /**
+     * Avvia la richiesta di autorizzazione per una Proposta di Scarto: salva i dati del
+     * provvedimento di richiesta e transita lo stato in DA_AUTORIZZARE.
+     *
+     * @param idPropScartoVers  ID della proposta da inviare ad autorizzazione
+     * @param ntAutorita        Note/identificativo dell'autorità
+     * @param cdRegistroRichAut Registro del provvedimento di richiesta
+     * @param aaRichAut         Anno del provvedimento di richiesta
+     * @param cdRichAut         Numero del provvedimento di richiesta
+     * @param idUserIam         ID dell'utente che esegue l'operazione
+     *
+     * @throws ParerUserError se la proposta non è in stato APERTA o in caso di errore generico
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void avviaRichiestaAutorizzazione(BigDecimal idPropScartoVers, String ntAutorita,
+            String cdRegistroRichAut, BigDecimal aaRichAut, String cdRichAut, long idUserIam)
+            throws ParerUserError {
+        try {
+            AroPropScartoVers proposta = helper.findByIdWithLock(AroPropScartoVers.class,
+                    idPropScartoVers);
+            if (proposta == null) {
+                throw new ParerUserError("Proposta di scarto non trovata.");
+            }
+
+            // Verifica stato corrente: deve essere APERTA
+            AroStatoPropScartoVers statoCorrente = helper.findById(AroStatoPropScartoVers.class,
+                    proposta.getIdStatoPropScartoVersCor());
+            if (!CostantiDB.TiStatoPropScartoVers.APERTA.name()
+                    .equals(statoCorrente.getTiStatoPropScartoVers())) {
+                throw new ParerUserError(
+                        "La proposta non è in stato APERTA: impossibile avviare la richiesta di autorizzazione.");
+            }
+
+            // Salva i dati della richiesta di autorizzazione sulla proposta
+            proposta.setNtAutorita(ntAutorita);
+            proposta.setCdRegistroRichAut(cdRegistroRichAut);
+            proposta.setAaRichAut(aaRichAut);
+            proposta.setCdRichAut(cdRichAut);
+            proposta.setDtUltimaMod(Calendar.getInstance().getTime());
+
+            // Crea il nuovo stato DA_AUTORIZZARE
+            IamUser utente = helper.findById(IamUser.class, idUserIam);
+            AroStatoPropScartoVers nuovoStato = new AroStatoPropScartoVers();
+            nuovoStato.setAroPropScartoVers(proposta);
+            nuovoStato.setPgStatoPropScartoVers(
+                    statoCorrente.getPgStatoPropScartoVers().add(BigDecimal.ONE));
+            nuovoStato.setTiStatoPropScartoVers(
+                    CostantiDB.TiStatoPropScartoVers.DA_AUTORIZZARE.name());
+            nuovoStato.setDtRegStatoPropScartoVers(Calendar.getInstance().getTime());
+            nuovoStato.setDsNotaPropScartoVers("Richiesta di autorizzazione avviata");
+            nuovoStato.setIamUser(utente);
+
+            helper.insertStatoPropostaScarto(nuovoStato);
+            proposta.setIdStatoPropScartoVersCor(
+                    BigDecimal.valueOf(nuovoStato.getIdStatoPropScartoVers()));
+
+            logger.info(
+                    "Proposta Scarto ID: {} transitata in stato DA_AUTORIZZARE dall'utente ID: {}",
+                    idPropScartoVers, idUserIam);
+        } catch (ParerUserError ex) {
+            throw ex;
+        } catch (Exception ex) {
+            logger.error(
+                    "Errore durante l'avvio della richiesta di autorizzazione: " + ex.getMessage(),
+                    ex);
+            throw new ParerUserError(
+                    "Errore imprevisto durante l'avvio della richiesta di autorizzazione.");
+        }
+    }
+
+    /**
+     * Registra l'autorizzazione (risposta dell'autorità) su una Proposta di Scarto. Salva i dati
+     * del provvedimento di risposta e transita lo stato in AUTORIZZATA. In caso di autorizzazione
+     * PARZIALE la proposta rimane modificabile per la rimozione delle UD non autorizzate.
+     *
+     * @param idPropScartoVers      ID della proposta
+     * @param cdRegistroRispAut     Registro di risposta
+     * @param aaRispAut             Anno di risposta
+     * @param cdRispAut             Numero di risposta
+     * @param tiAutorizzazione      COMPLETA o PARZIALE
+     * @param cdRegistroProvvScarto Registro del provvedimento di scarto
+     * @param aaProvvScarto         Anno del provvedimento di scarto
+     * @param idUserIam             ID dell'utente che esegue l'operazione
+     * @param dsFirmatoDa           Firmatario del provvedimento di scarto
+     * @param cdProvvScarto         Numero del provvedimento di scarto
+     * @return Id della richiesta di scarto creata
+     *
+     * @throws ParerUserError se la proposta non è in stato DA_AUTORIZZARE o in caso di errore
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Long registraAutorizzazione(BigDecimal idPropScartoVers, String cdRegistroRispAut,
+            BigDecimal aaRispAut, String cdRispAut, String tiAutorizzazione,
+            String cdRegistroProvvScarto, BigDecimal aaProvvScarto, String cdProvvScarto,
+            String dsFirmatoDa, long idUserIam) throws ParerUserError {
+        Long idRichScartoVers = null;
+        try {
+            AroPropScartoVers proposta = helper.findByIdWithLock(AroPropScartoVers.class,
+                    idPropScartoVers);
+            if (proposta == null) {
+                throw new ParerUserError("Proposta di scarto non trovata.");
+            }
+
+            // Verifica stato corrente: deve essere DA_AUTORIZZARE
+            AroStatoPropScartoVers statoCorrente = helper.findById(AroStatoPropScartoVers.class,
+                    proposta.getIdStatoPropScartoVersCor());
+            if (!CostantiDB.TiStatoPropScartoVers.DA_AUTORIZZARE.name()
+                    .equals(statoCorrente.getTiStatoPropScartoVers())) {
+                throw new ParerUserError(
+                        "La proposta non è in stato DA_AUTORIZZARE: impossibile registrare l'autorizzazione.");
+            }
+
+            // Valida il tipo di autorizzazione
+            CostantiDB.TiAutorizzazionePropScartoVers tiAut;
+            try {
+                tiAut = CostantiDB.TiAutorizzazionePropScartoVers.valueOf(tiAutorizzazione);
+            } catch (IllegalArgumentException ex) {
+                throw new ParerUserError(
+                        "Tipo autorizzazione non valido: " + tiAutorizzazione);
+            }
+
+            // Per autorizzazione COMPLETA, pre-verifica unicità del codice richiesta PRIMA del
+            // cambio di stato: se il codice esiste già la ParerUserError viene lanciata con la
+            // proposta ancora in DA_AUTORIZZARE, evitando che finisca in AUTORIZZATA senza
+            // richiesta.
+            if (tiAut == CostantiDB.TiAutorizzazionePropScartoVers.COMPLETA) {
+                Calendar calPre = Calendar.getInstance();
+                calPre.setTime(proposta.getDtCreazione());
+                String cdRichPrev = proposta.getPgPropScartoVers().toPlainString() + "/"
+                        + calPre.get(Calendar.YEAR);
+                if (helper.isRichScartoVersExisting(cdRichPrev,
+                        BigDecimal.valueOf(proposta.getOrgStrut().getIdStrut()))) {
+                    throw new ParerUserError(
+                            "Impossibile registrare l'autorizzazione: esiste gi\u00e0 una richiesta "
+                                    + "di scarto con codice '" + cdRichPrev
+                                    + "' per questa struttura. Verificare se la proposta è già "
+                                    + "stata autorizzata in precedenza.");
+                }
+            }
+
+            // Salva i dati della risposta dell'autorità sulla proposta
+            proposta.setCdRegistroRispAut(cdRegistroRispAut);
+            proposta.setAaRispAut(aaRispAut);
+            proposta.setCdRispAut(cdRispAut);
+            proposta.setTiAutorizzazione(tiAut.name());
+            // Salva i dati del provvedimento di scarto
+            proposta.setCdRegistroProvvScarto(cdRegistroProvvScarto);
+            proposta.setAaProvvScarto(aaProvvScarto);
+            proposta.setCdProvvScarto(cdProvvScarto);
+            proposta.setDsFirmatoDa(dsFirmatoDa);
+            proposta.setDtUltimaMod(Calendar.getInstance().getTime());
+
+            // Per autorizzazione PARZIALE lo stato torna ad APERTA per consentire la modifica
+            // in sottrazione; per COMPLETA la proposta viene chiusa definitivamente.
+            String nuovoStatoStr;
+            String notaStato;
+            if (tiAut == CostantiDB.TiAutorizzazionePropScartoVers.PARZIALE) {
+                nuovoStatoStr = CostantiDB.TiStatoPropScartoVers.APERTA_REVISIONE.name();
+                notaStato = "Autorizzazione PARZIALE registrata: rimuovere le UD non autorizzate e completare la revisione";
+                // Snapshot del numero di UD presenti al momento dell'autorizzazione
+                long niUd = helper.countItemsByTipo(idPropScartoVers.longValue(),
+                        CostantiDB.TiItemPropScartoVers.UNI_DOC.name());
+                proposta.setNiUdPreRevisione(BigDecimal.valueOf(niUd));
+            } else {
+                nuovoStatoStr = CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name();
+                notaStato = "Autorizzazione COMPLETA registrata: proposta autorizzata";
+            }
+
+            IamUser utente = helper.findById(IamUser.class, idUserIam);
+            AroStatoPropScartoVers nuovoStato = new AroStatoPropScartoVers();
+            nuovoStato.setAroPropScartoVers(proposta);
+            nuovoStato.setPgStatoPropScartoVers(
+                    statoCorrente.getPgStatoPropScartoVers().add(BigDecimal.ONE));
+            nuovoStato.setTiStatoPropScartoVers(nuovoStatoStr);
+            nuovoStato.setDtRegStatoPropScartoVers(Calendar.getInstance().getTime());
+            nuovoStato.setDsNotaPropScartoVers(notaStato);
+            nuovoStato.setIamUser(utente);
+
+            helper.insertStatoPropostaScarto(nuovoStato);
+            proposta.setIdStatoPropScartoVersCor(
+                    BigDecimal.valueOf(nuovoStato.getIdStatoPropScartoVers()));
+
+            // Per autorizzazione COMPLETA crea subito la richiesta di scarto
+            if (tiAut == CostantiDB.TiAutorizzazionePropScartoVers.COMPLETA) {
+                idRichScartoVers = creaRichScartoVersFromProposta(proposta, utente,
+                        Calendar.getInstance().getTime(), idUserIam);
+            }
+
+            logger.info(
+                    "Proposta Scarto ID: {} autorizzazione {} registrata dall'utente ID: {}",
+                    idPropScartoVers, tiAut.name(), idUserIam);
+        } catch (ParerUserError ex) {
+            throw ex;
+        } catch (Exception ex) {
+            logger.error("Errore durante la registrazione dell'autorizzazione: " + ex.getMessage(),
+                    ex);
+            throw new ParerUserError(
+                    "Errore imprevisto durante la registrazione dell'autorizzazione.");
+        }
+        return idRichScartoVers;
+    }
+
+    /**
+     * Completa la revisione di una Proposta di Scarto che si trova in stato APERTA_REVISIONE (dopo
+     * autorizzazione PARZIALE). Transita lo stato in AUTORIZZATA senza richiedere ulteriori dati di
+     * autorizzazione (già registrati in precedenza).
+     *
+     * @param idPropScartoVers ID della proposta
+     * @param idUserIam        ID dell'utente che esegue l'operazione
+     * @return Id della richiesta di scarto creata
+     *
+     * @throws ParerUserError se la proposta non è in stato APERTA_REVISIONE o in caso di errore
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Long completaRevisionePropostaScarto(BigDecimal idPropScartoVers, long idUserIam)
+            throws ParerUserError {
+        Long idRichScartoVers = null;
+        try {
+            AroPropScartoVers proposta = helper.findByIdWithLock(AroPropScartoVers.class,
+                    idPropScartoVers);
+            if (proposta == null) {
+                throw new ParerUserError("Proposta di scarto non trovata.");
+            }
+
+            AroStatoPropScartoVers statoCorrente = helper.findById(AroStatoPropScartoVers.class,
+                    proposta.getIdStatoPropScartoVersCor());
+            if (!CostantiDB.TiStatoPropScartoVers.APERTA_REVISIONE.name()
+                    .equals(statoCorrente.getTiStatoPropScartoVers())) {
+                throw new ParerUserError(
+                        "La proposta non è in stato APERTA_REVISIONE: impossibile completare la revisione.");
+            }
+
+            // Verifica che sia stata rimossa almeno una UD rispetto allo snapshot pre-revisione
+            BigDecimal niUdPreRevisione = proposta.getNiUdPreRevisione();
+            if (niUdPreRevisione != null) {
+                long niUdAttuali = helper.countItemsByTipo(idPropScartoVers.longValue(),
+                        CostantiDB.TiItemPropScartoVers.UNI_DOC.name());
+                if (niUdAttuali >= niUdPreRevisione.longValue()) {
+                    throw new ParerUserError(
+                            "Impossibile completare la revisione: l'autorizzazione era PARZIALE ma non è stata rimossa alcuna unità documentaria dalla proposta. "
+                                    + "Rimuovere almeno una UD non autorizzata prima di procedere.");
+                }
+            }
+
+            proposta.setDtUltimaMod(Calendar.getInstance().getTime());
+
+            // Pre-verifica unicità del codice richiesta PRIMA del cambio di stato: se il codice
+            // esiste già la ParerUserError viene lanciata con la proposta ancora in
+            // APERTA_REVISIONE.
+            Calendar calPre = Calendar.getInstance();
+            calPre.setTime(proposta.getDtCreazione());
+            String cdRichPrev = proposta.getPgPropScartoVers().toPlainString() + "/"
+                    + calPre.get(Calendar.YEAR);
+            if (helper.isRichScartoVersExisting(cdRichPrev,
+                    BigDecimal.valueOf(proposta.getOrgStrut().getIdStrut()))) {
+                throw new ParerUserError(
+                        "Impossibile completare la revisione: esiste gi\u00e0 una richiesta "
+                                + "di scarto con codice '" + cdRichPrev
+                                + "' per questa struttura. Verificare se la proposta è già "
+                                + "stata processata in precedenza.");
+            }
+
+            IamUser utente = helper.findById(IamUser.class, idUserIam);
+            AroStatoPropScartoVers nuovoStato = new AroStatoPropScartoVers();
+            nuovoStato.setAroPropScartoVers(proposta);
+            nuovoStato.setPgStatoPropScartoVers(
+                    statoCorrente.getPgStatoPropScartoVers().add(BigDecimal.ONE));
+            nuovoStato.setTiStatoPropScartoVers(
+                    CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name());
+            nuovoStato.setDtRegStatoPropScartoVers(Calendar.getInstance().getTime());
+            nuovoStato.setDsNotaPropScartoVers(
+                    "Revisione completata: proposta autorizzata dopo rimozione UD non autorizzate");
+            nuovoStato.setIamUser(utente);
+
+            helper.insertStatoPropostaScarto(nuovoStato);
+            proposta.setIdStatoPropScartoVersCor(
+                    BigDecimal.valueOf(nuovoStato.getIdStatoPropScartoVers()));
+
+            // Revisione completata → proposta AUTORIZZATA: crea la richiesta di scarto
+            idRichScartoVers = creaRichScartoVersFromProposta(proposta, utente,
+                    Calendar.getInstance().getTime(), idUserIam);
+
+            logger.info(
+                    "Proposta Scarto ID: {} revisione completata → AUTORIZZATA dall'utente ID: {}",
+                    idPropScartoVers, idUserIam);
+        } catch (ParerUserError ex) {
+            throw ex;
+        } catch (Exception ex) {
+            logger.error("Errore durante il completamento della revisione: " + ex.getMessage(), ex);
+            throw new ParerUserError("Errore imprevisto durante il completamento della revisione.");
+        }
+        return idRichScartoVers;
+    }
+
+    /**
      * Recupera i dati del Report delle UD per le Proposte di Scarto, mappando i risultati della
      * query nativa nel TableBean per la UI e calcolando i totali per il riepilogo.
      *
@@ -534,6 +827,66 @@ public class ScartoEjb {
                     "La proposta non \u00E8 cancellabile perch\u00E9 ha stato corrente diverso da APERTA");
         }
         helper.removeEntity(propScartoVers, false);
+    }
+
+    /**
+     * Annulla fisicamente una Proposta di Scarto che si trova in stato DA_AUTORIZZARE, rimuovendo
+     * tutti gli item e cancellando la proposta dal DB. Da utilizzare quando l'autorità ha
+     * comunicato che TUTTE le UD presenti in proposta non sono scartabili.
+     *
+     * @param idPropScartoVers ID della proposta da annullare
+     * @param idUserIam        ID dell'utente che esegue l'operazione
+     *
+     * @throws ParerUserError se la proposta non è in stato DA_AUTORIZZARE o in caso di errore
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void annullaPropostaDaAutorizzare(BigDecimal idPropScartoVers, long idUserIam)
+            throws ParerUserError {
+        try {
+            AroPropScartoVers proposta = helper.findByIdWithLock(AroPropScartoVers.class,
+                    idPropScartoVers);
+            if (proposta == null) {
+                throw new ParerUserError("Proposta di scarto non trovata.");
+            }
+
+            // Verifica stato corrente: deve essere DA_AUTORIZZARE
+            AroStatoPropScartoVers statoCorrente = helper.findById(AroStatoPropScartoVers.class,
+                    proposta.getIdStatoPropScartoVersCor());
+            if (!CostantiDB.TiStatoPropScartoVers.DA_AUTORIZZARE.name()
+                    .equals(statoCorrente.getTiStatoPropScartoVers())) {
+                throw new ParerUserError(
+                        "La proposta non \u00e8 in stato DA_AUTORIZZARE: impossibile annullarla con questa funzione.");
+            }
+
+            // Prima azzeriamo il puntatore allo stato corrente per evitare vincoli FK
+            proposta.setIdStatoPropScartoVersCor(null);
+            helper.mergeEntity(proposta);
+            // Flush necessario per rendere visibile la modifica prima delle DELETE
+            entityManager.flush();
+
+            // Rimuove tutti gli item dalla proposta (BULK DELETE)
+            helper.deleteAllItemsDaProposta(idPropScartoVers.longValue());
+
+            // Rimuove tutti gli stati della proposta (BULK DELETE)
+            helper.deleteAllStatiDaProposta(idPropScartoVers.longValue());
+
+            // Cancella fisicamente la proposta
+            // Rileggo l'entità per averla managed dopo il flush
+            AroPropScartoVers propostaManaged = helper.findById(AroPropScartoVers.class,
+                    idPropScartoVers);
+            if (propostaManaged != null) {
+                helper.removeEntity(propostaManaged, false);
+            }
+
+            logger.info(
+                    "Proposta Scarto ID: {} annullata (DA_AUTORIZZARE, nessuna UD scartabile) dall'utente ID: {}",
+                    idPropScartoVers, idUserIam);
+        } catch (ParerUserError ex) {
+            throw ex;
+        } catch (Exception ex) {
+            logger.error("Errore durante l'annullamento della proposta: " + ex.getMessage(), ex);
+            throw new ParerUserError("Errore imprevisto durante l'annullamento della proposta.");
+        }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -906,6 +1259,26 @@ public class ScartoEjb {
         // stato APERTA o CHIUSA che
         // contiene quella unita doc da scartare
         if (ud != null) {
+            // Controllo se l'UD è già stata scartata in una precedente richiesta evasa
+            if (helper.isUdScartata(ud.getIdUnitaDoc())) {
+                String dsErr = "L'unità documentaria " + ud.getCdRegistroKeyUnitaDoc() + "-"
+                        + ud.getAaKeyUnitaDoc().toPlainString() + "-" + ud.getCdKeyUnitaDoc()
+                        + " è già stata scartata";
+                createAroErrRichScartoVers(item, new BigDecimal(progressivoErr++),
+                        CostantiDB.TipoErrRichScartoVers.ITEM_GIA_SCARTATO.name(), dsErr,
+                        CostantiDB.TipoGravitaErrore.ERRORE.name());
+            }
+
+            // Controllo se l'UD è già stata annullata
+            if (helper.isUdAnnullata(ud.getIdUnitaDoc())) {
+                String dsErr = "L'unità documentaria " + ud.getCdRegistroKeyUnitaDoc() + "-"
+                        + ud.getAaKeyUnitaDoc().toPlainString() + "-" + ud.getCdKeyUnitaDoc()
+                        + " è già stata annullata";
+                createAroErrRichScartoVers(item, new BigDecimal(progressivoErr++),
+                        CostantiDB.TipoErrRichScartoVers.ITEM_GIA_ANNULLATO.name(), dsErr,
+                        CostantiDB.TipoGravitaErrore.ERRORE.name());
+            }
+
             AroRichScartoVers existingRich = helper.getAroRichScartoVersContainingUd(
                     ud.getIdUnitaDoc(), item.getAroRichScartoVers().getIdRichScartoVers());
             if (existingRich != null) {
@@ -998,6 +1371,85 @@ public class ScartoEjb {
         helper.insertEntity(item, true);
         return item;
     }
+
+    /**
+     * Crea automaticamente una richiesta di scarto (ARO_RICH_SCARTO_VERS) a partire da una proposta
+     * che ha appena raggiunto lo stato AUTORIZZATA. Vengono trasferiti come item della richiesta
+     * tutte le UD di tipo UNI_DOC presenti nella proposta. La richiesta viene creata in stato
+     * CHIUSA (pronta per l'elaborazione da parte del job).
+     *
+     * @param proposta  la proposta autorizzata
+     * @param utente    utente che ha completato l'autorizzazione
+     * @param now       timestamp dell'operazione
+     * @param idUserIam id utente (per il controllo abilitazioni)
+     */
+    private Long creaRichScartoVersFromProposta(AroPropScartoVers proposta, IamUser utente,
+            Date now, long idUserIam) throws ParerUserError {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(proposta.getDtCreazione());
+        int anno = cal.get(Calendar.YEAR);
+        String cdRichScartoVers = proposta.getPgPropScartoVers().toPlainString() + "/" + anno;
+
+        // Verifica unicità del codice: in caso di doppia sottomissione o errore applicativo
+        // potrebbe essere richiesta la creazione di una richiesta con codice già esistente.
+        if (helper.isRichScartoVersExisting(cdRichScartoVers,
+                BigDecimal.valueOf(proposta.getOrgStrut().getIdStrut()))) {
+            throw new ParerUserError("Impossibile creare la richiesta di scarto: esiste già una "
+                    + "richiesta con codice '" + cdRichScartoVers + "' per questa struttura.");
+        }
+
+        AroRichScartoVers rich = new AroRichScartoVers();
+        rich.setCdRichScartoVers(cdRichScartoVers);
+        rich.setDsRichScartoVers(proposta.getDsPropScartoVers());
+        rich.setNtRichScartoVers(proposta.getNtPropScartoVers());
+        rich.setDtCreazioneRichScartoVers(now);
+        rich.setTiCreazioneRichScartoVers(
+                CostantiDB.TipoCreazioneRichScartoVers.DA_PROPOSTA.name());
+        rich.setOrgStrut(proposta.getOrgStrut());
+        rich.setAroItemRichScartoVers(new ArrayList<>());
+        rich.setAroFileRichScartoVers(new ArrayList<>());
+        rich.setAroStatoRichScartoVers(new ArrayList<>());
+
+        helper.insertEntity(rich, true);
+
+        // Crea un item della richiesta per ciascuna UD di tipo UNI_DOC in proposta
+        int progressivo = 1;
+        for (AroItemPropScartoVers itemProp : proposta.getAroItemPropScartoVers()) {
+            if (!CostantiDB.TiItemPropScartoVers.UNI_DOC.name()
+                    .equals(itemProp.getTiItemPropScartoVers())) {
+                continue;
+            }
+            AroUnitaDoc ud = itemProp.getAroUnitaDoc();
+            if (ud == null) {
+                continue;
+            }
+            AroItemRichScartoVers item = new AroItemRichScartoVers();
+            item.setCdRegistroKeyUnitaDoc(ud.getCdRegistroKeyUnitaDoc());
+            item.setAaKeyUnitaDoc(ud.getAaKeyUnitaDoc());
+            item.setCdKeyUnitaDoc(ud.getCdKeyUnitaDoc());
+            item.setIdStrut(BigDecimal.valueOf(proposta.getOrgStrut().getIdStrut()));
+            item.setPgItemRichScartoVers(new BigDecimal(progressivo++));
+            item.setTiStatoItemScarto(CostantiDB.StatoItemRichScartoVers.NON_SCARTABILE.name());
+            item.setAroUnitaDoc(ud);
+            rich.addAroItemRichScartoVers(item);
+            helper.insertEntity(item, true);
+        }
+
+        // Stato iniziale CHIUSA: la richiesta è pronta per l'elaborazione del job
+        AroStatoRichScartoVers statoRich = context.getBusinessObject(ScartoEjb.class)
+                .createAroStatoRichScartoVers(rich,
+                        CostantiDB.StatoRichScartoVers.CHIUSA.name(), now,
+                        "Creata automaticamente da proposta di scarto " + cdRichScartoVers,
+                        utente);
+        helper.insertEntity(statoRich, true);
+        rich.setIdStatoRichScartoVersCor(
+                new BigDecimal(statoRich.getIdStatoRichScartoVers()));
+
+        logger.info(
+                "Richiesta di scarto {} creata automaticamente dalla proposta ID: {}",
+                cdRichScartoVers, proposta.getIdPropScartoVers());
+        return rich.getIdRichScartoVers();
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Scarto versamenti">
@@ -1028,7 +1480,7 @@ public class ScartoEjb {
                     ScartoEjb.class.getSimpleName());
 
             // Elimino tutti gli errori rilevati sugli item della richiesta, tranne quelli
-            // di tipo ITEM_NON_ESISTE e ITEM_GIA_PRESENTE e ITEM_GIA_SCARTATO
+            // di tipo ITEM_NON_ESISTE e ITEM_GIA_PRESENTE e ITEM_GIA_SCARTATO e ITEM_GIA_ANNULLATO
             helper.deleteAroErrRichScartoVers(idRichScartoVers,
                     CostantiDB.TipoErrRichScartoVers.getStatiControlloItem());
 
@@ -1096,7 +1548,7 @@ public class ScartoEjb {
         richiestaScarto.setAroStatoRichScartoVers(query.getResultList());
         AroStatoRichScartoVers statoRichScartoVersNew = context.getBusinessObject(ScartoEjb.class)
                 .createAroStatoRichScartoVers(richiestaScarto,
-                        CostantiDB.StatoRichAnnulVers.EVASA.name(),
+                        CostantiDB.StatoRichScartoVers.EVASA.name(),
                         Calendar.getInstance().getTime(), null, statoRichScartoVers.getIamUser());
         helper.insertEntity(statoRichScartoVersNew, false);
         // Aggiorno l'identificatore dello stato corrente della richiesta assegnando
@@ -1479,21 +1931,24 @@ public class ScartoEjb {
      * @param idTipoUd         id tipo ud
      * @param idRegistro       id registro
      * @param anno             anno ud
+     * @param annoDa           anno ud da
+     * @param annoA            anno ud a
      * @param numero           numero ud
+     * @param numeroDa         numero ud da
+     * @param numeroA          numero ud a
      * @param flScartabile     flag scartabile
      * @param dsAlertTesto     testo alert
      * @return lista ud salvate in proposta
      */
     public BaseTable getListaUdSalvateInProposta(BigDecimal idPropScartoVers, BigDecimal idTipoUd,
-            BigDecimal idRegistro, BigDecimal anno, String numero, String flScartabile,
+            BigDecimal idRegistro, BigDecimal anno, BigDecimal annoDa, BigDecimal annoA,
+            String numero, String numeroDa, String numeroA, String flScartabile,
             String dsAlertTesto) {
         BaseTable tableBean = new BaseTable();
 
-        // Chiamo la query nativa nell'Helper che fa le JOIN e calcola l'Alert in real-time
-        // List<Object[]> rawResults =
-        // helper.getUdSalvateConAlertNative(idPropScartoVers.longValue());
         List<Object[]> rawResults = helper.getUdSalvateConAlertNative(idPropScartoVers.longValue(),
-                idTipoUd, idRegistro, anno, numero, flScartabile, dsAlertTesto);
+                idTipoUd, idRegistro, anno, annoDa, annoA, numero, numeroDa, numeroA, flScartabile,
+                dsAlertTesto);
 
         if (rawResults != null && !rawResults.isEmpty()) {
             for (Object[] row : rawResults) {

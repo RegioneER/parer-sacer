@@ -19,7 +19,6 @@ package it.eng.parer.job.verificaCompTipoFasc.ejb;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -44,6 +43,8 @@ import it.eng.parer.ws.versFascicoli.dto.ConfigNumFasc;
 import it.eng.parer.ws.versFascicoli.ejb.ControlliFascicoli;
 import it.eng.parer.ws.versFascicoli.utils.KeyOrdFascUtility;
 import it.eng.parer.ws.versFascicoli.utils.KeySizeFascUtility;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
 /**
  *
@@ -87,7 +88,7 @@ public class VerificaPeriodoTipoFascEjb {
                 KeySizeFascUtility.MAX_LEN_CHIAVEORD);
         long anno = tmpDecAaTipoFascicolo.getAaIniTipoFascicolo().longValue();
         long annoMax = tmpDecAaTipoFascicolo.getAaFinTipoFascicolo() != null
-                ? tmpDecAaTipoFascicolo.getAaIniTipoFascicolo().longValue()
+                ? tmpDecAaTipoFascicolo.getAaFinTipoFascicolo().longValue()
                 : new GregorianCalendar().get(Calendar.YEAR);
         long idTipoFasc = tmpDecAaTipoFascicolo.getDecTipoFascicolo().getIdTipoFascicolo();
         long idOrgStrut = tmpDecAaTipoFascicolo.getDecTipoFascicolo().getOrgStrut().getIdStrut();
@@ -115,44 +116,74 @@ public class VerificaPeriodoTipoFascEjb {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public RispostaControlli verificaAnnoNewTrans(long idTipoFasc, long anno, long idOrgStrut,
             KeyOrdFascUtility tmpKeyOrdFascUtility) {
+
         RispostaControlli risposta = new RispostaControlli();
         risposta.setrBoolean(true);
+        int count = 0;
 
-        // elabora anno
-        List<FasFascicolo> fasFascicolos = verificaCompTipoFascHelper
-                .getListaFasFascicoloDaVerificare(idTipoFasc, idOrgStrut, anno);
-        for (FasFascicolo tmpFasc : fasFascicolos) {
-            CSChiaveFasc tmpCSChiaveFasc = new CSChiaveFasc();
-            tmpCSChiaveFasc.setAnno(tmpFasc.getAaFascicolo().intValue());
-            tmpCSChiaveFasc.setNumero(tmpFasc.getCdKeyFascicolo());
-            RispostaControlli rispostaControlli = tmpKeyOrdFascUtility.verificaChiave(
-                    tmpCSChiaveFasc, tmpFasc.getOrgStrut().getIdStrut(),
-                    tmpFasc.getDtApeFascicolo(), tmpFasc.getCdIndiceClassif());
+        // Utilizzo del try-with-resources per gestire la chiusura automatica del cursore DB
+        try (Stream<FasFascicolo> fasFascicoloStream = verificaCompTipoFascHelper
+                .getStreamFasFascicoloDaVerificare(idTipoFasc, idOrgStrut, anno)) {
 
-            if (rispostaControlli.isrBoolean()) {
-                // salvo la chiave per l'ordinamento
-                KeyOrdFascUtility.KeyOrdResult keyOrdResult = (KeyOrdFascUtility.KeyOrdResult) rispostaControlli
-                        .getrObject();
-                // aggiorno tmpUd
-                // aggiorno la chiave di ordinamento calcolata
-                tmpFasc.setCdKeyOrd(keyOrdResult.getKeyOrdCalcolata());
-                // TODO: aggiorno il progressivo calcolato, estratto dal numero della chiave..
-                // potrebbe non esistere
-                /*
-                 * if (keyOrdResult.getProgressivoCalcolato() != null) { tmpFasc.setPgUnitaDoc(new
-                 * BigDecimal(keyOrdResult.getProgressivoCalcolato())); } else {
-                 * tmpFasc.setPgUnitaDoc(null); }
-                 */
-            } else {
-                risposta.setCodErr(rispostaControlli.getCodErr());
-                risposta.setDsErr(rispostaControlli.getDsErr());
-                risposta.setrLong(tmpFasc.getIdFascicolo());
-                risposta.setrBoolean(false);
-                // in caso di problemi, effettuo il rollback delle modifiche fatte alle UD dell'anno
-                ejbContext.setRollbackOnly();
-                break;
+            log.info("JOB VERIFICA_COMPATIBILITA_TIPO_FASC: Verifica tipo fascicolo {} per anno {}",
+                    idTipoFasc, anno);
+
+            Iterator<FasFascicolo> iterator = fasFascicoloStream.iterator();
+
+            while (iterator.hasNext()) {
+                FasFascicolo tmpFasc = iterator.next();
+
+                // 1. Preparazione e verifica chiave fascicolo
+                CSChiaveFasc tmpCSChiaveFasc = new CSChiaveFasc();
+                tmpCSChiaveFasc.setAnno(tmpFasc.getAaFascicolo().intValue());
+                tmpCSChiaveFasc.setNumero(tmpFasc.getCdKeyFascicolo());
+
+                RispostaControlli rispostaControlli = tmpKeyOrdFascUtility.verificaChiave(
+                        tmpCSChiaveFasc, tmpFasc.getOrgStrut().getIdStrut(),
+                        tmpFasc.getDtApeFascicolo(), tmpFasc.getCdIndiceClassif());
+
+                if (rispostaControlli.isrBoolean()) {
+                    // 2. Successo: Aggiornamento della chiave di ordinamento
+                    KeyOrdFascUtility.KeyOrdResult keyOrdResult = (KeyOrdFascUtility.KeyOrdResult) rispostaControlli
+                            .getrObject();
+                    tmpFasc.setCdKeyOrd(keyOrdResult.getKeyOrdCalcolata());
+                } else {
+                    // 3. Fallimento: Impostazione errore e Rollback totale dell'annualità
+                    risposta.setCodErr(rispostaControlli.getCodErr());
+                    risposta.setDsErr(rispostaControlli.getDsErr());
+                    risposta.setrLong(tmpFasc.getIdFascicolo());
+                    risposta.setrBoolean(false);
+                    log.info(
+                            "JOB VERIFICA_COMPATIBILITA_TIPO_FASC: Verifica terminata con errore di validazione");
+
+                    ejbContext.setRollbackOnly();
+                    return risposta; // Uscita immediata dal metodo (lo stream viene chiuso dal
+                                     // try-with-resources)
+                }
+
+                // 4. Gestione della Memoria: Flush & Clear ogni 1000 record
+                if (++count % 1000 == 0) {
+                    entityManager.flush(); // Sincronizza gli update sul DB
+                    entityManager.clear(); // Libera la RAM eliminando i fascicoli processati
+                }
             }
+            log.info(
+                    "JOB VERIFICA_COMPATIBILITA_TIPO_FASC: Verifica dell'anno {} terminata senza errorei di validazione",
+                    anno);
+        } catch (Exception e) {
+            // Gestione errori tecnici imprevisti durante lo streaming
+            log.error(
+                    "JOB VERIFICA_COMPATIBILITA_TIPO_FASC: Errore nel processamento fascicoli dello stream per anno "
+                            + anno,
+                    e);
+            risposta.setrBoolean(false);
+            risposta.setDsErr(
+                    "JOB VERIFICA_COMPATIBILITA_TIPO_FASC: Errore nel processamento fascicoli dello stream per anno: "
+                            + e.getMessage());
+            ejbContext.setRollbackOnly();
+            return risposta;
         }
+
         return risposta;
     }
 

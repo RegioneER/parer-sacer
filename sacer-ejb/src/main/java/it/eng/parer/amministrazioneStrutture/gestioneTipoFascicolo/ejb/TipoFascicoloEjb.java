@@ -403,6 +403,8 @@ public class TipoFascicoloEjb {
         try {
             aaTipoFascicoloRowBean = (DecAaTipoFascicoloRowBean) Transform
                     .entity2RowBean(aaTipoFascicolo);
+            aaTipoFascicoloRowBean.setFlUpdFmtNumero(
+                    aaTipoFascicoloRowBean.getFlUpdFmtNumero().equals("1") ? "0" : "1");
             aaTipoFascicoloRowBean.setString("controllo_formato",
                     helper.getDecVChkFmtNumeroFascForPeriodo(
                             aaTipoFascicoloRowBean.getIdAaTipoFascicolo()));
@@ -1289,6 +1291,8 @@ public class TipoFascicoloEjb {
         Long idTipoFascicolo = parteNumeroFascicolo.getDecAaTipoFascicolo().getDecTipoFascicolo()
                 .getIdTipoFascicolo();
 
+        parteNumeroFascicolo.getDecAaTipoFascicolo().setFlUpdFmtNumero("1");
+
         // Rimozione a cascata
         helper.removeEntity(parteNumeroFascicolo, true);
 
@@ -1371,6 +1375,8 @@ public class TipoFascicoloEjb {
         //
         DecAaTipoFascicolo aaTipoFascicolo = helper.findById(DecAaTipoFascicolo.class,
                 aaTipoFascicoloRowBean.getIdAaTipoFascicolo());
+
+        aaTipoFascicolo.setFlUpdFmtNumero("1");
 
         logger.info("Inserisco o aggiorno le parti");
         if (parteRowBean.getIdParteNumeroFascicolo() != null) {

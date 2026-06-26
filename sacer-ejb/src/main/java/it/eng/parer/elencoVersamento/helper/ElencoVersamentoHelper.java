@@ -3865,15 +3865,17 @@ public class ElencoVersamentoHelper extends GenericHelper {
     }
 
     public BigDecimal getPgStatoElencoVers(BigDecimal idElencoVers) {
-        String queryStr = "SELECT statoElencoVers.pgStatoElencoVers "
+        String queryStr = "SELECT COALESCE(MAX(statoElencoVers.pgStatoElencoVers), 0) "
                 + "FROM ElvStatoElencoVer statoElencoVers "
-                + "WHERE statoElencoVers.elvElencoVer.idElencoVers = :idElencoVers "
-                + "ORDER BY statoElencoVers.pgStatoElencoVers DESC ";
+                + "WHERE statoElencoVers.elvElencoVer.idElencoVers = :idElencoVers ";
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVers", idElencoVers.longValue());
-        List<BigDecimal> risultato = query.getResultList();
-        if (!risultato.isEmpty()) {
-            return risultato.get(0);
+        Object risultato = query.getSingleResult();
+        if (risultato instanceof BigDecimal) {
+            return (BigDecimal) risultato;
+        }
+        if (risultato instanceof Number) {
+            return BigDecimal.valueOf(((Number) risultato).longValue());
         }
         return BigDecimal.ZERO;
     }

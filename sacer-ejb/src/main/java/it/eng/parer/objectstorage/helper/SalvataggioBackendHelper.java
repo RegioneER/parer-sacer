@@ -97,6 +97,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectAttributesRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectAttributesResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.ChecksumMode;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -1591,7 +1592,7 @@ public class SalvataggioBackendHelper {
             S3Client s3SourceClient = s3Clients.getClient(configuration.getAddress(),
                     configuration.getAccessKeyId(), configuration.getSecretKey());
             HeadObjectRequest headObjectRequest = HeadObjectRequest.builder().bucket(bucket)
-                    .key(objectKey).build();
+                    .key(objectKey).checksumMode(ChecksumMode.ENABLED).build();
             return s3SourceClient.headObject(headObjectRequest);
         } catch (AwsServiceException | SdkClientException e) {
             throw ObjectStorageException.builder().message(

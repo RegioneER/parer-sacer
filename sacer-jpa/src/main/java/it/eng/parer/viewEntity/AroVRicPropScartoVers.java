@@ -39,6 +39,21 @@ public class AroVRicPropScartoVers implements Serializable {
     private String nmStrut;
     private String ntPropScartoVers;
     private String tiStatoPropScartoVersCor;
+    // Dati richiesta di autorizzazione
+    private String ntAutorita;
+    private String cdRegistroRichAut;
+    private BigDecimal aaRichAut;
+    private String cdRichAut;
+    // Dati risposta autorizzazione
+    private String cdRegistroRispAut;
+    private BigDecimal aaRispAut;
+    private String cdRispAut;
+    private String tiAutorizzazione;
+    // Dati provvedimento di scarto
+    private String cdRegistroProvvScarto;
+    private BigDecimal aaProvvScarto;
+    private String cdProvvScarto;
+    private String dsFirmatoDa;
 
     public AroVRicPropScartoVers() {
     }
@@ -151,6 +166,114 @@ public class AroVRicPropScartoVers implements Serializable {
 
     public void setTiStatoPropScartoVersCor(String tiStatoPropScartoVersCor) {
         this.tiStatoPropScartoVersCor = tiStatoPropScartoVersCor;
+    }
+
+    @Column(name = "NT_AUTORITA")
+    public String getNtAutorita() {
+        return this.ntAutorita;
+    }
+
+    public void setNtAutorita(String ntAutorita) {
+        this.ntAutorita = ntAutorita;
+    }
+
+    @Column(name = "CD_REGISTRO_RICH_AUT")
+    public String getCdRegistroRichAut() {
+        return this.cdRegistroRichAut;
+    }
+
+    public void setCdRegistroRichAut(String cdRegistroRichAut) {
+        this.cdRegistroRichAut = cdRegistroRichAut;
+    }
+
+    @Column(name = "AA_RICH_AUT")
+    public BigDecimal getAaRichAut() {
+        return this.aaRichAut;
+    }
+
+    public void setAaRichAut(BigDecimal aaRichAut) {
+        this.aaRichAut = aaRichAut;
+    }
+
+    @Column(name = "CD_RICH_AUT")
+    public String getCdRichAut() {
+        return this.cdRichAut;
+    }
+
+    public void setCdRichAut(String cdRichAut) {
+        this.cdRichAut = cdRichAut;
+    }
+
+    @Column(name = "CD_REGISTRO_RISP_AUT")
+    public String getCdRegistroRispAut() {
+        return this.cdRegistroRispAut;
+    }
+
+    public void setCdRegistroRispAut(String cdRegistroRispAut) {
+        this.cdRegistroRispAut = cdRegistroRispAut;
+    }
+
+    @Column(name = "AA_RISP_AUT")
+    public BigDecimal getAaRispAut() {
+        return this.aaRispAut;
+    }
+
+    public void setAaRispAut(BigDecimal aaRispAut) {
+        this.aaRispAut = aaRispAut;
+    }
+
+    @Column(name = "CD_RISP_AUT")
+    public String getCdRispAut() {
+        return this.cdRispAut;
+    }
+
+    public void setCdRispAut(String cdRispAut) {
+        this.cdRispAut = cdRispAut;
+    }
+
+    @Column(name = "TI_AUTORIZZAZIONE")
+    public String getTiAutorizzazione() {
+        return this.tiAutorizzazione;
+    }
+
+    public void setTiAutorizzazione(String tiAutorizzazione) {
+        this.tiAutorizzazione = tiAutorizzazione;
+    }
+
+    @Column(name = "CD_REGISTRO_PROVV_SCARTO")
+    public String getCdRegistroProvvScarto() {
+        return cdRegistroProvvScarto;
+    }
+
+    public void setCdRegistroProvvScarto(String cdRegistroProvvScarto) {
+        this.cdRegistroProvvScarto = cdRegistroProvvScarto;
+    }
+
+    @Column(name = "AA_PROVV_SCARTO")
+    public BigDecimal getAaProvvScarto() {
+        return aaProvvScarto;
+    }
+
+    public void setAaProvvScarto(BigDecimal aaProvvScarto) {
+        this.aaProvvScarto = aaProvvScarto;
+    }
+
+    @Column(name = "CD_PROVV_SCARTO")
+    public String getCdProvvScarto() {
+        return cdProvvScarto;
+    }
+
+    public void setCdProvvScarto(String cdProvvScarto) {
+        this.cdProvvScarto = cdProvvScarto;
+    }
+
+    @Column(name = "DS_FIRMATO_DA")
+    public String getDsFirmatoDa() {
+        return dsFirmatoDa;
+    }
+
+    public void setDsFirmatoDa(String dsFirmatoDa) {
+        this.dsFirmatoDa = dsFirmatoDa;
     }
 
     private AroVRicPropScartoVersId aroVRicPropScartoVersId;

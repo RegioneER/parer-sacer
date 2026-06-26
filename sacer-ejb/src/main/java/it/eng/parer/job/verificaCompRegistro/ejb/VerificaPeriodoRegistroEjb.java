@@ -187,9 +187,14 @@ public class VerificaPeriodoRegistroEjb {
                     anno);
         } catch (Exception e) {
             // Gestione errori tecnici imprevisti durante lo streaming
-            log.error("Errore nel processamento dello stream per anno " + anno, e);
+            log.error(
+                    "JOB VERIFICA_COMPATIBILITA_REGISTRO: Errore nel processamento dello stream per anno "
+                            + anno,
+                    e);
             risposta.setrBoolean(false);
-            risposta.setDsErr("Errore nel processamento dello stream per anno: " + e.getMessage());
+            risposta.setDsErr(
+                    "JOB VERIFICA_COMPATIBILITA_REGISTRO: Errore nel processamento dello stream per anno: "
+                            + e.getMessage());
             ejbContext.setRollbackOnly();
             return risposta;
         }

@@ -27,7 +27,7 @@ import it.eng.parer.scarto.helper.ScartoHelper.ColonnaReportUd;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.ScartoAbstractAction;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm;
-import it.eng.parer.slite.gen.tablebean.AroPropScartoVersRowBean;
+
 import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DmUdDelTableBean;
@@ -115,7 +115,7 @@ public class ScartoAction extends ScartoAbstractAction {
     private UnitaDocumentarieHelper udHelper;
 
     public enum ModalitaInitScarto {
-        VIEW, INS, MOD
+        VIEW, INS, MOD, REVISIONE
     }
 
     private static final String QTA_RAGGIUNTO_COLUMN_TITLE = "Tempo raggiunto";
@@ -245,15 +245,14 @@ public class ScartoAction extends ScartoAbstractAction {
     }
 
     private void loadDettaglioProposta(BigDecimal idPropScartoVers) throws EMFError {
-        initPropScartoVers(ModalitaInitScarto.VIEW);
-        initGestioneItemPropScartoVers(ModalitaInitScarto.VIEW);
-
-        // Carica i dati della proposta
-        // AroPropScartoVersRowBean detailRow = scartoEjb
-        // .getAroPropScartoVersRowBean(idPropScartoVers);
+        // Carica i dati della proposta PRIMA di initPropScartoVers, così lo stato è già
+        // popolato quando initPropScartoVers decide quali pulsanti mostrare
         AroVRicPropScartoVersRowBean detailRow = scartoEjb
                 .getAroVRicPropScartoVersRowBean(idPropScartoVers, getUser().getIdUtente());
         getForm().getCreazionePropScartoVers().copyFromBean(detailRow);
+
+        initPropScartoVers(ModalitaInitScarto.VIEW);
+        initGestioneItemPropScartoVers(ModalitaInitScarto.VIEW);
 
         // Carica i totali degli item (num ud, num fascioli, num serie) della proposta
         long numUdInProposta = scartoEjb.getNumeroItemProposta(idPropScartoVers,
@@ -436,13 +435,35 @@ public class ScartoAction extends ScartoAbstractAction {
                 getForm().getRichScartoVersList().setStatus(Status.view);
             } else if (publisherName.equals(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS)) {
                 try {
+                    // loadDettaglioProposta chiama internamente copyFromBean (che carica lo stato),
+                    // initPropScartoVers(VIEW) e initGestioneItemPropScartoVers(VIEW)
                     loadDettaglioProposta(getForm().getCreazionePropScartoVers()
                             .getId_prop_scarto_vers().parse());
-                    initPropScartoVers(ModalitaInitScarto.MOD);
-                    initGestioneItemPropScartoVers(ModalitaInitScarto.MOD);
+                    getForm().getCreazionePropScartoVers().setStatus(Status.view);
+                    getForm().getPropScartoVersList().setStatus(Status.view);
                 } catch (EMFError ex) {
                     log.error(ex.getDescription(), ex);
                 }
+            } else if (publisherName.equals(Application.Publisher.RICHIESTA_AUT_PROP_SCARTO_VERS)) {
+                getForm().getRichiestaAutPropScartoVers().setEditMode();
+                getForm().getRichiestaAutPropScartoVers().getId_prop_scarto_vers().setViewMode();
+                getForm().getRichiestaAutPropScartoVers().getCd_prop_scarto_vers().setViewMode();
+                getForm().getRichiestaAutPropScartoVers().getTi_stato_prop_scarto_vers_cor()
+                        .setViewMode();
+                getForm().getRichiestaAutPropScartoVers().getCd_registro_rich_aut()
+                        .setDecodeMap(getMappaCodiceRegistro());
+            } else if (publisherName.equals(Application.Publisher.REGISTRA_AUT_PROP_SCARTO_VERS)) {
+                getForm().getRegistraAutPropScartoVers().setEditMode();
+                getForm().getRegistraAutPropScartoVers().getId_prop_scarto_vers().setViewMode();
+                getForm().getRegistraAutPropScartoVers().getCd_prop_scarto_vers().setViewMode();
+                getForm().getRegistraAutPropScartoVers().getTi_stato_prop_scarto_vers_cor()
+                        .setViewMode();
+                getForm().getRegistraAutPropScartoVers().getTi_autorizzazione()
+                        .setDecodeMap(ComboGetter.getMappaTiAutorizzazionePropScarto());
+                getForm().getRegistraAutPropScartoVers().getCd_registro_risp_aut()
+                        .setDecodeMap(getMappaCodiceRegistro());
+                getForm().getRegistraAutPropScartoVers().getCd_registro_provv_scarto()
+                        .setDecodeMap(getMappaCodiceRegistro());
             }
         } catch (EMFError e) {
             log.error("Errore nel ricaricamento della pagina " + publisherName, e);
@@ -702,10 +723,386 @@ public class ScartoAction extends ScartoAbstractAction {
 
     @Override
     public void updatePropScartoVersList() throws EMFError {
+        String statoCorrente = getForm().getCreazionePropScartoVers()
+                .getTi_stato_prop_scarto_vers_cor().getValue();
+
+        if (CostantiDB.TiStatoPropScartoVers.DA_AUTORIZZARE.name().equals(statoCorrente)) {
+            getMessageBox().addError(
+                    "La proposta è in attesa di autorizzazione: non è possibile modificarla.");
+            forwardToPublisher(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
+            return;
+        }
+        if (CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name().equals(statoCorrente)) {
+            getMessageBox().addError(
+                    "La proposta è già autorizzata: non è possibile modificarla.");
+            forwardToPublisher(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
+            return;
+        }
+
+        boolean isRevisione = CostantiDB.TiStatoPropScartoVers.APERTA_REVISIONE.name()
+                .equals(statoCorrente);
         initPropScartoVers(ModalitaInitScarto.MOD);
-        initGestioneItemPropScartoVers(ModalitaInitScarto.MOD);
-        getForm().getCreazionePropScartoVers().setStatus(Status.update);
-        getForm().getPropScartoVersList().setStatus(Status.update);
+        if (isRevisione) {
+            initGestioneItemPropScartoVers(ModalitaInitScarto.REVISIONE);
+            getForm().getCreazionePropScartoVers().setStatus(Status.update);
+            getForm().getPropScartoVersList().setStatus(Status.update);
+        } else {
+            initGestioneItemPropScartoVers(ModalitaInitScarto.MOD);
+            getForm().getCreazionePropScartoVers().setStatus(Status.update);
+            getForm().getPropScartoVersList().setStatus(Status.update);
+        }
+        forwardToPublisher(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
+    }
+
+    @Override
+    public void avviaRichiestaAutorizzazione() throws EMFError {
+        // Navigazione verso la pagina dedicata alla richiesta di autorizzazione
+        BigDecimal idPropScartoVers = getForm().getCreazionePropScartoVers()
+                .getId_prop_scarto_vers().parse();
+        getForm().getRichiestaAutPropScartoVers().clear();
+        getForm().getRichiestaAutPropScartoVers().getId_prop_scarto_vers()
+                .setValue(idPropScartoVers != null ? idPropScartoVers.toPlainString() : null);
+        getForm().getRichiestaAutPropScartoVers().getCd_prop_scarto_vers()
+                .setValue(
+                        getForm().getCreazionePropScartoVers().getCd_prop_scarto_vers().getValue());
+        getForm().getRichiestaAutPropScartoVers().getTi_stato_prop_scarto_vers_cor()
+                .setValue(getForm().getCreazionePropScartoVers().getTi_stato_prop_scarto_vers_cor()
+                        .getValue());
+        getForm().getRichiestaAutPropScartoVers().setEditMode();
+        getForm().getRichiestaAutPropScartoVers().getId_prop_scarto_vers().setViewMode();
+        getForm().getRichiestaAutPropScartoVers().getCd_prop_scarto_vers().setViewMode();
+        getForm().getRichiestaAutPropScartoVers().getTi_stato_prop_scarto_vers_cor().setViewMode();
+        getForm().getRichiestaAutPropScartoVers().getCd_registro_rich_aut()
+                .setDecodeMap(getMappaCodiceRegistro());
+        forwardToPublisher(Application.Publisher.RICHIESTA_AUT_PROP_SCARTO_VERS);
+    }
+
+    @Override
+    public void salvaRichiestaAutorizzazione() throws EMFError {
+        getForm().getRichiestaAutPropScartoVers().post(getRequest());
+
+        BigDecimal idPropScartoVers = getForm().getRichiestaAutPropScartoVers()
+                .getId_prop_scarto_vers().parse();
+        String ntAutorita = getForm().getRichiestaAutPropScartoVers().getNt_autorita().getValue();
+
+        boolean useRegistroEsterno = "1".equals(
+                getForm().getRichiestaAutPropScartoVers().getFl_registro_esterno_rich().getValue());
+        String cdRegistroRichAut;
+        if (useRegistroEsterno) {
+            cdRegistroRichAut = getForm().getRichiestaAutPropScartoVers()
+                    .getCd_registro_rich_aut_esterno().getValue();
+            if (StringUtils.isBlank(cdRegistroRichAut)) {
+                getMessageBox().addError("Il campo 'Registro esterno' è obbligatorio.");
+            }
+        } else {
+            cdRegistroRichAut = getForm().getRichiestaAutPropScartoVers()
+                    .getCd_registro_rich_aut().getValue();
+            if (StringUtils.isBlank(cdRegistroRichAut)) {
+                getMessageBox().addError("Il campo 'Registro' è obbligatorio.");
+            }
+        }
+
+        BigDecimal aaRichAut = getForm().getRichiestaAutPropScartoVers().getAa_rich_aut().parse();
+        String cdRichAut = getForm().getRichiestaAutPropScartoVers().getCd_rich_aut().getValue();
+
+        if (StringUtils.isBlank(ntAutorita)) {
+            getMessageBox().addError("Il campo 'Autorità' è obbligatorio.");
+        }
+        if (aaRichAut == null) {
+            getMessageBox().addError("Il campo 'Anno' è obbligatorio.");
+        }
+        if (StringUtils.isBlank(cdRichAut)) {
+            getMessageBox().addError("Il campo 'Numero' è obbligatorio.");
+        }
+
+        if (!getMessageBox().hasError()) {
+            try {
+                scartoEjb.avviaRichiestaAutorizzazione(idPropScartoVers, ntAutorita,
+                        cdRegistroRichAut, aaRichAut, cdRichAut, getUser().getIdUtente());
+                getMessageBox().addInfo(
+                        "Richiesta di autorizzazione avviata. La proposta è ora in stato DA_AUTORIZZARE.");
+                loadDettaglioProposta(idPropScartoVers);
+                initPropScartoVers(ModalitaInitScarto.MOD);
+                // Stato ora DA_AUTORIZZARE: items in sola lettura, nessuna modifica consentita
+                initGestioneItemPropScartoVers(ModalitaInitScarto.VIEW);
+                getForm().getCreazionePropScartoVers().setStatus(Status.view);
+                getForm().getPropScartoVersList().setStatus(Status.view);
+                goBackTo(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
+                return;
+            } catch (ParerUserError ex) {
+                log.error(ex.getDescription(), ex);
+                getMessageBox().addError(ex.getDescription());
+            }
+        }
+
+        forwardToPublisher(Application.Publisher.RICHIESTA_AUT_PROP_SCARTO_VERS);
+    }
+
+    @Override
+    public void annullaRichiestaAutorizzazione() throws EMFError {
+        goBackTo(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
+    }
+
+    @Override
+    public void registraAutorizzazione() throws EMFError {
+        // Navigazione verso la pagina dedicata alla registrazione dell'autorizzazione
+        BigDecimal idPropScartoVers = getForm().getCreazionePropScartoVers()
+                .getId_prop_scarto_vers().parse();
+        getForm().getRegistraAutPropScartoVers().clear();
+        getForm().getRegistraAutPropScartoVers().getId_prop_scarto_vers()
+                .setValue(idPropScartoVers != null ? idPropScartoVers.toPlainString() : null);
+        getForm().getRegistraAutPropScartoVers().getCd_prop_scarto_vers()
+                .setValue(
+                        getForm().getCreazionePropScartoVers().getCd_prop_scarto_vers().getValue());
+        getForm().getRegistraAutPropScartoVers().getTi_stato_prop_scarto_vers_cor()
+                .setValue(getForm().getCreazionePropScartoVers().getTi_stato_prop_scarto_vers_cor()
+                        .getValue());
+        getForm().getRegistraAutPropScartoVers().getTi_autorizzazione()
+                .setDecodeMap(ComboGetter.getMappaTiAutorizzazionePropScarto());
+        getForm().getRegistraAutPropScartoVers().getFl_registro_esterno_risp_aut().setValue("0");
+        getForm().getRegistraAutPropScartoVers().getCd_registro_risp_aut()
+                .setDecodeMap(getMappaCodiceRegistro());
+        getForm().getRegistraAutPropScartoVers().getFl_registro_esterno_provv_scarto()
+                .setValue("0");
+        getForm().getRegistraAutPropScartoVers().getCd_registro_provv_scarto()
+                .setDecodeMap(getMappaCodiceRegistro());
+        getForm().getRegistraAutPropScartoVers().setEditMode();
+        getForm().getRegistraAutPropScartoVers().getId_prop_scarto_vers().setViewMode();
+        getForm().getRegistraAutPropScartoVers().getCd_prop_scarto_vers().setViewMode();
+        getForm().getRegistraAutPropScartoVers().getTi_stato_prop_scarto_vers_cor().setViewMode();
+        forwardToPublisher(Application.Publisher.REGISTRA_AUT_PROP_SCARTO_VERS);
+    }
+
+    @Override
+    public void salvaRegistraAutorizzazione() throws EMFError {
+        getForm().getRegistraAutPropScartoVers().post(getRequest());
+
+        BigDecimal idPropScartoVers = getForm().getRegistraAutPropScartoVers()
+                .getId_prop_scarto_vers().parse();
+
+        // --- Registro risposta: combo o esterno ---
+        boolean useRegistroEsternoRisp = "1".equals(
+                getForm().getRegistraAutPropScartoVers().getFl_registro_esterno_risp_aut()
+                        .getValue());
+        String cdRegistroRispAut;
+        if (useRegistroEsternoRisp) {
+            cdRegistroRispAut = getForm().getRegistraAutPropScartoVers()
+                    .getCd_registro_risp_aut_esterno().getValue();
+            if (StringUtils.isBlank(cdRegistroRispAut)) {
+                getMessageBox().addError("Il campo 'Registro (esterno) risposta' è obbligatorio.");
+            }
+        } else {
+            cdRegistroRispAut = getForm().getRegistraAutPropScartoVers()
+                    .getCd_registro_risp_aut().getValue();
+            if (StringUtils.isBlank(cdRegistroRispAut)) {
+                getMessageBox().addError("Il campo 'Registro risposta' è obbligatorio.");
+            }
+        }
+
+        BigDecimal aaRispAut = getForm().getRegistraAutPropScartoVers().getAa_risp_aut().parse();
+        String cdRispAut = getForm().getRegistraAutPropScartoVers().getCd_risp_aut().getValue();
+        String tiAutorizzazione = getForm().getRegistraAutPropScartoVers().getTi_autorizzazione()
+                .getValue();
+
+        if (aaRispAut == null) {
+            getMessageBox().addError("Il campo 'Anno risposta' è obbligatorio.");
+        }
+        if (StringUtils.isBlank(cdRispAut)) {
+            getMessageBox().addError("Il campo 'Numero risposta' è obbligatorio.");
+        }
+        if (StringUtils.isBlank(tiAutorizzazione)) {
+            getMessageBox().addError("Il campo 'Tipo autorizzazione' è obbligatorio.");
+        }
+
+        // --- Registro provvedimento: combo o esterno (obbligatorio) ---
+        boolean useRegistroEsternoProvv = "1".equals(
+                getForm().getRegistraAutPropScartoVers().getFl_registro_esterno_provv_scarto()
+                        .getValue());
+        String cdRegistroProvvScarto;
+        if (useRegistroEsternoProvv) {
+            cdRegistroProvvScarto = getForm().getRegistraAutPropScartoVers()
+                    .getCd_registro_provv_scarto_esterno().getValue();
+            if (StringUtils.isBlank(cdRegistroProvvScarto)) {
+                getMessageBox()
+                        .addError("Il campo 'Registro (esterno) provvedimento' è obbligatorio.");
+            }
+        } else {
+            cdRegistroProvvScarto = getForm().getRegistraAutPropScartoVers()
+                    .getCd_registro_provv_scarto().getValue();
+            if (StringUtils.isBlank(cdRegistroProvvScarto)) {
+                getMessageBox().addError("Il campo 'Registro provvedimento' è obbligatorio.");
+            }
+        }
+        BigDecimal aaProvvScarto = getForm().getRegistraAutPropScartoVers().getAa_provv_scarto()
+                .parse();
+        String cdProvvScarto = getForm().getRegistraAutPropScartoVers().getCd_provv_scarto()
+                .getValue();
+        String dsFirmatoDa = getForm().getRegistraAutPropScartoVers().getDs_firmato_da()
+                .getValue();
+
+        if (aaProvvScarto == null) {
+            getMessageBox().addError("Il campo 'Anno provvedimento' è obbligatorio.");
+        }
+        if (StringUtils.isBlank(cdProvvScarto)) {
+            getMessageBox().addError("Il campo 'Numero provvedimento' è obbligatorio.");
+        }
+        if (StringUtils.isBlank(dsFirmatoDa)) {
+            getMessageBox().addError("Il campo 'Firmato da' è obbligatorio.");
+        }
+
+        if (!getMessageBox().hasError()) {
+            try {
+                Long idRichScartoVers = scartoEjb.registraAutorizzazione(idPropScartoVers,
+                        cdRegistroRispAut, aaRispAut, cdRispAut, tiAutorizzazione,
+                        cdRegistroProvvScarto, aaProvvScarto, cdProvvScarto, dsFirmatoDa,
+                        getUser().getIdUtente());
+
+                boolean isParziale = CostantiDB.TiAutorizzazionePropScartoVers.PARZIALE.name()
+                        .equals(tiAutorizzazione);
+
+                // Se COMPLETA la richiesta di scarto è già stata creata: elaboriamola subito
+                if (idRichScartoVers != null) {
+                    scartoEjb.elaboraRichiestaScarto(idRichScartoVers, getUser().getIdUtente(),
+                            Constants.ANNULLAMENTO_ONLINE);
+                }
+
+                loadDettaglioProposta(idPropScartoVers);
+                initPropScartoVers(ModalitaInitScarto.MOD);
+                // PARZIALE → APERTA_REVISIONE: solo rimozione UD; COMPLETA → AUTORIZZATA, sola
+                // lettura
+                if (isParziale) {
+                    getMessageBox().addInfo(
+                            "Autorizzazione PARZIALE registrata. La proposta è in stato APERTA_REVISIONE: rimuovere le UD non autorizzate e poi cliccare 'Completa revisione'.");
+                    initGestioneItemPropScartoVers(ModalitaInitScarto.REVISIONE);
+                    getForm().getCreazionePropScartoVers().setStatus(Status.update);
+                    getForm().getPropScartoVersList().setStatus(Status.update);
+                } else {
+                    getMessageBox().addInfo(
+                            "Autorizzazione COMPLETA registrata. La proposta è ora AUTORIZZATA.");
+                    initGestioneItemPropScartoVers(ModalitaInitScarto.VIEW);
+                    getForm().getCreazionePropScartoVers().setStatus(Status.view);
+                    getForm().getPropScartoVersList().setStatus(Status.view);
+                }
+                goBackTo(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
+                return;
+            } catch (ParerUserError ex) {
+                log.error(ex.getDescription(), ex);
+                // Ricarica lo stato reale della proposta dal DB per distinguere due scenari:
+                // A) registraAutorizzazione fallita → proposta ancora in DA_AUTORIZZARE
+                // → rimane sul form di registrazione (comportamento atteso)
+                // B) registraAutorizzazione ok + elaboraRichiestaScarto fallita
+                // → proposta già AUTORIZZATA in DB ma utente è ancora sul form
+                // → riporta l'utente sulla pagina della proposta con warning, il job
+                // rielaborerà automaticamente la richiesta rimasta in stato CHIUSA
+                try {
+                    loadDettaglioProposta(idPropScartoVers);
+                    if (CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name().equals(
+                            getForm().getCreazionePropScartoVers()
+                                    .getTi_stato_prop_scarto_vers_cor().getValue())) {
+                        getMessageBox().addWarning(
+                                "L'autorizzazione \u00e8 stata registrata correttamente. "
+                                        + "Si \u00e8 verificato un errore nell'evasione immediata "
+                                        + "della richiesta di scarto: " + ex.getDescription()
+                                        + ". La richiesta sar\u00e0 elaborata automaticamente dal sistema.");
+                        initPropScartoVers(ModalitaInitScarto.MOD);
+                        initGestioneItemPropScartoVers(ModalitaInitScarto.VIEW);
+                        getForm().getCreazionePropScartoVers().setStatus(Status.view);
+                        getForm().getPropScartoVersList().setStatus(Status.view);
+                        goBackTo(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
+                        return;
+                    }
+                } catch (Exception reloadEx) {
+                    log.error(
+                            "Errore nel reload della proposta dopo errore di registrazione autorizzazione",
+                            reloadEx);
+                }
+                getMessageBox().addError(ex.getDescription());
+            }
+        }
+
+        // Scenario A: errore prima del cambio di stato → rimango sul form di registrazione
+        getForm().getRegistraAutPropScartoVers().getCd_registro_risp_aut()
+                .setDecodeMap(getMappaCodiceRegistro());
+        getForm().getRegistraAutPropScartoVers().getCd_registro_provv_scarto()
+                .setDecodeMap(getMappaCodiceRegistro());
+        getForm().getRegistraAutPropScartoVers().getTi_autorizzazione()
+                .setDecodeMap(ComboGetter.getMappaTiAutorizzazionePropScarto());
+        forwardToPublisher(Application.Publisher.REGISTRA_AUT_PROP_SCARTO_VERS);
+    }
+
+    @Override
+    public void annullaRegistraAutorizzazione() throws EMFError {
+        goBackTo(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
+    }
+
+    @Override
+    public void annullaPropostaScarto() throws EMFError {
+        BigDecimal idPropScartoVers = getForm().getCreazionePropScartoVers()
+                .getId_prop_scarto_vers().parse();
+        String cdProposta = getForm().getCreazionePropScartoVers().getCd_prop_scarto_vers()
+                .getValue();
+        try {
+            scartoEjb.annullaPropostaDaAutorizzare(idPropScartoVers, getUser().getIdUtente());
+            // Torna alla pagina di ricerca proposte con messaggio informativo
+            initRicercaPropScartoVers();
+            getMessageBox().addInfo("La proposta " + cdProposta
+                    + " \u00e8 stata annullata e cancellata: nessuna unit\u00e0 documentaria era idonea allo scarto.");
+            getMessageBox().setViewMode(it.eng.spagoLite.message.MessageBox.ViewMode.plain);
+        } catch (ParerUserError ex) {
+            log.error(ex.getDescription(), ex);
+            getMessageBox().addError(ex.getDescription());
+            forwardToPublisher(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
+        }
+    }
+
+    @Override
+    public void completaRevisionePropostaScarto() throws EMFError {
+        BigDecimal idPropScartoVers = getForm().getCreazionePropScartoVers()
+                .getId_prop_scarto_vers().parse();
+        try {
+            Long idRichScartoVers = scartoEjb.completaRevisionePropostaScarto(idPropScartoVers,
+                    getUser().getIdUtente());
+            // Proposta ora AUTORIZZATA: elabora subito la richiesta di scarto creata
+            if (idRichScartoVers != null) {
+                scartoEjb.elaboraRichiestaScarto(idRichScartoVers, getUser().getIdUtente(),
+                        Constants.ANNULLAMENTO_ONLINE);
+            }
+            getMessageBox().addInfo(
+                    "Revisione completata. La proposta è ora in stato AUTORIZZATA.");
+            loadDettaglioProposta(idPropScartoVers);
+            initPropScartoVers(ModalitaInitScarto.MOD);
+            initGestioneItemPropScartoVers(ModalitaInitScarto.VIEW);
+            getForm().getCreazionePropScartoVers().setStatus(Status.view);
+            getForm().getPropScartoVersList().setStatus(Status.view);
+        } catch (ParerUserError ex) {
+            log.error(ex.getDescription(), ex);
+            // Ricarica lo stato reale per distinguere:
+            // A) completaRevisionePropostaScarto fallita → proposta ancora in APERTA_REVISIONE
+            // B) completaRevisionePropostaScarto ok + elaboraRichiestaScarto fallita
+            // → proposta già AUTORIZZATA, il job rielaborerà la richiesta
+            try {
+                loadDettaglioProposta(idPropScartoVers);
+                initPropScartoVers(ModalitaInitScarto.MOD);
+                if (CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name().equals(
+                        getForm().getCreazionePropScartoVers()
+                                .getTi_stato_prop_scarto_vers_cor().getValue())) {
+                    getMessageBox().addWarning(
+                            "La revisione \u00e8 stata completata correttamente. "
+                                    + "Si \u00e8 verificato un errore nell'evasione immediata "
+                                    + "della richiesta di scarto: " + ex.getDescription()
+                                    + ". La richiesta sar\u00e0 elaborata automaticamente dal sistema.");
+                    initGestioneItemPropScartoVers(ModalitaInitScarto.VIEW);
+                    getForm().getCreazionePropScartoVers().setStatus(Status.view);
+                    getForm().getPropScartoVersList().setStatus(Status.view);
+                } else {
+                    getMessageBox().addError(ex.getDescription());
+                }
+            } catch (Exception reloadEx) {
+                log.error("Errore nel reload della proposta dopo errore di completamento revisione",
+                        reloadEx);
+                getMessageBox().addError(ex.getDescription());
+            }
+        }
         forwardToPublisher(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
     }
 
@@ -1092,6 +1489,30 @@ public class ScartoAction extends ScartoAbstractAction {
     @Override
     public void ricercaUdSelezionate() throws EMFError {
         getForm().getFiltriRicercaUdSelezionate().post(getRequest());
+
+        // Validazione: singolo e range sono mutualmente esclusivi
+        BigDecimal annoVal = getForm().getFiltriRicercaUdSelezionate().getAnno_sel().parse();
+        BigDecimal annoDaVal = getForm().getFiltriRicercaUdSelezionate().getAnno_da_sel().parse();
+        BigDecimal annoAVal = getForm().getFiltriRicercaUdSelezionate().getAnno_a_sel().parse();
+        String numeroVal = getForm().getFiltriRicercaUdSelezionate().getNumero_ud_sel().parse();
+        String numeroDaVal = getForm().getFiltriRicercaUdSelezionate().getNumero_da_sel().parse();
+        String numeroAVal = getForm().getFiltriRicercaUdSelezionate().getNumero_a_sel().parse();
+
+        if (annoVal != null && (annoDaVal != null || annoAVal != null)) {
+            getMessageBox().addError(
+                    "Il filtro Anno non può essere usato contemporaneamente ad Anno da / Anno a");
+        }
+        if (StringUtils.isNotBlank(numeroVal)
+                && (StringUtils.isNotBlank(numeroDaVal) || StringUtils.isNotBlank(numeroAVal))) {
+            getMessageBox().addError(
+                    "Il filtro Numero non può essere usato contemporaneamente a Numero da / Numero a");
+        }
+
+        if (getMessageBox().hasError()) {
+            forwardToPublisher(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
+            return;
+        }
+
         ricaricaListaUdSelezionateDaDb();
         forwardToPublisher(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
     }
@@ -1120,14 +1541,18 @@ public class ScartoAction extends ScartoAbstractAction {
             BigDecimal idRegistro = getForm().getFiltriRicercaUdSelezionate()
                     .getId_registro_unita_doc_sel().parse();
             BigDecimal anno = getForm().getFiltriRicercaUdSelezionate().getAnno_sel().parse();
+            BigDecimal annoDa = getForm().getFiltriRicercaUdSelezionate().getAnno_da_sel().parse();
+            BigDecimal annoA = getForm().getFiltriRicercaUdSelezionate().getAnno_a_sel().parse();
             String numero = getForm().getFiltriRicercaUdSelezionate().getNumero_ud_sel().parse();
+            String numeroDa = getForm().getFiltriRicercaUdSelezionate().getNumero_da_sel().parse();
+            String numeroA = getForm().getFiltriRicercaUdSelezionate().getNumero_a_sel().parse();
             String scartabile = getForm().getFiltriRicercaUdSelezionate().getFl_scartabile_sel()
                     .getDecodedValue();
             String alert = getForm().getFiltriRicercaUdSelezionate().getDs_alert_sel().parse();
 
             // Chiamo l'EJB
             BaseTable tableSelAggiornata = scartoEjb.getListaUdSalvateInProposta(idPropBD, idTipoUd,
-                    idRegistro, anno, numero, scartabile, alert);
+                    idRegistro, anno, annoDa, annoA, numero, numeroDa, numeroA, scartabile, alert);
 
             getForm().getUdSelezionatePropScartoList().setTable(tableSelAggiornata);
 
@@ -1220,13 +1645,62 @@ public class ScartoAction extends ScartoAbstractAction {
         getForm().getCreazionePropScartoVers().getDt_ultima_mod_prop_scarto_vers().setHidden(false);
         getForm().getCreazionePropScartoVers().getTi_stato_prop_scarto_vers_cor().setHidden(false);
 
+        // Sezioni autorizzazione: nascoste di default
+        getForm().getRichiestaAutorizzazioneSection().setHidden(true);
+        getForm().getRispostaAutorizzazioneSection().setHidden(true);
+        getForm().getRevisioneSection().setHidden(true);
+        getForm().getDatiRichiestaAutSection().setHidden(true);
+        getForm().getDatiRispostaAutSection().setHidden(true);
+        getForm().getProvvedimentoScartoDettaglioSection().setHidden(true);
+
         // Popolo le combo Ambiente / ente / struttura della proposta
         popolaAmbienteEnteStrutturaCreazionePropScarto();
+
+        // I pulsanti di flusso autorizzativo sono azioni di navigazione indipendenti
+        // dall'editing della testata: si mostrano in base allo stato anche in VIEW mode.
+        if (!modalita.equals(ModalitaInitScarto.INS)) {
+            String statoCorrente = getForm().getCreazionePropScartoVers()
+                    .getTi_stato_prop_scarto_vers_cor().getValue();
+
+            if (CostantiDB.TiStatoPropScartoVers.APERTA.name().equals(statoCorrente)) {
+                getForm().getRichiestaAutorizzazioneSection().setHidden(false);
+                getForm().getCreazionePropScartoVers().getAvviaRichiestaAutorizzazione()
+                        .setEditMode();
+            } else if (CostantiDB.TiStatoPropScartoVers.DA_AUTORIZZARE.name()
+                    .equals(statoCorrente)) {
+                getForm().getRispostaAutorizzazioneSection().setHidden(false);
+                getForm().getCreazionePropScartoVers().getRegistraAutorizzazione().setEditMode();
+                getForm().getDatiRichiestaAutSection().setHidden(false);
+                getForm().getCreazionePropScartoVers().getAnnullaPropostaScarto().setEditMode();
+            } else if (CostantiDB.TiStatoPropScartoVers.APERTA_REVISIONE.name()
+                    .equals(statoCorrente)) {
+                getForm().getRevisioneSection().setHidden(false);
+                getForm().getCreazionePropScartoVers().getCompletaRevisionePropostaScarto()
+                        .setEditMode();
+                getForm().getDatiRichiestaAutSection().setHidden(false);
+                getForm().getDatiRispostaAutSection().setHidden(false);
+                getForm().getProvvedimentoScartoDettaglioSection().setHidden(false);
+            } else if (CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name()
+                    .equals(statoCorrente)) {
+                getForm().getDatiRichiestaAutSection().setHidden(false);
+                getForm().getDatiRispostaAutSection().setHidden(false);
+                getForm().getProvvedimentoScartoDettaglioSection().setHidden(false);
+            }
+        }
 
         if (modalita.equals(ModalitaInitScarto.MOD)) {
             getForm().getCreazionePropScartoVers().getDs_prop_scarto_vers().setEditMode();
             getForm().getCreazionePropScartoVers().getNt_prop_scarto_vers().setEditMode();
             getForm().getCreazionePropScartoVers().getSalvaProposta().setEditMode();
+
+            // In DA_AUTORIZZARE la testata è in sola lettura anche in MOD
+            String statoCorrente = getForm().getCreazionePropScartoVers()
+                    .getTi_stato_prop_scarto_vers_cor().getValue();
+            if (CostantiDB.TiStatoPropScartoVers.DA_AUTORIZZARE.name().equals(statoCorrente)) {
+                getForm().getCreazionePropScartoVers().getDs_prop_scarto_vers().setViewMode();
+                getForm().getCreazionePropScartoVers().getNt_prop_scarto_vers().setViewMode();
+                getForm().getCreazionePropScartoVers().getSalvaProposta().setViewMode();
+            }
         }
 
         if (modalita.equals(ModalitaInitScarto.INS)) {
@@ -1252,7 +1726,7 @@ public class ScartoAction extends ScartoAbstractAction {
         getForm().getFiltriRicercaUdPropScarto().reset();
         getForm().getFiltriRicercaUdPropScarto().setViewMode();
         getForm().getFiltriRicercaUdSelezionate().reset();
-        getForm().getFiltriRicercaUdSelezionate().setViewMode();
+        getForm().getFiltriRicercaUdSelezionate().setEditMode();
 
         // Inizializzazione delle liste di ricerca vuote
         getForm().getReportFascPropScartoList().setTable(new BaseTable());
@@ -1267,7 +1741,7 @@ public class ScartoAction extends ScartoAbstractAction {
         getForm().getFiltriRicercaUdPropScarto().getRicercaUd().setViewMode();
         getForm().getFiltriRicercaUdPropScarto().getPulisciUd().setViewMode();
         // getForm().getFiltriRicercaUdSelezionate().getPulisciUdSelezionate().setViewMode();
-        getForm().getFiltriRicercaUdSelezionate().getRicercaUdSelezionate().setViewMode();
+        getForm().getFiltriRicercaUdSelezionate().getRicercaUdSelezionate().setEditMode();
         getForm().getSelectButtonList().setViewMode();
 
         // Pulisco i totali riepilogativi
@@ -1295,6 +1769,40 @@ public class ScartoAction extends ScartoAbstractAction {
         getForm().getListaSerieSelezionateSection().setShowButton(true);
 
         getForm().getUdSelezionatePropScartoList().getFl_ud_selected().setHidden(true);
+
+        if (modalita.equals(ModalitaInitScarto.REVISIONE)) {
+            // Solo in sottrazione: filtri ricerca ud già in proposta editabili, combo popolate
+            getForm().getFiltriRicercaUdSelezionate().setEditMode();
+            getForm().getFiltriRicercaUdSelezionate().getRicercaUdSelezionate().setEditMode();
+
+            getForm().getCreazionePropScartoTabs()
+                    .setCurrentTab(getForm().getCreazionePropScartoTabs().getTabUnitaDoc());
+            popolaComboRegistroTipoUdCreazionePropScarto();
+
+            // NASCOSTO: tutto il pannello di ricerca/aggiunta UD
+            getForm().getFiltriRicercaUdPropostaScartoSection().setHidden(true);
+            getForm().getResultTotSection().setHidden(true);
+            getForm().getListaUdDaSelSection().setHidden(true);
+            // Nascondo Aggiungi/Aggiungi tutti, lascio visibili solo Rimuovi/Rimuovi tutti
+            getForm().getSelectButtonList().setViewMode();
+            getForm().getSelectButtonList().getDeselectUd().setEditMode();
+            getForm().getSelectButtonList().getDeselectAllUd().setEditMode();
+
+            // VISIBILE: solo la lista UD già nella proposta, con rimozione abilitata
+            getForm().getListaUdSelezionateSection().setHidden(false);
+            getForm().getListaUdSelezionateSection().setShowButton(false);
+            getForm().getUdSelezionatePropScartoList().getFl_ud_selected().setHidden(false);
+
+            // Fascicoli e serie: solo lista selezionati (no aggiunta)
+            getForm().getFiltriRicercaFascicoliPropostaScartoSection().setHidden(true);
+            getForm().getListaFascicoliDaSelSection().setHidden(true);
+            getForm().getListaFascicoliSelezionatiSection().setHidden(false);
+            getForm().getListaFascicoliSelezionatiSection().setShowButton(true);
+            getForm().getFiltriRicercaSeriePropostaScartoSection().setHidden(true);
+            getForm().getListaSerieDaSelSection().setHidden(true);
+            getForm().getListaSerieSelezionateSection().setHidden(false);
+            getForm().getListaSerieSelezionateSection().setShowButton(true);
+        }
 
         if (modalita.equals(ModalitaInitScarto.INS)) {
             // Inizializzo le tabelle dei totali, ud selezionabili e selezionate delle UD
@@ -1352,6 +1860,12 @@ public class ScartoAction extends ScartoAbstractAction {
         getForm().getFiltriRicercaUdPropScarto().getFl_includi_serie().setValue("0");
         getForm().getFiltriRicercaUdSelezionate().getDs_alert_sel()
                 .setDecodeMap(ComboGetter.getMappaTiAlertPropScarto());
+
+        // Popola combo Registro e TipoUD per i filtri della lista UD in proposta
+        // (necessario per tutti i modi non-INS, inclusa la sola visualizzazione)
+        if (!modalita.equals(ModalitaInitScarto.INS)) {
+            popolaComboRegistroTipoUdCreazionePropScarto();
+        }
 
     }
 
@@ -1424,6 +1938,24 @@ public class ScartoAction extends ScartoAbstractAction {
         getForm().getFiltriRicercaUdSelezionate().getId_tipo_unita_doc_sel()
                 .setDecodeMap(mappaTipoUd);
 
+    }
+
+    /**
+     * Costruisce una DecodeMap per i registri abilitati alla struttura corrente, usando
+     * cd_registro_unita_doc sia come chiave che come valore da salvare in DB.
+     */
+    private DecodeMap getMappaCodiceRegistro() {
+        BigDecimal idStrut = getUser().getIdOrganizzazioneFoglia();
+        long idUtente = getUser().getIdUtente();
+        DecodeMap mappa = new DecodeMap();
+        try {
+            DecRegistroUnitaDocTableBean tb = registroEjb.getRegistriUnitaDocAbilitati(idUtente,
+                    idStrut);
+            mappa.populatedMap(tb, "cd_registro_unita_doc", "cd_registro_unita_doc");
+        } catch (Exception ex) {
+            log.error("Errore durante il recupero dei registri per la proposta di scarto", ex);
+        }
+        return mappa;
     }
 
     private void popolaAmbienteEnteStrutturaCreazionePropScarto() {
@@ -1651,6 +2183,7 @@ public class ScartoAction extends ScartoAbstractAction {
         if (!scartoEjb.isPropostaDeletable(idPropScartoVers)) {
             getMessageBox().addError(
                     "La proposta di scarto versamenti è in stato diverso da APERTA. Impossibile procedere");
+            forwardToPublisher(getLastPublisher());
         } /* ...altrimenti procedo con l'eliminazione della proposta */ else {
             try {
                 scartoEjb.deletePropScartoVers(idPropScartoVers);

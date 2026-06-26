@@ -159,6 +159,102 @@ public class AroVRicPropScartoVersRowBean extends BaseRow
         setObject("ti_stato_prop_scarto_vers_cor", tiStatoPropScartoVersCor);
     }
 
+    public String getNtAutorita() {
+        return getString("nt_autorita");
+    }
+
+    public void setNtAutorita(String ntAutorita) {
+        setObject("nt_autorita", ntAutorita);
+    }
+
+    public String getCdRegistroRichAut() {
+        return getString("cd_registro_rich_aut");
+    }
+
+    public void setCdRegistroRichAut(String cdRegistroRichAut) {
+        setObject("cd_registro_rich_aut", cdRegistroRichAut);
+    }
+
+    public BigDecimal getAaRichAut() {
+        return getBigDecimal("aa_rich_aut");
+    }
+
+    public void setAaRichAut(BigDecimal aaRichAut) {
+        setObject("aa_rich_aut", aaRichAut);
+    }
+
+    public String getCdRichAut() {
+        return getString("cd_rich_aut");
+    }
+
+    public void setCdRichAut(String cdRichAut) {
+        setObject("cd_rich_aut", cdRichAut);
+    }
+
+    public String getCdRegistroRispAut() {
+        return getString("cd_registro_risp_aut");
+    }
+
+    public void setCdRegistroRispAut(String cdRegistroRispAut) {
+        setObject("cd_registro_risp_aut", cdRegistroRispAut);
+    }
+
+    public BigDecimal getAaRispAut() {
+        return getBigDecimal("aa_risp_aut");
+    }
+
+    public void setAaRispAut(BigDecimal aaRispAut) {
+        setObject("aa_risp_aut", aaRispAut);
+    }
+
+    public String getCdRispAut() {
+        return getString("cd_risp_aut");
+    }
+
+    public void setCdRispAut(String cdRispAut) {
+        setObject("cd_risp_aut", cdRispAut);
+    }
+
+    public String getTiAutorizzazione() {
+        return getString("ti_autorizzazione");
+    }
+
+    public void setTiAutorizzazione(String tiAutorizzazione) {
+        setObject("ti_autorizzazione", tiAutorizzazione);
+    }
+
+    public String getCdRegistroProvvScarto() {
+        return getString("cd_registro_provv_scarto");
+    }
+
+    public void setCdRegistroProvvScarto(String cdRegistroProvvScarto) {
+        setObject("cd_registro_provv_scarto", cdRegistroProvvScarto);
+    }
+
+    public BigDecimal getAaProvvScarto() {
+        return getBigDecimal("aa_provv_scarto");
+    }
+
+    public void setAaProvvScarto(BigDecimal aaProvvScarto) {
+        setObject("aa_provv_scarto", aaProvvScarto);
+    }
+
+    public String getCdProvvScarto() {
+        return getString("cd_provv_scarto");
+    }
+
+    public void setCdProvvScarto(String cdProvvScarto) {
+        setObject("cd_provv_scarto", cdProvvScarto);
+    }
+
+    public String getDsFirmatoDa() {
+        return getString("ds_firmato_da");
+    }
+
+    public void setDsFirmatoDa(String dsFirmatoDa) {
+        setObject("ds_firmato_da", dsFirmatoDa);
+    }
+
     @Override
     public void entityToRowBean(Object obj) {
         AroVRicPropScartoVers entity = (AroVRicPropScartoVers) obj;
@@ -184,6 +280,18 @@ public class AroVRicPropScartoVersRowBean extends BaseRow
                     new Timestamp(entity.getDtUltimaModPropScartoVers().getTime()));
         }
         this.setTiStatoPropScartoVersCor(entity.getTiStatoPropScartoVersCor());
+        this.setNtAutorita(entity.getNtAutorita());
+        this.setCdRegistroRichAut(entity.getCdRegistroRichAut());
+        this.setAaRichAut(entity.getAaRichAut());
+        this.setCdRichAut(entity.getCdRichAut());
+        this.setCdRegistroRispAut(entity.getCdRegistroRispAut());
+        this.setAaRispAut(entity.getAaRispAut());
+        this.setCdRispAut(entity.getCdRispAut());
+        this.setTiAutorizzazione(entity.getTiAutorizzazione());
+        this.setCdRegistroProvvScarto(entity.getCdRegistroProvvScarto());
+        this.setAaProvvScarto(entity.getAaProvvScarto());
+        this.setCdProvvScarto(entity.getCdProvvScarto());
+        this.setDsFirmatoDa(entity.getDsFirmatoDa());
     }
 
     @Override
@@ -204,6 +312,17 @@ public class AroVRicPropScartoVersRowBean extends BaseRow
         entity.setDtCreazionePropScartoVers(this.getDtCreazionePropScartoVers());
         entity.setDtUltimaModPropScartoVers(this.getDtUltimaModPropScartoVers());
         entity.setTiStatoPropScartoVersCor(this.getTiStatoPropScartoVersCor());
+        entity.setNtAutorita(this.getNtAutorita());
+        entity.setCdRegistroRichAut(this.getCdRegistroRichAut());
+        entity.setAaRichAut(this.getAaRichAut());
+        entity.setCdRichAut(this.getCdRichAut());
+        entity.setCdRegistroRispAut(this.getCdRegistroRispAut());
+        entity.setAaRispAut(this.getAaRispAut());
+        entity.setCdRispAut(this.getCdRispAut());
+        entity.setTiAutorizzazione(this.getTiAutorizzazione());
+        entity.setCdRegistroProvvScarto(this.getCdRegistroProvvScarto());
+        entity.setAaProvvScarto(this.getAaProvvScarto());
+        entity.setCdProvvScarto(this.getCdProvvScarto());
         return entity;
     }
 

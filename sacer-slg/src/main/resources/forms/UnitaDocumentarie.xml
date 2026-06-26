@@ -245,6 +245,8 @@
     <!-- Filtri di Ricerca Unità Documentarie Per Dati Specifici -->
     <Fields Description="Filtri unità documentaria ricerca dati spec" Name="FiltriUnitaDocumentarieDatiSpec">        
         <MultiSelect Description="Registro" Name="cd_registro_key_unita_doc" Type="INTEGER"/>        
+        <Input Description="Anno" MaxLength="4" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
         <Input Description="Anno da" MaxLength="4" Name="aa_key_unita_doc_da" Type="INTEGER"/>
         <Input Description="Anno a" MaxLength="4" Name="aa_key_unita_doc_a" Type="INTEGER"/>
         <Input Description="Numero da" Name="cd_key_unita_doc_da" Type="STRING"/>

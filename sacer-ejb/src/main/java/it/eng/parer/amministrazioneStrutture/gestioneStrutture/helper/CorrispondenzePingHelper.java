@@ -24,6 +24,7 @@ import javax.persistence.Query;
 
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.viewEntity.OrgVCorrPing;
+import java.util.ArrayList;
 
 /**
  *
@@ -36,23 +37,45 @@ public class CorrispondenzePingHelper extends GenericHelper {
 
     public List<OrgVCorrPing> retrieveOrgVCorrPingList(BigDecimal idStrut, BigDecimal idEnte,
             BigDecimal idAmbiente) {
-        StringBuilder queryStr = new StringBuilder(
-                "SELECT DISTINCT corr FROM OrgVCorrPing corr WHERE idOrganizApplic IN (:idStrut, :idEnte, :idAmbiente)");
 
-        // creazione query dalla stringa
+        boolean isStrutValid = idStrut != null && idStrut.compareTo(BigDecimal.ZERO) != 0;
+        boolean isEnteValid = idEnte != null && idEnte.compareTo(BigDecimal.ZERO) != 0;
+        boolean isAmbienteValid = idAmbiente != null && idAmbiente.compareTo(BigDecimal.ZERO) != 0;
+
+        if (!isStrutValid && !isEnteValid && !isAmbienteValid) {
+            return new ArrayList<>();
+        }
+
+        // Usiamo una lista per collezionare le condizioni valide
+        List<String> conditions = new ArrayList<>();
+
+        if (isStrutValid) {
+            conditions.add("(corr.tiDichVers = 'STRUTTURA' AND corr.idOrganizApplic = :idStrut)");
+        }
+        if (isEnteValid) {
+            conditions.add("(corr.tiDichVers = 'ENTE' AND corr.idOrganizApplic = :idEnte)");
+        }
+        if (isAmbienteValid) {
+            conditions.add("(corr.tiDichVers = 'AMBIENTE' AND corr.idOrganizApplic = :idAmbiente)");
+        }
+
+        // Costruiamo la query unendo le condizioni con " OR "
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT DISTINCT corr FROM OrgVCorrPing corr WHERE ");
+        queryStr.append(String.join(" OR ", conditions));
+
         Query query = getEntityManager().createQuery(queryStr.toString());
-        if (idStrut != null && idStrut.compareTo(BigDecimal.ZERO) != 0) {
+
+        if (isStrutValid) {
             query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
-
-        if (idEnte != null && idEnte.compareTo(BigDecimal.ZERO) != 0) {
+        if (isEnteValid) {
             query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
-        if (idAmbiente != null && idAmbiente.compareTo(BigDecimal.ZERO) != 0) {
+        if (isAmbienteValid) {
             query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
 
-        // getEntityManager().unwrap(JpagetEntityManager().class)
         return query.getResultList();
     }
 

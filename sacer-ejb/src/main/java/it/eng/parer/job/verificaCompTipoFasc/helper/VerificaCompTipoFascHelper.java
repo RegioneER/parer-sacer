@@ -31,6 +31,8 @@ import javax.persistence.PersistenceContext;
 import it.eng.parer.entity.DecAaTipoFascicolo;
 import it.eng.parer.entity.DecErrAaTipoFascicolo;
 import it.eng.parer.entity.FasFascicolo;
+import java.util.stream.Stream;
+import org.hibernate.jpa.QueryHints;
 
 /**
  *
@@ -51,26 +53,18 @@ public class VerificaCompTipoFascHelper {
         return aaTipoFascicolos;
     }
 
-    public List<FasFascicolo> getListaFasFascicoloDaVerificare(long idTipoFascicolo, long idStrut,
-            Long anno) {
-        List<FasFascicolo> fasFascicolos;
-
-        String queryStr = "select f from FasFascicolo f " + "where "
-                + "f.orgStrut.idStrut = :idStrut "
+    public Stream<FasFascicolo> getStreamFasFascicoloDaVerificare(long idTipoFascicolo,
+            long idStrut, Long anno) {
+        String queryStr = "select f from FasFascicolo f " + "where f.orgStrut.idStrut = :idStrut "
                 + "and f.decTipoFascicolo.idTipoFascicolo = :idTipoFascicolo "
-                + "and f.aaFascicolo = :aaFascicolo " + "and f.dtAnnull > :dataDiOggiIn"; // esclude
-        // dalla
-        // ricerca
-        // i
-        // fascicoli
-        // annullati
-        javax.persistence.Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
-        query.setParameter("idTipoFascicolo", idTipoFascicolo);
-        query.setParameter("aaFascicolo", new BigDecimal(anno));
-        query.setParameter("dataDiOggiIn", new Date());
-        fasFascicolos = query.getResultList();
-        return fasFascicolos;
+                + "and f.aaFascicolo = :aaFascicolo " + "and f.dtAnnull > :dataDiOggiIn";
+
+        return entityManager.createQuery(queryStr, FasFascicolo.class)
+                .setParameter("idStrut", idStrut).setParameter("idTipoFascicolo", idTipoFascicolo)
+                .setParameter("aaFascicolo", new BigDecimal(anno))
+                .setParameter("dataDiOggiIn", new Date())
+                // Hint per ottimizzare il recupero dei dati dal database a blocchi
+                .setHint(QueryHints.HINT_FETCH_SIZE, "1000").getResultStream();
     }
 
     public void sbloccaAaTipoFascicolo(long idAaTipoFasc) {

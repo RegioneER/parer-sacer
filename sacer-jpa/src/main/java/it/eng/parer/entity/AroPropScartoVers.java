@@ -39,6 +39,28 @@ public class AroPropScartoVers implements Serializable {
     private OrgStrut orgStrut;
     private String ntPropScartoVers;
     private BigDecimal idStatoPropScartoVersCor;
+
+    // Dati richiesta di autorizzazione
+    private String ntAutorita;
+    private String cdRegistroRichAut;
+    private BigDecimal aaRichAut;
+    private String cdRichAut;
+
+    // Dati risposta dell'autorità
+    private String cdRegistroRispAut;
+    private BigDecimal aaRispAut;
+    private String cdRispAut;
+    private String tiAutorizzazione;
+
+    // Dati provvedimento di scarto
+    private String cdRegistroProvvScarto;
+    private BigDecimal aaProvvScarto;
+    private String cdProvvScarto;
+    private String dsFirmatoDa;
+
+    // Numero UD in proposta al momento dell'autorizzazione PARZIALE (snapshot pre-revisione)
+    private BigDecimal niUdPreRevisione;
+
     private List<AroItemPropScartoVers> aroItemPropScartoVers = new ArrayList<>();
     private List<AroStatoPropScartoVers> aroStatoPropScartoVers = new ArrayList<>();
 
@@ -139,6 +161,135 @@ public class AroPropScartoVers implements Serializable {
 
     public void setNtPropScartoVers(String ntPropScartoVers) {
         this.ntPropScartoVers = ntPropScartoVers;
+    }
+
+    // -----------------------------------------------------------------------
+    // Richiesta di autorizzazione
+    // -----------------------------------------------------------------------
+
+    @Column(name = "NT_AUTORITA")
+    public String getNtAutorita() {
+        return ntAutorita;
+    }
+
+    public void setNtAutorita(String ntAutorita) {
+        this.ntAutorita = ntAutorita;
+    }
+
+    @Column(name = "CD_REGISTRO_RICH_AUT")
+    public String getCdRegistroRichAut() {
+        return cdRegistroRichAut;
+    }
+
+    public void setCdRegistroRichAut(String cdRegistroRichAut) {
+        this.cdRegistroRichAut = cdRegistroRichAut;
+    }
+
+    @Column(name = "AA_RICH_AUT")
+    public BigDecimal getAaRichAut() {
+        return aaRichAut;
+    }
+
+    public void setAaRichAut(BigDecimal aaRichAut) {
+        this.aaRichAut = aaRichAut;
+    }
+
+    @Column(name = "CD_RICH_AUT")
+    public String getCdRichAut() {
+        return cdRichAut;
+    }
+
+    public void setCdRichAut(String cdRichAut) {
+        this.cdRichAut = cdRichAut;
+    }
+
+    // -----------------------------------------------------------------------
+    // Risposta dell'autorità
+    // -----------------------------------------------------------------------
+
+    @Column(name = "CD_REGISTRO_RISP_AUT")
+    public String getCdRegistroRispAut() {
+        return cdRegistroRispAut;
+    }
+
+    public void setCdRegistroRispAut(String cdRegistroRispAut) {
+        this.cdRegistroRispAut = cdRegistroRispAut;
+    }
+
+    @Column(name = "AA_RISP_AUT")
+    public BigDecimal getAaRispAut() {
+        return aaRispAut;
+    }
+
+    public void setAaRispAut(BigDecimal aaRispAut) {
+        this.aaRispAut = aaRispAut;
+    }
+
+    @Column(name = "CD_RISP_AUT")
+    public String getCdRispAut() {
+        return cdRispAut;
+    }
+
+    public void setCdRispAut(String cdRispAut) {
+        this.cdRispAut = cdRispAut;
+    }
+
+    @Column(name = "TI_AUTORIZZAZIONE")
+    public String getTiAutorizzazione() {
+        return tiAutorizzazione;
+    }
+
+    public void setTiAutorizzazione(String tiAutorizzazione) {
+        this.tiAutorizzazione = tiAutorizzazione;
+    }
+
+    // -----------------------------------------------------------------------
+    // Provvedimento di scarto
+    // -----------------------------------------------------------------------
+
+    @Column(name = "CD_REGISTRO_PROVV_SCARTO")
+    public String getCdRegistroProvvScarto() {
+        return cdRegistroProvvScarto;
+    }
+
+    public void setCdRegistroProvvScarto(String cdRegistroProvvScarto) {
+        this.cdRegistroProvvScarto = cdRegistroProvvScarto;
+    }
+
+    @Column(name = "AA_PROVV_SCARTO")
+    public BigDecimal getAaProvvScarto() {
+        return aaProvvScarto;
+    }
+
+    public void setAaProvvScarto(BigDecimal aaProvvScarto) {
+        this.aaProvvScarto = aaProvvScarto;
+    }
+
+    @Column(name = "CD_PROVV_SCARTO")
+    public String getCdProvvScarto() {
+        return cdProvvScarto;
+    }
+
+    public void setCdProvvScarto(String cdProvvScarto) {
+        this.cdProvvScarto = cdProvvScarto;
+    }
+
+    @Column(name = "DS_FIRMATO_DA")
+    public String getDsFirmatoDa() {
+        return dsFirmatoDa;
+    }
+
+    public void setDsFirmatoDa(String dsFirmatoDa) {
+        this.dsFirmatoDa = dsFirmatoDa;
+    }
+
+    @Column(name = "NI_UD_PRE_REVISIONE")
+    public BigDecimal getNiUdPreRevisione() {
+        return niUdPreRevisione;
+    }
+
+    public void setNiUdPreRevisione(BigDecimal niUdPreRevisione) {
+        this.niUdPreRevisione = niUdPreRevisione;
     }
 
     @OneToMany(mappedBy = "aroPropScartoVers", cascade = CascadeType.PERSIST)

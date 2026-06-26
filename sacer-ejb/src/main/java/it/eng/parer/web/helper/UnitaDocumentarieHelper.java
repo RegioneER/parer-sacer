@@ -177,7 +177,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
     private static final String ID_VER_INDICE_AIP_PARAMETER = "idVerIndiceAip";
 
-    private static final String RIC_UD_DATI_SPEC_BASE = "SELECT distinct ud.id_Unita_Doc, ud.aa_Key_Unita_Doc, ud.cd_Key_Unita_Doc, ud.cd_Registro_Key_Unita_Doc, ud.dt_Creazione, ud.dt_Reg_Unita_Doc, ud.fl_Unita_Doc_Firmato, "
+    private static final String RIC_UD_DATI_SPEC_BASE = "SELECT /*+ LEADING(ric ud tipo_ud) USE_NL(ud) USE_NL(tipo_ud) */ ud.id_Unita_Doc, ud.aa_Key_Unita_Doc, ud.cd_Key_Unita_Doc, ud.cd_Registro_Key_Unita_Doc, ud.dt_Creazione, ud.dt_Reg_Unita_Doc, ud.fl_Unita_Doc_Firmato, "
             + "ud.ti_Esito_Verif_Firme, ud.ds_Msg_Esito_Verif_Firme, tipo_ud.nm_Tipo_Unita_Doc, ud.fl_Forza_Accettazione, ud.fl_Forza_Conservazione, ud.ds_Key_Ord, ud.ni_Alleg, ud.ni_Annessi, ud.ni_Annot, ud.ti_Stato_Conservazione, ";
 
     private static final String RIC_UD_DATI_SPEC_NM_TIPO_DOC_PRINC = "(SELECT tipo_doc_princ.nm_tipo_doc "
@@ -203,9 +203,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             + "                                   IS NOT NULL) tmp "
             + "                                   )       ds_lista_stati_elenco_vers ";
 
-    private static final String RIC_UD_DATI_SPEC_BASE_FROM = "FROM sacer.aro_unita_doc ud "
-            + "JOIN sacer.dec_tipo_unita_doc tipo_ud on (tipo_ud.id_tipo_unita_doc = ud.id_tipo_unita_doc) "
-            + "JOIN sacer.aro_doc doc on (doc.id_unita_doc = ud.id_unita_doc) ";
+    // RIC_UD_DATI_SPEC_BASE_FROM non più usato: la clausola FROM viene costruita dinamicamente
+    // in getAroVRicUnitaDocRicDatiSpecViewBeanPlainFilter includendo la inline view come driving
+    // table.
 
     @EJB(mappedName = "java:app/Parer-ejb/VolumeHelper")
     private VolumeHelper volumeHelper;
@@ -1231,7 +1231,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             boolean almenoUnTipoDocSelPerRicercaDatiSpec) throws EMFError {
         return getAroVRicUnitaDocRicDatiSpecViewBeanPlainFilter(idTipoUnitaDocList,
                 cdRegistroUnitaDocSet, idTipoDocList, listaDatiSpecOnLine, idStruttura, addButton,
-                new FiltriUnitaDocumentarieDatiSpecPlain(filtri), false,
+                new FiltriUnitaDocumentarieDatiSpecPlain(filtri), true,
                 almenoUnTipoUdSelPerRicercaDatiSpec, almenoUnTipoDocSelPerRicercaDatiSpec);
     }
 
@@ -3137,10 +3137,11 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             boolean lazy, boolean almenoUnTipoUnitaDocSePerRicercaDatiSpec,
             boolean almenoUnTipoDocSelPerRicercaDatiSpec) throws EMFError {
         String whereWord = " WHERE ";
-        // Creo la parte iniziale della query di ricerca
+        // Creo la parte iniziale della query di ricerca (solo SELECT, la FROM sarà costruita
+        // dinamicamente includendo la inline view ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS)
         StringBuilder queryInvolucro = new StringBuilder(
                 RIC_UD_DATI_SPEC_BASE + RIC_UD_DATI_SPEC_NM_TIPO_DOC_PRINC
-                        + RIC_UD_DATI_SPEC_STATI_ELENCO_VERS + RIC_UD_DATI_SPEC_BASE_FROM);
+                        + RIC_UD_DATI_SPEC_STATI_ELENCO_VERS);
 
         StringBuilder queryWhereConditions = new StringBuilder();
 
@@ -3152,23 +3153,37 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         }
 
         if (!idTipoDocList.isEmpty()) {
-            // Inserimento nella query del filtro Tipo doc
-            queryWhereConditions.append(whereWord).append(" doc.id_tipo_doc IN (:listtipodoc) ");
+            // Filtro Tipo doc come EXISTS (aro_doc non è più in JOIN diretto nella FROM)
+            queryWhereConditions.append(whereWord)
+                    .append(" EXISTS (SELECT 1 FROM sacer.aro_doc doc"
+                            + " WHERE doc.id_unita_doc = ud.id_unita_doc"
+                            + " AND doc.id_tipo_doc IN (:listtipodoc)) ");
             whereWord = "AND ";
         }
 
         if (!idTipoUnitaDocList.isEmpty()) {
-            // Inserimento nella query del filtro Tipo doc
+            // Inserimento nella query del filtro Tipo ud
             queryWhereConditions.append(whereWord)
                     .append(" ud.id_tipo_unita_doc IN (:listtipoud) ");
             whereWord = "AND ";
         }
 
-        // Inserimento nella query dei filtri sui range di anno e numero
+        // Inserimento nella query dei filtri su anno/numero (singolo o range)
         BigDecimal annoRangeDa = filtri.getAaKeyUnitaDocDa();
         BigDecimal annoRangeA = filtri.getAaKeyUnitaDocA();
         String codiceRangeDa = filtri.getCdKeyUnitaDocDa();
         String codiceRangeA = filtri.getCdKeyUnitaDocA();
+
+        if (annoRangeDa == null && annoRangeA == null && filtri.getAaKeyUnitaDoc() != null) {
+            annoRangeDa = filtri.getAaKeyUnitaDoc();
+            annoRangeA = filtri.getAaKeyUnitaDoc();
+        }
+
+        if (codiceRangeDa == null && codiceRangeA == null
+                && StringUtils.isNotBlank(filtri.getCdKeyUnitaDoc())) {
+            codiceRangeDa = filtri.getCdKeyUnitaDoc();
+            codiceRangeA = filtri.getCdKeyUnitaDoc();
+        }
 
         if (annoRangeDa != null && annoRangeA != null) {
             queryWhereConditions.append(whereWord)
@@ -3195,18 +3210,23 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         whereWord = " AND ";
         queryWhereConditions.append(whereWord).append(" ud.ti_annul is null ");
 
-        // UTILIZZO DEI DATI SPECIFICI
+        // UTILIZZO DEI DATI SPECIFICI: costruzione della inline view come driving table
         String cdVersioneXsdUd = filtri.getCdVersioneXsdUd();
         String cdVersioneXsdDoc = filtri.getCdVersioneXsdDoc();
-        ReturnParams params = volumeHelper.buildConditionsForRicDatiSpec(listaDatiSpecOnLine,
+        ReturnParams params = volumeHelper.buildInlineViewForRicDatiSpec(listaDatiSpecOnLine,
                 cdVersioneXsdUd, cdVersioneXsdDoc, annoRangeDa, annoRangeA, idStruttura);
         List<DatiSpecQueryParams> mappone = params.getMappone();
 
-        // Aggrego le varie sottoquery
-        queryInvolucro.append(queryWhereConditions);
-        queryInvolucro.append(params.getQuery());
+        // Assemblo FROM con la inline view come driving table
+        queryInvolucro.append("FROM (").append(params.getQuery()).append(") ric ")
+                .append("JOIN sacer.aro_unita_doc ud ON ud.id_unita_doc = ric.id_unita_doc ")
+                .append("JOIN sacer.dec_tipo_unita_doc tipo_ud"
+                        + " ON tipo_ud.id_tipo_unita_doc = ud.id_tipo_unita_doc ");
 
-        // ordina per dsKeyDoc crescente
+        // Aggrego le condizioni WHERE
+        queryInvolucro.append(queryWhereConditions);
+
+        // ordina per dsKeyOrd crescente
         queryInvolucro.append(" ORDER BY ud.ds_Key_Ord");
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -3265,15 +3285,13 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("subStruts", subStruts);
         }
 
-        // Mi faccio restituire uno stream (più performante) e lo converto in oggetti
-        // AroVRicUnitaDoc
-        List<AroVRicUnitaDoc> aroVRicUnitaDocList = convertStreamToObjectList(query);
-
         if (lazy) {
-            return lazyListHelper.getTableBean(query,
-                    getAroVRicUnitaDocTableBeanFromResultListFunction(addButton), "u.idUnitaDoc");
+            return lazyListHelper.getTableBeanForNativeQuery(query,
+                    this::resultListDTOToAroVRicUnitaDocRowBeansNuovo, "ud.ID_UNITA_DOC",
+                    "AroVRicUnitaDocNewDTOMapping");
         } else {
-            // return getAroVRicUnitaDocTableBeanFromResultList(query.getResultList(), addButton);
+            // Mi faccio restituire uno stream (più performante) e lo converto in oggetti
+            List<AroVRicUnitaDoc> aroVRicUnitaDocList = convertStreamToObjectList(query);
             return getAroVRicUnitaDocTableBeanFromResultList(aroVRicUnitaDocList, addButton);
         }
     }
@@ -4011,7 +4029,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
     // Ricavo i componenti di tipo file di un determinato documento
     public AroVLisDatiSpecTableBean getAroVLisDatiSpecTableBean(BigDecimal identificativo,
-            TipoEntitaSacer tipoEntitaSacer, String tipoDatiSpec, int maxResults) {
+            TipoEntitaSacer tipoEntitaSacer, String tipoDatiSpec, BigDecimal idStrut,
+            BigDecimal aaKeyUnitaDoc, int maxResults) {
         String tmpTipoEntita = null;
         switch (tipoEntitaSacer) {
         case UNI_DOC:
@@ -4029,6 +4048,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
         String queryStr = String.format(
                 "SELECT u FROM AroVLisDatiSpec u " + "WHERE %s = :id "
+                        + "AND u.idStrut = :idStrut "
+                        + "AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc "
                         + "AND u.tiUsoXsd = :tipoDatiSpecIn "
                         + "AND u.tiEntitaSacer = :tipoEntitaSacerIn " + "ORDER BY u.niOrdAttrib",
                 tmpTipoEntita);
@@ -4036,6 +4057,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         Query query = this.getEntityManager().createQuery(queryStr);
 
         query.setParameter("id", identificativo);
+        query.setParameter("idStrut", idStrut);
+        query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
         query.setParameter("tipoDatiSpecIn", tipoDatiSpec);
         query.setParameter("tipoEntitaSacerIn", tipoEntitaSacer.name());
 
@@ -6521,8 +6544,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
         private String cdVersioneXsdUd;
         private String cdVersioneXsdDoc;
-        // private BigDecimal aaKeyUnitaDoc;
-        // private String cdKeyUnitaDoc;
+        private BigDecimal aaKeyUnitaDoc;
+        private String cdKeyUnitaDoc;
         private BigDecimal aaKeyUnitaDocDa;
         private BigDecimal aaKeyUnitaDocA;
         private String cdKeyUnitaDocDa;
@@ -6538,8 +6561,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                 throws EMFError {
             this.cdVersioneXsdUd = filtri.getCd_versione_xsd_ud().parse();
             this.cdVersioneXsdDoc = filtri.getCd_versione_xsd_doc().parse();
-            /// this.aaKeyUnitaDoc = filtri.getAa_key_unita_doc().parse();
-            // this.cdKeyUnitaDoc = filtri.getCd_key_unita_doc().parse();
+            this.aaKeyUnitaDoc = filtri.getAa_key_unita_doc().parse();
+            this.cdKeyUnitaDoc = filtri.getCd_key_unita_doc().parse();
             // this.cdKeyUnitaDocContiene = filtri.getCd_key_unita_doc_contiene().parse();
             this.aaKeyUnitaDocDa = filtri.getAa_key_unita_doc_da().parse();
             this.aaKeyUnitaDocA = filtri.getAa_key_unita_doc_a().parse();
@@ -6565,21 +6588,22 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             this.cdVersioneXsdDoc = cdVersioneXsdDoc;
         }
 
-        // public BigDecimal getAaKeyUnitaDoc() {
-        // return aaKeyUnitaDoc;
-        // }
-        //
-        // void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-        // this.aaKeyUnitaDoc = aaKeyUnitaDoc;
-        // }
-        //
-        // public String getCdKeyUnitaDoc() {
-        // return cdKeyUnitaDoc;
-        // }
-        //
-        // void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-        // this.cdKeyUnitaDoc = cdKeyUnitaDoc;
-        // }
+        public BigDecimal getAaKeyUnitaDoc() {
+            return aaKeyUnitaDoc;
+        }
+
+        void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+            this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        }
+
+        public String getCdKeyUnitaDoc() {
+            return cdKeyUnitaDoc;
+        }
+
+        void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
+            this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        }
+
         public BigDecimal getAaKeyUnitaDocDa() {
             return aaKeyUnitaDocDa;
         }

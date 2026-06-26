@@ -84,6 +84,7 @@ import it.eng.parer.ws.utils.CRC32CChecksum;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.util.UUIDMdcLogUtil;
 import java.nio.file.StandardOpenOption;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.model.GetObjectAttributesResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
@@ -1190,6 +1191,39 @@ public class ObjectStorageService {
             throw new EJBException(e);
         }
     }
+
+    // MAC#40183
+    /**
+     * Ottieni i metadati dell'oggetto dell'indice aip cercando per chiave ricostruita, senza
+     * dipendenza dal link DB. Usato durante la rielaborazione DLQ quando un rollback precedente ha
+     * rimosso il record DB ma l'oggetto fisico è ancora presente su O.S. Restituisce
+     * {@link Optional#empty()} se l'oggetto non esiste (HTTP 404); rilancia {@link EJBException}
+     * per qualsiasi altro errore infrastrutturale.
+     *
+     * @param idVerIndiceAip id della versione dell'indice aip
+     * @param nomeBackend    nome del backend configurato
+     *
+     * @return Optional con i metadati dell'oggetto, oppure empty se non presente su O.S.
+     */
+    public Optional<HeadObjectResponse> headObjectIndiceAipUd(long idVerIndiceAip,
+            String nomeBackend) {
+        try {
+            ObjectStorageBackend config = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(nomeBackend, READ_INDICI_AIP);
+            String key = salvataggioBackendHelper.generateKeyIndiceAip(idVerIndiceAip) + ".xml";
+            return Optional.of(
+                    salvataggioBackendHelper.getObjectMetadata(config, config.getBucket(), key));
+        } catch (ObjectStorageException e) {
+            if (e.getCause() instanceof AwsServiceException
+                    && ((AwsServiceException) e.getCause()).statusCode() == 404) {
+                return Optional.empty();
+            }
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    // end MAC#40183
     // end MEV#30395
 
     // MEV #30398

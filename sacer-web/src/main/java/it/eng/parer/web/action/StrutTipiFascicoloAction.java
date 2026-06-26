@@ -1368,6 +1368,8 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                             tipoFascicoloEjb.saveDecAaTipoFascicolo(param, aaTipoFascicoloRowBean);
                             tipoFascicoloEjb.checkFascicoliNelPeriodoValidita(
                                     aaTipoFascicoloRowBean.getIdAaTipoFascicolo());
+                            loadDettaglioAaTipoFascicolo(
+                                    aaTipoFascicoloRowBean.getIdAaTipoFascicolo());
                         } else {
                             Date dtIstituz = getForm().getTipoFascicoloDetail().getDt_istituz()
                                     .parse();

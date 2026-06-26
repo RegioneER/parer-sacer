@@ -16,6 +16,7 @@ package it.eng.parer.web.util;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.ws.dto.IRispostaWS;
 import it.eng.parer.ws.recupero.dto.RecuperoExt;
+import it.eng.parer.ws.recupero.dto.WSDescRecDipEsibizione;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
 import it.eng.parer.ws.recupero.dto.WSDescRecUDPdf;
 import it.eng.parer.ws.recupero.ejb.RecuperoSync;
@@ -63,7 +64,7 @@ public class DownloadDip {
 
         this.rispostaWs = new RispostaWSRecupero();
         this.recuperoExt = new RecuperoExt();
-        recuperoExt.setDescrizione(new WSDescRecUDPdf());
+        recuperoExt.setDescrizione(new WSDescRecDipEsibizione());
 
         AvanzamentoWs tmpAvanzamento = AvanzamentoWs.nuovoAvanzamentoWS("prova",
                 AvanzamentoWs.Funzioni.RecuperoWeb);
@@ -121,10 +122,12 @@ public class DownloadDip {
                 .setTipoRichiedente(JobConstants.TipoSessioniRecupEnum.DOWNLOAD);
         switch (tipoDownload) {
         case SCARICA_COMP_CONV:
+            this.recuperoExt.setDescrizione(new WSDescRecUDPdf());
             recuperoDip.recuperaCompConvertito(getRispostaWs(), this.recuperoExt,
                     System.getProperty("java.io.tmpdir"));
             break;
         case SCARICA_ZIP:
+            this.recuperoExt.setDescrizione(new WSDescRecDipEsibizione());
             recuperoDip.recuperaUnitaDocumentaria(getRispostaWs(), this.recuperoExt,
                     System.getProperty("java.io.tmpdir"));
             break;

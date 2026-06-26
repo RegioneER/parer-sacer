@@ -1640,6 +1640,10 @@ public class AnnulVersEjb {
         helper.updateDocumentiUdItem(idRichAnnulVers, dataAnnullamento,
                 CostantiDB.TipoAnnullamentoUnitaDoc.ANNULLAMENTO.name(),
                 richiestaAnnullamento.getNtRichAnnulVers());
+        // Elimino le URN calcolate dei componenti riferiti alle unità doc annullate
+        int deletedCompUrnCalc = helper.deleteAroCompUrnCalcByRichAnnulVers(idRichAnnulVers);
+        logger.debug("{} Eliminate {} righe da ARO_COMP_URN_CALC per idRichAnnulVers={}",
+                LOG_MESSAGE_ANNULLA_UD, deletedCompUrnCalc, idRichAnnulVers);
 
         logger.debug("{} Registro il nuovo stato della richiesta avente id: {}",
                 LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);

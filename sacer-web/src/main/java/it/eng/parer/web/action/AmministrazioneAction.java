@@ -245,14 +245,17 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
             AplParamApplicTableBean paramApplicTableBean) {
         Iterator<AplParamApplicRowBean> rowIt = paramApplicTableBean.iterator();
         while (rowIt.hasNext()) {
-            AplParamApplicRowBean rowBean = rowIt.next();
-            if (rowBean.getTiValoreParamApplic()
-                    .equals(Constants.ComboValueParamentersType.PASSWORD.name())) {
-                rowBean.setString("ds_valore_param_applic", Constants.OBFUSCATED_STRING);
-            }
+            obfuscatePasswordParamApplic(rowIt.next());
         }
 
         return paramApplicTableBean;
+    }
+
+    private void obfuscatePasswordParamApplic(AplParamApplicRowBean rowBean) {
+        if (rowBean != null && Constants.ComboValueParamentersType.PASSWORD.name()
+                .equals(rowBean.getTiValoreParamApplic())) {
+            rowBean.setString("ds_valore_param_applic", Constants.OBFUSCATED_STRING);
+        }
     }
 
     /**
@@ -402,7 +405,9 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
             AplParamApplicRowBean detailRow = amministrazioneEjb
                     .getAplParamApplicRowBean(currentRow.getIdParamApplic());
             if (detailRow != null) {
-                // syncConfigurationCurrentRow(detailRow);
+                if (!editMode) {
+                    obfuscatePasswordParamApplic(detailRow);
+                }
                 getForm().getConfigurationDetail().copyFromBean(detailRow);
             }
         }
@@ -582,12 +587,8 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                     AplParamApplicRowBean detailRow = amministrazioneEjb
                             .getAplParamApplicRowBean(row.getIdParamApplic());
                     if (detailRow != null) {
-                        if (ComboValueParamentersType.PASSWORD.name()
-                                .equals(detailRow.getTiValoreParamApplic())) {
-                            detailRow.setString("ds_valore_param_applic",
-                                    Constants.OBFUSCATED_STRING);
-                        }
                         syncConfigurationCurrentRow(detailRow);
+                        obfuscatePasswordParamApplic(detailRow);
                         getForm().getConfigurationDetail().copyFromBean(detailRow);
                     }
 
@@ -680,6 +681,11 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                 && !"1".equals(row.getFlAppartApplic())) {
             getMessageBox().addError(
                     "Il valore del parametro può essere indicato solo se il parametro ha il flag Applicazione alzato");
+            getMessageBox().setViewMode(ViewMode.plain);
+        }
+
+        if ("1".equals(row.getFlAppartApplic()) && StringUtils.isBlank(dsValoreParamApplicValue)) {
+            getMessageBox().addError("Attenzione: è necessario inserire il Valore applicativo");
             getMessageBox().setViewMode(ViewMode.plain);
         }
 

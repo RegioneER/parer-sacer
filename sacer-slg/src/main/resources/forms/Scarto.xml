@@ -31,6 +31,14 @@
 
     <!-- sezioni proposta -->
     <Section Name="InfoPropostaScartoSection" Description="" Legend="Informazioni proposta" ShowButton="false" LoadOpened="true" />
+    <Section Name="RichiestaAutorizzazioneSection" Description="" Legend="Richiesta di autorizzazione" ShowButton="false" LoadOpened="true" />
+    <Section Name="DatiPropostaSection" Description="" Legend="Dati proposta" ShowButton="false" LoadOpened="true" />
+    <Section Name="RispostaAutorizzazioneSection" Description="" Legend="Risposta dell'autorità" ShowButton="false" LoadOpened="true" />
+    <Section Name="ProvvedimentoScartoSection" Description="" Legend="Provvedimento di scarto" ShowButton="false" LoadOpened="true" />    
+    <Section Name="DatiRichiestaAutSection" Description="" Legend="Dati richiesta di autorizzazione" ShowButton="false" LoadOpened="true" />    
+    <Section Name="DatiRispostaAutSection" Description="" Legend="Dati risposta autorizzazione" ShowButton="false" LoadOpened="true" />    
+    <Section Name="ProvvedimentoScartoDettaglioSection" Description="" Legend="Provvedimento di scarto" ShowButton="false" LoadOpened="true" />
+    <Section Name="RevisioneSection" Description="" Legend="Revisione proposta (autorizzazione parziale)" ShowButton="false" LoadOpened="true" />
     <!-- sezioni filtri ricerca ud/fascicoli/serie -->     
     <Section Name="filtriRicercaUdPropostaScartoSection" Description="" Legend="Filtri ricerca ud" ShowButton="false" LoadOpened="true"/>        
     <Section Name="filtriRicercaFascicoliPropostaScartoSection" Description="" Legend="Filtri ricerca fascicoli" ShowButton="false" LoadOpened="true"/>        
@@ -63,9 +71,73 @@
         <Input Name="ni_serie_inserite" Description="Numero serie inserite" Type="INTEGER" Readonly="true"/>
         <!-- Pulsante salva "testata" proposta -->
         <Button Name="salvaProposta" Description="Salva proposta" Type="STRING"/>
+        <!-- Pulsanti di navigazione alle pagine di autorizzazione -->
+        <Button Name="avviaRichiestaAutorizzazione" Description="Avvia richiesta di autorizzazione" Type="STRING"/>
+        <Button Name="registraAutorizzazione" Description="Registra autorizzazione" Type="STRING"/>
+        <!-- Pulsante per completare la revisione post-autorizzazione parziale -->
+        <Button Name="completaRevisionePropostaScarto" Description="Completa revisione" Type="STRING"/>
+        <!-- Pulsante per annullare la proposta quando in DA_AUTORIZZARE e nessuna UD è scartabile -->
+        <Button Name="annullaPropostaScarto" Description="Annulla proposta" Type="STRING"/>
         <!--<Button Name="scaricaProposta" Description="Scarica proposta" Type="STRING"/>-->
+        <!-- Campi display dati richiesta autorizzazione (readonly, visibili da DA_AUTORIZZARE in poi) -->
+        <Input Name="nt_autorita" Description="Autorit\u00e0" Type="STRING" Readonly="true"/>
+        <Input Name="cd_registro_rich_aut" Description="Registro" Type="STRING" Readonly="true"/>
+        <Input Name="aa_rich_aut" Description="Anno" Type="INTEGER" Readonly="true"/>
+        <Input Name="cd_rich_aut" Description="Numero" Type="STRING" Readonly="true"/>
+        <!-- Campi display dati risposta autorizzazione (readonly, visibili da APERTA_REVISIONE in poi) -->
+        <Input Name="cd_registro_risp_aut" Description="Registro" Type="STRING" Readonly="true"/>
+        <Input Name="aa_risp_aut" Description="Anno" Type="INTEGER" Readonly="true"/>
+        <Input Name="cd_risp_aut" Description="Numero" Type="STRING" Readonly="true"/>
+        <Input Name="ti_autorizzazione" Description="Tipo autorizzazione" Type="STRING" Readonly="true"/>
+        <!-- Campi display dati provvedimento di scarto (readonly, visibili da APERTA_REVISIONE in poi) -->
+        <Input Name="cd_registro_provv_scarto" Description="Registro" Type="STRING" Readonly="true"/>
+        <Input Name="aa_provv_scarto" Description="Anno" Type="INTEGER" Readonly="true"/>
+        <Input Name="cd_provv_scarto" Description="Numero" Type="STRING" Readonly="true"/>
+        <Input Name="ds_firmato_da" Description="Firmato da" Type="STRING" Readonly="true"/>
     </Fields>
-    
+
+    <!-- ================================================ -->
+    <!-- RICHIESTA DI AUTORIZZAZIONE  -->
+    <!-- ================================================ -->
+    <Fields Name="RichiestaAutPropScartoVers" Description="Richiesta di autorizzazione allo scarto">
+        <Input Name="id_prop_scarto_vers" Description="Id proposta" Type="INTEGER" Hidden="true"/>
+        <Input Name="cd_prop_scarto_vers" Description="Codice proposta" Type="STRING" Readonly="true"/>
+        <Input Name="ti_stato_prop_scarto_vers_cor" Description="Stato corrente" Type="STRING" Readonly="true"/>
+        <Input Name="nt_autorita" Description="Autorit\u00e0" Type="STRING" MaxLength="2000" Required="true"/>
+        <ComboBox Name="cd_registro_rich_aut" Description="Registro SACER" Type="STRING"/>
+        <CheckBox Name="fl_registro_esterno_rich" Description="Registro SACER non presente" Type="STRING"/>
+        <Input Name="cd_registro_rich_aut_esterno" Description="Registro esterno" Type="STRING" MaxLength="100"/>
+        <Input Name="aa_rich_aut" Description="Anno" Type="INTEGER" MaxLength="4" Required="true"/>
+        <Input Name="cd_rich_aut" Description="Numero" Type="STRING" MaxLength="100" Required="true"/>
+        <Button Name="salvaRichiestaAutorizzazione" Description="Salva richiesta di autorizzazione" Type="STRING"/>
+        <Button Name="annullaRichiestaAutorizzazione" Description="Annulla" Type="STRING"/>
+    </Fields>
+
+    <!-- ================================================ -->
+    <!-- REGISTRA AUTORIZZAZIONE   -->
+    <!-- ================================================ -->
+    <Fields Name="RegistraAutPropScartoVers" Description="Registra autorizzazione allo scarto">
+        <Input Name="id_prop_scarto_vers" Description="Id proposta" Type="INTEGER" Hidden="true"/>
+        <Input Name="cd_prop_scarto_vers" Description="Codice proposta" Type="STRING" Readonly="true"/>
+        <Input Name="ti_stato_prop_scarto_vers_cor" Description="Stato corrente" Type="STRING" Readonly="true"/>
+        <!-- Dati risposta dell'autorita -->
+        <CheckBox Name="fl_registro_esterno_risp_aut" Description="Registro SACER non presente" Type="STRING"/>
+        <ComboBox Name="cd_registro_risp_aut" Description="Registro SACER" Type="STRING"/>
+        <Input Name="cd_registro_risp_aut_esterno" Description="Registro esterno" Type="STRING" MaxLength="100"/>
+        <Input Name="aa_risp_aut" Description="Anno" Type="INTEGER" MaxLength="4" Required="true"/>
+        <Input Name="cd_risp_aut" Description="Numero" Type="STRING" MaxLength="100" Required="true"/>
+        <ComboBox Name="ti_autorizzazione" Description="Tipo autorizzazione" Type="STRING" Required="true"/>
+        <!-- Dati provvedimento di scarto -->
+        <CheckBox Name="fl_registro_esterno_provv_scarto" Description="Registro SACER non presente" Type="STRING"/>
+        <ComboBox Name="cd_registro_provv_scarto" Description="Registro SACER" Type="STRING"/>
+        <Input Name="cd_registro_provv_scarto_esterno" Description="Registro esterno" Type="STRING" MaxLength="100"/>
+        <Input Name="aa_provv_scarto" Description="Anno" Type="INTEGER" MaxLength="4"/>
+        <Input Name="cd_provv_scarto" Description="Numero" Type="STRING" MaxLength="100"/>
+        <Input Name="ds_firmato_da" Description="Firmato da" Type="STRING" MaxLength="255"/>
+        <Button Name="salvaRegistraAutorizzazione" Description="Salva autorizzazione" Type="STRING" />
+        <Button Name="annullaRegistraAutorizzazione" Description="Annulla" Type="STRING"/>
+    </Fields>
+
     <!-- ========================================== -->
     <!-- TABS CREAZIONE PROPOSTA DI SCARTO          -->
     <!-- ========================================== -->
@@ -164,7 +236,11 @@
             <ComboBox Name="id_tipo_unita_doc_sel" Description="Tipologia UD" Type="INTEGER"/>
             <ComboBox Name="id_registro_unita_doc_sel" Description="Registro" Type="INTEGER"/>
             <Input Name="anno_sel" Description="Anno" Type="INTEGER" MaxLength="4"/>
+            <Input Name="anno_da_sel" Description="Anno da" Type="INTEGER" MaxLength="4"/>
+            <Input Name="anno_a_sel" Description="Anno a" Type="INTEGER" MaxLength="4"/>
             <Input Name="numero_ud_sel" Description="Numero" Type="STRING"/>
+            <Input Name="numero_da_sel" Description="Numero da" Type="STRING"/>
+            <Input Name="numero_a_sel" Description="Numero a" Type="STRING"/>
             <ComboBox Name="fl_scartabile_sel" Description="Scartabile" Type="STRING"/>
             <ComboBox Name="ds_alert_sel" Description="Testo Alert" Type="STRING" />
             <Button Name="ricercaUdSelezionate" Description="Ricerca in proposta" Type="STRING"/>
