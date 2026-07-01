@@ -14,6 +14,8 @@
 package it.eng.parer.web.util;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -21,15 +23,22 @@ import javax.naming.NamingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.ws.dto.IRispostaWS;
+import it.eng.parer.ws.dto.CSChiave;
+import it.eng.parer.ws.dto.RispostaControlli;
+import it.eng.parer.ws.ejb.ControlliWS;
 import it.eng.parer.ws.recupero.dto.ParametriRecupero;
 import it.eng.parer.ws.recupero.dto.RecuperoExt;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
+import it.eng.parer.ws.recupero.ejb.ControlliRecupero;
 import it.eng.parer.ws.recupero.dto.WSDescRecUnitaDoc;
 import it.eng.parer.ws.recupero.ejb.RecuperoSync;
 import it.eng.parer.ws.utils.AvanzamentoWs;
 import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.MessaggiWSBundle;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.parer.ws.xml.versReqStato.Recupero;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.security.User;
@@ -41,6 +50,8 @@ import it.eng.spagoLite.security.User;
 public class RecuperoWeb {
 
     private static final Logger log = LoggerFactory.getLogger(RecuperoWeb.class);
+    private static final List<String> LISTA_ABIL_TIPO_DATO_UD = Arrays.asList("REGISTRO",
+            "TIPO_UNITA_DOC", "SUB_STRUTTURA");
     private final Recupero recupero;
     private final User user;
     private final BigDecimal idUnitaDoc;
@@ -142,6 +153,14 @@ public class RecuperoWeb {
                 break;
             }
 
+            RispostaControlli rispostaAuth = verificaAbilitazioniTipiDato(user,
+                    idUnitaDoc.longValue());
+            if (!rispostaAuth.isrBoolean()) {
+                rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsError(rispostaAuth.getCodErr(), rispostaAuth.getDsErr());
+                return rispostaWs;
+            }
+
             myRecuperoExt.setDatiXml(" ");
             myRecuperoExt.setStrutturaRecupero(recupero);
             myRecuperoExt.setVersioneWsChiamata("---");
@@ -195,6 +214,15 @@ public class RecuperoWeb {
             if (tipoEntitaSacer.name().equals(CostantiDB.TipiEntitaRecupero.DOC.name())) {
                 tmpParametriRecupero.setIdDocumento(idCompDoc.longValue());
             }
+
+            RispostaControlli rispostaAuth = verificaAbilitazioniTipiDato(user,
+                    idUnitaDoc.longValue());
+            if (!rispostaAuth.isrBoolean()) {
+                rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsError(rispostaAuth.getCodErr(), rispostaAuth.getDsErr());
+                return rispostaWs;
+            }
+
             myRecuperoExt.setDatiXml(" ");
             myRecuperoExt.setStrutturaRecupero(recupero);
             myRecuperoExt.setVersioneWsChiamata("---");
@@ -245,6 +273,15 @@ public class RecuperoWeb {
             tmpParametriRecupero.setTipoRichiedente(JobConstants.TipoSessioniRecupEnum.DOWNLOAD);
             tmpParametriRecupero.setTipoEntitaSacer(tipoEntitaSacer);
             tmpParametriRecupero.setIdComponente(idCompDoc.longValue());
+
+            RispostaControlli rispostaAuth = verificaAbilitazioniTipiDato(user,
+                    idUnitaDoc.longValue());
+            if (!rispostaAuth.isrBoolean()) {
+                rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsError(rispostaAuth.getCodErr(), rispostaAuth.getDsErr());
+                return rispostaWs;
+            }
+
             myRecuperoExt.setDatiXml(" ");
             myRecuperoExt.setStrutturaRecupero(recupero);
             myRecuperoExt.setVersioneWsChiamata("---");
@@ -254,5 +291,58 @@ public class RecuperoWeb {
                     System.getProperty("java.io.tmpdir"));
         }
         return rispostaWs;
+    }
+
+    public static RispostaControlli verificaAbilitazioniTipiDato(User user, long idUnitaDoc) {
+        RispostaControlli rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+
+        ControlliRecupero controlliRecupero;
+        ControlliWS controlliWs;
+        try {
+            InitialContext context = new InitialContext();
+            controlliRecupero = (ControlliRecupero) context
+                    .lookup("java:app/Parer-ejb/ControlliRecupero");
+            controlliWs = (ControlliWS) context.lookup("java:app/Parer-ejb/ControlliWS");
+        } catch (NamingException ex) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Impossibile recuperare gli EJB di controllo: " + ex.getMessage()));
+            log.error("Errore nel recupero degli EJB di controllo per il download web", ex);
+            return rispostaControlli;
+        }
+
+        rispostaControlli = controlliRecupero.leggiUnitaDoc(idUnitaDoc);
+        if (!rispostaControlli.isrBoolean()) {
+            return rispostaControlli;
+        }
+
+        AroUnitaDoc unitaDoc = (AroUnitaDoc) rispostaControlli.getrObject();
+        rispostaControlli = controlliRecupero.leggiChiaveUnitaDoc(idUnitaDoc);
+        if (!rispostaControlli.isrBoolean()) {
+            return rispostaControlli;
+        }
+
+        String descUnitaDoc = MessaggiWSFormat
+                .formattaSubPathUnitaDocArk((CSChiave) rispostaControlli.getrObject());
+        BigDecimal idOrganizzazioneFoglia = user.getIdOrganizzazioneFoglia();
+
+        try {
+            user.setIdOrganizzazioneFoglia(BigDecimal.valueOf(unitaDoc.getOrgStrut().getIdStrut()));
+
+            for (String classeTipoDatoUd : LISTA_ABIL_TIPO_DATO_UD) {
+                rispostaControlli = controlliWs.checkTipoDatoUdIamUserOrganizzazione(descUnitaDoc,
+                        user, idUnitaDoc, classeTipoDatoUd);
+                if (!rispostaControlli.isrBoolean()) {
+                    return rispostaControlli;
+                }
+            }
+
+            rispostaControlli = controlliWs.checkTipoDatoDocsIamUserOrganizzazioneByUd(
+                    descUnitaDoc, user, idUnitaDoc);
+            return rispostaControlli;
+        } finally {
+            user.setIdOrganizzazioneFoglia(idOrganizzazioneFoglia);
+        }
     }
 }

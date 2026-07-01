@@ -174,6 +174,7 @@ import it.eng.parer.web.validator.UnitaDocumentarieValidator;
 import it.eng.parer.ws.dto.CSChiave;
 import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.dto.IRispostaWS.SeverityEnum;
+import it.eng.parer.ws.dto.RispostaControlli;
 import it.eng.parer.ws.ejb.RecuperoDocumento;
 import it.eng.parer.ws.recupero.dto.ComponenteRec;
 import it.eng.parer.ws.recupero.dto.ParametriRecupero;
@@ -516,10 +517,10 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
      *
      * @throws EMFError errore generico
      */
-    @Secure(action = "Menu.Amministrazione.UnitaDocumentarieRicercaDatiSpec")
+    @Secure(action = "Menu.UnitaDocumentarie.UnitaDocumentarieRicercaDatiSpec")
     public void unitaDocumentarieRicercaDatiSpec() throws EMFError {
         getUser().getMenu().reset();
-        getUser().getMenu().select("Menu.Amministrazione.UnitaDocumentarieRicercaDatiSpec");
+                getUser().getMenu().select("Menu.UnitaDocumentarie.UnitaDocumentarieRicercaDatiSpec");
         String cleanHistory = getRequest().getParameter(CLEAN_HISTORY);
         if (Boolean.parseBoolean(cleanHistory)) {
             getForm().getUnitaDocumentariePerSerie().reset();
@@ -4432,6 +4433,13 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         try {
             // EVO#16486
             this.verificaUrnUd(idud.longValue());
+            RispostaControlli rispostaControlli = verificaAbilitazioniDownloadUd(
+                    idud.longValue());
+            if (!rispostaControlli.isrBoolean()) {
+                getMessageBox().addError(rispostaControlli.getDsErr());
+                forwardToPublisher(getLastPublisher());
+                return;
+            }
             /*
              * Ricavo l'unità documentaria prendendo i dati da DB anche se li ho già nella maschera
              * di dettaglio, onde evitare che un domani, eliminando quei campi dall'online, vada
@@ -5479,6 +5487,13 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         try {
             // EVO#16486
             this.verificaUrnUd(idud.longValue());
+            RispostaControlli rispostaControlli = verificaAbilitazioniDownloadUd(
+                    idud.longValue());
+            if (!rispostaControlli.isrBoolean()) {
+                getMessageBox().addError(rispostaControlli.getDsErr());
+                forwardToPublisher(getLastPublisher());
+                return;
+            }
             /*
              * Ricavo l'unità documentaria prendendo i dati da DB anche se li ho già nella maschera
              * di dettaglio, onde evitare che un domani, eliminando quei campi dall'online, vada
@@ -5521,6 +5536,10 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     .addError("Eccezione nel recupero documenti di conservazione: " + message);
             log.error("Eccezione nel recupero documenti di conservazione ", e);
         }
+    }
+
+    private RispostaControlli verificaAbilitazioniDownloadUd(long idUnitaDoc) {
+        return RecuperoWeb.verificaAbilitazioniTipiDato(getUser(), idUnitaDoc);
     }
 
     /**

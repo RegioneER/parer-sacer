@@ -21,7 +21,6 @@ import it.eng.parer.ws.dto.CSChiave;
 import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.dto.IRispostaWS;
 import it.eng.parer.ws.dto.RispostaControlli;
-import it.eng.parer.ws.dto.IWSDesc;
 import it.eng.parer.ws.ejb.ControlliSemantici;
 import it.eng.parer.ws.ejb.ControlliWS;
 import it.eng.parer.ws.ejb.ControlliTpi;
@@ -299,19 +298,6 @@ public class GestSessRecupero {
     private void verificaAutorizzazioniRecupero(RecuperoExt recupero) {
         if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.OK) {
             return;
-        }
-
-        IWSDesc descrizione = recupero.getDescrizione();
-        if (descrizione != null) {
-            rispostaControlli.reset();
-            rispostaControlli = controlliWs.checkAuthWS(recupero.getParametriRecupero().getUtente(),
-                    descrizione, Costanti.TipiWSPerControlli.VERSAMENTO_RECUPERO);
-            if (!rispostaControlli.isrBoolean()) {
-                setRispostaWsError();
-                rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(),
-                        rispostaControlli.getDsErr());
-                return;
-            }
         }
 
         for (String classeTipoDatoUd : LISTA_ABIL_TIPO_DATO_UD) {
