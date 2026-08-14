@@ -961,14 +961,16 @@
     <!-- Sezioni data mart -->
     <Section Description="" Legend="Chiave Unità documentaria" LoadOpened="true" Name="ChiaveUdDataMartSection" ShowButton="false"/>
     <Section Description="" Legend="Richieste di cancellazione" LoadOpened="true" Name="RichiesteDataMartSection" ShowButton="false"/>
+    <Section Description="" Legend="Storico stati richiesta" LoadOpened="false" Name="StoricoStatiRichiestaSection" ShowButton="true"/>
     <Section Description="" Legend="Numero ud" LoadOpened="true" Name="NumUdDataMartSection" ShowButton="false"/>
-    <Section Description="" Legend="Unità documentarie data mart" LoadOpened="true" Name="UdDataMartSection" ShowButton="false"/>    
+    <Section Description="" Legend="Unità documentarie data mart" LoadOpened="true" Name="UdDataMartSection" ShowButton="false"/>
     <!-- Filtri di ricerca Unità Documentarie Data Mart -->
-    <Fields Description="Filtri ricerca cancellazione" Name="FiltriRicercaDataMart">        
+    <Fields Description="Filtri ricerca cancellazione" Name="FiltriRicercaDataMart">
+        <ComboBox Description="Ambiente" Name="id_ambiente" Type="INTEGER" Trigger="true" WithSearchComp="true"/>
+        <ComboBox Description="Ente" Name="id_ente" Type="INTEGER" Trigger="true" WithSearchComp="true"/>
+        <ComboBox Description="Struttura" Name="id_strut" Type="INTEGER" Trigger="true" WithSearchComp="true"/>
         <ComboBox Description="Tipo richiesta cancellazione ud" Name="ti_mot_cancellazione" Type="STRING"/>
         <ComboBox Description="Stato richiesta" Name="ti_stato_richiesta" Type="STRING"/>
-        <ComboBox Description="Ente" Name="id_ente" Type="INTEGER" Trigger="true" />
-        <ComboBox Description="Struttura" Name="id_strut" Type="INTEGER" Trigger="true"/>
         <Input Description="Data creazione richiesta da" Name="dt_creazione_da" Type="DATE"/>
         <Input Description="Data creazione richiesta a" Name="dt_creazione_a" Type="DATE"/>
         <ComboBox Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
@@ -986,6 +988,13 @@
         <Button Description="Cancellazione fisica" Name="eseguiCancellazioneDataMart" Type="STRING"/>
     </Fields>
     
+    <!-- Lista degli stati interni di una richiesta data mart -->
+    <List Description="Lista storico stati richiesta" Name="StoricoStatiRichiestaList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true" >
+        <Input Description="Id stato" Name="id_stato_ud_del_richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Description="Data/Ora" Name="dt_reg_stato" Type="DATETIME"/>
+        <Input Description="Stato interno" Name="ds_stato_interno_rich" Type="STRING"/>
+    </List>
+
     <!-- Lista delle richieste data mart trovate in base ai parametri di ricerca -->
     <List Description="Lista data-mart" Name="RichiesteDataMartList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true" >
         <Input Description="Id ud del richiesta" Name="id_ud_del_richiesta" Type="INTEGER" Hidden="true" />
@@ -994,7 +1003,9 @@
         <Input Description="Tipo motivo cancellazione" Name="ti_mot_cancellazione" Type="STRING" Hidden="true" />
         <Input Description="Tipo richiesta cancellazione ud" Name="ds_mot_cancellazione" Type="STRING"/>
         <Input Description="Data creazione" Name="dt_creazione" Type="DATE" />
+        <Input Description="Data evasione" Name="dt_evasione" Type="DATE" />
         <Input Description="Stato richiesta" Name="ti_stato_richiesta" Type="STRING"/>
+        <Input Description="Stato interno corrente" Name="ds_stato_interno_rich" Type="STRING"/>
         <Input Description="Numero ud" Name="ni_ud" Type="INTEGER" GroupingDecimal="true" />
         <Input Description="Id strut" Name="id_strut" Type="INTEGER" Hidden="true"/>        
     </List>

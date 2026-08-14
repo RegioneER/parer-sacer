@@ -35,13 +35,14 @@ public class DmUdDelRichieste implements Serializable {
     private String cdRichiesta;
     private String dsMessaggioErrore;
     private Date dtCreazione;
-    private Date dtUltimoAggiornamento;
     private BigDecimal idRichiesta;
     private String tiModDel;
     private String tiMotCancellazione;
-    private String tiStatoInternoRich;
     private String tiStatoRichiesta;
+    private Date dtEvasione;
+    private DmUdDelStatoRichiesta statoInternoRichCor;
     private List<DmUdDel> dmUdDels;
+    private List<DmUdDelStatoRichiesta> dmUdDelStatoRichieste;
 
     public DmUdDelRichieste() {
         /* Hibernate */
@@ -89,16 +90,6 @@ public class DmUdDelRichieste implements Serializable {
         this.dtCreazione = dtCreazione;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "DT_ULTIMO_AGGIORNAMENTO")
-    public Date getDtUltimoAggiornamento() {
-        return this.dtUltimoAggiornamento;
-    }
-
-    public void setDtUltimoAggiornamento(Date dtUltimoAggiornamento) {
-        this.dtUltimoAggiornamento = dtUltimoAggiornamento;
-    }
-
     @Column(name = "ID_RICHIESTA")
     public BigDecimal getIdRichiesta() {
         return this.idRichiesta;
@@ -126,22 +117,33 @@ public class DmUdDelRichieste implements Serializable {
         this.tiMotCancellazione = tiMotCancellazione;
     }
 
-    @Column(name = "TI_STATO_INTERNO_RICH")
-    public String getTiStatoInternoRich() {
-        return this.tiStatoInternoRich;
-    }
-
-    public void setTiStatoInternoRich(String tiStatoInternoRich) {
-        this.tiStatoInternoRich = tiStatoInternoRich;
-    }
-
-    @Column(name = "TI_STATO_RICHIESTA")
+    @Column(name = "TI_STATO_RICHIESTA", length = 100)
     public String getTiStatoRichiesta() {
         return this.tiStatoRichiesta;
     }
 
     public void setTiStatoRichiesta(String tiStatoRichiesta) {
         this.tiStatoRichiesta = tiStatoRichiesta;
+    }
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "DT_EVASIONE")
+    public Date getDtEvasione() {
+        return this.dtEvasione;
+    }
+
+    public void setDtEvasione(Date dtEvasione) {
+        this.dtEvasione = dtEvasione;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_STATO_INTERNO_RICH_COR")
+    public DmUdDelStatoRichiesta getStatoInternoRichCor() {
+        return this.statoInternoRichCor;
+    }
+
+    public void setStatoInternoRichCor(DmUdDelStatoRichiesta statoInternoRichCor) {
+        this.statoInternoRichCor = statoInternoRichCor;
     }
 
     // bi-directional many-to-one association to DmUdDel
@@ -152,6 +154,16 @@ public class DmUdDelRichieste implements Serializable {
 
     public void setDmUdDels(List<DmUdDel> dmUdDels) {
         this.dmUdDels = dmUdDels;
+    }
+
+    // bi-directional many-to-one association to DmUdDelStatoRichiesta
+    @OneToMany(mappedBy = "dmUdDelRichieste")
+    public List<DmUdDelStatoRichiesta> getDmUdDelStatoRichieste() {
+        return this.dmUdDelStatoRichieste;
+    }
+
+    public void setDmUdDelStatoRichieste(List<DmUdDelStatoRichiesta> dmUdDelStatoRichieste) {
+        this.dmUdDelStatoRichieste = dmUdDelStatoRichieste;
     }
 
 }

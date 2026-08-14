@@ -89,7 +89,6 @@ import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum.FIRMA;
-import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum.MARCA_FIRMA;
 import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum.SIGILLO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

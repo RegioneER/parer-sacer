@@ -5979,6 +5979,10 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getImportaParametri().getNm_tipo_unita_doc()
                 .setDecodeMap(getTipiUdDaXmlDecodeMap(uuid));
         getForm().getImportaParametri().getNm_tipo_unita_doc().clear();
+        // Setto i valori di tipologie unità documentarie ricavati dall'xml
+        getForm().getImportaParametri().getNm_tipo_doc()
+                .setDecodeMap(getTipiDocDaXmlDecodeMap(uuid));
+        getForm().getImportaParametri().getNm_tipo_doc().clear();
         // Setto i valori di tipi fascicolo ricavati dall'xml
         getForm().getImportaParametri().getNm_tipo_fascicolo()
                 .setDecodeMap(getTipiFascicoloDaXmlDecodeMap(uuid));
@@ -6107,6 +6111,13 @@ public class StruttureAction extends StruttureAbstractAction {
         return mappaTipiUd;
     }
 
+    private DecodeMap getTipiDocDaXmlDecodeMap(UUID uuid) {
+        DecodeMap mappaTipiDoc = new DecodeMap();
+        DecTipoDocTableBean decTipoDocTableBean = struttureEjb.getTipiDocDaXmlImportato(uuid);
+        mappaTipiDoc.populatedMap(decTipoDocTableBean, "nm_tipo_doc", "nm_tipo_doc");
+        return mappaTipiDoc;
+    }
+
     /**
      * Popola la combo Periodi tipo fascicolo in base alla scelta di Tipo Fascicolo
      *
@@ -6228,6 +6239,8 @@ public class StruttureAction extends StruttureAbstractAction {
                 .parse();
         String tipoStrutUdDaImportare = getForm().getImportaParametri().getNm_tipo_strut_unita_doc()
                 .parse();
+        List<String> tipoDocDaImportareList = getForm().getImportaParametri().getNm_tipo_doc()
+                .parse();
         String importareCriteri = getForm().getImportaParametri().getCheck_includi_criteri()
                 .parse();
         BigDecimal idStrutturaCorrente = ((BaseRowInterface) getForm().getStruttureList().getTable()
@@ -6279,8 +6292,8 @@ public class StruttureAction extends StruttureAbstractAction {
                 log.info("Importa parametri - Inizio importazione tipo ud {}", tipoUdDaImportare);
                 // Eseguo l'import
                 Object[] report = struttureEjb.eseguiImportTipoUd(param, struttureDaElaborare, uuid,
-                        tipoUdDaImportare, tipoStrutUdDaImportare, importareRegistri,
-                        importareCriteri, importareSistemiMigraz,
+                        tipoUdDaImportare, tipoStrutUdDaImportare, tipoDocDaImportareList,
+                        importareRegistri, importareCriteri, importareSistemiMigraz,
                         existRegistriDaImportareConFlTipoSerieMultAlzato,
                         importareFormatiComponente);
                 log.info("Importa parametri - Fine importazione tipo ud {}", tipoUdDaImportare);

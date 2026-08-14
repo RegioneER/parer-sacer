@@ -24,6 +24,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.parer.web.ejb.CaricaErrori;
 import it.eng.spagoCore.util.UUIDMdcLogUtil;
 
 public class MessaggiWSBundle {
@@ -60,10 +61,9 @@ public class MessaggiWSBundle {
         }
     }
 
-    private static MessaggiWSCache lookupCacheRef() {
+    private static CaricaErrori lookupCacheRef() {
         try {
-            return (MessaggiWSCache) new InitialContext()
-                    .lookup("java:app/Parer-ejb/MessaggiWSCache");
+            return (CaricaErrori) new InitialContext().lookup("java:app/Parer-ejb/CaricaErrori");
         } catch (NamingException ex) {
             log.error("Errore lookup dei messaggi " + ExceptionUtils.getRootCauseMessage(ex), ex);
             throw new RuntimeException("Errore lookup singleton dei messaggi "

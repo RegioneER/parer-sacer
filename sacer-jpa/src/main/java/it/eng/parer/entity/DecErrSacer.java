@@ -49,6 +49,8 @@ public class DecErrSacer implements Serializable {
 
     private DecClasseErrSacer decClasseErrSacer;
 
+    private DecErrSacerDett decErrSacerDett;
+
     public DecErrSacer() {/* Hibernate */
     }
 
@@ -111,5 +113,14 @@ public class DecErrSacer implements Serializable {
 
     public void setDecClasseErrSacer(DecClasseErrSacer decClasseErrSacer) {
         this.decClasseErrSacer = decClasseErrSacer;
+    }
+
+    @OneToOne(mappedBy = "decErrSacer")
+    public DecErrSacerDett getDecErrSacerDett() {
+        return decErrSacerDett;
+    }
+
+    public void setDecErrSacerDett(DecErrSacerDett decErrSacerDett) {
+        this.decErrSacerDett = decErrSacerDett;
     }
 }

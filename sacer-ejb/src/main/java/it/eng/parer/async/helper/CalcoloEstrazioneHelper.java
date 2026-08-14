@@ -210,13 +210,18 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
-    public List<Long> retrieveRichiesteEstrazioniInCorso(long idStrut) {
+    public List<Long> retrieveRichiesteEstrazioniInCorsoStessaStruttura(long idStrut) {
+        // Il parallelismo tra richieste resta consentito solo se le strutture sono diverse.
         Query q = entityManager.createQuery("SELECT richiestaRa.idRichiestaRa "
                 + "FROM AroRichiestaRa richiestaRa " + "WHERE (richiestaRa.tiStato = :tiStato "
-                + "AND richiestaRa.orgStrut.idStrut != :idStrut)");
+                + "AND richiestaRa.orgStrut.idStrut = :idStrut)");
         q.setParameter("tiStato", AroRichiestaTiStato.ESTRAZIONE_IN_CORSO);
         q.setParameter("idStrut", idStrut);
         return q.getResultList();
+    }
+
+    public List<Long> retrieveRichiesteEstrazioniInCorso(long idStrut) {
+        return retrieveRichiesteEstrazioniInCorsoStessaStruttura(idStrut);
     }
 
     public boolean checkRichiestaInCoda(BigDecimal idEnteConvenz) {
@@ -307,7 +312,10 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
                                     ? Constants.TipoEntitaSacer.SER
                                     : Constants.TipoEntitaSacer.FASC;
             Long id = (Long) udSerFascObject[0];
-            udSerFascObjSet.add(new UdSerFascObj(BigDecimal.valueOf(id), tipoEntitaSacer));
+            // L'anno viene mantenuto nel DTO per partizionare in parallelo le UD per cartella.
+            BigDecimal aaKeyUnitaDoc = (BigDecimal) udSerFascObject[2];
+            udSerFascObjSet
+                    .add(new UdSerFascObj(BigDecimal.valueOf(id), tipoEntitaSacer, aaKeyUnitaDoc));
         }
 
         return udSerFascObjSet;

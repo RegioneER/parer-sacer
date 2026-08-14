@@ -54,6 +54,7 @@ import it.eng.spagoLite.db.base.sorting.SortingRule;
 import it.eng.spagoLite.db.base.table.BaseTable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -190,6 +191,12 @@ public class DataMartEjb {
                 filtriDataMart.getCd_key_unita_doc().parse(),
                 filtriDataMart.getDt_creazione_da().parse(),
                 filtriDataMart.getDt_creazione_a().parse());
+        List<Long> ids = new ArrayList<>();
+        for (RichiestaDataMartDTO richiesta : richiesteList) {
+            ids.add(richiesta.getIdUdDelRichiesta());
+        }
+        Map<Long, String> statiInterniMap = dataMartHelper.getStatiInterniRichieste(ids);
+
         for (RichiestaDataMartDTO richiesta : richiesteList) {
             DmUdDelRichiesteRowBean richiestaRowBean = new DmUdDelRichiesteRowBean();
             richiestaRowBean
@@ -200,6 +207,11 @@ public class DataMartEjb {
             richiestaRowBean.setString("ds_mot_cancellazione", richiesta.getDsMotCancellazione());
             richiestaRowBean.setDtCreazione(new Timestamp(richiesta.getDtCreazione().getTime()));
             richiestaRowBean.setTiStatoRichiesta(richiesta.getTiStatoRichiesta());
+            richiestaRowBean.setDsStatoInternoRich(
+                    statiInterniMap.getOrDefault(richiesta.getIdUdDelRichiesta(), null));
+            if (richiesta.getDtEvasione() != null) {
+                richiestaRowBean.setDtEvasione(new Timestamp(richiesta.getDtEvasione().getTime()));
+            }
             richiestaRowBean.setBigDecimal("ni_ud",
                     BigDecimal.valueOf(richiesta.getTotalUnitaDocumentarie()));
             richiesteTableBean.add(richiestaRowBean);
@@ -225,6 +237,10 @@ public class DataMartEjb {
                     richiestaDto.getDsMotCancellazione());
             richiestaRowBean.setDtCreazione(new Timestamp(richiestaDto.getDtCreazione().getTime()));
             richiestaRowBean.setTiStatoRichiesta(richiestaDto.getTiStatoRichiesta());
+            if (richiestaDto.getDtEvasione() != null) {
+                richiestaRowBean
+                        .setDtEvasione(new Timestamp(richiestaDto.getDtEvasione().getTime()));
+            }
             richiestaRowBean.setBigDecimal("ni_ud",
                     BigDecimal.valueOf(richiestaDto.getTotalUnitaDocumentarie()));
         }
@@ -240,6 +256,8 @@ public class DataMartEjb {
             try {
                 richiestaRowBean = (DmUdDelRichiesteRowBean) Transform
                         .entity2RowBean(udDelRichieste);
+                richiestaRowBean.setTiStatoInternoRich(
+                        dataMartHelper.getStatoInternoRichiesta(idUdDelRichiesta));
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
                     | IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException ex) {
@@ -560,6 +578,56 @@ public class DataMartEjb {
             // Se lo stato è valido, procedi
             dataMartHelper.impostaStatoInternoRichiesta(idUdDelRichiesta,
                     CostantiDB.TiStatoInternoRich.IN_PREPARAZIONE_FISICA.name());
+
+            // MEV #37227 SALVATAGGIO SNAPSHOT
+            logger.info("Salvataggio snapshot contatori SACER per la richiesta {}",
+                    idUdDelRichiesta);
+            String tipoMotivo = getDmUdDelRichiesteRowBean(idUdDelRichiesta)
+                    .getTiMotCancellazione();
+
+            // Se NON è una restituzione archivio, calcola i delta riga per riga per le tabelle di
+            // appoggio.
+            if (!"R".equals(tipoMotivo)) {
+                // GUARDIA: impedisce la cancellazione fisica se il JOB CalcoloContenutoSACER
+                // non ha ancora elaborato la data di versamento/aggiunta di almeno una UD.
+                // Questo evita la desincronizzazione tra MON_CONTA_UD_DOC_COMP e il delta
+                // snapshot, che causerebbe un errore di quadratura (mismatch) al prossimo
+                // giro del JOB.
+                List<Object[]> udNonContate = dataMartHelper
+                        .getUdConDocNonAncoraConteggiati(idUdDelRichiesta);
+                if (!udNonContate.isEmpty()) {
+                    Object[] primaRiga = udNonContate.get(0);
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                    String ultimoJobDt = primaRiga[4] != null
+                            ? sdf.format((java.util.Date) primaRiga[4])
+                            : "JOB mai eseguito";
+                    String ultimaDocDt = primaRiga[3] != null
+                            ? sdf.format((java.util.Date) primaRiga[3])
+                            : "n/d";
+                    StringBuilder sb = new StringBuilder()
+                            .append("Impossibile procedere con la cancellazione fisica: ")
+                            .append(udNonContate.size())
+                            .append(" UD hanno versamenti o annullamenti con data non ancora conteggiata ")
+                            .append("dal JOB CalcoloContenutoSACER. ")
+                            .append("Ultima data elaborata: ").append(ultimoJobDt).append(". ")
+                            .append("Prima UD non contata: ").append(primaRiga[0]).append("/")
+                            .append(primaRiga[1]).append("/").append(primaRiga[2])
+                            .append(" (ultima data rilevante: ").append(ultimaDocDt).append("). ")
+                            .append("Attendere il prossimo giro del JOB.");
+                    throw new PreparazioneFisicaException(
+                            "Fallimento durante la preparazione dei dati.",
+                            new IllegalStateException(sb.toString()));
+                }
+
+                logger.info("Salvataggio snapshot contatori SACER per la richiesta {}",
+                        idUdDelRichiesta);
+                dataMartHelper.popolaSnapshotConteggiSacer(idUdDelRichiesta);
+            } else {
+                logger.info(
+                        "Richiesta di Restituzione Archivio {}: skip popolamento delta (uso svuotamento massivo)",
+                        idUdDelRichiesta);
+            }
+
             dataMartHelper.populateDataMartUdSatelliti(idUdDelRichiesta.longValue());
             // dataMartHelper.aggiornaStatoUdaCancellabili(idUdDelRichiesta); --> ci pensa Fabio in
             // precedenza a mettere lo stato CANCELLABILE al termine della Cancellazione logica
@@ -568,6 +636,9 @@ public class DataMartEjb {
             // Chiama il metodo di avvio separato per completare l'operazione
             this.riavviaJobCancellazioneFisica(idUdDelRichiesta);
 
+        } catch (PreparazioneFisicaException e) {
+            // Ri-lancia senza wrappare: il messaggio dettagliato deve arrivare intatto all'Action
+            throw e;
         } catch (Exception e) {
             // Se la preparazione fallisce, lancia l'eccezione specifica per l'Action
             // Lo stato di errore viene già impostato dall'Action, non qui.
@@ -586,10 +657,10 @@ public class DataMartEjb {
     public void riavviaJobCancellazioneFisica(BigDecimal idUdDelRichiesta) {
         try {
             String tiModDel = dataMartHelper.getTiModDelRichiesta(idUdDelRichiesta);
-            dataMartHelper.impostaStatoInternoRichiesta(idUdDelRichiesta,
-                    CostantiDB.TiStatoInternoRich.IN_CODA_CANCELLAZIONE.name());
-            jobCancellazioneFisicaStarterEjb.avviaJobCancellazioneFisica(idUdDelRichiesta,
-                    tiModDel);
+            BigDecimal ProgressivoImpostatoLatoJava = dataMartHelper.impostaStatoInternoRichiesta(
+                    idUdDelRichiesta, CostantiDB.TiStatoInternoRich.IN_CODA_CANCELLAZIONE.name());
+            jobCancellazioneFisicaStarterEjb.avviaJobCancellazioneFisica(idUdDelRichiesta, tiModDel,
+                    ProgressivoImpostatoLatoJava);
         } catch (Exception e) {
             // Se l'avvio del job fallisce, lancia l'eccezione specifica per l'Action
             throw new PreparazioneFisicaException("Fallimento durante il riavvio del job.", e);
@@ -603,27 +674,29 @@ public class DataMartEjb {
      *
      * @param idUdDelRichiesta richiesta per la quale avviare il JOB di cancellazione fisica
      */
-    @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) // Ogni avvio è una sua transazione
-    public void avviaJobOracleAsincrono(BigDecimal idUdDelRichiesta) {
-        logger.info("Esecuzione asincrona dell'avvio del job Oracle per la richiesta {}",
-                idUdDelRichiesta);
-        try {
-            // Una piccola pausa per essere sicuri che la transazione principale sia terminata.
-            Thread.sleep(2000); // 2 secondi di attesa
-            String tiModDel = dataMartHelper.getTiModDelRichiesta(idUdDelRichiesta);
-            // La chiamata al job starter che usa JDBC puro.
-            jobCancellazioneFisicaStarterEjb.avviaJobCancellazioneFisica(idUdDelRichiesta,
-                    tiModDel);
-        } catch (Exception e) {
-            logger.error(
-                    "Fallimento critico nell'avvio asincrono del job per la richiesta {}. Imposto stato di errore.",
-                    idUdDelRichiesta, e);
-            // Se l'avvio stesso fallisce, lo registriamo.
-            dataMartHelper.impostaStatoInternoRichiesta(idUdDelRichiesta,
-                    CostantiDB.TiStatoInternoRich.ERRORE_AVVIO_JOB.name(), e.getMessage());
-        }
-    }
+    // @Asynchronous
+    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) // Ogni avvio è una sua
+    // transazione
+    // public void avviaJobOracleAsincrono(BigDecimal idUdDelRichiesta) {
+    // logger.info("Esecuzione asincrona dell'avvio del job Oracle per la richiesta {}",
+    // idUdDelRichiesta);
+    // try {
+    // // Una piccola pausa per essere sicuri che la transazione principale sia terminata.
+    // Thread.sleep(2000); // 2 secondi di attesa
+    // String tiModDel = dataMartHelper.getTiModDelRichiesta(idUdDelRichiesta);
+    // // La chiamata al job starter che usa JDBC puro.
+    // jobCancellazioneFisicaStarterEjb.avviaJobCancellazioneFisica(idUdDelRichiesta,
+    // tiModDel);
+    // } catch (Exception e) {
+    // logger.error(
+    // "Fallimento critico nell'avvio asincrono del job per la richiesta {}. Imposto stato di
+    // errore.",
+    // idUdDelRichiesta, e);
+    // // Se l'avvio stesso fallisce, lo registriamo.
+    // dataMartHelper.impostaStatoInternoRichiesta(idUdDelRichiesta,
+    // CostantiDB.TiStatoInternoRich.ERRORE_AVVIO_JOB.name(), e.getMessage());
+    // }
+    // }
 
     /**
      * Metodo "tuttofare" per la fase logica, chiamato sia dal polling che dall'Action. 1.
@@ -878,6 +951,79 @@ public class DataMartEjb {
         deleteAroRichSoftDelete(idRichiestaSacer, getTiItemRichSoftDelete(tiMotCancellazione));
         // Riporta le ud in DA_CANCELLARE
         updateDmUdDelDaCancellare(idUdDelRichiestaSacer);
+    }
+
+    /**
+     * Recupera lo storico dei passaggi di stato interno di una richiesta, dal più recente al più
+     * vecchio, come TableBean per la visualizzazione nella lista SLite della UI.
+     *
+     * @param idUdDelRichiesta la PK della richiesta
+     *
+     * @return il TableBean degli stati
+     */
+    public it.eng.parer.slite.gen.tablebean.DmUdDelStatoRichiestaTableBean getStoricoStatiRichiestaTableBean(
+            BigDecimal idUdDelRichiesta) {
+        List<Object[]> rows = dataMartHelper
+                .getStoricoStatiRichiestaConDescrizione(idUdDelRichiesta);
+        it.eng.parer.slite.gen.tablebean.DmUdDelStatoRichiestaTableBean tableBean = new it.eng.parer.slite.gen.tablebean.DmUdDelStatoRichiestaTableBean();
+        for (Object[] row : rows) {
+            it.eng.parer.slite.gen.tablebean.DmUdDelStatoRichiestaRowBean rowBean = new it.eng.parer.slite.gen.tablebean.DmUdDelStatoRichiestaRowBean();
+            // row: [0]=ID_STATO, [1]=ID_UD_DEL_RICHIESTA, [2]=TI_STATO_INTERNO_RICH,
+            // [3]=DT_REG_STATO, [4]=PG_STATO_RICH, [5]=DS_STATO_INTERNO_RICH
+            if (row[0] != null) {
+                rowBean.setIdStatoUdDelRichiesta(new java.math.BigDecimal(row[0].toString()));
+            }
+            if (row[1] != null) {
+                rowBean.setIdUdDelRichiesta(new java.math.BigDecimal(row[1].toString()));
+            }
+            rowBean.setTiStatoInternoRich(row[2] != null ? row[2].toString() : null);
+            if (row[3] != null) {
+                rowBean.setDtRegStato(new java.sql.Timestamp(((java.util.Date) row[3]).getTime()));
+            }
+            if (row[4] != null) {
+                rowBean.setPgStatoRich(new java.math.BigDecimal(row[4].toString()));
+            }
+            rowBean.setDsStatoInternoRich(row[5] != null ? row[5].toString() : null);
+            tableBean.add(rowBean);
+        }
+        return tableBean;
+    }
+
+    /**
+     * Recupera lo storico dei passaggi di stato interno di una richiesta, dal più recente al più
+     * vecchio, per la visualizzazione nella pagina della UI.
+     *
+     * @param idUdDelRichiesta la PK della richiesta
+     *
+     * @return la lista delle entità degli stati
+     */
+    public List<it.eng.parer.entity.DmUdDelStatoRichiesta> getStoricoStatiRichiestaEntita(
+            BigDecimal idUdDelRichiesta) {
+        return dataMartHelper.getStoricoStatiRichiesta(idUdDelRichiesta);
+    }
+
+    /**
+     * Recupera lo storico dei passaggi di stato interno di una richiesta, dal più recente al più
+     * vecchio, per la visualizzazione nel popup della UI.
+     *
+     * @param idUdDelRichiesta la PK della richiesta
+     *
+     * @return la lista dei DTO degli stati
+     */
+    public List<it.eng.parer.datamart.dto.StatoRichiestaDTO> getStoricoStatiRichiesta(
+            BigDecimal idUdDelRichiesta) {
+        List<it.eng.parer.entity.DmUdDelStatoRichiesta> statiDb = dataMartHelper
+                .getStoricoStatiRichiesta(idUdDelRichiesta);
+        List<it.eng.parer.datamart.dto.StatoRichiestaDTO> result = new ArrayList<>();
+        for (it.eng.parer.entity.DmUdDelStatoRichiesta stato : statiDb) {
+            it.eng.parer.datamart.dto.StatoRichiestaDTO dto = new it.eng.parer.datamart.dto.StatoRichiestaDTO();
+            dto.setTiStatoInternoRich(stato.getDecodStatoInterno() != null
+                    ? stato.getDecodStatoInterno().getTiStatoInternoRich()
+                    : null);
+            dto.setDtRegStato(stato.getDtRegStato() != null ? stato.getDtRegStato().getTime() : 0L);
+            result.add(dto);
+        }
+        return result;
     }
 
     // MEV #30416

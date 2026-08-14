@@ -94,6 +94,22 @@ public class DmUdDelRichiesteRowBean extends BaseRow
         setObject("TI_STATO_INTERNO_RICH", tiStatoInternoRich);
     }
 
+    public String getDsStatoInternoRich() {
+        return getString("DS_STATO_INTERNO_RICH");
+    }
+
+    public void setDsStatoInternoRich(String dsStatoInternoRich) {
+        setObject("DS_STATO_INTERNO_RICH", dsStatoInternoRich);
+    }
+
+    public BigDecimal getIdStatoInternoRichCor() {
+        return getBigDecimal("ID_STATO_INTERNO_RICH_COR");
+    }
+
+    public void setIdStatoInternoRichCor(BigDecimal idStatoInternoRichCor) {
+        setObject("ID_STATO_INTERNO_RICH_COR", idStatoInternoRichCor);
+    }
+
     public String getTiModDel() {
         return getString("TI_MOD_DEL");
     }
@@ -118,12 +134,12 @@ public class DmUdDelRichiesteRowBean extends BaseRow
         setObject("DT_CREAZIONE", dtCreazione);
     }
 
-    public Timestamp getDtUltimoAggiornamento() {
-        return getTimestamp("DT_ULTIMO_AGGIORNAMENTO");
+    public Timestamp getDtEvasione() {
+        return getTimestamp("DT_EVASIONE");
     }
 
-    public void setDtUltimoAggiornamento(Timestamp dtUltimoAggiornamento) {
-        setObject("DT_ULTIMO_AGGIORNAMENTO", dtUltimoAggiornamento);
+    public void setDtEvasione(Timestamp dtEvasione) {
+        setObject("DT_EVASIONE", dtEvasione);
     }
 
     @Override
@@ -135,16 +151,14 @@ public class DmUdDelRichiesteRowBean extends BaseRow
         this.setCdRichiesta(entity.getCdRichiesta());
         this.setTiMotCancellazione(entity.getTiMotCancellazione());
         this.setTiStatoRichiesta(entity.getTiStatoRichiesta());
-        this.setTiStatoInternoRich(entity.getTiStatoInternoRich());
         this.setTiModDel(entity.getTiModDel());
         this.setDsMessaggioErrore(entity.getDsMessaggioErrore());
 
         if (entity.getDtCreazione() != null) {
             this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
         }
-        if (entity.getDtUltimoAggiornamento() != null) {
-            this.setDtUltimoAggiornamento(
-                    new Timestamp(entity.getDtUltimoAggiornamento().getTime()));
+        if (entity.getDtEvasione() != null) {
+            this.setDtEvasione(new Timestamp(entity.getDtEvasione().getTime()));
         }
     }
 
@@ -158,11 +172,10 @@ public class DmUdDelRichiesteRowBean extends BaseRow
         entity.setCdRichiesta(this.getCdRichiesta());
         entity.setTiMotCancellazione(this.getTiMotCancellazione());
         entity.setTiStatoRichiesta(this.getTiStatoRichiesta());
-        entity.setTiStatoInternoRich(this.getTiStatoInternoRich());
         entity.setTiModDel(this.getTiModDel());
         entity.setDsMessaggioErrore(this.getDsMessaggioErrore());
         entity.setDtCreazione(this.getDtCreazione());
-        entity.setDtUltimoAggiornamento(this.getDtUltimoAggiornamento());
+        entity.setDtEvasione(this.getDtEvasione());
         return entity;
     }
 

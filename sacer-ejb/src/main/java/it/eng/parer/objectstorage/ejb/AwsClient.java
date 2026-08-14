@@ -15,11 +15,13 @@ package it.eng.parer.objectstorage.ejb;
 
 import java.net.URI;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -44,11 +46,12 @@ import software.amazon.awssdk.services.s3.S3Client;
  * @author Snidero_L
  */
 @Singleton
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class AwsClient {
 
     private final Logger log = LoggerFactory.getLogger(AwsClient.class);
 
-    private final Map<CacheKey, S3Client> clientCache = new HashMap<>();
+    private final Map<CacheKey, S3Client> clientCache = new ConcurrentHashMap<>();
 
     @EJB
     protected ConfigurationHelper configurationHelper;
@@ -81,7 +84,7 @@ public class AwsClient {
                 .requestChecksumCalculation(RequestChecksumCalculation.WHEN_REQUIRED)
                 .httpClientBuilder(ApacheHttpClient.builder().maxConnections(maxConnections())
                         .connectionTimeout(connectionTimeoutOfMinutes())
-                        .socketTimeout(socketTimeoutOfMinutes()))
+                        .socketTimeout(socketTimeoutOfMinutes()).tcpKeepAlive(true))
                 .build();
     }
 

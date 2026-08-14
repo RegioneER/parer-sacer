@@ -44,28 +44,33 @@ public class JobCancellazioneFisicaStarterEjb {
     /**
      * Avvia il job di cancellazione fisica PL/SQL usando JDBC puro.
      *
-     * @param idUdDelRichiesta L'ID della richiesta da processare.
-     * @param modCancellazione modalità di cancellazione, può assumere valore CAMPIONE o COMPLETA
+     * @param idUdDelRichiesta             L'ID della richiesta da processare.
+     * @param modCancellazione             modalità di cancellazione, può assumere valore CAMPIONE o
+     *                                     COMPLETA
+     * @param progressivoImpostatoLatoJava progressivo impostato lato java per risolvere il problema
+     *                                     della concorrenza
      *
      * @return L'ID del job Oracle creato.
      */
-    public long avviaJobCancellazioneFisica(BigDecimal idUdDelRichiesta, String modCancellazione) {
+    public long avviaJobCancellazioneFisica(BigDecimal idUdDelRichiesta, String modCancellazione,
+            BigDecimal progressivoImpostatoLatoJava) {
         logger.info("Avvio job di cancellazione per richiesta {} con JDBC puro.", idUdDelRichiesta);
 
         // USARE SEMPRE BLOCCHI try-with-resources PER CHIUDERE LE CONNESSIONI
         try (Connection conn = getJdbcConnection();
                 CallableStatement cstmt = conn
-                        .prepareCall("{call cancellazione_ud.avvia_job_cancellazione(?,?,?)}")) {
+                        .prepareCall("{call cancellazione_ud.avvia_job_cancellazione(?,?,?,?)}")) {
 
             conn.setAutoCommit(false); // Prendiamo noi il controllo esplicito
 
             cstmt.setBigDecimal(1, idUdDelRichiesta);
             cstmt.setString(2, modCancellazione);
-            cstmt.registerOutParameter(3, Types.NUMERIC);
+            cstmt.setBigDecimal(3, progressivoImpostatoLatoJava);
+            cstmt.registerOutParameter(4, Types.NUMERIC);
 
             cstmt.execute();
 
-            long jobId = cstmt.getBigDecimal(3).longValue();
+            long jobId = cstmt.getBigDecimal(4).longValue();
 
             // Il COMMIT nella procedura PL/SQL ha già salvato il lavoro.
             // Il commit qui serve solo se la procedura non avesse il suo. Per sicurezza, lo

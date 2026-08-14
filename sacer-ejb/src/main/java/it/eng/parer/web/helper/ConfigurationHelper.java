@@ -202,6 +202,33 @@ public class ConfigurationHelper {
     }
 
     /**
+     * Recupera un parametro di tipo APPLIC senza propagare eccezioni quando non e' configurato.
+     * Serve per i parametri opzionali, cosi' il chiamante puo' applicare un fallback senza marcare
+     * la transazione come rollback.
+     *
+     * @param nmParamApplic codice del parametro
+     *
+     * @return valore del parametro oppure {@code null} se assente o vuoto
+     */
+    public String getValoreParamApplicByApplicIfPresent(String nmParamApplic) {
+        String queryStr = "SELECT valoreParamApplic.dsValoreParamApplic "
+                + "FROM AplValoreParamApplic valoreParamApplic "
+                + "JOIN valoreParamApplic.aplParamApplic paramApplic "
+                + "WHERE paramApplic.nmParamApplic = :nmParamApplic "
+                + "AND valoreParamApplic.tiAppart = 'APPLIC'";
+
+        TypedQuery<String> query = entityManager.createQuery(queryStr, String.class);
+        query.setParameter("nmParamApplic", nmParamApplic);
+
+        List<String> result = query.getResultList();
+        if (result == null || result.isEmpty()) {
+            return null;
+        }
+
+        return StringUtils.trimToNull(result.get(0));
+    }
+
+    /**
      * Ottieni il valore del parametro indicato dal codice in input. Il valore viene ottenuto
      * filtrando per tipologia <em>AMBIENTE</em> {@link TipoAplVGetValAppart#AMBIENTE}
      *

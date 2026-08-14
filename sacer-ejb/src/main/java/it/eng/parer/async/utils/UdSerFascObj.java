@@ -24,10 +24,17 @@ public class UdSerFascObj {
 
     private BigDecimal id;
     private TipoEntitaSacer tiEntitaSacer;
+    // Valorizzato solo per le UD e usato dal job per creare gruppi con cartella di output distinta.
+    private BigDecimal aaKeyUnitaDoc;
 
     public UdSerFascObj(BigDecimal id, TipoEntitaSacer tiEntitaSacer) {
+        this(id, tiEntitaSacer, null);
+    }
+
+    public UdSerFascObj(BigDecimal id, TipoEntitaSacer tiEntitaSacer, BigDecimal aaKeyUnitaDoc) {
         this.id = id;
         this.tiEntitaSacer = tiEntitaSacer;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     public BigDecimal getId() {
@@ -44,5 +51,13 @@ public class UdSerFascObj {
 
     public void setTiEntitaSacer(TipoEntitaSacer tiEntitaSacer) {
         this.tiEntitaSacer = tiEntitaSacer;
+    }
+
+    public BigDecimal getAaKeyUnitaDoc() {
+        return aaKeyUnitaDoc;
+    }
+
+    public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 }

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
-import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
+import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -75,7 +75,8 @@ public class DecUsoModelloXsdFasc implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_AA_TIPO_FASCICOLO")
-    @XmlInverseReference(mappedBy = "decUsoModelloXsdFascs")
+    // @XmlInverseReference(mappedBy = "decUsoModelloXsdFascs")
+    @XmlTransient
     public DecAaTipoFascicolo getDecAaTipoFascicolo() {
         return this.decAaTipoFascicolo;
     }

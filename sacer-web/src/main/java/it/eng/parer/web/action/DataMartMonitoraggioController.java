@@ -15,8 +15,10 @@ package it.eng.parer.web.action;
 
 import it.eng.parer.datamart.dto.StatoAvanzamentoCancellazioneFisicaDTO;
 import it.eng.parer.datamart.dto.StatoAvanzamentoCancellazioneLogicaDTO;
+import it.eng.parer.datamart.dto.StatoRichiestaDTO;
 import it.eng.parer.web.ejb.DataMartEjb;
 import java.math.BigDecimal;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -73,5 +75,11 @@ public class DataMartMonitoraggioController {
             @RequestParam("idUdDelRichiesta") BigDecimal idUdDelRichiesta) {
         return ResponseEntity
                 .ok(dataMartEjb.calcolaStatoAvanzamentoCancellazioneFisica(idUdDelRichiesta));
+    }
+
+    @GetMapping("/storico-stati")
+    public ResponseEntity<List<StatoRichiestaDTO>> getStoricoStati(
+            @RequestParam("idUdDelRichiesta") BigDecimal idUdDelRichiesta) {
+        return ResponseEntity.ok(dataMartEjb.getStoricoStatiRichiesta(idUdDelRichiesta));
     }
 }

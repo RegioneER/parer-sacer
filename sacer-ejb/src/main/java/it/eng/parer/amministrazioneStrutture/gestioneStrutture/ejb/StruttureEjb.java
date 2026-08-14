@@ -2549,6 +2549,31 @@ public class StruttureEjb {
     }
 
     /**
+     * Data una struttura importata da XML, restituisce tutti i Tipi Documento associati ad essa
+     * nell'XML stesso
+     *
+     * @param uuid l'oggetto contenente la struttura importata da XML
+     *
+     * @return il table bean rappresentante i Tipi Documento trovati
+     */
+    public DecTipoDocTableBean getTipiDocDaXmlImportato(UUID uuid) {
+        OrgStrut strut = strutCache.getOrgStrut(uuid);
+        List<DecTipoDoc> decTipoDocList = strut.getDecTipoDocs();
+        DecTipoDocTableBean decTipoDocTableBean = new DecTipoDocTableBean();
+
+        try {
+            if (!decTipoDocList.isEmpty()) {
+                decTipoDocTableBean = (DecTipoDocTableBean) Transform
+                        .entities2TableBean(decTipoDocList);
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return decTipoDocTableBean;
+    }
+
+    /**
      * Data una struttura importata da XML e uno dei suoi Tipi Unit\u00E0 Documentaria selezionato
      * tra quelli presenti, restituisce tutti i Tipi Struttura Unit\u00E0 Documentaria associati al
      * tipo ud dell'XML stesso
@@ -2658,6 +2683,8 @@ public class StruttureEjb {
      *                                                         importata da XML
      * @param nmTipoStrutUnitaDocSelezionataDaCombo            l'eventuale tipo struttura unit\u00E0
      *                                                         documentaria selezionato dalla combo
+     * @param nmTipiDocSelezionatiDaCombo                      tipi doc selezionati
+     *
      * @param importareRegistri                                il flag che mi dice se devo importare
      *                                                         anche i registri collegati
      * @param importareCriteri                                 il flag che mi dice se devo importare
@@ -2674,8 +2701,8 @@ public class StruttureEjb {
      */
     public Object[] eseguiImportTipoUd(LogParam param, Map<BigDecimal, String> struttureDaElaborare,
             UUID uuid, String nmTipoUnitaDocSelezionataDaCombo,
-            String nmTipoStrutUnitaDocSelezionataDaCombo, String importareRegistri,
-            String importareCriteri, String importareSistemiMigraz,
+            String nmTipoStrutUnitaDocSelezionataDaCombo, List<String> nmTipiDocSelezionatiDaCombo,
+            String importareRegistri, String importareCriteri, String importareSistemiMigraz,
             boolean existRegistriDaImportareConFlTipoSerieMultAlzato,
             String importareFormatiComponente) throws ParerUserError {
 
@@ -2698,8 +2725,8 @@ public class StruttureEjb {
                 // L'import viene eseguito in una nuova transazione
                 me.confermaImportazione(param, idStrutCorrente, uuid,
                         nmTipoUnitaDocSelezionataDaCombo, nmTipoStrutUnitaDocSelezionataDaCombo,
-                        importareRegistri, importareCriteri, importareSistemiMigraz,
-                        importareFormatiComponente);
+                        nmTipiDocSelezionatiDaCombo, importareRegistri, importareCriteri,
+                        importareSistemiMigraz, importareFormatiComponente);
             } catch (ParerUserError e) {
                 // TODO: miglior gestione delle eccezioni da smistare
                 if (e.getDescription()
@@ -2791,7 +2818,8 @@ public class StruttureEjb {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Object[] confermaImportazione(LogParam param, BigDecimal idStrutCorrente, UUID uuid,
             String nmTipoUnitaDocSelezionataDaCombo, String nmTipoStrutUnitaDocSelezionataDaCombo,
-            String importareRegistri, String importareCriteri, String importareSistemiMigraz,
+            List<String> nmTipiDocSelezionatiDaCombo, String importareRegistri,
+            String importareCriteri, String importareSistemiMigraz,
             String importareFormatiComponente) throws Exception {
         List<CoppiaRegistri> registriImportati = new ArrayList<>();
 
@@ -2887,7 +2915,8 @@ public class StruttureEjb {
         List<CoppiaTipiDoc> tipiDocImportati = importaTipoStrutUnitaDoc(idStrutCorrente,
                 decTipoStrutUnitaDocExpList, tipoUnitaDoc, (boolean) obj[1], tipiDocumentoDaLoggare,
                 tipiStrutturaDocumentoDaLoggare, formatiDaLoggare,
-                tipiRappresentazioneComponenteDaLoggare, importareFormatiComponente);
+                tipiRappresentazioneComponenteDaLoggare, importareFormatiComponente,
+                nmTipiDocSelezionatiDaCombo);
 
         ////////////////////
         // IMPORTA REGOLE //
@@ -3401,6 +3430,7 @@ public class StruttureEjb {
      * @param tipiRappresentazioneComponenteDaLoggare rappresentazione componente da loggare
      *
      * @param includereFormatiComponente              flag
+     * @param nmTipiDocSelezionatiDaCombo             tipi doc selezionati
      *
      * @return l'elenco dei tipi documento importati ex novo
      */
@@ -3409,7 +3439,7 @@ public class StruttureEjb {
             boolean tipoUnitaDocGiaPresente, Set<BigDecimal> tipiDocumetoDaLoggare,
             Set<BigDecimal> tipiStrutturaDocumetoDaLoggare, Set<BigDecimal> formatiDaLoggare,
             Set<BigDecimal> tipiRappresentazioneComponenteDaLoggare,
-            String includereFormatiComponente) {
+            String includereFormatiComponente, List<String> nmTipiDocSelezionatiDaCombo) {
         List<CoppiaTipiDoc> tipiDocImportati = new ArrayList<>();
         // Per ogni TIPO STRUTTURA UNITA' DOCUMENTARIA
         for (DecTipoStrutUnitaDoc tipoStrutUnitaDocExp : tipoStrutUnitaDocExpList) {
@@ -3438,6 +3468,12 @@ public class StruttureEjb {
             // Per ogni DEC_TIPO_DOC_AMMESSO dall'XML
             for (DecTipoDocAmmesso tipoDocAmmessoExp : tipoStrutUnitaDocExp
                     .getDecTipoDocAmmessos()) {
+                // Se l'utente ha selezionato specifici tipi documento, importa solo quelli
+                if (nmTipiDocSelezionatiDaCombo != null && !nmTipiDocSelezionatiDaCombo.isEmpty()
+                        && !nmTipiDocSelezionatiDaCombo
+                                .contains(tipoDocAmmessoExp.getDecTipoDoc().getNmTipoDoc())) {
+                    continue;
+                }
                 DecTipoDoc tipoDoc = gestisciTipoDoc(idStrutCorrente, tipoDocAmmessoExp,
                         tipoStrutUnitaDoc, tipiDocImportati);
                 // Per ogni DEC_TIPO_STRUT_DOC_AMMESSO

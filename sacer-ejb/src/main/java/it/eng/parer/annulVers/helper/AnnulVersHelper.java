@@ -507,6 +507,17 @@ public class AnnulVersHelper extends GenericHelper {
         q.setParameter("idRichAnnulVers", idRichAnnulVers);
         return q.getResultList();
     }
+
+    public void deleteUrnVerIndiceAipUdItem(long idRichAnnulVers) {
+        Query q = getEntityManager()
+                .createQuery("DELETE FROM AroUrnVerIndiceAipUd urnVerIndiceAipUd "
+                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers "
+                        + "WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers "
+                        + "AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
+                        + "AND itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = urnVerIndiceAipUd.aroVerIndiceAipUd.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc)");
+        q.setParameter("idRichAnnulVers", idRichAnnulVers);
+        q.executeUpdate();
+    }
     // end MEV #31162
 
     // MAC #39443
@@ -540,7 +551,21 @@ public class AnnulVersHelper extends GenericHelper {
     public void updateCollegamentiUd(long idRichAnnulVers) {
         Query q = getEntityManager().createQuery(
                 "UPDATE AroLinkUnitaDoc linkUnitaDoc SET linkUnitaDoc.aroUnitaDocLink = null "
-                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND (itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = linkUnitaDoc.aroUnitaDoc.idUnitaDoc OR itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = linkUnitaDoc.aroUnitaDocLink.idUnitaDoc) AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER') ");
+                        + "WHERE linkUnitaDoc.aroUnitaDoc.idUnitaDoc IN ("
+                        + "SELECT itemRichAnnulVers.aroUnitaDoc.idUnitaDoc "
+                        + "FROM AroItemRichAnnulVers itemRichAnnulVers "
+                        + "WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers "
+                        + "AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER')");
+        q.setParameter("idRichAnnulVers", idRichAnnulVers);
+        q.executeUpdate();
+
+        q = getEntityManager().createQuery(
+                "UPDATE AroLinkUnitaDoc linkUnitaDoc SET linkUnitaDoc.aroUnitaDocLink = null "
+                        + "WHERE linkUnitaDoc.aroUnitaDocLink.idUnitaDoc IN ("
+                        + "SELECT itemRichAnnulVers.aroUnitaDoc.idUnitaDoc "
+                        + "FROM AroItemRichAnnulVers itemRichAnnulVers "
+                        + "WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers "
+                        + "AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER')");
         q.setParameter("idRichAnnulVers", idRichAnnulVers);
         q.executeUpdate();
     }

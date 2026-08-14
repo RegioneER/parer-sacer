@@ -2171,6 +2171,30 @@ public class FascicoliHelper extends GenericHelper {
                     .append("f.ti_Stato_Fasc_Elenco_Vers = :tiStatoFascElencoVers ");
             whereWord = " AND ";
         }
+        // Soggetto coinvolto: il filtro genera una subquery EXISTS su FAS_SOG_FASCICOLO
+        boolean sogFilter = StringUtils.isNotBlank(filtri.getDsDenomSog())
+                || StringUtils.isNotBlank(filtri.getNmCognSog())
+                || StringUtils.isNotBlank(filtri.getNmNomeSog())
+                || StringUtils.isNotBlank(filtri.getTiRapp());
+        if (sogFilter) {
+            StringBuilder sogSub = new StringBuilder(
+                    "EXISTS (SELECT 1 FROM FAS_SOG_FASCICOLO sog WHERE sog.id_fascicolo = f.id_fascicolo");
+            if (StringUtils.isNotBlank(filtri.getDsDenomSog())) {
+                sogSub.append(" AND UPPER(sog.ds_denom_sog) LIKE :dsDenomSog");
+            }
+            if (StringUtils.isNotBlank(filtri.getNmCognSog())) {
+                sogSub.append(" AND UPPER(sog.nm_cogn_sog) LIKE :nmCognSog");
+            }
+            if (StringUtils.isNotBlank(filtri.getNmNomeSog())) {
+                sogSub.append(" AND UPPER(sog.nm_nome_sog) LIKE :nmNomeSog");
+            }
+            if (StringUtils.isNotBlank(filtri.getTiRapp())) {
+                sogSub.append(" AND UPPER(sog.ti_rapp) LIKE :tiRapp");
+            }
+            sogSub.append(") ");
+            whereString.append(whereWord).append(sogSub);
+            whereWord = " AND ";
+        }
         // whereString.append(whereWord).append("f.tiStatoConservazione != 'ANNULLATO' ");
         // whereWord = " AND ";
         // whereString.append(whereWord).append("f.idUserIamCorrente =:userId");
@@ -2311,6 +2335,18 @@ public class FascicoliHelper extends GenericHelper {
         }
         if (StringUtils.isNotBlank(filtri.getCdVersioneWs())) {
             query.setParameter("cdVersioneWs", filtri.getCdVersioneWs());
+        }
+        if (StringUtils.isNotBlank(filtri.getDsDenomSog())) {
+            query.setParameter("dsDenomSog", "%" + filtri.getDsDenomSog().toUpperCase() + "%");
+        }
+        if (StringUtils.isNotBlank(filtri.getNmCognSog())) {
+            query.setParameter("nmCognSog", "%" + filtri.getNmCognSog().toUpperCase() + "%");
+        }
+        if (StringUtils.isNotBlank(filtri.getNmNomeSog())) {
+            query.setParameter("nmNomeSog", "%" + filtri.getNmNomeSog().toUpperCase() + "%");
+        }
+        if (StringUtils.isNotBlank(filtri.getTiRapp())) {
+            query.setParameter("tiRapp", "%" + filtri.getTiRapp().toUpperCase() + "%");
         }
         query.setParameter("userId", bigDecimalFromLong(userId));
         result = query.getResultList();
@@ -3221,6 +3257,12 @@ public class FascicoliHelper extends GenericHelper {
         String tiStatoFascElencoVers;
         String flUpdAnnulUnitaDoc;
         String flUpdModifUnitaDoc;
+        // Soggetto coinvolto: persona giuridica
+        String dsDenomSog;
+        // Soggetto coinvolto: persona fisica
+        String nmCognSog;
+        String nmNomeSog;
+        String tiRapp;
 
         public FiltriRicercaFascicoli() {
 
@@ -3276,6 +3318,10 @@ public class FascicoliHelper extends GenericHelper {
             flUpdModifUnitaDoc = filtri.getFlUpdModifUnitaDoc();
             dtAnnulDa = filtri.getDt_annul_da();
             dtAnnulA = filtri.getDt_annul_a();
+            dsDenomSog = filtri.getDs_denom_sog();
+            nmCognSog = filtri.getNm_cogn_sog();
+            nmNomeSog = filtri.getNm_nome_sog();
+            tiRapp = filtri.getTi_rapp();
         }
 
         public BigDecimal getAaFascicolo() {
@@ -3668,6 +3714,38 @@ public class FascicoliHelper extends GenericHelper {
 
         void setFlUpdModifUnitaDoc(String flUpdModifUnitaDoc) {
             this.flUpdModifUnitaDoc = flUpdModifUnitaDoc;
+        }
+
+        public String getDsDenomSog() {
+            return dsDenomSog;
+        }
+
+        void setDsDenomSog(String dsDenomSog) {
+            this.dsDenomSog = dsDenomSog;
+        }
+
+        public String getNmCognSog() {
+            return nmCognSog;
+        }
+
+        void setNmCognSog(String nmCognSog) {
+            this.nmCognSog = nmCognSog;
+        }
+
+        public String getNmNomeSog() {
+            return nmNomeSog;
+        }
+
+        void setNmNomeSog(String nmNomeSog) {
+            this.nmNomeSog = nmNomeSog;
+        }
+
+        public String getTiRapp() {
+            return tiRapp;
+        }
+
+        void setTiRapp(String tiRapp) {
+            this.tiRapp = tiRapp;
         }
 
     }

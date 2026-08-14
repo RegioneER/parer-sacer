@@ -27,7 +27,7 @@ import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.migrazioneObjectStorage.ejb.ElaborazioneCodaDaMigrareEjb;
-import it.eng.parer.migrazioneObjectStorage.utils.MsgUtil;
+import it.eng.parer.web.ejb.CaricaErrori;
 
 /**
  *
@@ -45,6 +45,8 @@ public class ProducerCodaDaMigrareEjb {
     private JobHelper jobHelper;
     @EJB
     private ElaborazioneCodaDaMigrareEjb elaborazioneCodaDaMigrareEjb;
+    @EJB(mappedName = "java:app/Parer-ejb/CaricaErrori")
+    private CaricaErrori caricaErrori;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void eseguiPreparazioneJob(int numeroJob) throws ParerInternalError {
@@ -70,10 +72,10 @@ public class ProducerCodaDaMigrareEjb {
                     JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE);
         } else {
             if (totalizzatore.isIsNotFileToMigrate()) {
-                messaggioJob = MsgUtil.getCompleteMessage("OST-002");
+                messaggioJob = caricaErrori.getCompleteMessage("OST-002");
             } else {
                 if (totalizzatore.isIsCodaPiena()) {
-                    messaggioJob = MsgUtil.getCompleteMessage("OST-003");
+                    messaggioJob = caricaErrori.getCompleteMessage("OST-003");
                 }
             }
         }

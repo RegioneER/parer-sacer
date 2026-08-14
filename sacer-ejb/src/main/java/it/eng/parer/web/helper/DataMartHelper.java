@@ -16,9 +16,11 @@ package it.eng.parer.web.helper;
 import it.eng.parer.datamart.dto.ConteggioStatoUdDto;
 import it.eng.parer.datamart.dto.RichiestaDataMartDTO;
 import it.eng.parer.viewEntity.AroVChkStatoCorRichSoftDelete;
+import it.eng.parer.entity.DmUdDelDecodStatoInterno;
 import it.eng.parer.entity.DmUdDelObjectStorage;
 import it.eng.parer.entity.DmUdDelRecRefTab;
 import it.eng.parer.entity.DmUdDelRichieste;
+import it.eng.parer.entity.DmUdDelStatoRichiesta;
 import java.util.List;
 
 import javax.ejb.LocalBean;
@@ -35,6 +37,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ejb.EJBException;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -53,6 +58,12 @@ public class DataMartHelper extends GenericHelper {
 
     private static final Logger log = LoggerFactory.getLogger(DataMartHelper.class.getName());
 
+    /**
+     * Restituisce la lista degli enti che hanno almeno una unità documentaria nel datamart (tabella
+     * DM_UD_DEL), ordinata per nome ente.
+     *
+     * @return lista di {@link OrgEnte} coinvolti nel datamart
+     */
     public List<OrgEnte> getOrgEnteDataMartList() {
         String queryStr = "SELECT ente.* FROM Org_Ente ente "
                 + "WHERE ente.id_Ente IN (SELECT distinct id_ente FROM DM_UD_DEL group by id_ente) "
@@ -61,6 +72,28 @@ public class DataMartHelper extends GenericHelper {
         return (List<OrgEnte>) q.getResultList();
     }
 
+    /**
+     * Restituisce l'elenco aggregato delle richieste del datamart con il conteggio delle UD per
+     * ogni combinazione di (id_richiesta, ti_mot_cancellazione, ti_stato_ud_cancellate), filtrando
+     * in base ai parametri opzionali forniti.
+     *
+     * @param tiMotCancellazione    tipo di motivo di cancellazione (es. 'R', 'S', 'A'); se
+     *                              {@code null} non viene applicato il filtro
+     * @param tiStatoRichiesta      stato della richiesta; se {@code null} non viene applicato il
+     *                              filtro
+     * @param idEnte                identificativo dell'ente; se {@code null} non viene applicato il
+     *                              filtro
+     * @param idStrut               identificativo della struttura; se {@code null} non viene
+     *                              applicato il filtro
+     * @param cdRegistroKeyUnitaDoc codice registro dell'unità documentaria; se {@code null} non
+     *                              viene applicato il filtro
+     * @param aaKeyUnitaDoc         anno chiave dell'unità documentaria; se {@code null} non viene
+     *                              applicato il filtro
+     * @param cdKeyUnitaDoc         chiave dell'unità documentaria; se {@code null} non viene
+     *                              applicato il filtro
+     *
+     * @return lista di array di oggetti con i dati aggregati
+     */
     public List<Object[]> getRichiesteDataMartList(String tiMotCancellazione,
             String tiStatoRichiesta, BigDecimal idEnte, BigDecimal idStrut,
             String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc) {
@@ -130,23 +163,47 @@ public class DataMartHelper extends GenericHelper {
         return (List<Object[]>) q.getResultList();
     }
 
+    /**
+     * Restituisce la lista delle richieste del datamart come DTO, con il conteggio delle UD
+     * associate, applicando i filtri opzionali forniti.
+     *
+     * @param tiMotCancellazione    tipo di motivo di cancellazione (es. 'R', 'S', 'A'); se
+     *                              {@code null} non viene applicato il filtro
+     * @param tiStatoRichiesta      stato della richiesta; se {@code null} non viene applicato il
+     *                              filtro
+     * @param idEnte                identificativo dell'ente; se {@code null} non viene applicato il
+     *                              filtro
+     * @param idStrut               identificativo della struttura; se {@code null} non viene
+     *                              applicato il filtro
+     * @param cdRegistroKeyUnitaDoc codice registro dell'unità documentaria; se {@code null} non
+     *                              viene applicato il filtro
+     * @param aaKeyUnitaDoc         anno chiave dell'unità documentaria; se {@code null} non viene
+     *                              applicato il filtro
+     * @param cdKeyUnitaDoc         chiave dell'unità documentaria; se {@code null} non viene
+     *                              applicato il filtro
+     * @param dtCreazioneDa         data di creazione minima (inclusa); se {@code null} viene usato
+     *                              il 1° gennaio 2000
+     * @param dtCreazioneA          data di creazione massima (inclusa); se {@code null} viene usata
+     *                              la data odierna
+     *
+     * @return lista di {@link RichiestaDataMartDTO}
+     */
     public List<RichiestaDataMartDTO> getRichiesteDataMartDtoList(String tiMotCancellazione,
             String tiStatoRichiesta, BigDecimal idEnte, BigDecimal idStrut,
             String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc,
             Date dtCreazioneDa, Date dtCreazioneA) {
 
-        // La SELECT ora usa il costruttore del DTO. L'ordine dei campi DEVE corrispondere.
         StringBuilder queryStr = new StringBuilder(
                 "SELECT NEW it.eng.parer.datamart.dto.RichiestaDataMartDTO( "
-                        + "dmRich.idUdDelRichiesta, " + "dmRich.idRichiesta, "
-                        + "dmRich.cdRichiesta, " + "dmRich.tiMotCancellazione, "
+                        + "dmRich.idUdDelRichiesta, dmRich.idRichiesta, dmRich.cdRichiesta, "
+                        + "dmRich.tiMotCancellazione, "
                         + "CASE dmRich.tiMotCancellazione WHEN 'R' THEN 'Restituzione archivio' WHEN 'S' THEN 'Scarto' WHEN 'A' THEN 'Annullamento ud' ELSE 'Non definita' END, "
-                        + "dmRich.dtCreazione, " + "dmRich.tiStatoRichiesta, " + "COUNT(dmUd) "
-                        + ") " + "FROM DmUdDelRichieste dmRich JOIN dmRich.dmUdDels dmUd ");
+                        + "dmRich.dtCreazione, dmRich.dtEvasione, dmRich.tiStatoRichiesta"
+                        + ", COUNT(dmUd)) "
+                        + "FROM DmUdDelRichieste dmRich JOIN dmRich.dmUdDels dmUd ");
 
         String whereWord = " WHERE ";
 
-        // I filtri sono ora applicati agli alias corretti (dmRich o dmUd)
         if (tiMotCancellazione != null) {
             queryStr.append(whereWord).append("dmRich.tiMotCancellazione = :tiMotCancellazione ");
             whereWord = " AND ";
@@ -155,7 +212,6 @@ public class DataMartHelper extends GenericHelper {
             queryStr.append(whereWord).append("dmRich.tiStatoRichiesta = :tiStatoRichiesta ");
             whereWord = " AND ";
         }
-        // Assumendo che questi campi siano nell'entità DmUdDel
         if (idEnte != null) {
             queryStr.append(whereWord).append("dmUd.idEnte = :idEnte ");
             whereWord = " AND ";
@@ -180,21 +236,17 @@ public class DataMartHelper extends GenericHelper {
         Date[] dateNormalizzate = new Date[2];
         if (dtCreazioneDa != null || dtCreazioneA != null) {
             dateNormalizzate = normalizeDateForDataMart(dtCreazioneDa, dtCreazioneA);
-            // Il filtro sulla data si applica a dmRich (la richiesta)
             queryStr.append(whereWord).append(
                     "dmRich.dtCreazione >= :dtCreazioneDa AND dmRich.dtCreazione <= :dtCreazioneA ");
             whereWord = " AND ";
         }
 
-        // Il GROUP BY si semplifica e usa i campi delle entità
-        queryStr.append(
-                "GROUP BY dmRich.idUdDelRichiesta, dmRich.idRichiesta, dmRich.cdRichiesta, dmRich.tiMotCancellazione, dmRich.dtCreazione, dmRich.tiStatoRichiesta ");
+        queryStr.append("GROUP BY dmRich.idUdDelRichiesta, dmRich.idRichiesta, dmRich.cdRichiesta, "
+                + "dmRich.tiMotCancellazione, dmRich.tiStatoRichiesta, dmRich.dtCreazione, dmRich.dtEvasione ");
 
-        // Usa TypedQuery per ottenere una lista del tipo corretto senza cast manuali
         TypedQuery<RichiestaDataMartDTO> q = getEntityManager().createQuery(queryStr.toString(),
                 RichiestaDataMartDTO.class);
 
-        // Impostazione dei parametri (identica a prima)
         if (tiMotCancellazione != null) {
             q.setParameter("tiMotCancellazione", tiMotCancellazione);
         }
@@ -224,30 +276,46 @@ public class DataMartHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Recupera una singola richiesta del datamart come DTO, incluso il conteggio delle UD
+     * associate.
+     *
+     * @param idUdDelRichiesta la PK della richiesta (ID_UD_DEL_RICHIESTA)
+     *
+     * @return il {@link RichiestaDataMartDTO} corrispondente, oppure {@code null} se non trovato
+     */
     public RichiestaDataMartDTO getRichiestaDataMart(BigDecimal idUdDelRichiesta) {
 
-        // La SELECT ora usa il costruttore del DTO. L'ordine dei campi DEVE corrispondere.
         String queryStr = "SELECT NEW it.eng.parer.datamart.dto.RichiestaDataMartDTO( "
-                + "dmRich.idUdDelRichiesta, " + "dmRich.idRichiesta, " + "dmRich.cdRichiesta, "
+                + "dmRich.idUdDelRichiesta, dmRich.idRichiesta, dmRich.cdRichiesta, "
                 + "dmRich.tiMotCancellazione, "
                 + "CASE dmRich.tiMotCancellazione WHEN 'R' THEN 'Restituzione archivio' WHEN 'S' THEN 'Scarto' WHEN 'A' THEN 'Annullamento ud' ELSE 'Non definita' END, "
-                + "dmRich.dtCreazione, " + "dmRich.tiStatoRichiesta, " + "COUNT(dmUd) " + ") "
-                + "FROM DmUdDelRichieste dmRich JOIN dmRich.dmUdDels dmUd WHERE dmRich.idUdDelRichiesta = :idUdDelRichiesta "
-                + "GROUP BY dmRich.idUdDelRichiesta, dmRich.idRichiesta, dmRich.cdRichiesta, dmRich.tiMotCancellazione, dmRich.dtCreazione, dmRich.tiStatoRichiesta ";
+                + "dmRich.dtCreazione, dmRich.dtEvasione, dmRich.tiStatoRichiesta, COUNT(dmUd)) "
+                + "FROM DmUdDelRichieste dmRich JOIN dmRich.dmUdDels dmUd "
+                + "WHERE dmRich.idUdDelRichiesta = :idUdDelRichiesta "
+                + "GROUP BY dmRich.idUdDelRichiesta, dmRich.idRichiesta, dmRich.cdRichiesta, "
+                + "dmRich.tiMotCancellazione, dmRich.tiStatoRichiesta, dmRich.dtCreazione, dmRich.dtEvasione ";
 
-        // Usa TypedQuery per ottenere una lista del tipo corretto senza cast manuali
         TypedQuery<RichiestaDataMartDTO> q = getEntityManager().createQuery(queryStr,
                 RichiestaDataMartDTO.class);
-
         q.setParameter("idUdDelRichiesta", idUdDelRichiesta.longValue());
         List<RichiestaDataMartDTO> lista = q.getResultList();
         if (lista.size() == 1) {
             return lista.get(0);
         }
         return null;
-
     }
 
+    /**
+     * Normalizza l'intervallo di date per le query del datamart: imposta l'ora di {@code data_da} a
+     * 00:00:00.000 (default: 1° gennaio 2000) e l'ora di {@code data_a} a 23:59:59.999 (default:
+     * data odierna).
+     *
+     * @param data_da data di inizio intervallo; se {@code null} viene impostata al 1° gennaio 2000
+     * @param data_a  data di fine intervallo; se {@code null} viene impostata alla data odierna
+     *
+     * @return array di due date: {@code [data_da normalizzata, data_a normalizzata]}
+     */
     private Date[] normalizeDateForDataMart(Date data_da, Date data_a) {
         // Se data_da è null, impostalo al 1 gennaio 2000
         Calendar calDa = Calendar.getInstance();
@@ -279,6 +347,15 @@ public class DataMartHelper extends GenericHelper {
                 data_da, data_a };
     }
 
+    /**
+     * Costruisce e restituisce una {@link Query} JPA per recuperare le unità documentarie di una
+     * richiesta filtrate per stato.
+     *
+     * @param idRichiesta         identificativo della richiesta (ID_RICHIESTA)
+     * @param tiStatoUdCancellate stato delle UD da filtrare (es. 'DA_CANCELLARE', 'CANCELLABILE')
+     *
+     * @return la {@link Query} pronta per l'esecuzione
+     */
     public Query getUdDataMartByStatoUdQuery(BigDecimal idRichiesta, String tiStatoUdCancellate) {
         String queryStr = "SELECT dm FROM DmUdDel dm WHERE dm.idRichiesta = :idRichiesta AND dm.tiStatoUdCancellate = :tiStatoUdCancellate ORDER BY dm.cdRegistroKeyUnitaDoc, dm.aaKeyUnitaDoc, dm.cdKeyUnitaDoc ";
         Query q = getEntityManager().createQuery(queryStr);
@@ -287,6 +364,22 @@ public class DataMartHelper extends GenericHelper {
         return q;
     }
 
+    /**
+     * Costruisce e restituisce una {@link Query} JPA per recuperare le unità documentarie del
+     * datamart, applicando i filtri opzionali forniti e ordinando per ente, struttura, registro,
+     * anno e chiave UD.
+     *
+     * @param tiMotCancellazione    tipo di motivo di cancellazione; se {@code null} ignorato
+     * @param idEnte                identificativo dell'ente; se {@code null} ignorato
+     * @param idStrut               identificativo della struttura; se {@code null} ignorato
+     * @param cdRegistroKeyUnitaDoc codice registro UD; se {@code null} ignorato
+     * @param aaKeyUnitaDoc         anno chiave UD; se {@code null} ignorato
+     * @param cdKeyUnitaDoc         chiave UD; se {@code null} ignorato
+     * @param idRichiesta           identificativo della richiesta; se {@code null} ignorato
+     * @param tiStatoUdCancellate   stato della UD; se {@code null} ignorato
+     *
+     * @return la {@link Query} pronta per l'esecuzione
+     */
     public Query getUdDataMartQuery(String tiMotCancellazione, BigDecimal idEnte,
             BigDecimal idStrut, String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc,
             String cdKeyUnitaDoc, BigDecimal idRichiesta, String tiStatoUdCancellate) {
@@ -359,6 +452,15 @@ public class DataMartHelper extends GenericHelper {
         return q;
     }
 
+    /**
+     * Costruisce e restituisce una {@link Query} JPA per recuperare le UD del datamart relative a
+     * richieste di annullamento versamento (TI_MOT_CANCELLAZIONE = 'A'), filtrate per stato UD.
+     *
+     * @param idRichiesta         identificativo della richiesta
+     * @param tiStatoUdCancellate stato delle UD da filtrare
+     *
+     * @return la {@link Query} pronta per l'esecuzione
+     */
     public Query getDmUdDelAnnulVersQuery(BigDecimal idRichiesta, String tiStatoUdCancellate) {
         String queryStr = "SELECT dm FROM DmUdDel dm JOIN dm.dmUdDelRichieste dmRich "
                 + "WHERE dmRich.idRichiesta = :idRichiesta AND dmRich.tiMotCancellazione = 'A' AND dm.tiStatoUdCancellate = :tiStatoUdCancellate "
@@ -371,6 +473,15 @@ public class DataMartHelper extends GenericHelper {
         return q;
     }
 
+    /**
+     * Costruisce e restituisce una {@link Query} JPA per recuperare le UD del datamart relative a
+     * richieste di scarto versamento (TI_MOT_CANCELLAZIONE = 'S'), filtrate per stato UD.
+     *
+     * @param idRichiesta         identificativo della richiesta
+     * @param tiStatoUdCancellate stato delle UD da filtrare
+     *
+     * @return la {@link Query} pronta per l'esecuzione
+     */
     public Query getDmUdDelScartoVersQuery(BigDecimal idRichiesta, String tiStatoUdCancellate) {
         String queryStr = "SELECT dm FROM DmUdDel dm JOIN dm.dmUdDelRichieste dmRich "
                 + "WHERE dmRich.idRichiesta = :idRichiesta AND dmRich.tiMotCancellazione = 'S' AND dm.tiStatoUdCancellate = :tiStatoUdCancellate "
@@ -383,6 +494,26 @@ public class DataMartHelper extends GenericHelper {
         return q;
     }
 
+    /**
+     * Costruisce e restituisce una {@link Query} JPA per recuperare le UD del datamart con filtri
+     * multipli opzionali, incluso il collegamento alla tabella delle richieste.
+     * <p>
+     * Il parametro {@code tiStatoRichiesta} è mantenuto per retrocompatibilità ma viene ignorato,
+     * in quanto lo stato si trova nella tabella storico {@code DmUdDelStatoRichiesta}.
+     *
+     * @param tiMotCancellazione    tipo di motivo di cancellazione; se {@code null} ignorato
+     * @param tiStatoRichiesta      ignorato (mantenuto per retrocompatibilità)
+     * @param idEnte                identificativo dell'ente; se {@code null} ignorato
+     * @param idStrut               identificativo della struttura; se {@code null} ignorato
+     * @param cdRegistroKeyUnitaDoc codice registro UD; se {@code null} ignorato
+     * @param aaKeyUnitaDoc         anno chiave UD; se {@code null} ignorato
+     * @param cdKeyUnitaDoc         chiave UD; se {@code null} ignorato
+     * @param idUdDelRichiesta      PK della richiesta (ID_UD_DEL_RICHIESTA); se {@code null}
+     *                              ignorato
+     * @param tiStatoUdCancellate   stato della UD; se {@code null} ignorato
+     *
+     * @return la {@link Query} pronta per l'esecuzione
+     */
     public Query getDmUdDelQuery(String tiMotCancellazione, String tiStatoRichiesta,
             BigDecimal idEnte, BigDecimal idStrut, String cdRegistroKeyUnitaDoc,
             BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc, BigDecimal idUdDelRichiesta,
@@ -394,10 +525,8 @@ public class DataMartHelper extends GenericHelper {
             queryStr.append(whereWord).append("dm.tiMotCancellazione = :tiMotCancellazione ");
             whereWord = " AND ";
         }
-        if (tiStatoRichiesta != null) {
-            queryStr.append(whereWord).append("dm.tiStatoRichiesta = :tiStatoRichiesta ");
-            whereWord = " AND ";
-        }
+        // tiStatoRichiesta è ora nella tabella storico DmUdDelStatoRichiesta, non in DmUdDel
+        // il parametro viene ignorato per retrocompatibilità (sempre null nelle chiamate esistenti)
         if (idEnte != null) {
             queryStr.append(whereWord).append("dm.idEnte = :idEnte ");
             whereWord = " AND ";
@@ -436,9 +565,6 @@ public class DataMartHelper extends GenericHelper {
         if (tiMotCancellazione != null) {
             q.setParameter("tiMotCancellazione", tiMotCancellazione);
         }
-        if (tiStatoRichiesta != null) {
-            q.setParameter("tiStatoRichiesta", tiStatoRichiesta);
-        }
         if (idEnte != null) {
             q.setParameter("idEnte", idEnte);
         }
@@ -464,6 +590,18 @@ public class DataMartHelper extends GenericHelper {
         return q;
     }
 
+    /**
+     * Popola il datamart per una richiesta di <strong>annullamento versamento</strong>: crea il
+     * record master in {@code DM_UD_DEL_RICHIESTE} e inserisce massivamente le UD da cancellare in
+     * {@code DM_UD_DEL} a partire dagli item annullati in {@code ARO_ITEM_RICH_ANNUL_VERS}.
+     *
+     * @param idRichiesta        identificativo della richiesta di annullamento versamento
+     * @param cdRichiesta        codice della richiesta
+     * @param tiMotCancellazione tipo motivo cancellazione (atteso {@code 'A'})
+     * @param tiModDel           modalità di cancellazione
+     *
+     * @return numero di righe inserite in {@code DM_UD_DEL}
+     */
     @Transactional
     public int populateDataMartUdCentroStellaAnnulVers(BigDecimal idRichiesta, String cdRichiesta,
             String tiMotCancellazione, String tiModDel) {
@@ -497,6 +635,17 @@ public class DataMartHelper extends GenericHelper {
 
     }
 
+    /**
+     * Popola il datamart per una richiesta di <strong>restituzione archivio</strong>: crea il
+     * record master in {@code DM_UD_DEL_RICHIESTE} e inserisce massivamente le UD da cancellare in
+     * {@code DM_UD_DEL} a partire dalla vista {@code ARO_V_SEL_UD_SER_FASC_BY_ENTE_X_DM}.
+     *
+     * @param idRichiesta identificativo della richiesta di restituzione archivio
+     * @param cdRichiesta codice della richiesta
+     * @param tiModDel    modalità di cancellazione
+     *
+     * @return numero di righe inserite in {@code DM_UD_DEL}
+     */
     //
     @Transactional
     public int populateDataMartUdCentroStellaRestArch(BigDecimal idRichiesta, String cdRichiesta,
@@ -537,6 +686,21 @@ public class DataMartHelper extends GenericHelper {
 
     }
 
+    /**
+     * Crea e persiste un nuovo record master in {@code DM_UD_DEL_RICHIESTE}, registra lo stato
+     * interno iniziale nella tabella storico {@code DM_UD_DEL_STATO_RICHIESTA} e aggiorna il
+     * puntatore {@code STATO_INTERNO_RICH_COR} nella riga appena creata.
+     *
+     * @param idRichiesta        identificativo della richiesta sorgente (es. di annullamento o
+     *                           scarto)
+     * @param cdRichiesta        codice della richiesta
+     * @param tiMotCancellazione tipo motivo di cancellazione (es. 'A', 'S', 'R')
+     * @param tiStatoRichiesta   stato iniziale della richiesta (es. 'DA_EVADERE')
+     * @param tiStatoInternoRich codice stato interno iniziale (es. 'INIZIALE')
+     * @param tiModDel           modalità di cancellazione
+     *
+     * @return la PK ({@code ID_UD_DEL_RICHIESTA}) della riga appena creata
+     */
     public Long createDmUdDelRichieste(BigDecimal idRichiesta, String cdRichiesta,
             String tiMotCancellazione, String tiStatoRichiesta, String tiStatoInternoRich,
             String tiModDel) {
@@ -545,36 +709,53 @@ public class DataMartHelper extends GenericHelper {
         nuovaRichiesta.setCdRichiesta(cdRichiesta);
         nuovaRichiesta.setTiMotCancellazione(tiMotCancellazione);
         nuovaRichiesta.setTiStatoRichiesta(tiStatoRichiesta);
-        nuovaRichiesta.setTiStatoInternoRich(tiStatoInternoRich);
         nuovaRichiesta.setTiModDel(tiModDel);
         nuovaRichiesta.setDtCreazione(new Date());
-
-        // Persisti l'entità. Dopo questa chiamata, JPA/Hibernate si occuperà
-        // di eseguire l'INSERT e di popolare il campo ID con il valore generato dal DB.
         getEntityManager().persist(nuovaRichiesta);
+
+        // Registra lo stato interno iniziale nella tabella storico (prima riga per questa
+        // richiesta: PG = 1)
+        DmUdDelDecodStatoInterno decodIniziale = getEntityManager()
+                .createQuery(
+                        "SELECT d FROM DmUdDelDecodStatoInterno d WHERE d.tiStatoInternoRich = :ti",
+                        DmUdDelDecodStatoInterno.class)
+                .setParameter("ti", tiStatoInternoRich).getSingleResult();
+        DmUdDelStatoRichiesta statoIniziale = new DmUdDelStatoRichiesta();
+        statoIniziale.setDmUdDelRichieste(nuovaRichiesta);
+        statoIniziale.setDecodStatoInterno(decodIniziale);
+        statoIniziale.setDtRegStato(new Date());
+        statoIniziale.setPgStatoRich(BigDecimal.ONE);
+        getEntityManager().persist(statoIniziale);
+        getEntityManager().flush(); // garantisce che statoIniziale.idStatoUdDelRichiesta sia
+                                    // valorizzato
+
+        // Aggiorna il puntatore FK allo stato corrente
+        nuovaRichiesta.setStatoInternoRichCor(statoIniziale);
+        getEntityManager().merge(nuovaRichiesta);
 
         return nuovaRichiesta.getIdUdDelRichiesta();
     }
 
+    /**
+     * Popola il datamart per una richiesta di <strong>scarto versamento</strong>: crea il record
+     * master in {@code DM_UD_DEL_RICHIESTE} e inserisce massivamente le UD da cancellare in
+     * {@code DM_UD_DEL} a partire dagli item scartati in {@code ARO_ITEM_RICH_SCARTO_VERS}.
+     *
+     * @param idRichiesta        identificativo della richiesta di scarto versamento
+     * @param cdRichiesta        codice della richiesta
+     * @param tiMotCancellazione tipo motivo di cancellazione
+     * @param tiModDel           modalità di cancellazione
+     *
+     * @return numero di righe inserite in {@code DM_UD_DEL}
+     */
     @Transactional
     public int populateDataMartScartoUdCentroStella(long idRichiesta, String cdRichiesta,
             String tiMotCancellazione, String tiModDel) {
-        // --- PASSAGGIO 1: Creare e salvare la riga master in DM_UD_DEL_RICHIESTE ---
-
-        DmUdDelRichieste nuovaRichiesta = new DmUdDelRichieste();
-        nuovaRichiesta.setIdRichiesta(BigDecimal.valueOf(idRichiesta));
-        nuovaRichiesta.setCdRichiesta(cdRichiesta);
-        nuovaRichiesta.setTiMotCancellazione(tiMotCancellazione);
-        nuovaRichiesta.setTiStatoRichiesta("DA_EVADERE"); // Stato utente iniziale
-        nuovaRichiesta.setTiStatoInternoRich("INIZIALE"); // Stato tecnico iniziale
-        nuovaRichiesta.setTiModDel(tiModDel); // Stato tecnico iniziale
-        nuovaRichiesta.setDtCreazione(new Date()); // Imposta la data corrente
-
-        // Persisti l'entità. Dopo questa chiamata, JPA/Hibernate si occuperà
-        // di eseguire l'INSERT e di popolare il campo ID con il valore generato dal DB.
-        getEntityManager().persist(nuovaRichiesta);
-
-        Long idUdDelRichiesta = nuovaRichiesta.getIdUdDelRichiesta();
+        // --- PASSAGGIO 1: Creare e salvare la riga master in DM_UD_DEL_RICHIESTE con stato
+        // iniziale ---
+        Long idUdDelRichiesta = createDmUdDelRichieste(BigDecimal.valueOf(idRichiesta), cdRichiesta,
+                tiMotCancellazione, CostantiDB.TiStatoRichiesta.DA_EVADERE.name(),
+                CostantiDB.TiStatoInternoRich.INIZIALE.name(), tiModDel);
 
         // ID della richiesta corrente, da passare come parametro
         int numRecordDmUdDel = 0;
@@ -602,6 +783,14 @@ public class DataMartHelper extends GenericHelper {
 
     }
 
+    /**
+     * Popola le tabelle satellite del datamart ({@code DM_UD_DEL_FAS}, {@code DM_UD_DEL_SER},
+     * {@code DM_UD_DEL_OBJECT_STORAGE}) con i dati di fascicoli, serie e object-storage associati
+     * alle UD della richiesta indicata. Al termine aggiorna lo stato delle UD a
+     * {@code CANCELLABILE}.
+     *
+     * @param idUdDelRichiesta la PK della richiesta (ID_UD_DEL_RICHIESTA)
+     */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void populateDataMartUdSatelliti(long idUdDelRichiesta) {
         int numRecordDmUdDelFas = 0;
@@ -785,7 +974,8 @@ public class DataMartHelper extends GenericHelper {
     }
 
     /**
-     * Esegue l'update dello stato delle singole UD a 'CANCELLABILE'. Deve essere chiamato
+     * Aggiorna la data di stato ({@code DT_STATO_UD_CANCELLATE}) a {@code SYSDATE} per tutte le UD
+     * con stato {@code CANCELLABILE} appartenenti alla richiesta indicata. Deve essere chiamato
      * all'interno di una transazione esistente.
      *
      * @param idUdDelRichiesta L'ID della richiesta.
@@ -828,6 +1018,13 @@ public class DataMartHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    /**
+     * Cancella le richieste di soft-delete ({@code ARO_RICH_SOFT_DELETE}) associate agli item della
+     * richiesta Sacer indicata e al tipo item specificato.
+     *
+     * @param idRichiesta          identificativo della richiesta Sacer
+     * @param tiItemRichSoftDelete tipo item di soft-delete (es. 'ANNUL_VERS', 'SCARTO_VERS')
+     */
     public void deleteAroRichSoftDelete(BigDecimal idRichiesta, String tiItemRichSoftDelete) {
         String queryStr = "DELETE FROM ARO_RICH_SOFT_DELETE WHERE ID_RICH_SOFT_DELETE IN "
                 + "(SELECT item.id_rich_soft_delete FROM ARO_ITEM_RICH_SOFT_DELETE item "
@@ -842,83 +1039,224 @@ public class DataMartHelper extends GenericHelper {
     // =================================================================================
     // METODI PER LA CANCELLAZIONE FISICA
     // =================================================================================
+
     /**
-     * Aggiorna lo stato della richiesta master nella tabella DM_UD_DEL_RICHIESTE. Viene eseguito in
-     * una NUOVA transazione per garantire che il commit sia immediato, rendendo lo stato visibile
+     * Inserisce una nuova riga nella tabella storico stati DM_UD_DEL_STATO_RICHIESTA con FK verso
+     * la tabella di decodifica DM_UD_DEL_DECOD_STATO_INTERNO.
+     * <p>
+     * PG_STATO_RICH è calcolato come MAX(PG_STATO_RICH)+1 per la richiesta corrente: i progressivi
+     * partono da 1 e sono univoci nell'ambito della singola richiesta.
+     */
+    private DmUdDelStatoRichiesta inserisciStatoRich(long idUdDelRichiesta,
+            String tiStatoInternoRich) {
+        // Calcola il prossimo progressivo come MAX+1 per questa richiesta (scope locale)
+        BigDecimal pg = (BigDecimal) getEntityManager().createNativeQuery(
+                "SELECT NVL(MAX(PG_STATO_RICH), 0) + 1 FROM DM_UD_DEL_STATO_RICHIESTA WHERE ID_UD_DEL_RICHIESTA = :id")
+                .setParameter("id", idUdDelRichiesta).getSingleResult();
+
+        // Recupera il record di decodifica tramite il codice tecnico
+        DmUdDelDecodStatoInterno decod = getEntityManager()
+                .createQuery(
+                        "SELECT d FROM DmUdDelDecodStatoInterno d WHERE d.tiStatoInternoRich = :ti",
+                        DmUdDelDecodStatoInterno.class)
+                .setParameter("ti", tiStatoInternoRich).getSingleResult();
+
+        DmUdDelStatoRichiesta stato = new DmUdDelStatoRichiesta();
+        stato.setDmUdDelRichieste(
+                getEntityManager().getReference(DmUdDelRichieste.class, idUdDelRichiesta));
+        stato.setDecodStatoInterno(decod);
+        stato.setDtRegStato(new Date());
+        stato.setPgStatoRich(pg);
+        getEntityManager().persist(stato);
+        getEntityManager().flush(); // garantisce che stato.idStatoUdDelRichiesta sia valorizzato
+
+        // Aggiorna il puntatore FK allo stato corrente nella tabella principale
+        getEntityManager()
+                .createQuery("UPDATE DmUdDelRichieste r SET r.statoInternoRichCor = :stato "
+                        + "WHERE r.idUdDelRichiesta = :id")
+                .setParameter("stato", stato).setParameter("id", idUdDelRichiesta).executeUpdate();
+        return stato;
+    }
+
+    /**
+     * Registra il nuovo stato della richiesta nella tabella storico stati. Viene eseguito in una
+     * NUOVA transazione per garantire che il commit sia immediato, rendendo lo stato visibile
      * subito dopo la chiamata, indipendentemente dalla transazione del chiamante.
      *
-     * @param idRichiesta L'ID della richiesta da aggiornare.
-     * @param nuovoStato  Il nuovo stato da impostare (es. 'INVIATA_A_MS', 'LOGICA_COMPLETATA').
+     * @param idRichiesta L'ID della richiesta (ID_RICHIESTA, non la PK della tabella).
+     * @param nuovoStato  Il nuovo stato da impostare (es. 'DA_EVADERE', 'EVASA').
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void impostaStatoRichiesta(BigDecimal idRichiesta, String nuovoStato) {
         log.info("[TX-STATUS] Aggiornando stato per richiesta {} a '{}'", idRichiesta, nuovoStato);
 
-        String sqlRichiesta = "UPDATE DM_UD_DEL_RICHIESTE SET TI_STATO_RICHIESTA = :stato, DT_ULTIMO_AGGIORNAMENTO = SYSDATE WHERE ID_RICHIESTA = :idRichiesta";
-
-        int updatedRows = getEntityManager().createNativeQuery(sqlRichiesta)
+        int updated = getEntityManager()
+                .createQuery("UPDATE DmUdDelRichieste r SET r.tiStatoRichiesta = :stato "
+                        + "WHERE r.idRichiesta = :idRichiesta")
                 .setParameter("stato", nuovoStato).setParameter("idRichiesta", idRichiesta)
                 .executeUpdate();
+        if (updated == 0) {
+            throw new EJBException("Nessuna richiesta trovata per ID_RICHIESTA: " + idRichiesta);
+        }
 
-        if (updatedRows == 0) {
-            // Questo è un errore grave, significa che stiamo cercando di aggiornare una richiesta
-            // che non esiste.
-            throw new EJBException(
-                    "Nessuna richiesta master trovata da aggiornare per l'ID: " + idRichiesta);
+        // Se lo stato è EVASA, aggiorna anche DT_EVASIONE nella tabella principale
+        if (CostantiDB.TiStatoRichiesta.EVASA.name().equals(nuovoStato)) {
+            getEntityManager().createQuery(
+                    "UPDATE DmUdDelRichieste r SET r.dtEvasione = :now WHERE r.idRichiesta = :idRichiesta")
+                    .setParameter("now", new Date()).setParameter("idRichiesta", idRichiesta)
+                    .executeUpdate();
         }
 
         log.info("[TX-STATUS] Aggiornamento stato per richiesta {} completato.", idRichiesta);
     }
 
+    /**
+     * Aggiorna lo stato interno della richiesta inserendo una nuova riga nello storico e,
+     * facoltativamente, salvando un messaggio di errore nel record principale.
+     *
+     * @param idUdDelRichiesta  la PK della richiesta (ID_UD_DEL_RICHIESTA)
+     * @param nuovoStatoInterno il codice del nuovo stato interno (es. 'IN_CANCELLAZIONE_FISICA')
+     * @param messaggioErrore   messaggio di errore da salvare in {@code DS_MESSAGGIO_ERRORE};
+     *                          {@code null} se non applicabile
+     *
+     * @return il progressivo ({@code PG_STATO_RICH}) della riga di stato appena creata, oppure
+     *         {@code null} se la creazione non è riuscita
+     */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void impostaStatoInternoRichiesta(BigDecimal idUdDelRichiesta, String nuovoStatoInterno,
-            String messaggioErrore) {
+    public BigDecimal impostaStatoInternoRichiesta(BigDecimal idUdDelRichiesta,
+            String nuovoStatoInterno, String messaggioErrore) {
         log.info("[TX-STATUS] Aggiornando stato INTERNO per richiesta {} a '{}'", idUdDelRichiesta,
                 nuovoStatoInterno);
-        String sqlBase = "UPDATE DM_UD_DEL_RICHIESTE SET TI_STATO_INTERNO_RICH = :stato, DT_ULTIMO_AGGIORNAMENTO = SYSDATE ";
-        if (messaggioErrore != null) {
-            sqlBase += ", DS_MESSAGGIO_ERRORE = :msg ";
-        }
-        String sqlRichiesta = sqlBase + " WHERE ID_UD_DEL_RICHIESTA = :idUdDelRichiesta";
 
-        Query q = getEntityManager().createNativeQuery(sqlRichiesta);
-        q.setParameter("stato", nuovoStatoInterno);
-        q.setParameter("idUdDelRichiesta", idUdDelRichiesta);
-        if (messaggioErrore != null) {
-            q.setParameter("msg", messaggioErrore);
-        }
+        DmUdDelStatoRichiesta stato = inserisciStatoRich(idUdDelRichiesta.longValue(),
+                nuovoStatoInterno);
 
-        if (q.executeUpdate() == 0) {
-            throw new EJBException(
-                    "Nessuna richiesta master trovata da aggiornare per l'ID: " + idUdDelRichiesta);
+        // Il messaggio di errore resta nel record principale della richiesta
+        if (messaggioErrore != null) {
+            int updated = getEntityManager()
+                    .createQuery("UPDATE DmUdDelRichieste r SET r.dsMessaggioErrore = :msg "
+                            + "WHERE r.idUdDelRichiesta = :id")
+                    .setParameter("msg", messaggioErrore)
+                    .setParameter("id", idUdDelRichiesta.longValue()).executeUpdate();
+            if (updated == 0) {
+                throw new EJBException("Nessuna richiesta trovata per ID: " + idUdDelRichiesta);
+            }
         }
+        return stato.getPgStatoRich();
     }
 
-    public void impostaStatoInternoRichiesta(BigDecimal idUdDelRichiesta,
+    /**
+     * Overload di {@link #impostaStatoInternoRichiesta(BigDecimal, String, String)} senza messaggio
+     * di errore.
+     *
+     * @param idUdDelRichiesta  la PK della richiesta (ID_UD_DEL_RICHIESTA)
+     * @param nuovoStatoInterno il codice del nuovo stato interno
+     *
+     * @return il progressivo ({@code PG_STATO_RICH}) della riga di stato appena creata, oppure
+     *         {@code null} se la creazione non è riuscita
+     */
+    public BigDecimal impostaStatoInternoRichiesta(BigDecimal idUdDelRichiesta,
             String nuovoStatoInterno) {
-        impostaStatoInternoRichiesta(idUdDelRichiesta, nuovoStatoInterno, null);
+        return impostaStatoInternoRichiesta(idUdDelRichiesta, nuovoStatoInterno, null);
     }
 
+    /**
+     * Restituisce il codice dello stato esterno ({@code TI_STATO_RICHIESTA}) della richiesta
+     * indicata.
+     *
+     * @param idUdDelRichiesta la PK della richiesta (ID_UD_DEL_RICHIESTA)
+     *
+     * @return il codice stato, oppure {@code 'DA_EVADERE'} se la richiesta non viene trovata
+     */
     public String getStatoRichiesta(BigDecimal idUdDelRichiesta) {
         try {
-            String sql = "SELECT TI_STATO_RICHIESTA FROM DM_UD_DEL_RICHIESTE WHERE ID_UD_DEL_RICHIESTA = :id";
-            return (String) getEntityManager().createNativeQuery(sql)
-                    .setParameter("id", idUdDelRichiesta).getSingleResult();
+            String jpql = "SELECT r.tiStatoRichiesta FROM DmUdDelRichieste r "
+                    + "WHERE r.idUdDelRichiesta = :id";
+            return (String) getEntityManager().createQuery(jpql)
+                    .setParameter("id", idUdDelRichiesta.longValue()).getSingleResult();
         } catch (NoResultException e) {
-            return "DA_EVADERE";
+            return CostantiDB.TiStatoRichiesta.DA_EVADERE.name();
         }
     }
 
+    /**
+     * Restituisce il codice dello stato interno corrente ({@code TI_STATO_INTERNO_RICH}) della
+     * richiesta indicata, navigando la FK {@code STATO_INTERNO_RICH_COR}.
+     *
+     * @param idUdDelRichiesta la PK della richiesta (ID_UD_DEL_RICHIESTA)
+     *
+     * @return il codice stato interno, oppure {@code 'NON_TROVATA'} se la richiesta non esiste o
+     *         non ha uno stato corrente valorizzato
+     */
     public String getStatoInternoRichiesta(BigDecimal idUdDelRichiesta) {
         try {
-            String sql = "SELECT TI_STATO_INTERNO_RICH FROM DM_UD_DEL_RICHIESTE WHERE ID_UD_DEL_RICHIESTA = :id";
-            return (String) getEntityManager().createNativeQuery(sql)
-                    .setParameter("id", idUdDelRichiesta).getSingleResult();
+            String jpql = "SELECT r.statoInternoRichCor.decodStatoInterno.tiStatoInternoRich FROM DmUdDelRichieste r "
+                    + "WHERE r.idUdDelRichiesta = :id AND r.statoInternoRichCor IS NOT NULL";
+            return (String) getEntityManager().createQuery(jpql)
+                    .setParameter("id", idUdDelRichiesta.longValue()).getSingleResult();
         } catch (NoResultException e) {
             return "NON_TROVATA";
         }
     }
 
+    /**
+     * Restituisce la mappa {@code TI_STATO_INTERNO_RICH -> DS_STATO_INTERNO_RICH} leggendo l'intera
+     * tabella di decodifica {@code DM_UD_DEL_DECOD_STATO_INTERNO}. Utile per risolvere il codice
+     * tecnico dello stato in una descrizione leggibile, ad esempio per popolare la colonna
+     * {@code DS_STATO_INTERNO_RICH} nelle liste di visualizzazione.
+     *
+     * @return mappa non {@code null} con tutti gli stati interni disponibili; può essere vuota se
+     *         la tabella di decodifica non contiene righe
+     */
+    public Map<String, String> getDecodificaStatiInterni() {
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = getEntityManager().createNativeQuery(
+                "SELECT TI_STATO_INTERNO_RICH, DS_STATO_INTERNO_RICH FROM DM_UD_DEL_DECOD_STATO_INTERNO")
+                .getResultList();
+        Map<String, String> map = new HashMap<>();
+        for (Object[] row : rows) {
+            map.put((String) row[0], (String) row[1]);
+        }
+        return map;
+    }
+
+    /**
+     * Recupera in un'unica query la descrizione dello stato interno corrente per un insieme di
+     * richieste.
+     *
+     * @param ids lista di {@code ID_UD_DEL_RICHIESTA} da interrogare
+     *
+     * @return mappa {@code ID_UD_DEL_RICHIESTA -> descrizione stato interno}; le richieste prive di
+     *         stato corrente vengono escluse
+     */
+    public Map<Long, String> getStatiInterniRichieste(List<Long> ids) {
+        Map<Long, String> result = new HashMap<>();
+        if (ids == null || ids.isEmpty()) {
+            return result;
+        }
+        // Legge il codice stato e la sua descrizione dalla tabella di decodifica in un'unica query
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows = getEntityManager().createNativeQuery(
+                "SELECT r.ID_UD_DEL_RICHIESTA, NVL(d.DS_STATO_INTERNO_RICH, d.TI_STATO_INTERNO_RICH) "
+                        + "FROM DM_UD_DEL_RICHIESTE r "
+                        + "JOIN DM_UD_DEL_STATO_RICHIESTA s ON s.ID_STATO_UD_DEL_RICHIESTA = r.ID_STATO_INTERNO_RICH_COR "
+                        + "JOIN DM_UD_DEL_DECOD_STATO_INTERNO d ON d.ID_DECOD_STATO_INTERNO = s.ID_DECOD_STATO_INTERNO "
+                        + "WHERE r.ID_UD_DEL_RICHIESTA IN :ids AND r.ID_STATO_INTERNO_RICH_COR IS NOT NULL")
+                .setParameter("ids", ids).getResultList();
+        for (Object[] row : rows) {
+            result.put(((Number) row[0]).longValue(), (String) row[1]);
+        }
+        return result;
+    }
+
+    /**
+     * Restituisce la modalità di cancellazione ({@code TI_MOD_DEL}) della richiesta indicata.
+     *
+     * @param idUdDelRichiesta la PK della richiesta (ID_UD_DEL_RICHIESTA)
+     *
+     * @return il valore di {@code TI_MOD_DEL}, oppure {@code 'COMPLETA'} se la richiesta non viene
+     *         trovata
+     */
     public String getTiModDelRichiesta(BigDecimal idUdDelRichiesta) {
         try {
             String sql = "SELECT TI_MOD_DEL FROM DM_UD_DEL_RICHIESTE WHERE ID_UD_DEL_RICHIESTA = :id";
@@ -1114,6 +1452,12 @@ public class DataMartHelper extends GenericHelper {
         return result.intValue() == 1;
     }
 
+    /**
+     * Reimposta lo stato di tutte le UD della richiesta a {@code DA_CANCELLARE}, consentendo la
+     * ripresa di un processo di cancellazione interrotto.
+     *
+     * @param idUdDelRichiesta la PK della richiesta (ID_UD_DEL_RICHIESTA)
+     */
     public void updateDmUdDelDaCancellare(BigDecimal idUdDelRichiesta) {
         log.info("Resetto lo stato delle UD in 'DA_CANCELLARE'.");
         String updateUdsSql = "UPDATE DM_UD_DEL " + "SET TI_STATO_UD_CANCELLATE = 'DA_CANCELLARE' "
@@ -1233,9 +1577,11 @@ public class DataMartHelper extends GenericHelper {
      * @return la lista di richieste attive
      */
     public List<BigDecimal> getRichiesteFisicheAttive() {
-        String sql = "SELECT ID_UD_DEL_RICHIESTA FROM DM_UD_DEL_RICHIESTE "
-                + "WHERE TI_STATO_INTERNO_RICH IN ('IN_CODA_CANCELLAZIONE', 'IN_CANCELLAZIONE_FISICA')";
-        return getEntityManager().createNativeQuery(sql).getResultList();
+        String queryStr = "SELECT DISTINCT r.idUdDelRichiesta FROM DmUdDelRichieste r "
+                + "WHERE r.statoInternoRichCor IS NOT NULL "
+                + "AND r.statoInternoRichCor.decodStatoInterno.tiStatoInternoRich IN ('IN_CODA_CANCELLAZIONE', 'IN_CANCELLAZIONE_FISICA')";
+        List<Long> ids = getEntityManager().createQuery(queryStr, Long.class).getResultList();
+        return ids.stream().map(BigDecimal::valueOf).collect(java.util.stream.Collectors.toList());
     }
 
     /**
@@ -1264,5 +1610,242 @@ public class DataMartHelper extends GenericHelper {
         String sql = "DELETE FROM VRS_UNITA_DOC_NON_VERS WHERE ID_STRUT IN (:idStruts) AND ROWNUM <= :batchSize";
         return getEntityManager().createNativeQuery(sql).setParameter("idStruts", idStrutList)
                 .setParameter("batchSize", batchSize).executeUpdate();
+    }
+
+    // MEV 37227
+
+    /**
+     * Verifica che tutte le UD nella richiesta abbiano documenti (versamento e aggiunte) con
+     * DT_CREAZIONE già elaborata dal JOB CalcoloContenutoSACER, cioè con data che sia minore o
+     * uguale a MAX(DT_RIF_CONTA) in MON_CONTA_UD_DOC_COMP. Se MON_CONTA è vuota (JOB mai eseguito),
+     * tutte le UD risultano non contate. Ogni elemento del risultato è Object[]:
+     * [CD_REGISTRO_KEY_UNITA_DOC, AA_KEY_UNITA_DOC, CD_KEY_UNITA_DOC, ultima_doc_dt, ultimo_job_dt]
+     *
+     * @param idUdDelRichiesta id della richiesta
+     * @return lista ud
+     */
+    public List<Object[]> getUdConDocNonAncoraConteggiati(BigDecimal idUdDelRichiesta) {
+        // Controlla sia la data di versamento (DT_CREAZIONE documenti) sia la data di
+        // annullamento (DT_REG_STATO_RICH_ANNUL_VERS con stato EVASA) rispetto all'ultima
+        // data elaborata dal JOB CalcoloContenutoSACER.
+        // Se una delle due è successiva al MAX(DT_RIF_CONTA), la cancellazione fisica
+        // non può avvenire: il JOB non troverebbe più l'UD in ARO e perderebbe il conteggio.
+        String sql = "SELECT ud.CD_REGISTRO_KEY_UNITA_DOC, " + "       ud.AA_KEY_UNITA_DOC, "
+                + "       ud.CD_KEY_UNITA_DOC, " + "       GREATEST( "
+                + "           TRUNC(MAX(doc.DT_CREAZIONE)), "
+                + "           COALESCE(TRUNC(MAX(stato.DT_REG_STATO_RICH_ANNUL_VERS)), "
+                + "                    TRUNC(MAX(doc.DT_CREAZIONE))) "
+                + "       )                                                            AS ultima_data_rilevante, "
+                + "       (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m)   AS ultimo_job_dt "
+                + "FROM DM_UD_DEL dm "
+                + "JOIN ARO_UNITA_DOC ud ON dm.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "JOIN ARO_DOC       doc ON doc.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "LEFT JOIN ARO_ITEM_RICH_ANNUL_VERS item "
+                + "       ON item.ID_UNITA_DOC            = ud.ID_UNITA_DOC "
+                + "      AND item.TI_ITEM_RICH_ANNUL_VERS  = 'UNI_DOC' "
+                + "      AND item.TI_STATO_ITEM            = 'ANNULLATO' "
+                + "LEFT JOIN ARO_RICH_ANNUL_VERS rich "
+                + "       ON rich.ID_RICH_ANNUL_VERS = item.ID_RICH_ANNUL_VERS "
+                + "LEFT JOIN ARO_STATO_RICH_ANNUL_VERS stato "
+                + "       ON stato.ID_STATO_RICH_ANNUL_VERS = rich.ID_STATO_RICH_ANNUL_VERS_COR "
+                + "      AND stato.TI_STATO_RICH_ANNUL_VERS = 'EVASA' "
+                + "WHERE dm.ID_UD_DEL_RICHIESTA    = ? "
+                + "  AND dm.TI_STATO_UD_CANCELLATE = 'CANCELLABILE' " + "  AND ( "
+                + "        (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) IS NULL "
+                + "        OR TRUNC(doc.DT_CREAZIONE) > "
+                + "           (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) "
+                + "        OR TRUNC(stato.DT_REG_STATO_RICH_ANNUL_VERS) > "
+                + "           (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) "
+                + "      ) "
+                + "GROUP BY ud.CD_REGISTRO_KEY_UNITA_DOC, ud.AA_KEY_UNITA_DOC, ud.CD_KEY_UNITA_DOC "
+                + "ORDER BY ultima_data_rilevante DESC, ud.CD_REGISTRO_KEY_UNITA_DOC";
+
+        Query q = getEntityManager().createNativeQuery(sql);
+        q.setParameter(1, idUdDelRichiesta);
+        return q.getResultList();
+    }
+
+    /**
+     * Crea uno snapshot dei delta contabili (versamenti, aggiunte documenti, annullamenti) nella
+     * tabella {@code DM_UD_DEL_CONTA} per le UD con stato {@code CANCELLABILE} della richiesta
+     * indicata. L'operazione è idempotente: elimina eventuali snapshot residui prima di reinserire.
+     * <p>
+     * I dati vengono aggregati in 8 blocchi UNION ALL che coprono: versamento UD, documenti
+     * versati, componenti versati, aggiunta documenti, aggiunta componenti, UD annullate, documenti
+     * annullati e componenti annullati.
+     *
+     * @param idUdDelRichiesta la PK della richiesta (ID_UD_DEL_RICHIESTA)
+     */
+    @TransactionAttribute(TransactionAttributeType.MANDATORY)
+    public void popolaSnapshotConteggiSacer(BigDecimal idUdDelRichiesta) {
+
+        // Prima di tutto pulisco eventuali snapshot residui per queste UD (idempotenza)
+        String sqlDelete = "DELETE FROM DM_UD_DEL_CONTA WHERE ID_UNITA_DOC IN "
+                + "(SELECT ID_UNITA_DOC FROM DM_UD_DEL WHERE ID_UD_DEL_RICHIESTA = ?)";
+        getEntityManager().createNativeQuery(sqlDelete).setParameter(1, idUdDelRichiesta)
+                .executeUpdate();
+
+        String nativeSql = "INSERT INTO DM_UD_DEL_CONTA ( "
+                + "  ID_UNITA_DOC, DT_RIF_CONTA, ID_STRUT, ID_SUB_STRUT, AA_KEY_UNITA_DOC, "
+                + "  ID_REGISTRO_UNITA_DOC, ID_TIPO_UNITA_DOC, ID_TIPO_DOC_PRINC, "
+                + "  NI_UNITA_DOC_VERS, NI_DOC_VERS, NI_COMP_VERS, NI_SIZE_VERS, "
+                + "  NI_DOC_AGG, NI_COMP_AGG, NI_SIZE_AGG, "
+                + "  NI_UNITA_DOC_ANNUL, NI_DOC_ANNUL_UD, NI_COMP_ANNUL_UD, NI_SIZE_ANNUL_UD "
+                + ") " + "SELECT t.* FROM ( " +
+
+                // --- 1. VERSAMENTO UD ---
+                "  SELECT ud.ID_UNITA_DOC as ID_UNITA_DOC, TRUNC(docPrinc.DT_CREAZIONE) as DT_RIF_CONTA, ud.ID_STRUT as ID_STRUT, "
+                + "  ud.ID_SUB_STRUT as ID_SUB_STRUT, ud.AA_KEY_UNITA_DOC as AA_KEY_UNITA_DOC, ud.ID_REGISTRO_UNITA_DOC as ID_REGISTRO_UNITA_DOC, "
+                + "  ud.ID_TIPO_UNITA_DOC as ID_TIPO_UNITA_DOC, docPrinc.ID_TIPO_DOC as ID_TIPO_DOC_PRINC, "
+                + "  1 as NI_UNITA_DOC_VERS, 0 as NI_DOC_VERS, 0 as NI_COMP_VERS, 0 as NI_SIZE_VERS, "
+                + "  0 as NI_DOC_AGG, 0 as NI_COMP_AGG, 0 as NI_SIZE_AGG, "
+                + "  0 as NI_UNITA_DOC_ANNUL, 0 as NI_DOC_ANNUL_UD, 0 as NI_COMP_ANNUL_UD, 0 as NI_SIZE_ANNUL_UD "
+                + "  FROM ARO_UNITA_DOC ud "
+                + "  JOIN ARO_DOC docPrinc ON ud.ID_UNITA_DOC = docPrinc.ID_UNITA_DOC AND docPrinc.TI_DOC = 'PRINCIPALE' "
+                + "  JOIN DM_UD_DEL dm ON dm.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "  WHERE dm.ID_UD_DEL_RICHIESTA = ? AND dm.TI_STATO_UD_CANCELLATE = 'CANCELLABILE' "
+                + "  AND docPrinc.TI_CREAZIONE = 'VERSAMENTO_UNITA_DOC' " + "  UNION ALL " +
+
+                // --- 2. DOCUMENTI VERSATI ---
+                "  SELECT ud.ID_UNITA_DOC, TRUNC(doc.DT_CREAZIONE), ud.ID_STRUT, ud.ID_SUB_STRUT, ud.AA_KEY_UNITA_DOC, "
+                + "  ud.ID_REGISTRO_UNITA_DOC, ud.ID_TIPO_UNITA_DOC, docPrinc.ID_TIPO_DOC, "
+                + "  0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 " + "  FROM ARO_UNITA_DOC ud "
+                + "  JOIN ARO_DOC docPrinc ON ud.ID_UNITA_DOC = docPrinc.ID_UNITA_DOC AND docPrinc.TI_DOC = 'PRINCIPALE' "
+                + "  JOIN ARO_DOC doc ON ud.ID_UNITA_DOC = doc.ID_UNITA_DOC "
+                + "  JOIN DM_UD_DEL dm ON dm.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "  WHERE dm.ID_UD_DEL_RICHIESTA = ? AND dm.TI_STATO_UD_CANCELLATE = 'CANCELLABILE' "
+                + "  AND doc.TI_CREAZIONE = 'VERSAMENTO_UNITA_DOC' " + "  UNION ALL " +
+
+                // --- 3. COMPONENTI VERSATI E SIZE ---
+                "  SELECT ud.ID_UNITA_DOC, TRUNC(doc.DT_CREAZIONE), ud.ID_STRUT, ud.ID_SUB_STRUT, ud.AA_KEY_UNITA_DOC, "
+                + "  ud.ID_REGISTRO_UNITA_DOC, ud.ID_TIPO_UNITA_DOC, docPrinc.ID_TIPO_DOC, "
+                + "  0, 0, 1, NVL(comp.NI_SIZE_FILE_CALC, 0), 0, 0, 0, 0, 0, 0, 0 "
+                + "  FROM ARO_UNITA_DOC ud "
+                + "  JOIN ARO_DOC docPrinc ON ud.ID_UNITA_DOC = docPrinc.ID_UNITA_DOC AND docPrinc.TI_DOC = 'PRINCIPALE' "
+                + "  JOIN ARO_DOC doc ON ud.ID_UNITA_DOC = doc.ID_UNITA_DOC "
+                + "  JOIN ARO_STRUT_DOC strut ON doc.ID_DOC = strut.ID_DOC "
+                + "  JOIN ARO_COMP_DOC comp ON strut.ID_STRUT_DOC = comp.ID_STRUT_DOC "
+                + "  JOIN DM_UD_DEL dm ON dm.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "  WHERE dm.ID_UD_DEL_RICHIESTA = ? AND dm.TI_STATO_UD_CANCELLATE = 'CANCELLABILE' "
+                + "  AND doc.TI_CREAZIONE = 'VERSAMENTO_UNITA_DOC' " + "  UNION ALL " +
+
+                // --- 4. AGGIUNTA DOCUMENTI ---
+                "  SELECT ud.ID_UNITA_DOC, TRUNC(doc.DT_CREAZIONE), ud.ID_STRUT, ud.ID_SUB_STRUT, ud.AA_KEY_UNITA_DOC, "
+                + "  ud.ID_REGISTRO_UNITA_DOC, ud.ID_TIPO_UNITA_DOC, docPrinc.ID_TIPO_DOC, "
+                + "  0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 " + // <--- 1 in NI_DOC_AGG
+                "  FROM ARO_UNITA_DOC ud "
+                + "  JOIN ARO_DOC docPrinc ON ud.ID_UNITA_DOC = docPrinc.ID_UNITA_DOC AND docPrinc.TI_DOC = 'PRINCIPALE' "
+                + "  JOIN ARO_DOC doc ON ud.ID_UNITA_DOC = doc.ID_UNITA_DOC "
+                + "  JOIN DM_UD_DEL dm ON dm.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "  WHERE dm.ID_UD_DEL_RICHIESTA = ? AND dm.TI_STATO_UD_CANCELLATE = 'CANCELLABILE' "
+                + "  AND doc.TI_CREAZIONE = 'AGGIUNTA_DOCUMENTO' " + "  UNION ALL " +
+
+                // --- 5. AGGIUNTA COMPONENTI E SIZE (IL BLOCCO CHE MANCAVA!) ---
+                "  SELECT ud.ID_UNITA_DOC, TRUNC(doc.DT_CREAZIONE), ud.ID_STRUT, ud.ID_SUB_STRUT, ud.AA_KEY_UNITA_DOC, "
+                + "  ud.ID_REGISTRO_UNITA_DOC, ud.ID_TIPO_UNITA_DOC, docPrinc.ID_TIPO_DOC, "
+                + "  0, 0, 0, 0, 0, 1, NVL(comp.NI_SIZE_FILE_CALC, 0), 0, 0, 0, 0 " + // <--- 1 in
+                                                                                      // NI_COMP_AGG
+                                                                                      // e
+                                                                                      // Size
+                "  FROM ARO_UNITA_DOC ud "
+                + "  JOIN ARO_DOC docPrinc ON ud.ID_UNITA_DOC = docPrinc.ID_UNITA_DOC AND docPrinc.TI_DOC = 'PRINCIPALE' "
+                + "  JOIN ARO_DOC doc ON ud.ID_UNITA_DOC = doc.ID_UNITA_DOC "
+                + "  JOIN ARO_STRUT_DOC strut ON doc.ID_DOC = strut.ID_DOC "
+                + "  JOIN ARO_COMP_DOC comp ON strut.ID_STRUT_DOC = comp.ID_STRUT_DOC "
+                + "  JOIN DM_UD_DEL dm ON dm.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "  WHERE dm.ID_UD_DEL_RICHIESTA = ? AND dm.TI_STATO_UD_CANCELLATE = 'CANCELLABILE' "
+                + "  AND doc.TI_CREAZIONE = 'AGGIUNTA_DOCUMENTO' " + "  UNION ALL " +
+
+                // --- 6. UD ANNULLATE ---
+                "  SELECT ud.ID_UNITA_DOC, TRUNC(docPrinc.DT_CREAZIONE), ud.ID_STRUT, ud.ID_SUB_STRUT, ud.AA_KEY_UNITA_DOC, "
+                + "  ud.ID_REGISTRO_UNITA_DOC, ud.ID_TIPO_UNITA_DOC, docPrinc.ID_TIPO_DOC, "
+                + "  0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 " + "  FROM ARO_UNITA_DOC ud "
+                + "  JOIN ARO_DOC docPrinc ON ud.ID_UNITA_DOC = docPrinc.ID_UNITA_DOC AND docPrinc.TI_DOC = 'PRINCIPALE' "
+                + "  JOIN ARO_ITEM_RICH_ANNUL_VERS item ON ud.ID_UNITA_DOC = item.ID_UNITA_DOC "
+                + "  JOIN ARO_RICH_ANNUL_VERS rich ON item.ID_RICH_ANNUL_VERS = rich.ID_RICH_ANNUL_VERS "
+                + "  JOIN ARO_STATO_RICH_ANNUL_VERS statoAnnul ON rich.ID_STATO_RICH_ANNUL_VERS_COR = statoAnnul.ID_STATO_RICH_ANNUL_VERS "
+                + "  JOIN DM_UD_DEL dm ON dm.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "  WHERE dm.ID_UD_DEL_RICHIESTA = ? AND dm.TI_STATO_UD_CANCELLATE = 'CANCELLABILE' "
+                + "  AND statoAnnul.TI_STATO_RICH_ANNUL_VERS = 'EVASA' AND item.TI_STATO_ITEM = 'ANNULLATO' "
+                + "  UNION ALL " +
+
+                // --- 7. DOCUMENTI ANNULLATI ---
+                "  SELECT ud.ID_UNITA_DOC, TRUNC(doc.DT_CREAZIONE), ud.ID_STRUT, ud.ID_SUB_STRUT, ud.AA_KEY_UNITA_DOC, "
+                + "  ud.ID_REGISTRO_UNITA_DOC, ud.ID_TIPO_UNITA_DOC, docPrinc.ID_TIPO_DOC, "
+                + "  0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 " + "  FROM ARO_UNITA_DOC ud "
+                + "  JOIN ARO_DOC docPrinc ON ud.ID_UNITA_DOC = docPrinc.ID_UNITA_DOC AND docPrinc.TI_DOC = 'PRINCIPALE' "
+                + "  JOIN ARO_DOC doc ON ud.ID_UNITA_DOC = doc.ID_UNITA_DOC "
+                + "  JOIN ARO_ITEM_RICH_ANNUL_VERS item ON ud.ID_UNITA_DOC = item.ID_UNITA_DOC "
+                + "  JOIN ARO_RICH_ANNUL_VERS rich ON item.ID_RICH_ANNUL_VERS = rich.ID_RICH_ANNUL_VERS "
+                + "  JOIN ARO_STATO_RICH_ANNUL_VERS statoAnnul ON rich.ID_STATO_RICH_ANNUL_VERS_COR = statoAnnul.ID_STATO_RICH_ANNUL_VERS "
+                + "  JOIN DM_UD_DEL dm ON dm.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "  WHERE dm.ID_UD_DEL_RICHIESTA = ? AND dm.TI_STATO_UD_CANCELLATE = 'CANCELLABILE' "
+                + "  AND statoAnnul.TI_STATO_RICH_ANNUL_VERS = 'EVASA' AND item.TI_STATO_ITEM = 'ANNULLATO' "
+                + "  UNION ALL " +
+
+                // --- 8. COMPONENTI ANNULLATI E SIZE ---
+                "  SELECT ud.ID_UNITA_DOC, TRUNC(doc.DT_CREAZIONE), ud.ID_STRUT, ud.ID_SUB_STRUT, ud.AA_KEY_UNITA_DOC, "
+                + "  ud.ID_REGISTRO_UNITA_DOC, ud.ID_TIPO_UNITA_DOC, docPrinc.ID_TIPO_DOC, "
+                + "  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, NVL(comp.NI_SIZE_FILE_CALC, 0) "
+                + "  FROM ARO_UNITA_DOC ud "
+                + "  JOIN ARO_DOC docPrinc ON ud.ID_UNITA_DOC = docPrinc.ID_UNITA_DOC AND docPrinc.TI_DOC = 'PRINCIPALE' "
+                + "  JOIN ARO_DOC doc ON ud.ID_UNITA_DOC = doc.ID_UNITA_DOC "
+                + "  JOIN ARO_STRUT_DOC strut ON doc.ID_DOC = strut.ID_DOC "
+                + "  JOIN ARO_COMP_DOC comp ON strut.ID_STRUT_DOC = comp.ID_STRUT_DOC "
+                + "  JOIN ARO_ITEM_RICH_ANNUL_VERS item ON ud.ID_UNITA_DOC = item.ID_UNITA_DOC "
+                + "  JOIN ARO_RICH_ANNUL_VERS rich ON item.ID_RICH_ANNUL_VERS = rich.ID_RICH_ANNUL_VERS "
+                + "  JOIN ARO_STATO_RICH_ANNUL_VERS statoAnnul ON rich.ID_STATO_RICH_ANNUL_VERS_COR = statoAnnul.ID_STATO_RICH_ANNUL_VERS "
+                + "  JOIN DM_UD_DEL dm ON dm.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "  WHERE dm.ID_UD_DEL_RICHIESTA = ? AND dm.TI_STATO_UD_CANCELLATE = 'CANCELLABILE' "
+                + "  AND statoAnnul.TI_STATO_RICH_ANNUL_VERS = 'EVASA' AND item.TI_STATO_ITEM = 'ANNULLATO' "
+                + ") t";
+
+        Query q = getEntityManager().createNativeQuery(nativeSql);
+        for (int i = 1; i <= 8; i++) {
+            q.setParameter(i, idUdDelRichiesta);
+        }
+
+        int insertedRecords = q.executeUpdate();
+        log.info(
+                "Salvato snapshot di {} delta contabili (inclusi annullamenti) per la richiesta {}",
+                insertedRecords, idUdDelRichiesta);
+    }
+
+    /**
+     * Recupera lo storico completo dei passaggi di stato interno per una richiesta, ordinato per
+     * progressivo decrescente (dal più recente al più vecchio).
+     *
+     * @param idUdDelRichiesta la PK della richiesta
+     *
+     * @return la lista degli stati, ordinata per PG_STATO_RICH discendente
+     */
+    public List<DmUdDelStatoRichiesta> getStoricoStatiRichiesta(BigDecimal idUdDelRichiesta) {
+        String queryStr = "SELECT s FROM DmUdDelStatoRichiesta s "
+                + "WHERE s.dmUdDelRichieste.idUdDelRichiesta = :idUdDelRichiesta "
+                + "ORDER BY s.pgStatoRich DESC";
+        TypedQuery<DmUdDelStatoRichiesta> q = getEntityManager().createQuery(queryStr,
+                DmUdDelStatoRichiesta.class);
+        q.setParameter("idUdDelRichiesta", idUdDelRichiesta.longValue());
+        return q.getResultList();
+    }
+
+    /**
+     * Restituisce lo storico stati con la descrizione decodificata. Ogni Object[] contiene: [0]
+     * DmUdDelStatoRichiesta, [1] DS_STATO_INTERNO_RICH (String, nullable)
+     *
+     * @param idUdDelRichiesta la PK della richiesta
+     *
+     * @return lista di oggetti
+     */
+    @SuppressWarnings("unchecked")
+    public List<Object[]> getStoricoStatiRichiestaConDescrizione(BigDecimal idUdDelRichiesta) {
+        String sql = "SELECT s.ID_STATO_UD_DEL_RICHIESTA, s.ID_UD_DEL_RICHIESTA, "
+                + "d.TI_STATO_INTERNO_RICH, s.DT_REG_STATO, s.PG_STATO_RICH, "
+                + "NVL(d.DS_STATO_INTERNO_RICH, d.TI_STATO_INTERNO_RICH) AS DS_STATO_INTERNO_RICH "
+                + "FROM DM_UD_DEL_STATO_RICHIESTA s "
+                + "JOIN DM_UD_DEL_DECOD_STATO_INTERNO d ON d.ID_DECOD_STATO_INTERNO = s.ID_DECOD_STATO_INTERNO "
+                + "WHERE s.ID_UD_DEL_RICHIESTA = :id " + "ORDER BY s.PG_STATO_RICH DESC";
+        return getEntityManager().createNativeQuery(sql)
+                .setParameter("id", idUdDelRichiesta.longValue()).getResultList();
     }
 }

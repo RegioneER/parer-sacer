@@ -23,7 +23,6 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,6 +58,7 @@ import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb.FormatoF
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneSistemaMigrazione.ejb.SistemaMigrazioneEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneSottoStrutture.ejb.SottoStruttureEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.ejb.TipoFascicoloEjb;
@@ -80,7 +80,6 @@ import it.eng.parer.serie.ejb.SerieEjb;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.UnitaDocumentarieAbstractAction;
 import it.eng.parer.slite.gen.form.ComponentiForm;
-import it.eng.parer.slite.gen.form.CriteriRaggruppamentoForm;
 import it.eng.parer.slite.gen.form.ElenchiVersamentoForm;
 import it.eng.parer.slite.gen.form.FascicoliForm;
 import it.eng.parer.slite.gen.form.SerieUDForm;
@@ -91,7 +90,6 @@ import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriFascicoliUnitaDoc
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec;
-import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.UnitaDocumentarieList;
 import it.eng.parer.slite.gen.form.VolumiForm;
 import it.eng.parer.slite.gen.tablebean.AroLogStatoConservUdTableBean;
@@ -117,6 +115,9 @@ import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecVersioneWsTableBean;
 import it.eng.parer.slite.gen.tablebean.ElvElencoVerRowBean;
 import it.eng.parer.slite.gen.tablebean.ElvElencoVerTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgAmbienteTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgSubStrutTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisArchivUnitaDocTableBean;
@@ -203,8 +204,6 @@ import it.eng.spagoLite.db.decodemap.DecodeMapIF;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.base.BaseElements;
 import it.eng.spagoLite.form.base.BaseForm;
-import it.eng.spagoLite.form.fields.Field;
-import it.eng.spagoLite.form.fields.Fields;
 import it.eng.spagoLite.form.fields.SingleValueField;
 import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.form.fields.impl.MultiSelect;
@@ -288,6 +287,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     private DataMartEjb dataMartEjb;
     @EJB(mappedName = "java:app/Parer-ejb/DataMartHelper")
     private DataMartHelper dataMartHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/AmbienteEjb")
+    private AmbienteEjb ambienteEjb;
     @EJB(mappedName = "java:app/Parer-ejb/StruttureEjb")
     private StruttureEjb struttureEjb;
 
@@ -520,7 +521,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     @Secure(action = "Menu.UnitaDocumentarie.UnitaDocumentarieRicercaDatiSpec")
     public void unitaDocumentarieRicercaDatiSpec() throws EMFError {
         getUser().getMenu().reset();
-                getUser().getMenu().select("Menu.UnitaDocumentarie.UnitaDocumentarieRicercaDatiSpec");
+        getUser().getMenu().select("Menu.UnitaDocumentarie.UnitaDocumentarieRicercaDatiSpec");
         String cleanHistory = getRequest().getParameter(CLEAN_HISTORY);
         if (Boolean.parseBoolean(cleanHistory)) {
             getForm().getUnitaDocumentariePerSerie().reset();
@@ -627,8 +628,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 .setDecodeMap(DecodeMap.Factory.newInstance(versioneWsTableBean, "cd_versione_ws",
                         "cd_versione_ws"));
 
-        getForm().getFiltriDatiSpecUnitaDocumentarieList().getTi_oper().setDecodeMap(ComboGetter
-                .getMappaSortedGenericEnum("operatore",
+        getForm().getFiltriDatiSpecUnitaDocumentarieList().getTi_oper()
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("operatore",
                         Arrays.stream(CostantiDB.TipoOperatoreDatiSpec.values())
                                 .filter(v -> v != CostantiDB.TipoOperatoreDatiSpec.NULLO
                                         && v != CostantiDB.TipoOperatoreDatiSpec.NON_NULLO)
@@ -838,8 +839,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         }
         getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_sub_strut().setValues(chiavi);
 
-        getForm().getFiltriDatiSpecUnitaDocumentarieList().getTi_oper().setDecodeMap(ComboGetter
-                .getMappaSortedGenericEnum("operatore",
+        getForm().getFiltriDatiSpecUnitaDocumentarieList().getTi_oper()
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("operatore",
                         Arrays.stream(CostantiDB.TipoOperatoreDatiSpec.values())
                                 .filter(v -> v != CostantiDB.TipoOperatoreDatiSpec.NULLO
                                         && v != CostantiDB.TipoOperatoreDatiSpec.NON_NULLO)
@@ -2448,9 +2449,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 getForm().getVolumiList().getTable().first();
                 // Carico la lista dei dati specifici
                 AroVLisDatiSpecTableBean listDatiSpecTB = udHelper.getAroVLisDatiSpecTableBean(
-                        iddoc, TipoEntitaSacer.DOC, Constants.TI_USO_XSD_VERS,
-                        getIdStrut(), documentoAaaRB.getAaKeyUnitaDoc(),
-                        Integer.parseInt(maxResultStandard));
+                        iddoc, TipoEntitaSacer.DOC, Constants.TI_USO_XSD_VERS, getIdStrut(),
+                        documentoAaaRB.getAaKeyUnitaDoc(), Integer.parseInt(maxResultStandard));
                 getForm().getDatiSpecificiDocList().setTable(listDatiSpecTB);
                 getForm().getDatiSpecificiDocList().getTable().setPageSize(10);
                 getForm().getDatiSpecificiDocList().getTable().first();
@@ -2760,12 +2760,10 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         // Ricavo la lista dei dati specifici per unità documentaria
         AroVLisDatiSpecTableBean listDatiSpecTB = udHelper.getAroVLisDatiSpecTableBean(idUnitDoc,
                 TipoEntitaSacer.UNI_DOC, Constants.TI_USO_XSD_VERS, getIdStrut(),
-                udRB.getAaKeyUnitaDoc(),
-                Integer.parseInt(maxResultStandard));
+                udRB.getAaKeyUnitaDoc(), Integer.parseInt(maxResultStandard));
         AroVLisDatiSpecTableBean listDatiSpecMigrazioneTB = udHelper.getAroVLisDatiSpecTableBean(
                 idUnitDoc, TipoEntitaSacer.UNI_DOC, Constants.TI_USO_XSD_MIGR, getIdStrut(),
-                udRB.getAaKeyUnitaDoc(),
-                Integer.parseInt(maxResultStandard));
+                udRB.getAaKeyUnitaDoc(), Integer.parseInt(maxResultStandard));
         // Ricavo la lista degli indici AIP
         AroVerIndiceAipUdTableBean listIndiciAIPTB = udHelper
                 .getAroVerIndiceAipUdTableBean(idUnitDoc, Integer.parseInt(maxResultStandard));
@@ -3464,8 +3462,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             unitaDocumentarieRicercaSempliceNuova();
         } else if (getLastPublisher()
                 .equals(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_DATI_SPEC)
-                || TipoRicercaAttribute.DATI_SPEC.name().equals(
-                        getSession().getAttribute(UnitaDocAttributes.TIPORICERCA.name()))) {
+                || TipoRicercaAttribute.DATI_SPEC.name()
+                        .equals(getSession().getAttribute(UnitaDocAttributes.TIPORICERCA.name()))) {
             pulisciRicercaDatiSpec();
         } else if (getSession().getAttribute(UnitaDocAttributes.TIPORICERCA.name()) != null
                 && getSession().getAttribute(UnitaDocAttributes.TIPORICERCA.name())
@@ -3479,8 +3477,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     private void pulisciRicercaDatiSpec() throws EMFError {
         getForm().getFiltriUnitaDocumentarieDatiSpec().reset();
         getForm().getUnitaDocumentarieList().setTable(null);
-        getForm().getUnitaDocumentarieTabs().setCurrentTab(
-                getForm().getUnitaDocumentarieTabs().getFiltriRicercaAvanzata());
+        getForm().getUnitaDocumentarieTabs()
+                .setCurrentTab(getForm().getUnitaDocumentarieTabs().getFiltriRicercaAvanzata());
 
         if (getSession().getAttribute("listaDatiSpecOnLine") != null) {
             getSession().removeAttribute("listaDatiSpecOnLine");
@@ -4433,8 +4431,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         try {
             // EVO#16486
             this.verificaUrnUd(idud.longValue());
-            RispostaControlli rispostaControlli = verificaAbilitazioniDownloadUd(
-                    idud.longValue());
+            RispostaControlli rispostaControlli = verificaAbilitazioniDownloadUd(idud.longValue());
             if (!rispostaControlli.isrBoolean()) {
                 getMessageBox().addError(rispostaControlli.getDsErr());
                 forwardToPublisher(getLastPublisher());
@@ -5487,8 +5484,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         try {
             // EVO#16486
             this.verificaUrnUd(idud.longValue());
-            RispostaControlli rispostaControlli = verificaAbilitazioniDownloadUd(
-                    idud.longValue());
+            RispostaControlli rispostaControlli = verificaAbilitazioniDownloadUd(idud.longValue());
             if (!rispostaControlli.isrBoolean()) {
                 getMessageBox().addError(rispostaControlli.getDsErr());
                 forwardToPublisher(getLastPublisher());
@@ -7470,10 +7466,11 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     /**
      * Metodo di inizializzazione pagina di ricerca data mart
      *
-     * @throws EMFError errore generico
+     * @throws EMFError       errore generico
+     * @throws ParerUserError errore generico
      */
     @Secure(action = "Menu.Amministrazione.RicercaCancellazioni")
-    public void ricercaDataMartPage() throws EMFError {
+    public void ricercaDataMartPage() throws EMFError, ParerUserError {
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Amministrazione.RicercaCancellazioni");
         getSession().setAttribute(UnitaDocAttributes.TIPORICERCA.name(),
@@ -7486,21 +7483,60 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getMicroservizioDataMartFields().setEditMode();
 
         // Setto le varie combo dei filtri di ricerca
+        // Ricavo Ambiente, Ente e Struttura della struttura corrente selezionata al login
+        OrgStrutTableBean tmpTableBeanStruttura = null;
+        OrgEnteTableBean tmpTableBeanEnte = null;
+        OrgAmbienteTableBean tmpTableBeanAmbiente = null;
+        BigDecimal idAmbienteDef = null;
+        BigDecimal idEnteDef = null;
+        BigDecimal idStrutDef = null;
+        try {
+            OrgStrutRowBean strutWithAmbienteEnte = evEjb
+                    .getOrgStrutRowBeanWithAmbienteEnte(getUser().getIdOrganizzazioneFoglia());
+            idAmbienteDef = strutWithAmbienteEnte.getBigDecimal("id_ambiente");
+            idEnteDef = strutWithAmbienteEnte.getIdEnte();
+            idStrutDef = strutWithAmbienteEnte.getIdStrut();
+            tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
+            tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(getUser().getIdUtente(),
+                    idAmbienteDef.longValue(), Boolean.FALSE);
+            tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(),
+                    idEnteDef, Boolean.FALSE);
+        } catch (Exception ex) {
+            log.error("Errore durante il recupero dei filtri Ambiente - Ente - Struttura", ex);
+        }
+        DecodeMap mappaAmbiente = new DecodeMap();
+        mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
+        getForm().getFiltriRicercaDataMart().getId_ambiente().setDecodeMap(mappaAmbiente);
+        if (idAmbienteDef != null) {
+            getForm().getFiltriRicercaDataMart().getId_ambiente()
+                    .setValue(idAmbienteDef.toString());
+        }
+        DecodeMap mappaEnte = new DecodeMap();
+        mappaEnte.populatedMap(tmpTableBeanEnte, "id_ente", "nm_ente");
+        getForm().getFiltriRicercaDataMart().getId_ente().setDecodeMap(mappaEnte);
+        if (idEnteDef != null) {
+            getForm().getFiltriRicercaDataMart().getId_ente().setValue(idEnteDef.toString());
+        }
+        DecodeMap mappaStrut = new DecodeMap();
+        mappaStrut.populatedMap(tmpTableBeanStruttura, "id_strut", "nm_strut");
+        getForm().getFiltriRicercaDataMart().getId_strut().setDecodeMap(mappaStrut);
+        if (idStrutDef != null) {
+            getForm().getFiltriRicercaDataMart().getId_strut().setValue(idStrutDef.toString());
+        }
         getForm().getFiltriRicercaDataMart().getTi_mot_cancellazione()
                 .setDecodeMap(ComboGetter.getMappaTiMotCancellazione());
         getForm().getFiltriRicercaDataMart().getTi_stato_richiesta()
                 .setDecodeMap(ComboGetter.getMappaTiStatoRichiesta());
-        getForm().getFiltriRicercaDataMart().getId_ente().setDecodeMap(
-                DecodeMap.Factory.newInstance(dataMartEjb.getEntiDataMart(), "id_ente", "nm_ente"));
-        getForm().getFiltriRicercaDataMart().getId_strut().setDecodeMap(new DecodeMap());
 
         // Inizializzo la liste data mart vuote e le section nascoste
         getForm().getRichiesteDataMartSection().setHidden(true);
         getForm().getNumUdDataMartSection().setHidden(true);
         getForm().getUdDataMartSection().setHidden(true);
+        getForm().getStoricoStatiRichiestaSection().setHidden(true);
         getForm().getRichiesteDataMartList().setTable(null);
         getForm().getNumUdDataMartList().setTable(null);
         getForm().getUdDataMartList().setTable(null);
+        getForm().getStoricoStatiRichiestaList().setTable(null);
 
         // Nascondo i pulsanti per la cancellazione logica e fisica
         getForm().getMicroservizioDataMartFields().getCallMicroservizioDataMart().setViewMode();
@@ -7543,6 +7579,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
                 getForm().getNumUdDataMartSection().setHidden(true);
                 getForm().getUdDataMartSection().setHidden(true);
+                getForm().getStoricoStatiRichiestaSection().setHidden(true);
+                getForm().getStoricoStatiRichiestaList().setTable(null);
 
                 if (richiesteDataMart.size() == 1) {
                     BigDecimal idUdDelRichiesta = richiesteDataMart.getRow(0).getIdUdDelRichiesta();
@@ -7882,6 +7920,40 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     @Override
+    public JSONObject triggerFiltriRicercaDataMartId_ambienteOnTrigger() throws EMFError {
+        getForm().getFiltriRicercaDataMart().post(getRequest());
+        getForm().getFiltriRicercaDataMart().getId_ente().setValue("");
+        getForm().getFiltriRicercaDataMart().getId_strut().setValue("");
+        BigDecimal idAmbiente = getForm().getFiltriRicercaDataMart().getId_ambiente().parse();
+        if (idAmbiente != null) {
+            OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(
+                    getUser().getIdUtente(), idAmbiente.longValue(), Boolean.FALSE);
+            DecodeMap mappaEnte = new DecodeMap();
+            mappaEnte.populatedMap(tmpTableBeanEnte, "id_ente", "nm_ente");
+            getForm().getFiltriRicercaDataMart().getId_ente().setDecodeMap(mappaEnte);
+            if (tmpTableBeanEnte.size() == 1) {
+                BigDecimal idEnte = tmpTableBeanEnte.getRow(0).getIdEnte();
+                getForm().getFiltriRicercaDataMart().getId_ente().setValue(idEnte.toString());
+                OrgStrutTableBean tmpTableBeanStrut = struttureEjb
+                        .getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.FALSE);
+                DecodeMap mappaStrut = new DecodeMap();
+                mappaStrut.populatedMap(tmpTableBeanStrut, "id_strut", "nm_strut");
+                getForm().getFiltriRicercaDataMart().getId_strut().setDecodeMap(mappaStrut);
+                if (tmpTableBeanStrut.size() == 1) {
+                    getForm().getFiltriRicercaDataMart().getId_strut()
+                            .setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
+                }
+            } else {
+                getForm().getFiltriRicercaDataMart().getId_strut().setDecodeMap(new DecodeMap());
+            }
+        } else {
+            getForm().getFiltriRicercaDataMart().getId_ente().setDecodeMap(new DecodeMap());
+            getForm().getFiltriRicercaDataMart().getId_strut().setDecodeMap(new DecodeMap());
+        }
+        return getForm().getFiltriRicercaDataMart().asJSON();
+    }
+
+    @Override
     public JSONObject triggerFiltriRicercaDataMartId_enteOnTrigger() throws EMFError {
         getForm().getFiltriRicercaDataMart().post(getRequest());
         if (getForm().getFiltriRicercaDataMart().getId_ente().parse() != null) {
@@ -8213,8 +8285,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     dataMartEjb.impostaStatoInternoRichiesta(idUdDelRichiesta,
                             CostantiDB.TiStatoInternoRich.ERRORE_PREPARAZIONE.name(),
                             messaggioErrore);
-                    getMessageBox().addError(
-                            "Errore durante la preparazione. Operazione annullata. Riprovare.");
+                    getMessageBox().addError(messaggioErrore);
                 } else { // Errore durante il riavvio
                     log.error("Fallimento durante il riavvio del job per la richiesta {}",
                             idUdDelRichiesta, e);
@@ -8306,6 +8377,14 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getUdDataMartList().setTable(udDataMart);
         getForm().getUdDataMartList().getTable().setPageSize(10);
         getForm().getUdDataMartList().getTable().first();
+
+        // --- 5. STORICO STATI INTERNI RICHIESTA ---
+        it.eng.parer.slite.gen.tablebean.DmUdDelStatoRichiestaTableBean storicoStati = dataMartEjb
+                .getStoricoStatiRichiestaTableBean(idUdDelRichiesta);
+        getForm().getStoricoStatiRichiestaList().setTable(storicoStati);
+        getForm().getStoricoStatiRichiestaList().getTable().setPageSize(10);
+        getForm().getStoricoStatiRichiestaList().getTable().first();
+        getForm().getStoricoStatiRichiestaSection().setHidden(storicoStati.isEmpty());
     }
 
     // </editor-fold>

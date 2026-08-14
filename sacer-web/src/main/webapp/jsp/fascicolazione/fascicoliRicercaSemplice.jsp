@@ -77,6 +77,15 @@
                         <slf:lblField colSpan="1" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.NM_USERID%>" controlWidth="w100" />
                         <sl:newLine />
                     </slf:section>
+                    <slf:section name="<%=FascicoliForm.SoggettiRicercaSection.NAME%>" styleClass="importantContainer">
+                        <slf:lblField colSpan="2" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.DS_DENOM_SOG%>" controlWidth="w100" />
+                        <sl:newLine />
+                        <slf:lblField colSpan="1" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.NM_COGN_SOG%>" controlWidth="w100" />
+                        <slf:lblField colSpan="1" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.NM_NOME_SOG%>" controlWidth="w100" />
+                        <sl:newLine />
+                        <slf:lblField colSpan="1" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.TI_RAPP%>" controlWidth="w100" />
+                        <sl:newLine />
+                    </slf:section>
                 </slf:section>
                 <sl:newLine />
 

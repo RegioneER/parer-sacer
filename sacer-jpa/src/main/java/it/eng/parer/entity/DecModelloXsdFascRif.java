@@ -13,14 +13,15 @@
 
 package it.eng.parer.entity;
 
-import java.io.Serializable;
-import java.util.Date;
-import javax.persistence.*;
-
 import it.eng.parer.entity.constraint.DecModelloXsdFascRif.TiRiferimento;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * The persistent class for the DEC_MODELLO_XSD_FASC_RIF database table. * Rappresenta le dipendenze
@@ -114,6 +115,7 @@ public class DecModelloXsdFascRif implements Serializable {
     // bi-directional many-to-one association to DecModelloXsdFascicolo (parent/root)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MODELLO_XSD_FASCICOLO_PADRE")
+    @XmlTransient
     public DecModelloXsdFascicolo getDecModelloXsdFascicoloPadre() {
         return this.decModelloXsdFascicoloPadre;
     }
@@ -125,6 +127,7 @@ public class DecModelloXsdFascRif implements Serializable {
     // bi-directional many-to-one association to DecModelloXsdFascicolo (target/imported)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MODELLO_XSD_FASCICOLO_TARGET")
+    @XmlTransient
     public DecModelloXsdFascicolo getDecModelloXsdFascicoloTarget() {
         return this.decModelloXsdFascicoloTarget;
     }

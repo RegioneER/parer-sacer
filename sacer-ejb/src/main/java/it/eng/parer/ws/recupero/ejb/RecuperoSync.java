@@ -16,6 +16,7 @@
  */
 package it.eng.parer.ws.recupero.ejb;
 
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -358,6 +359,260 @@ public class RecuperoSync {
         if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
             myEsito.setXMLRichiesta(recupero.getDatiXml());
         }
+    }
+
+    /*
+     * Variante "in streaming" di {@link #recuperaOggetto(RispostaWSRecupero, RecuperoExt, String)}:
+     * collassa in un'unica fase la generazione dello zip e l'invio al client, scrivendo
+     * direttamente sullo stream indicato (tipicamente la response HTTP) invece di produrre un file
+     * temporaneo su disco da streammare successivamente. Va usata solo quando il chiamante è in
+     * grado di gestire una response il cui Content-Length non è noto a priori (transfer chunked) e
+     * di accettare che, in caso di errore avvenuto DOPO l'invocazione della {@code headerCallback},
+     * la response non possa più essere sostituita con un messaggio di errore pulito (vedi javadoc
+     * di {@link RecuperoZipGen#generaZipOggettoStream}). <p> Tutta la logica di
+     * validazione/prenotazione precedente alla generazione vera e propria è identica a quella del
+     * metodo basato su file, perché avviene comunque prima che la response venga toccata.
+     */
+    public void recuperaOggettoStream(RispostaWSRecupero rispostaWs, RecuperoExt recupero,
+            OutputStream out, RecuperoZipGen.HeaderCallback headerCallback) {
+        StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
+        AvanzamentoWs tmpAvanzamentoWs = rispostaWs.getAvanzamento();
+        boolean salvaSessioneRecupero = false;
+        boolean tentaRecuperoDIP = true;
+        GestSessRecupero gestSessRecupero = null;
+
+        if (recupero.getParametriRecupero().getUtente() == null) {
+            rispostaWs.setSeverity(SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                    "Errore: l'utente non è autenticato.");
+            return;
+        }
+
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecupero = new GestSessRecupero(rispostaWs);
+        }
+
+        // carica i parametri, stabilisce se è attivo il TPI, predispone i nomi di tutti i
+        // path utili per il salvataggio filesystem
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecupero.caricaParametri(recupero);
+        }
+
+        // verifica se è stato prodotto l'AIP nel caso venga richiesto il recupero AIP
+        // se non lo trova rende un errore ed esce
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            // EVO#20972
+            if (recupero.getParametriRecupero()
+                    .getTipoEntitaSacer() == CostantiDB.TipiEntitaRecupero.UNI_DOC_UNISYNCRO
+                    || recupero.getParametriRecupero()
+                            .getTipoEntitaSacer() == CostantiDB.TipiEntitaRecupero.UNI_DOC_UNISYNCRO_V2) // end
+            // EVO#20972
+            {
+                RispostaControlli rc = controlliRecupero
+                        .contaXMLIndiceAIP(recupero.getParametriRecupero().getIdUnitaDoc());
+                if (rc.getrLong() == 0) {
+                    rispostaWs.setSeverity(SeverityEnum.ERROR);
+                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.UD_005_003,
+                            recupero.getParametriRecupero().getDescUnitaDoc());
+                    return;
+                }
+            }
+        }
+
+        // verifica e carica le date di versamento di tutti i documenti dell'UD/DOC/COMP
+        // che devono essere recuperati
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecupero.verificaDate(recupero);
+        }
+
+        if (rispostaWs.getSeverity() == SeverityEnum.OK
+                && recupero.getTipoSalvataggioFile() == CostantiDB.TipoSalvataggioFile.FILE
+                && recupero.isTpiAbilitato()) {
+            gestSessRecupero.verificaPrenotaRecAsync(recupero);
+            // il parametro tentaRecuperoDIP è sempre false, se sta recuperando da TPI
+            tentaRecuperoDIP = false;
+            /*
+             * se rende OK -> recupera da filesystem se rende WARNING -> prenotazione effettuata o
+             * recupero in corso, non recupera nulla se rende ERROR -> recupero e prenotazione
+             * impossibili
+             */
+        }
+
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            salvaSessioneRecupero = true;
+            try {
+                recuperoZipGen.generaZipOggettoStream(out, recupero, tentaRecuperoDIP, rispostaWs,
+                        headerCallback);
+                tmpAvanzamentoWs.resetFase();
+            } catch (Exception e) {
+                rispostaWs.setSeverity(SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                        "Errore nella fase di generazione dello zip del EJB " + e.getMessage());
+                log.error("Errore nella fase di generazione dello zip del EJB ", e);
+            }
+        }
+
+        if (salvaSessioneRecupero) {
+            if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+                recupero.getDatiSessioneRecupero()
+                        .setStatoSess(JobConstants.StatoSessioniRecupEnum.ELIMINATO);
+                recupero.getDatiSessioneRecupero()
+                        .setStatoDtVers(JobConstants.StatoDtVersRecupEnum.RECUPERATA);
+            } else {
+                recupero.getDatiSessioneRecupero()
+                        .setStatoSess(JobConstants.StatoSessioniRecupEnum.CHIUSO_ERR);
+                recupero.getDatiSessioneRecupero()
+                        .setStatoDtVers(JobConstants.StatoDtVersRecupEnum.ERRORE);
+                recupero.getDatiSessioneRecupero().setErrorCode(rispostaWs.getErrorCode());
+                recupero.getDatiSessioneRecupero().setErrorMessage(rispostaWs.getErrorMessage());
+            }
+            //
+            if (recupero.getTipoSalvataggioFile() == CostantiDB.TipoSalvataggioFile.FILE
+                    && recupero.isTpiAbilitato()) {
+                gestSessRecupero.chiudiSessRec(recupero);
+            } else {
+                gestSessRecupero.creaSessRecChiusa(recupero);
+            }
+        }
+
+        // NOTA: a differenza della variante su file, se l'errore avviene dopo l'inizio dello
+        // streaming (headerCallback già invocata) impostare qui XMLRichiesta non ha alcun effetto
+        // utile: la response è già in corso di invio come application/zip e non può più
+        // contenere l'XML di errore. Viene comunque valorizzato per coerenza del modello dati e
+        // per i casi (più frequenti) in cui l'errore avviene prima dell'inizio dello streaming.
+        if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
+            myEsito.setXMLRichiesta(recupero.getDatiXml());
+        }
+    }
+
+    /*
+     * Variante di {@link #recuperaOggetto(RispostaWSRecupero, RecuperoExt, String)} dedicata al
+     * ramo storico "FileUnzippato" (estrazione di un singolo componente non compresso). Tenta un
+     * fast-path in streaming diretto (nessun file temporaneo, nessun contenitore zip) quando è
+     * possibile stabilire a costo pressoché nullo che il recupero produce esattamente 1 componente;
+     * negli altri casi ripiega sul comportamento storico basato su file temporaneo (vedi {@link
+     * RecuperoZipGen#generaFileUnzippato} per il dettaglio dei casi coperti). La logica di
+     * validazione/prenotazione precedente alla generazione vera e propria, e quella di chiusura
+     * della sessione di recupero, sono identiche a quelle di {@link
+     * #recuperaOggetto(RispostaWSRecupero, RecuperoExt, String)}: vengono eseguite una sola volta
+     * indipendentemente dall'esito, in modo da non duplicare né la prenotazione TPI né la
+     * registrazione della sessione qualunque sia il path (streaming o fallback su file) che viene
+     * effettivamente percorso.
+     *
+     * @param path directory da usare per l'eventuale file temporaneo di fallback (stesso
+     * significato del parametro {@code path} di {@link #recuperaOggetto(RispostaWSRecupero,
+     * RecuperoExt, String)})
+     *
+     * @param out stream di destinazione per il fast-path in streaming diretto
+     *
+     * @return {@code true} se si è ripiegato sul comportamento storico a file temporaneo (esito
+     * disponibile in {@code rispostaWs.getRifFileBinario()}); {@code false} altrimenti (fast-path
+     * riuscito, oppure errore già impostato in {@code rispostaWs})
+     */
+    public boolean recuperaOggettoFileUnzippato(RispostaWSRecupero rispostaWs, RecuperoExt recupero,
+            String path, OutputStream out, RecuperoZipGen.HeaderCallback headerCallback) {
+        StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
+        AvanzamentoWs tmpAvanzamentoWs = rispostaWs.getAvanzamento();
+        boolean salvaSessioneRecupero = false;
+        boolean tentaRecuperoDIP = true;
+        GestSessRecupero gestSessRecupero = null;
+        boolean esito = false;
+
+        if (recupero.getParametriRecupero().getUtente() == null) {
+            rispostaWs.setSeverity(SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                    "Errore: l'utente non è autenticato.");
+            return esito;
+        }
+
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecupero = new GestSessRecupero(rispostaWs);
+        }
+
+        // carica i parametri, stabilisce se è attivo il TPI, predispone i nomi di tutti i
+        // path utili per il salvataggio filesystem
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecupero.caricaParametri(recupero);
+        }
+
+        // verifica se è stato prodotto l'AIP nel caso venga richiesto il recupero AIP
+        // se non lo trova rende un errore ed esce
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            // EVO#20972
+            if (recupero.getParametriRecupero()
+                    .getTipoEntitaSacer() == CostantiDB.TipiEntitaRecupero.UNI_DOC_UNISYNCRO
+                    || recupero.getParametriRecupero()
+                            .getTipoEntitaSacer() == CostantiDB.TipiEntitaRecupero.UNI_DOC_UNISYNCRO_V2) // end
+            // EVO#20972
+            {
+                RispostaControlli rc = controlliRecupero
+                        .contaXMLIndiceAIP(recupero.getParametriRecupero().getIdUnitaDoc());
+                if (rc.getrLong() == 0) {
+                    rispostaWs.setSeverity(SeverityEnum.ERROR);
+                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.UD_005_003,
+                            recupero.getParametriRecupero().getDescUnitaDoc());
+                    return esito;
+                }
+            }
+        }
+
+        // verifica e carica le date di versamento di tutti i documenti dell'UD/DOC/COMP
+        // che devono essere recuperati
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            gestSessRecupero.verificaDate(recupero);
+        }
+
+        if (rispostaWs.getSeverity() == SeverityEnum.OK
+                && recupero.getTipoSalvataggioFile() == CostantiDB.TipoSalvataggioFile.FILE
+                && recupero.isTpiAbilitato()) {
+            gestSessRecupero.verificaPrenotaRecAsync(recupero);
+            // il parametro tentaRecuperoDIP è sempre false, se sta recuperando da TPI
+            tentaRecuperoDIP = false;
+        }
+
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            salvaSessioneRecupero = true;
+            try {
+                esito = recuperoZipGen.generaFileUnzippato(path, out, recupero, tentaRecuperoDIP,
+                        rispostaWs, headerCallback);
+                tmpAvanzamentoWs.resetFase();
+            } catch (Exception e) {
+                rispostaWs.setSeverity(SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                        "Errore nella fase di generazione dello zip del EJB " + e.getMessage());
+                log.error("Errore nella fase di generazione dello zip del EJB ", e);
+                esito = false;
+            }
+        }
+
+        if (salvaSessioneRecupero) {
+            if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+                recupero.getDatiSessioneRecupero()
+                        .setStatoSess(JobConstants.StatoSessioniRecupEnum.ELIMINATO);
+                recupero.getDatiSessioneRecupero()
+                        .setStatoDtVers(JobConstants.StatoDtVersRecupEnum.RECUPERATA);
+            } else {
+                recupero.getDatiSessioneRecupero()
+                        .setStatoSess(JobConstants.StatoSessioniRecupEnum.CHIUSO_ERR);
+                recupero.getDatiSessioneRecupero()
+                        .setStatoDtVers(JobConstants.StatoDtVersRecupEnum.ERRORE);
+                recupero.getDatiSessioneRecupero().setErrorCode(rispostaWs.getErrorCode());
+                recupero.getDatiSessioneRecupero().setErrorMessage(rispostaWs.getErrorMessage());
+            }
+            //
+            if (recupero.getTipoSalvataggioFile() == CostantiDB.TipoSalvataggioFile.FILE
+                    && recupero.isTpiAbilitato()) {
+                gestSessRecupero.chiudiSessRec(recupero);
+            } else {
+                gestSessRecupero.creaSessRecChiusa(recupero);
+            }
+        }
+
+        if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
+            myEsito.setXMLRichiesta(recupero.getDatiXml());
+        }
+
+        return esito;
     }
 
     // questo metodo viene usato nel WS di recupero prove di conservazione UD

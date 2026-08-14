@@ -733,8 +733,7 @@ public class ScartoAction extends ScartoAbstractAction {
             return;
         }
         if (CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name().equals(statoCorrente)) {
-            getMessageBox().addError(
-                    "La proposta è già autorizzata: non è possibile modificarla.");
+            getMessageBox().addError("La proposta è già autorizzata: non è possibile modificarla.");
             forwardToPublisher(Application.Publisher.CREAZIONE_PROP_SCARTO_VERS);
             return;
         }
@@ -762,9 +761,8 @@ public class ScartoAction extends ScartoAbstractAction {
         getForm().getRichiestaAutPropScartoVers().clear();
         getForm().getRichiestaAutPropScartoVers().getId_prop_scarto_vers()
                 .setValue(idPropScartoVers != null ? idPropScartoVers.toPlainString() : null);
-        getForm().getRichiestaAutPropScartoVers().getCd_prop_scarto_vers()
-                .setValue(
-                        getForm().getCreazionePropScartoVers().getCd_prop_scarto_vers().getValue());
+        getForm().getRichiestaAutPropScartoVers().getCd_prop_scarto_vers().setValue(
+                getForm().getCreazionePropScartoVers().getCd_prop_scarto_vers().getValue());
         getForm().getRichiestaAutPropScartoVers().getTi_stato_prop_scarto_vers_cor()
                 .setValue(getForm().getCreazionePropScartoVers().getTi_stato_prop_scarto_vers_cor()
                         .getValue());
@@ -795,8 +793,8 @@ public class ScartoAction extends ScartoAbstractAction {
                 getMessageBox().addError("Il campo 'Registro esterno' è obbligatorio.");
             }
         } else {
-            cdRegistroRichAut = getForm().getRichiestaAutPropScartoVers()
-                    .getCd_registro_rich_aut().getValue();
+            cdRegistroRichAut = getForm().getRichiestaAutPropScartoVers().getCd_registro_rich_aut()
+                    .getValue();
             if (StringUtils.isBlank(cdRegistroRichAut)) {
                 getMessageBox().addError("Il campo 'Registro' è obbligatorio.");
             }
@@ -851,9 +849,8 @@ public class ScartoAction extends ScartoAbstractAction {
         getForm().getRegistraAutPropScartoVers().clear();
         getForm().getRegistraAutPropScartoVers().getId_prop_scarto_vers()
                 .setValue(idPropScartoVers != null ? idPropScartoVers.toPlainString() : null);
-        getForm().getRegistraAutPropScartoVers().getCd_prop_scarto_vers()
-                .setValue(
-                        getForm().getCreazionePropScartoVers().getCd_prop_scarto_vers().getValue());
+        getForm().getRegistraAutPropScartoVers().getCd_prop_scarto_vers().setValue(
+                getForm().getCreazionePropScartoVers().getCd_prop_scarto_vers().getValue());
         getForm().getRegistraAutPropScartoVers().getTi_stato_prop_scarto_vers_cor()
                 .setValue(getForm().getCreazionePropScartoVers().getTi_stato_prop_scarto_vers_cor()
                         .getValue());
@@ -881,9 +878,8 @@ public class ScartoAction extends ScartoAbstractAction {
                 .getId_prop_scarto_vers().parse();
 
         // --- Registro risposta: combo o esterno ---
-        boolean useRegistroEsternoRisp = "1".equals(
-                getForm().getRegistraAutPropScartoVers().getFl_registro_esterno_risp_aut()
-                        .getValue());
+        boolean useRegistroEsternoRisp = "1".equals(getForm().getRegistraAutPropScartoVers()
+                .getFl_registro_esterno_risp_aut().getValue());
         String cdRegistroRispAut;
         if (useRegistroEsternoRisp) {
             cdRegistroRispAut = getForm().getRegistraAutPropScartoVers()
@@ -892,8 +888,8 @@ public class ScartoAction extends ScartoAbstractAction {
                 getMessageBox().addError("Il campo 'Registro (esterno) risposta' è obbligatorio.");
             }
         } else {
-            cdRegistroRispAut = getForm().getRegistraAutPropScartoVers()
-                    .getCd_registro_risp_aut().getValue();
+            cdRegistroRispAut = getForm().getRegistraAutPropScartoVers().getCd_registro_risp_aut()
+                    .getValue();
             if (StringUtils.isBlank(cdRegistroRispAut)) {
                 getMessageBox().addError("Il campo 'Registro risposta' è obbligatorio.");
             }
@@ -915,9 +911,8 @@ public class ScartoAction extends ScartoAbstractAction {
         }
 
         // --- Registro provvedimento: combo o esterno (obbligatorio) ---
-        boolean useRegistroEsternoProvv = "1".equals(
-                getForm().getRegistraAutPropScartoVers().getFl_registro_esterno_provv_scarto()
-                        .getValue());
+        boolean useRegistroEsternoProvv = "1".equals(getForm().getRegistraAutPropScartoVers()
+                .getFl_registro_esterno_provv_scarto().getValue());
         String cdRegistroProvvScarto;
         if (useRegistroEsternoProvv) {
             cdRegistroProvvScarto = getForm().getRegistraAutPropScartoVers()
@@ -937,8 +932,7 @@ public class ScartoAction extends ScartoAbstractAction {
                 .parse();
         String cdProvvScarto = getForm().getRegistraAutPropScartoVers().getCd_provv_scarto()
                 .getValue();
-        String dsFirmatoDa = getForm().getRegistraAutPropScartoVers().getDs_firmato_da()
-                .getValue();
+        String dsFirmatoDa = getForm().getRegistraAutPropScartoVers().getDs_firmato_da().getValue();
 
         if (aaProvvScarto == null) {
             getMessageBox().addError("Il campo 'Anno provvedimento' è obbligatorio.");
@@ -996,8 +990,8 @@ public class ScartoAction extends ScartoAbstractAction {
                 // rielaborerà automaticamente la richiesta rimasta in stato CHIUSA
                 try {
                     loadDettaglioProposta(idPropScartoVers);
-                    if (CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name().equals(
-                            getForm().getCreazionePropScartoVers()
+                    if (CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name()
+                            .equals(getForm().getCreazionePropScartoVers()
                                     .getTi_stato_prop_scarto_vers_cor().getValue())) {
                         getMessageBox().addWarning(
                                 "L'autorizzazione \u00e8 stata registrata correttamente. "
@@ -1067,8 +1061,8 @@ public class ScartoAction extends ScartoAbstractAction {
                 scartoEjb.elaboraRichiestaScarto(idRichScartoVers, getUser().getIdUtente(),
                         Constants.ANNULLAMENTO_ONLINE);
             }
-            getMessageBox().addInfo(
-                    "Revisione completata. La proposta è ora in stato AUTORIZZATA.");
+            getMessageBox()
+                    .addInfo("Revisione completata. La proposta è ora in stato AUTORIZZATA.");
             loadDettaglioProposta(idPropScartoVers);
             initPropScartoVers(ModalitaInitScarto.MOD);
             initGestioneItemPropScartoVers(ModalitaInitScarto.VIEW);
@@ -1083,11 +1077,11 @@ public class ScartoAction extends ScartoAbstractAction {
             try {
                 loadDettaglioProposta(idPropScartoVers);
                 initPropScartoVers(ModalitaInitScarto.MOD);
-                if (CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name().equals(
-                        getForm().getCreazionePropScartoVers()
+                if (CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name()
+                        .equals(getForm().getCreazionePropScartoVers()
                                 .getTi_stato_prop_scarto_vers_cor().getValue())) {
-                    getMessageBox().addWarning(
-                            "La revisione \u00e8 stata completata correttamente. "
+                    getMessageBox()
+                            .addWarning("La revisione \u00e8 stata completata correttamente. "
                                     + "Si \u00e8 verificato un errore nell'evasione immediata "
                                     + "della richiesta di scarto: " + ex.getDescription()
                                     + ". La richiesta sar\u00e0 elaborata automaticamente dal sistema.");
@@ -1680,8 +1674,7 @@ public class ScartoAction extends ScartoAbstractAction {
                 getForm().getDatiRichiestaAutSection().setHidden(false);
                 getForm().getDatiRispostaAutSection().setHidden(false);
                 getForm().getProvvedimentoScartoDettaglioSection().setHidden(false);
-            } else if (CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name()
-                    .equals(statoCorrente)) {
+            } else if (CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name().equals(statoCorrente)) {
                 getForm().getDatiRichiestaAutSection().setHidden(false);
                 getForm().getDatiRispostaAutSection().setHidden(false);
                 getForm().getProvvedimentoScartoDettaglioSection().setHidden(false);

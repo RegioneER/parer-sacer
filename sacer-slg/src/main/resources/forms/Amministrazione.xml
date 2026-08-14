@@ -77,5 +77,37 @@
         <Input Name="nm_sistema_migraz" Description="Nome" Type="STRING" Required="true" MaxLength="100"/>
         <Input Name="ds_sistema_migraz" Description="Descrizione" Type="STRING" Required="true" MaxLength="254"/>
     </Fields>
+
+    <!-- Gestione errori SACER -->
+    <Fields Name="FiltriRicercaGestioneErrori" Description="Filtri ricerca errori SACER">
+        <ComboBox Name="cd_classe_err_sacer_ric" Description="Classe" Type="STRING" />
+        <Button Name="ricercaGestioneErroriButton" Description="Ricerca" Type="STRING" />
+    </Fields>
+
+    <List Name="GestioneErroriList" Description="Lista errori SACER" >
+        <Input Name="id_err_sacer" Description="Id" Type="INTEGER" Hidden="true"/>
+        <Input Name="cd_err" Description="Codice errore" Type="STRING" />
+        <Input Name="ds_err_filtro" Description="Descrizione filtro" Type="STRING" />
+        <Input Name="casistica" Description="Casistica" Type="STRING" />
+        <Input Name="soluzione_sugg" Description="Soluzione suggerita" Type="STRING" />
+        <CheckBox Name="deprecato" Description="Deprecato" Type="STRING" />
+        <CheckBox Name="pubblico" Description="Pubblico" Type="STRING" />
+    </List>
+
+    <Fields Name="DettaglioGestioneErrore" Description="Dettaglio errore SACER">
+        <ComboBox Name="id_err_sacer" Trigger="true" Description="Errore SACER" Type="INTEGER" Required="true"/>
+        <Input Name="cd_classe_err_sacer" Description="Classe" Type="STRING" />
+        <Input Name="cd_err" Description="Codice errore" Type="STRING" />
+        <Input Name="ds_err" Description="Descrizione" Type="STRING" />
+        <Input Name="ds_err_filtro" Description="Descrizione filtro" Type="STRING" />
+        <Input Name="ti_err_sacer" Description="Tipo errore" Type="STRING" />
+        <Input Name="sottoclasse" Description="Sottoclasse" Type="STRING" />
+        <TextArea Name="casistica" Description="Casistica" Type="STRING" Rows="10" Cols="100" MaxLength="4000" />
+        <TextArea Name="soluzione_sugg" Description="Soluzione suggerita" Type="STRING" Rows="10" Cols="100" MaxLength="4000" />
+        <Input Name="vers_inizio_val" Description="Versione inizio validità" Type="STRING" MaxLength="50" />
+        <Input Name="vers_fine_val" Description="Versione fine validità" Type="STRING" MaxLength="50" />
+        <CheckBox Name="deprecato" Description="Deprecato" Type="STRING" />
+        <CheckBox Name="pubblico" Description="Pubblico" Type="STRING" />
+    </Fields>
     
 </Form>

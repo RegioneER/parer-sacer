@@ -570,7 +570,14 @@ public class CalcoloMonitoraggioHelper {
         if (codiceErrore != null) {
             queryStr.append(whereWord).append("u.cdErr = :cdErr ");
             whereWord = "AND ";
-        } else if (sottoClasseErrore != null || classeErrore != null) {
+        } else if (sottoClasseErrore != null) {
+            queryStr.append(whereWord).append("EXISTS ("
+                    + "SELECT decErr.idErrSacer FROM DecErrSacer decErr "
+                    + "JOIN decErr.decErrSacerDett dett "
+                    + "WHERE decErr.cdErr = u.cdErr "
+                    + "AND dett.cdSottoclasse = :sottoClasseErrore) ");
+            whereWord = "AND ";
+        } else if (classeErrore != null) {
             queryStr.append(whereWord).append("u.cdErr LIKE :cdErr ");
             whereWord = "AND ";
         }
@@ -648,7 +655,7 @@ public class CalcoloMonitoraggioHelper {
         if (codiceErrore != null) {
             query.setParameter("cdErr", codiceErrore);
         } else if (sottoClasseErrore != null) {
-            query.setParameter("cdErr", sottoClasseErrore + '%');
+            query.setParameter("sottoClasseErrore", sottoClasseErrore);
         } else if (classeErrore != null) {
             query.setParameter("cdErr", classeErrore + '%');
         }

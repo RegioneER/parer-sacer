@@ -955,7 +955,14 @@ public class MonitoraggioHelper implements Serializable {
         if (codiceErrore != null) {
             queryStr.append(whereWord).append("u.cdErr = :cdErr ");
             whereWord = "AND ";
-        } else if (sottoClasseErrore != null || classeErrore != null) {
+        } else if (sottoClasseErrore != null) {
+            queryStr.append(whereWord).append("EXISTS ("
+                    + "SELECT decErr.idErrSacer FROM DecErrSacer decErr "
+                    + "JOIN decErr.decErrSacerDett dett "
+                    + "WHERE decErr.cdErr = u.cdErr "
+                    + "AND dett.cdSottoclasse = :sottoClasseErrore) ");
+            whereWord = "AND ";
+        } else if (classeErrore != null) {
             queryStr.append(whereWord).append("u.cdErr LIKE :cdErr ");
             whereWord = "AND ";
         }
@@ -1064,7 +1071,7 @@ public class MonitoraggioHelper implements Serializable {
         if (codiceErrore != null) {
             query.setParameter("cdErr", codiceErrore);
         } else if (sottoClasseErrore != null) {
-            query.setParameter("cdErr", sottoClasseErrore + '%');
+            query.setParameter("sottoClasseErrore", sottoClasseErrore);
         } else if (classeErrore != null) {
             query.setParameter("cdErr", classeErrore + '%');
         }
@@ -2190,10 +2197,14 @@ public class MonitoraggioHelper implements Serializable {
                 + "subStrut.nmSubStrut, registroUnitaDoc.cdRegistroUnitaDoc, "
                 + "mon.aaKeyUnitaDoc, tree.dlPathCategTipoUnitaDoc, "
                 + "tipoUnitaDoc.nmTipoUnitaDoc, tipoDoc.nmTipoDoc, "
-                + "sum(mon.niUnitaDocVers) - sum(mon.niUnitaDocAnnul), "
-                + "sum(mon.niDocVers) - sum(mon.niDocAnnulUd), "
-                + "sum(mon.niCompVers) - sum(mon.niCompAnnulUd), "
-                + "sum(mon.niSizeVers) - sum(mon.niSizeAnnulUd), "
+                // 1. Unità Documentarie nette
+                + "(sum(mon.niUnitaDocVers) - sum(mon.niUnitaDocAnnul)), "
+                // 2. Documenti netti (Versati + Aggiunti - Annullati)
+                + "(sum(mon.niDocVers) + sum(mon.niDocAgg) - sum(mon.niDocAnnulUd)), "
+                // 3. Componenti netti (Versati + Aggiunti - Annullati)
+                + "(sum(mon.niCompVers) + sum(mon.niCompAgg) - sum(mon.niCompAnnulUd)), "
+                // 4. Dimensione netta (Size Vers + Size Agg - Size Annul)
+                + "(sum(mon.niSizeVers) + sum(mon.niSizeAgg) - sum(mon.niSizeAnnulUd)), "
                 + "sum(mon.niDocAgg), sum(mon.niCompAgg), sum(mon.niSizeAgg), "
                 + "sum(mon.niUnitaDocAnnul), sum(mon.niDocAnnulUd), sum(mon.niCompAnnulUd), sum(mon.niSizeAnnulUd) "
                 + "FROM " + entityName + " mon, " + "DecTipoUnitaDoc tipoUnitaDoc, "
@@ -5439,8 +5450,12 @@ public class MonitoraggioHelper implements Serializable {
                     + "AND ses.cdKeyUnitaDoc = u.monVLisUdNonVersIamId.cdKeyUnitaDoc " + "AND ");
             if (StringUtils.isNotBlank(filtri.getCodiceErrore())) {
                 queryStr.append("err.cdErr = :codErr");
-            } else if (StringUtils.isNotBlank(filtri.getClasseErrore())
-                    || StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
+            } else if (StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
+                queryStr.append("EXISTS (SELECT decErr.idErrSacer FROM DecErrSacer decErr "
+                        + "JOIN decErr.decErrSacerDett dett "
+                        + "WHERE decErr.cdErr = err.cdErr "
+                        + "AND dett.cdSottoclasse = :sottoClasseErrore)");
+            } else if (StringUtils.isNotBlank(filtri.getClasseErrore())) {
                 queryStr.append("err.cdErr like :codErr");
             }
             queryStr.append(" )");
@@ -5508,7 +5523,7 @@ public class MonitoraggioHelper implements Serializable {
         if (StringUtils.isNotBlank(filtri.getCodiceErrore())) {
             query.setParameter("codErr", filtri.getCodiceErrore());
         } else if (StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
-            query.setParameter("codErr", filtri.getSottoClasseErrore() + "%");
+            query.setParameter("sottoClasseErrore", filtri.getSottoClasseErrore());
         } else if (StringUtils.isNotBlank(filtri.getClasseErrore())) {
             query.setParameter("codErr", filtri.getClasseErrore() + "%");
         }
@@ -5677,8 +5692,14 @@ public class MonitoraggioHelper implements Serializable {
                     + "AND ");
             if (StringUtils.isNotBlank(filtri.getCodiceErrore())) {
                 queryStr.append("vrserrsess1_.cd_Err = :codErr");
-            } else if (StringUtils.isNotBlank(filtri.getClasseErrore())
-                    || StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
+            } else if (StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
+                queryStr.append("EXISTS ("
+                        + "SELECT 1 FROM DEC_ERR_SACER decerrsacer_ "
+                        + "JOIN DEC_ERR_SACER_DETT decerrdett_ "
+                        + "ON decerrdett_.ID_ERR_SACER = decerrsacer_.ID_ERR_SACER "
+                        + "WHERE decerrsacer_.CD_ERR = vrserrsess1_.cd_Err "
+                        + "AND decerrdett_.CD_SOTTOCLASSE = :sottoClasseErrore)");
+            } else if (StringUtils.isNotBlank(filtri.getClasseErrore())) {
                 queryStr.append("vrserrsess1_.cd_Err like :codErr");
             }
             queryStr.append(" )");
@@ -5746,7 +5767,7 @@ public class MonitoraggioHelper implements Serializable {
         if (StringUtils.isNotBlank(filtri.getCodiceErrore())) {
             query.setParameter("codErr", filtri.getCodiceErrore());
         } else if (StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
-            query.setParameter("codErr", filtri.getSottoClasseErrore() + "%");
+            query.setParameter("sottoClasseErrore", filtri.getSottoClasseErrore());
         } else if (StringUtils.isNotBlank(filtri.getClasseErrore())) {
             query.setParameter("codErr", filtri.getClasseErrore() + "%");
         }
@@ -5900,8 +5921,12 @@ public class MonitoraggioHelper implements Serializable {
                     + "AND ses.cdKeyDocVers = u.monVLisDocNonVersIamId.cdKeyDocVers " + "AND ");
             if (StringUtils.isNotBlank(filtri.getCodiceErrore())) {
                 queryStr.append("err.cdErr = :codErr");
-            } else if (StringUtils.isNotBlank(filtri.getClasseErrore())
-                    || StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
+            } else if (StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
+                queryStr.append("EXISTS (SELECT decErr.idErrSacer FROM DecErrSacer decErr "
+                        + "JOIN decErr.decErrSacerDett dett "
+                        + "WHERE decErr.cdErr = err.cdErr "
+                        + "AND dett.cdSottoclasse = :sottoClasseErrore)");
+            } else if (StringUtils.isNotBlank(filtri.getClasseErrore())) {
                 queryStr.append("err.cdErr like :codErr");
             }
             queryStr.append(" )");
@@ -5960,7 +5985,7 @@ public class MonitoraggioHelper implements Serializable {
         if (StringUtils.isNotBlank(filtri.getCodiceErrore())) {
             query.setParameter("codErr", filtri.getCodiceErrore());
         } else if (StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
-            query.setParameter("codErr", filtri.getSottoClasseErrore() + "%");
+            query.setParameter("sottoClasseErrore", filtri.getSottoClasseErrore());
         } else if (StringUtils.isNotBlank(filtri.getClasseErrore())) {
             query.setParameter("codErr", filtri.getClasseErrore() + "%");
         }

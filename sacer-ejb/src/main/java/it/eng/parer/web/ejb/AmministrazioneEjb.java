@@ -16,7 +16,9 @@ package it.eng.parer.web.ejb;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -37,6 +41,9 @@ import it.eng.parer.entity.AplParamApplic;
 import it.eng.parer.entity.AplValParamApplicMulti;
 import it.eng.parer.entity.AplValoreParamApplic;
 import it.eng.parer.entity.DecAaTipoFascicolo;
+import it.eng.parer.entity.DecClasseErrSacer;
+import it.eng.parer.entity.DecErrSacer;
+import it.eng.parer.entity.DecErrSacerDett;
 import it.eng.parer.entity.DecTipoUnitaDoc;
 import it.eng.parer.entity.OrgAmbiente;
 import it.eng.parer.entity.OrgStrut;
@@ -58,6 +65,7 @@ import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
+import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 
 /**
  *
@@ -66,6 +74,11 @@ import it.eng.spagoLite.db.base.table.BaseTable;
 @Stateless(mappedName = "AmministrazioneEjb")
 @LocalBean
 public class AmministrazioneEjb {
+
+    private static final Pattern JAVA_UNICODE_ESCAPE_PATTERN = Pattern
+            .compile("\\\\u([0-9a-fA-F]{4})");
+    private static final Pattern HTML_DECIMAL_ENTITY_PATTERN = Pattern.compile("&#(\\d+);");
+    private static final Pattern HTML_HEX_ENTITY_PATTERN = Pattern.compile("&#x([0-9a-fA-F]+);");
 
     @EJB
     private AmministrazioneHelper amministrazioneHelper;
@@ -168,6 +181,196 @@ public class AmministrazioneEjb {
             logger.error(e.getMessage(), e);
             return null;
         }
+    }
+
+    public DecodeMap getCdClasseErrSacerDecodeMap() {
+        BaseTable table = new BaseTable();
+        List<DecClasseErrSacer> classiErrore = amministrazioneHelper.getDecClasseErrSacerList();
+        for (DecClasseErrSacer classeErrore : classiErrore) {
+            BaseRow row = new BaseRow();
+            row.setString("cd_classe_err_sacer", classeErrore.getCdClasseErrSacer());
+            row.setString("ds_classe_err_sacer", classeErrore.getCdClasseErrSacer() + " - "
+                    + classeErrore.getDsClasseErrSacer());
+            table.add(row);
+        }
+        return DecodeMap.Factory.newInstance(table, "cd_classe_err_sacer", "ds_classe_err_sacer");
+    }
+
+    public DecodeMap getErrSacerDecodeMap() {
+        BaseTable table = new BaseTable();
+        List<DecErrSacer> errori = amministrazioneHelper.getDecErrSacerList(null);
+        for (DecErrSacer errore : errori) {
+            BaseRow row = new BaseRow();
+            row.setBigDecimal("id_err_sacer", BigDecimal.valueOf(errore.getIdErrSacer()));
+            row.setString("ds_err_sacer_combo", errore.getCdErr());
+            table.add(row);
+        }
+        return DecodeMap.Factory.newInstance(table, "id_err_sacer", "ds_err_sacer_combo");
+    }
+
+    public BaseTable getGestioneErroriTableBean(String cdClasseErrSacer) {
+        BaseTable table = new BaseTable();
+        List<DecErrSacer> errori = amministrazioneHelper.getDecErrSacerList(cdClasseErrSacer);
+        for (DecErrSacer errore : errori) {
+            BaseRowInterface row = new BaseRow();
+            row.setBigDecimal("id_err_sacer", BigDecimal.valueOf(errore.getIdErrSacer()));
+            row.setString("cd_err", errore.getCdErr());
+            row.setString("ds_err_filtro", decodeEscapedText(errore.getDsErrFiltro()));
+            DecErrSacerDett dettaglio = errore.getDecErrSacerDett();
+            row.setString("casistica",
+                    dettaglio != null ? decodeEscapedText(dettaglio.getDsCasistica()) : null);
+            row.setString("soluzione_sugg",
+                    dettaglio != null ? decodeEscapedText(dettaglio.getDsSoluzioneSugg()) : null);
+            row.setString("deprecato",
+                    dettaglio != null && dettaglio.getFlDeprecato() != null
+                            ? dettaglio.getFlDeprecato()
+                            : "0");
+            row.setString("pubblico",
+                    dettaglio != null && dettaglio.getFlPubblico() != null
+                            ? dettaglio.getFlPubblico()
+                            : "0");
+            table.add(row);
+        }
+        return table;
+    }
+
+    public BaseRow getGestioneErroreRowBean(BigDecimal idErrSacer) {
+        DecErrSacer errore = amministrazioneHelper.getDecErrSacer(idErrSacer.longValue());
+        if (errore == null) {
+            return null;
+        }
+
+        BaseRow row = new BaseRow();
+        row.setBigDecimal("id_err_sacer", BigDecimal.valueOf(errore.getIdErrSacer()));
+        row.setString("cd_classe_err_sacer", errore.getDecClasseErrSacer().getCdClasseErrSacer());
+        row.setString("cd_err", errore.getCdErr());
+        row.setString("ds_err", decodeEscapedText(errore.getDsErr()));
+        row.setString("ds_err_filtro", decodeEscapedText(errore.getDsErrFiltro()));
+        row.setString("ti_err_sacer", errore.getTiErrSacer());
+
+        DecErrSacerDett dettaglio = errore.getDecErrSacerDett();
+        if (dettaglio != null) {
+            row.setString("sottoclasse", dettaglio.getCdSottoclasse());
+            row.setString("casistica", dettaglio.getDsCasistica());
+            row.setString("soluzione_sugg", dettaglio.getDsSoluzioneSugg());
+            row.setString("vers_inizio_val", dettaglio.getDtVersInizioVal());
+            row.setString("vers_fine_val", dettaglio.getDtVersFineVal());
+            row.setString("deprecato",
+                    dettaglio.getFlDeprecato() != null ? dettaglio.getFlDeprecato() : "0");
+            row.setString("pubblico",
+                    dettaglio.getFlPubblico() != null ? dettaglio.getFlPubblico() : "0");
+        } else {
+            row.setString("deprecato", "0");
+            row.setString("pubblico", "0");
+        }
+        return row;
+    }
+
+    public BaseRow saveGestioneErroreDettaglio(BigDecimal originalIdErrSacer,
+            BigDecimal selectedIdErrSacer, String sottoclasse, String casistica,
+            String soluzioneSugg, String versInizioVal, String versFineVal, String deprecato,
+            String pubblico, boolean insertMode) throws ParerUserError {
+        if (selectedIdErrSacer == null) {
+            throw new ParerUserError("Selezionare l'errore SACER da associare al dettaglio");
+        }
+
+        DecErrSacer selectedErrore = amministrazioneHelper
+                .getDecErrSacer(selectedIdErrSacer.longValue());
+        if (selectedErrore == null) {
+            throw new ParerUserError("Errore SACER selezionato non trovato");
+        }
+
+        DecErrSacerDett dettaglio;
+        boolean newRow = false;
+        if (insertMode) {
+            if (selectedErrore.getDecErrSacerDett() != null) {
+                throw new ParerUserError(
+                        "Esiste gi\u00e0 un dettaglio per l'errore SACER selezionato");
+            }
+            dettaglio = new DecErrSacerDett();
+            newRow = true;
+        } else {
+            if (originalIdErrSacer == null) {
+                throw new ParerUserError("Errore SACER originale non disponibile");
+            }
+            DecErrSacer originalErrore = amministrazioneHelper
+                    .getDecErrSacer(originalIdErrSacer.longValue());
+            if (originalErrore == null) {
+                throw new ParerUserError("Errore SACER originale non trovato");
+            }
+            dettaglio = originalErrore.getDecErrSacerDett();
+            if (dettaglio == null) {
+                dettaglio = new DecErrSacerDett();
+                newRow = true;
+            }
+            DecErrSacerDett selectedDettaglio = selectedErrore.getDecErrSacerDett();
+            if (selectedDettaglio != null && !selectedIdErrSacer.equals(originalIdErrSacer)) {
+                throw new ParerUserError(
+                        "Esiste gi\u00e0 un dettaglio per l'errore SACER selezionato");
+            }
+        }
+
+        dettaglio.setDecErrSacer(selectedErrore);
+        dettaglio.setCdSottoclasse(sottoclasse);
+        dettaglio.setDsCasistica(casistica);
+        dettaglio.setDsSoluzioneSugg(soluzioneSugg);
+        dettaglio.setDtVersInizioVal(versInizioVal);
+        dettaglio.setDtVersFineVal(versFineVal);
+        dettaglio.setFlDeprecato(normalizeFlag(deprecato));
+        dettaglio.setFlPubblico(normalizeFlag(pubblico));
+
+        if (newRow) {
+            amministrazioneHelper.getEntityManager().persist(dettaglio);
+        }
+        amministrazioneHelper.getEntityManager().flush();
+        return getGestioneErroreRowBean(selectedIdErrSacer);
+    }
+
+    public boolean deleteGestioneErroreDettaglio(BigDecimal idErrSacer) {
+        if (idErrSacer == null) {
+            return false;
+        }
+
+        DecErrSacer errore = amministrazioneHelper.getDecErrSacer(idErrSacer.longValue());
+        if (errore == null || errore.getDecErrSacerDett() == null) {
+            return false;
+        }
+
+        amministrazioneHelper.getEntityManager().remove(errore.getDecErrSacerDett());
+        amministrazioneHelper.getEntityManager().flush();
+        return true;
+    }
+
+    private String decodeEscapedText(String value) {
+        if (value == null || value.isEmpty()) {
+            return value;
+        }
+
+        String decoded = decodePattern(value, JAVA_UNICODE_ESCAPE_PATTERN, 16);
+        decoded = decodePattern(decoded, HTML_HEX_ENTITY_PATTERN, 16);
+        decoded = decodePattern(decoded, HTML_DECIMAL_ENTITY_PATTERN, 10);
+        decoded = decoded.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">")
+                .replace("&quot;", "\"").replace("&#39;", "'");
+        return decoded;
+    }
+
+    private String decodePattern(String value, Pattern pattern, int radix) {
+        Matcher matcher = pattern.matcher(value);
+        StringBuffer buffer = new StringBuffer();
+        while (matcher.find()) {
+            int codePoint = Integer.parseInt(matcher.group(1), radix);
+            matcher.appendReplacement(buffer,
+                    Matcher.quoteReplacement(new String(Character.toChars(codePoint))));
+        }
+        matcher.appendTail(buffer);
+        return buffer.toString();
+    }
+
+    private String normalizeFlag(String flag) {
+        if (flag == null || flag.trim().isEmpty()) {
+            return "0";
+        }
+        return flag.trim();
     }
 
     /**

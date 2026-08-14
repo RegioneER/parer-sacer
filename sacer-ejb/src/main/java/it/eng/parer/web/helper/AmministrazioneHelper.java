@@ -29,6 +29,9 @@ import org.slf4j.LoggerFactory;
 import it.eng.parer.entity.AplParamApplic;
 import it.eng.parer.entity.AplValParamApplicMulti;
 import it.eng.parer.entity.AplValoreParamApplic;
+import it.eng.parer.entity.DecClasseErrSacer;
+import it.eng.parer.entity.DecErrSacer;
+import it.eng.parer.entity.DecErrSacerDett;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
@@ -109,6 +112,48 @@ public class AmministrazioneHelper extends GenericHelper {
             log.error(e.getMessage(), e);
         }
         return tb;
+    }
+
+    public List<DecClasseErrSacer> getDecClasseErrSacerList() {
+        Query q = getEntityManager().createQuery(
+                "SELECT classe FROM DecClasseErrSacer classe ORDER BY classe.cdClasseErrSacer",
+                DecClasseErrSacer.class);
+        return q.getResultList();
+    }
+
+    public List<DecErrSacer> getDecErrSacerList(String cdClasseErrSacer) {
+        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT err FROM DecErrSacer err "
+                + "JOIN FETCH err.decClasseErrSacer classe "
+                + "LEFT JOIN FETCH err.decErrSacerDett dett ");
+        String whereWord = " WHERE ";
+        if (cdClasseErrSacer != null) {
+            queryStr.append(whereWord)
+                    .append("UPPER(classe.cdClasseErrSacer) = :cdClasseErrSacer ");
+        }
+        queryStr.append("ORDER BY classe.cdClasseErrSacer, err.cdErr ");
+
+        Query q = getEntityManager().createQuery(queryStr.toString());
+        if (cdClasseErrSacer != null) {
+            q.setParameter("cdClasseErrSacer", cdClasseErrSacer.toUpperCase());
+        }
+        return q.getResultList();
+    }
+
+    public DecErrSacer getDecErrSacer(Long idErrSacer) {
+        Query q = getEntityManager().createQuery(
+                "SELECT err FROM DecErrSacer err " + "JOIN FETCH err.decClasseErrSacer classe "
+                        + "LEFT JOIN FETCH err.decErrSacerDett dett "
+                        + "WHERE err.idErrSacer = :idErrSacer ");
+        q.setParameter("idErrSacer", idErrSacer);
+        List<DecErrSacer> result = q.getResultList();
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result.get(0);
+    }
+
+    public DecErrSacerDett getDecErrSacerDett(Long idErrSacerDett) {
+        return findById(DecErrSacerDett.class, idErrSacerDett);
     }
 
     /**

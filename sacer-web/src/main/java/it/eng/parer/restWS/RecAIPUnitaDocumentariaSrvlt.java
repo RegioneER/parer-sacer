@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletConfig;
@@ -57,6 +58,7 @@ import it.eng.parer.ws.recupero.dto.RecuperoExt;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
 import it.eng.parer.ws.recupero.dto.WSDescRecAipUnitaDoc;
 import it.eng.parer.ws.recupero.ejb.RecuperoSync;
+import it.eng.parer.ws.recupero.ejb.RecuperoZipGen;
 import it.eng.parer.ws.utils.AvanzamentoWs;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
@@ -125,6 +127,10 @@ public class RecAIPUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
         AvanzamentoWs tmpAvanzamento;
         RequestPrsr myRequestPrsr = new RequestPrsr();
         RequestPrsr.ReqPrsrConfig tmpPrsrConfig = new RequestPrsr().new ReqPrsrConfig();
+        // valorizzato a true quando la generazione+invio è avvenuta in streaming diretto sulla
+        // response (vedi sotto): in tal caso il blocco "rispondi" più sotto va saltato perché la
+        // response è già stata scritta (in tutto o in parte).
+        boolean responseGiaInviata = false;
 
         rispostaWs = new RispostaWSRecupero();
         myRecuperoExt = new RecuperoExt();
@@ -273,7 +279,22 @@ public class RecAIPUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
                         // tmpAvanzamento.setFase("generazione xml").
                         // logAvanzamento();
                         //
-                        recuperoSync.recuperaOggetto(rispostaWs, myRecuperoExt, uploadDir);
+                        // Collassa generazione + invio in un'unica fase: lo zip viene scritto
+                        // direttamente sullo stream della response, senza passare da un file
+                        // temporaneo su disco. Il Content-Length non viene impostato (la
+                        // dimensione non è nota a priori): il container userà il transfer
+                        // chunked previsto da HTTP/1.1.
+                        final AtomicBoolean headersInviati = new AtomicBoolean(false);
+                        RecuperoZipGen.HeaderCallback headerCallback = (contentType, fileName) -> {
+                            headersInviati.set(true);
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.setContentType(contentType);
+                            response.setHeader("Content-Disposition",
+                                    "attachment; filename=\"" + fileName + "\"");
+                        };
+                        recuperoSync.recuperaOggettoStream(rispostaWs, myRecuperoExt,
+                                response.getOutputStream(), headerCallback);
+                        responseGiaInviata = headersInviati.get();
                     }
 
                     myEsito = rispostaWs.getIstanzaEsito();
@@ -313,6 +334,15 @@ public class RecAIPUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
         // rispondi
         tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.InvioRisposta).setFase("")
                 .logAvanzamento();
+
+        if (responseGiaInviata) {
+            // La generazione+invio è già avvenuta in streaming diretto sulla response (vedi sopra):
+            // gli header sono già stati (parzialmente o totalmente) inviati al client, quindi non è
+            // più possibile fare response.reset()/scrivere un'eventuale risposta di errore.
+            tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Fine).setFase("")
+                    .logAvanzamento();
+            return;
+        }
 
         response.reset();
         response.setStatus(HttpServletResponse.SC_OK);

@@ -267,8 +267,7 @@ public class UnitaDocumentarieValidator extends TypeValidator {
     }
 
     public Object[] validaChiaviUnitaDocRicUdDatiSpec(String[] registro, BigDecimal anno,
-            String numero, BigDecimal annoDa, BigDecimal annoA, String numeroDa,
-            String numeroA) {
+            String numero, BigDecimal annoDa, BigDecimal annoA, String numeroDa, String numeroA) {
         if (anno == null && annoDa == null && annoA == null) {
             getMessageBox().addMessage(new Message(Message.MessageLevel.ERR,
                     "Almeno uno dei filtri relativo all'anno o al range di anni di chiave unità documentaria deve essere valorizzato</br>"));

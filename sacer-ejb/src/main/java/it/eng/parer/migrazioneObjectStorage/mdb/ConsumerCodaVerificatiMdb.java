@@ -48,7 +48,7 @@ import it.eng.parer.entity.AroCompObjectStorage;
 import it.eng.parer.entity.DecBackend;
 import it.eng.parer.entity.OstMigrazFile;
 import it.eng.parer.migrazioneObjectStorage.helper.ConsumerCodaHelper;
-import it.eng.parer.objectstorage.helper.SalvataggioBackendHelper;
+import it.eng.parer.objectstorage.helper.BackendHelper;
 
 /**
  *
@@ -72,7 +72,7 @@ public class ConsumerCodaVerificatiMdb implements MessageListener {
     @EJB
     private ConsumerCodaHelper ccHelper;
     @EJB
-    private SalvataggioBackendHelper backendHelper;
+    private BackendHelper backendHelper;
 
     @Override
     public void onMessage(Message message) {

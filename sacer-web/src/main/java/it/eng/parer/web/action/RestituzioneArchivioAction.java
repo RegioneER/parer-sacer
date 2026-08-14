@@ -472,7 +472,6 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
             String messaggio2 = "Richiesta annullata - Il processo di conservazione delle unità documentarie presenti in archivio non è ancora completato in: <br>";
             boolean trovatoMsg1 = false;
             boolean trovatoMsg2 = false;
-
             for (AroVChkRaUd chk : chkRaUdViewList) {
                 OrgStrutRowBean strutRB = struttureEjb
                         .getOrgStrutRowBean(chk.getAroVChkRaUdId().getIdStrut());

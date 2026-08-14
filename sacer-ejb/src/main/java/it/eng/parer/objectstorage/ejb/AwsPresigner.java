@@ -16,12 +16,14 @@ package it.eng.parer.objectstorage.ejb;
 import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.Singleton;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -52,11 +54,12 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
  * @author Snidero_L
  */
 @Singleton
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class AwsPresigner {
 
     private Logger log = LoggerFactory.getLogger(AwsPresigner.class);
 
-    private final Map<CacheKey, S3Presigner> presignerCache = new HashMap<>();
+    private final Map<CacheKey, S3Presigner> presignerCache = new ConcurrentHashMap<>();
 
     @EJB
     protected ConfigurationHelper configurationHelper;

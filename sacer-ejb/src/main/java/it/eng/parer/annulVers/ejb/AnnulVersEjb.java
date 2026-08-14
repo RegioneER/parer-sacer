@@ -1621,6 +1621,7 @@ public class AnnulVersEjb {
                 CostantiDB.TipoAnnullamentoUnitaDoc.ANNULLAMENTO.name(),
                 CostantiDB.StatoConservazioneUnitaDoc.ANNULLATA.name(),
                 richiestaAnnullamento.getNtRichAnnulVers());
+        helper.deleteUrnVerIndiceAipUdItem(idRichAnnulVers);
 
         // MEV #31162
         IamUser utente = helper.findById(IamUser.class, idUserIam);

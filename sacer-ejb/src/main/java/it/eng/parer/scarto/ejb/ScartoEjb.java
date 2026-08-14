@@ -387,8 +387,7 @@ public class ScartoEjb {
             try {
                 tiAut = CostantiDB.TiAutorizzazionePropScartoVers.valueOf(tiAutorizzazione);
             } catch (IllegalArgumentException ex) {
-                throw new ParerUserError(
-                        "Tipo autorizzazione non valido: " + tiAutorizzazione);
+                throw new ParerUserError("Tipo autorizzazione non valido: " + tiAutorizzazione);
             }
 
             // Per autorizzazione COMPLETA, pre-verifica unicità del codice richiesta PRIMA del
@@ -458,8 +457,7 @@ public class ScartoEjb {
                         Calendar.getInstance().getTime(), idUserIam);
             }
 
-            logger.info(
-                    "Proposta Scarto ID: {} autorizzazione {} registrata dall'utente ID: {}",
+            logger.info("Proposta Scarto ID: {} autorizzazione {} registrata dall'utente ID: {}",
                     idPropScartoVers, tiAut.name(), idUserIam);
         } catch (ParerUserError ex) {
             throw ex;
@@ -537,8 +535,8 @@ public class ScartoEjb {
             nuovoStato.setAroPropScartoVers(proposta);
             nuovoStato.setPgStatoPropScartoVers(
                     statoCorrente.getPgStatoPropScartoVers().add(BigDecimal.ONE));
-            nuovoStato.setTiStatoPropScartoVers(
-                    CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name());
+            nuovoStato
+                    .setTiStatoPropScartoVers(CostantiDB.TiStatoPropScartoVers.AUTORIZZATA.name());
             nuovoStato.setDtRegStatoPropScartoVers(Calendar.getInstance().getTime());
             nuovoStato.setDsNotaPropScartoVers(
                     "Revisione completata: proposta autorizzata dopo rimozione UD non autorizzate");
@@ -1437,16 +1435,13 @@ public class ScartoEjb {
 
         // Stato iniziale CHIUSA: la richiesta è pronta per l'elaborazione del job
         AroStatoRichScartoVers statoRich = context.getBusinessObject(ScartoEjb.class)
-                .createAroStatoRichScartoVers(rich,
-                        CostantiDB.StatoRichScartoVers.CHIUSA.name(), now,
-                        "Creata automaticamente da proposta di scarto " + cdRichScartoVers,
+                .createAroStatoRichScartoVers(rich, CostantiDB.StatoRichScartoVers.CHIUSA.name(),
+                        now, "Creata automaticamente da proposta di scarto " + cdRichScartoVers,
                         utente);
         helper.insertEntity(statoRich, true);
-        rich.setIdStatoRichScartoVersCor(
-                new BigDecimal(statoRich.getIdStatoRichScartoVers()));
+        rich.setIdStatoRichScartoVersCor(new BigDecimal(statoRich.getIdStatoRichScartoVers()));
 
-        logger.info(
-                "Richiesta di scarto {} creata automaticamente dalla proposta ID: {}",
+        logger.info("Richiesta di scarto {} creata automaticamente dalla proposta ID: {}",
                 cdRichScartoVers, proposta.getIdPropScartoVers());
         return rich.getIdRichScartoVers();
     }

@@ -208,7 +208,7 @@ public class DecAaTipoFascicolo implements Serializable {
 
     @OneToMany(mappedBy = "decAaTipoFascicolo", cascade = {
             CascadeType.PERSIST, CascadeType.REMOVE })
-
+    @XmlTransient
     public List<DecUsoModelloXsdFasc> getDecUsoModelloXsdFascs() {
         return this.decUsoModelloXsdFascs;
     }

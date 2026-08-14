@@ -10,6 +10,7 @@
 
     <Section Description="" Legend="Fascicolo" LoadOpened="true" Name="FascicoloSection" ShowButton="false"/>
     <Section Description="" Legend="Procedimento amministrativo" LoadOpened="true" Name="ProcedimentoSection" ShowButton="false" BorderHidden="true"/>
+    <Section Description="" Legend="Soggetto coinvolto" LoadOpened="true" Name="SoggettiRicercaSection" ShowButton="false" BorderHidden="true"/>
     <Section Description="" Legend="Profilo archivistico" LoadOpened="true" Name="ProfiloArchivisticoSection" ShowButton="false"/>
     <Section Description="" Legend="Fascicolo di appartenenza" LoadOpened="true" Name="FascicoloAppartSection" ShowButton="false" BorderHidden="true"/>
     <Section Description="" Legend="Unità documentarie contenute nel fascicolo" LoadOpened="true" Name="UDContenuteNelFascSection" ShowButton="false"/>
@@ -72,6 +73,12 @@
         <ComboBox Description="Stato generazione indice AIP" Name="ti_stato_fasc_elenco_vers" Type="STRING"/>
         <ComboBox Name="fl_upd_annul_unita_doc" Description="Presenza UD annullate" Type="STRING" />
         <ComboBox Name="fl_upd_modif_unita_doc" Description="Presenza UD aggiornate" Type="STRING" />
+        <!-- Soggetto coinvolto: persona giuridica -->
+        <Input Description="Denominazione" Name="ds_denom_sog" Type="STRING"/>
+        <!-- Soggetto coinvolto: persona fisica -->
+        <Input Description="Cognome" Name="nm_cogn_sog" Type="STRING"/>
+        <Input Description="Nome" Name="nm_nome_sog" Type="STRING"/>
+        <Input Description="Ruolo" Name="ti_rapp" Type="STRING"/>
         <Button Name="ricercaFascicoli" Description="Ricerca fascicoli" Type="STRING"/>
         <Button Name="pulisciFascicoli" Description="Pulisci ricerca" Type="STRING"/>
     </Fields>

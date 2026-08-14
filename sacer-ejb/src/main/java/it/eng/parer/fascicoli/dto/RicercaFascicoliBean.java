@@ -77,6 +77,13 @@ public class RicercaFascicoliBean {
     private String fl_upd_annul_unita_doc;
     private String fl_upd_modif_unita_doc;
 
+    // Soggetto coinvolto: persona giuridica
+    private String ds_denom_sog;
+    // Soggetto coinvolto: persona fisica
+    private String nm_cogn_sog;
+    private String nm_nome_sog;
+    private String ti_rapp;
+
     public RicercaFascicoliBean() {
     }
 
@@ -470,5 +477,37 @@ public class RicercaFascicoliBean {
 
     public void setFlUpdModifUnitaDoc(String fl_upd_modif_unita_doc) {
         this.fl_upd_modif_unita_doc = fl_upd_modif_unita_doc;
+    }
+
+    public String getDs_denom_sog() {
+        return ds_denom_sog;
+    }
+
+    public void setDs_denom_sog(String ds_denom_sog) {
+        this.ds_denom_sog = ds_denom_sog;
+    }
+
+    public String getNm_cogn_sog() {
+        return nm_cogn_sog;
+    }
+
+    public void setNm_cogn_sog(String nm_cogn_sog) {
+        this.nm_cogn_sog = nm_cogn_sog;
+    }
+
+    public String getNm_nome_sog() {
+        return nm_nome_sog;
+    }
+
+    public void setNm_nome_sog(String nm_nome_sog) {
+        this.nm_nome_sog = nm_nome_sog;
+    }
+
+    public String getTi_rapp() {
+        return ti_rapp;
+    }
+
+    public void setTi_rapp(String ti_rapp) {
+        this.ti_rapp = ti_rapp;
     }
 }

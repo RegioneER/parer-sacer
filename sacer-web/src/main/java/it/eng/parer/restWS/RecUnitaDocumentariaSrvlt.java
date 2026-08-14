@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -57,6 +58,7 @@ import it.eng.parer.ws.recupero.dto.RecuperoExt;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
 import it.eng.parer.ws.recupero.dto.WSDescRecUnitaDoc;
 import it.eng.parer.ws.recupero.ejb.RecuperoSync;
+import it.eng.parer.ws.recupero.ejb.RecuperoZipGen;
 import it.eng.parer.ws.utils.AvanzamentoWs;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.versamento.dto.SyncFakeSessn;
@@ -121,6 +123,15 @@ public class RecUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
         AvanzamentoWs tmpAvanzamento;
         RequestPrsr myRequestPrsr = new RequestPrsr();
         RequestPrsr.ReqPrsrConfig tmpPrsrConfig = new RequestPrsr().new ReqPrsrConfig();
+        // valorizzato a true quando la generazione+invio è avvenuta in streaming diretto sulla
+        // response (vedi sotto): in tal caso il blocco "rispondi" più sotto va saltato perché la
+        // response è già stata scritta (in tutto o in parte).
+        boolean responseGiaInviata = false;
+        // esito del ramo "FileUnzippato" (false se non applicabile, cioè richiesta di zip
+        // completo, oppure fast-path riuscito o errore): true se si è ripiegato sul comportamento
+        // storico a file temporaneo, usato più sotto per instradare esplicitamente il blocco
+        // "rispondi" invece di dedurre il fallback da severity+responseGiaInviata.
+        boolean fallbackFileUnzippato = false;
 
         rispostaWs = new RispostaWSRecupero();
         myRecuperoExt = new RecuperoExt();
@@ -250,13 +261,56 @@ public class RecUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
                                 myRecuperoExt);
                     }
 
-                    // prepara risposta
+                    // prepara e invia risposta
                     myEsito = rispostaWs.getIstanzaEsito();
                     if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-                        // tmpAvanzamento.setFase("generazione xml").
-                        // logAvanzamento();
-                        //
-                        recuperoSync.recuperaOggetto(rispostaWs, myRecuperoExt, uploadDir);
+                        // MEV performance: il ramo "FileUnzippato" (estrazione di un singolo
+                        // componente non compresso) richiede di conoscere il numero di entry
+                        // finali dello zip. Quando è possibile stabilirlo a costo pressoché nullo
+                        // (query di conteggio, senza toccare i blob) che sarà prodotto esattamente
+                        // 1 componente, lo si streamma direttamente sulla response, senza file
+                        // temporaneo né contenitore zip; negli altri casi (minoritari) si ripiega
+                        // sul comportamento storico basato su file temporaneo (vedi blocco
+                        // "rispondi" più sotto, che gestisce anche l'ispezione post-generazione
+                        // del file temporaneo prodotto in questo caso).
+                        boolean fileUnzippatoRichiesto = myRecuperoExt.getStrutturaRecupero()
+                                .getParametri() != null
+                                && Boolean.TRUE.equals(myRecuperoExt.getStrutturaRecupero()
+                                        .getParametri().isFileUnzippato());
+
+                        if (fileUnzippatoRichiesto) {
+                            final AtomicBoolean headersInviati = new AtomicBoolean(false);
+                            RecuperoZipGen.HeaderCallback headerCallback = (contentType,
+                                    fileName) -> {
+                                headersInviati.set(true);
+                                response.setStatus(HttpServletResponse.SC_OK);
+                                response.setContentType(contentType);
+                                response.setHeader("Content-Disposition",
+                                        "attachment; filename=\"" + fileName + "\"");
+                            };
+                            fallbackFileUnzippato = recuperoSync.recuperaOggettoFileUnzippato(
+                                    rispostaWs, myRecuperoExt, uploadDir,
+                                    response.getOutputStream(), headerCallback);
+                            responseGiaInviata = headersInviati.get();
+                        } else {
+                            // Collassa generazione + invio in un'unica fase: lo zip viene scritto
+                            // direttamente sullo stream della response, senza passare da un file
+                            // temporaneo su disco. Il Content-Length non viene impostato (la
+                            // dimensione non è nota a priori): il container userà il transfer
+                            // chunked previsto da HTTP/1.1.
+                            final AtomicBoolean headersInviati = new AtomicBoolean(false);
+                            RecuperoZipGen.HeaderCallback headerCallback = (contentType,
+                                    fileName) -> {
+                                headersInviati.set(true);
+                                response.setStatus(HttpServletResponse.SC_OK);
+                                response.setContentType(contentType);
+                                response.setHeader("Content-Disposition",
+                                        "attachment; filename=\"" + fileName + "\"");
+                            };
+                            recuperoSync.recuperaOggettoStream(rispostaWs, myRecuperoExt,
+                                    response.getOutputStream(), headerCallback);
+                            responseGiaInviata = headersInviati.get();
+                        }
                     }
 
                     myEsito = rispostaWs.getIstanzaEsito();
@@ -295,12 +349,20 @@ public class RecUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
         tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.InvioRisposta).setFase("")
                 .logAvanzamento();
 
+        if (responseGiaInviata) {
+            // La generazione+invio è già avvenuta in streaming diretto sulla response (vedi sopra):
+            // gli header sono già stati (parzialmente o totalmente) inviati al client, quindi non è
+            // più possibile fare response.reset()/scrivere un'eventuale risposta di errore.
+            tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Fine).setFase("")
+                    .logAvanzamento();
+            return;
+        }
+
         response.reset();
         response.setStatus(HttpServletResponse.SC_OK);
 
         try {
             if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-                String filename = rispostaWs.getNomeFile();
                 // MEV#38961 - Recupero componente unzippato
                 // Se si è chiesto di unzippare l'unico file richiesto (deve essere stato passato
                 // l'ID
@@ -309,10 +371,16 @@ public class RecUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
                 // interno
                 // e strimmato quello sull'output della servlet con contenuto generico
                 // octet/stream
-                if (myRecuperoExt.getStrutturaRecupero().getParametri() != null
-                        && myRecuperoExt.getStrutturaRecupero().getParametri()
-                                .isFileUnzippato() != null
-                        && myRecuperoExt.getStrutturaRecupero().getParametri().isFileUnzippato()) {
+                // NB: si arriva qui solo se il fast-path di streaming diretto NON ha già inviato
+                // la response (responseGiaInviata=false): per il ramo FileUnzippato questo
+                // corrisponde esattamente al caso di fallback (file accessori presenti, oppure
+                // singolo componente proveniente solo da recupero DIP), che ha comunque prodotto
+                // lo zip temporaneo storico da ispezionare/estrarre qui sotto. Il caso "zip
+                // completo" (fileUnzippatoRichiesto=false) non arriva mai qui con severity=OK,
+                // perché in quel ramo la response viene sempre già inviata in streaming diretto
+                // (vedi sopra): fallbackFileUnzippato=false in questo punto sarebbe quindi uno
+                // stato incoerente/imprevisto, gestito difensivamente sotto.
+                if (fallbackFileUnzippato) {
                     File zipFile = rispostaWs.getRifFileBinario().getFileSuDisco();
                     try (ServletOutputStream out = response.getOutputStream();
                             ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
@@ -393,24 +461,26 @@ public class RecUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
                     } // fine try with resources
 
                 } else {
-                    // Vecchio ramo che strimma lo zip sulla servlet outpiut...
-                    response.setContentType("application/zip");
-                    response.setHeader("Content-Disposition", "attachment; filename=\"" + filename);
-
+                    // Stato incoerente/imprevisto: con le logiche attuali non dovrebbe mai
+                    // verificarsi (vedi commento sopra), ma viene gestito esplicitamente invece di
+                    // eseguire silenziosamente il vecchio codice "zip completo da file temporaneo"
+                    // (che qui presupporrebbe un file temporaneo in realtà mai generato in questo
+                    // flusso, con conseguente NullPointerException su getRifFileBinario()).
+                    log.error(
+                            "Stato incoerente nella servlet recupero sync: severity OK, response non "
+                                    + "ancora inviata, ma nessun fallback su file temporaneo registrato");
+                    rispostaWs.setSeverity(SeverityEnum.ERROR);
+                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                            "Errore interno: stato di generazione risposta incoerente.");
+                    response.setContentType("application/xml; charset=\"utf-8\"");
                     try (ServletOutputStream out = response.getOutputStream();
-                            FileInputStream inputStream = new FileInputStream(
-                                    rispostaWs.getRifFileBinario().getFileSuDisco());) {
-
-                        response.setHeader("Content-Length", String
-                                .valueOf(rispostaWs.getRifFileBinario().getFileSuDisco().length()));
-
-                        byte[] buffer = new byte[BUFFERSIZE];
-                        int bytesRead;
-                        while ((bytesRead = inputStream.read(buffer)) != -1) {
-                            out.write(buffer, 0, bytesRead);
-                        }
-                        out.flush();
-                    } catch (IOException e) {
+                            OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out,
+                                    StandardCharsets.UTF_8)) {
+                        Marshaller marshaller = xmlContextCache
+                                .getVersRespStatoCtx_StatoConservazione().createMarshaller();
+                        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+                        marshaller.marshal(rispostaWs.getIstanzaEsito(), tmpStreamWriter);
+                    } catch (JAXBException | IOException e) {
                         log.error("Eccezione nella servlet recupero sync", e);
                     }
                 }
@@ -436,11 +506,9 @@ public class RecUnitaDocumentariaSrvlt extends KeycloakAuthorizationServlet {
             if (rispostaWs.getRifFileBinario() != null
                     && rispostaWs.getRifFileBinario().getFileSuDisco() != null) {
                 File zipDaEliminare = rispostaWs.getRifFileBinario().getFileSuDisco();
-                if (zipDaEliminare != null) {
+                if (zipDaEliminare != null && !zipDaEliminare.delete() && zipDaEliminare.exists()) {
                     log.info("CANCELLAZIONE FILE lato servlet: {}",
                             zipDaEliminare.getAbsolutePath());
-                }
-                if (!zipDaEliminare.delete() && zipDaEliminare.exists()) {
                     log.warn("Impossibile eliminare il file zip temporaneo: {}",
                             zipDaEliminare.getAbsolutePath());
                 }

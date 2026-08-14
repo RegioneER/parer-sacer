@@ -35,7 +35,7 @@ import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.migrazioneObjectStorage.helper.VerificaMigrazioneSubPartizioniHelper;
-import it.eng.parer.migrazioneObjectStorage.utils.MsgUtil;
+import it.eng.parer.web.ejb.CaricaErrori;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.ws.utils.CostantiDB;
 
@@ -59,6 +59,8 @@ public class VerificaMigrazioneSubPartizioneEjb {
     private ConfigurationHelper configurationHelper;
     @EJB
     private VerificaMigrazioneSubPartizioneEjb me;
+    @EJB(mappedName = "java:app/Parer-ejb/CaricaErrori")
+    private CaricaErrori caricaErrori;
 
     private String OST_004 = "OST-004";
     private String OST_005 = "OST-005";
@@ -92,7 +94,7 @@ public class VerificaMigrazioneSubPartizioneEjb {
             boolean nessunFileErroreResettabile = me.verificaSubPartizioniInErroreDiMigrazione();
 
             if (nessunFileErroreResettabile) {
-                errori.append(MsgUtil.getMessage(OST_004));
+                errori.append(caricaErrori.getMessage(OST_004));
             }
         } else {
             log.info(VerificaMigrazioneSubPartizioneEjb.class.getSimpleName()
@@ -108,7 +110,7 @@ public class VerificaMigrazioneSubPartizioneEjb {
         tiStato.add(it.eng.parer.entity.constraint.OstStatoMigrazSubPart.TiStato.TBS_NON_ELIMINABILE
                 .name());
         if (!vmspHelper.getOstMigrazSubPartList(tiStato, null).isEmpty()) {
-            errori.append(MsgUtil.getMessage(OST_005));
+            errori.append(caricaErrori.getMessage(OST_005));
         }
 
         /* Scrivo nel LogJob */

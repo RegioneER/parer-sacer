@@ -192,6 +192,11 @@ public class CostantiDB {
         //
         public static final String MAX_UD2PROC_RA = "MAX_UD2PROC_RA";
         public static final String NUM_MAX_FILE_FOLDER_RA = "NUM_MAX_FILE_FOLDER_RA";
+        // Numero massimo di gruppi per anno eseguibili in parallelo dentro la stessa richiesta RA.
+        public static final String MAX_PARALLEL_ANNI_RA = "MAX_PARALLEL_ANNI_RA";
+        // Numero massimo di richieste RA eseguibili in parallelo quando insistono su strutture
+        // diverse.
+        public static final String MAX_PARALLEL_RICHIESTE_RA = "MAX_PARALLEL_RICHIESTE_RA";
         //
         public static final String NUM_MAX_UD_IN_CODA_GENERA_AIP = "NUM_MAX_UD_IN_CODA_GENERA_AIP";
         //

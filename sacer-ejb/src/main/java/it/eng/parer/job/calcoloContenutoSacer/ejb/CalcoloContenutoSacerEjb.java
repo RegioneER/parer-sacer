@@ -64,11 +64,11 @@ public class CalcoloContenutoSacerEjb {
         /* Ciclo sui giorni eseguendo il calcolo per ogni giorno */
         while (!start.after(end)) {
             Date targetDay = start.getTime();
-            log.info("Calcolo Contenuto Sacer - Inserimento totali del giorno "
+            log.info("Calcolo Contenuto Sacer - Elaborazione atomica del giorno "
                     + formattaData.format(targetDay));
             try {
-                // Inserisco i totali
-                ccsHelper.insertTotaliPerGiorno(targetDay);
+                ccsHelper.elaboraGiornataContenutoSacer(targetDay);
+
             } catch (Exception ex) {
                 String errore = "Calcolo Contenuto Sacer - Errore durante il calcolo per il giorno: "
                         + formattaData.format(targetDay);

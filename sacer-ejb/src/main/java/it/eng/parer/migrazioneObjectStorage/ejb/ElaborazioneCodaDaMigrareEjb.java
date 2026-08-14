@@ -51,7 +51,6 @@ import it.eng.parer.entity.constraint.OrgPartition;
 import it.eng.parer.entity.constraint.OstStatoMigrazSubPart.TiStato;
 import it.eng.parer.migrazioneObjectStorage.helper.ConsumerCodaHelper;
 import it.eng.parer.migrazioneObjectStorage.helper.VerificaMigrazioneSubPartizioniHelper;
-import it.eng.parer.migrazioneObjectStorage.utils.MsgUtil;
 import it.eng.parer.util.Utils;
 import it.eng.parer.util.ejb.JmsProducerUtilEjb;
 import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
@@ -59,6 +58,7 @@ import it.eng.parer.viewEntity.OstVLisFileBlobBystrumese;
 import it.eng.parer.viewEntity.OstVLisStrutMmBlob;
 import it.eng.parer.viewEntity.OstVLisSubpartBlobByIstz;
 import it.eng.parer.viewEntity.OstVPayloadMigrazFileBlob;
+import it.eng.parer.web.ejb.CaricaErrori;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.ws.dto.CSChiave;
@@ -100,6 +100,8 @@ public class ElaborazioneCodaDaMigrareEjb {
     private ConsumerCodaHelper ccHelper;
     @EJB
     private UniformResourceNameUtilHelper calcoloURNHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/CaricaErrori")
+    private CaricaErrori caricaErrori;
 
     public void completaSubpartizioniBlob(int numeroJob) {
         List<OstMigrazSubPart> lista = verificaMigrazioneSubPartizioneHelper
@@ -652,7 +654,7 @@ public class ElaborazioneCodaDaMigrareEjb {
         migrazFileErr.setOstMigrazFile(migrazFile);
         migrazFileErr.setTsErr(new Date());
         migrazFileErr.setCdErr(OST_001);
-        migrazFileErr.setDsErr(MsgUtil.getMessage(OST_001));
+        migrazFileErr.setDsErr(caricaErrori.getMessage(OST_001));
         migrazFileErr.setTiErr("NORMALIZZAZIONE");
         verificaMigrazioneSubPartizioneHelper.insertEntity(migrazFileErr, true);
     }

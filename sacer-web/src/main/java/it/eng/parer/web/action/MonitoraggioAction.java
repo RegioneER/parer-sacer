@@ -7434,8 +7434,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     @Override
     public JSONObject triggerFiltriVersamentiSottoclasse_erroreOnTrigger() throws EMFError {
         getForm().getFiltriVersamenti().post(getRequest());
+        String classe = getForm().getFiltriVersamenti().getClasse_errore().parse();
         String sottoClasse = getForm().getFiltriVersamenti().getSottoclasse_errore().parse();
-        DecodeMap mappaCodice = caricaErrori.filtraCodice(sottoClasse);
+        DecodeMap mappaCodice = caricaErrori.filtraCodice(classe, sottoClasse);
         getForm().getFiltriVersamenti().getCodice_errore().setDecodeMap(mappaCodice);
         return getForm().getFiltriVersamenti().asJSON();
     }
@@ -7720,9 +7721,10 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     public JSONObject triggerFiltriUdDocDerivantiDaVersFallitiSottoclasse_erroreOnTrigger()
             throws EMFError {
         getForm().getFiltriUdDocDerivantiDaVersFalliti().post(getRequest());
+        String classe = getForm().getFiltriUdDocDerivantiDaVersFalliti().getClasse_errore().parse();
         String sottoClasse = getForm().getFiltriUdDocDerivantiDaVersFalliti()
                 .getSottoclasse_errore().parse();
-        DecodeMap mappaCodice = caricaErrori.filtraCodice(sottoClasse);
+        DecodeMap mappaCodice = caricaErrori.filtraCodice(classe, sottoClasse);
         getForm().getFiltriUdDocDerivantiDaVersFalliti().getCodice_errore()
                 .setDecodeMap(mappaCodice);
         return getForm().getFiltriUdDocDerivantiDaVersFalliti().asJSON();

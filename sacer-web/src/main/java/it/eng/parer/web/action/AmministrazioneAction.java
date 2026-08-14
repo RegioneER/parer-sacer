@@ -48,11 +48,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import javax.ejb.EJB;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -359,6 +361,8 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
             getForm().getDettaglioSistemaMigrazione().setStatus(Status.insert);
             getForm().getSistemiMigrazioneList().setStatus(Status.insert);
             forwardToPublisher(Application.Publisher.DETTAGLIO_SIS_MIGR);
+        } else if (getTableName().equals(getForm().getGestioneErroriList().getName())) {
+            insertGestioneErroriList();
         }
     }
 
@@ -379,6 +383,10 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                 AplSistemaMigrazRowBean currentRow = (AplSistemaMigrazRowBean) getForm()
                         .getSistemiMigrazioneList().getTable().getCurrentRow();
                 loadDettaglioSistemaMigrazione(currentRow.getIdSistemaMigraz());
+            } else if (getTableName().equals(getForm().getGestioneErroriList().getName())) {
+                BaseRowInterface currentRow = getForm().getGestioneErroriList().getTable()
+                        .getCurrentRow();
+                loadDettaglioGestioneErrore(currentRow.getBigDecimal("id_err_sacer"));
             }
         }
     }
@@ -467,6 +475,20 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         getForm().getDettaglioSistemaMigrazione().setViewMode();
     }
 
+    private void loadDettaglioGestioneErrore(BigDecimal idErrSacer) throws EMFError {
+        BaseRowInterface detailRow = amministrazioneEjb.getGestioneErroreRowBean(idErrSacer);
+        if (detailRow == null) {
+            getMessageBox().addWarning("Errore SACER non trovato");
+            return;
+        }
+        initGestioneErroreDetailCombo();
+        getForm().getDettaglioGestioneErrore().copyFromBean(detailRow);
+        getForm().getGestioneErroriList().setStatus(Status.view);
+        getForm().getDettaglioGestioneErrore().setStatus(Status.view);
+        getForm().getDettaglioGestioneErrore().setViewMode();
+        getForm().getDettaglioGestioneErrore().getId_err_sacer().setHidden(true);
+    }
+
     @Override
     public void undoDettaglio() throws EMFError {
         if (getLastPublisher().equals(Application.Publisher.CONFIGURATION_DETAIL)) {
@@ -480,6 +502,8 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                 loadDettaglioSistemaMigrazione(idSistemaMigraz);
             }
             forwardToPublisher(Application.Publisher.DETTAGLIO_SIS_MIGR);
+        } else if (getLastPublisher().equals(Application.Publisher.GESTIONE_ERRORI_DETAIL)) {
+            goBackTo(Application.Publisher.GESTIONE_ERRORI_RICERCA);
         } else {
             goBack();
         }
@@ -489,6 +513,11 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
     public void saveDettaglio() throws EMFError {
         if (getLastPublisher().equals(Application.Publisher.CONFIGURATION_DETAIL)) {
             saveConfigurationDettaglio();
+            return;
+        }
+
+        if (getLastPublisher().equals(Application.Publisher.GESTIONE_ERRORI_DETAIL)) {
+            saveGestioneErroreDettaglio();
             return;
         }
 
@@ -533,6 +562,79 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
 
         }
         forwardToPublisher(Application.Publisher.DETTAGLIO_SIS_MIGR);
+    }
+
+    private void saveGestioneErroreDettaglio() throws EMFError {
+        initGestioneErroreDetailCombo();
+
+        if (getForm().getDettaglioGestioneErrore().postAndValidate(getRequest(), getMessageBox())) {
+            try {
+                BigDecimal selectedIdErrSacer = getForm().getDettaglioGestioneErrore()
+                        .getId_err_sacer().parse();
+                String sottoclasse = getForm().getDettaglioGestioneErrore().getSottoclasse()
+                        .parse();
+                String casistica = getForm().getDettaglioGestioneErrore().getCasistica().parse();
+                String soluzioneSugg = getForm().getDettaglioGestioneErrore().getSoluzione_sugg()
+                        .parse();
+                String versInizioVal = getForm().getDettaglioGestioneErrore().getVers_inizio_val()
+                        .parse();
+                String versFineVal = getForm().getDettaglioGestioneErrore().getVers_fine_val()
+                        .parse();
+                String deprecato = getForm().getDettaglioGestioneErrore().getDeprecato().parse();
+                String pubblico = getForm().getDettaglioGestioneErrore().getPubblico().parse();
+                boolean insertMode = getForm().getGestioneErroriList().getStatus()
+                        .equals(Status.insert);
+                BigDecimal originalIdErrSacer = null;
+                if (!insertMode && getForm().getGestioneErroriList().getTable() != null
+                        && getForm().getGestioneErroriList().getTable().getCurrentRow() != null) {
+                    originalIdErrSacer = getForm().getGestioneErroriList().getTable()
+                            .getCurrentRow().getBigDecimal("id_err_sacer");
+                }
+
+                if (StringUtils.length(casistica) > 4000) {
+                    getMessageBox().addError(
+                            "Il campo Casistica non pu\u00f2 superare 4000 caratteri comprensivi dei tag di formattazione");
+                    getForm().getDettaglioGestioneErrore()
+                            .setStatus(getForm().getGestioneErroriList().getStatus());
+                    setGestioneErroreDetailEditMode();
+                    repopulateGestioneErroreDetailForm();
+                    forwardToPublisher(Application.Publisher.GESTIONE_ERRORI_DETAIL);
+                    return;
+                }
+
+                if (StringUtils.length(soluzioneSugg) > 4000) {
+                    getMessageBox().addError(
+                            "Il campo Soluzione suggerita non pu\u00f2 superare 4000 caratteri comprensivi dei tag di formattazione");
+                    getForm().getDettaglioGestioneErrore()
+                            .setStatus(getForm().getGestioneErroriList().getStatus());
+                    setGestioneErroreDetailEditMode();
+                    repopulateGestioneErroreDetailForm();
+                    forwardToPublisher(Application.Publisher.GESTIONE_ERRORI_DETAIL);
+                    return;
+                }
+
+                amministrazioneEjb.saveGestioneErroreDettaglio(originalIdErrSacer,
+                        selectedIdErrSacer, sottoclasse, casistica, soluzioneSugg, versInizioVal,
+                        versFineVal, deprecato, pubblico, insertMode);
+
+                refreshGestioneErroriList();
+                selectGestioneErroreCurrentRow(selectedIdErrSacer);
+                loadDettaglioGestioneErrore(selectedIdErrSacer);
+                getMessageBox().addInfo("Dettaglio errore SACER salvato con successo");
+                getMessageBox().setViewMode(ViewMode.plain);
+            } catch (ParerUserError ex) {
+                getMessageBox().addError(ex.getDescription());
+                getForm().getDettaglioGestioneErrore()
+                        .setStatus(getForm().getGestioneErroriList().getStatus());
+                setGestioneErroreDetailEditMode();
+                repopulateGestioneErroreDetailForm();
+            }
+        } else {
+            setGestioneErroreDetailEditMode();
+            repopulateGestioneErroreDetailForm();
+        }
+
+        forwardToPublisher(Application.Publisher.GESTIONE_ERRORI_DETAIL);
     }
 
     private void saveConfigurationDettaglio() throws EMFError {
@@ -712,6 +814,8 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                 forwardToPublisher(Application.Publisher.CONFIGURATION_DETAIL);
             } else if (getTableName().equals(getForm().getSistemiMigrazioneList().getName())) {
                 forwardToPublisher(Application.Publisher.DETTAGLIO_SIS_MIGR);
+            } else if (getTableName().equals(getForm().getGestioneErroriList().getName())) {
+                forwardToPublisher(Application.Publisher.GESTIONE_ERRORI_DETAIL);
             }
         }
     }
@@ -724,7 +828,11 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
     @Override
     public void reloadAfterGoBack(String publisherName) {
         try {
-            ricercaSistemiMigrazioneButton();
+            if (Application.Publisher.GESTIONE_ERRORI_RICERCA.equals(publisherName)) {
+                ricercaGestioneErroriButton();
+            } else {
+                ricercaSistemiMigrazioneButton();
+            }
         } catch (EMFError ex) {
             getMessageBox().addError(ex.getDescription());
         }
@@ -824,6 +932,24 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
             }
         }
         forwardToPublisher(Application.Publisher.RICERCA_SIS_MIGR);
+    }
+
+    @Override
+    public void ricercaGestioneErroriButton() throws EMFError {
+        getForm().getFiltriRicercaGestioneErrori().post(getRequest());
+
+        if (getForm().getFiltriRicercaGestioneErrori().validate(getMessageBox())) {
+            String cdClasseErrSacer = getForm().getFiltriRicercaGestioneErrori()
+                    .getCd_classe_err_sacer_ric().parse();
+
+            BaseTable gestioneErroriTableBean = amministrazioneEjb
+                    .getGestioneErroriTableBean(cdClasseErrSacer);
+            getForm().getGestioneErroriList().setTable(gestioneErroriTableBean);
+            getForm().getGestioneErroriList().getTable().setPageSize(10);
+            getForm().getGestioneErroriList().getTable().first();
+            setGestioneErroriListReadOnly();
+        }
+        forwardToPublisher(Application.Publisher.GESTIONE_ERRORI_RICERCA);
     }
 
     /**
@@ -928,11 +1054,214 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         forwardToPublisher(Application.Publisher.RICERCA_SIS_MIGR);
     }
 
+    @Secure(action = "Menu.Amministrazione.GestioneErrori")
+    public void loadGestioneErroriRicerca() throws EMFError {
+        getUser().getMenu().reset();
+        getUser().getMenu().select("Menu.Amministrazione.GestioneErrori");
+        getForm().getGestioneErroriList().clear();
+        getForm().getDettaglioGestioneErrore().clear();
+        getForm().getFiltriRicercaGestioneErrori().clear();
+        getForm().getFiltriRicercaGestioneErrori().getCd_classe_err_sacer_ric()
+                .setDecodeMap(amministrazioneEjb.getCdClasseErrSacerDecodeMap());
+
+        getForm().getFiltriRicercaGestioneErrori().setEditMode();
+        getForm().getGestioneErroriList().setHideInsertButton(false);
+        getForm().getGestioneErroriList().setHideUpdateButton(false);
+        getForm().getGestioneErroriList().setHideDeleteButton(false);
+
+        forwardToPublisher(Application.Publisher.GESTIONE_ERRORI_RICERCA);
+    }
+
+    public void insertGestioneErroriList() throws EMFError {
+        getForm().getDettaglioGestioneErrore().clear();
+        initGestioneErroreDetailCombo();
+        getForm().getDettaglioGestioneErrore().getDeprecato().setValue("0");
+        getForm().getDettaglioGestioneErrore().getPubblico().setValue("0");
+        getForm().getGestioneErroriList().setStatus(Status.insert);
+        getForm().getDettaglioGestioneErrore().setStatus(Status.insert);
+        setGestioneErroreDetailEditMode();
+        forwardToPublisher(Application.Publisher.GESTIONE_ERRORI_DETAIL);
+    }
+
     @Override
     public void updateSistemiMigrazioneList() throws EMFError {
         getForm().getDettaglioSistemaMigrazione().setEditMode();
         getForm().getSistemiMigrazioneList().setStatus(Status.update);
         getForm().getDettaglioSistemaMigrazione().setStatus(Status.update);
+    }
+
+    @Override
+    public void updateGestioneErroriList() throws EMFError {
+        BaseRowInterface currentRow = getForm().getGestioneErroriList().getTable().getCurrentRow();
+        if (currentRow != null) {
+            loadDettaglioGestioneErrore(currentRow.getBigDecimal("id_err_sacer"));
+            getForm().getGestioneErroriList().setStatus(Status.update);
+            getForm().getDettaglioGestioneErrore().setStatus(Status.update);
+            setGestioneErroreDetailEditMode();
+            forwardToPublisher(Application.Publisher.GESTIONE_ERRORI_DETAIL);
+        }
+    }
+
+    @Override
+    public void deleteGestioneErroriList() throws EMFError {
+        BaseRowInterface currentRow = getForm().getGestioneErroriList().getTable().getCurrentRow();
+        if (currentRow != null) {
+            BigDecimal idErrSacer = currentRow.getBigDecimal("id_err_sacer");
+            if (amministrazioneEjb.deleteGestioneErroreDettaglio(idErrSacer)) {
+                getMessageBox().addInfo("Dettaglio errore SACER eliminato con successo");
+                getMessageBox().setViewMode(ViewMode.plain);
+            } else {
+                getMessageBox()
+                        .addWarning("Nessun dettaglio presente per l'errore SACER selezionato");
+            }
+            refreshGestioneErroriList();
+        }
+        forwardToPublisher(Application.Publisher.GESTIONE_ERRORI_RICERCA);
+    }
+
+    private void setGestioneErroriListReadOnly() {
+        getForm().getGestioneErroriList().setStatus(Status.view);
+        getForm().getGestioneErroriList().setHideInsertButton(false);
+        getForm().getGestioneErroriList().setHideUpdateButton(false);
+        getForm().getGestioneErroriList().setHideDeleteButton(false);
+        getForm().getGestioneErroriList().getCd_err().setViewMode();
+        getForm().getGestioneErroriList().getDs_err_filtro().setViewMode();
+        getForm().getGestioneErroriList().getCasistica().setViewMode();
+        getForm().getGestioneErroriList().getSoluzione_sugg().setViewMode();
+        getForm().getGestioneErroriList().getDeprecato().setEditMode();
+        getForm().getGestioneErroriList().getPubblico().setEditMode();
+        getForm().getGestioneErroriList().getDeprecato().setReadonly(true);
+        getForm().getGestioneErroriList().getPubblico().setReadonly(true);
+    }
+
+    private void initGestioneErroreDetailCombo() {
+        getForm().getDettaglioGestioneErrore().getId_err_sacer()
+                .setDecodeMap(amministrazioneEjb.getErrSacerDecodeMap());
+    }
+
+    private void setGestioneErroreDetailEditMode() {
+        initGestioneErroreDetailCombo();
+        getForm().getDettaglioGestioneErrore().setEditMode();
+        boolean insertMode = getForm().getDettaglioGestioneErrore().getStatus()
+                .equals(Status.insert)
+                || getForm().getGestioneErroriList().getStatus().equals(Status.insert);
+        getForm().getDettaglioGestioneErrore().getId_err_sacer().setHidden(!insertMode);
+        if (insertMode) {
+            getForm().getDettaglioGestioneErrore().getId_err_sacer().setEditMode();
+        } else {
+            getForm().getDettaglioGestioneErrore().getId_err_sacer().setViewMode();
+        }
+        getForm().getDettaglioGestioneErrore().getCd_classe_err_sacer().setViewMode();
+        getForm().getDettaglioGestioneErrore().getCd_err().setViewMode();
+        getForm().getDettaglioGestioneErrore().getDs_err().setViewMode();
+        getForm().getDettaglioGestioneErrore().getDs_err_filtro().setViewMode();
+        getForm().getDettaglioGestioneErrore().getTi_err_sacer().setViewMode();
+        getForm().getDettaglioGestioneErrore().getSottoclasse().setEditMode();
+        getForm().getDettaglioGestioneErrore().getCasistica().setEditMode();
+        getForm().getDettaglioGestioneErrore().getSoluzione_sugg().setEditMode();
+        getForm().getDettaglioGestioneErrore().getVers_inizio_val().setEditMode();
+        getForm().getDettaglioGestioneErrore().getVers_fine_val().setEditMode();
+        getForm().getDettaglioGestioneErrore().getDeprecato().setEditMode();
+        getForm().getDettaglioGestioneErrore().getPubblico().setEditMode();
+    }
+
+    @Override
+    public JSONObject triggerDettaglioGestioneErroreId_err_sacerOnTrigger() throws EMFError {
+        getForm().getDettaglioGestioneErrore().getId_err_sacer().post(getRequest());
+
+        BigDecimal selectedIdErrSacer = getForm().getDettaglioGestioneErrore().getId_err_sacer()
+                .parse();
+        populateGestioneErroreMasterFields(selectedIdErrSacer);
+        setGestioneErroreDetailEditMode();
+        return getForm().getDettaglioGestioneErrore().asJSON();
+    }
+
+    private void populateGestioneErroreMasterFields(BigDecimal idErrSacer) {
+        if (idErrSacer == null) {
+            getForm().getDettaglioGestioneErrore().getCd_classe_err_sacer().setValue("");
+            getForm().getDettaglioGestioneErrore().getCd_err().setValue("");
+            getForm().getDettaglioGestioneErrore().getDs_err().setValue("");
+            getForm().getDettaglioGestioneErrore().getDs_err_filtro().setValue("");
+            getForm().getDettaglioGestioneErrore().getTi_err_sacer().setValue("");
+            return;
+        }
+
+        BaseRowInterface detailRow = amministrazioneEjb.getGestioneErroreRowBean(idErrSacer);
+        if (detailRow == null) {
+            getForm().getDettaglioGestioneErrore().getCd_classe_err_sacer().setValue("");
+            getForm().getDettaglioGestioneErrore().getCd_err().setValue("");
+            getForm().getDettaglioGestioneErrore().getDs_err().setValue("");
+            getForm().getDettaglioGestioneErrore().getDs_err_filtro().setValue("");
+            getForm().getDettaglioGestioneErrore().getTi_err_sacer().setValue("");
+            return;
+        }
+
+        getForm().getDettaglioGestioneErrore().getCd_classe_err_sacer()
+                .setValue(detailRow.getString("cd_classe_err_sacer"));
+        getForm().getDettaglioGestioneErrore().getCd_err().setValue(detailRow.getString("cd_err"));
+        getForm().getDettaglioGestioneErrore().getDs_err().setValue(detailRow.getString("ds_err"));
+        getForm().getDettaglioGestioneErrore().getDs_err_filtro()
+                .setValue(detailRow.getString("ds_err_filtro"));
+        getForm().getDettaglioGestioneErrore().getTi_err_sacer()
+                .setValue(detailRow.getString("ti_err_sacer"));
+    }
+
+    private void repopulateGestioneErroreDetailForm() throws EMFError {
+        String idErrSacerValue = getForm().getDettaglioGestioneErrore().getId_err_sacer()
+                .getValue();
+        String sottoclasseValue = getForm().getDettaglioGestioneErrore().getSottoclasse()
+                .getValue();
+        String casisticaValue = getForm().getDettaglioGestioneErrore().getCasistica().getValue();
+        String soluzioneSuggValue = getForm().getDettaglioGestioneErrore().getSoluzione_sugg()
+                .getValue();
+        String versInizioValValue = getForm().getDettaglioGestioneErrore().getVers_inizio_val()
+                .getValue();
+        String versFineValValue = getForm().getDettaglioGestioneErrore().getVers_fine_val()
+                .getValue();
+        String deprecatoValue = getForm().getDettaglioGestioneErrore().getDeprecato().getValue();
+        String pubblicoValue = getForm().getDettaglioGestioneErrore().getPubblico().getValue();
+
+        if (StringUtils.isNotBlank(idErrSacerValue)) {
+            try {
+                populateGestioneErroreMasterFields(new BigDecimal(idErrSacerValue));
+            } catch (NumberFormatException ex) {
+                log.debug("Id errore SACER non valido durante il ripopolamento del form", ex);
+            }
+        }
+
+        getForm().getDettaglioGestioneErrore().getId_err_sacer().setValue(idErrSacerValue);
+        getForm().getDettaglioGestioneErrore().getSottoclasse().setValue(sottoclasseValue);
+        getForm().getDettaglioGestioneErrore().getCasistica().setValue(casisticaValue);
+        getForm().getDettaglioGestioneErrore().getSoluzione_sugg().setValue(soluzioneSuggValue);
+        getForm().getDettaglioGestioneErrore().getVers_inizio_val().setValue(versInizioValValue);
+        getForm().getDettaglioGestioneErrore().getVers_fine_val().setValue(versFineValValue);
+        getForm().getDettaglioGestioneErrore().getDeprecato().setValue(deprecatoValue);
+        getForm().getDettaglioGestioneErrore().getPubblico().setValue(pubblicoValue);
+    }
+
+    private void refreshGestioneErroriList() throws EMFError {
+        String cdClasseErrSacer = getForm().getFiltriRicercaGestioneErrori()
+                .getCd_classe_err_sacer_ric().parse();
+        BaseTable gestioneErroriTableBean = amministrazioneEjb
+                .getGestioneErroriTableBean(cdClasseErrSacer);
+        getForm().getGestioneErroriList().setTable(gestioneErroriTableBean);
+        getForm().getGestioneErroriList().getTable().setPageSize(10);
+        getForm().getGestioneErroriList().getTable().first();
+        setGestioneErroriListReadOnly();
+    }
+
+    private void selectGestioneErroreCurrentRow(BigDecimal idErrSacer) {
+        if (idErrSacer == null || getForm().getGestioneErroriList().getTable() == null) {
+            return;
+        }
+
+        for (int index = 0; index < getForm().getGestioneErroriList().getTable().size(); index++) {
+            BaseRowInterface row = getForm().getGestioneErroriList().getTable().getRow(index);
+            if (idErrSacer.equals(row.getBigDecimal("id_err_sacer"))) {
+                getForm().getGestioneErroriList().getTable().setCurrentRowIndex(index);
+                return;
+            }
+        }
     }
 
     @Override

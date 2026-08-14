@@ -16,6 +16,7 @@ package it.eng.parer.ws.recupero.ejb;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -182,8 +183,76 @@ public class RecuperoZipGen {
 
     }
 
-    public void generaZipOggetto(String outputPath, RecuperoExt recupero, boolean tentaRecuperoDip,
-            RispostaWSRecupero rispostaWs) throws IOException {
+    /**
+     * Callback invocata dai metodi di generazione "in streaming" nel momento esatto in cui si è
+     * certi del contenuto da produrre (content-type e nome file), ma PRIMA che venga scritto anche
+     * un solo byte sullo stream di destinazione. Il chiamante (tipicamente una servlet) la utilizza
+     * per impostare gli header HTTP della response. Da questo momento in poi la response si
+     * considera "avviata": un eventuale errore nella generazione del contenuto non potrà più
+     * tradursi in una risposta di errore pulita, perché gli header potrebbero già essere stati
+     * inviati al client.
+     */
+    @FunctionalInterface
+    public interface HeaderCallback {
+        void onHeadersReady(String contentType, String fileName);
+    }
+
+    /**
+     * Raggruppa l'esito della fase di lookup (interamente in-memory/DB, senza alcuna scrittura su
+     * file o stream) comune sia alla generazione su file temporaneo sia a quella in streaming
+     * diretto verso il client.
+     */
+    private static final class RecComponentToIncludeInfo {
+        private final List<ComponenteRec> lstComp;
+        private final boolean includiSessFileVersamento;
+        private final boolean includiRapportoVersamento;
+        private final boolean includiFileIndiceAIP;
+        private final boolean recuperaDip;
+        private final boolean recuperaDipEsibizione;
+        private final boolean includiFirmaMarcaElencoIndiceAIP;
+        private final boolean includiIndiceVolumeAIPSerie;
+        private final boolean includiIndiceFascicoli;
+        private final boolean includiSessFileVersamentoV2;
+        private final boolean includiSessFileVersUpd;
+        private final boolean includiFileIndiceAIPV2;
+        private final boolean includiFileIndiceAIPExt;
+        private final boolean includiFileIndiceAIPVol;
+        private final boolean includiFileXsdAIPV2;
+
+        private RecComponentToIncludeInfo(List<ComponenteRec> lstComp,
+                boolean includiSessFileVersamento, boolean includiRapportoVersamento,
+                boolean includiFileIndiceAIP, boolean recuperaDip, boolean recuperaDipEsibizione,
+                boolean includiFirmaMarcaElencoIndiceAIP, boolean includiIndiceVolumeAIPSerie,
+                boolean includiIndiceFascicoli, boolean includiSessFileVersamentoV2,
+                boolean includiSessFileVersUpd, boolean includiFileIndiceAIPV2,
+                boolean includiFileIndiceAIPExt, boolean includiFileIndiceAIPVol,
+                boolean includiFileXsdAIPV2) {
+            this.lstComp = lstComp;
+            this.includiSessFileVersamento = includiSessFileVersamento;
+            this.includiRapportoVersamento = includiRapportoVersamento;
+            this.includiFileIndiceAIP = includiFileIndiceAIP;
+            this.recuperaDip = recuperaDip;
+            this.recuperaDipEsibizione = recuperaDipEsibizione;
+            this.includiFirmaMarcaElencoIndiceAIP = includiFirmaMarcaElencoIndiceAIP;
+            this.includiIndiceVolumeAIPSerie = includiIndiceVolumeAIPSerie;
+            this.includiIndiceFascicoli = includiIndiceFascicoli;
+            this.includiSessFileVersamentoV2 = includiSessFileVersamentoV2;
+            this.includiSessFileVersUpd = includiSessFileVersUpd;
+            this.includiFileIndiceAIPV2 = includiFileIndiceAIPV2;
+            this.includiFileIndiceAIPExt = includiFileIndiceAIPExt;
+            this.includiFileIndiceAIPVol = includiFileIndiceAIPVol;
+            this.includiFileXsdAIPV2 = includiFileXsdAIPV2;
+        }
+    }
+
+    /**
+     * Individua, in base al tipo di entità richiesta, l'elenco dei componenti da includere nello
+     * zip ed i flag che pilotano l'aggiunta dei vari file accessori (indici AIP, rapporti di
+     * versamento, ecc.). Non scrive nulla su file o stream: si limita a letture da DB, per cui può
+     * essere condivisa sia dalla generazione su file temporaneo sia da quella in streaming diretto.
+     */
+    private RecComponentToIncludeInfo caricaListaComponentiPerRecupero(RecuperoExt recupero,
+            boolean tentaRecuperoDip, RispostaWSRecupero rispostaWs) {
         List<ComponenteRec> lstComp = null;
         String prefisso = null;
         String nomeFileZip = null;
@@ -203,7 +272,6 @@ public class RecuperoZipGen {
         boolean includiFileIndiceAIPVol = false;
         boolean includiFileXsdAIPV2 = false;
         // end EVO#20972
-        FileBinario zipDaScaricare = null;
         RispostaControlli rispostaControlli = new RispostaControlli();
         // legge l'elenco dei componenti di tipo file nell'UD, per estrarre i relativi
         // blob
@@ -309,6 +377,145 @@ public class RecuperoZipGen {
             }
         }
 
+        return new RecComponentToIncludeInfo(lstComp, includiSessFileVersamento,
+                includiRapportoVersamento, includiFileIndiceAIP, recuperaDip, recuperaDipEsibizione,
+                includiFirmaMarcaElencoIndiceAIP, includiIndiceVolumeAIPSerie,
+                includiIndiceFascicoli, includiSessFileVersamentoV2, includiSessFileVersUpd,
+                includiFileIndiceAIPV2, includiFileIndiceAIPExt, includiFileIndiceAIPVol,
+                includiFileXsdAIPV2);
+    }
+
+    /**
+     * Scrive sullo {@link ZipOutputStream} indicato tutte le entry previste dal recupero
+     * (componenti, indici AIP, rapporti di versamento, ecc.), secondo i flag calcolati da
+     * {@link #caricaListaComponentiPerRecupero}. Il metodo NON apre né chiude alcuna risorsa: si
+     * limita a scrivere sullo stream ricevuto, che sia esso collegato ad un file temporaneo o
+     * direttamente alla response HTTP del client.
+     */
+    private void elabZipEntry(ZipOutputStream tmpZipOutputStream, RecuperoExt recupero,
+            RecComponentToIncludeInfo recCompToIncludeInfo, RispostaWSRecupero rispostaWs)
+            throws IOException {
+        tmpZipOutputStream.setLevel(Deflater.DEFAULT_COMPRESSION);
+        tmpZipOutputStream.setMethod(ZipOutputStream.DEFLATED);
+
+        if (recCompToIncludeInfo.recuperaDip && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            this.aggiungiComponentiDIP(tmpZipOutputStream, recupero, rispostaWs);
+        }
+
+        if (recCompToIncludeInfo.recuperaDipEsibizione
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            this.aggiungiDipEsibizione(tmpZipOutputStream, recupero, rispostaWs);
+        }
+
+        if (recCompToIncludeInfo.includiSessFileVersamento
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            // MAC #34838
+            this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero,
+                    TipiLetturaXml.RECUPERO_PER_ZIP_AIP, TipiXmlDaIncludere.TUTTI, rispostaWs);
+        }
+
+        // MAC#30890
+        if (recCompToIncludeInfo.includiSessFileVersamentoV2
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero,
+                    TipiLetturaXml.RECUPERO_PER_ZIP_AIP, TipiXmlDaIncludere.TUTTI, rispostaWs);
+        }
+        // end MAC#30890
+
+        // EVO#20972
+        if (recCompToIncludeInfo.includiSessFileVersUpd
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            this.aggiungiXMLVersamentoUpd(tmpZipOutputStream, recupero, rispostaWs);
+        }
+
+        if (recCompToIncludeInfo.includiFileXsdAIPV2
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            // aggiunge se necessario le varie versioni degli XSD
+            this.aggiungiFileXmlSchema(tmpZipOutputStream, rispostaWs);
+        }
+        // end EVO#20972
+
+        if (recCompToIncludeInfo.includiRapportoVersamento
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero,
+                    TipiLetturaXml.SOLO_FILE_RECUPERATI,
+                    TipiXmlDaIncludere.SOLO_RAPPORTO_VERSAMENTO, rispostaWs);
+        }
+
+        this.aggiungiFileComponenti(tmpZipOutputStream, recupero, recCompToIncludeInfo.lstComp,
+                rispostaWs);
+
+        if (recCompToIncludeInfo.includiFileIndiceAIP
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            // aggiunge se necessario le varie versioni dell'indice AIP
+            this.aggiungiIndiciAipUdOs(tmpZipOutputStream,
+                    recupero.getParametriRecupero().getIdUnitaDoc(), rispostaWs);
+        }
+
+        // EVO#20972:MEV#20971
+        if (recCompToIncludeInfo.includiFileIndiceAIPV2
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            // MEV#30395
+            // aggiunge se necessario le varie versioni dell'indice AIP Unisincro di Sacer
+            this.aggiungiIndiciAipUdV2Os(tmpZipOutputStream,
+                    recupero.getParametriRecupero().getIdUnitaDoc(), rispostaWs);
+            // end MEV#30395
+        }
+
+        if (recCompToIncludeInfo.includiFileIndiceAIPExt
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            // aggiunge se necessario le varie versioni dell'indice AIP Unisincro di altri
+            // conservatori
+            this.aggiungiIndiciAipUdExt(tmpZipOutputStream,
+                    recupero.getParametriRecupero().getIdUnitaDoc(), rispostaWs);
+        }
+
+        if (recCompToIncludeInfo.includiFileIndiceAIPVol
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            // aggiunge se necessario le varie versioni dell'indice dei Volumi di
+            // conservazione di Sacer
+            this.aggiungiIndiciAipUdVol(tmpZipOutputStream,
+                    recupero.getParametriRecupero().getIdUnitaDoc(), rispostaWs);
+        }
+        // end EVO#20972:MEV#20971
+
+        if (recCompToIncludeInfo.includiFirmaMarcaElencoIndiceAIP
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            this.aggiungiElencoIndiciAipUd(tmpZipOutputStream,
+                    recupero.getParametriRecupero().getIdUnitaDoc(),
+                    it.eng.parer.entity.constraint.ElvFileElencoVer.TiFileElencoVers.FIRMA_ELENCO_INDICI_AIP
+                            .name(),
+                    it.eng.parer.entity.constraint.ElvFileElencoVer.TiFileElencoVers.ELENCO_INDICI_AIP
+                            .name(),
+                    rispostaWs);
+            this.aggiungiElencoIndiciAipUd(tmpZipOutputStream,
+                    recupero.getParametriRecupero().getIdUnitaDoc(),
+                    it.eng.parer.entity.constraint.ElvFileElencoVer.TiFileElencoVers.MARCA_FIRMA_ELENCO_INDICI_AIP
+                            .name(),
+                    null, rispostaWs);
+        }
+
+        if (recCompToIncludeInfo.includiIndiceVolumeAIPSerie
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            this.aggiungiIndiciSerie(tmpZipOutputStream, recupero, rispostaWs);
+        }
+
+        if (recCompToIncludeInfo.includiIndiceFascicoli
+                && rispostaWs.getSeverity() == SeverityEnum.OK) {
+            this.aggiungiIndiceFascicoli(tmpZipOutputStream, recupero, rispostaWs);
+        }
+
+        tmpZipOutputStream.flush();
+        tmpZipOutputStream.finish();
+    }
+
+    public void generaZipOggetto(String outputPath, RecuperoExt recupero, boolean tentaRecuperoDip,
+            RispostaWSRecupero rispostaWs) throws IOException {
+        FileBinario zipDaScaricare = null;
+
+        RecComponentToIncludeInfo recCompToIncludeInfo = caricaListaComponentiPerRecupero(recupero,
+                tentaRecuperoDip, rispostaWs);
+
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             zipDaScaricare = new FileBinario();
             File tmpOutput = File.createTempFile("output_", ".zip", new File(outputPath));
@@ -319,107 +526,7 @@ public class RecuperoZipGen {
             try (FileOutputStream tmpOutputStream = new FileOutputStream(tmpOutput);
                     ZipOutputStream tmpZipOutputStream = new ZipOutputStream(tmpOutputStream)) {
 
-                tmpZipOutputStream.setLevel(Deflater.DEFAULT_COMPRESSION);
-                tmpZipOutputStream.setMethod(ZipOutputStream.DEFLATED);
-
-                if (recuperaDip && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiComponentiDIP(tmpZipOutputStream, recupero, rispostaWs);
-                }
-
-                if (recuperaDipEsibizione && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiDipEsibizione(tmpZipOutputStream, recupero, rispostaWs);
-                }
-
-                if (includiSessFileVersamento && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    // MAC #34838
-                    this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero,
-                            TipiLetturaXml.RECUPERO_PER_ZIP_AIP, TipiXmlDaIncludere.TUTTI,
-                            rispostaWs);
-                }
-
-                // MAC#30890
-                if (includiSessFileVersamentoV2 && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero,
-                            TipiLetturaXml.RECUPERO_PER_ZIP_AIP, TipiXmlDaIncludere.TUTTI,
-                            rispostaWs);
-                }
-                // end MAC#30890
-
-                // EVO#20972
-                if (includiSessFileVersUpd && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiXMLVersamentoUpd(tmpZipOutputStream, recupero, rispostaWs);
-                }
-
-                if (includiFileXsdAIPV2 && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    // aggiunge se necessario le varie versioni degli XSD
-                    this.aggiungiFileXmlSchema(tmpZipOutputStream, rispostaWs);
-                }
-                // end EVO#20972
-
-                if (includiRapportoVersamento && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero,
-                            TipiLetturaXml.SOLO_FILE_RECUPERATI,
-                            TipiXmlDaIncludere.SOLO_RAPPORTO_VERSAMENTO, rispostaWs);
-                }
-
-                this.aggiungiFileComponenti(tmpZipOutputStream, recupero, lstComp, rispostaWs);
-
-                if (includiFileIndiceAIP && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    // aggiunge se necessario le varie versioni dell'indice AIP
-                    this.aggiungiIndiciAipUdOs(tmpZipOutputStream,
-                            recupero.getParametriRecupero().getIdUnitaDoc(), rispostaWs);
-                }
-
-                // EVO#20972:MEV#20971
-                if (includiFileIndiceAIPV2 && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    // MEV#30395
-                    // aggiunge se necessario le varie versioni dell'indice AIP Unisincro di Sacer
-                    this.aggiungiIndiciAipUdV2Os(tmpZipOutputStream,
-                            recupero.getParametriRecupero().getIdUnitaDoc(), rispostaWs);
-                    // end MEV#30395
-                }
-
-                if (includiFileIndiceAIPExt && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    // aggiunge se necessario le varie versioni dell'indice AIP Unisincro di altri
-                    // conservatori
-                    this.aggiungiIndiciAipUdExt(tmpZipOutputStream,
-                            recupero.getParametriRecupero().getIdUnitaDoc(), rispostaWs);
-                }
-
-                if (includiFileIndiceAIPVol && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    // aggiunge se necessario le varie versioni dell'indice dei Volumi di
-                    // conservazione di Sacer
-                    this.aggiungiIndiciAipUdVol(tmpZipOutputStream,
-                            recupero.getParametriRecupero().getIdUnitaDoc(), rispostaWs);
-                }
-                // end EVO#20972:MEV#20971
-
-                if (includiFirmaMarcaElencoIndiceAIP
-                        && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiElencoIndiciAipUd(tmpZipOutputStream,
-                            recupero.getParametriRecupero().getIdUnitaDoc(),
-                            it.eng.parer.entity.constraint.ElvFileElencoVer.TiFileElencoVers.FIRMA_ELENCO_INDICI_AIP
-                                    .name(),
-                            it.eng.parer.entity.constraint.ElvFileElencoVer.TiFileElencoVers.ELENCO_INDICI_AIP
-                                    .name(),
-                            rispostaWs);
-                    this.aggiungiElencoIndiciAipUd(tmpZipOutputStream,
-                            recupero.getParametriRecupero().getIdUnitaDoc(),
-                            it.eng.parer.entity.constraint.ElvFileElencoVer.TiFileElencoVers.MARCA_FIRMA_ELENCO_INDICI_AIP
-                                    .name(),
-                            null, rispostaWs);
-                }
-
-                if (includiIndiceVolumeAIPSerie && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiIndiciSerie(tmpZipOutputStream, recupero, rispostaWs);
-                }
-
-                if (includiIndiceFascicoli && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiIndiceFascicoli(tmpZipOutputStream, recupero, rispostaWs);
-                }
-
-                tmpZipOutputStream.flush();
-                tmpZipOutputStream.finish();
+                elabZipEntry(tmpZipOutputStream, recupero, recCompToIncludeInfo, rispostaWs);
 
             } catch (IOException ex) {
                 rispostaWs.setSeverity(SeverityEnum.ERROR);
@@ -440,6 +547,186 @@ public class RecuperoZipGen {
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaWs.setRifFileBinario(zipDaScaricare);
+        }
+    }
+
+    /*
+     * Variante "in streaming" di {@link #generaZipOggetto(String, RecuperoExt, boolean,
+     * RispostaWSRecupero)}: collassa in un'unica fase la generazione dello zip e l'invio al client,
+     * scrivendo direttamente sullo stream di destinazione (tipicamente la response HTTP) senza
+     * creare alcun file temporaneo su disco. <p> ATTENZIONE - punto di non ritorno: la {@code
+     * headerCallback} viene invocata solo dopo che il lookup dei componenti è andato a buon fine
+     * (quindi la generazione avverrà sicuramente), ma PRIMA di scrivere anche un solo byte sullo
+     * stream. Da quel momento in poi un eventuale errore nella scrittura delle entry non può più
+     * essere convertito in una risposta di errore pulita (gli header HTTP potrebbero già essere
+     * stati inviati al client): viene solo loggato e la response terminerà troncata, cosa che il
+     * client rileverà come zip corrotto. Si tratta di un trade-off accettato per evitare la doppia
+     * scrittura su disco anche per i file di grandi dimensioni.
+     *
+     * @param out stream di destinazione (NON viene chiuso da questo metodo se non tramite il
+     * proprio try-with-resources interno: la chiusura del relativo {@link ZipOutputStream} chiude
+     * anche {@code out})
+     *
+     * @param recupero parametri del recupero
+     *
+     * @param tentaRecuperoDip se tentare il recupero dei file DIP convertiti
+     *
+     * @param rispostaWs esito/contesto del WS
+     *
+     * @param headerCallback invocata con (contentType, nomeFile) subito prima di iniziare a
+     * scrivere, per permettere al chiamante di impostare gli header HTTP
+     */
+    public void generaZipOggettoStream(OutputStream out, RecuperoExt recupero,
+            boolean tentaRecuperoDip, RispostaWSRecupero rispostaWs, HeaderCallback headerCallback)
+            throws IOException {
+        RecComponentToIncludeInfo li = caricaListaComponentiPerRecupero(recupero, tentaRecuperoDip,
+                rispostaWs);
+
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            // da qui in poi la response si considera avviata: vedi javadoc del metodo
+            headerCallback.onHeadersReady("application/zip", rispostaWs.getNomeFile());
+
+            try (ZipOutputStream tmpZipOutputStream = new ZipOutputStream(out)) {
+                elabZipEntry(tmpZipOutputStream, recupero, li, rispostaWs);
+            } catch (IOException ex) {
+                rispostaWs.setSeverity(SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                        ERRORE_GENERAZIONE_ZIP + ex.getMessage());
+                log.error("Errore nella generazione dello zip in streaming diretto verso il client "
+                        + "(contenuto potenzialmente già parzialmente inviato, la response terminerà troncata)",
+                        ex);
+            }
+        }
+    }
+
+    /*
+     * Variante "senza zip" pensata per il ramo storico "FileUnzippato" (estrazione di un singolo
+     * componente non compresso, invece dell'intero zip). Il vecchio comportamento genera comunque
+     * l'intero zip su file temporaneo, per poi ispezionarlo e verificare che contenga una sola
+     * entry prima di estrarla: qui, quando possibile, si stabilisce a costo pressoché nullo (sole
+     * query di conteggio, senza toccare i blob) che il recupero produce esattamente 1 componente, e
+     * lo si scrive direttamente sullo stream di destinazione, senza file temporaneo né contenitore
+     * zip. <p> Il fast-path si applica solo quando: nessun file accessorio (indici AIP, rapporti di
+     * versamento, DIP per esibizione, ecc.) è previsto per il tipo di entità richiesto, e il
+     * singolo elemento risultante proviene dall'elenco "diretto" dei componenti (non da un
+     * eventuale recupero DIP). Negli altri casi si ripiega sul comportamento storico invocando
+     * {@link #generaZipOggetto}, il cui esito (incluso l'eventuale file temporaneo da ispezionare)
+     * resta disponibile in {@code rispostaWs} esattamente come oggi.
+     *
+     * @param outputPath directory da usare per l'eventuale file temporaneo di fallback
+     *
+     * @param out stream di destinazione per il fast-path in streaming diretto
+     *
+     * @param headerCallback invocata con (contentType, nomeFile) subito prima di scrivere, solo nel
+     * caso di fast-path riuscito
+     *
+     * @return {@code true} se si è ripiegato sul comportamento storico a file temporaneo (il cui
+     * esito resta disponibile in {@code rispostaWs.getRifFileBinario()}, da ispezionare/estrarre
+     * come in passato); {@code false} se il fast-path ha gestito il caso interamente (componente
+     * streammato con successo, oppure conteggio preventivo che ha già impostato l'errore in {@code
+     * rispostaWs} senza scrivere alcun byte)
+     */
+    public boolean generaFileUnzippato(String outputPath, OutputStream out, RecuperoExt recupero,
+            boolean tentaRecuperoDip, RispostaWSRecupero rispostaWs, HeaderCallback headerCallback)
+            throws IOException {
+        RecComponentToIncludeInfo recCompToIncludeInfo = caricaListaComponentiPerRecupero(recupero,
+                tentaRecuperoDip, rispostaWs);
+
+        if (rispostaWs.getSeverity() != SeverityEnum.OK) {
+            return false;
+        }
+
+        boolean fileAccessoriPresenti = recCompToIncludeInfo.includiFileIndiceAIP
+                || recCompToIncludeInfo.includiSessFileVersamento
+                || recCompToIncludeInfo.recuperaDipEsibizione
+                || recCompToIncludeInfo.includiFirmaMarcaElencoIndiceAIP
+                || recCompToIncludeInfo.includiIndiceVolumeAIPSerie
+                || recCompToIncludeInfo.includiIndiceFascicoli
+                || recCompToIncludeInfo.includiSessFileVersamentoV2
+                || recCompToIncludeInfo.includiSessFileVersUpd
+                || recCompToIncludeInfo.includiFileIndiceAIPV2
+                || recCompToIncludeInfo.includiFileIndiceAIPExt
+                || recCompToIncludeInfo.includiFileIndiceAIPVol
+                || recCompToIncludeInfo.includiFileXsdAIPV2
+                || recCompToIncludeInfo.includiRapportoVersamento;
+
+        if (!fileAccessoriPresenti) {
+            int countDip = 0;
+            if (recCompToIncludeInfo.recuperaDip) {
+                RispostaControlli rc = controlliRecDip
+                        .contaComponenti(recupero.getParametriRecupero());
+                if (!rc.isrBoolean()) {
+                    setRispostaWsError(rispostaWs, rc);
+                    rispostaWs.setEsitoWsError(rc.getCodErr(), rc.getDsErr());
+                    return false;
+                }
+                countDip = (int) rc.getrLong();
+            }
+
+            int totale = recCompToIncludeInfo.lstComp.size() + countDip;
+            if (totale != 1) {
+                // MEV#40093 - Utilizzo del parametro <FileUnzippato> limitato al recupero del
+                // componente: se nello zip generato si troverebbe più (o meno) di un componente
+                // e si è richiesto di unzippare il componente, genera un errore applicativo,
+                // senza aver scritto alcun byte né generato alcun file.
+                rispostaWs.setSeverity(SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.COMP_003_006,
+                        "Trovati più record per il componente richiesto!");
+                log.info("Trovati più record per il componente richiesto!");
+                return false;
+            }
+
+            if (countDip == 0 && recCompToIncludeInfo.lstComp.size() == 1) {
+                // fast-path: un solo componente diretto, nessun file DIP coinvolto
+                streammaComponenteUnico(out, recCompToIncludeInfo.lstComp.get(0), recupero,
+                        headerCallback, rispostaWs);
+                return false;
+            }
+        }
+
+        // fallback: casi non coperti dal fast-path (file accessori previsti, oppure singolo
+        // elemento proveniente esclusivamente dal recupero DIP); si mantiene il comportamento
+        // storico basato su file temporaneo
+        generaZipOggetto(outputPath, recupero, tentaRecuperoDip, rispostaWs);
+        return true;
+    }
+
+    /*
+     * Scrive sullo stream di destinazione il contenuto grezzo (senza framing zip) dell'unico
+     * componente individuato dal fast-path di {@link #generaFileUnzippato}, invocando la {@code
+     * headerCallback} subito prima di scrivere il primo byte (punto di non ritorno: da quel momento
+     * eventuali errori non possono più essere convertiti in una risposta XML pulita, stesso
+     * trade-off di {@link #generaZipOggettoStream}).
+     */
+    private void streammaComponenteUnico(OutputStream out, ComponenteRec unico,
+            RecuperoExt recupero, HeaderCallback headerCallback, RispostaWSRecupero rispostaWs) {
+        TokenFileNameType tipoNomeFile = recupero.getStrutturaRecupero().getParametri() != null
+                ? recupero.getStrutturaRecupero().getParametri().getTipoNomeFile()
+                : null;
+        boolean invokeUnsignedDocService = isInvokeUnsignedDocService(recupero);
+
+        EntryName entryName = calcolaNomeArchiveEntry(unico, recupero, tipoNomeFile);
+        String nomeCompleto = entryName.nome;
+        if (invokeUnsignedDocService) {
+            nomeCompleto = nomeCompleto + FilenameUtils.EXTENSION_SEPARATOR_STR
+                    + unico.getNomeFormatoComponenteSbustato();
+        }
+        String nomeFileDaScaricare = nomeCompleto;
+        int posizioneUltimoSlash = nomeFileDaScaricare.lastIndexOf("/");
+        if (posizioneUltimoSlash > 0) {
+            nomeFileDaScaricare = nomeFileDaScaricare.substring(posizioneUltimoSlash + 1);
+        }
+
+        // punto di non ritorno: da qui la response si considera avviata
+        headerCallback.onHeadersReady("application/octet-stream", nomeFileDaScaricare);
+
+        RispostaControlli rispostaControlli = scriviContenutoComponente(out, unico, recupero,
+                invokeUnsignedDocService);
+        if (!rispostaControlli.isrBoolean()) {
+            setRispostaWsError(rispostaWs, rispostaControlli);
+            rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
+            log.error("Errore nella scrittura in streaming diretto del componente unzippato "
+                    + "(contenuto potenzialmente già parzialmente inviato, la response terminerà troncata)");
         }
     }
 
@@ -930,139 +1217,218 @@ public class RecuperoZipGen {
         return tmpXmlByteArr;
     }
 
+    /**
+     * Nome della entry (zip o file "unzippato") calcolato per un componente, comprensivo del flag
+     * che stabilisce se va sottoposto al controllo di deduplicazione dei nomi (vedi
+     * {@link #addZipEntry}).
+     */
+    private static final class EntryName {
+        private final String nome;
+        private final boolean checkEntry;
+
+        private EntryName(String nome, boolean checkEntry) {
+            this.nome = nome;
+            this.checkEntry = checkEntry;
+        }
+    }
+
+    /**
+     * Calcola il nome dell'entry (di zip o di file "unzippato") per il componente indicato, in base
+     * al {@code tipoNomeFile} richiesto. Non ha effetti collaterali: è condivisa sia dal ciclo di
+     * scrittura dello zip completo ({@link #aggiungiFileComponenti}) sia dal fast-path di streaming
+     * diretto per il caso "FileUnzippato" ({@link #streammaComponenteUnico}).
+     */
+    private EntryName calcolaNomeArchiveEntry(ComponenteRec tmpCmp, RecuperoExt recupero,
+            TokenFileNameType tipoNomeFile) {
+        String archiveEntryFinalName = null;
+        boolean checkEntry = true; // verify or not zip entry on HashSet entryGiaInserite
+        // Se viene passato NIENTE oppure NOME_FILE_URN_SACER si vuole il vecchio
+        // comportamento
+        if (tipoNomeFile == null || tipoNomeFile.value().trim().equals("")
+                || tipoNomeFile.equals(TokenFileNameType.NOME_FILE_URN_SACER)) {
+            // EVO#20972
+            if (!recupero.getParametriRecupero().getTipoEntitaSacer()
+                    .equals(CostantiDB.TipiEntitaRecupero.UNI_DOC_UNISYNCRO_V2)) {
+                // Vecchio comportamento
+                // elab file name
+                archiveEntryFinalName = DIRECTORY_REC + "/" + tmpCmp.getNomeFilePerZip();
+            } else {
+                // elab file name
+                archiveEntryFinalName = DIRECTORY_REC_AIPV2 + "/"
+                        + it.eng.parer.async.utils.IOUtils
+                                .getFilename(
+                                        it.eng.parer.async.utils.IOUtils
+                                                .extractPartUrnName(tmpCmp.getUrnCompleto(), true),
+                                        tmpCmp.getEstensioneFile());
+            }
+            // end EVO#20972
+            checkEntry = false;
+        } else if (tipoNomeFile.equals(TokenFileNameType.NOME_FILE_VERSATO)) {
+            // Nuovo comportamento
+            String nomeFileOriginaleVersato = tmpCmp.getNomeFileOriginaleVersato();
+            String urnVersato = tmpCmp.getUrnOriginaleVersata();
+            String pathCompleto = "";
+            /*
+             * Se il nome del file originario non dovesse esserci ci si mette il nome del file che
+             * si metteva in precedenza cioè quello con l'URN
+             */
+            if (nomeFileOriginaleVersato == null || nomeFileOriginaleVersato.trim().equals("")) {
+                nomeFileOriginaleVersato = tmpCmp.getNomeFilePerZip();
+            }
+            if (nomeFileOriginaleVersato == null) {
+                nomeFileOriginaleVersato = "";
+            }
+            if (urnVersato == null) {
+                urnVersato = "";
+            }
+            /*
+             * Se non si è riusciti a determinare il nome file originale allora prende l'urn
+             * originale versato
+             */
+            if (nomeFileOriginaleVersato.equals("")) {
+                // MEV#23698 - Servizi di recupero: problema con urn definito nel nome
+                // componente
+                pathCompleto = aggiungiConSlashInMezzo("", urnVersato);
+            } else {
+                pathCompleto = aggiungiConSlashInMezzo("", nomeFileOriginaleVersato);
+            }
+            pathCompleto = eliminaEventualiDoppiSlash(pathCompleto);
+            // elab file name
+            archiveEntryFinalName = DIRECTORY_REC
+                    + MessaggiWSFormat.normalizingFileName(pathCompleto);
+        } else if (tipoNomeFile.equals(TokenFileNameType.NOME_FILE_URN_VERSATO)) {
+            // Nuovo comportamento
+            String nomeFileOriginaleVersato = tmpCmp.getNomeFileOriginaleVersato();
+            String urnVersato = tmpCmp.getUrnOriginaleVersata();
+            /*
+             * Se il nome del file originario non dovesse esserci ci si mette il nome del file che
+             * si metteva in precedenza cioè quello con l'URN
+             */
+            if (nomeFileOriginaleVersato == null || nomeFileOriginaleVersato.trim().equals("")) {
+                nomeFileOriginaleVersato = tmpCmp.getNomeFilePerZip();
+            }
+            if (nomeFileOriginaleVersato == null) {
+                nomeFileOriginaleVersato = "";
+            }
+            if (urnVersato == null) {
+                urnVersato = "";
+            }
+            // dopo aver eliminato tutti i possibili NULL...determiniamo il path completo.
+            String pathCompleto = "";
+            if (urnVersato.trim().equals("")) {
+                pathCompleto = "/" + nomeFileOriginaleVersato;
+                // MEV#23698 - Servizi di recupero: problema con urn definito nel nome
+                // componente
+                pathCompleto = aggiungiConSlashInMezzo("", nomeFileOriginaleVersato);
+            } else {
+                /*
+                 * Controllo che il nome del file originario non sia presente nell'urn versato, se
+                 * esiste si prende direttamente l'urn versato completo (che contiene già il nome
+                 * del file)
+                 */
+                if (!nomeFileOriginaleVersato.trim().equals("")) {
+                    if (urnVersato.endsWith(nomeFileOriginaleVersato)) {
+                        // Se l'urn versato inizia per "/" non lo aggiunge al path
+                        // MEV#23698 - Servizi di recupero: problema con urn definito nel nome
+                        // componente
+                        pathCompleto = aggiungiConSlashInMezzo("", urnVersato);
+                    } else {
+                        // Se l'urn versato inizia per "/" non lo aggiunge al path
+                        // MEV#23698 - Servizi di recupero: problema con urn definito nel nome
+                        // componente
+                        if (urnVersato.startsWith("/")) {
+                            pathCompleto = aggiungiConSlashInMezzo(urnVersato,
+                                    nomeFileOriginaleVersato);
+                        } else {
+                            pathCompleto = aggiungiConSlashInMezzo("/" + urnVersato,
+                                    nomeFileOriginaleVersato);
+                        }
+                    }
+                } else {
+                    if (urnVersato.startsWith("/")) {
+                        pathCompleto = urnVersato;
+                    } else {
+                        pathCompleto = "/" + urnVersato;
+                    }
+                }
+            }
+            pathCompleto = eliminaEventualiDoppiSlash(pathCompleto);
+            archiveEntryFinalName = DIRECTORY_REC
+                    + MessaggiWSFormat.normalizingFileName(pathCompleto);
+        }
+        return new EntryName(archiveEntryFinalName, checkEntry);
+    }
+
+    /**
+     * Determina se, per il recupero indicato, va tentato il recupero del file "sbustato" (originale
+     * non firmato) al posto/prima di quello standard.
+     */
+    private boolean isInvokeUnsignedDocService(RecuperoExt recupero) {
+        return recupero.getStrutturaRecupero().getParametri() != null
+                && recupero.getStrutturaRecupero().getParametri().isFileSbustato() != null
+                && recupero.getStrutturaRecupero().getParametri().isFileSbustato();
+    }
+
+    /**
+     * Scrive sull'{@link OutputStream} indicato il contenuto binario del componente (da object
+     * storage, blob o filesystem TPI a seconda della configurazione), senza occuparsi di eventuale
+     * framing zip: condivisa sia dal ciclo di scrittura dello zip completo
+     * ({@link #aggiungiFileComponenti}) sia dal fast-path di streaming diretto per il caso
+     * "FileUnzippato" ({@link #streammaComponenteUnico}).
+     */
+    private RispostaControlli scriviContenutoComponente(OutputStream out, ComponenteRec tmpCmp,
+            RecuperoExt recupero, boolean invokeUnsignedDocService) {
+        RispostaControlli rispostaControlli;
+        if (recupero.getTipoSalvataggioFile() == CostantiDB.TipoSalvataggioFile.FILE
+                && recupero.isTpiAbilitato()) {
+            // su file system
+            rispostaControlli = recuperoCompFS.recuperaFileCompSuStream(tmpCmp, out, recupero);
+        } else {
+            rispostaControlli = new RispostaControlli();
+            boolean esitoRecupero = false;
+
+            // recupero documento blob vs obj storage
+            RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(TiEntitaSacerObjectStorage.COMP_DOC,
+                    tmpCmp.getIdCompDoc(), out,
+                    RecBlbOracle.TabellaBlob.valueOf(recupero.getTipoSalvataggioFile().name()));
+
+            /* MEV#34239 - Estensione servizio per recupero file sbustati */
+            // Se richiesto viene aggiunto allo zip finale la componente "unsigned" (originale)
+            // a partire dal documento firmato, se l'esisto del recupero è negativo viene
+            // gestito il recupero della componente "standard"
+            // Nota : gestitione esclusiva dei soli p7m
+            if (invokeUnsignedDocService) {
+                // get unsigned p7m
+                esitoRecupero = recuperoDocumento
+                        .callRecuperoOriginalDocFromSignedSuStream(csRecuperoDoc);
+            }
+            // recupero componente standard
+            if (!invokeUnsignedDocService || !esitoRecupero) {
+                esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+            }
+            //
+            rispostaControlli.setrBoolean(esitoRecupero);
+            if (!esitoRecupero) {
+                rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+                rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                        "Errore nel recupero dei file per lo zip"));
+            }
+        }
+        return rispostaControlli;
+    }
+
     private void aggiungiFileComponenti(ZipOutputStream zipOutputStream, RecuperoExt recupero,
             List<ComponenteRec> lstComp, RispostaWSRecupero rispostaWs) throws IOException {
-        RispostaControlli rispostaControlli = new RispostaControlli();
         Set<String> entryGiaInserite = new HashSet<>();
         TokenFileNameType tipoNomeFile = recupero.getStrutturaRecupero().getParametri() != null
                 ? recupero.getStrutturaRecupero().getParametri().getTipoNomeFile()
                 : null;
         for (ComponenteRec tmpCmp : lstComp) {
-            // define file name
-            String archiveEntryFinalName = null;
-            // check single entry
-            boolean checkEntry = true; // verify or not zip entry on HashSet entryGiaInserite
-            // Se viene passato NIENTE oppure NOME_FILE_URN_SACER si vuole il vecchio
-            // comportamento
-            if (tipoNomeFile == null || tipoNomeFile.value().trim().equals("")
-                    || tipoNomeFile.equals(TokenFileNameType.NOME_FILE_URN_SACER)) {
-                // EVO#20972
-                if (!recupero.getParametriRecupero().getTipoEntitaSacer()
-                        .equals(CostantiDB.TipiEntitaRecupero.UNI_DOC_UNISYNCRO_V2)) {
-                    // Vecchio comportamento
-                    // elab file name
-                    archiveEntryFinalName = DIRECTORY_REC + "/" + tmpCmp.getNomeFilePerZip();
-                } else {
-                    // elab file name
-                    archiveEntryFinalName = DIRECTORY_REC_AIPV2 + "/"
-                            + it.eng.parer.async.utils.IOUtils.getFilename(
-                                    it.eng.parer.async.utils.IOUtils
-                                            .extractPartUrnName(tmpCmp.getUrnCompleto(), true),
-                                    tmpCmp.getEstensioneFile());
-                }
-                // end EVO#20972
-                checkEntry = false;
-            } else if (tipoNomeFile.equals(TokenFileNameType.NOME_FILE_VERSATO)) {
-                // Nuovo comportamento
-                String nomeFileOriginaleVersato = tmpCmp.getNomeFileOriginaleVersato();
-                String urnVersato = tmpCmp.getUrnOriginaleVersata();
-                String pathCompleto = "";
-                /*
-                 * Se il nome del file originario non dovesse esserci ci si mette il nome del file
-                 * che si metteva in precedenza cioè quello con l'URN
-                 */
-                if (nomeFileOriginaleVersato == null
-                        || nomeFileOriginaleVersato.trim().equals("")) {
-                    nomeFileOriginaleVersato = tmpCmp.getNomeFilePerZip();
-                }
-                if (nomeFileOriginaleVersato == null) {
-                    nomeFileOriginaleVersato = "";
-                }
-                if (urnVersato == null) {
-                    urnVersato = "";
-                }
-                /*
-                 * Se non si è riusciti a determinare il nome file originale allora prende l'urn
-                 * originale versato
-                 */
-                if (nomeFileOriginaleVersato.equals("")) {
-                    // MEV#23698 - Servizi di recupero: problema con urn definito nel nome
-                    // componente
-                    pathCompleto = aggiungiConSlashInMezzo("", urnVersato);
-                } else {
-                    pathCompleto = aggiungiConSlashInMezzo("", nomeFileOriginaleVersato);
-                }
-                pathCompleto = eliminaEventualiDoppiSlash(pathCompleto);
-                // elab file name
-                archiveEntryFinalName = DIRECTORY_REC
-                        + MessaggiWSFormat.normalizingFileName(pathCompleto);
-            } else if (tipoNomeFile.equals(TokenFileNameType.NOME_FILE_URN_VERSATO)) {
-                // Nuovo comportamento
-                String nomeFileOriginaleVersato = tmpCmp.getNomeFileOriginaleVersato();
-                String urnVersato = tmpCmp.getUrnOriginaleVersata();
-                /*
-                 * Se il nome del file originario non dovesse esserci ci si mette il nome del file
-                 * che si metteva in precedenza cioè quello con l'URN
-                 */
-                if (nomeFileOriginaleVersato == null
-                        || nomeFileOriginaleVersato.trim().equals("")) {
-                    nomeFileOriginaleVersato = tmpCmp.getNomeFilePerZip();
-                }
-                if (nomeFileOriginaleVersato == null) {
-                    nomeFileOriginaleVersato = "";
-                }
-                if (urnVersato == null) {
-                    urnVersato = "";
-                }
-                // dopo aver eliminato tutti i possibili NULL...determiniamo il path completo.
-                String pathCompleto = "";
-                if (urnVersato.trim().equals("")) {
-                    pathCompleto = "/" + nomeFileOriginaleVersato;
-                    // MEV#23698 - Servizi di recupero: problema con urn definito nel nome
-                    // componente
-                    pathCompleto = aggiungiConSlashInMezzo("", nomeFileOriginaleVersato);
-                } else {
-                    /*
-                     * Controllo che il nome del file originario non sia presente nell'urn versato,
-                     * se esiste si prende direttamente l'urn versato completo (che contiene già il
-                     * nome del file)
-                     */
-                    if (!nomeFileOriginaleVersato.trim().equals("")) {
-                        if (urnVersato.endsWith(nomeFileOriginaleVersato)) {
-                            // Se l'urn versato inizia per "/" non lo aggiunge al path
-                            // MEV#23698 - Servizi di recupero: problema con urn definito nel nome
-                            // componente
-                            pathCompleto = aggiungiConSlashInMezzo("", urnVersato);
-                        } else {
-                            // Se l'urn versato inizia per "/" non lo aggiunge al path
-                            // MEV#23698 - Servizi di recupero: problema con urn definito nel nome
-                            // componente
-                            if (urnVersato.startsWith("/")) {
-                                pathCompleto = aggiungiConSlashInMezzo(urnVersato,
-                                        nomeFileOriginaleVersato);
-                            } else {
-                                pathCompleto = aggiungiConSlashInMezzo("/" + urnVersato,
-                                        nomeFileOriginaleVersato);
-                            }
-                        }
-                    } else {
-                        if (urnVersato.startsWith("/")) {
-                            pathCompleto = urnVersato;
-                        } else {
-                            pathCompleto = "/" + urnVersato;
-                        }
-                    }
-                }
-                pathCompleto = eliminaEventualiDoppiSlash(pathCompleto);
-                archiveEntryFinalName = DIRECTORY_REC
-                        + MessaggiWSFormat.normalizingFileName(pathCompleto);
-            }
+            EntryName entryName = calcolaNomeArchiveEntry(tmpCmp, recupero, tipoNomeFile);
+            String archiveEntryFinalName = entryName.nome;
 
             // MEV#34239 (define zip entry)
-            boolean invokeUnsignedDocService = recupero.getStrutturaRecupero()
-                    .getParametri() != null
-                    && recupero.getStrutturaRecupero().getParametri().isFileSbustato() != null
-                    && recupero.getStrutturaRecupero().getParametri().isFileSbustato();
+            boolean invokeUnsignedDocService = isInvokeUnsignedDocService(recupero);
             if (invokeUnsignedDocService) {
                 // MEV#39147 - Modifica delle modalità di calcolo dell'estensione nel recupero di
                 // file sbustati
@@ -1071,43 +1437,12 @@ public class RecuperoZipGen {
                         + tmpCmp.getNomeFormatoComponenteSbustato();
             }
             // create zip entry
-            addZipEntry(zipOutputStream, archiveEntryFinalName, entryGiaInserite, checkEntry);
+            addZipEntry(zipOutputStream, archiveEntryFinalName, entryGiaInserite,
+                    entryName.checkEntry);
 
-            if (recupero.getTipoSalvataggioFile() == CostantiDB.TipoSalvataggioFile.FILE
-                    && recupero.isTpiAbilitato()) {
-                // su file system
-                rispostaControlli = recuperoCompFS.recuperaFileCompSuStream(tmpCmp, zipOutputStream,
-                        recupero);
-            } else {
-                boolean esitoRecupero = false;
+            RispostaControlli rispostaControlli = scriviContenutoComponente(zipOutputStream, tmpCmp,
+                    recupero, invokeUnsignedDocService);
 
-                // recupero documento blob vs obj storage
-                RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(
-                        TiEntitaSacerObjectStorage.COMP_DOC, tmpCmp.getIdCompDoc(), zipOutputStream,
-                        RecBlbOracle.TabellaBlob.valueOf(recupero.getTipoSalvataggioFile().name()));
-
-                /* MEV#34239 - Estensione servizio per recupero file sbustati */
-                // Se richiesto viene aggiunto allo zip finale la componente "unsigned" (originale)
-                // a partire dal documento firmato, se l'esisto del recupero è negativo viene
-                // gestito il recupero della componente "standard"
-                // Nota : gestitione esclusiva dei soli p7m
-                if (invokeUnsignedDocService) {
-                    // get unsigned p7m
-                    esitoRecupero = recuperoDocumento
-                            .callRecuperoOriginalDocFromSignedSuStream(csRecuperoDoc);
-                }
-                // recupero componente standard
-                if (!invokeUnsignedDocService || !esitoRecupero) {
-                    esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
-                }
-                //
-                rispostaControlli.setrBoolean(esitoRecupero);
-                if (!esitoRecupero) {
-                    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-                    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                            "Errore nel recupero dei file per lo zip"));
-                }
-            }
             zipOutputStream.closeEntry();
             if (!rispostaControlli.isrBoolean()) {
                 setRispostaWsError(rispostaWs, rispostaControlli);
@@ -1784,8 +2119,8 @@ public class RecuperoZipGen {
                         String ambiente = strut.getOrgEnte().getOrgAmbiente().getNmAmbiente();
                         String ente = strut.getOrgEnte().getNmEnte();
                         String struttura = strut.getNmStrut();
-                        String numero = MessaggiWSFormat.bonificaUrnPerNomeFile(
-                                unitaDocFascicolo.getFasFascicolo().getCdKeyFascicolo());
+                        // String numero = MessaggiWSFormat.bonificaUrnPerNomeFile(
+                        // unitaDocFascicolo.getFasFascicolo().getCdKeyFascicolo());
 
                         // Indice aip del fascicolo
                         FasFileMetaVerAipFasc meta = fasHelper.getFasFileMetaVerAipFasc(
@@ -1793,8 +2128,8 @@ public class RecuperoZipGen {
                                 FasMetaVerAipFascicolo.TiMeta.INDICE.name());
 
                         if (meta != null) {
-                            BigDecimal versione = meta.getFasMetaVerAipFascicolo()
-                                    .getFasVerAipFascicolo().getPgVerAipFascicolo();
+                            // BigDecimal versione = meta.getFasMetaVerAipFascicolo()
+                            // .getFasVerAipFascicolo().getPgVerAipFascicolo();
                             String urnMeta = "PIndexFA";
                             ZipEntry zaeMeta = createZipEntry(urnZipArchive + urnMeta + ".xml");
                             zipOutputStream.putNextEntry(zaeMeta);

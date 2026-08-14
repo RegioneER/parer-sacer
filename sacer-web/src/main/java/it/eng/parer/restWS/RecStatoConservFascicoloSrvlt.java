@@ -29,7 +29,6 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
@@ -169,8 +168,19 @@ public class RecStatoConservFascicoloSrvlt extends KeycloakAuthorizationServlet 
                     //
                     // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai
                     // servizi di recupero con certificato
-                    fileItems = myRequestPrsr.parse(rispostaWsFasc, tmpPrsrConfig, null,
-                            sessioneFinta.getCertCommonName() == null ? false : true);
+                    // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai
+                    // servizi di recupero con
+                    // certificato
+                    // Oauth2 - Verifica se la richiesta è autenticata con token Oauth2
+                    boolean hasAuthHeader = hasAuthorizationHeader(request);
+
+                    if (hasAuthHeader) {
+                        fileItems = myRequestPrsr.parse(rispostaWsFasc, tmpPrsrConfig,
+                                getAccessToken(request));
+                    } else {
+                        fileItems = myRequestPrsr.parse(rispostaWsFasc, tmpPrsrConfig,
+                                sessioneFinta.getCertCommonName() == null ? false : true);
+                    }
 
                     //
                     if (rispostaWsFasc.getSeverity() != SeverityEnum.OK) {
@@ -197,7 +207,6 @@ public class RecStatoConservFascicoloSrvlt extends KeycloakAuthorizationServlet 
                                 rispostaWsFasc, myRecuperoFascExt);
                     }
 
-                    boolean hasAuthHeader = hasAuthorizationHeader(request);
                     // testa le credenziali utente, tramite ejb
                     myEsito = rispostaWsFasc.getIstanzaEsito();
                     if (rispostaWsFasc.getSeverity() == SeverityEnum.OK) {

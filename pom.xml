@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sacer-jboss</artifactId>
-    <version>10.20.2-SNAPSHOT</version>
+    <version>10.21.0</version>
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
@@ -28,8 +28,8 @@
         <!-- third party lib -->
         <org.apache.wss4j.version>3.0.5</org.apache.wss4j.version>
         <blob-info.version>1.0.0</blob-info.version>
-        <software.amazon.awssdk.version>2.42.34</software.amazon.awssdk.version>
-        <netty.version>4.1.132.Final</netty.version>
+        <software.amazon.awssdk.version>2.46.1</software.amazon.awssdk.version>
+        <netty.version>4.1.133.Final</netty.version>
         <xadisk.version>1.2.2.5</xadisk.version>
         <ojdbc7.version>12.1.0.1</ojdbc7.version>
         <naming-java.version>0.8</naming-java.version>

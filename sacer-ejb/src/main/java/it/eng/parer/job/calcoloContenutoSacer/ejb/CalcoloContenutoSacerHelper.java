@@ -410,6 +410,19 @@ public class CalcoloContenutoSacerHelper {
     }
 
     /**
+     * Elabora in modo atomico l'intera giornata di Calcolo Contenuto Sacer. Se uno step fallisce,
+     * l'intera giornata viene rollbackata.
+     *
+     * @param dataCalcoloDa data da elaborare
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void elaboraGiornataContenutoSacer(Date dataCalcoloDa) {
+        insertTotaliPerGiorno(dataCalcoloDa);
+        gestisciCancellazioniFisiche(dataCalcoloDa);
+        gestisciRestituzioniArchivioDelGiorno(dataCalcoloDa);
+    }
+
+    /**
      * Restituisce gli id tipi unità documentaria per quel tipo servizio per le strutture passate
      * come parametro. Null se non sono presenti record.
      *
@@ -537,4 +550,404 @@ public class CalcoloContenutoSacerHelper {
         return null;
 
     }
+
+    // MEV #37227
+
+    // METODO UNICO PER LE CANCELLAZIONI (Annullamento, Scarto)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void gestisciCancellazioniFisiche(Date dataCalcoloDa) {
+        Date dataCalcoloA = org.apache.commons.lang3.time.DateUtils.addDays(dataCalcoloDa, 1);
+
+        log.info(
+                "Calcolo Contenuto Sacer - Avvio allineamento massivo contatori cancellazioni tra {} e {}",
+                dataCalcoloDa, dataCalcoloA);
+
+        // Verifica formale di quadratura prima dello storno: tutte le chiavi da spostare
+        // devono esistere nella tabella attiva e con capienza sufficiente per il decremento.
+        String aggSourceSql = "SELECT c.DT_RIF_CONTA, c.ID_STRUT, c.ID_SUB_STRUT, c.AA_KEY_UNITA_DOC, "
+                + "       c.ID_REGISTRO_UNITA_DOC, c.ID_TIPO_UNITA_DOC, c.ID_TIPO_DOC_PRINC, "
+                + "       SUM(c.NI_UNITA_DOC_VERS) as s_ud_vers, SUM(c.NI_DOC_VERS) as s_doc_vers, SUM(c.NI_COMP_VERS) as s_comp_vers, SUM(c.NI_SIZE_VERS) as s_size_vers, "
+                + "       SUM(c.NI_DOC_AGG) as s_doc_agg, SUM(c.NI_COMP_AGG) as s_comp_agg, SUM(c.NI_SIZE_AGG) as s_size_agg, "
+                + "       SUM(c.NI_UNITA_DOC_ANNUL) as s_ud_annul, SUM(c.NI_DOC_ANNUL_UD) as s_doc_annul, SUM(c.NI_COMP_ANNUL_UD) as s_comp_annul, SUM(c.NI_SIZE_ANNUL_UD) as s_size_annul "
+                + "FROM DM_UD_DEL_CONTA c " + "JOIN DM_UD_DEL d ON c.ID_UNITA_DOC = d.ID_UNITA_DOC "
+                + "WHERE d.TI_STATO_UD_CANCELLATE = 'CANCELLATA_DB_SACER' "
+                + "  AND d.DT_STATO_UD_CANCELLATE >= :dataDa AND d.DT_STATO_UD_CANCELLATE < :dataA "
+                + "GROUP BY c.DT_RIF_CONTA, c.ID_STRUT, c.ID_SUB_STRUT, c.AA_KEY_UNITA_DOC, c.ID_REGISTRO_UNITA_DOC, c.ID_TIPO_UNITA_DOC, c.ID_TIPO_DOC_PRINC";
+
+        String aggCountSql = "SELECT COUNT(1) FROM (" + aggSourceSql + ")";
+        Query qAggCount = entityManager.createNativeQuery(aggCountSql);
+        qAggCount.setParameter("dataDa", dataCalcoloDa);
+        qAggCount.setParameter("dataA", dataCalcoloA);
+        Number aggCount = (Number) qAggCount.getSingleResult();
+        long totCombinazioni = aggCount != null ? aggCount.longValue() : 0L;
+
+        String dmVolumeSql = "SELECT COUNT(1), COUNT(DISTINCT c.ID_UNITA_DOC) "
+                + "FROM DM_UD_DEL_CONTA c " + "JOIN DM_UD_DEL d ON c.ID_UNITA_DOC = d.ID_UNITA_DOC "
+                + "WHERE d.TI_STATO_UD_CANCELLATE = 'CANCELLATA_DB_SACER' "
+                + "  AND d.DT_STATO_UD_CANCELLATE >= :dataDa AND d.DT_STATO_UD_CANCELLATE < :dataA";
+        Query qDmVolume = entityManager.createNativeQuery(dmVolumeSql);
+        qDmVolume.setParameter("dataDa", dataCalcoloDa);
+        qDmVolume.setParameter("dataA", dataCalcoloA);
+        Object[] dmVolume = (Object[]) qDmVolume.getSingleResult();
+        long totRigheDm = dmVolume[0] != null ? ((Number) dmVolume[0]).longValue() : 0L;
+        long totUdCoinvolte = dmVolume[1] != null ? ((Number) dmVolume[1]).longValue() : 0L;
+
+        // Checksum dei volumi aggregati da spostare: usato nel log di apertura e chiusura
+        // per verificare a colpo d'occhio la coerenza dell'operazione.
+        String deltaCheckSql = "SELECT SUM(s_ud_vers), SUM(s_doc_vers), SUM(s_comp_vers), SUM(s_size_vers), "
+                + "       SUM(s_doc_agg), SUM(s_comp_agg), SUM(s_size_agg), "
+                + "       SUM(s_ud_annul), SUM(s_doc_annul), SUM(s_comp_annul), SUM(s_size_annul) "
+                + "FROM (" + aggSourceSql + ")";
+        Query qDeltaCheck = entityManager.createNativeQuery(deltaCheckSql);
+        qDeltaCheck.setParameter("dataDa", dataCalcoloDa);
+        qDeltaCheck.setParameter("dataA", dataCalcoloA);
+        Object[] deltaCheck = (Object[]) qDeltaCheck.getSingleResult();
+        long chkUdVers = deltaCheck[0] != null ? ((Number) deltaCheck[0]).longValue() : 0L;
+        long chkDocVers = deltaCheck[1] != null ? ((Number) deltaCheck[1]).longValue() : 0L;
+        long chkCompVers = deltaCheck[2] != null ? ((Number) deltaCheck[2]).longValue() : 0L;
+        long chkSizeVers = deltaCheck[3] != null ? ((Number) deltaCheck[3]).longValue() : 0L;
+        long chkDocAgg = deltaCheck[4] != null ? ((Number) deltaCheck[4]).longValue() : 0L;
+        long chkCompAgg = deltaCheck[5] != null ? ((Number) deltaCheck[5]).longValue() : 0L;
+        long chkSizeAgg = deltaCheck[6] != null ? ((Number) deltaCheck[6]).longValue() : 0L;
+        long chkUdAnnul = deltaCheck[7] != null ? ((Number) deltaCheck[7]).longValue() : 0L;
+        long chkDocAnnul = deltaCheck[8] != null ? ((Number) deltaCheck[8]).longValue() : 0L;
+        long chkCompAnnul = deltaCheck[9] != null ? ((Number) deltaCheck[9]).longValue() : 0L;
+        long chkSizeAnnul = deltaCheck[10] != null ? ((Number) deltaCheck[10]).longValue() : 0L;
+
+        log.info(
+                "Calcolo Contenuto Sacer - Sintesi input cancellazioni fisiche [giorno={}, combinazioni={}, righeDm={}, udCoinvolte={}, "
+                        + "udVers={}, docVers={}, compVers={}, sizeVers={}, docAgg={}, compAgg={}, sizeAgg={}, "
+                        + "udAnnul={}, docAnnul={}, compAnnul={}, sizeAnnul={}]",
+                dataCalcoloDa, totCombinazioni, totRigheDm, totUdCoinvolte, chkUdVers, chkDocVers,
+                chkCompVers, chkSizeVers, chkDocAgg, chkCompAgg, chkSizeAgg, chkUdAnnul,
+                chkDocAnnul, chkCompAnnul, chkSizeAnnul);
+
+        if (totCombinazioni == 0L) {
+            log.info(
+                    "Calcolo Contenuto Sacer - Nessuna combinazione da stornare per cancellazioni fisiche tra {} e {}",
+                    dataCalcoloDa, dataCalcoloA);
+            return;
+        }
+
+        String mismatchSql = "SELECT COUNT(1) FROM (" + aggSourceSql + ") agg "
+                + "LEFT JOIN MON_CONTA_UD_DOC_COMP att "
+                + "  ON att.DT_RIF_CONTA = agg.DT_RIF_CONTA AND att.ID_STRUT = agg.ID_STRUT AND att.ID_SUB_STRUT = agg.ID_SUB_STRUT "
+                + " AND att.AA_KEY_UNITA_DOC = agg.AA_KEY_UNITA_DOC AND att.ID_REGISTRO_UNITA_DOC = agg.ID_REGISTRO_UNITA_DOC "
+                + " AND att.ID_TIPO_UNITA_DOC = agg.ID_TIPO_UNITA_DOC AND att.ID_TIPO_DOC_PRINC = agg.ID_TIPO_DOC_PRINC "
+                + "WHERE att.ID_CONTA_UD_DOC_COMP IS NULL "
+                + "   OR NVL(att.NI_UNITA_DOC_VERS, 0) < NVL(agg.s_ud_vers, 0) "
+                + "   OR NVL(att.NI_DOC_VERS, 0) < NVL(agg.s_doc_vers, 0) "
+                + "   OR NVL(att.NI_COMP_VERS, 0) < NVL(agg.s_comp_vers, 0) "
+                + "   OR NVL(att.NI_SIZE_VERS, 0) < NVL(agg.s_size_vers, 0) "
+                + "   OR NVL(att.NI_DOC_AGG, 0) < NVL(agg.s_doc_agg, 0) "
+                + "   OR NVL(att.NI_COMP_AGG, 0) < NVL(agg.s_comp_agg, 0) "
+                + "   OR NVL(att.NI_SIZE_AGG, 0) < NVL(agg.s_size_agg, 0) "
+                + "   OR NVL(att.NI_UNITA_DOC_ANNUL, 0) < NVL(agg.s_ud_annul, 0) "
+                + "   OR NVL(att.NI_DOC_ANNUL_UD, 0) < NVL(agg.s_doc_annul, 0) "
+                + "   OR NVL(att.NI_COMP_ANNUL_UD, 0) < NVL(agg.s_comp_annul, 0) "
+                + "   OR NVL(att.NI_SIZE_ANNUL_UD, 0) < NVL(agg.s_size_annul, 0)";
+
+        Query qMismatch = entityManager.createNativeQuery(mismatchSql);
+        qMismatch.setParameter("dataDa", dataCalcoloDa);
+        qMismatch.setParameter("dataA", dataCalcoloA);
+        Number mismatchCount = (Number) qMismatch.getSingleResult();
+        if (mismatchCount != null && mismatchCount.longValue() > 0L) {
+            String mismatchSampleSql = "SELECT * FROM ("
+                    + "  SELECT agg.DT_RIF_CONTA, agg.ID_STRUT, agg.ID_SUB_STRUT, agg.AA_KEY_UNITA_DOC, "
+                    + "         agg.ID_REGISTRO_UNITA_DOC, agg.ID_TIPO_UNITA_DOC, agg.ID_TIPO_DOC_PRINC, "
+                    + "         CASE "
+                    + "           WHEN att.ID_CONTA_UD_DOC_COMP IS NULL THEN 'MISSING_ACTIVE_ROW' "
+                    + "           WHEN NVL(att.NI_UNITA_DOC_VERS, 0) < NVL(agg.s_ud_vers, 0) THEN 'INSUFFICIENT_NI_UNITA_DOC_VERS' "
+                    + "           WHEN NVL(att.NI_DOC_VERS, 0) < NVL(agg.s_doc_vers, 0) THEN 'INSUFFICIENT_NI_DOC_VERS' "
+                    + "           WHEN NVL(att.NI_COMP_VERS, 0) < NVL(agg.s_comp_vers, 0) THEN 'INSUFFICIENT_NI_COMP_VERS' "
+                    + "           WHEN NVL(att.NI_SIZE_VERS, 0) < NVL(agg.s_size_vers, 0) THEN 'INSUFFICIENT_NI_SIZE_VERS' "
+                    + "           WHEN NVL(att.NI_DOC_AGG, 0) < NVL(agg.s_doc_agg, 0) THEN 'INSUFFICIENT_NI_DOC_AGG' "
+                    + "           WHEN NVL(att.NI_COMP_AGG, 0) < NVL(agg.s_comp_agg, 0) THEN 'INSUFFICIENT_NI_COMP_AGG' "
+                    + "           WHEN NVL(att.NI_SIZE_AGG, 0) < NVL(agg.s_size_agg, 0) THEN 'INSUFFICIENT_NI_SIZE_AGG' "
+                    + "           WHEN NVL(att.NI_UNITA_DOC_ANNUL, 0) < NVL(agg.s_ud_annul, 0) THEN 'INSUFFICIENT_NI_UNITA_DOC_ANNUL' "
+                    + "           WHEN NVL(att.NI_DOC_ANNUL_UD, 0) < NVL(agg.s_doc_annul, 0) THEN 'INSUFFICIENT_NI_DOC_ANNUL_UD' "
+                    + "           WHEN NVL(att.NI_COMP_ANNUL_UD, 0) < NVL(agg.s_comp_annul, 0) THEN 'INSUFFICIENT_NI_COMP_ANNUL_UD' "
+                    + "           WHEN NVL(att.NI_SIZE_ANNUL_UD, 0) < NVL(agg.s_size_annul, 0) THEN 'INSUFFICIENT_NI_SIZE_ANNUL_UD' "
+                    + "           ELSE 'UNKNOWN' " + "         END as MOTIVO " + "  FROM ("
+                    + aggSourceSql + ") agg " + "  LEFT JOIN MON_CONTA_UD_DOC_COMP att "
+                    + "    ON att.DT_RIF_CONTA = agg.DT_RIF_CONTA AND att.ID_STRUT = agg.ID_STRUT AND att.ID_SUB_STRUT = agg.ID_SUB_STRUT "
+                    + "   AND att.AA_KEY_UNITA_DOC = agg.AA_KEY_UNITA_DOC AND att.ID_REGISTRO_UNITA_DOC = agg.ID_REGISTRO_UNITA_DOC "
+                    + "   AND att.ID_TIPO_UNITA_DOC = agg.ID_TIPO_UNITA_DOC AND att.ID_TIPO_DOC_PRINC = agg.ID_TIPO_DOC_PRINC "
+                    + "  WHERE att.ID_CONTA_UD_DOC_COMP IS NULL "
+                    + "     OR NVL(att.NI_UNITA_DOC_VERS, 0) < NVL(agg.s_ud_vers, 0) "
+                    + "     OR NVL(att.NI_DOC_VERS, 0) < NVL(agg.s_doc_vers, 0) "
+                    + "     OR NVL(att.NI_COMP_VERS, 0) < NVL(agg.s_comp_vers, 0) "
+                    + "     OR NVL(att.NI_SIZE_VERS, 0) < NVL(agg.s_size_vers, 0) "
+                    + "     OR NVL(att.NI_DOC_AGG, 0) < NVL(agg.s_doc_agg, 0) "
+                    + "     OR NVL(att.NI_COMP_AGG, 0) < NVL(agg.s_comp_agg, 0) "
+                    + "     OR NVL(att.NI_SIZE_AGG, 0) < NVL(agg.s_size_agg, 0) "
+                    + "     OR NVL(att.NI_UNITA_DOC_ANNUL, 0) < NVL(agg.s_ud_annul, 0) "
+                    + "     OR NVL(att.NI_DOC_ANNUL_UD, 0) < NVL(agg.s_doc_annul, 0) "
+                    + "     OR NVL(att.NI_COMP_ANNUL_UD, 0) < NVL(agg.s_comp_annul, 0) "
+                    + "     OR NVL(att.NI_SIZE_ANNUL_UD, 0) < NVL(agg.s_size_annul, 0) "
+                    + ") WHERE ROWNUM <= 20";
+
+            Query qMismatchSample = entityManager.createNativeQuery(mismatchSampleSql);
+            qMismatchSample.setParameter("dataDa", dataCalcoloDa);
+            qMismatchSample.setParameter("dataA", dataCalcoloA);
+            List<Object[]> mismatchSample = qMismatchSample.getResultList();
+            for (Object[] rec : mismatchSample) {
+                log.error(
+                        "Quadratura KO - chiave [DT_RIF_CONTA={}, ID_STRUT={}, ID_SUB_STRUT={}, AA_KEY_UNITA_DOC={}, ID_REGISTRO_UNITA_DOC={}, ID_TIPO_UNITA_DOC={}, ID_TIPO_DOC_PRINC={}] motivo={} ",
+                        rec[0], rec[1], rec[2], rec[3], rec[4], rec[5], rec[6], rec[7]);
+            }
+            throw new IllegalStateException(
+                    "Quadratura cancellazioni fisiche fallita: " + mismatchCount.longValue()
+                            + " combinazioni non allineate tra delta DM e tabella attiva");
+        }
+
+        // 1. INCREMENTA LA TABELLA READ_ONLY (Storico Aggregato)
+        String mergeReadOnlySql = "MERGE INTO MON_CONTA_UD_DOC_COMP_READ_ONLY ro " + "USING ("
+                + "  SELECT c.DT_RIF_CONTA, c.ID_STRUT, c.ID_SUB_STRUT, c.AA_KEY_UNITA_DOC, "
+                + "         c.ID_REGISTRO_UNITA_DOC, c.ID_TIPO_UNITA_DOC, c.ID_TIPO_DOC_PRINC, "
+                + "         SUM(c.NI_UNITA_DOC_VERS) as s_ud_vers, SUM(c.NI_DOC_VERS) as s_doc_vers, SUM(c.NI_COMP_VERS) as s_comp_vers, SUM(c.NI_SIZE_VERS) as s_size_vers, "
+                + "         SUM(c.NI_DOC_AGG) as s_doc_agg, SUM(c.NI_COMP_AGG) as s_comp_agg, SUM(c.NI_SIZE_AGG) as s_size_agg, "
+                + "         SUM(c.NI_UNITA_DOC_ANNUL) as s_ud_annul, SUM(c.NI_DOC_ANNUL_UD) as s_doc_annul, SUM(c.NI_COMP_ANNUL_UD) as s_comp_annul, SUM(c.NI_SIZE_ANNUL_UD) as s_size_annul "
+                + "  FROM DM_UD_DEL_CONTA c "
+                + "  JOIN DM_UD_DEL d ON c.ID_UNITA_DOC = d.ID_UNITA_DOC "
+                + "  WHERE d.TI_STATO_UD_CANCELLATE = 'CANCELLATA_DB_SACER' "
+                + "    AND d.DT_STATO_UD_CANCELLATE >= :dataDa AND d.DT_STATO_UD_CANCELLATE < :dataA "
+                + "  GROUP BY c.DT_RIF_CONTA, c.ID_STRUT, c.ID_SUB_STRUT, c.AA_KEY_UNITA_DOC, c.ID_REGISTRO_UNITA_DOC, c.ID_TIPO_UNITA_DOC, c.ID_TIPO_DOC_PRINC "
+                + ") agg "
+                + "ON (ro.DT_RIF_CONTA = agg.DT_RIF_CONTA AND ro.ID_STRUT = agg.ID_STRUT AND ro.ID_SUB_STRUT = agg.ID_SUB_STRUT AND "
+                + "    ro.AA_KEY_UNITA_DOC = agg.AA_KEY_UNITA_DOC AND ro.ID_REGISTRO_UNITA_DOC = agg.ID_REGISTRO_UNITA_DOC AND "
+                + "    ro.ID_TIPO_UNITA_DOC = agg.ID_TIPO_UNITA_DOC AND ro.ID_TIPO_DOC_PRINC = agg.ID_TIPO_DOC_PRINC) "
+                + "WHEN MATCHED THEN UPDATE SET "
+                + "  ro.NI_UNITA_DOC_VERS = NVL(ro.NI_UNITA_DOC_VERS, 0) + agg.s_ud_vers, "
+                + "  ro.NI_DOC_VERS = NVL(ro.NI_DOC_VERS, 0) + agg.s_doc_vers, "
+                + "  ro.NI_COMP_VERS = NVL(ro.NI_COMP_VERS, 0) + agg.s_comp_vers, "
+                + "  ro.NI_SIZE_VERS = NVL(ro.NI_SIZE_VERS, 0) + agg.s_size_vers, "
+                + "  ro.NI_DOC_AGG = NVL(ro.NI_DOC_AGG, 0) + agg.s_doc_agg, "
+                + "  ro.NI_COMP_AGG = NVL(ro.NI_COMP_AGG, 0) + agg.s_comp_agg, "
+                + "  ro.NI_SIZE_AGG = NVL(ro.NI_SIZE_AGG, 0) + agg.s_size_agg, "
+                + "  ro.NI_UNITA_DOC_ANNUL = NVL(ro.NI_UNITA_DOC_ANNUL, 0) + agg.s_ud_annul, "
+                + "  ro.NI_DOC_ANNUL_UD = NVL(ro.NI_DOC_ANNUL_UD, 0) + agg.s_doc_annul, "
+                + "  ro.NI_COMP_ANNUL_UD = NVL(ro.NI_COMP_ANNUL_UD, 0) + agg.s_comp_annul, "
+                + "  ro.NI_SIZE_ANNUL_UD = NVL(ro.NI_SIZE_ANNUL_UD, 0) + agg.s_size_annul "
+                + "WHEN NOT MATCHED THEN INSERT "
+                + "  (ID_CONTA_UD_DOC_COMP, DT_RIF_CONTA, ID_STRUT, ID_SUB_STRUT, AA_KEY_UNITA_DOC, ID_REGISTRO_UNITA_DOC, ID_TIPO_UNITA_DOC, ID_TIPO_DOC_PRINC, "
+                + "   NI_UNITA_DOC_VERS, NI_DOC_VERS, NI_COMP_VERS, NI_SIZE_VERS, NI_DOC_AGG, NI_COMP_AGG, NI_SIZE_AGG, "
+                + "   NI_UNITA_DOC_ANNUL, NI_DOC_ANNUL_UD, NI_COMP_ANNUL_UD, NI_SIZE_ANNUL_UD) "
+                + "  VALUES (SMON_CONTA_UD_DOC_COMP.NEXTVAL, agg.DT_RIF_CONTA, agg.ID_STRUT, agg.ID_SUB_STRUT, agg.AA_KEY_UNITA_DOC, agg.ID_REGISTRO_UNITA_DOC, agg.ID_TIPO_UNITA_DOC, agg.ID_TIPO_DOC_PRINC, "
+                + "          agg.s_ud_vers, agg.s_doc_vers, agg.s_comp_vers, agg.s_size_vers, agg.s_doc_agg, agg.s_comp_agg, agg.s_size_agg, "
+                + "          agg.s_ud_annul, agg.s_doc_annul, agg.s_comp_annul, agg.s_size_annul)";
+
+        Query qMergeRO = entityManager.createNativeQuery(mergeReadOnlySql);
+        qMergeRO.setParameter("dataDa", dataCalcoloDa);
+        qMergeRO.setParameter("dataA", dataCalcoloA);
+        int rowsRO = qMergeRO.executeUpdate();
+
+        // 2. DECREMENTA LA TABELLA ATTIVA (Usa GREATEST per evitare numeri negativi)
+        String updateAttivaSql = "MERGE INTO MON_CONTA_UD_DOC_COMP att " + "USING ("
+                + "  SELECT c.DT_RIF_CONTA, c.ID_STRUT, c.ID_SUB_STRUT, c.AA_KEY_UNITA_DOC, "
+                + "         c.ID_REGISTRO_UNITA_DOC, c.ID_TIPO_UNITA_DOC, c.ID_TIPO_DOC_PRINC, "
+                + "         SUM(c.NI_UNITA_DOC_VERS) as s_ud_vers, SUM(c.NI_DOC_VERS) as s_doc_vers, SUM(c.NI_COMP_VERS) as s_comp_vers, SUM(c.NI_SIZE_VERS) as s_size_vers, "
+                + "         SUM(c.NI_DOC_AGG) as s_doc_agg, SUM(c.NI_COMP_AGG) as s_comp_agg, SUM(c.NI_SIZE_AGG) as s_size_agg, "
+                + "         SUM(c.NI_UNITA_DOC_ANNUL) as s_ud_annul, SUM(c.NI_DOC_ANNUL_UD) as s_doc_annul, SUM(c.NI_COMP_ANNUL_UD) as s_comp_annul, SUM(c.NI_SIZE_ANNUL_UD) as s_size_annul "
+                + "  FROM DM_UD_DEL_CONTA c "
+                + "  JOIN DM_UD_DEL d ON c.ID_UNITA_DOC = d.ID_UNITA_DOC "
+                + "  WHERE d.TI_STATO_UD_CANCELLATE = 'CANCELLATA_DB_SACER' "
+                + "    AND d.DT_STATO_UD_CANCELLATE >= :dataDa AND d.DT_STATO_UD_CANCELLATE < :dataA "
+                + "  GROUP BY c.DT_RIF_CONTA, c.ID_STRUT, c.ID_SUB_STRUT, c.AA_KEY_UNITA_DOC, c.ID_REGISTRO_UNITA_DOC, c.ID_TIPO_UNITA_DOC, c.ID_TIPO_DOC_PRINC "
+                + ") agg "
+                + "ON (att.DT_RIF_CONTA = agg.DT_RIF_CONTA AND att.ID_STRUT = agg.ID_STRUT AND att.ID_SUB_STRUT = agg.ID_SUB_STRUT AND "
+                + "    att.AA_KEY_UNITA_DOC = agg.AA_KEY_UNITA_DOC AND att.ID_REGISTRO_UNITA_DOC = agg.ID_REGISTRO_UNITA_DOC AND "
+                + "    att.ID_TIPO_UNITA_DOC = agg.ID_TIPO_UNITA_DOC AND att.ID_TIPO_DOC_PRINC = agg.ID_TIPO_DOC_PRINC) "
+                + "WHEN MATCHED THEN UPDATE SET "
+                + "  att.NI_UNITA_DOC_VERS = GREATEST(0, NVL(att.NI_UNITA_DOC_VERS, 0) - agg.s_ud_vers), "
+                + "  att.NI_DOC_VERS = GREATEST(0, NVL(att.NI_DOC_VERS, 0) - agg.s_doc_vers), "
+                + "  att.NI_COMP_VERS = GREATEST(0, NVL(att.NI_COMP_VERS, 0) - agg.s_comp_vers), "
+                + "  att.NI_SIZE_VERS = GREATEST(0, NVL(att.NI_SIZE_VERS, 0) - agg.s_size_vers), "
+                + "  att.NI_DOC_AGG = GREATEST(0, NVL(att.NI_DOC_AGG, 0) - agg.s_doc_agg), "
+                + "  att.NI_COMP_AGG = GREATEST(0, NVL(att.NI_COMP_AGG, 0) - agg.s_comp_agg), "
+                + "  att.NI_SIZE_AGG = GREATEST(0, NVL(att.NI_SIZE_AGG, 0) - agg.s_size_agg), "
+                + "  att.NI_UNITA_DOC_ANNUL = GREATEST(0, NVL(att.NI_UNITA_DOC_ANNUL, 0) - agg.s_ud_annul), "
+                + "  att.NI_DOC_ANNUL_UD = GREATEST(0, NVL(att.NI_DOC_ANNUL_UD, 0) - agg.s_doc_annul), "
+                + "  att.NI_COMP_ANNUL_UD = GREATEST(0, NVL(att.NI_COMP_ANNUL_UD, 0) - agg.s_comp_annul), "
+                + "  att.NI_SIZE_ANNUL_UD = GREATEST(0, NVL(att.NI_SIZE_ANNUL_UD, 0) - agg.s_size_annul)";
+
+        Query qUpdateAttiva = entityManager.createNativeQuery(updateAttivaSql);
+        qUpdateAttiva.setParameter("dataDa", dataCalcoloDa);
+        qUpdateAttiva.setParameter("dataA", dataCalcoloA);
+        int rowsAttiva = qUpdateAttiva.executeUpdate();
+
+        if (rowsAttiva != totCombinazioni) {
+            throw new IllegalStateException(
+                    "Quadratura MERGE su tabella attiva non coerente. Combinazioni="
+                            + totCombinazioni + ", righe aggiornate attiva=" + rowsAttiva);
+        }
+        if (rowsRO < totCombinazioni) {
+            throw new IllegalStateException(
+                    "Quadratura MERGE su tabella read only non coerente. Combinazioni="
+                            + totCombinazioni + ", righe toccate read only=" + rowsRO);
+        }
+
+        // 3. PULIZIA ZERI DALLA TABELLA ATTIVA
+        // Rimuove fisicamente i record della tabella attiva che sono stati portati a 0 dalle
+        // sottrazioni.
+        String cleanZerosSql = "DELETE FROM MON_CONTA_UD_DOC_COMP "
+                + "WHERE NVL(NI_UNITA_DOC_VERS,0) = 0 AND NVL(NI_DOC_VERS,0) = 0 "
+                + "  AND NVL(NI_COMP_VERS,0) = 0 AND NVL(NI_SIZE_VERS,0) = 0 "
+                + "  AND NVL(NI_DOC_AGG,0) = 0 AND NVL(NI_COMP_AGG,0) = 0 AND NVL(NI_SIZE_AGG,0) = 0 "
+                + "  AND NVL(NI_UNITA_DOC_ANNUL,0) = 0 AND NVL(NI_DOC_ANNUL_UD,0) = 0 "
+                + "  AND NVL(NI_COMP_ANNUL_UD,0) = 0 AND NVL(NI_SIZE_ANNUL_UD,0) = 0";
+
+        int rowsZeriCancellati = entityManager.createNativeQuery(cleanZerosSql).executeUpdate();
+
+        // 4. PARACADUTE: SALVATAGGIO IN STORICO (Audit)
+        // Spostiamo i delta elaborati oggi in una tabella di archivio storico prima di distruggerli
+        String archiveSnapshotSql = "INSERT INTO DM_UD_DEL_CONTA_STORICO (ID_UNITA_DOC, DT_RIF_CONTA, ID_STRUT, ID_SUB_STRUT, AA_KEY_UNITA_DOC, "
+                + "  ID_REGISTRO_UNITA_DOC, ID_TIPO_UNITA_DOC, ID_TIPO_DOC_PRINC, NI_UNITA_DOC_VERS, NI_DOC_VERS, NI_COMP_VERS, NI_SIZE_VERS, "
+                + "  NI_DOC_AGG, NI_COMP_AGG, NI_SIZE_AGG, NI_UNITA_DOC_ANNUL, NI_DOC_ANNUL_UD, NI_COMP_ANNUL_UD, NI_SIZE_ANNUL_UD, DT_ELABORAZIONE_JOB) "
+                + "SELECT c.ID_UNITA_DOC, c.DT_RIF_CONTA, c.ID_STRUT, c.ID_SUB_STRUT, c.AA_KEY_UNITA_DOC, "
+                + "  c.ID_REGISTRO_UNITA_DOC, c.ID_TIPO_UNITA_DOC, c.ID_TIPO_DOC_PRINC, c.NI_UNITA_DOC_VERS, c.NI_DOC_VERS, c.NI_COMP_VERS, c.NI_SIZE_VERS, "
+                + "  c.NI_DOC_AGG, c.NI_COMP_AGG, c.NI_SIZE_AGG, c.NI_UNITA_DOC_ANNUL, c.NI_DOC_ANNUL_UD, c.NI_COMP_ANNUL_UD, c.NI_SIZE_ANNUL_UD, SYSDATE "
+                + "FROM DM_UD_DEL_CONTA c " + "WHERE EXISTS ( " + "  SELECT 1 FROM DM_UD_DEL d "
+                + "  WHERE d.ID_UNITA_DOC = c.ID_UNITA_DOC "
+                + "    AND d.TI_STATO_UD_CANCELLATE = 'CANCELLATA_DB_SACER' "
+                + "    AND d.DT_STATO_UD_CANCELLATE >= :dataDa AND d.DT_STATO_UD_CANCELLATE < :dataA "
+                + ")";
+
+        Query qArchive = entityManager.createNativeQuery(archiveSnapshotSql);
+        qArchive.setParameter("dataDa", dataCalcoloDa);
+        qArchive.setParameter("dataA", dataCalcoloA);
+        int rowsArchived = qArchive.executeUpdate();
+
+        // 5. PULIZIA SNAPSHOT (Svuotiamo la tabella di lavoro)
+        String cleanSnapshotSql = "DELETE FROM DM_UD_DEL_CONTA c " + "WHERE EXISTS ( "
+                + "  SELECT 1 FROM DM_UD_DEL d " + "  WHERE d.ID_UNITA_DOC = c.ID_UNITA_DOC "
+                + "    AND d.TI_STATO_UD_CANCELLATE = 'CANCELLATA_DB_SACER' "
+                + "    AND d.DT_STATO_UD_CANCELLATE >= :dataDa AND d.DT_STATO_UD_CANCELLATE < :dataA "
+                + ")";
+
+        Query qClean = entityManager.createNativeQuery(cleanSnapshotSql);
+        qClean.setParameter("dataDa", dataCalcoloDa);
+        qClean.setParameter("dataA", dataCalcoloA);
+        int rowsDeleted = qClean.executeUpdate();
+
+        if (rowsArchived != rowsDeleted) {
+            throw new IllegalStateException(
+                    "Quadratura archive/delete DM_UD_DEL_CONTA non coerente. Archiviati="
+                            + rowsArchived + ", cancellati=" + rowsDeleted);
+        }
+
+        log.info(
+                "Spostamento conteggi concluso. Aggiornati {} aggr. in RO, {} in Attiva. Rimosse {} righe azzerate. "
+                        + "Archiviati {} e puliti {} record di log storici. "
+                        + "Sintesi [combinazioni={}, righeDm={}, udCoinvolte={}, "
+                        + "udVers={}, docVers={}, compVers={}, sizeVers={}, docAgg={}, compAgg={}, sizeAgg={}, "
+                        + "udAnnul={}, docAnnul={}, compAnnul={}, sizeAnnul={}].",
+                rowsRO, rowsAttiva, rowsZeriCancellati, rowsArchived, rowsDeleted, totCombinazioni,
+                totRigheDm, totUdCoinvolte, chkUdVers, chkDocVers, chkCompVers, chkSizeVers,
+                chkDocAgg, chkCompAgg, chkSizeAgg, chkUdAnnul, chkDocAnnul, chkCompAnnul,
+                chkSizeAnnul);
+    }
+
+    // METODO DEDICATO: GESTIONE SGANCIAMENTO INTERA STRUTTURA (Restituzione Archivio)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void gestisciRestituzioneArchivio(Long idStrut) {
+        log.info(
+                "Calcolo Contenuto Sacer - Inizio allineamento contatori per Restituzione Archivio. ID_STRUT: {}",
+                idStrut);
+
+        // 1. TRAVASO DIRETTO: Sposta tutto l'attivo della struttura nella READ_ONLY.
+        // Se ci sono già righe per quelle combinazioni nello storico, le somma.
+        String mergeSql = "MERGE INTO MON_CONTA_UD_DOC_COMP_READ_ONLY ro "
+                + "USING (SELECT * FROM MON_CONTA_UD_DOC_COMP WHERE ID_STRUT = :idStrut) att "
+                + "ON (ro.DT_RIF_CONTA = att.DT_RIF_CONTA AND ro.ID_STRUT = att.ID_STRUT AND ro.ID_SUB_STRUT = att.ID_SUB_STRUT "
+                + "    AND ro.AA_KEY_UNITA_DOC = att.AA_KEY_UNITA_DOC AND ro.ID_REGISTRO_UNITA_DOC = att.ID_REGISTRO_UNITA_DOC "
+                + "    AND ro.ID_TIPO_UNITA_DOC = att.ID_TIPO_UNITA_DOC AND ro.ID_TIPO_DOC_PRINC = att.ID_TIPO_DOC_PRINC) "
+                + "WHEN MATCHED THEN UPDATE SET "
+                + "    ro.NI_UNITA_DOC_VERS = NVL(ro.NI_UNITA_DOC_VERS, 0) + NVL(att.NI_UNITA_DOC_VERS, 0), "
+                + "    ro.NI_DOC_VERS = NVL(ro.NI_DOC_VERS, 0) + NVL(att.NI_DOC_VERS, 0), "
+                + "    ro.NI_COMP_VERS = NVL(ro.NI_COMP_VERS, 0) + NVL(att.NI_COMP_VERS, 0), "
+                + "    ro.NI_SIZE_VERS = NVL(ro.NI_SIZE_VERS, 0) + NVL(att.NI_SIZE_VERS, 0), "
+                + "    ro.NI_DOC_AGG = NVL(ro.NI_DOC_AGG, 0) + NVL(att.NI_DOC_AGG, 0), "
+                + "    ro.NI_COMP_AGG = NVL(ro.NI_COMP_AGG, 0) + NVL(att.NI_COMP_AGG, 0), "
+                + "    ro.NI_SIZE_AGG = NVL(ro.NI_SIZE_AGG, 0) + NVL(att.NI_SIZE_AGG, 0), "
+                + "    ro.NI_UNITA_DOC_ANNUL = NVL(ro.NI_UNITA_DOC_ANNUL, 0) + NVL(att.NI_UNITA_DOC_ANNUL, 0), "
+                + "    ro.NI_DOC_ANNUL_UD = NVL(ro.NI_DOC_ANNUL_UD, 0) + NVL(att.NI_DOC_ANNUL_UD, 0), "
+                + "    ro.NI_COMP_ANNUL_UD = NVL(ro.NI_COMP_ANNUL_UD, 0) + NVL(att.NI_COMP_ANNUL_UD, 0), "
+                + "    ro.NI_SIZE_ANNUL_UD = NVL(ro.NI_SIZE_ANNUL_UD, 0) + NVL(att.NI_SIZE_ANNUL_UD, 0) "
+                + "WHEN NOT MATCHED THEN INSERT "
+                + "    (ID_CONTA_UD_DOC_COMP, DT_RIF_CONTA, ID_STRUT, ID_SUB_STRUT, AA_KEY_UNITA_DOC, "
+                + "     ID_REGISTRO_UNITA_DOC, ID_TIPO_UNITA_DOC, ID_TIPO_DOC_PRINC, "
+                + "     NI_UNITA_DOC_VERS, NI_DOC_VERS, NI_COMP_VERS, NI_SIZE_VERS, "
+                + "     NI_DOC_AGG, NI_COMP_AGG, NI_SIZE_AGG, "
+                + "     NI_UNITA_DOC_ANNUL, NI_DOC_ANNUL_UD, NI_COMP_ANNUL_UD, NI_SIZE_ANNUL_UD) "
+                + "    VALUES (SMON_CONTA_UD_DOC_COMP.NEXTVAL, att.DT_RIF_CONTA, att.ID_STRUT, att.ID_SUB_STRUT, att.AA_KEY_UNITA_DOC, "
+                + "            att.ID_REGISTRO_UNITA_DOC, att.ID_TIPO_UNITA_DOC, att.ID_TIPO_DOC_PRINC, "
+                + "            NVL(att.NI_UNITA_DOC_VERS, 0), NVL(att.NI_DOC_VERS, 0), NVL(att.NI_COMP_VERS, 0), NVL(att.NI_SIZE_VERS, 0), "
+                + "            NVL(att.NI_DOC_AGG, 0), NVL(att.NI_COMP_AGG, 0), NVL(att.NI_SIZE_AGG, 0), "
+                + "            NVL(att.NI_UNITA_DOC_ANNUL, 0), NVL(att.NI_DOC_ANNUL_UD, 0), NVL(att.NI_COMP_ANNUL_UD, 0), NVL(att.NI_SIZE_ANNUL_UD, 0))";
+
+        Query queryMerge = entityManager.createNativeQuery(mergeSql);
+        queryMerge.setParameter("idStrut", idStrut);
+        int mergedRows = queryMerge.executeUpdate();
+
+        // 2. SCRITTURA LOG DI AUDIT (Aggregato)
+        // Registriamo nello storico COSA abbiamo spostato, così la query di riconciliazione
+        // quadrerà
+        String logSql = "INSERT INTO DM_UD_DEL_CONTA_STORICO (ID_UNITA_DOC, DT_RIF_CONTA, ID_STRUT, ID_SUB_STRUT, "
+                + "  AA_KEY_UNITA_DOC, ID_REGISTRO_UNITA_DOC, ID_TIPO_UNITA_DOC, ID_TIPO_DOC_PRINC, "
+                + "  NI_UNITA_DOC_VERS, NI_DOC_VERS, NI_COMP_VERS, NI_SIZE_VERS, "
+                + "  NI_DOC_AGG, NI_COMP_AGG, NI_SIZE_AGG, NI_UNITA_DOC_ANNUL, NI_DOC_ANNUL_UD, NI_COMP_ANNUL_UD, NI_SIZE_ANNUL_UD, DT_ELABORAZIONE_JOB) "
+                + "SELECT 0, DT_RIF_CONTA, ID_STRUT, ID_SUB_STRUT, "
+                + "  AA_KEY_UNITA_DOC, ID_REGISTRO_UNITA_DOC, ID_TIPO_UNITA_DOC, ID_TIPO_DOC_PRINC, "
+                + "  NI_UNITA_DOC_VERS, NI_DOC_VERS, NI_COMP_VERS, NI_SIZE_VERS, "
+                + "  NI_DOC_AGG, NI_COMP_AGG, NI_SIZE_AGG, NI_UNITA_DOC_ANNUL, NI_DOC_ANNUL_UD, NI_COMP_ANNUL_UD, NI_SIZE_ANNUL_UD, SYSDATE "
+                + "FROM MON_CONTA_UD_DOC_COMP WHERE ID_STRUT = :idStrut";
+
+        entityManager.createNativeQuery(logSql).setParameter("idStrut", idStrut).executeUpdate();
+
+        // 3. PULIZIA: Dato che la struttura è bloccata, posso eliminare tutto l'attivo in totale
+        // sicurezza.
+        String deleteSql = "DELETE FROM MON_CONTA_UD_DOC_COMP WHERE ID_STRUT = :idStrut";
+        Query queryDelete = entityManager.createNativeQuery(deleteSql);
+        queryDelete.setParameter("idStrut", idStrut);
+        int deletedRows = queryDelete.executeUpdate();
+
+        log.info(
+                "Restituzione Archivio completata per ID_STRUT {}. {} righe aggregate spostate nello Storico. {} righe cancellate dall'Attivo.",
+                idStrut, mergedRows, deletedRows);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void gestisciRestituzioniArchivioDelGiorno(Date dataCalcoloDa) {
+        Date dataCalcoloA = org.apache.commons.lang3.time.DateUtils.addDays(dataCalcoloDa, 1);
+
+        // Cerco l'ID_STRUT collegato a una richiesta di RESTITUZIONE che ha terminato TUTTO l'iter
+        // (stato EVASA) esattamente nel giorno in esame.
+        String findStrutSql = "SELECT DISTINCT d.ID_STRUT " + "FROM DM_UD_DEL_RICHIESTE r "
+                + "JOIN DM_UD_DEL d ON r.ID_UD_DEL_RICHIESTA = d.ID_UD_DEL_RICHIESTA "
+                + "WHERE r.TI_MOT_CANCELLAZIONE = 'R' " + "  AND r.TI_STATO_RICHIESTA = 'EVASA' " + // <--
+                                                                                                    // Controlla
+                                                                                                    // che
+                                                                                                    // TUTTA
+                                                                                                    // la
+                                                                                                    // richiesta
+                                                                                                    // sia
+                                                                                                    // finita
+                "  AND r.DT_EVASIONE >= :dataDa AND r.DT_EVASIONE < :dataA";
+
+        Query queryFind = entityManager.createNativeQuery(findStrutSql);
+        queryFind.setParameter("dataDa", dataCalcoloDa);
+        queryFind.setParameter("dataA", dataCalcoloA);
+
+        List<Number> idStrutture = queryFind.getResultList();
+
+        // Se non trova nulla, questo ciclo viene semplicemente saltato.
+        for (Number idStrutNum : idStrutture) {
+            Long idStrut = idStrutNum.longValue();
+            gestisciRestituzioneArchivio(idStrut);
+        }
+    }
+
+    // end MEV #37227
+
 }

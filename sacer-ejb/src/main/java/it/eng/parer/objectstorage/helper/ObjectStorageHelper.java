@@ -13,10 +13,13 @@
 
 package it.eng.parer.objectstorage.helper;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -35,7 +38,6 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import it.eng.parer.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,18 +51,20 @@ import it.eng.parer.entity.AroVersIniDatiSpecObjectStorage;
 import it.eng.parer.entity.AroXmlDocObjectStorage;
 import it.eng.parer.entity.AroXmlUnitaDocObjectStorage;
 import it.eng.parer.entity.AroXmlUpdUdObjectStorage;
-import it.eng.parer.entity.DecAaTipoFascicolo;
 import it.eng.parer.entity.DecBackend;
 import it.eng.parer.entity.DecConfigObjectStorage;
-import it.eng.parer.entity.DecTipoUnitaDoc;
+import it.eng.parer.entity.ElvElencoVer;
+import it.eng.parer.entity.ElvElencoVersFasc;
+import it.eng.parer.entity.ElvFileElencoVer;
 import it.eng.parer.entity.ElvFileElencoVersFasc;
 import it.eng.parer.entity.ElvFileElencoVersFascObjectStorage;
+import it.eng.parer.entity.ElvFileElencoVersObjectStorage;
+import it.eng.parer.entity.FasFascicolo;
 import it.eng.parer.entity.FasFileMetaVerAipFascObjectStorage;
 import it.eng.parer.entity.FasVerAipFascicolo;
 import it.eng.parer.entity.FasXmlFascObjectStorage;
 import it.eng.parer.entity.FasXmlVersFascObjectStorage;
 import it.eng.parer.entity.FirReport;
-import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.SerFileVerSerie;
 import it.eng.parer.entity.SerVerSerie;
 import it.eng.parer.entity.SerVerSerieObjectStorage;
@@ -73,21 +77,18 @@ import it.eng.parer.entity.VrsXmlSesUpdUdKoObjectStorage;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc;
 import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
 import it.eng.parer.entity.inheritance.oop.AroXmlObjectStorage;
-import it.eng.parer.exception.ParamApplicNotFoundException;
-import it.eng.parer.objectstorage.dto.BackendStorage;
 import it.eng.parer.objectstorage.dto.ObjectStorageBackend;
 import it.eng.parer.objectstorage.dto.ObjectStorageResource;
 import it.eng.parer.objectstorage.ejb.AwsClient;
 import it.eng.parer.objectstorage.ejb.AwsPresigner;
+import it.eng.parer.objectstorage.ejb.ObjectStorageConfigCache;
+import it.eng.parer.objectstorage.exceptions.BackendException;
 import it.eng.parer.objectstorage.exceptions.ObjectStorageException;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.utils.Costanti.AwsConstants;
 import it.eng.parer.ws.utils.CostantiDB.ParametroAppl;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
-import java.text.MessageFormat;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -97,7 +98,6 @@ import software.amazon.awssdk.services.s3.model.GetObjectAttributesRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectAttributesResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.ChecksumMode;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -105,13 +105,12 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.model.Tag;
 import software.amazon.awssdk.services.s3.model.Tagging;
 
-@Stateless(mappedName = "SalvataggioBackendHelper")
+@Stateless(mappedName = "ObjectStorageHelper")
 @LocalBean
-public class SalvataggioBackendHelper {
+public class ObjectStorageHelper {
 
-    private final Logger log = LoggerFactory.getLogger(SalvataggioBackendHelper.class);
+    private final Logger log = LoggerFactory.getLogger(ObjectStorageHelper.class);
 
-    private static final String NO_PARAMETER = "Impossibile ottenere il parametro {0}";
     private static final String LOG_MESSAGE_NO_SAVED = "Impossibile salvare il link dell'oggetto su DB";
     private static final String ID_COMP_DOC = "idCompDoc";
     private static final String ID_VER_SERIE = "idVerSerie";
@@ -128,8 +127,9 @@ public class SalvataggioBackendHelper {
 
     private static final String TIPO_USO_OS_PARAMETER = "tipoUsoOs";
 
-    @EJB
-    protected SalvataggioBackendHelper me;
+    private static final String BUCKET = "BUCKET";
+    private static final String ACCESS_KEY_ID_SYS_PROP = "ACCESS_KEY_ID_SYS_PROP";
+    private static final String SECRET_KEY_SYS_PROP = "SECRET_KEY_SYS_PROP";
 
     @EJB
     protected ConfigurationHelper configurationHelper;
@@ -140,112 +140,14 @@ public class SalvataggioBackendHelper {
     @EJB
     protected AwsClient s3Clients;
 
+    @EJB
+    protected ObjectStorageConfigCache configCache;
+
+    @EJB
+    protected BackendHelper backendHelper;
+
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
-
-    public enum BACKEND_VERSAMENTO {
-        DATABASE, OBJECT_STORAGE
-    }
-
-    /**
-     * Ottieni la tipologia di backend per salvare i BLOB relativi al versamento sincrono
-     *
-     * @param idTipoUnitaDoc id della tipologia dell'UD
-     * @param paramName      nome del parametro
-     *
-     * @return Configurazione del backend. Può essere, per esempio OBJECT_STORAGE_STAGING oppure
-     *         DATABASE_PRIMARIO
-     *
-     * @throws ObjectStorageException in caso di errore
-     */
-    public String getBackendByParamName(long idTipoUnitaDoc, String paramName)
-            throws ObjectStorageException {
-        String backendDatiVersamento = null;
-        try {
-            return getParameter(idTipoUnitaDoc, paramName);
-
-        } catch (ParamApplicNotFoundException | IllegalArgumentException e) {
-            throw ObjectStorageException.builder().message(
-                    "Impossibile ottenere il parametro {0} con id tipo unita doc {1} e tipo creazione {2}",
-                    backendDatiVersamento, idTipoUnitaDoc, paramName).cause(e).build();
-        }
-    }
-
-    private String getParameter(long idTipoUnitaDoc, String parameterName) {
-        DecTipoUnitaDoc tipoUd = entityManager.find(DecTipoUnitaDoc.class, idTipoUnitaDoc);
-        long idStrut = tipoUd.getOrgStrut().getIdStrut();
-
-        long idAmbiente = tipoUd.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente();
-
-        return configurationHelper.getValoreParamApplicByTipoUd(parameterName,
-                BigDecimal.valueOf(idAmbiente), BigDecimal.valueOf(idStrut),
-                BigDecimal.valueOf(idTipoUnitaDoc));
-    }
-
-    // MEV#30397
-    /**
-     * Ottieni la configurazione applicativa relativa alla tipologia di Backend per il salvataggio
-     * degli elenchi indici aip
-     *
-     * @param idStrut id struttura
-     *
-     * @return configurazione del backend. Può essere, per esempio OBJECT_STORAGE_STAGING oppure
-     *         DATABASE_PRIMARIO
-     *
-     * @throws ObjectStorageException in caso di errore di recupero del parametro
-     */
-    public String getBackendElenchiIndiciAip(long idStrut) throws ObjectStorageException {
-        try {
-            OrgStrut strut = entityManager.find(OrgStrut.class, idStrut);
-
-            long idAmbiente = strut.getOrgEnte().getOrgAmbiente().getIdAmbiente();
-            return configurationHelper.getValoreParamApplicByStrut(
-                    ParametroAppl.BACKEND_ELENCHI_INDICI_AIP, BigDecimal.valueOf(idAmbiente),
-                    BigDecimal.valueOf(idStrut));
-
-        } catch (ParamApplicNotFoundException | IllegalArgumentException e) {
-            throw ObjectStorageException.builder()
-                    .message(NO_PARAMETER, ParametroAppl.BACKEND_ELENCHI_INDICI_AIP).cause(e)
-                    .build();
-        }
-    }
-    // end MEV#30397
-
-    // MEV#30400
-    /**
-     * Ottieni la configurazione applicativa relativa alla tipologia di Backend per il salvataggio
-     * degli indici aip di serie di ud
-     *
-     * @param idStrut id struttura
-     *
-     * @return configurazione del backend. Può essere, per esempio OBJECT_STORAGE_STAGING oppure
-     *         DATABASE_PRIMARIO
-     *
-     * @throws ObjectStorageException in caso di errore di recupero del parametro
-     */
-    public String getBackendIndiciAipSerieUD(long idStrut) throws ObjectStorageException {
-        try {
-            OrgStrut strut = entityManager.find(OrgStrut.class, idStrut);
-
-            long idAmbiente = strut.getOrgEnte().getOrgAmbiente().getIdAmbiente();
-            return configurationHelper.getValoreParamApplicByStrut(
-                    ParametroAppl.BACKEND_INDICI_AIP_SERIE_UD, BigDecimal.valueOf(idAmbiente),
-                    BigDecimal.valueOf(idStrut));
-
-        } catch (ParamApplicNotFoundException | IllegalArgumentException e) {
-            throw ObjectStorageException.builder()
-                    .message(NO_PARAMETER, ParametroAppl.BACKEND_INDICI_AIP_SERIE_UD).cause(e)
-                    .build();
-        }
-    }
-    // end MEV#30400
-
-    public DecBackend getBackendEntity(String nomeBackend) {
-        TypedQuery<DecBackend> query = entityManager.createQuery(
-                "Select d from DecBackend d where d.nmBackend = :nomeBackend", DecBackend.class);
-        query.setParameter(NOME_BACKEND_PARAMETER, nomeBackend);
-        return query.getSingleResult();
-    }
 
     /**
      * Ottieni l'oggetto dall'object storage selezionato sotto-forma di InputStream.
@@ -258,15 +160,15 @@ public class SalvataggioBackendHelper {
      *
      * @throws ObjectStorageException in caso di errore
      */
-    public ResponseInputStream<GetObjectResponse> getObject(ObjectStorageBackend configuration,
+    public ResponseInputStream<GetObjectResponse> getS3Object(ObjectStorageBackend configuration,
             String bucket, String objectKey) throws ObjectStorageException {
         try {
-            S3Client s3SourceClient = s3Clients.getClient(configuration.getAddress(),
+            S3Client s3Client = s3Clients.getClient(configuration.getAddress(),
                     configuration.getAccessKeyId(), configuration.getSecretKey());
 
             GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket)
                     .key(objectKey).build();
-            return s3SourceClient.getObject(getObjectRequest);
+            return s3Client.getObject(getObjectRequest);
 
         } catch (AwsServiceException | SdkClientException e) {
             throw ObjectStorageException.builder()
@@ -662,7 +564,7 @@ public class SalvataggioBackendHelper {
      *
      * @throws ObjectStorageException in caso di errore
      */
-    public FirReport getLinkReportVerificaFirma(long idCompDoc) throws ObjectStorageException {
+    public FirReport getLinkReportVerificaFirmaOs(long idCompDoc) throws ObjectStorageException {
         try {
             TypedQuery<FirReport> query = entityManager.createQuery(
                     "select t from FirReport t where t.aroCompDoc.idCompDoc = :idCompDoc",
@@ -688,7 +590,7 @@ public class SalvataggioBackendHelper {
      *
      * @throws ObjectStorageException in caso di errore
      */
-    public VrsFileSesObjectStorageKo getLinkVersamentoFallito(long idFileSessioneKo)
+    public VrsFileSesObjectStorageKo getLinkVersamentoFallitoOs(long idFileSessioneKo)
             throws ObjectStorageException {
         try {
             TypedQuery<VrsFileSesObjectStorageKo> query = entityManager.createQuery(
@@ -777,48 +679,6 @@ public class SalvataggioBackendHelper {
     }
 
     /**
-     * Ottieni la configurazione del backend a partire dal nome del backend
-     *
-     * @param nomeBackend per esempio "OBJECT_STORAGE_PRIMARIO"
-     *
-     * @return Informazioni sul Backend identificato
-     *
-     * @throws ObjectStorageException in caso di errore
-     */
-    public BackendStorage getBackend(String nomeBackend) throws ObjectStorageException {
-        try {
-
-            DecBackend backend = me.getBackendEntity(nomeBackend);
-            final BackendStorage.STORAGE_TYPE type = BackendStorage.STORAGE_TYPE
-                    .valueOf(backend.getNmTipoBackend());
-            final String backendName = backend.getNmBackend();
-
-            return new BackendStorage() {
-                private static final long serialVersionUID = 5092016605462729859L;
-
-                @Override
-                public BackendStorage.STORAGE_TYPE getType() {
-                    return type;
-                }
-
-                @Override
-                public String getBackendName() {
-                    return backendName;
-                }
-            };
-
-        } catch (IllegalArgumentException | NonUniqueResultException e) {
-            throw ObjectStorageException.builder()
-                    .message("Impossibile ottenere le informazioni di backend").cause(e).build();
-        }
-
-    }
-
-    private static final String BUCKET = "BUCKET";
-    private static final String ACCESS_KEY_ID_SYS_PROP = "ACCESS_KEY_ID_SYS_PROP";
-    private static final String SECRET_KEY_SYS_PROP = "SECRET_KEY_SYS_PROP";
-
-    /**
      * Ottieni la configurazione per potersi collegare a quel bucket dell'Object Storage scelto.
      *
      * @param nomeBackend nome del backend <strong> di tipo DEC_BACKEND.NM_TIPO_BACKEND = 'OS'
@@ -830,6 +690,16 @@ public class SalvataggioBackendHelper {
      * @throws ObjectStorageException in caso di errore
      */
     public ObjectStorageBackend getObjectStorageConfiguration(final String nomeBackend,
+            final String tipoUsoOs) throws ObjectStorageException {
+        ObjectStorageBackend cached = configCache.getOsConfig(nomeBackend, tipoUsoOs);
+        if (cached != null) {
+            return cached;
+        }
+        ObjectStorageBackend loaded = loadObjectStorageConfiguration(nomeBackend, tipoUsoOs);
+        return configCache.putOsConfigIfAbsent(nomeBackend, tipoUsoOs, loaded);
+    }
+
+    private ObjectStorageBackend loadObjectStorageConfiguration(final String nomeBackend,
             final String tipoUsoOs) throws ObjectStorageException {
         TypedQuery<DecConfigObjectStorage> query = entityManager.createQuery(
                 "Select c from DecConfigObjectStorage c where c.tiUsoConfigObjectStorage = :tipoUsoOs and c.decBackend.nmBackend = :nomeBackend order by c.nmConfigObjectStorage",
@@ -871,10 +741,10 @@ public class SalvataggioBackendHelper {
                     .build();
         }
 
-        final String accessKeyId = System.getProperty(nomeSystemPropertyAccessKeyId);
-        final String secretKey = System.getProperty(nomeSystemPropertySecretKey);
-        final URI osURI = URI.create(storageAddress);
-        final String stagingBucket = bucket;
+        final String finalAccessKeyId = System.getProperty(nomeSystemPropertyAccessKeyId);
+        final String finalSecretKey = System.getProperty(nomeSystemPropertySecretKey);
+        final URI finalAddress = URI.create(storageAddress);
+        final String finalBucket = bucket;
 
         return new ObjectStorageBackend() {
             private static final long serialVersionUID = -7032516962480163852L;
@@ -886,25 +756,24 @@ public class SalvataggioBackendHelper {
 
             @Override
             public URI getAddress() {
-                return osURI;
+                return finalAddress;
             }
 
             @Override
             public String getBucket() {
-                return stagingBucket;
+                return finalBucket;
             }
 
             @Override
             public String getAccessKeyId() {
-                return accessKeyId;
+                return finalAccessKeyId;
             }
 
             @Override
             public String getSecretKey() {
-                return secretKey;
+                return finalSecretKey;
             }
         };
-
     }
 
     // MEV#30395
@@ -920,11 +789,11 @@ public class SalvataggioBackendHelper {
      *
      * @throws ObjectStorageException in caso di errore
      */
-    public ObjectStorageResource putObject(String contenuto, final String key,
+    public ObjectStorageResource putS3Object(String contenuto, final String key,
             ObjectStorageBackend configuration) throws ObjectStorageException {
         checkFullConfiguration(configuration);
         try {
-            return putObject(contenuto, key, configuration, Optional.empty(), Optional.empty(),
+            return putS3Object(contenuto, key, configuration, Optional.empty(), Optional.empty(),
                     Optional.empty());
         } catch (Exception e) {
             throw ObjectStorageException.builder()
@@ -950,7 +819,7 @@ public class SalvataggioBackendHelper {
      *
      * @throws ObjectStorageException in caso di errore
      */
-    public ObjectStorageResource putObject(String contenuto, final String key,
+    public ObjectStorageResource putS3Object(String contenuto, final String key,
             ObjectStorageBackend configuration, Optional<Map<String, String>> metadata,
             Optional<Set<Tag>> tags, Optional<String> base64crc32c) throws ObjectStorageException {
 
@@ -1057,7 +926,7 @@ public class SalvataggioBackendHelper {
      *
      * @throws ObjectStorageException in caso di errore
      */
-    public ObjectStorageResource putObject(InputStream blob, long blobLength, final String key,
+    public ObjectStorageResource putS3Object(InputStream blob, long blobLength, final String key,
             ObjectStorageBackend configuration, Optional<Map<String, String>> metadata,
             Optional<Set<Tag>> tags, Optional<String> base64crc32c) throws ObjectStorageException {
 
@@ -1160,7 +1029,7 @@ public class SalvataggioBackendHelper {
     public void saveObjectStorageLinkElencoIndiceAip(ObjectStorageResource object, String nmBackend,
             long idFileElencoVers, BigDecimal idStrut) throws ObjectStorageException {
         try {
-            DecBackend decBackend = me.getBackendEntity(nmBackend);
+            DecBackend decBackend = backendHelper.getBackendEntity(nmBackend);
             ElvFileElencoVer elvFileElencoVer = entityManager.find(ElvFileElencoVer.class,
                     idFileElencoVers);
 
@@ -1283,7 +1152,7 @@ public class SalvataggioBackendHelper {
             long idVerIndiceAip, BigDecimal idSubStrut, BigDecimal aaKeyUnitaDoc)
             throws ObjectStorageException {
         try {
-            DecBackend decBackend = me.getBackendEntity(nmBackend);
+            DecBackend decBackend = backendHelper.getBackendEntity(nmBackend);
             AroVerIndiceAipUd aroVerIndiceAip = entityManager.find(AroVerIndiceAipUd.class,
                     idVerIndiceAip);
 
@@ -1315,7 +1184,8 @@ public class SalvataggioBackendHelper {
      *
      * @throws ObjectStorageException in caso di errore.
      */
-    public String generateKeyIndiceAip(long idVerIndiceAip) throws ObjectStorageException {
+    public String generateKeyIndiceAipObjectStorage(long idVerIndiceAip)
+            throws ObjectStorageException {
         try {
 
             AroVerIndiceAipUd verIndiceAipUd = entityManager.find(AroVerIndiceAipUd.class,
@@ -1356,7 +1226,7 @@ public class SalvataggioBackendHelper {
                 + cdKeyUnitaDocNorm + "_IndiceAIPUD_" + idUnitaDoc + "_" + pgVerIndiceAip;
     }
 
-    public String generateKeyElencoIndiceAip(long idFileElencoVers, String suffisso)
+    public String generateKeyElencoIndiceAipObjectStorage(long idFileElencoVers, String suffisso)
             throws ObjectStorageException {
         try {
 
@@ -1391,7 +1261,8 @@ public class SalvataggioBackendHelper {
                 + idElencoVers + "_" + suffisso;
     }
 
-    public String generateKeyIndiceAipFasc(long idVerAipFasc) throws ObjectStorageException {
+    public String generateKeyIndiceAipFascObjectStorage(long idVerAipFasc)
+            throws ObjectStorageException {
         try {
 
             FasVerAipFascicolo verAipFascicolo = entityManager.find(FasVerAipFascicolo.class,
@@ -1423,7 +1294,7 @@ public class SalvataggioBackendHelper {
                 + "_IndiceAIPFA_" + pgVerAipFascicolo;
     }
 
-    public String generateKeyElencoIndiceAipFasc(long idFileElencoVersFasc)
+    public String generateKeyElencoIndiceAipFascObjectStorage(long idFileElencoVersFasc)
             throws ObjectStorageException {
         try {
 
@@ -1559,14 +1430,14 @@ public class SalvataggioBackendHelper {
      *
      * @throws ObjectStorageException in caso di errore
      */
-    public GetObjectAttributesResponse getObjectAttributes(ObjectStorageBackend configuration,
+    public GetObjectAttributesResponse getS3ObjectAttributes(ObjectStorageBackend configuration,
             String bucket, String objectKey) throws ObjectStorageException {
         try {
-            S3Client s3SourceClient = s3Clients.getClient(configuration.getAddress(),
+            S3Client s3Client = s3Clients.getClient(configuration.getAddress(),
                     configuration.getAccessKeyId(), configuration.getSecretKey());
             GetObjectAttributesRequest getObjectAttributesRequest = GetObjectAttributesRequest
                     .builder().bucket(bucket).key(objectKey).build();
-            return s3SourceClient.getObjectAttributes(getObjectAttributesRequest);
+            return s3Client.getObjectAttributes(getObjectAttributesRequest);
         } catch (AwsServiceException | SdkClientException e) {
             throw ObjectStorageException.builder().message(
                     "{0}: impossibile ottenere dal bucket {1} gli attributi dell'oggetto con chiave {2}",
@@ -1586,14 +1457,14 @@ public class SalvataggioBackendHelper {
      *
      * @throws ObjectStorageException in caso di errore
      */
-    public HeadObjectResponse getObjectMetadata(ObjectStorageBackend configuration, String bucket,
+    public HeadObjectResponse getS3ObjectMetadata(ObjectStorageBackend configuration, String bucket,
             String objectKey) throws ObjectStorageException {
         try {
-            S3Client s3SourceClient = s3Clients.getClient(configuration.getAddress(),
+            S3Client s3Client = s3Clients.getClient(configuration.getAddress(),
                     configuration.getAccessKeyId(), configuration.getSecretKey());
             HeadObjectRequest headObjectRequest = HeadObjectRequest.builder().bucket(bucket)
-                    .key(objectKey).checksumMode(ChecksumMode.ENABLED).build();
-            return s3SourceClient.headObject(headObjectRequest);
+                    .key(objectKey).build();
+            return s3Client.headObject(headObjectRequest);
         } catch (AwsServiceException | SdkClientException e) {
             throw ObjectStorageException.builder().message(
                     "{0}: impossibile ottenere dal bucket {1} i metadati dell'oggetto con chiave {2}",
@@ -1747,43 +1618,6 @@ public class SalvataggioBackendHelper {
 
     }
 
-    /**
-     * Ottieni la tipologia di backend per salvare i BLOB relativi al versamento sincrono
-     *
-     * @param idAaTipoFascicolo id periodo della tipologia del fascicolo
-     * @param paramName         nome del parametro
-     *
-     * @return Configurazione del backend. Può essere, per esempio OBJECT_STORAGE_STAGING oppure
-     *         DATABASE_PRIMARIO
-     *
-     * @throws ObjectStorageException in caso di errore
-     */
-    public String getBackendByParamNameFasc(long idAaTipoFascicolo, String paramName)
-            throws ObjectStorageException {
-        String backendDatiVersamento = null;
-        try {
-            return getParameterFasc(idAaTipoFascicolo, paramName);
-
-        } catch (ParamApplicNotFoundException | IllegalArgumentException e) {
-            throw ObjectStorageException.builder().message(
-                    "Impossibile ottenere il parametro {0} con id aa tipo fascicolo {1} e tipo creazione {2}",
-                    backendDatiVersamento, idAaTipoFascicolo, paramName).cause(e).build();
-        }
-    }
-
-    private String getParameterFasc(long idAaTipoFascicolo, String parameterName) {
-        DecAaTipoFascicolo aaTipoFasc = entityManager.find(DecAaTipoFascicolo.class,
-                idAaTipoFascicolo);
-        long idStrut = aaTipoFasc.getDecTipoFascicolo().getOrgStrut().getIdStrut();
-
-        long idAmbiente = aaTipoFasc.getDecTipoFascicolo().getOrgStrut().getOrgEnte()
-                .getOrgAmbiente().getIdAmbiente();
-
-        return configurationHelper.getValoreParamApplicByAaTipoFasc(parameterName,
-                BigDecimal.valueOf(idAmbiente), BigDecimal.valueOf(idStrut),
-                BigDecimal.valueOf(idAaTipoFascicolo));
-    }
-
     // end MEV #30398
 
     // MEV #30399
@@ -1802,7 +1636,7 @@ public class SalvataggioBackendHelper {
             String nmBackend, long idFileElencoVersFasc, BigDecimal idStrut)
             throws ObjectStorageException {
         try {
-            DecBackend decBackend = me.getBackendEntity(nmBackend);
+            DecBackend decBackend = backendHelper.getBackendEntity(nmBackend);
             ElvFileElencoVersFasc elvFileElencoVersFasc = entityManager
                     .find(ElvFileElencoVersFasc.class, idFileElencoVersFasc);
 
@@ -1830,10 +1664,10 @@ public class SalvataggioBackendHelper {
      *
      * @return boolean true se effettivamente presente su object storage / false altrimenti
      *
-     * @throws ObjectStorageException eccezione generica
+     * @throws BackendException eccezione generica
      */
     public boolean existElencoIndiciAipFascObjectStorage(long idFileElencoVersFasc)
-            throws ObjectStorageException {
+            throws BackendException {
         try {
             TypedQuery<Long> query = entityManager.createQuery(
                     "Select count(elv_file_os) from ElvFileElencoVersFascObjectStorage elv_file_os where elv_file_os.elvFileElencoVersFasc.idFileElencoVersFasc = :idFileElencoVersFasc",
@@ -1842,36 +1676,9 @@ public class SalvataggioBackendHelper {
             Long result = query.getSingleResult();
             return result > 0;
         } catch (NonUniqueResultException e) {
-            throw ObjectStorageException.builder().message(
+            throw BackendException.builder().message(
                     "Errore verifica presenza ElvFileElencoVersFascObjectStorage per id file elenco vers fasc {0} ",
                     idFileElencoVersFasc).cause(e).build();
-        }
-    }
-
-    /**
-     * Ottieni la configurazione applicativa relativa alla tipologia di Backend per il salvataggio
-     * degli elenchi indici aip fascicoli
-     *
-     * @param idStrut id struttura
-     *
-     * @return configurazione del backend. Può essere, per esempio OBJECT_STORAGE_STAGING oppure
-     *         DATABASE_PRIMARIO
-     *
-     * @throws ObjectStorageException in caso di errore di recupero del parametro
-     */
-    public String getBackendElenchiIndiciAipFasc(long idStrut) throws ObjectStorageException {
-        try {
-            OrgStrut strut = entityManager.find(OrgStrut.class, idStrut);
-
-            long idAmbiente = strut.getOrgEnte().getOrgAmbiente().getIdAmbiente();
-            return configurationHelper.getValoreParamApplicByStrut(
-                    ParametroAppl.BACKEND_ELENCHI_INDICI_AIP_FASCICOLI,
-                    BigDecimal.valueOf(idAmbiente), BigDecimal.valueOf(idStrut));
-
-        } catch (ParamApplicNotFoundException | IllegalArgumentException e) {
-            throw ObjectStorageException.builder()
-                    .message(NO_PARAMETER, ParametroAppl.BACKEND_ELENCHI_INDICI_AIP_FASCICOLI)
-                    .cause(e).build();
         }
     }
 
@@ -1920,7 +1727,7 @@ public class SalvataggioBackendHelper {
             String nmBackend, long idVerSerie, BigDecimal idStrut, String tiFileVerSerie)
             throws ObjectStorageException {
         try {
-            DecBackend decBackend = me.getBackendEntity(nmBackend);
+            DecBackend decBackend = backendHelper.getBackendEntity(nmBackend);
             SerVerSerie serVerSerie = entityManager.find(SerVerSerie.class, idVerSerie);
 
             SerVerSerieObjectStorage osLink = new SerVerSerieObjectStorage();
@@ -1941,7 +1748,7 @@ public class SalvataggioBackendHelper {
         }
     }
 
-    public String generateKeyIndiceAipSerieUD(SerFileVerSerie serFileVerSerie,
+    public String generateKeyIndiceAipSerieUDObjectStorage(SerFileVerSerie serFileVerSerie,
             CSVersatore versatore, String codiceSerie, String versioneSerie)
             throws ObjectStorageException {
         try {

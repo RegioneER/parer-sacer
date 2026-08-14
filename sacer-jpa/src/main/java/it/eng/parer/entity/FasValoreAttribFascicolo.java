@@ -24,6 +24,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
@@ -60,6 +61,7 @@ public class FasValoreAttribFascicolo implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USO_MODELLO_XSD_FASC")
+    @XmlTransient
     public DecUsoModelloXsdFasc getDecUsoModelloXsdFasc() {
         return this.decUsoModelloXsdFasc;
     }

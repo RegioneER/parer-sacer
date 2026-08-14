@@ -1456,8 +1456,7 @@ public class ScartoHelper extends GenericHelper {
         getEntityManager()
                 .createQuery("DELETE FROM AroItemPropScartoVers i "
                         + "WHERE i.aroPropScartoVers.idPropScartoVers = :idProp")
-                .setParameter("idProp", idPropScartoVers)
-                .executeUpdate();
+                .setParameter("idProp", idPropScartoVers).executeUpdate();
     }
 
     /**
@@ -1470,7 +1469,6 @@ public class ScartoHelper extends GenericHelper {
         getEntityManager()
                 .createQuery("DELETE FROM AroStatoPropScartoVers s "
                         + "WHERE s.aroPropScartoVers.idPropScartoVers = :idProp")
-                .setParameter("idProp", idPropScartoVers)
-                .executeUpdate();
+                .setParameter("idProp", idPropScartoVers).executeUpdate();
     }
 }

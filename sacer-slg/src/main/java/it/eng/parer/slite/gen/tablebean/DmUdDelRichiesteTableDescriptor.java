@@ -44,9 +44,11 @@ public class DmUdDelRichiesteTableDescriptor extends TableDescriptor {
     public static final String COL_TI_MOT_CANCELLAZIONE = "TI_MOT_CANCELLAZIONE";
     public static final String COL_TI_STATO_RICHIESTA = "TI_STATO_RICHIESTA";
     public static final String COL_TI_STATO_INTERNO_RICH = "TI_STATO_INTERNO_RICH";
+    public static final String COL_DS_STATO_INTERNO_RICH = "DS_STATO_INTERNO_RICH";
+    public static final String COL_ID_STATO_INTERNO_RICH_COR = "ID_STATO_INTERNO_RICH_COR";
     public static final String COL_TI_MOD_DEL = "TI_MOD_DEL";
     public static final String COL_DT_CREAZIONE = "DT_CREAZIONE";
-    public static final String COL_DT_ULTIMO_AGGIORNAMENTO = "DT_ULTIMO_AGGIORNAMENTO";
+    public static final String COL_DT_EVASIONE = "DT_EVASIONE";
     public static final String COL_DS_MESSAGGIO_ERRORE = "DS_MESSAGGIO_ERRORE";
 
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
@@ -63,11 +65,14 @@ public class DmUdDelRichiesteTableDescriptor extends TableDescriptor {
                 new ColumnDescriptor(COL_TI_STATO_RICHIESTA, Types.VARCHAR, 100, false));
         map.put(COL_TI_STATO_INTERNO_RICH,
                 new ColumnDescriptor(COL_TI_STATO_INTERNO_RICH, Types.VARCHAR, 100, false));
+        map.put(COL_DS_STATO_INTERNO_RICH,
+                new ColumnDescriptor(COL_DS_STATO_INTERNO_RICH, Types.VARCHAR, 200, true));
+        map.put(COL_ID_STATO_INTERNO_RICH_COR,
+                new ColumnDescriptor(COL_ID_STATO_INTERNO_RICH_COR, Types.DECIMAL, 22, false));
         map.put(COL_TI_MOD_DEL, new ColumnDescriptor(COL_TI_MOD_DEL, Types.VARCHAR, 255, false));
         map.put(COL_DT_CREAZIONE,
                 new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, false));
-        map.put(COL_DT_ULTIMO_AGGIORNAMENTO,
-                new ColumnDescriptor(COL_DT_ULTIMO_AGGIORNAMENTO, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_EVASIONE, new ColumnDescriptor(COL_DT_EVASIONE, Types.TIMESTAMP, 7, false));
         map.put(COL_DS_MESSAGGIO_ERRORE,
                 new ColumnDescriptor(COL_DS_MESSAGGIO_ERRORE, Types.VARCHAR, 4000, false));
     }

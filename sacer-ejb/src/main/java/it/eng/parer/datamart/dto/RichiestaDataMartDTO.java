@@ -25,12 +25,13 @@ public class RichiestaDataMartDTO implements java.io.Serializable {
     private String tiMotCancellazione;
     private String dsMotCancellazione; // Campo calcolato dal CASE
     private Date dtCreazione;
+    private Date dtEvasione;
     private String tiStatoRichiesta;
     private Long totalUnitaDocumentarie; // Campo calcolato dal COUNT
 
     // È FONDAMENTALE avere un costruttore con tutti i campi nello stesso ordine della SELECT
     public RichiestaDataMartDTO(Long idUdDelRichiesta, BigDecimal idRichiesta, String cdRichiesta,
-            String tiMotCancellazione, String dsMotCancellazione, Date dtCreazione,
+            String tiMotCancellazione, String dsMotCancellazione, Date dtCreazione, Date dtEvasione,
             String tiStatoRichiesta, Long totalUnitaDocumentarie) {
         this.idUdDelRichiesta = idUdDelRichiesta;
         this.idRichiesta = idRichiesta;
@@ -38,6 +39,7 @@ public class RichiestaDataMartDTO implements java.io.Serializable {
         this.tiMotCancellazione = tiMotCancellazione;
         this.dsMotCancellazione = dsMotCancellazione;
         this.dtCreazione = dtCreazione;
+        this.dtEvasione = dtEvasione;
         this.tiStatoRichiesta = tiStatoRichiesta;
         this.totalUnitaDocumentarie = totalUnitaDocumentarie;
     }
@@ -88,6 +90,14 @@ public class RichiestaDataMartDTO implements java.io.Serializable {
 
     public void setDtCreazione(Date dtCreazione) {
         this.dtCreazione = dtCreazione;
+    }
+
+    public Date getDtEvasione() {
+        return dtEvasione;
+    }
+
+    public void setDtEvasione(Date dtEvasione) {
+        this.dtEvasione = dtEvasione;
     }
 
     public String getTiStatoRichiesta() {

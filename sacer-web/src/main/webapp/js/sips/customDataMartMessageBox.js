@@ -9,6 +9,32 @@ $(document).ready(function () {
     applicaEvidenziazioneAlCaricamento();
     inizializzaLogicaDiMonitoraggio();
 
+    // Dopo un reload automatico da polling, ri-clicca la riga precedentemente selezionata.
+    // I valori vengono da sessionStorage (non dagli input del server, che vengono azzerati
+    // dall'azione ricercaDataMart). Il timeout dà tempo al DOM di stabilizzarsi.
+    if (sessionStorage.getItem('autoClickRigaDopoRicerca') === '1') {
+        sessionStorage.removeItem('autoClickRigaDopoRicerca');
+        var selIdRDopoRicerca = sessionStorage.getItem('autoClickRigaId') || '';
+        sessionStorage.removeItem('autoClickRigaId');
+        sessionStorage.removeItem('autoClickRigaMotivo');
+        if (selIdRDopoRicerca) {
+            setTimeout(function () {
+                var trovata = false;
+                $('#RichiesteDataMartList tbody tr').each(function () {
+                    var $riga = $(this);
+                    if ($riga.find('input[name="Id_ud_del_richiesta"]').val() === selIdRDopoRicerca) {
+                        trovata = true;
+                        $riga[0].click(); // click nativo per garantire la propagazione corretta
+                        return false;
+                    }
+                });
+                if (!trovata) {
+                    console.warn('autoClick: riga non trovata per id=' + selIdRDopoRicerca);
+                }
+            }, 200); // 200ms per dare tempo al DOM di stabilizzarsi
+        }
+    }
+
     // GESTORI EVENTI
     $('#RichiesteDataMartList tbody').on('click', 'tr', function () {
         stopActivePolling();
@@ -18,7 +44,6 @@ $(document).ready(function () {
             idUdDelRichiesta: $rigaCliccata.find('td').eq(0).find('input[name="Id_ud_del_richiesta"]').val(),
             idRichiesta: $rigaCliccata.find('td').eq(1).text().trim(),
             idStrut: $rigaCliccata.find('td').eq(8).find('input[name="Id_strut"]').val(),
-            //mappaTotaliUD: $rigaCliccata.find('td').eq(7).find('input[name="Json_totali_ud"]').val() || '{}',
             selectedRigaIdR: $rigaCliccata.find('td').eq(0).find('input[name="Id_ud_del_richiesta"]').val(),
             selectedRigaMotivoR: $rigaCliccata.find('td').eq(3).find('input[name="Ti_mot_cancellazione"]').val(),
             indiceRigaCliccata: $rigaCliccata.index()
@@ -80,6 +105,19 @@ $(document).ready(function () {
         if (activePollingIntervalId) { clearInterval(activePollingIntervalId); activePollingIntervalId = null; }
     }
 
+    function eseguiRicercaEAutoclick() {
+        // Salva in sessionStorage i valori che identificano la riga selezionata
+        // (il server potrebbe azzerarli dopo la ricerca)
+        var selIdR = $('#selectedRigaIdR_val').val();
+        var selMotivoR = $('#selectedRigaMotivoR_val').val();
+        if (selIdR) {
+            sessionStorage.setItem('autoClickRigaId', selIdR);
+            sessionStorage.setItem('autoClickRigaMotivo', selMotivoR || '');
+            sessionStorage.setItem('autoClickRigaDopoRicerca', '1');
+        }
+        $('input[name="operation__ricercaDataMart"]').click();
+    }
+
     // FUNZIONI DI POLLING
     function startPollingLogico(idUdDelRichiesta, idRichiesta, tiMotivo) {
     const url = `/sacer/monitoraggio-datamart/cancellazione-logica-status?idUdDelRichiesta=${idUdDelRichiesta}&idRichiesta=${idRichiesta}&tiMotivo=${tiMotivo}`;
@@ -99,19 +137,9 @@ $(document).ready(function () {
             if (statiFinali.includes(data.statoInternoRichiesta)) {
                 // Il processo è terminato, quindi fermiamo il polling.
                 stopActivePolling();
-                console.log("Fase logica terminata. Polling fermato. Aggiorno UI finale senza ricaricare.");
-                
-                // Ora gestiamo la visibilità dei pulsanti in base al risultato.
-                if (data.statoInternoRichiesta === 'PRONTA_PER_FISICA') {
-                    // Successo: mostra il pulsante per la fase successiva.
-                    $('input[name="operation__eseguiCancellazioneDataMart"]').show();
-                } else if ((data.statoInternoRichiesta === 'ERRORE_LOGICO_RIPRISTINABILE')){
-                    // Errore: mostra il pulsante "Riprendi cancellazione logica" per permettere un nuovo tentativo.
-                    $('input[name="operation__recupCancellazioneLogicaDataMart"]').show().prop('disabled', false);
-                } else{
-                    // Errore: mostra di nuovo il pulsante "Cancellazione Logica" per permettere un nuovo tentativo.
-                    $('input[name="operation__callMicroservizioDataMart"]').show().prop('disabled', false);
-                }
+                console.log("Fase logica terminata. Polling fermato. Rieffettuo la ricerca per aggiornare la lista.");
+                // Rieffettua la ricerca e poi auto-clicca sulla riga selezionata
+                eseguiRicercaEAutoclick();
             }
         }).fail(function() {
             // Se la comunicazione fallisce, ferma il polling e riattiva il pulsante per riprovare.
@@ -140,40 +168,10 @@ $(document).ready(function () {
             
             // Controlla se il processo è terminato (con successo o con errore)
             if (data.statoRichiesta === 'EVASA' || statiInterniDiErrore.includes(data.statoInternoRichiesta)) {
-                
-                if (data.statoRichiesta === 'EVASA') {
-                    // ...aggiorniamo dinamicamente la tabella principale.
-                    const idUdDelRichiestaCompletata = $('#selectedRigaIdR_val').val();
-                    const tiMotivoCompletato = $('#selectedRigaMotivoR_val').val();
-                     // Cerca la riga corrispondente nella tabella RichiesteDataMartList
-                    $('#RichiesteDataMartList tbody tr').each(function () {
-                        var $riga = $(this);
-                        var idRiga = $riga.find('td').eq(0).find('input[name="Id_ud_del_richiesta"]').val();
-                        var motivoRiga = $riga.find('td').eq(3).find('input[name="Ti_mot_cancellazione"]').val();
-
-                        if (idRiga === idUdDelRichiestaCompletata && motivoRiga === tiMotivoCompletato) {
-                            // Trovata! Aggiorniamo il testo nella colonna dello stato.
-                            $riga.find('td').eq(6).text('EVASA');
-                            
-                            // 2. Rimuovi la classe che la rende "cliccabile" e aggiungine una nuova
-                            /*$riga.css('cursor', 'default');
-                            $riga.addClass('riga-completata'); // Classe per lo stile (es. grigio chiaro)
-                            
-                            // 3. Disabilita l'handler di click per questa specifica riga
-                            $riga.off('click');*/
-
-                            // Se hai un filtro attivo per "DA_EVADERE", potremmo nascondere la riga.
-                            // Questo codice la fa sparire con una dissolvenza.
-                            //$riga.fadeOut(2000, function() { $(this).remove(); });
-                            
-                            return false; // Esce dal ciclo .each
-                        }
-                    });
-                }
-                
-                
                 stopActivePolling();
-                console.log("Fase fisica terminata. Polling fermato.");
+                console.log("Fase fisica terminata. Polling fermato. Rieffettuo la ricerca per aggiornare la lista.");
+                // Rieffettua la ricerca e poi auto-clicca sulla riga selezionata
+                eseguiRicercaEAutoclick();
             }
         }).fail(() => stopActivePolling());
     };

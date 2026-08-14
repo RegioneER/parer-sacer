@@ -142,6 +142,7 @@
         <Button Name="importaParametriDaRicercaButton" Description="Importa parametri di configurazione" Type="STRING"/>        
         <MultiSelect Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Trigger="true" />
         <ComboBox Type="STRING" Description="Tipologia struttura unità documentaria" Name="nm_tipo_strut_unita_doc" />
+        <MultiSelect Type="STRING" Description="Tipologia documento" Name="nm_tipo_doc" Trigger="false" />
         <CheckBox Type="STRING" Description="Includi registri collegati" Name="check_includi_registri" />
         <CheckBox Type="STRING" Description="Includi criteri di raggruppamento" Name="check_includi_criteri" />
         <CheckBox Type="STRING" Description="Includi sistemi di migrazione" Name="check_includi_sistemi_migraz" />        

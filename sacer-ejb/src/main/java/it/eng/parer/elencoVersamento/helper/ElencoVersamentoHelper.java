@@ -135,7 +135,6 @@ import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
-import it.eng.spagoCore.error.EMFError;
 
 /**
  *

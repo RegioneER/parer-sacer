@@ -3139,9 +3139,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         String whereWord = " WHERE ";
         // Creo la parte iniziale della query di ricerca (solo SELECT, la FROM sarà costruita
         // dinamicamente includendo la inline view ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS)
-        StringBuilder queryInvolucro = new StringBuilder(
-                RIC_UD_DATI_SPEC_BASE + RIC_UD_DATI_SPEC_NM_TIPO_DOC_PRINC
-                        + RIC_UD_DATI_SPEC_STATI_ELENCO_VERS);
+        StringBuilder queryInvolucro = new StringBuilder(RIC_UD_DATI_SPEC_BASE
+                + RIC_UD_DATI_SPEC_NM_TIPO_DOC_PRINC + RIC_UD_DATI_SPEC_STATI_ELENCO_VERS);
 
         StringBuilder queryWhereConditions = new StringBuilder();
 
@@ -4047,8 +4046,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         }
 
         String queryStr = String.format(
-                "SELECT u FROM AroVLisDatiSpec u " + "WHERE %s = :id "
-                        + "AND u.idStrut = :idStrut "
+                "SELECT u FROM AroVLisDatiSpec u " + "WHERE %s = :id " + "AND u.idStrut = :idStrut "
                         + "AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc "
                         + "AND u.tiUsoXsd = :tipoDatiSpecIn "
                         + "AND u.tiEntitaSacer = :tipoEntitaSacerIn " + "ORDER BY u.niOrdAttrib",
@@ -5439,7 +5437,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                     filtriUnitaDocumentarieAnnullatePlain.getTiAnnullamento());
         }
         if (lazy) {
-            return lazyListHelper.getTableBean(query, this::aroUnitaDocsToTableBean);
+            return lazyListHelper.getTableBean(query, this::aroUnitaDocsToTableBean,
+                    "u.idUnitaDoc");
         } else {
             return aroUnitaDocsToTableBean(query.getResultList());
         }

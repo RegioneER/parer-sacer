@@ -338,8 +338,8 @@ public class RecuperoWeb {
                 }
             }
 
-            rispostaControlli = controlliWs.checkTipoDatoDocsIamUserOrganizzazioneByUd(
-                    descUnitaDoc, user, idUnitaDoc);
+            rispostaControlli = controlliWs.checkTipoDatoDocsIamUserOrganizzazioneByUd(descUnitaDoc,
+                    user, idUnitaDoc);
             return rispostaControlli;
         } finally {
             user.setIdOrganizzazioneFoglia(idOrganizzazioneFoglia);

@@ -1158,12 +1158,11 @@ public class VolumeHelper {
 
                     queryStr.append("SELECT id_Unita_Doc FROM ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS")
                             .append(" WHERE id_Attrib_Dati_Spec = :idattribdatispecin")
-                            .append(indiceidattribds)
-                            .append(" AND aa_key_unita_doc BETWEEN ").append(annoRangeDa)
-                            .append(" AND ").append(annoRangeA)
+                            .append(indiceidattribds).append(" AND aa_key_unita_doc BETWEEN ")
+                            .append(annoRangeDa).append(" AND ").append(annoRangeA)
                             .append(" AND id_strut = ").append(idStrut)
-                            .append(" AND ti_Entita_Sacer = 'UNI_DOC'")
-                            .append(" AND dl_Valore ").append(operatore).append(filtro);
+                            .append(" AND ti_Entita_Sacer = 'UNI_DOC'").append(" AND dl_Valore ")
+                            .append(operatore).append(filtro);
                     if (filtroVersioneDsUd != null) {
                         queryStr.append(" AND cd_versione_xsd_ud = ").append(filtroVersioneDsUd);
                     }
@@ -1222,9 +1221,8 @@ public class VolumeHelper {
                             "SELECT doc.id_unita_doc FROM ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS ric")
                             .append(" JOIN sacer.aro_doc doc ON doc.id_doc = ric.id_doc")
                             .append(" WHERE ric.id_Attrib_Dati_Spec = :idattribdatispecin")
-                            .append(indiceidattribds)
-                            .append(" AND ric.aa_key_unita_doc BETWEEN ").append(annoRangeDa)
-                            .append(" AND ").append(annoRangeA)
+                            .append(indiceidattribds).append(" AND ric.aa_key_unita_doc BETWEEN ")
+                            .append(annoRangeDa).append(" AND ").append(annoRangeA)
                             .append(" AND ric.id_strut = ").append(idStrut)
                             .append(" AND ric.ti_Entita_Sacer = 'DOC'")
                             .append(" AND ric.dl_Valore ").append(operatore).append(filtro);

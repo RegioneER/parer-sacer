@@ -912,6 +912,12 @@ public class FascicoliAction extends FascicoliAbstractAction {
         result.setFlUpdAnnulUnitaDoc(filtri.getFl_upd_annul_unita_doc().parse());
         result.setFlUpdModifUnitaDoc(filtri.getFl_upd_modif_unita_doc().parse());
 
+        // Soggetto coinvolto
+        result.setDs_denom_sog(filtri.getDs_denom_sog().parse());
+        result.setNm_cogn_sog(filtri.getNm_cogn_sog().parse());
+        result.setNm_nome_sog(filtri.getNm_nome_sog().parse());
+        result.setTi_rapp(filtri.getTi_rapp().parse());
+
         return result;
     }
 

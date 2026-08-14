@@ -33,6 +33,7 @@
         <url-pattern>/InvioRichiestaAnnullamentoVersamenti</url-pattern>
         <url-pattern>/RecDIPStatoConservazioneSync</url-pattern>
         <url-pattern>/RecDIPProveConservSync</url-pattern>
+        <url-pattern>/RecStatoConservFascicoloSync</url-pattern>
     </filter-mapping>
     <!--  -->
     <filter>
@@ -51,7 +52,8 @@
         <url-pattern>/RecDIPComponenteTrasformatoSync</url-pattern>
         <url-pattern>/RecDIPRapportiVersSync</url-pattern>
         <url-pattern>/RecDIPStatoConservazioneSync</url-pattern>
-        <url-pattern>/RecDIPProveConservSync</url-pattern>        
+        <url-pattern>/RecDIPProveConservSync</url-pattern>
+        <url-pattern>/RecStatoConservFascicoloSync</url-pattern>                
     </filter-mapping>
 
     <!-- QUESTE LE LASCIO !! -->

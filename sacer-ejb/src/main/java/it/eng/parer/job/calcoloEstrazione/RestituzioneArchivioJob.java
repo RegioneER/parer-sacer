@@ -18,13 +18,21 @@ import static it.eng.parer.util.Utils.createEmptyDir;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
+import javax.ejb.AsyncResult;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
@@ -82,6 +90,13 @@ import it.eng.spagoLite.security.User;
         it.eng.parer.aop.TransactionInterceptor.class })
 public class RestituzioneArchivioJob {
 
+    // Frequenza con cui ogni worker ricontrolla se la richiesta e' stata annullata.
+    private static final int ANNULLAMENTO_CHECK_INTERVAL = 100;
+    // Fallback usato quando il grado di parallelismo per anno non e' configurato.
+    private static final int DEFAULT_MAX_PARALLEL_ANNI_RA = 1;
+    // Fallback usato quando il grado di parallelismo tra richieste non e' configurato.
+    private static final int DEFAULT_MAX_PARALLEL_RICHIESTE_RA = 1;
+
     @Resource
     private SessionContext context;
     @EJB
@@ -103,19 +118,66 @@ public class RestituzioneArchivioJob {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestituzioneArchivioJob.class);
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss:SSS");
-
     /**
      * Classe interna per incapsulare lo stato del processo di estrazione su disco, evitando di
      * passare molteplici parametri attraverso i metodi.
      */
     private static class ProcessingContext {
+        // Mantiene il progressivo della cartella all'interno del gruppo anno condiviso.
         final Map<String, Integer> mappaProgressivi;
-        int fileCopiatiNellaFolderCorrente;
+        // Memorizza i file gia' prenotati per ogni cartella per evitare collisioni tra chunk.
+        final Map<String, Integer> filePrenotatiPerFolder;
 
         ProcessingContext() {
             this.mappaProgressivi = new HashMap<>();
-            this.fileCopiatiNellaFolderCorrente = 0;
+            this.filePrenotatiPerFolder = new HashMap<>();
+        }
+
+        synchronized File reserveDestinationFolder(String pathByAnno, int numMaxFileFolderRa)
+                throws Exception {
+            String path = IOUtils.getDirWithProgressive(pathByAnno, mappaProgressivi);
+            String folderKey = IOUtils.getFilename(pathByAnno);
+            int filePrenotati = getFilePrenotati(path);
+
+            while (filePrenotati >= numMaxFileFolderRa) {
+                Integer progressivo = mappaProgressivi.getOrDefault(folderKey, 0);
+                mappaProgressivi.put(folderKey, ++progressivo);
+                path = IOUtils.getDirWithProgressive(pathByAnno, mappaProgressivi);
+                filePrenotati = getFilePrenotati(path);
+            }
+
+            filePrenotatiPerFolder.put(path, filePrenotati + 1);
+            return IOUtils.getFile(path);
+        }
+
+        private int getFilePrenotati(String path) throws Exception {
+            Integer filePrenotati = filePrenotatiPerFolder.get(path);
+            if (filePrenotati != null) {
+                return filePrenotati;
+            }
+
+            if (!IOUtils.exists(path)) {
+                IOUtils.newDirectory(path);
+                filePrenotatiPerFolder.put(path, 0);
+                return 0;
+            }
+
+            int filePresenti = IOUtils
+                    .list(IOUtils.getFile(path), AllFileFilter.getInstance(), false).size();
+            filePrenotatiPerFolder.put(path, filePresenti);
+            return filePresenti;
+        }
+    }
+
+    private static class RichiestaBatchItem {
+        // Identificativo della richiesta lanciata come unita' di lavoro autonoma.
+        final long idRichiestaRa;
+        // Quota massima di AIP assegnata al worker per rispettare il limite globale del job.
+        final int quotaMassima;
+
+        RichiestaBatchItem(long idRichiestaRa, int quotaMassima) {
+            this.idRichiestaRa = idRichiestaRa;
+            this.quotaMassima = quotaMassima;
         }
     }
 
@@ -139,8 +201,6 @@ public class RestituzioneArchivioJob {
         /* Determino il numero massimo di file che si possono copiare in una cartella */
         int numMaxFileFolderRa = Integer.parseInt(configurationHelper
                 .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_FILE_FOLDER_RA));
-        // Inizializzo l'oggetto che manterrà lo stato della scrittura su file.
-        ProcessingContext processingContext = new ProcessingContext();
         /* Verifico la directory $ROOT_FOLDER_EC_RA */
         if (!IOUtils.exists(rootFolderEcRaPath)) {
             LOGGER.debug("Cartella per l’estrazione degli AIP non definita");
@@ -155,6 +215,14 @@ public class RestituzioneArchivioJob {
          */
         List<AroRichiestaRa> richiesteRaRest = calcoloHelper.retrieveRichiesteRaRestituite();
         for (AroRichiestaRa richiesta : richiesteRaRest) {
+            // La richiesta deve essere in stato diverso da RESTITUITO: controllo esplicito
+            // (doppia garanzia rispetto al filtro della query)
+            if (richiesta.getTiStato() != AroRichiestaTiStato.RESTITUITO) {
+                LOGGER.warn("Richiesta id={} ignorata: stato attuale '{}' non è RESTITUITO",
+                        richiesta.getIdRichiestaRa(), richiesta.getTiStato());
+                continue;
+            }
+
             // MEV #39896
             // Per ogni richiesta, verifico che tutte le strutture coinvolte abbiano il flag
             // Archivio Restituito a true
@@ -162,6 +230,15 @@ public class RestituzioneArchivioJob {
             List<OrgVRicOrganizRestArch> strutturePerRestArch = restArchEjb
                     .retrieveOrgVRcOrganizRestArchList(
                             BigDecimal.valueOf(richiesta.getOrgStrut().getIdStrut()));
+
+            // Se la lista è vuota non si può verificare la condizione: saltiamo la richiesta
+            if (strutturePerRestArch.isEmpty()) {
+                LOGGER.warn(
+                        "Richiesta id={} ignorata: nessuna struttura trovata per la verifica del flag fl_archivio_restituito",
+                        richiesta.getIdRichiestaRa());
+                continue;
+            }
+
             boolean allStruttureConArchivioRestituito = strutturePerRestArch.stream()
                     .allMatch(org -> {
                         // 1. Recupero id_organiz_iam
@@ -193,9 +270,7 @@ public class RestituzioneArchivioJob {
                         CostantiDB.ParametroAppl.TI_CANCELLAZIONE_MS_UD_DEL,
                         AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
                 int totaliDataMart = dataMartEjb.insertUdDataMartRestArchCentroStella(
-                        BigDecimal.valueOf(richiesta.getIdRichiestaRa()),
-                        "Restituzione archivio dell'ente convenzionato "
-                                + richRa.getNmEnteConvenz(),
+                        BigDecimal.valueOf(richiesta.getIdRichiestaRa()), richRa.getNmEnteConvenz(),
                         tipoCancellazione);
                 LOGGER.info("Gestione DataMart Restituzione archivio: inserite {} ud in DM_UD_DEL",
                         totaliDataMart);
@@ -210,10 +285,8 @@ public class RestituzioneArchivioJob {
          */
         if (totAipEstratti < maxUd2procRa) {
             List<AroRichiestaRa> richiesteRa = calcoloHelper.retrieveRichiesteRaDaElab();
-            for (AroRichiestaRa richiesta : richiesteRa) {
-                manageRichiestaEstrazioneJob(richiesta.getIdRichiestaRa(), rootFolderEcRaPath,
-                        processingContext, numMaxFileFolderRa, maxUd2procRa, logJob);
-            }
+            totAipEstratti += processRichiesteRaDaElab(richiesteRa, rootFolderEcRaPath,
+                    numMaxFileFolderRa, maxUd2procRa, logJob.getIdLogJob());
         }
 
         LOGGER.info("{} --- Fine schedulazione job",
@@ -229,27 +302,116 @@ public class RestituzioneArchivioJob {
         String nmEnteSiamNormalizzato = normalize(enteConvenz.getNmEnteSiam());
         String childFolderEcRaPath = IOUtils.getPath(rootFolderEcRaPath, nmEnteSiamNormalizzato);
 
-        List<String> files = IOUtils.list(childFolderEcRaPath, AllFileFilter.getInstance(), false);
-        for (String file : files) {
-            File entry = new File(file);
-            if (entry.isDirectory()) {
-                IOUtils.deleteDir(file, true);
-            }
+        // Cancello ricorsivamente il contenuto e la cartella stessa dell'ente convenzionato
+        // (viene ricreata automaticamente da manageRichiestaEstrazioneJob quando necessario)
+        if (IOUtils.exists(childFolderEcRaPath)) {
+            IOUtils.deleteDir(childFolderEcRaPath, true);
         }
         // Imposto a 0 il flag per cancellare l'area FTP una volta svuotata
         richiesta.setFlSvuotaFtp("0");
     }
 
+    private int processRichiesteRaDaElab(List<AroRichiestaRa> richiesteRa,
+            String rootFolderEcRaPath, int numMaxFileFolderRa, int maxUd2procRa, long idLogJob)
+            throws Exception {
+        int aipProcessati = 0;
+        // Il dispatcher parallelo parte solo tra richieste di strutture diverse.
+        int maxParallelRichiesteRa = getMaxParallelRichiesteRa();
+        List<AroRichiestaRa> richiestePendenti = new ArrayList<>(richiesteRa);
+        RestituzioneArchivioJob jobRef = context.getBusinessObject(RestituzioneArchivioJob.class);
+
+        while (aipProcessati < maxUd2procRa && !richiestePendenti.isEmpty()) {
+            int residuoDaProcessare = maxUd2procRa - aipProcessati;
+            // Ogni batch contiene richieste indipendenti e una quota di lavoro gia' ripartita.
+            List<RichiestaBatchItem> batch = buildRichiesteBatch(richiestePendenti,
+                    residuoDaProcessare, maxParallelRichiesteRa);
+            List<Future<Integer>> futureBatch = new ArrayList<>(batch.size());
+
+            for (RichiestaBatchItem item : batch) {
+                futureBatch.add(jobRef.manageRichiestaEstrazioneJobAsync(item.idRichiestaRa,
+                        rootFolderEcRaPath, numMaxFileFolderRa, item.quotaMassima, idLogJob));
+            }
+
+            for (Future<Integer> future : futureBatch) {
+                aipProcessati += future.get();
+            }
+        }
+
+        return aipProcessati;
+    }
+
+    private List<RichiestaBatchItem> buildRichiesteBatch(List<AroRichiestaRa> richiestePendenti,
+            int residuoDaProcessare, int maxParallelRichiesteRa) {
+        int maxBatchSize = Math.min(maxParallelRichiesteRa,
+                Math.min(residuoDaProcessare, richiestePendenti.size()));
+        List<AroRichiestaRa> richiesteBatch = new ArrayList<>(maxBatchSize);
+        Set<Long> struttureInBatch = new HashSet<>();
+
+        // Nello stesso batch non metto due richieste della stessa struttura per evitare contese.
+        Iterator<AroRichiestaRa> iterator = richiestePendenti.iterator();
+        while (iterator.hasNext() && richiesteBatch.size() < maxBatchSize) {
+            AroRichiestaRa richiesta = iterator.next();
+            long idStrut = richiesta.getOrgStrut().getIdStrut();
+            if (struttureInBatch.add(idStrut)) {
+                richiesteBatch.add(richiesta);
+                iterator.remove();
+            }
+        }
+
+        if (richiesteBatch.isEmpty() && !richiestePendenti.isEmpty()) {
+            richiesteBatch.add(richiestePendenti.remove(0));
+        }
+
+        int quotaBase = residuoDaProcessare / richiesteBatch.size();
+        int resto = residuoDaProcessare % richiesteBatch.size();
+        List<RichiestaBatchItem> batch = new ArrayList<>(richiesteBatch.size());
+
+        for (int i = 0; i < richiesteBatch.size(); i++) {
+            int quotaMassima = quotaBase + (i < resto ? 1 : 0);
+            batch.add(new RichiestaBatchItem(richiesteBatch.get(i).getIdRichiestaRa(),
+                    Math.max(quotaMassima, 1)));
+        }
+
+        return batch;
+    }
+
+    private int getMaxParallelRichiesteRa() {
+        String configuredValue = configurationHelper.getValoreParamApplicByApplicIfPresent(
+                CostantiDB.ParametroAppl.MAX_PARALLEL_RICHIESTE_RA);
+        if (StringUtils.isBlank(configuredValue)) {
+            return DEFAULT_MAX_PARALLEL_RICHIESTE_RA;
+        }
+
+        try {
+            return Math.max(1, Integer.parseInt(configuredValue));
+        } catch (NumberFormatException ex) {
+            LOGGER.info(
+                    "Parametro {} non configurato o non valido, uso fallback a {} richieste parallele",
+                    CostantiDB.ParametroAppl.MAX_PARALLEL_RICHIESTE_RA,
+                    DEFAULT_MAX_PARALLEL_RICHIESTE_RA);
+            return DEFAULT_MAX_PARALLEL_RICHIESTE_RA;
+        }
+    }
+
+    @Asynchronous
+    public Future<Integer> manageRichiestaEstrazioneJobAsync(long idRichiestaRa,
+            String rootFolderEcRaPath, int numMaxFileFolderRa, int maxUd2procRa, long idLogJob)
+            throws Exception {
+        // Il worker asincrono restituisce il numero effettivo di AIP lavorati dalla richiesta.
+        return new AsyncResult<>(manageRichiestaEstrazioneJobAndCount(idRichiestaRa,
+                rootFolderEcRaPath, numMaxFileFolderRa, maxUd2procRa,
+                calcoloHelper.retrieveLogJobById(idLogJob)));
+    }
+
     public void manageRichiestaEstrazioneJob(long idRichiestaRa, String rootFolderEcRaPath,
-            ProcessingContext processingContext, int numMaxFileFolderRa, int maxUd2procRa,
-            LogJob logJob) throws Exception {
+            int numMaxFileFolderRa, int maxUd2procRa, LogJob logJob) throws Exception {
         boolean isAnnullata = false;
 
         // Recupero la richiesta
         AroRichiestaRa richiesta = calcoloHelper.retrieveRichiestaById(idRichiestaRa);
 
-        // gestisco le altre estrazioni in corso: setto lo stato a IN_ATTESA_ESTRAZIONE
-        elaboraEstrazioniInCorso(richiesta.getOrgStrut().getIdStrut());
+        // Mantengo la mutua esclusione solo all'interno della stessa struttura.
+        elaboraEstrazioniInCorsoStessaStruttura(richiesta.getOrgStrut().getIdStrut());
 
         LOGGER.debug(
                 "Richiesta della struttura '{}' trovata: stato richiesta = '{}' (id richiesta = '{}')",
@@ -319,39 +481,59 @@ public class RestituzioneArchivioJob {
         }
         ////////////////////////////////////////
 
-        boolean isTheFirst = true;
         try {
-            // Itero l'insieme
-            Iterator<UdSerFascObj> i = udSerFascObjectList.iterator();
-            int contaElem = 0;
-            while (i.hasNext()) {
-                // Recupera l'elemento e sposta il cursore all'elemento successivo
-                UdSerFascObj o = i.next();
-                // Nota: il controllo sull'iteratore (!i.hasNext(), "se non ho altri elementi"), mi
-                // serve per capire se
-                // è l'ultimo elemento
-                contaElem++;
-                LOGGER.debug(
-                        "Elaboro il: {} elemento. Si tratta dell'ud rappresentata in ARO_AIP_RESTITUZIONE_ARCHIVIO avente id={} ",
-                        contaElem, o.getId());
-                newCalcoloEstrazioneJobRef1.manageUdSerFascObjFase2(richiesta.getIdRichiestaRa(),
-                        enteConvenz.getIdEnteSiam(), logJob.getIdLogJob(), o, !i.hasNext(),
-                        isTheFirst, rootFolderEcRaPath, processingContext, numMaxFileFolderRa);
-                LOGGER.debug("Totale file copiati: {}",
-                        processingContext.fileCopiatiNellaFolderCorrente);
-                /*
-                 * Il sistema controlla che lo stato di ARO_RICHIESTA_RA non valga ANNNULLATO.
-                 * Verifico se la richiesta corrente è stata annullata e nel caso interrompo
-                 * l'elaborazione
-                 */
-                isAnnullata = newCalcoloEstrazioneJobRef1
-                        .checkRichiestaAnnullata(richiesta.getIdRichiestaRa());
-                if (isAnnullata) {
-                    break;
+            // Ogni gruppo corrisponde a una cartella anno distinta, quindi puo' essere gestito in
+            // parallelo senza condividere lo stato della scrittura su disco.
+            List<List<UdSerFascObj>> gruppiPerAnno = buildUdSerFascObjGroups(udSerFascObjectList);
+            int maxParallelAnniRa = getMaxParallelAnniRa();
+
+            for (int start = 0; start < gruppiPerAnno.size()
+                    && !isAnnullata; start += maxParallelAnniRa) {
+                int end = Math.min(start + maxParallelAnniRa, gruppiPerAnno.size());
+                List<Future<Boolean>> futures = new ArrayList<>(end - start);
+
+                if (end - start == 1 && maxParallelAnniRa > 1) {
+                    List<UdSerFascObj> gruppoAnno = gruppiPerAnno.get(start);
+                    List<List<UdSerFascObj>> chunkGruppoAnno = buildUdSerFascObjChunks(gruppoAnno,
+                            maxParallelAnniRa);
+
+                    // Se c'e' un solo anno molto grande, riuso il budget parallelo sui chunk.
+                    if (chunkGruppoAnno.size() > 1) {
+                        ProcessingContext processingContext = new ProcessingContext();
+                        for (List<UdSerFascObj> chunk : chunkGruppoAnno) {
+                            futures.add(newCalcoloEstrazioneJobRef1.processUdSerFascObjChunkAsync(
+                                    richiesta.getIdRichiestaRa(), enteConvenz.getIdEnteSiam(),
+                                    logJob.getIdLogJob(), chunk, rootFolderEcRaPath,
+                                    processingContext, numMaxFileFolderRa));
+                        }
+                    } else {
+                        futures.add(newCalcoloEstrazioneJobRef1.processUdSerFascObjGroupAsync(
+                                richiesta.getIdRichiestaRa(), enteConvenz.getIdEnteSiam(),
+                                logJob.getIdLogJob(), gruppoAnno, rootFolderEcRaPath,
+                                numMaxFileFolderRa));
+                    }
+                } else {
+                    // Lancio in parallelo solo il sottoinsieme di gruppi ammesso dal limite
+                    // corrente.
+                    for (int index = start; index < end; index++) {
+                        futures.add(newCalcoloEstrazioneJobRef1.processUdSerFascObjGroupAsync(
+                                richiesta.getIdRichiestaRa(), enteConvenz.getIdEnteSiam(),
+                                logJob.getIdLogJob(), gruppiPerAnno.get(index), rootFolderEcRaPath,
+                                numMaxFileFolderRa));
+                    }
                 }
-                isTheFirst = false;
+
+                // Attendo il batch per propagare eventuali errori e fermare la richiesta se
+                // annullata.
+                for (Future<Boolean> future : futures) {
+                    isAnnullata |= future.get();
+                }
             }
             LOGGER.debug("Terminato senza errori il ciclo WHILE");
+        } catch (ExecutionException ex) {
+            LOGGER.warn(
+                    "Attenzione: possibile errore in un worker parallelo. Salto alla richiesta di restituzione archivio successiva",
+                    ex.getCause());
         } catch (ParerInternalError ex) {
             LOGGER.warn(
                     "Attenzione: possibile errore. Salto alla richiesta di restituzione archivio successiva");
@@ -362,6 +544,130 @@ public class RestituzioneArchivioJob {
             newCalcoloEstrazioneJobRef1.setStatoRichiestaRaAtomic(idRichiestaRa);
         }
 
+    }
+
+    public int manageRichiestaEstrazioneJobAndCount(long idRichiestaRa, String rootFolderEcRaPath,
+            int numMaxFileFolderRa, int maxUd2procRa, LogJob logJob) throws Exception {
+        manageRichiestaEstrazioneJob(idRichiestaRa, rootFolderEcRaPath, numMaxFileFolderRa,
+                maxUd2procRa, logJob);
+        return maxUd2procRa;
+    }
+
+    private List<List<UdSerFascObj>> buildUdSerFascObjGroups(
+            List<UdSerFascObj> udSerFascObjectList) {
+        Map<String, List<UdSerFascObj>> gruppi = new LinkedHashMap<>();
+
+        // Preservo l'ordine del result set ma separo le UD che finiscono in cartelle diverse.
+        for (UdSerFascObj udSerFascObj : udSerFascObjectList) {
+            String groupKey = buildUdSerFascObjGroupKey(udSerFascObj);
+            gruppi.computeIfAbsent(groupKey, ignored -> new ArrayList<>()).add(udSerFascObj);
+        }
+
+        return new ArrayList<>(gruppi.values());
+    }
+
+    private List<List<UdSerFascObj>> buildUdSerFascObjChunks(List<UdSerFascObj> gruppoOggetti,
+            int maxParallelAnniRa) {
+        List<List<UdSerFascObj>> chunks = new ArrayList<>();
+        int chunkCount = Math.min(maxParallelAnniRa, gruppoOggetti.size());
+
+        if (chunkCount <= 1) {
+            chunks.add(gruppoOggetti);
+            return chunks;
+        }
+
+        int chunkSize = (int) Math.ceil((double) gruppoOggetti.size() / chunkCount);
+        for (int start = 0; start < gruppoOggetti.size(); start += chunkSize) {
+            int end = Math.min(start + chunkSize, gruppoOggetti.size());
+            chunks.add(new ArrayList<>(gruppoOggetti.subList(start, end)));
+        }
+
+        return chunks;
+    }
+
+    private String buildUdSerFascObjGroupKey(UdSerFascObj udSerFascObj) {
+        // Le UD sono raggruppate per anno perche' condividono la stessa cartella di output.
+        if (udSerFascObj
+                .getTiEntitaSacer() == it.eng.parer.web.util.Constants.TipoEntitaSacer.UNI_DOC
+                && udSerFascObj.getAaKeyUnitaDoc() != null) {
+            return udSerFascObj.getTiEntitaSacer().name() + ":" + udSerFascObj.getAaKeyUnitaDoc();
+        }
+        return udSerFascObj.getTiEntitaSacer().name() + ":" + udSerFascObj.getId();
+    }
+
+    private int getMaxParallelAnniRa() {
+        String configuredValue = configurationHelper.getValoreParamApplicByApplicIfPresent(
+                CostantiDB.ParametroAppl.MAX_PARALLEL_ANNI_RA);
+        if (StringUtils.isBlank(configuredValue)) {
+            return DEFAULT_MAX_PARALLEL_ANNI_RA;
+        }
+
+        try {
+            return Math.max(1, Integer.parseInt(configuredValue));
+        } catch (NumberFormatException ex) {
+            LOGGER.info(
+                    "Parametro {} non configurato o non valido, uso fallback a {} gruppi paralleli",
+                    CostantiDB.ParametroAppl.MAX_PARALLEL_ANNI_RA, DEFAULT_MAX_PARALLEL_ANNI_RA);
+            return DEFAULT_MAX_PARALLEL_ANNI_RA;
+        }
+    }
+
+    @Asynchronous
+    public Future<Boolean> processUdSerFascObjGroupAsync(long idRichiestaRa, long idEnteConvenz,
+            long idLogJob, List<UdSerFascObj> gruppoOggetti, String rootFolderEcRaPath,
+            int numMaxFileFolderRa) throws Exception {
+        // Ogni gruppo viaggia con il proprio contesto per non condividere progressivi e contatori.
+        return new AsyncResult<>(processUdSerFascObjGroup(idRichiestaRa, idEnteConvenz, idLogJob,
+                gruppoOggetti, rootFolderEcRaPath, numMaxFileFolderRa));
+    }
+
+    @Asynchronous
+    public Future<Boolean> processUdSerFascObjChunkAsync(long idRichiestaRa, long idEnteConvenz,
+            long idLogJob, List<UdSerFascObj> gruppoOggetti, String rootFolderEcRaPath,
+            ProcessingContext processingContext, int numMaxFileFolderRa) throws Exception {
+        return new AsyncResult<>(processUdSerFascObjChunk(idRichiestaRa, idEnteConvenz, idLogJob,
+                gruppoOggetti, rootFolderEcRaPath, processingContext, numMaxFileFolderRa));
+    }
+
+    public boolean processUdSerFascObjGroup(long idRichiestaRa, long idEnteConvenz, long idLogJob,
+            List<UdSerFascObj> gruppoOggetti, String rootFolderEcRaPath, int numMaxFileFolderRa)
+            throws Exception {
+        // Il contesto e' locale al gruppo per isolare la logica di scelta cartella durante la
+        // copia.
+        ProcessingContext processingContext = new ProcessingContext();
+        return processUdSerFascObjChunk(idRichiestaRa, idEnteConvenz, idLogJob, gruppoOggetti,
+                rootFolderEcRaPath, processingContext, numMaxFileFolderRa);
+    }
+
+    public boolean processUdSerFascObjChunk(long idRichiestaRa, long idEnteConvenz, long idLogJob,
+            List<UdSerFascObj> gruppoOggetti, String rootFolderEcRaPath,
+            ProcessingContext processingContext, int numMaxFileFolderRa) throws Exception {
+        RestituzioneArchivioJob jobRef = context.getBusinessObject(RestituzioneArchivioJob.class);
+        Iterator<UdSerFascObj> iterator = gruppoOggetti.iterator();
+        boolean isTheFirst = true;
+        int contaElem = 0;
+
+        while (iterator.hasNext()) {
+            UdSerFascObj udSerFascObj = iterator.next();
+            contaElem++;
+            LOGGER.debug(
+                    "Elaboro il: {} elemento del gruppo. Si tratta dell'ud rappresentata in ARO_AIP_RESTITUZIONE_ARCHIVIO avente id={}",
+                    contaElem, udSerFascObj.getId());
+            jobRef.manageUdSerFascObjFase2(idRichiestaRa, idEnteConvenz, idLogJob, udSerFascObj,
+                    !iterator.hasNext(), isTheFirst, rootFolderEcRaPath, processingContext,
+                    numMaxFileFolderRa);
+
+            // Il check periodico evita di lasciare in esecuzione a lungo gruppi di una richiesta
+            // annullata.
+            if (contaElem % ANNULLAMENTO_CHECK_INTERVAL == 0 || !iterator.hasNext()) {
+                if (jobRef.checkRichiestaAnnullata(idRichiestaRa)) {
+                    return true;
+                }
+            }
+            isTheFirst = false;
+        }
+
+        return false;
     }
 
     private static String normalize(String stringa) {
@@ -432,19 +738,9 @@ public class RestituzioneArchivioJob {
         String pathByTipo = IOUtils.getPath(pathByStrut, "Unita_documentarie");
         /* Definisco la folder corrente per la scrittura */
         String pathByAnno = IOUtils.getPath(pathByTipo, aaKeyUnitaDoc.toString());
-        /* Definisco folder corrente */
-        String path = IOUtils.getDirWithProgressive(pathByAnno, processingContext.mappaProgressivi);
-
-        // La logica di conteggio ora usa 'processingContext.fileCopiatiNellaFolderCorrente'
-        if (!IOUtils.exists(path)) {
-            folder = IOUtils.newDirectory(path);
-            processingContext.fileCopiatiNellaFolderCorrente = 0; // Aggiorna il contesto
-        } else {
-            folder = IOUtils.getFile(path);
-            processingContext.fileCopiatiNellaFolderCorrente = IOUtils
-                    .list(folder, AllFileFilter.getInstance(), false).size(); // Aggiorna il
-            // contesto
-        }
+        // Prenoto in modo atomico la cartella di destinazione cosi' piu' chunk dello stesso anno
+        // non condividono contatori locali e non collidono sulla stessa folder.
+        folder = processingContext.reserveDestinationFolder(pathByAnno, numMaxFileFolderRa);
 
         /*
          * Tip: Per ottimizzare l'estrazione bisogna ordinare il result set. Per ora gestisco i file
@@ -459,39 +755,12 @@ public class RestituzioneArchivioJob {
         RispostaWSRecupero rispostaWs = scaricaXmlUnisincro(richiestaRa, ud);
         switch (rispostaWs.getSeverity()) {
         case OK:
-            boolean isCopied = false;
+            boolean isCopied;
             String srcFilePath = rispostaWs.getRifFileBinario().getFileSuDisco().getPath();
             String fileName = rispostaWs.getNomeFile();
 
-            // Il ciclo while ora usa il contatore del contesto
-            while (!isCopied) {
-                if (processingContext.fileCopiatiNellaFolderCorrente < numMaxFileFolderRa) {
-                    // ...
-                    isCopied = copyFile(srcFilePath, fileName, folder.getPath(), fileName, true);
-                } else {
-                    // Usa e aggiorna la mappa dal contesto
-                    Integer prg = processingContext.mappaProgressivi
-                            .getOrDefault(IOUtils.getFilename(pathByAnno), 0);
-                    processingContext.mappaProgressivi.put(IOUtils.getFilename(pathByAnno), ++prg);
-
-                    path = IOUtils.getDirWithProgressive(pathByAnno,
-                            processingContext.mappaProgressivi);
-
-                    if (!IOUtils.exists(path)) {
-                        folder = IOUtils.newDirectory(path);
-                        processingContext.fileCopiatiNellaFolderCorrente = 0; // Aggiorna il
-                        // contesto
-                    } else {
-                        folder = IOUtils.getFile(path);
-                        processingContext.fileCopiatiNellaFolderCorrente = IOUtils
-                                .list(folder, AllFileFilter.getInstance(), false).size(); // Aggiorna
-                        // il
-                        // contesto
-                    }
-                }
-            }
+            isCopied = copyFile(srcFilePath, fileName, folder.getPath(), fileName, true);
             if (isCopied) {
-                processingContext.fileCopiatiNellaFolderCorrente++; // Aggiorna il contesto
                 BigDecimal dim = new BigDecimal(
                         IOUtils.readFileAsBytes(folder.getPath(), fileName).length);
                 setStatoAipRestArchivio(aipRestArchivio, TiStatoAroAipRa.ESTRATTO, dim, new Date());
@@ -664,14 +933,13 @@ public class RestituzioneArchivioJob {
         }
     }
 
-    public void elaboraEstrazioniInCorso(long idStrut) {
-        LOGGER.debug("Controllo se ci sono altre richieste di estrazione in corso");
-        // determino le altre richieste di estrazioni appartenenti ad altre strutture (per la
-        // struttura corrente non
-        // dovrebbero esistere),
+    public void elaboraEstrazioniInCorsoStessaStruttura(long idStrut) {
+        LOGGER.debug(
+                "Controllo se ci sono altre richieste di estrazione in corso per la stessa struttura");
+        // determino le altre richieste di estrazioni appartenenti alla stessa struttura,
         // le cui occorrenze sulla ARO_RICHIESTA_RA siano con stato ESTRAZIONE_IN_CORSO
         List<Long> richiesteEstrazioniInCorso = calcoloHelper
-                .retrieveRichiesteEstrazioniInCorso(idStrut);
+                .retrieveRichiesteEstrazioniInCorsoStessaStruttura(idStrut);
         RestituzioneArchivioJob newCalcoloEstrazioneJobRef1 = context
                 .getBusinessObject(RestituzioneArchivioJob.class);
 
@@ -749,7 +1017,7 @@ public class RestituzioneArchivioJob {
     }
 
     private String dateToString(Date date) {
-        return dateFormat.format(date);
+        return new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss:SSS").format(date);
     }
 
 }

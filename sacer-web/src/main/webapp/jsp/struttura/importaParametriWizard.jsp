@@ -55,6 +55,8 @@
                         <sl:newLine />
                         <slf:lblField  name="<%=StruttureForm.ImportaParametri.NM_TIPO_STRUT_UNITA_DOC%>" colSpan="2" />
                         <sl:newLine />
+                        <slf:lblField  name="<%=StruttureForm.ImportaParametri.NM_TIPO_DOC%>" colSpan="2" />
+                        <sl:newLine />
                         <slf:lblField  name="<%=StruttureForm.ImportaParametri.CHECK_INCLUDI_REGISTRI%>" colSpan="2" />
                         <sl:newLine />
                         <slf:lblField  name="<%=StruttureForm.ImportaParametri.CHECK_INCLUDI_CRITERI%>" colSpan="2" />

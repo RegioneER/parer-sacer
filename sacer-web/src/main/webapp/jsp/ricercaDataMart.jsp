@@ -31,7 +31,10 @@
             /*.riga-completata td {background-color: #f0f0f0; color: #888; }*/
             #RichiesteDataMartList tbody tr, #NumUdDataMartList tbody tr { cursor: pointer; }
             #RichiesteDataMartList tbody tr:not(.riga-selezionata):hover, #NumUdDataMartList tbody tr:not(.riga-selezionata):hover { background-color: #f0f0f0; }
-            #RichiesteDataMartList tbody tr td:nth-child(8), #RichiesteDataMartList thead tr th:nth-child(8),
+            #RichiesteDataMartList tbody tr td:nth-child(7), #RichiesteDataMartList thead tr th:nth-child(7) { text-align: left; }
+            #RichiesteDataMartList tbody tr td:nth-child(8), #RichiesteDataMartList thead tr th:nth-child(8) { text-align: left; }
+            #RichiesteDataMartList tbody tr td:nth-child(9), #RichiesteDataMartList thead tr th:nth-child(9) { text-align: left; }
+            #RichiesteDataMartList tbody tr td:nth-child(10), #RichiesteDataMartList thead tr th:nth-child(10) { text-align: right; }
             #NumUdDataMartList tbody tr td:nth-child(5), #NumUdDataMartList thead tr th:nth-child(5), #NumUdDataMartList tbody tr td:nth-child(6), #NumUdDataMartList thead tr th:nth-child(6) { text-align: right; }
         </style>
     </sl:head>
@@ -45,13 +48,15 @@
             <sl:newLine skipLine="true"/>
             
             <slf:fieldSet  borderHidden="false">
-                <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriRicercaDataMart.TI_MOT_CANCELLAZIONE%>" />
-                <sl:newLine />
-                <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriRicercaDataMart.TI_STATO_RICHIESTA%>"  />
+                <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriRicercaDataMart.ID_AMBIENTE%>" />
                 <sl:newLine />
                 <slf:lblField colSpan="1" name="<%=UnitaDocumentarieForm.FiltriRicercaDataMart.ID_ENTE%>"  />
                 <sl:newLine />
                 <slf:lblField colSpan="1" name="<%=UnitaDocumentarieForm.FiltriRicercaDataMart.ID_STRUT%>"  />
+                <sl:newLine />
+                <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriRicercaDataMart.TI_MOT_CANCELLAZIONE%>" />
+                <sl:newLine />
+                <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriRicercaDataMart.TI_STATO_RICHIESTA%>"  />
                 <sl:newLine />
                 <slf:lblField colSpan="1" name="<%=UnitaDocumentarieForm.FiltriRicercaDataMart.DT_CREAZIONE_DA%>"  />
                 <slf:lblField colSpan="1" name="<%=UnitaDocumentarieForm.FiltriRicercaDataMart.DT_CREAZIONE_A%>"  />
@@ -71,7 +76,14 @@
                 <slf:list name="<%= UnitaDocumentarieForm.RichiesteDataMartList.NAME%>" />
                 <slf:listNavBar  name="<%= UnitaDocumentarieForm.RichiesteDataMartList.NAME%>" />
             </slf:section>
-            <sl:newLine skipLine="true"/>         
+            <sl:newLine skipLine="true"/>
+
+            <slf:section name="<%=UnitaDocumentarieForm.StoricoStatiRichiestaSection.NAME%>" styleClass="importantContainer">
+                <slf:listNavBar name="<%= UnitaDocumentarieForm.StoricoStatiRichiestaList.NAME%>" pageSizeRelated="true"/>
+                <slf:list name="<%= UnitaDocumentarieForm.StoricoStatiRichiestaList.NAME%>" />
+                <slf:listNavBar  name="<%= UnitaDocumentarieForm.StoricoStatiRichiestaList.NAME%>" />
+            </slf:section>
+            <sl:newLine skipLine="true"/>
             
             <div style="display: flex; align-items: flex-start; gap: 20px;">
                 <div style="flex: 1; min-width: 0">

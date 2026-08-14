@@ -41,28 +41,18 @@ public class DecModelloXsdFascicolo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long idModelloXsdFascicolo;
-
     private String blXsd;
-
     private String cdXsd;
-
     private String dsXsd;
-
     private Date dtIstituz;
-
     private Date dtSoppres;
-
     private String flDefault;
     private TiModelloXsd tiModelloXsd;
     private TiUsoModelloXsd tiUsoModelloXsd;
     private AplSistemaMigraz aplSistemaMigraz;
-
     private OrgAmbiente orgAmbiente;
-
     private List<DecUsoModelloXsdFasc> decUsoModelloXsdFascs = new ArrayList<>();
-
     private List<FasXmlFascicolo> fasXmlFascicolos = new ArrayList<>();
-
     private List<FasXsdMetaVerAipFasc> fasXsdMetaVerAipFascs = new ArrayList<>();
     private List<DecModelloXsdAttribFascicolo> decModelloXsdAttribFascicolos = new ArrayList<>();
     private List<DecModelloXsdFascRif> decModelloXsdFascRifsPadre = new ArrayList<>();
@@ -72,7 +62,6 @@ public class DecModelloXsdFascicolo implements Serializable {
     }
 
     @Id
-
     @Column(name = "ID_MODELLO_XSD_FASCICOLO")
     @XmlID
     @XmlJavaTypeAdapter(LongToStringAdapter.class)
@@ -171,7 +160,6 @@ public class DecModelloXsdFascicolo implements Serializable {
     }
 
     @XmlTransient
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SISTEMA_MIGRAZ")
     public AplSistemaMigraz getAplSistemaMigraz() {
@@ -183,7 +171,6 @@ public class DecModelloXsdFascicolo implements Serializable {
     }
 
     @XmlTransient
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_AMBIENTE")
     public OrgAmbiente getOrgAmbiente() {
@@ -195,7 +182,6 @@ public class DecModelloXsdFascicolo implements Serializable {
     }
 
     @XmlInverseReference(mappedBy = "decModelloXsdFascicolo")
-
     @OneToMany(mappedBy = "decModelloXsdFascicolo")
     public List<DecUsoModelloXsdFasc> getDecUsoModelloXsdFascs() {
         return this.decUsoModelloXsdFascs;
@@ -230,7 +216,6 @@ public class DecModelloXsdFascicolo implements Serializable {
     }
 
     @XmlTransient
-
     @OneToMany(mappedBy = "decModelloXsdFascicolo", cascade = {
             CascadeType.REMOVE })
     public List<FasXsdMetaVerAipFasc> getFasXsdMetaVerAipFascs() {
@@ -242,7 +227,6 @@ public class DecModelloXsdFascicolo implements Serializable {
     }
 
     @XmlTransient
-
     @OneToMany(mappedBy = "decModelloXsdFascicolo", cascade = CascadeType.PERSIST)
     public List<DecModelloXsdAttribFascicolo> getDecModelloXsdAttribFascicolos() {
         return this.decModelloXsdAttribFascicolos;
@@ -270,6 +254,7 @@ public class DecModelloXsdFascicolo implements Serializable {
     }
 
     // bi-directional many-to-one association to DecModelloXsdFascRif (come padre)
+    @XmlTransient
     @OneToMany(mappedBy = "decModelloXsdFascicoloPadre", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<DecModelloXsdFascRif> getDecModelloXsdFascRifsPadre() {
         return this.decModelloXsdFascRifsPadre;
@@ -295,6 +280,7 @@ public class DecModelloXsdFascicolo implements Serializable {
     }
 
     // bi-directional many-to-one association to DecModelloXsdFascRif (come target)
+    @XmlTransient
     @OneToMany(mappedBy = "decModelloXsdFascicoloTarget")
     public List<DecModelloXsdFascRif> getDecModelloXsdFascRifsTarget() {
         return this.decModelloXsdFascRifsTarget;
