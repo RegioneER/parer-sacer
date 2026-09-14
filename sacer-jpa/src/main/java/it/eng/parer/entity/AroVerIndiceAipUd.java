@@ -90,6 +90,10 @@ public class AroVerIndiceAipUd implements Serializable {
 
     private List<AroUrnVerIndiceAipUd> aroUrnVerIndiceAipUds = new ArrayList<>();
 
+    private BigDecimal aaKeyUnitaDoc;
+
+    private BigDecimal idStrut;
+
     public AroVerIndiceAipUd() {/* Hibernate */
     }
 
@@ -314,5 +318,23 @@ public class AroVerIndiceAipUd implements Serializable {
 
     public void setAroUrnVerIndiceAipUds(List<AroUrnVerIndiceAipUd> aroUrnVerIndiceAipUds) {
         this.aroUrnVerIndiceAipUds = aroUrnVerIndiceAipUds;
+    }
+
+    @Column(name = "AA_KEY_UNITA_DOC")
+    public BigDecimal getAaKeyUnitaDoc() {
+        return this.aaKeyUnitaDoc;
+    }
+
+    public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+    }
+
+    @Column(name = "ID_STRUT")
+    public BigDecimal getIdStrut() {
+        return this.idStrut;
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        this.idStrut = idStrut;
     }
 }

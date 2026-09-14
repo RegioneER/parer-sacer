@@ -71,7 +71,7 @@
         <Input Name="num_aip" Description="Numero aip" Type="INTEGER" />
         <Input Name="dimensione" Description="Dimensione (MegaByte)" Type="INTEGER" />
         <Input Name="num_docs" Description="Numero documenti" Type="INTEGER" />
-        <Input Name="num_errori" Description="Numero errori" Type="INTEGER" />
+        <Link Name="num_errori" Description="Numero errori" Type="INTEGER" Target="apriElenchiErroreLink" Tooltip="Visualizza gli elenchi di versamento degli aip in errore" isTargetList="false" />
         <Input Name="num_estratti" Description="Numero estratti" Type="INTEGER" />
         <Input Name="avanzamento" Description="% avanzamento" Type="INTEGER" />
     </List>

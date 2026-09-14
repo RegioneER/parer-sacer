@@ -186,6 +186,29 @@ public class ElenchiVersamentoHelper extends GenericHelper {
         return listaElenchiVersamento;
     }
 
+    /**
+     * Recupera la lista degli elenchi di versamento corrispondenti agli ID_ELENCO_VERS passati in
+     * input. Utilizzato ad esempio per la ricerca secca degli elenchi di versamento a partire da un
+     * elenco di id (es. dal dettaglio della richiesta di restituzione archivio).
+     *
+     * @param idUserIam        l'id utente IAM
+     * @param idElencoVersList la lista degli ID_ELENCO_VERS da ricercare
+     *
+     * @return la lista degli elenchi di versamento trovati
+     */
+    public List<ElvVRicElencoVers> retrieveElvVRicElencoVersListByIds(long idUserIam,
+            List<BigDecimal> idElencoVersList) {
+        if (idElencoVersList == null || idElencoVersList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        Query query = getEntityManager().createQuery(
+                "SELECT u FROM ElvVRicElencoVers u WHERE u.idUserIam = :idUserIam "
+                        + "AND u.idElencoVers IN (:idElencoVersList)");
+        query.setParameter("idUserIam", bigDecimalFromLong(idUserIam));
+        query.setParameter("idElencoVersList", idElencoVersList);
+        return query.getResultList();
+    }
+
     public List<ElvVRicElencoVersByStato> retrieveElvVRicElencoVersByStatoList(long idUserIam,
             FiltriElenchiVersamento filtriElenchiVersamento) throws EMFError {
         return retrieveElvVRicElencoVersByStatoList(idUserIam, new Filtri(filtriElenchiVersamento));

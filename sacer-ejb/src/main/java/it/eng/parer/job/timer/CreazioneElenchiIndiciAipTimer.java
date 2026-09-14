@@ -118,6 +118,7 @@ public class CreazioneElenchiIndiciAipTimer extends JobTimer {
     }
 
     @Timeout
+    @Lock(LockType.WRITE)
     public void doJob(Timer timer) {
         if (timer.getInfo().equals(jobName)) {
             try {
@@ -130,6 +131,7 @@ public class CreazioneElenchiIndiciAipTimer extends JobTimer {
     }
 
     @Override
+    @Lock(LockType.WRITE)
     public void startProcess(Timer timer) {
         try {
             LogJob log = jobHelper.writeAtomicLogJob(jobName,

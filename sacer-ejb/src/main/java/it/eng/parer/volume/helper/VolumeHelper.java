@@ -1058,6 +1058,8 @@ public class VolumeHelper {
         List<DefinitoDaBean> listaDefinitoDa = new ArrayList<>();
         Set<String> insiemeTipiUnitaDoc = new HashSet<>();
         Set<String> insiemeTipiDoc = new HashSet<>();
+        Set<String> insiemeSistemiMigrazUniDoc = new HashSet<>();
+        Set<String> insiemeSistemiMigrazDoc = new HashSet<>();
 
         // Parsing dei dati specifici (stessa logica di buildConditionsForRicDatiSpec)
         for (Object datiSpecObj : datiSpecList) {
@@ -1092,9 +1094,14 @@ public class VolumeHelper {
                         } // Caso DOC
                         else if (definitoDa.getNmTipoDoc() != null) {
                             insiemeTipiDoc.add(definitoDa.getNmTipoDoc());
+                        } // Caso Sistema Migrazione con entità Sacer UNI_DOC
+                        else if (definitoDa.getTiEntitaSacer()
+                                .equals(TipoEntitaSacer.UNI_DOC.name())) {
+                            insiemeSistemiMigrazUniDoc.add(definitoDa.getNmSistemaMigraz());
+                        } // Caso Sistema Migrazione con entità Sacer DOC
+                        else if (definitoDa.getTiEntitaSacer().equals(TipoEntitaSacer.DOC.name())) {
+                            insiemeSistemiMigrazDoc.add(definitoDa.getNmSistemaMigraz());
                         }
-                        // Nota: il caso sistema migrazione non è gestito (coerente con
-                        // buildConditionsForRicDatiSpec)
                     }
                 }
             }
@@ -1106,6 +1113,8 @@ public class VolumeHelper {
 
         boolean hasUniDoc = !insiemeTipiUnitaDoc.isEmpty();
         boolean hasDoc = !insiemeTipiDoc.isEmpty();
+        boolean hasMigrazUniDoc = !insiemeSistemiMigrazUniDoc.isEmpty();
+        boolean hasMigrazDoc = !insiemeSistemiMigrazDoc.isEmpty();
 
         if (filtroVersioneDsUd != null) {
             filtroVersioneDsUd = "'" + filtroVersioneDsUd + "'";
@@ -1242,6 +1251,146 @@ public class VolumeHelper {
                 // Chiude il gruppo DOC
                 queryStr.append(")");
             }
+        }
+
+        if (hasMigrazUniDoc || hasMigrazDoc) {
+            if (hasUniDoc || hasDoc) {
+                queryStr.append(" INTERSECT ");
+            }
+
+            if (hasMigrazUniDoc && hasMigrazDoc) {
+                queryStr.append("(");
+            }
+
+            if (hasMigrazUniDoc) {
+                boolean firstOrGroup = true;
+                for (String nmSistemaMigraz : insiemeSistemiMigrazUniDoc) {
+                    List<DefinitoDaBean> definitoDaForGroup = new ArrayList<>();
+                    for (DefinitoDaBean definitoDa : listaDefinitoDa) {
+                        if (nmSistemaMigraz.equals(definitoDa.getNmSistemaMigraz())
+                                && TipoEntitaSacer.UNI_DOC.name()
+                                        .equals(definitoDa.getTiEntitaSacer())) {
+                            definitoDaForGroup.add(definitoDa);
+                        }
+                    }
+                    if (definitoDaForGroup.isEmpty()) {
+                        continue;
+                    }
+                    if (!firstOrGroup) {
+                        queryStr.append(" UNION ");
+                    }
+                    firstOrGroup = false;
+
+                    boolean needGroupParens = definitoDaForGroup.size() > 1;
+                    if (needGroupParens) {
+                        queryStr.append("(");
+                    }
+                    boolean firstAndBranch = true;
+                    for (DefinitoDaBean definitoDa : definitoDaForGroup) {
+                        if (!firstAndBranch) {
+                            queryStr.append(" INTERSECT ");
+                        }
+                        firstAndBranch = false;
+
+                        int j = mappone.size();
+                        Object[] obj = translateFiltroToSql(definitoDa, j);
+                        DatiSpecQueryParams datiSpecQueryParams = (DatiSpecQueryParams) obj[0];
+                        operatore = (String) obj[1];
+                        filtro = (String) obj[2];
+
+                        queryStr.append(
+                                "SELECT ric.id_unita_doc FROM ARO_V_RIC_DATI_SPEC_MIGRAZ ric")
+                                .append(" JOIN sacer.aro_unita_doc ud_mig")
+                                .append(" ON ud_mig.id_unita_doc = ric.id_unita_doc")
+                                .append(" WHERE ric.id_attrib_dati_spec = :idattribdatispecin")
+                                .append(indiceidattribds)
+                                .append(" AND ric.nm_sistema_migraz = :nmsistemamigrazin")
+                                .append(indiceidattribds)
+                                .append(" AND ud_mig.aa_key_unita_doc BETWEEN ")
+                                .append(annoRangeDa).append(" AND ").append(annoRangeA)
+                                .append(" AND ud_mig.id_strut_unita_doc = ").append(idStrut)
+                                .append(" AND ric.ti_entita_sacer = 'UNI_DOC'")
+                                .append(" AND ric.dl_valore ").append(operatore)
+                                .append(filtro);
+                        mappone.add(datiSpecQueryParams);
+                        indiceidattribds++;
+                    }
+                    if (needGroupParens) {
+                        queryStr.append(")");
+                    }
+                }
+            }
+
+            if (hasMigrazDoc) {
+                if (hasMigrazUniDoc) {
+                    queryStr.append(") INTERSECT (");
+                }
+
+                boolean firstOrGroup = true;
+                for (String nmSistemaMigraz : insiemeSistemiMigrazDoc) {
+                    List<DefinitoDaBean> definitoDaForGroup = new ArrayList<>();
+                    for (DefinitoDaBean definitoDa : listaDefinitoDa) {
+                        if (nmSistemaMigraz.equals(definitoDa.getNmSistemaMigraz())
+                                && TipoEntitaSacer.DOC.name()
+                                        .equals(definitoDa.getTiEntitaSacer())) {
+                            definitoDaForGroup.add(definitoDa);
+                        }
+                    }
+                    if (definitoDaForGroup.isEmpty()) {
+                        continue;
+                    }
+                    if (!firstOrGroup) {
+                        queryStr.append(" UNION ");
+                    }
+                    firstOrGroup = false;
+
+                    boolean needGroupParens = definitoDaForGroup.size() > 1;
+                    if (needGroupParens) {
+                        queryStr.append("(");
+                    }
+                    boolean firstAndBranch = true;
+                    for (DefinitoDaBean definitoDa : definitoDaForGroup) {
+                        if (!firstAndBranch) {
+                            queryStr.append(" INTERSECT ");
+                        }
+                        firstAndBranch = false;
+
+                        int j = mappone.size();
+                        Object[] obj = translateFiltroToSql(definitoDa, j);
+                        DatiSpecQueryParams datiSpecQueryParams = (DatiSpecQueryParams) obj[0];
+                        operatore = (String) obj[1];
+                        filtro = (String) obj[2];
+
+                        queryStr.append(
+                                "SELECT ric.id_unita_doc FROM ARO_V_RIC_DATI_SPEC_MIGRAZ ric")
+                                .append(" JOIN sacer.aro_unita_doc ud_mig")
+                                .append(" ON ud_mig.id_unita_doc = ric.id_unita_doc")
+                                .append(" WHERE ric.id_attrib_dati_spec = :idattribdatispecin")
+                                .append(indiceidattribds)
+                                .append(" AND ric.nm_sistema_migraz = :nmsistemamigrazin")
+                                .append(indiceidattribds)
+                                .append(" AND ud_mig.aa_key_unita_doc BETWEEN ")
+                                .append(annoRangeDa).append(" AND ").append(annoRangeA)
+                                .append(" AND ud_mig.id_strut_unita_doc = ").append(idStrut)
+                                .append(" AND ric.ti_entita_sacer = 'DOC'")
+                                .append(" AND ric.dl_valore ").append(operatore)
+                                .append(filtro);
+                        mappone.add(datiSpecQueryParams);
+                        indiceidattribds++;
+                    }
+                    if (needGroupParens) {
+                        queryStr.append(")");
+                    }
+                }
+
+                if (hasMigrazUniDoc) {
+                    queryStr.append(")");
+                }
+            }
+        }
+
+        if (queryStr.length() == 0) {
+            queryStr.append("SELECT CAST(NULL AS NUMBER) AS id_unita_doc FROM dual WHERE 1 = 0");
         }
 
         retParams.setMappone(mappone);

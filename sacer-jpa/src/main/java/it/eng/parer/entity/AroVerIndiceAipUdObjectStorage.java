@@ -35,6 +35,8 @@ public class AroVerIndiceAipUdObjectStorage implements Serializable {
     private String nmBucket;
     private String cdKeyFile;
 
+    private BigDecimal idStrut;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_VER_INDICE_AIP_UD_OBJECT_STORAGE")
@@ -109,5 +111,14 @@ public class AroVerIndiceAipUdObjectStorage implements Serializable {
 
     public void setCdKeyFile(String cdKeyFile) {
         this.cdKeyFile = cdKeyFile;
+    }
+
+    @Column(name = "ID_STRUT")
+    public BigDecimal getIdStrut() {
+        return this.idStrut;
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        this.idStrut = idStrut;
     }
 }

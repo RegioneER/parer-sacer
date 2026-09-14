@@ -2475,6 +2475,7 @@ public class ScartoAction extends ScartoAbstractAction {
                     .getDs_rich_scarto_vers().parse();
             final String ntRichScartoVers = getForm().getCreazioneRichScartoVers()
                     .getNt_rich_scarto_vers().parse();
+            final String tiRichScartoVers = "UNITA_DOC";
             final String blFile = getForm().getCreazioneRichScartoVers().getBl_file().parse();
 
             if (!getMessageBox().hasError() && blFile != null) {
@@ -2500,7 +2501,7 @@ public class ScartoAction extends ScartoAbstractAction {
                 // Salvo la richiesta di scarto versamento
                 Long idRichScartoVers = scartoEjb.saveRichScartoVers(getUser().getIdUtente(),
                         cdRichScartoVers, dsRichScartoVers, ntRichScartoVers, fileByteArray,
-                        getUser().getIdOrganizzazioneFoglia());
+                        getUser().getIdOrganizzazioneFoglia(), tiRichScartoVers);
                 // ELABORAZIONE RICHIESTA
                 if (idRichScartoVers != null) {
                     scartoEjb.elaboraRichiestaScarto(idRichScartoVers, getUser().getIdUtente(),

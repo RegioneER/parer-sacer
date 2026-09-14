@@ -52,6 +52,7 @@ import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.web.util.Constants;
 
 /**
@@ -94,6 +95,8 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
         aipRestituzioneArch.setAroIndiceAipUd(indiceAipUd);
         aipRestituzioneArch.setTiTipologiaOggetto(tiTipologiaOggetto);
         aipRestituzioneArch.setTiStato(tiStato);
+        // Il default DB non viene applicato se Hibernate invia esplicitamente NULL in insert.
+        aipRestituzioneArch.setFlAipControllato(JobConstants.DB_FALSE);
         aipRestituzioneArch.setAroRichiestaRa(richiestaRa);
 
         entityManager.persist(aipRestituzioneArch);

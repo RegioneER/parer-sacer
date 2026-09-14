@@ -15,6 +15,8 @@ package it.eng.parer.scarto.ejb;
 import com.csvreader.CsvReader;
 import it.eng.parer.scarto.dto.RicercaRichScartoVersBean;
 import it.eng.parer.annulVers.dto.UnitaDocBean;
+import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.entity.*;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.slite.gen.viewbean.*;
@@ -25,6 +27,7 @@ import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.utils.CostantiDB;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +81,8 @@ public class ScartoEjb {
     // end MEV #30725
     @EJB
     private ConfigurationHelper configurationHelper;
+    @EJB
+    private ElencoVersamentoHelper evHelper;
 
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
@@ -1025,6 +1030,7 @@ public class ScartoEjb {
      * @param ntRichScartoVers nota richiesta
      * @param fileByteArray    upload caricato dall'utente
      * @param idStrut          la struttura per cui viene creata la serie
+     * @param tiRichScartoVers tipo richiesta scarto
      *
      * @return id richiesta
      *
@@ -1032,7 +1038,8 @@ public class ScartoEjb {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Long saveRichScartoVers(long idUserIam, String cdRichScartoVers, String dsRichScartoVers,
-            String ntRichScartoVers, byte[] fileByteArray, BigDecimal idStrut)
+            String ntRichScartoVers, byte[] fileByteArray, BigDecimal idStrut,
+            String tiRichScartoVers)
             throws ParerUserError {
         logger.info("Eseguo il salvataggio della richiesta di scarto");
         Date now = Calendar.getInstance().getTime();
@@ -1049,6 +1056,7 @@ public class ScartoEjb {
             rich.setCdRichScartoVers(cdRichScartoVers);
             rich.setDsRichScartoVers(dsRichScartoVers);
             rich.setNtRichScartoVers(ntRichScartoVers);
+            rich.setTiRichScartoVers(tiRichScartoVers);
             rich.setDtCreazioneRichScartoVers(now);
             rich.setTiCreazioneRichScartoVers(
                     CostantiDB.TipoCreazioneRichScartoVers.UPLOAD_FILE.name());
@@ -1073,7 +1081,7 @@ public class ScartoEjb {
 
             // Se è specificato il file, devo preparare il file da registrare in
             // ARO_FILE_RICH_SCARTO_VERS
-            if (fileByteArray != null) {
+            if (tiRichScartoVers.equals("UNITA_DOC") && fileByteArray != null) {
                 AroFileRichScartoVers fileRich = new AroFileRichScartoVers();
                 fileRich.setTiFile(CostantiDB.TipoFileRichScartoVers.FILE_UD_SCARTO.name());
                 fileRich.setBlFile(new String(fileByteArray, StandardCharsets.UTF_8));
@@ -1361,6 +1369,7 @@ public class ScartoEjb {
         item.setCdKeyUnitaDoc(numero);
         item.setIdStrut(new BigDecimal(rich.getOrgStrut().getIdStrut()));
         item.setPgItemRichScartoVers(new BigDecimal(progressivo));
+        item.setTiItemRichScartoVers(CostantiDB.TiItemRichScartoVers.UNI_DOC.name());
         item.setTiStatoItemScarto(CostantiDB.StatoItemRichScartoVers.NON_SCARTABILE.name());
         if (item.getAroErrRichScartoVers() == null) {
             item.setAroErrRichScartoVers(new ArrayList<>());
@@ -1531,8 +1540,87 @@ public class ScartoEjb {
         SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_TIMESTAMP_TYPE);
         String dtString = df.format(dataScarto);
 
-        // TODO EVENTUALI OPERAZIONI DA EFFETTUARE SUGLI ELEMENTI COLLEGATI ALLE UD COME
-        // NELL'ANNULLAMENTO
+        List<AroItemRichScartoVers> aroItemRichScartoVersList = helper.getItem(idRichScartoVers,
+                ElencoEnums.UdDocStatusEnum.IN_ATTESA_MEMORIZZAZIONE.name(),
+                ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name(),
+                ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+        for (AroItemRichScartoVers aroItemRichScartoVers : aroItemRichScartoVersList) {
+            helper.deleteElvUdVersDaElabElenco(
+                    aroItemRichScartoVers.getAroUnitaDoc().getIdUnitaDoc());
+            aroItemRichScartoVers.getAroUnitaDoc().setTiStatoUdElencoVers(null);
+        }
+
+        List<AroDoc> docList = helper.getDocAggiunti(idRichScartoVers,
+                ElencoEnums.UdDocStatusEnum.IN_ATTESA_MEMORIZZAZIONE.name(),
+                ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name(),
+                ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+        for (AroDoc doc : docList) {
+            helper.deleteElvDocAggDaElabElenco(doc.getIdDoc());
+            doc.setTiStatoDocElencoVers(null);
+        }
+
+        List<AroUpdUnitaDoc> updList = helper.getUpdItem(idRichScartoVers,
+                it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers.IN_ATTESA_SCHED,
+                it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers.NON_SELEZ_SCHED);
+        for (AroUpdUnitaDoc upd : updList) {
+            helper.deleteElvUpdUdDaElabElenco(upd.getIdUpdUnitaDoc());
+            upd.setTiStatoUpdElencoVers(null);
+        }
+
+        Set<Long> idElencoVersApertiODaChiudereSet = new HashSet<>();
+        List<AroItemRichScartoVers> item2List = helper.getItem(idRichScartoVers,
+                ElencoEnums.UdDocStatusEnum.IN_ELENCO_APERTO.name(),
+                ElencoEnums.UdDocStatusEnum.IN_ELENCO_DA_CHIUDERE.name());
+        for (AroItemRichScartoVers aroItemRichScartoVers : item2List) {
+            AroUnitaDoc unitaDoc = aroItemRichScartoVers.getAroUnitaDoc();
+            if (unitaDoc.getElvElencoVer() != null) {
+                idElencoVersApertiODaChiudereSet.add(unitaDoc.getElvElencoVer().getIdElencoVers());
+                unitaDoc.setElvElencoVer(null);
+                unitaDoc.setTiStatoUdElencoVers(null);
+            }
+        }
+
+        docList = helper.getDocAggiunti(idRichScartoVers,
+                ElencoEnums.DocStatusEnum.IN_ELENCO_APERTO.name(),
+                ElencoEnums.DocStatusEnum.IN_ELENCO_DA_CHIUDERE.name());
+        for (AroDoc doc : docList) {
+            if (doc.getElvElencoVer() != null) {
+                idElencoVersApertiODaChiudereSet.add(doc.getElvElencoVer().getIdElencoVers());
+            }
+            doc.setElvElencoVer(null);
+            doc.setTiStatoDocElencoVers(null);
+        }
+
+        List<AroUpdUnitaDoc> itemUpd2List = helper.getUpdItem(idRichScartoVers,
+                it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_APERTO,
+                it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_DA_CHIUDERE);
+        for (AroUpdUnitaDoc item2 : itemUpd2List) {
+            if (item2.getElvElencoVer() != null) {
+                idElencoVersApertiODaChiudereSet.add(item2.getElvElencoVer().getIdElencoVers());
+            }
+            item2.setElvElencoVer(null);
+            item2.setTiStatoUpdElencoVers(null);
+        }
+
+        for (Long idElencoVersAperto : idElencoVersApertiODaChiudereSet) {
+            context.getBusinessObject(ScartoEjb.class).updateTotaliElenco(idElencoVersAperto,
+                    statoRichScartoVers.getIamUser().getIdUserIam(), dtString);
+        }
+
+        List<ElvVLisElencoUdScarto> elenchiConUdDaScartare = helper.getElenchiConUdDaScartare(
+                idRichScartoVers);
+        for (ElvVLisElencoUdScarto elencoItem : elenchiConUdDaScartare) {
+            ElvElencoVer elenco = helper.findById(ElvElencoVer.class,
+                    elencoItem.getElvVLisElencoUdScartoId().getIdElencoVers().longValue());
+            String notaElenco = elencoItem.getNtElencoChiuso();
+            String notaScarto = "Nell'elenco sono presenti unità documentarie o documenti aggiunti di cui è stato effettuato lo scarto";
+            if (StringUtils.isBlank(notaElenco) || !notaElenco.contains(notaScarto)) {
+                elenco.setNtElencoChiuso(
+                        ((StringUtils.isNotBlank(notaElenco) ? notaElenco + " " : "")
+                                + notaScarto).trim());
+            }
+        }
+
         logger.debug("{} Registro il nuovo stato della richiesta di scarto avente id: {}",
                 LOG_MESSAGE_SCARTO, idRichScartoVers);
         // Registra il nuovo stato della richiesta di scarto
@@ -1569,6 +1657,34 @@ public class ScartoEjb {
         logger.debug("{} - richiesta avente id: {} elaborata con successo!", LOG_MESSAGE_SCARTO,
                 idRichScartoVers);
         logger.info("Fine evasione richiesta ID: {}", idRichScartoVers);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void updateTotaliElenco(long idElencoVers, long idUserIam, String dtString) {
+        ElvElencoVer elenco = helper.findById(ElvElencoVer.class, idElencoVers);
+
+        long niUnitaDocVersElenco = evHelper.contaUdVersate(idElencoVers);
+        long niDocAggElenco = evHelper.contaDocAggiunti(idElencoVers);
+        long niUpdUnitaDoc = evHelper.contaUpdUd(idElencoVers);
+
+        if (niUnitaDocVersElenco == 0 && niDocAggElenco == 0 && niUpdUnitaDoc == 0) {
+            evHelper.writeLogElencoVers(elenco, elenco.getOrgStrut(), idUserIam,
+                    ElencoEnums.OpTypeEnum.ELIMINA_ELENCO.name());
+            evHelper.deleteElvElencoVer(new BigDecimal(idElencoVers));
+        } else {
+            elenco.setNiUnitaDocVersElenco(new BigDecimal(niUnitaDocVersElenco));
+            elenco.setNiDocVersElenco(new BigDecimal(evHelper.contaDocVersati(idElencoVers)));
+            Object[] objVers = evHelper.contaCompVersati(idElencoVers);
+            elenco.setNiCompVersElenco(new BigDecimal((Long) objVers[0]));
+            elenco.setNiSizeVersElenco(
+                    objVers[1] != null ? (BigDecimal) objVers[1] : BigDecimal.ZERO);
+            elenco.setNiUnitaDocModElenco(
+                    new BigDecimal(evHelper.contaUdModificatePerDocAggiunti(idElencoVers)));
+            elenco.setNiDocAggElenco(new BigDecimal(niDocAggElenco));
+            Object[] objAgg = evHelper.contaCompPerDocAggiunti(idElencoVers);
+            elenco.setNiCompAggElenco(new BigDecimal((Long) objAgg[0]));
+            elenco.setNiSizeAggElenco(objAgg[1] != null ? (BigDecimal) objAgg[1] : BigDecimal.ZERO);
+        }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)

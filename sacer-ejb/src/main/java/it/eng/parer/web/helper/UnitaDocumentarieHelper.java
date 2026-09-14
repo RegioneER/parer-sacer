@@ -3160,6 +3160,41 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             whereWord = "AND ";
         }
 
+        BigDecimal idTipoStrutDoc = filtri.getNmTipoStrutDoc();
+        List<BigDecimal> idTipoCompDocList = filtri.getNmTipoCompDoc();
+        String cdVersioneXsdComp = filtri.getCdVersioneXsdComp();
+        if (idTipoStrutDoc != null || (idTipoCompDocList != null && !idTipoCompDocList.isEmpty())
+                || cdVersioneXsdComp != null) {
+            queryWhereConditions.append(whereWord)
+                    .append(" EXISTS (SELECT 1 FROM sacer.aro_doc doc"
+                            + " JOIN sacer.aro_strut_doc strut_doc"
+                            + " ON strut_doc.id_doc = doc.id_doc");
+            if ((idTipoCompDocList != null && !idTipoCompDocList.isEmpty())
+                    || cdVersioneXsdComp != null) {
+                queryWhereConditions.append(" JOIN sacer.aro_comp_doc comp"
+                        + " ON comp.id_strut_doc = strut_doc.id_strut_doc");
+            }
+            if (cdVersioneXsdComp != null) {
+                queryWhereConditions.append(" JOIN sacer.aro_uso_xsd_dati_spec uso_xsd"
+                        + " ON uso_xsd.id_comp_doc = comp.id_comp_doc"
+                        + " JOIN sacer.dec_xsd_dati_spec xsd"
+                        + " ON xsd.id_xsd_dati_spec = uso_xsd.id_xsd_dati_spec");
+            }
+            queryWhereConditions.append(" WHERE doc.id_unita_doc = ud.id_unita_doc");
+            if (idTipoStrutDoc != null) {
+                queryWhereConditions.append(
+                        " AND strut_doc.id_tipo_strut_doc = :idTipoStrutDoc");
+            }
+            if (idTipoCompDocList != null && !idTipoCompDocList.isEmpty()) {
+                queryWhereConditions.append(" AND comp.id_tipo_comp_doc IN (:idTipoCompDocList)");
+            }
+            if (cdVersioneXsdComp != null) {
+                queryWhereConditions.append(" AND xsd.cd_versione_xsd = :cdVersioneXsdComp");
+            }
+            queryWhereConditions.append(") ");
+            whereWord = "AND ";
+        }
+
         if (!idTipoUnitaDocList.isEmpty()) {
             // Inserimento nella query del filtro Tipo ud
             queryWhereConditions.append(whereWord)
@@ -3260,6 +3295,18 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         // Passaggio parametri alla query
         if (!idTipoDocList.isEmpty()) {
             query.setParameter("listtipodoc", idTipoDocList);
+        }
+
+        if (idTipoStrutDoc != null) {
+            query.setParameter("idTipoStrutDoc", idTipoStrutDoc);
+        }
+
+        if (idTipoCompDocList != null && !idTipoCompDocList.isEmpty()) {
+            query.setParameter("idTipoCompDocList", idTipoCompDocList);
+        }
+
+        if (cdVersioneXsdComp != null) {
+            query.setParameter("cdVersioneXsdComp", cdVersioneXsdComp);
         }
 
         if (!idTipoUnitaDocList.isEmpty()) {
@@ -3456,9 +3503,11 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                     e);
         }
 
-        // Calcolo il campo stato conservazione
-        setStatiDocumentari(dettaglioUD);
-        addXmlUniDocFromOStoAroVVisUnitaDocIamRowBean(dettaglioUD);
+        if (rec != null) {
+            // Calcolo il campo stato conservazione
+            setStatiDocumentari(dettaglioUD);
+            addXmlUniDocFromOStoAroVVisUnitaDocIamRowBean(dettaglioUD);
+        }
         return dettaglioUD;
     }
 
@@ -5128,6 +5177,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         if (aroCompUrnCalc == null) {
             aroCompUrnCalc = new AroCompUrnCalc();
             aroCompUrnCalc.setAroCompDoc(aroCompDoc);
+            aroCompUrnCalc.setIdStrut(aroCompDoc.getIdStrut());
+            aroCompUrnCalc.setAaKeyUnitaDoc(aroCompDoc.getAaKeyUnitaDoc());
             aroCompUrnCalc.setTiUrn(tiUrn);
             String tmpUrn = null;
             switch (tiUrn) {
@@ -6550,6 +6601,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         private String cdKeyUnitaDocDa;
         private String cdKeyUnitaDocA;
         private List<String> nmSistemaMigraz;
+        private BigDecimal nmTipoStrutDoc;
+        private List<BigDecimal> nmTipoCompDoc;
+        private String cdVersioneXsdComp;
         private List<BigDecimal> nmSubStrut;
         // private String cdKeyUnitaDocContiene;
 
@@ -6568,6 +6622,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             this.cdKeyUnitaDocDa = filtri.getCd_key_unita_doc_da().parse();
             this.cdKeyUnitaDocA = filtri.getCd_key_unita_doc_a().parse();
             // this.nmSistemaMigraz = filtri.getNm_sistema_migraz().parse();
+            this.nmTipoStrutDoc = filtri.getNm_tipo_strut_doc().parse();
+            this.nmTipoCompDoc = filtri.getNm_tipo_comp_doc().parse();
+            this.cdVersioneXsdComp = filtri.getCd_versione_xsd_comp().parse();
             this.nmSubStrut = filtri.getNm_sub_strut().parse();
         }
 
@@ -6642,6 +6699,30 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         // void setNmSistemaMigraz(List<String> nmSistemaMigraz) {
         // this.nmSistemaMigraz = nmSistemaMigraz;
         // }
+        public BigDecimal getNmTipoStrutDoc() {
+            return nmTipoStrutDoc;
+        }
+
+        void setNmTipoStrutDoc(BigDecimal nmTipoStrutDoc) {
+            this.nmTipoStrutDoc = nmTipoStrutDoc;
+        }
+
+        public List<BigDecimal> getNmTipoCompDoc() {
+            return nmTipoCompDoc;
+        }
+
+        void setNmTipoCompDoc(List<BigDecimal> nmTipoCompDoc) {
+            this.nmTipoCompDoc = nmTipoCompDoc;
+        }
+
+        public String getCdVersioneXsdComp() {
+            return cdVersioneXsdComp;
+        }
+
+        void setCdVersioneXsdComp(String cdVersioneXsdComp) {
+            this.cdVersioneXsdComp = cdVersioneXsdComp;
+        }
+
         public List<BigDecimal> getNmSubStrut() {
             return nmSubStrut;
         }

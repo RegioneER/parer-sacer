@@ -60,6 +60,8 @@ public class AroUdAppartVerSerie implements Serializable {
 
     private AroUnitaDoc aroUnitaDoc;
 
+    private BigDecimal idStrut;
+
     private SerContenutoVerSerie serContenutoVerSerie;
 
     private SerVolVerSerie serVolVerSerie;
@@ -144,6 +146,15 @@ public class AroUdAppartVerSerie implements Serializable {
 
     public void setAroUnitaDoc(AroUnitaDoc aroUnitaDoc) {
         this.aroUnitaDoc = aroUnitaDoc;
+    }
+
+    @Column(name = "ID_STRUT")
+    public BigDecimal getIdStrut() {
+        return this.idStrut;
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        this.idStrut = idStrut;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

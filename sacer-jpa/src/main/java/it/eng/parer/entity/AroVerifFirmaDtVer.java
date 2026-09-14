@@ -14,6 +14,7 @@
 package it.eng.parer.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,10 @@ public class AroVerifFirmaDtVer implements Serializable {
     private List<AroContrVerifFirmaDtVer> aroContrVerifFirmaDtVers = new ArrayList<>();
 
     private AroFirmaComp aroFirmaComp;
+
+    private BigDecimal aaKeyUnitaDoc;
+
+    private BigDecimal idStrut;
 
     public AroVerifFirmaDtVer() {/* Hibernate */
     }
@@ -122,5 +127,23 @@ public class AroVerifFirmaDtVer implements Serializable {
 
     public void setAroFirmaComp(AroFirmaComp aroFirmaComp) {
         this.aroFirmaComp = aroFirmaComp;
+    }
+
+    @Column(name = "AA_KEY_UNITA_DOC")
+    public BigDecimal getAaKeyUnitaDoc() {
+        return this.aaKeyUnitaDoc;
+    }
+
+    public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+    }
+
+    @Column(name = "ID_STRUT")
+    public BigDecimal getIdStrut() {
+        return this.idStrut;
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        this.idStrut = idStrut;
     }
 }

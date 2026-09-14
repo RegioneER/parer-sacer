@@ -172,7 +172,8 @@ public class CriteriRaggruppamentoEjb {
             campoCompilato = true;
         } else if (bean.getDtCreazioneA() != null) {
             campoCompilato = true;
-        } else if (StringUtils.isNotBlank(bean.getTiConservazione())) {
+        } else if (StringUtils.isNotBlank(bean.getTiConservazione())
+                && !"FISCALE".equals(bean.getTiConservazione())) {
             campoCompilato = true;
         } else if (StringUtils.isNotBlank(bean.getFlUnitaDocFirmato())) {
             campoCompilato = true;

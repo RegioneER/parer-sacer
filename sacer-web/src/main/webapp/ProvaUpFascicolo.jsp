@@ -199,7 +199,7 @@
                 </label>
                 <label>
                     <span>PASSWORD</span>
-                    <input type="text" size="100" name="PASSWORD" class="input-text"></input>
+                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text"></input>
                 </label>
                 <label>
                     <span>XMLSIP</span>

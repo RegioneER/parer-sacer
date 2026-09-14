@@ -350,6 +350,9 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
             indiceAip.setAroUnitaDoc(udDaElab.getAroUnitaDoc());
             indiceAip.setAroVerIndiceAipUds(new ArrayList<>());
             indiceAip.setTiFormatoIndiceAip("UNISYNCRO");
+            indiceAip.setIdStrut(
+                    BigDecimal.valueOf(udDaElab.getAroUnitaDoc().getOrgStrut().getIdStrut()));
+            indiceAip.setAaKeyUnitaDoc(udDaElab.getAroUnitaDoc().getAaKeyUnitaDoc());
         }
 
         /* Inserisco ARO_VER_INDICE_AIP_UD */
@@ -361,6 +364,9 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
         verIndiceAip.setPgVerIndiceAip(new BigDecimal(progressivoVersione));
         verIndiceAip.setCdVerIndiceAip(codiceVersione);
         verIndiceAip.setDtCreazione(new Date());
+        verIndiceAip.setIdStrut(
+                BigDecimal.valueOf(indiceAip.getAroUnitaDoc().getOrgStrut().getIdStrut()));
+        verIndiceAip.setAaKeyUnitaDoc(indiceAip.getAroUnitaDoc().getAaKeyUnitaDoc());
         // EVO#16486
         verIndiceAip.setDsHashIndiceAip(hash);
         verIndiceAip.setDsAlgoHashIndiceAip(TipiHash.SHA_256.descrivi());
@@ -378,6 +384,8 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
             AroCompVerIndiceAipUd compVerIndice = new AroCompVerIndiceAipUd();
             compVerIndice.setAroCompDoc(compDocDaElab.getAroCompDoc());
             compVerIndice.setAroVerIndiceAipUd(verIndiceAip);
+            compVerIndice.setIdStrut(verIndiceAip.getIdStrut());
+            compVerIndice.setAaKeyUnitaDoc(verIndiceAip.getAaKeyUnitaDoc());
             verIndiceAip.getAroCompVerIndiceAipUds().add(compVerIndice);
         }
 
@@ -404,6 +412,8 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
                         Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
         aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.ORIGINALE);
         aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
+        aroUrnVerIndiceAipUd.setIdStrut(verIndiceAip.getIdStrut());
+        aroUrnVerIndiceAipUd.setAaKeyUnitaDoc(verIndiceAip.getAaKeyUnitaDoc());
         verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
 
         // calcolo parte urn NORMALIZZATO
@@ -419,6 +429,8 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
                         Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
         aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.NORMALIZZATO);
         aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
+        aroUrnVerIndiceAipUd.setIdStrut(verIndiceAip.getIdStrut());
+        aroUrnVerIndiceAipUd.setAaKeyUnitaDoc(verIndiceAip.getAaKeyUnitaDoc());
         verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
         // end EVO#16486
 
@@ -462,6 +474,8 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
             indiceAip.setAroUnitaDoc(ud);
             indiceAip.setAroVerIndiceAipUds(new ArrayList<>());
             indiceAip.setTiFormatoIndiceAip("UNISYNCRO");
+            indiceAip.setIdStrut(BigDecimal.valueOf(ud.getOrgStrut().getIdStrut()));
+            indiceAip.setAaKeyUnitaDoc(ud.getAaKeyUnitaDoc());
         }
 
         VolVolumeConserv vol = volHelper.getVolInfo(ud.getIdUnitaDoc());
@@ -476,6 +490,9 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
         verIndiceAip.setPgVerIndiceAip(new BigDecimal(progressivoVersione));
         verIndiceAip.setCdVerIndiceAip(codiceVersione);
         verIndiceAip.setDtCreazione(new Date());
+        verIndiceAip.setIdStrut(
+                BigDecimal.valueOf(indiceAip.getAroUnitaDoc().getOrgStrut().getIdStrut()));
+        verIndiceAip.setAaKeyUnitaDoc(indiceAip.getAroUnitaDoc().getAaKeyUnitaDoc());
         // EVO#16486
         verIndiceAip.setDsHashIndiceAip(hash);
         verIndiceAip.setDsAlgoHashIndiceAip(TipiHash.SHA_256.descrivi());
@@ -510,6 +527,8 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
                 MessaggiWSFormat.formattaUrnIndiceAIP(tmpUrn, verIndiceAip.getCdVerIndiceAip(),
                         Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
         aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.ORIGINALE);
+        aroUrnVerIndiceAipUd.setIdStrut(verIndiceAip.getIdStrut());
+        aroUrnVerIndiceAipUd.setAaKeyUnitaDoc(verIndiceAip.getAaKeyUnitaDoc());
         aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
         verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
 
@@ -526,6 +545,8 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
                         Costanti.UrnFormatter.URN_INDICE_AIP_FMT_STRING_V2));
         aroUrnVerIndiceAipUd.setTiUrn(TiUrnVerIxAipUd.NORMALIZZATO);
         aroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAip);
+        aroUrnVerIndiceAipUd.setIdStrut(verIndiceAip.getIdStrut());
+        aroUrnVerIndiceAipUd.setAaKeyUnitaDoc(verIndiceAip.getAaKeyUnitaDoc());
         verIndiceAip.getAroUrnVerIndiceAipUds().add(aroUrnVerIndiceAipUd);
         // end EVO#16486
 
@@ -932,6 +953,14 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
                         + "JOIN indiceAipUd.aroUnitaDoc ud "
                         + "WHERE verIndiceAipUd.elvElencoVer.idElencoVers = :idElencoVers "
                         + "AND ud.tiStatoConservazione != 'ANNULLATA' "
+                        // MEV_37232: escludi UD scartate analogamente alle ANNULLATE,
+                        // per coerenza sia in prima creazione (CHIUSO/VALIDATO) che in
+                        // eventuali future rigenerazioni
+                        + "AND NOT EXISTS ("
+                        + "SELECT 1 FROM AroItemRichScartoVers item "
+                        + "WHERE item.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc "
+                        + "AND item.tiStatoItemScarto = 'SCARTATO'"
+                        + ") "
                         + "ORDER BY ud.dsKeyOrd, verIndiceAipUd.pgVerIndiceAip");
         query.setParameter("idElencoVers", idElencoVers);
         return query.getResultList();

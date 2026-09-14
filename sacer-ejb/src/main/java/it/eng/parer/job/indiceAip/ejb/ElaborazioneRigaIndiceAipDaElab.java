@@ -480,6 +480,13 @@ public class ElaborazioneRigaIndiceAipDaElab {
                                 new BigDecimal(unitaDoc.getOrgSubStrut().getIdSubStrut()),
                                 unitaDoc.getAaKeyUnitaDoc());
                 log.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
+            } else {
+                // MAC#41119: l'oggetto è già presente su O.S. ma il link DB manca (es. rollback
+                // di una precedente elaborazione): creo il link senza rieseguire la put
+                objectStorageService.linkIndiceAipUdEsistente(backendIndiciAip.getBackendName(),
+                        lastVer.getIdVerIndiceAip(),
+                        new BigDecimal(unitaDoc.getOrgSubStrut().getIdSubStrut()),
+                        unitaDoc.getAaKeyUnitaDoc());
             }
         }
         // end MEV#30395
@@ -688,6 +695,13 @@ public class ElaborazioneRigaIndiceAipDaElab {
                                 new BigDecimal(unitaDoc.getOrgSubStrut().getIdSubStrut()),
                                 unitaDoc.getAaKeyUnitaDoc());
                 log.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
+            } else {
+                // MAC#41119: l'oggetto è già presente su O.S. ma il link DB manca (es. rollback
+                // di una precedente elaborazione): creo il link senza rieseguire la put
+                objectStorageService.linkIndiceAipUdEsistente(backendIndiciAip.getBackendName(),
+                        lastVer.getIdVerIndiceAip(),
+                        new BigDecimal(unitaDoc.getOrgSubStrut().getIdSubStrut()),
+                        unitaDoc.getAaKeyUnitaDoc());
             }
         }
         // end MEV#30395
@@ -804,6 +818,13 @@ public class ElaborazioneRigaIndiceAipDaElab {
                                 new BigDecimal(unitaDoc.getOrgSubStrut().getIdSubStrut()),
                                 unitaDoc.getAaKeyUnitaDoc());
                 log.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
+            } else {
+                // MAC#41119: l'oggetto è già presente su O.S. ma il link DB manca (es. rollback
+                // di una precedente elaborazione): creo il link senza rieseguire la put
+                objectStorageService.linkIndiceAipUdEsistente(backendIndiciAip.getBackendName(),
+                        lastVer.getIdVerIndiceAip(),
+                        new BigDecimal(unitaDoc.getOrgSubStrut().getIdSubStrut()),
+                        unitaDoc.getAaKeyUnitaDoc());
             }
         }
         // end MEV#30395

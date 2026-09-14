@@ -53,6 +53,10 @@ public class AroIndiceAipUd implements Serializable {
 
     private List<AroAipRestituzioneArchivio> aroAipRestituzioneArchivios = new ArrayList<>();
 
+    private BigDecimal aaKeyUnitaDoc;
+
+    private BigDecimal idStrut;
+
     public AroIndiceAipUd() {/* Hibernate */
     }
 
@@ -130,5 +134,23 @@ public class AroIndiceAipUd implements Serializable {
         getAroAipRestituzioneArchivios().remove(aroAipRestituzioneArchivio);
         aroAipRestituzioneArchivio.setAroIndiceAipUd(null);
         return aroAipRestituzioneArchivio;
+    }
+
+    @Column(name = "AA_KEY_UNITA_DOC")
+    public BigDecimal getAaKeyUnitaDoc() {
+        return this.aaKeyUnitaDoc;
+    }
+
+    public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+    }
+
+    @Column(name = "ID_STRUT")
+    public BigDecimal getIdStrut() {
+        return this.idStrut;
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        this.idStrut = idStrut;
     }
 }

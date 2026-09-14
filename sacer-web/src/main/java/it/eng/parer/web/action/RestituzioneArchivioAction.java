@@ -21,6 +21,7 @@ import it.eng.parer.restArch.dto.RicercaRichRestArchBean;
 import it.eng.parer.restArch.ejb.RestituzioneArchivioEjb;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.RestituzioneArchivioAbstractAction;
+import it.eng.parer.slite.gen.form.ElenchiVersamentoForm;
 import it.eng.parer.slite.gen.tablebean.AroRichiestaRaRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgAmbienteTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
@@ -29,11 +30,11 @@ import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisItemRaTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVRicRichRaRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVRicRichRaTableBean;
-import it.eng.parer.viewEntity.AroVChkRaUd;
 import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
 import it.eng.parer.slite.gen.tablebean.OrgAmbienteRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgEnteRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVRicRichRaTableDescriptor;
+import it.eng.parer.viewEntity.AroVChkRaUd;
 import it.eng.parer.viewEntity.OrgVRicOrganizRestArch;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
 import it.eng.parer.web.util.ComboGetter;
@@ -53,10 +54,12 @@ import it.eng.spagoLite.security.Secure;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import javax.ejb.EJB;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.codehaus.jettison.json.JSONObject;
+
 import java.util.List;
 
 /**
@@ -207,6 +210,53 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
             if (getTableName().equals(getForm().getRichRestArchList().getName())) {
                 forwardToPublisher(Application.Publisher.RICH_REST_ARCH_DETAIL);
             }
+        }
+    }
+
+    /**
+     * Metodo richiamato dal link presente nella colonna "Numero errori" della lista degli item
+     * (raggruppati per anno) di una richiesta di restituzione archivio. Recupera l'elenco degli
+     * ID_ELENCO_VERS degli elenchi di versamento le cui unit\u00E0 documentarie sono associate agli
+     * aip in errore dell'anno selezionato e forwarda alla pagina di ricerca degli elenchi di
+     * versamento, eseguendo subito la ricerca sugli id individuati.
+     *
+     * @throws EMFError errore generico
+     */
+    public void apriElenchiErroreLink() throws EMFError {
+        String riga = getRequest().getParameter("riga");
+        int numRiga = StringUtils.isNotBlank(riga) ? Integer.parseInt(riga)
+                : getForm().getItemList().getTable().getCurrentRowIndex();
+        BaseRow row = (BaseRow) getForm().getItemList().getTable().getRow(numRiga);
+
+        BigDecimal numErrori = row.getBigDecimal("num_errori");
+        if (numErrori != null && numErrori.longValue() > 0) {
+            BigDecimal idRichiestaRa = row.getBigDecimal("id_richiesta_ra");
+            BigDecimal idStrut = row.getBigDecimal("id_strut");
+            BigDecimal anno = row.getBigDecimal("anno");
+
+            List<Long> idElencoVersList = restArchEjb.getIdElencoVersErroreByAnno(idRichiestaRa,
+                    idStrut, anno);
+
+            if (idElencoVersList.isEmpty()) {
+                getMessageBox().addError(
+                        "Non \u00E8 stato possibile individuare gli elenchi di versamento associati agli aip in errore");
+                forwardToPublisher(getLastPublisher());
+            } else {
+                StringBuilder ids = new StringBuilder();
+                for (Long idElencoVers : idElencoVersList) {
+                    if (ids.length() > 0) {
+                        ids.append(",");
+                    }
+                    ids.append(idElencoVers.toString());
+                }
+                redirectToAction(Application.Actions.ELENCHI_VERSAMENTO,
+                        "?operation=caricaElenchiConErrori&idsElencoVers=" + ids,
+                        new ElenchiVersamentoForm());
+            }
+        } else {
+            getMessageBox().addError(
+                    "Non \u00E8 possibile accedere alla lista degli elenchi di versamento in quanto il numero di errori \u00E8 pari a 0");
+            forwardToPublisher(getLastPublisher());
         }
     }
 
@@ -464,6 +514,7 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
         //
         if (tiRichRestArch.equals("UNITA_DOC")) {
             List<AroVChkRaUd> chkRaUdViewList = restArchEjb.retrieveChkRaUnitaDocList(idStrut);
+
             // I controlli fanno riferimento all'ente convenzionato associato alla struttura passata
             // in ingresso dunque si possono ricavare informazioni anche riguardanti le altre
             // strutture

@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -65,6 +66,8 @@ import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.restArch.ejb.RestituzioneArchivioEjb;
+import it.eng.parer.restArch.helper.ControlloCampioneAipHelper;
+import it.eng.parer.restArch.helper.ControlloCampioneAipHelper.EsitoControlloAip;
 import it.eng.parer.restArch.helper.RestituzioneArchivioHelper;
 import it.eng.parer.viewEntity.AroVChkAipRestArchUd;
 import it.eng.parer.viewEntity.AroVRicRichRa;
@@ -96,6 +99,17 @@ public class RestituzioneArchivioJob {
     private static final int DEFAULT_MAX_PARALLEL_ANNI_RA = 1;
     // Fallback usato quando il grado di parallelismo tra richieste non e' configurato.
     private static final int DEFAULT_MAX_PARALLEL_RICHIESTE_RA = 1;
+    // Fallback usato quando la frequenza del controllo a campione non e' configurata: se non
+    // diversamente impostato, il controllo viene eseguito su ogni AIP estratto.
+    private static final int DEFAULT_FREQ_CAMPIONE_CONTROLLO_AIP_RA = 1;
+
+    /*
+     * Contatore, condiviso da tutte le istanze del pool (dato il forte parallelismo del job), degli
+     * AIP estratti con successo e non ancora sottoposti a controllo. Viene incrementato in modo
+     * atomico da ogni worker prima di decidere se il singolo AIP rientra nel campione da
+     * controllare.
+     */
+    private static final AtomicLong CONTATORE_AIP_ESTRATTI = new AtomicLong(0);
 
     @Resource
     private SessionContext context;
@@ -109,6 +123,8 @@ public class RestituzioneArchivioJob {
     private RestituzioneArchivioHelper raHelper;
     @EJB
     private ConfigurationHelper configurationHelper;
+    @EJB
+    private ControlloCampioneAipHelper controlloCampioneAipHelper;
     @EJB(mappedName = "java:app/Parer-ejb/UserHelper")
     UserHelper userHelper;
     // MEV #31341
@@ -390,6 +406,28 @@ public class RestituzioneArchivioJob {
                     CostantiDB.ParametroAppl.MAX_PARALLEL_RICHIESTE_RA,
                     DEFAULT_MAX_PARALLEL_RICHIESTE_RA);
             return DEFAULT_MAX_PARALLEL_RICHIESTE_RA;
+        }
+    }
+
+    /**
+     * Determina ogni quanti AIP estratti con successo va eseguito il controllo a campione. Il
+     * parametro e' opzionale e modificabile a caldo: se assente o non valido si applica il fallback
+     * (controllo su ogni AIP).
+     */
+    private int getFreqCampioneControlloAipRa() {
+        String configuredValue = configurationHelper.getValoreParamApplicByApplicIfPresent(
+                CostantiDB.ParametroAppl.FREQ_CAMPIONE_CONTROLLO_AIP_RA);
+        if (StringUtils.isBlank(configuredValue)) {
+            return DEFAULT_FREQ_CAMPIONE_CONTROLLO_AIP_RA;
+        }
+
+        try {
+            return Math.max(1, Integer.parseInt(configuredValue));
+        } catch (NumberFormatException ex) {
+            LOGGER.info(
+                    "Parametro {} non configurato o non valido, uso fallback: controllo a campione su ogni AIP",
+                    CostantiDB.ParametroAppl.FREQ_CAMPIONE_CONTROLLO_AIP_RA);
+            return DEFAULT_FREQ_CAMPIONE_CONTROLLO_AIP_RA;
         }
     }
 
@@ -764,6 +802,9 @@ public class RestituzioneArchivioJob {
                 BigDecimal dim = new BigDecimal(
                         IOUtils.readFileAsBytes(folder.getPath(), fileName).length);
                 setStatoAipRestArchivio(aipRestArchivio, TiStatoAroAipRa.ESTRATTO, dim, new Date());
+                // MEV: controllo a campione del pacchetto AIP appena estratto
+                eseguiControlloCampioneSeNecessario(aipRestArchivio,
+                        IOUtils.getFile(folder.getPath(), fileName));
             } else {
                 codiceErrore = "Errore durante il tentativo di copia. File non trovato";
                 LOGGER.warn(codiceErrore);
@@ -1014,6 +1055,61 @@ public class RestituzioneArchivioJob {
                 aipRestArchivio.getIdAipRestArchivio(), TiStatoAroAipRa.ERRORE.name(), cdErrore);
         // il sistema definisce sul record il codice errore
         aipRestArchivio.setCdErrore(cdErrore);
+    }
+
+    /**
+     * Esegue, se rientra nel campione configurato, il controllo di validita' del pacchetto AIP
+     * appena estratto e aggiorna di conseguenza il flag {@code FL_AIP_CONTROLLATO} oppure, in caso
+     * di esito negativo, marca l'AIP in stato ERRORE riutilizzando {@code TI_STATO} e
+     * {@code CD_ERRORE} (le stesse colonne gia' usate per gli errori di recupero/copia del
+     * pacchetto).
+     * <p>
+     * Il controllo viene eseguito una sola volta per AIP: se {@code FL_AIP_CONTROLLATO} e' gia'
+     * valorizzato a "1" (perche' il controllo era gia' stato eseguito con esito positivo in una
+     * precedente esecuzione del job) il metodo non fa nulla.
+     * <p>
+     * Data la forte parallelizzazione del job (piu' richieste, piu' anni, piu' chunk in esecuzione
+     * contemporaneamente), la decisione su quale AIP sottoporre a controllo e' affidata ad un
+     * contatore atomico condiviso da tutte le istanze del pool: in questo modo il campione resta
+     * coerente (un AIP ogni N estratti con successo) indipendentemente dal numero di worker che
+     * estraggono AIP in parallelo.
+     *
+     * @param aipRestArchivio entity dell'AIP appena estratto
+     * @param zipAip          file zip del pacchetto AIP appena copiato nell'area di destinazione
+     */
+    private void eseguiControlloCampioneSeNecessario(AroAipRestituzioneArchivio aipRestArchivio,
+            File zipAip) {
+        if (JobConstants.DB_TRUE.equals(aipRestArchivio.getFlAipControllato())) {
+            LOGGER.debug("Aip restituzione archivio id = {} gia' controllato in precedenza",
+                    aipRestArchivio.getIdAipRestArchivio());
+            return;
+        }
+
+        int freqCampioneControlloAipRa = getFreqCampioneControlloAipRa();
+        long numeroProgressivo = CONTATORE_AIP_ESTRATTI.incrementAndGet();
+        if (numeroProgressivo % freqCampioneControlloAipRa != 0) {
+            LOGGER.debug(
+                    "Aip restituzione archivio id = {} non rientra nel campione da controllare (progressivo={}, frequenza={})",
+                    aipRestArchivio.getIdAipRestArchivio(), numeroProgressivo,
+                    freqCampioneControlloAipRa);
+            return;
+        }
+
+        LOGGER.debug("Eseguo il controllo a campione sull'aip restituzione archivio id = {}",
+                aipRestArchivio.getIdAipRestArchivio());
+        EsitoControlloAip esito = controlloCampioneAipHelper.controlla(zipAip);
+        if (esito.isEsito()) {
+            aipRestArchivio.setFlAipControllato(JobConstants.DB_TRUE);
+            LOGGER.debug("Aip restituzione archivio id = {} controllato con esito positivo",
+                    aipRestArchivio.getIdAipRestArchivio());
+        } else {
+            String messaggioErrore = "[" + esito.getCdErrore().name() + "] " + esito.getDsErrore();
+            LOGGER.warn("Controllo a campione fallito per aip restituzione archivio id = {}: {}",
+                    aipRestArchivio.getIdAipRestArchivio(), messaggioErrore);
+            // Riutilizzo TI_STATO e CD_ERRORE, gia' usate per gli errori di recupero/copia del
+            // pacchetto, anche per l'esito negativo del controllo a campione.
+            setErrore(messaggioErrore, aipRestArchivio);
+        }
     }
 
     private String dateToString(Date date) {

@@ -677,6 +677,11 @@ public class MessaggiWSBundle {
     public static final String UD_005_005 = "UD-005-005";
 
     /**
+     * Unità Documentaria {0}: L''unità documentaria è presente nel sistema ma è priva di AIP
+     */
+    public static final String UD_005_006 = "UD-005-006";
+
+    /**
      * Unità Documentaria {0}: la chiave indicata non rispetta i requisiti di formato; {1}
      */
     public static final String UD_007_001 = "UD-007-001";

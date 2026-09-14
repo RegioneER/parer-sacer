@@ -41,6 +41,12 @@ import it.eng.parer.entity.constraint.AroAipRestituzioneArchivio.TiStatoAroAipRa
 
 /**
  * The persistent class for the ARO_AIP_RESTITUZIONE_ARCHIVIO database table.
+ *
+ * <p>
+ * Rappresenta una richiesta di restituzione (estrazione) di un pacchetto AIP dall'archivio, con il
+ * relativo stato di elaborazione, la tipologia di oggetto restituito e gli eventuali dati di
+ * errore.
+ * </p>
  */
 @Entity
 @Table(name = "ARO_AIP_RESTITUZIONE_ARCHIVIO")
@@ -64,9 +70,17 @@ public class AroAipRestituzioneArchivio implements Serializable {
 
     private String cdErrore;
 
+    private String flAipControllato;
+
     public AroAipRestituzioneArchivio() {/* Hibernate */
     }
 
+    /**
+     * Identificativo univoco della richiesta di restituzione dell'AIP dall'archivio (chiave
+     * primaria).
+     *
+     * @return id restituzione AIP archivio
+     */
     @Id
     @Column(name = "ID_AIP_REST_ARCHIVIO")
     @GenericGenerator(name = "SARO_AIP_RESTITUZIONE_ARCHIVIO_ID_AIP_REST_ARCHIVIO_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
@@ -81,6 +95,11 @@ public class AroAipRestituzioneArchivio implements Serializable {
         this.idAipRestArchivio = idAipRestArchivio;
     }
 
+    /**
+     * Data e ora in cui il pacchetto AIP e' stato estratto dall'archivio.
+     *
+     * @return data estrazione
+     */
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ESTRAZIONE")
     public Date getDtEstrazione() {
@@ -91,6 +110,11 @@ public class AroAipRestituzioneArchivio implements Serializable {
         this.dtEstrazione = dtEstrazione;
     }
 
+    /**
+     * Dimensione, in byte, del pacchetto AIP restituito.
+     *
+     * @return dimensione AIP
+     */
     @Column(name = "DIM")
     public BigDecimal getDim() {
         return this.dim;
@@ -100,6 +124,12 @@ public class AroAipRestituzioneArchivio implements Serializable {
         this.dim = dim;
     }
 
+    /**
+     * Stato di elaborazione della richiesta di restituzione dell'AIP (es. DA_ELABORARE, ESTRATTO,
+     * ERRORE).
+     *
+     * @return stato elaborazione
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "TI_STATO")
     public TiStatoAroAipRa getTiStato() {
@@ -110,6 +140,12 @@ public class AroAipRestituzioneArchivio implements Serializable {
         this.tiStato = tiStato;
     }
 
+    /**
+     * Tipologia dell'oggetto (fascicolo, oggetto documentale, serie o unita' documentaria) a cui si
+     * riferisce il pacchetto AIP restituito.
+     *
+     * @return tipologia oggetto
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "TI_TIPOLOGIA_OGGETTO")
     public AroAipRaTipologiaOggetto getTiTipologiaOggetto() {
@@ -120,6 +156,11 @@ public class AroAipRestituzioneArchivio implements Serializable {
         this.tiTipologiaOggetto = tiTipologiaOggetto;
     }
 
+    /**
+     * Codice dell'eventuale errore riscontrato durante l'estrazione/restituzione del pacchetto AIP.
+     *
+     * @return codice errore
+     */
     @Column(name = "CD_ERRORE")
     public String getCdErrore() {
         return this.cdErrore;
@@ -129,6 +170,26 @@ public class AroAipRestituzioneArchivio implements Serializable {
         this.cdErrore = cdErrore;
     }
 
+    /**
+     * Flag che indica se il pacchetto AIP e' gia' stato sottoposto con successo al controllo a
+     * campione (esistenza dell'indice AIP, validita' XSD, presenza di tutti i file referenziati).
+     *
+     * @return flag AIP controllato
+     */
+    @Column(name = "FL_AIP_CONTROLLATO", columnDefinition = "char(1)")
+    public String getFlAipControllato() {
+        return this.flAipControllato;
+    }
+
+    public void setFlAipControllato(String flAipControllato) {
+        this.flAipControllato = flAipControllato;
+    }
+
+    /**
+     * Richiesta di restituzione dell'AIP (ARO_RICHIESTA_RA) a cui appartiene questa estrazione.
+     *
+     * @return richiesta RA
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_RICHIESTA_RA")
     public AroRichiestaRa getAroRichiestaRa() {
@@ -139,6 +200,12 @@ public class AroAipRestituzioneArchivio implements Serializable {
         this.aroRichiestaRa = aroRichiestaRa;
     }
 
+    /**
+     * Indice AIP (ARO_INDICE_AIP_UD) del pacchetto a cui si riferisce la restituzione
+     * dall'archivio.
+     *
+     * @return indice AIP UD
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_INDICE_AIP")
     public AroIndiceAipUd getAroIndiceAipUd() {

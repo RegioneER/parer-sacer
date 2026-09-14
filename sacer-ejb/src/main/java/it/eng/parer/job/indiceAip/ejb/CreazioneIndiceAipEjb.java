@@ -19,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -135,6 +136,7 @@ public class CreazioneIndiceAipEjb {
         // MAC#16424
         List<Long> idElenchiInCoda = elencoHelper.retrieveElenchiIndiciAipDaProcessare(
                 ElencoEnums.ElencoStatusEnum.IN_CODA_INDICE_AIP.name());
+        idElenchiInCoda = List.copyOf(new LinkedHashSet<>(idElenchiInCoda));
         if (!idElenchiInCoda.isEmpty()) {
             for (Long idElenco : idElenchiInCoda) {
                 me.setIndiciAipGeneratiInNewTransaction(idElenco);
@@ -144,6 +146,7 @@ public class CreazioneIndiceAipEjb {
 
         List<Long> idElenchi = elencoHelper.retrieveElenchiIndiciAipDaProcessare(
                 ElencoEnums.ElencoStatusEnum.INDICI_AIP_GENERATI.name());
+        idElenchi = List.copyOf(new LinkedHashSet<>(idElenchi));
         Set<Long> struttureVerificate = new HashSet<>();
         if (!idElenchi.isEmpty()) {
             for (Long idElenco : idElenchi) {

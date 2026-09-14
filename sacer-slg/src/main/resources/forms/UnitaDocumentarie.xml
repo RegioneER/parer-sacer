@@ -257,6 +257,10 @@
         <MultiSelect Description="Tipo documento" Name="nm_tipo_doc" Trigger="true" Type="INTEGER"/>
         <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_doc" Readonly="true" Type="STRING"/>
         <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_doc" Type="STRING"/>                
+        <ComboBox Description="Tipo struttura documento" Name="nm_tipo_strut_doc" Trigger="true" Type="INTEGER"/>
+        <MultiSelect Description="Tipo componente" Name="nm_tipo_comp_doc" Trigger="true" Type="INTEGER"/>
+        <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_comp" Readonly="true" Type="STRING"/>
+        <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_comp" Type="STRING"/>
         <MultiSelect Description="Sotto-struttura" Name="nm_sub_strut" Required="true" Type="INTEGER"/>      
         <TextArea Cols="5" Description="Filtri valorizzati sui dati specifici" MaxLength="100000" Name="filtri_dati_spec" Readonly="true" Rows="5" Type="STRING"/>  
     </Fields>
@@ -428,8 +432,6 @@
         <Button Description="Scarica SIP unità documentaria" Name="scarica_sip_ud" Type="STRING"/>
         <!-- Bottone scarica rapporto di versamento -->
         <Button Description="Scarica rapporto di versamento" Name="scarica_rv" Type="STRING"/>
-        <!-- Bottone visualizza ud annullata -->
-        <Button Description="Visualizza ud annullata" Name="visualizza_ud_annul" Type="STRING"/>
         <!-- Bottone annulla ud  -->
         <Button Description="Annulla ud" Name="annulla_ud" Type="STRING"/>
         <Input Description="idUnitaDocAnnullata" Name="id_unita_doc_annullata" Type="INTEGER"/>

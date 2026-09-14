@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 public class DefinitoDaBean {
     private BigDecimal idAttribDatiSpec;
     private String tiEntitaSacer;
+    private String nmTipoCompDoc;
     private String nmTipoDoc;
     private String nmTipoUnitaDoc;
     private String nmSistemaMigraz;
@@ -43,6 +44,14 @@ public class DefinitoDaBean {
 
     public void setTiEntitaSacer(String tiEntitaSacer) {
         this.tiEntitaSacer = tiEntitaSacer;
+    }
+
+    public String getNmTipoCompDoc() {
+        return nmTipoCompDoc;
+    }
+
+    public void setNmTipoCompDoc(String nmTipoCompDoc) {
+        this.nmTipoCompDoc = nmTipoCompDoc;
     }
 
     public String getNmTipoDoc() {

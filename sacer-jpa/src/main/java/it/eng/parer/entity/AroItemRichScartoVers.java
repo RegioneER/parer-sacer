@@ -38,6 +38,7 @@ public class AroItemRichScartoVers implements Serializable {
     private BigDecimal pgItemRichScartoVers;
     private String tiStatoItemScarto;
     private Timestamp tsSoftDelete;
+    private String tiItemRichScartoVers;
     private AroRichScartoVers aroRichScartoVers;
     private AroUnitaDoc aroUnitaDoc;
     private List<AroErrRichScartoVers> aroErrRichScartoVers = new ArrayList<>();
@@ -171,6 +172,15 @@ public class AroItemRichScartoVers implements Serializable {
 
     public void setAroUnitaDoc(AroUnitaDoc aroUnitaDoc) {
         this.aroUnitaDoc = aroUnitaDoc;
+    }
+
+    @Column(name = "TI_ITEM_RICH_SCARTO_VERS")
+    public String getTiItemRichScartoVers() {
+        return this.tiItemRichScartoVers;
+    }
+
+    public void setTiItemRichScartoVers(String tiItemRichScartoVers) {
+        this.tiItemRichScartoVers = tiItemRichScartoVers;
     }
 
 }

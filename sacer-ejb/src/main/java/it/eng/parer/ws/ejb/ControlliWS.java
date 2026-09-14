@@ -35,7 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.eng.parer.entity.AroDoc;
 import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.IamAbilTipoDato;
 import it.eng.parer.entity.IamUser;
@@ -373,40 +372,35 @@ public class ControlliWS {
             Long idUnitaDoc) {
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
-
-        AroUnitaDoc unitaDoc = null;
-        List<IamAbilTipoDato> iamAbilTipoDatos = null;
+        rispostaControlli.setrBoolean(false);
 
         try {
-            unitaDoc = entityManager.find(AroUnitaDoc.class, idUnitaDoc);
+            Query countDocumentiQuery = entityManager.createQuery(
+                    "select count(doc) from AroDoc doc "
+                            + "where doc.aroUnitaDoc.idUnitaDoc = :idUnitaDocIn");
+            countDocumentiQuery.setParameter("idUnitaDocIn", idUnitaDoc);
+            Long numeroDocumenti = (Long) countDocumentiQuery.getSingleResult();
 
-            for (AroDoc doc : unitaDoc.getAroDocs()) {
-                String queryStr = "select t from IamAbilTipoDato t "
-                        + "where t.iamAbilOrganiz.iamUser.idUserIam = :idUserIamIn "
-                        + "and t.iamAbilOrganiz.idOrganizApplic = :idOrganizApplicIn "
-                        + "and t.idTipoDatoApplic = :idTipoDatoApplicIn "
-                        + "and t.nmClasseTipoDato = :nmClasseTipoDatoIn ";
-                javax.persistence.Query query = entityManager.createQuery(queryStr,
-                        IamAbilTipoDato.class);
-                query.setParameter("idUserIamIn", utente.getIdUtente());
-                query.setParameter("idOrganizApplicIn", utente.getIdOrganizzazioneFoglia());
-                query.setParameter("idTipoDatoApplicIn",
-                        new BigDecimal(doc.getDecTipoDoc().getIdTipoDoc()));
-                query.setParameter("nmClasseTipoDatoIn", "TIPO_DOC");
-                iamAbilTipoDatos = query.getResultList();
+            Query countDocumentiAbilitatiQuery = entityManager.createQuery(
+                    "select count(doc) from AroDoc doc, IamAbilTipoDato abil "
+                            + "where doc.aroUnitaDoc.idUnitaDoc = :idUnitaDocIn "
+                            + "and abil.iamAbilOrganiz.iamUser.idUserIam = :idUserIamIn "
+                            + "and abil.iamAbilOrganiz.idOrganizApplic = :idOrganizApplicIn "
+                            + "and abil.idTipoDatoApplic = doc.idDecTipoDoc "
+                            + "and abil.nmClasseTipoDato = :nmClasseTipoDatoIn");
+            countDocumentiAbilitatiQuery.setParameter("idUnitaDocIn", idUnitaDoc);
+            countDocumentiAbilitatiQuery.setParameter("idUserIamIn", utente.getIdUtente());
+            countDocumentiAbilitatiQuery.setParameter("idOrganizApplicIn",
+                    utente.getIdOrganizzazioneFoglia());
+            countDocumentiAbilitatiQuery.setParameter("nmClasseTipoDatoIn", "TIPO_DOC");
+            Long numeroDocumentiAbilitati = (Long) countDocumentiAbilitatiQuery.getSingleResult();
 
-                // ottengo un risultato -> abilitato al tipo dato
-                if (iamAbilTipoDatos.size() == 1) {
-                    rispostaControlli.setrLong(iamAbilTipoDatos.get(0).getIdAbilTipoDato());
-                    rispostaControlli.setrBoolean(true);
-                } else {
-                    rispostaControlli.setCodErr(MessaggiWSBundle.UD_019_001);
-                    rispostaControlli.setDsErr(MessaggiWSBundle.getString(
-                            MessaggiWSBundle.UD_019_001, descKey,
-                            String.format("'TIPO_DOC': %s", doc.getDecTipoDoc().getNmTipoDoc())));
-                    rispostaControlli.setrBoolean(false);
-                    break;
-                }
+            if (numeroDocumenti.equals(numeroDocumentiAbilitati)) {
+                rispostaControlli.setrBoolean(true);
+            } else {
+                rispostaControlli.setCodErr(MessaggiWSBundle.UD_019_001);
+                rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_019_001,
+                        descKey, "'TIPO_DOC': almeno un documento dell'unità documentaria"));
             }
         } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);

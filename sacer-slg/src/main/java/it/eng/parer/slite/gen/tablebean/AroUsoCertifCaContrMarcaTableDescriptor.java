@@ -37,6 +37,7 @@ public class AroUsoCertifCaContrMarcaTableDescriptor extends TableDescriptor {
     public static final String TABLE_NAME = "Aro_Uso_Certif_Ca_Contr_Marca";
     public static final String COL_ID_USO_CERTIF_CA_CONTR_MARCA = "id_uso_certif_ca_contr_marca";
     public static final String COL_ID_CONTR_MARCA_COMP = "id_contr_marca_comp";
+    public static final String COL_ID_STRUT = "id_strut";
     public static final String COL_ID_CERTIF_CA = "id_certif_ca";
     public static final String COL_PG_CERTIF_CA = "pg_certif_ca";
     public static final String COL_ID_CRL_USATA = "id_crl_usata";
@@ -48,6 +49,7 @@ public class AroUsoCertifCaContrMarcaTableDescriptor extends TableDescriptor {
                 new ColumnDescriptor(COL_ID_USO_CERTIF_CA_CONTR_MARCA, Types.DECIMAL, 22, true));
         map.put(COL_ID_CONTR_MARCA_COMP,
                 new ColumnDescriptor(COL_ID_CONTR_MARCA_COMP, Types.DECIMAL, 22, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
         map.put(COL_ID_CERTIF_CA, new ColumnDescriptor(COL_ID_CERTIF_CA, Types.DECIMAL, 22, false));
         map.put(COL_PG_CERTIF_CA, new ColumnDescriptor(COL_PG_CERTIF_CA, Types.DECIMAL, 22, false));
         map.put(COL_ID_CRL_USATA, new ColumnDescriptor(COL_ID_CRL_USATA, Types.DECIMAL, 22, false));

@@ -197,6 +197,9 @@ public class CostantiDB {
         // Numero massimo di richieste RA eseguibili in parallelo quando insistono su strutture
         // diverse.
         public static final String MAX_PARALLEL_RICHIESTE_RA = "MAX_PARALLEL_RICHIESTE_RA";
+        // Frequenza (in numero di AIP estratti con successo) con cui il job di Restituzione
+        // Archivio esegue il controllo a campione sul pacchetto AIP appena estratto.
+        public static final String FREQ_CAMPIONE_CONTROLLO_AIP_RA = "FREQ_CAMPIONE_CONTROLLO_AIP_RA";
         //
         public static final String NUM_MAX_UD_IN_CODA_GENERA_AIP = "NUM_MAX_UD_IN_CODA_GENERA_AIP";
         //
@@ -1461,6 +1464,10 @@ public class CostantiDB {
     public enum TipoFileRichScartoVers {
 
         FILE_UD_SCARTO // , XML_RICH, XML_RISP, FILE_FASC_ANNUL
+    }
+
+    public enum TiItemRichScartoVers {
+        DOC, FASC, UNI_DOC
     }
 
     public enum StatoItemRichScartoVers {

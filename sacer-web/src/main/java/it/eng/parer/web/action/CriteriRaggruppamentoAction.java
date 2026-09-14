@@ -1055,6 +1055,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
      */
     private void salvaCriterioRaggr(int status) throws EMFError {
         String standardOld = "0";
+        String fiscaleOld = "0";
         String nome = null;
         String nomeCriterio = (String) getSession().getAttribute("nomeCriterio");
         if (status == CRITERIO_EDIT) {
@@ -1064,7 +1065,12 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
                 nome = ((DecCriterioRaggrRowBean) getForm().getCriterioRaggrList().getTable()
                         .getCurrentRow()).getNmCriterioRaggr();
             }
-            standardOld = getForm().getCreaCriterioRaggr().getFl_criterio_raggr_standard().parse();
+            BigDecimal idCriterioRaggr = getForm().getCriterioRaggrList().getTable().getCurrentRow()
+                    .getBigDecimal("id_criterio_raggr");
+            DecCriterioRaggrRowBean criterioAttuale = crHelper.getDecCriterioRaggrById(
+                    idCriterioRaggr);
+            standardOld = criterioAttuale.getFlCriterioRaggrStandard();
+            fiscaleOld = criterioAttuale.getFlCriterioRaggrFisc();
         }
         // Controllo su campi
         CriteriRaggruppamentoForm.CreaCriterioRaggr filtri = getForm().getCreaCriterioRaggr();
@@ -1179,6 +1185,17 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
             }
 
             if (!getMessageBox().hasError()) {
+                String criterioStandardNow = isCriterioRaggrStandard(filtri, dateCreazioneValidate)
+                        ? "1"
+                        : "0";
+                if (status == CRITERIO_EDIT && "1".equals(standardOld)
+                        && "1".equals(fiscaleOld) && "0".equals(criterioStandardNow)) {
+                    getMessageBox().addError(
+                            "Impossibile eseguire il salvataggio: un criterio fiscale con flag standard attivo non puo' perdere il flag standard");
+                    forwardToPublisher(Application.Publisher.CRITERIO_RAGGR_DETAIL);
+                    return;
+                }
+
                 BigDecimal numMaxPerWarning = new BigDecimal(
                         configurationHelper.getValoreParamApplicByApplic(
                                 CostantiDB.ParametroAppl.NUM_MAX_COMP_CRITERIO_RAGGR_WARN));
@@ -1193,7 +1210,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
                 if (niMaxComp.compareTo(numMaxPerWarning) > 0
                         && niMaxComp.compareTo(numMaxPerErrore) <= 0) {
                     getForm().getCriterioCustomMessageButtonList().setEditMode();
-                    Object[] sa = new Object[8];
+                    Object[] sa = new Object[9];
                     sa[0] = filtri;
                     sa[1] = dateCreazioneValidate;
                     sa[2] = nome;
@@ -1202,6 +1219,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
                     sa[5] = new BigDecimal(status);
                     sa[6] = "controllo1";
                     sa[7] = standardOld;
+                    sa[8] = fiscaleOld;
                     getSession().setAttribute("salvataggioAttributes", sa);
                     getRequest().setAttribute("customBox", numMaxPerWarning);
                 } else if (niMaxComp.compareTo(numMaxPerErrore) > 0) {
@@ -1209,7 +1227,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
                             + numMaxPerErrore + ": impossibile eseguire il salvataggio");
                 } else {
                     eseguiPrimoStepSalvataggioCriterioRaggruppamento(filtri, dateCreazioneValidate,
-                            nome, dataDa, dataA, status, standardOld);
+                            nome, dataDa, dataA, status, standardOld, fiscaleOld);
                 }
             }
         }
@@ -1218,7 +1236,8 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
 
     public void eseguiPrimoStepSalvataggioCriterioRaggruppamento(
             CriteriRaggruppamentoForm.CreaCriterioRaggr filtri, Date[] dateCreazioneValidate,
-            String nome, Timestamp dataDa, Timestamp dataA, int status, String standardOld)
+            String nome, Timestamp dataDa, Timestamp dataA, int status, String standardOld,
+            String fiscaleOld)
             throws EMFError {
         // Controllo se il criterio è STANDARD
         String criterioStandardNow = isCriterioRaggrStandard(filtri, dateCreazioneValidate) ? "1"
@@ -1227,18 +1246,24 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
         // Se sono in UPDATE controllo l'eventuale variazione del flag "Criterio standard"
         if (status == CRITERIO_EDIT) {
             if (standardOld.equals("1") && criterioStandardNow.equals("0")) {
-                getForm().getCriterioCustomMessageButtonList().setEditMode();
-                Object[] sa = new Object[8];
-                sa[0] = filtri;
-                sa[1] = dateCreazioneValidate;
-                sa[2] = nome;
-                sa[3] = dataDa;
-                sa[4] = dataA;
-                sa[5] = new BigDecimal(status);
-                sa[6] = "controllo2";
-                sa[7] = criterioStandardNow;
-                getSession().setAttribute("salvataggioAttributes", sa);
-                getRequest().setAttribute("customBox2", true);
+                if (fiscaleOld.equals("1")) {
+                    getMessageBox().addError(
+                            "Impossibile eseguire il salvataggio: un criterio fiscale con flag standard attivo non puo' perdere il flag standard");
+                } else {
+                    getForm().getCriterioCustomMessageButtonList().setEditMode();
+                    Object[] sa = new Object[8];
+                    sa[0] = filtri;
+                    sa[1] = dateCreazioneValidate;
+                    sa[2] = nome;
+                    sa[3] = dataDa;
+                    sa[4] = dataA;
+                    sa[5] = new BigDecimal(status);
+                    sa[6] = "controllo2";
+                    sa[7] = criterioStandardNow;
+                    sa[8] = fiscaleOld;
+                    getSession().setAttribute("salvataggioAttributes", sa);
+                    getRequest().setAttribute("customBox2", true);
+                }
             } else {
                 eseguiSalvataggioCriterioRaggruppamento(filtri, dateCreazioneValidate, nome, dataDa,
                         dataA, status, criterioStandardNow);
@@ -1660,12 +1685,17 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
             if (tipoControllo != null && tipoControllo.equals("controllo1")) {
                 eseguiPrimoStepSalvataggioCriterioRaggruppamento((CreaCriterioRaggr) sa[0],
                         (Date[]) sa[1], (String) sa[2], (Timestamp) sa[3], (Timestamp) sa[4],
-                        ((BigDecimal) sa[5]).intValue(), (String) sa[7]);
+                        ((BigDecimal) sa[5]).intValue(), (String) sa[7], (String) sa[8]);
             }
             if (tipoControllo != null && tipoControllo.equals("controllo2")) {
-                eseguiSalvataggioCriterioRaggruppamento((CreaCriterioRaggr) sa[0], (Date[]) sa[1],
-                        (String) sa[2], (Timestamp) sa[3], (Timestamp) sa[4],
-                        ((BigDecimal) sa[5]).intValue(), (String) sa[7]);
+                if (sa.length > 8 && "1".equals((String) sa[8])) {
+                    getMessageBox().addError(
+                            "Impossibile eseguire il salvataggio: un criterio fiscale con flag standard attivo non puo' perdere il flag standard");
+                } else {
+                    eseguiSalvataggioCriterioRaggruppamento((CreaCriterioRaggr) sa[0],
+                            (Date[]) sa[1], (String) sa[2], (Timestamp) sa[3],
+                            (Timestamp) sa[4], ((BigDecimal) sa[5]).intValue(), (String) sa[7]);
+                }
             }
         }
         forwardToPublisher(Application.Publisher.CRITERIO_RAGGR_DETAIL);

@@ -469,7 +469,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         // } else {
         // getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton().setReadonly(false);
         // }
-
         if (getForm().getFiltriElenchiDaFirmare().getTi_valid_elenco().parse()
                 .equals(ElvElencoVer.TiValidElenco.FIRMA.name())) {
             // MEV#31945 - Eliminare validazione elenco UD con firma
@@ -518,7 +517,57 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         /* Imposto tutti i filtri in edit mode */
         getForm().getFiltriElenchiVersamento().setEditMode();
         getForm().getComponentiFiltri().setEditMode();
+        /*
+         * Svuoto l'eventuale elenco di ID_ELENCO_VERS impostato in sessione da
+         * caricaElenchiConErrori(), in modo da non riproporlo in una ricerca "normale"
+         */
+        getSession().removeAttribute("idsElencoVers");
         /* Carico la pagina di ricerca */
+        forwardToPublisher(Application.Publisher.ELENCHI_VERSAMENTO_RICERCA);
+    }
+
+    /**
+     * Carica la pagina di "Ricerca elenchi di versamento" eseguendo subito una ricerca secca sugli
+     * ID_ELENCO_VERS ricevuti in input tramite il parametro di richiesta "idsElencoVers" (lista di
+     * id separati da virgola). Richiamato ad esempio dal dettaglio della richiesta di restituzione
+     * archivio, cliccando sul link della colonna "Numero errori".
+     *
+     * @throws EMFError errore generico
+     */
+    public void caricaElenchiConErrori() throws EMFError {
+        getUser().getMenu().reset();
+        getUser().getMenu().select("Menu.ElenchiVersamento.RicercaElenchiVersamento");
+        /* Azzero i filtri e la lista risultato della form di ricerca */
+        getForm().getFiltriElenchiVersamento().reset();
+        getForm().getComponentiFiltri().reset();
+        getForm().getElenchiVersamentoList().clear();
+        getForm().getElenchiVersamentoList().setUserOperations(true, true, false, true);
+        /* Inizializzo le combo di ricerca */
+        initComboRicercaElenchi();
+        initComboFiltriComponenti(null);
+        /* Imposto tutti i filtri in edit mode */
+        getForm().getFiltriElenchiVersamento().setEditMode();
+        getForm().getComponentiFiltri().setEditMode();
+
+        String idsElencoVersParam = getRequest().getParameter("idsElencoVers");
+        if (StringUtils.isNotBlank(idsElencoVersParam)) {
+            /*
+             * Salvo l'elenco di ID_ELENCO_VERS in sessione per la JSP e per eventuali riesecuzioni
+             */
+            getSession().setAttribute("idsElencoVers", idsElencoVersParam);
+            List<BigDecimal> idElencoVersList = new ArrayList<>();
+            for (String idElencoVers : idsElencoVersParam.split(",")) {
+                if (StringUtils.isNotBlank(idElencoVers)) {
+                    idElencoVersList.add(new BigDecimal(idElencoVers.trim()));
+                }
+            }
+            /* Eseguo subito la ricerca secca sugli id ricevuti in input */
+            getForm().getElenchiVersamentoList().setTable(evEjb
+                    .getElvVRicElencoVersTableBeanByIds(getUser().getIdUtente(), idElencoVersList));
+            getForm().getElenchiVersamentoList().getTable().setPageSize(10);
+            getForm().getElenchiVersamentoList().getTable().first();
+        }
+        /* Carico la pagina di ricerca con il risultato gi\u00E0 popolato */
         forwardToPublisher(Application.Publisher.ELENCHI_VERSAMENTO_RICERCA);
     }
 
@@ -556,18 +605,23 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         DecodeMap mappaAmbiente = new DecodeMap();
         mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
         getForm().getFiltriElenchiVersamento().getId_ambiente().setDecodeMap(mappaAmbiente);
-        getForm().getFiltriElenchiVersamento().getId_ambiente().setValue(idAmbiente.toString());
-
+        // Prepopola i combo solo se non si proviene dal dettaglio aip con errore!
+        String idsElencoVersParam = getRequest().getParameter("idsElencoVers");
+        if (StringUtils.isBlank(idsElencoVersParam)) {
+            getForm().getFiltriElenchiVersamento().getId_ambiente().setValue(idAmbiente.toString());
+        }
         DecodeMap mappaEnte = new DecodeMap();
         mappaEnte.populatedMap(tmpTableBeanEnte, "id_ente", "nm_ente");
         getForm().getFiltriElenchiVersamento().getId_ente().setDecodeMap(mappaEnte);
-        getForm().getFiltriElenchiVersamento().getId_ente().setValue(idEnte.toString());
-
+        if (StringUtils.isBlank(idsElencoVersParam)) {
+            getForm().getFiltriElenchiVersamento().getId_ente().setValue(idEnte.toString());
+        }
         DecodeMap mappaStrut = new DecodeMap();
         mappaStrut.populatedMap(tmpTableBeanStruttura, "id_strut", "nm_strut");
         getForm().getFiltriElenchiVersamento().getId_strut().setDecodeMap(mappaStrut);
-        getForm().getFiltriElenchiVersamento().getId_strut().setValue(idStrut.toString());
-
+        if (StringUtils.isBlank(idsElencoVersParam)) {
+            getForm().getFiltriElenchiVersamento().getId_strut().setValue(idStrut.toString());
+        }
         // Imposto le varie combo/multiselect dei FILTRI di ricerca Elenchi di Versamento
         getForm().getFiltriElenchiVersamento().getTi_stato_elenco()
                 .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_stato_elenco",
@@ -1209,7 +1263,27 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                      * impostate nei filtri di ricerca le combo Ambiente/Ente/Struttura
                      */
                     // end MAC#21555
-                    reloadElenchiVersamentoList(getForm().getFiltriElenchiVersamento());
+                    // Se in sessione ci sono ancora gli IDElenchiVersamento allora fa la query per
+                    // quelli
+                    // Altrimenti fa quello che faceva prima
+                    String idsElencoVersParam = (String) getSession().getAttribute("idsElencoVers");
+                    if (idsElencoVersParam != null) {
+                        List<BigDecimal> idElencoVersList = new ArrayList<>();
+                        for (String idElencoVers : idsElencoVersParam.split(",")) {
+                            if (StringUtils.isNotBlank(idElencoVers)) {
+                                idElencoVersList.add(new BigDecimal(idElencoVers.trim()));
+                            }
+                        }
+                        /* Eseguo subito la ricerca secca sugli id ricevuti in input */
+                        getForm().getElenchiVersamentoList().setTable(evEjb
+                                .getElvVRicElencoVersTableBeanByIds(getUser().getIdUtente(),
+                                        idElencoVersList));
+                        getForm().getElenchiVersamentoList().getTable().setPageSize(10);
+                        getForm().getElenchiVersamentoList().getTable().first();
+                    } else {
+                        reloadElenchiVersamentoList(getForm().getFiltriElenchiVersamento());
+                    }
+
                 } catch (EMFError ex) {
                     log.error(ex.getDescription(), ex);
                 }
@@ -2439,6 +2513,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
      * @throws EMFError errore generico
      *
      */
+
     // @Override
     // public void firmaElenchiHsmButton() throws Throwable {
     // ElvElencoVerTableBean elenchiDaFirmare = checkElenchiVersamentoToSign();
@@ -2507,7 +2582,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
     //
     // forwardToPublisher(Application.Publisher.LISTA_ELENCHI_VERSAMENTO_SELECT);
     // }
-
     /**
      * Signs the list of file selected
      *

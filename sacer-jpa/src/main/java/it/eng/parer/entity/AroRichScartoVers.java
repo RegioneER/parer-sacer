@@ -37,6 +37,7 @@ public class AroRichScartoVers implements Serializable {
     private BigDecimal idStatoRichScartoVersCor;
     private String ntRichScartoVers;
     private String tiCreazioneRichScartoVers;
+    private String tiRichScartoVers;
     private Timestamp tsSoftDelete;
     private List<AroItemRichScartoVers> aroItemRichScartoVers;
     private OrgStrut orgStrut;
@@ -223,5 +224,14 @@ public class AroRichScartoVers implements Serializable {
 
     public void setAroXmlRichScartoVers(List<AroXmlRichScartoVers> aroXmlRichScartoVers) {
         this.aroXmlRichScartoVers = aroXmlRichScartoVers;
+    }
+
+    @Column(name = "TI_RICH_SCARTO_VERS")
+    public String getTiRichScartoVers() {
+        return this.tiRichScartoVers;
+    }
+
+    public void setTiRichScartoVers(String tiRichScartoVers) {
+        this.tiRichScartoVers = tiRichScartoVers;
     }
 }

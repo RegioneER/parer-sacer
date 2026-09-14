@@ -19,6 +19,7 @@ import it.eng.parer.entity.AroContrMarcaComp;
 import it.eng.parer.entity.AroUsoCertifCaContrMarca;
 import it.eng.parer.entity.FirCertifCa;
 import it.eng.parer.entity.FirCrl;
+import it.eng.parer.entity.OrgStrut;
 import it.eng.spagoLite.db.base.JEEBaseRowInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
@@ -62,6 +63,14 @@ public class AroUsoCertifCaContrMarcaRowBean extends BaseRow implements JEEBaseR
         setObject("id_contr_marca_comp", idContrMarcaComp);
     }
 
+    public BigDecimal getIdStrut() {
+        return getBigDecimal("id_strut");
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        setObject("id_strut", idStrut);
+    }
+
     public BigDecimal getIdCertifCa() {
         return getBigDecimal("id_certif_ca");
     }
@@ -97,6 +106,10 @@ public class AroUsoCertifCaContrMarcaRowBean extends BaseRow implements JEEBaseR
                     new BigDecimal(entity.getAroContrMarcaComp().getIdContrMarcaComp()));
         }
 
+        if (entity.getIdStrut() != null) {
+            this.setIdStrut(entity.getIdStrut());
+        }
+
         if (entity.getFirCertifCa() != null) {
             this.setIdCertifCa(new BigDecimal(entity.getFirCertifCa().getIdCertifCa()));
         }
@@ -122,6 +135,7 @@ public class AroUsoCertifCaContrMarcaRowBean extends BaseRow implements JEEBaseR
             entity.getAroContrMarcaComp()
                     .setIdContrMarcaComp(this.getIdContrMarcaComp().longValue());
         }
+        entity.setIdStrut(this.getIdStrut());
         if (this.getIdCertifCa() != null) {
             if (entity.getFirCertifCa() == null) {
                 entity.setFirCertifCa(new FirCertifCa());

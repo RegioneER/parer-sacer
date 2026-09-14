@@ -2916,7 +2916,7 @@ public class StruttureEjb {
                 decTipoStrutUnitaDocExpList, tipoUnitaDoc, (boolean) obj[1], tipiDocumentoDaLoggare,
                 tipiStrutturaDocumentoDaLoggare, formatiDaLoggare,
                 tipiRappresentazioneComponenteDaLoggare, importareFormatiComponente,
-                nmTipiDocSelezionatiDaCombo);
+                nmTipiDocSelezionatiDaCombo, importareRegistri);
 
         ////////////////////
         // IMPORTA REGOLE //
@@ -3431,6 +3431,8 @@ public class StruttureEjb {
      *
      * @param includereFormatiComponente              flag
      * @param nmTipiDocSelezionatiDaCombo             tipi doc selezionati
+     * @param importareRegistri                       flag che indica se importare i registri
+     *                                                collegati
      *
      * @return l'elenco dei tipi documento importati ex novo
      */
@@ -3439,7 +3441,8 @@ public class StruttureEjb {
             boolean tipoUnitaDocGiaPresente, Set<BigDecimal> tipiDocumetoDaLoggare,
             Set<BigDecimal> tipiStrutturaDocumetoDaLoggare, Set<BigDecimal> formatiDaLoggare,
             Set<BigDecimal> tipiRappresentazioneComponenteDaLoggare,
-            String includereFormatiComponente, List<String> nmTipiDocSelezionatiDaCombo) {
+            String includereFormatiComponente, List<String> nmTipiDocSelezionatiDaCombo,
+            String importareRegistri) {
         List<CoppiaTipiDoc> tipiDocImportati = new ArrayList<>();
         // Per ogni TIPO STRUTTURA UNITA' DOCUMENTARIA
         for (DecTipoStrutUnitaDoc tipoStrutUnitaDocExp : tipoStrutUnitaDocExpList) {
@@ -3556,36 +3559,41 @@ public class StruttureEjb {
                 }
             } // End For DecTipoStrutUdSisVers
 
-            // Per ogni registro ammesso per il tipo struttura UD
-            for (DecTipoStrutUdReg tipoStrutUdRegExp : tipoStrutUnitaDocExp
-                    .getDecTipoStrutUdRegs()) {
+            // Per ogni registro ammesso per il tipo struttura UD (solo se richiesto)
+            if (importareRegistri != null && importareRegistri.equals("1")) {
+                for (DecTipoStrutUdReg tipoStrutUdRegExp : tipoStrutUnitaDocExp
+                        .getDecTipoStrutUdRegs()) {
 
-                // Controlla se esiste già un registro per la struttura in questione
-                DecRegistroUnitaDoc registroUnitaDoc = registroHelper.getDecRegistroUnitaDocByName(
-                        tipoStrutUdRegExp.getDecRegistroUnitaDoc().getCdRegistroUnitaDoc(),
-                        idStrutCorrente);
+                    // Controlla se esiste già un registro per la struttura in questione
+                    DecRegistroUnitaDoc registroUnitaDoc = registroHelper
+                            .getDecRegistroUnitaDocByName(
+                                    tipoStrutUdRegExp.getDecRegistroUnitaDoc()
+                                            .getCdRegistroUnitaDoc(),
+                                    idStrutCorrente);
 
-                // Se il sistema versante NON è presente nella struttura: il record è importato.
-                if (registroUnitaDoc == null) {
-                    registroUnitaDoc = inserisciRegistro(idStrutCorrente,
-                            tipoStrutUdRegExp.getDecRegistroUnitaDoc());
-                }
+                    // Se il sistema versante NON è presente nella struttura: il record è importato.
+                    if (registroUnitaDoc == null) {
+                        registroUnitaDoc = inserisciRegistro(idStrutCorrente,
+                                tipoStrutUdRegExp.getDecRegistroUnitaDoc());
+                    }
 
-                // Controllo se esiste già il record nella tabella, ed in caso lo inserisco
-                String nmTipoUnitaDoc = tipoStrutUdRegExp.getDecTipoStrutUnitaDoc()
-                        .getDecTipoUnitaDoc().getNmTipoUnitaDoc();
-                String nmTipoStrutUnitaDoc = tipoStrutUdRegExp.getDecTipoStrutUnitaDoc()
-                        .getNmTipoStrutUnitaDoc();
-                String cdRegistroUnitaDoc = tipoStrutUdRegExp.getDecRegistroUnitaDoc()
-                        .getCdRegistroUnitaDoc();
+                    // Controllo se esiste già il record nella tabella, ed in caso lo inserisco
+                    String nmTipoUnitaDoc = tipoStrutUdRegExp.getDecTipoStrutUnitaDoc()
+                            .getDecTipoUnitaDoc().getNmTipoUnitaDoc();
+                    String nmTipoStrutUnitaDoc = tipoStrutUdRegExp.getDecTipoStrutUnitaDoc()
+                            .getNmTipoStrutUnitaDoc();
+                    String cdRegistroUnitaDoc = tipoStrutUdRegExp.getDecRegistroUnitaDoc()
+                            .getCdRegistroUnitaDoc();
 
-                DecTipoStrutUdReg tipoStrutUdReg = registroHelper.getDecTipoStrutUdRegByName(
-                        idStrutCorrente, nmTipoUnitaDoc, nmTipoStrutUnitaDoc, cdRegistroUnitaDoc);
+                    DecTipoStrutUdReg tipoStrutUdReg = registroHelper.getDecTipoStrutUdRegByName(
+                            idStrutCorrente, nmTipoUnitaDoc, nmTipoStrutUnitaDoc,
+                            cdRegistroUnitaDoc);
 
-                if (tipoStrutUdReg == null) {
-                    inserisciTipoStrutUdReg(tipoStrutUnitaDoc, registroUnitaDoc);
-                }
-            } // End For DecTipoStrutUdReg
+                    if (tipoStrutUdReg == null) {
+                        inserisciTipoStrutUdReg(tipoStrutUnitaDoc, registroUnitaDoc);
+                    }
+                } // End For DecTipoStrutUdReg
+            }
 
         } // End For DecTipoStrutUnitaDocExp
 

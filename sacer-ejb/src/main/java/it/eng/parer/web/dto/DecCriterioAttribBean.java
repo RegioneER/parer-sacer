@@ -28,6 +28,7 @@ public class DecCriterioAttribBean implements Serializable, Comparable<DecCriter
     private long idCriterioAttrib;
     private String dsListaVersioniXsd;
     private String nmSistemaMigraz;
+    private String nmTipoCompDoc;
     private String nmTipoDoc;
     private String nmTipoUnitaDoc;
     private String tiEntitaSacer;
@@ -60,6 +61,14 @@ public class DecCriterioAttribBean implements Serializable, Comparable<DecCriter
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
         this.nmSistemaMigraz = nmSistemaMigraz;
+    }
+
+    public String getNmTipoCompDoc() {
+        return nmTipoCompDoc;
+    }
+
+    public void setNmTipoCompDoc(String nmTipoCompDoc) {
+        this.nmTipoCompDoc = nmTipoCompDoc;
     }
 
     public String getNmTipoDoc() {
@@ -117,6 +126,8 @@ public class DecCriterioAttribBean implements Serializable, Comparable<DecCriter
             // Se sono tipi unità documentaria
             if (this.nmTipoUnitaDoc != null) {
                 return this.nmTipoUnitaDoc.compareTo(o.nmTipoUnitaDoc);
+            } else if (this.nmTipoCompDoc != null) {
+                return this.nmTipoCompDoc.compareTo(o.nmTipoCompDoc);
             } else if (this.nmTipoDoc != null) {
                 return this.nmTipoDoc.compareTo(o.nmTipoDoc);
             } else {
@@ -138,6 +149,7 @@ public class DecCriterioAttribBean implements Serializable, Comparable<DecCriter
         int result = 1;
         result = prime * result + ((ordine == null) ? 0 : ordine.hashCode());
         result = prime * result + ((nmSistemaMigraz == null) ? 0 : nmSistemaMigraz.hashCode());
+        result = prime * result + ((nmTipoCompDoc == null) ? 0 : nmTipoCompDoc.hashCode());
         result = prime * result + ((nmTipoDoc == null) ? 0 : nmTipoDoc.hashCode());
         result = prime * result + ((nmTipoUnitaDoc == null) ? 0 : nmTipoUnitaDoc.hashCode());
         return result;
@@ -155,6 +167,8 @@ public class DecCriterioAttribBean implements Serializable, Comparable<DecCriter
             if (!this.ordine.equals(o.ordine)) {
                 if (this.nmTipoUnitaDoc != null) {
                     return this.nmTipoUnitaDoc.equals(o.nmTipoUnitaDoc);
+                } else if (this.nmTipoCompDoc != null) {
+                    return this.nmTipoCompDoc.equals(o.nmTipoCompDoc);
                 } else if (this.nmTipoDoc != null) {
                     return this.nmTipoDoc.equals(o.nmTipoDoc);
                 } else {

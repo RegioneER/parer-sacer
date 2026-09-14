@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import it.eng.parer.entity.AroContrMarcaComp;
 import it.eng.parer.entity.AroMarcaComp;
 import it.eng.parer.entity.FirCrl;
+import it.eng.parer.entity.OrgStrut;
 import it.eng.spagoLite.db.base.JEEBaseRowInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
@@ -61,6 +62,14 @@ public class AroContrMarcaCompRowBean extends BaseRow implements JEEBaseRowInter
         setObject("id_marca_comp", idMarcaComp);
     }
 
+    public BigDecimal getIdStrut() {
+        return getBigDecimal("id_strut");
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        setObject("id_strut", idStrut);
+    }
+
     public String getTiContr() {
         return getString("ti_contr");
     }
@@ -101,6 +110,9 @@ public class AroContrMarcaCompRowBean extends BaseRow implements JEEBaseRowInter
         if (entity.getAroMarcaComp() != null) {
             this.setIdMarcaComp(new BigDecimal(entity.getAroMarcaComp().getIdMarcaComp()));
         }
+        if (entity.getIdStrut() != null) {
+            this.setIdStrut(entity.getIdStrut());
+        }
         this.setTiContr(entity.getTiContr());
         this.setTiEsitoContrMarca(entity.getTiEsitoContrMarca());
         this.setDsMsgEsitoContrMarca(entity.getDsMsgEsitoContrMarca());
@@ -122,6 +134,7 @@ public class AroContrMarcaCompRowBean extends BaseRow implements JEEBaseRowInter
             }
             entity.getAroMarcaComp().setIdMarcaComp(this.getIdMarcaComp().longValue());
         }
+        entity.setIdStrut(this.getIdStrut());
         entity.setTiContr(this.getTiContr());
         entity.setTiEsitoContrMarca(this.getTiEsitoContrMarca());
         entity.setDsMsgEsitoContrMarca(this.getDsMsgEsitoContrMarca());

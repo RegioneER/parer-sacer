@@ -603,6 +603,22 @@ public class RestituzioneArchivioEjb {
     }
 
     /**
+     * Recupera l'elenco degli ID_ELENCO_VERS distinti degli elenchi di versamento contenenti le
+     * unit\u00E0 documentarie i cui aip, per l'anno indicato, sono in stato di errore all'interno
+     * della richiesta di restituzione archivio.
+     *
+     * @param idRichRestArch l'id richiesta restituzione archivio
+     * @param idStrut        la struttura specifica della richiesta
+     * @param anno           l'anno relativo alla riga selezionata
+     *
+     * @return la lista degli ID_ELENCO_VERS
+     */
+    public List<Long> getIdElencoVersErroreByAnno(BigDecimal idRichRestArch,
+            BigDecimal idStrut, BigDecimal anno) {
+        return helper.retrieveIdElencoVersErroreByAnno(idRichRestArch, idStrut, anno);
+    }
+
+    /**
      * Esegue il controllo degli item della richiesta data come parametro
      *
      * @param idRichRestArch id della richiesta di restituzione archivio
@@ -617,6 +633,7 @@ public class RestituzioneArchivioEjb {
                     .retrieveAroErrItemRestArch(idRichRestArch.longValue());
             for (AroAipRestituzioneArchivio item : itemsRichRestArchList) {
                 item.setTiStato(TiStatoAroAipRa.DA_ELABORARE);
+                item.setCdErrore(null);
             }
         } catch (Exception e) {
             String messaggio = "Eccezione imprevista durante il controllo degli item della richiesta ";

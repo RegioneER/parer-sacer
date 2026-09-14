@@ -246,6 +246,8 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
         tmpTabCDUrnComponenteCalc.setAroCompDoc(aroCompDoc);
         tmpTabCDUrnComponenteCalc.setDsUrn(tmpUrn);
         tmpTabCDUrnComponenteCalc.setTiUrn(tiUrn);
+        tmpTabCDUrnComponenteCalc.setIdStrut(aroCompDoc.getIdStrut());
+        tmpTabCDUrnComponenteCalc.setAaKeyUnitaDoc(aroCompDoc.getAaKeyUnitaDoc());
 
         // persist
         getEntityManager().persist(tmpTabCDUrnComponenteCalc);
@@ -589,6 +591,8 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
         tmpAroUrnVerIndiceAipUd.setDsUrn(tmpUrn);
         tmpAroUrnVerIndiceAipUd.setTiUrn(tiUrn);
         tmpAroUrnVerIndiceAipUd.setAroVerIndiceAipUd(verIndiceAipUd);
+        tmpAroUrnVerIndiceAipUd.setIdStrut(verIndiceAipUd.getIdStrut());
+        tmpAroUrnVerIndiceAipUd.setAaKeyUnitaDoc(verIndiceAipUd.getAaKeyUnitaDoc());
 
         // persist
         getEntityManager().persist(tmpAroUrnVerIndiceAipUd);
@@ -624,7 +628,7 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
         tmpElvUrnFileElencoVers.setTiUrn(tiUrn);
         tmpElvUrnFileElencoVers.setElvFileElencoVers(elvFileElencoVers);
 
-        // persist
+        // persist ElvFileElencoVers first (if transient), then the URN child
         getEntityManager().persist(elvFileElencoVers);
         getEntityManager().persist(tmpElvUrnFileElencoVers);
 

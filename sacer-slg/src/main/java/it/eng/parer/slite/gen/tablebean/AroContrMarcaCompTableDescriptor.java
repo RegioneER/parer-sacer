@@ -37,6 +37,7 @@ public class AroContrMarcaCompTableDescriptor extends TableDescriptor {
     public static final String TABLE_NAME = "Aro_Contr_Marca_Comp";
     public static final String COL_ID_CONTR_MARCA_COMP = "id_contr_marca_comp";
     public static final String COL_ID_MARCA_COMP = "id_marca_comp";
+    public static final String COL_ID_STRUT = "id_strut";
     public static final String COL_TI_CONTR = "ti_contr";
     public static final String COL_TI_ESITO_CONTR_MARCA = "ti_esito_contr_marca";
     public static final String COL_DS_MSG_ESITO_CONTR_MARCA = "ds_msg_esito_contr_marca";
@@ -49,6 +50,7 @@ public class AroContrMarcaCompTableDescriptor extends TableDescriptor {
                 new ColumnDescriptor(COL_ID_CONTR_MARCA_COMP, Types.DECIMAL, 22, true));
         map.put(COL_ID_MARCA_COMP,
                 new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
         map.put(COL_TI_CONTR, new ColumnDescriptor(COL_TI_CONTR, Types.VARCHAR, 20, false));
         map.put(COL_TI_ESITO_CONTR_MARCA,
                 new ColumnDescriptor(COL_TI_ESITO_CONTR_MARCA, Types.VARCHAR, 30, false));

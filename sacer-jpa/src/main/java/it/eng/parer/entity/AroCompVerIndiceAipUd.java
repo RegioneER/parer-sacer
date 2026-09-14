@@ -14,6 +14,7 @@
 package it.eng.parer.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,6 +44,10 @@ public class AroCompVerIndiceAipUd implements Serializable {
     private AroCompDoc aroCompDoc;
 
     private AroVerIndiceAipUd aroVerIndiceAipUd;
+
+    private BigDecimal aaKeyUnitaDoc;
+
+    private BigDecimal idStrut;
 
     public AroCompVerIndiceAipUd() {/* Hibernate */
     }
@@ -79,5 +84,23 @@ public class AroCompVerIndiceAipUd implements Serializable {
 
     public void setAroVerIndiceAipUd(AroVerIndiceAipUd aroVerIndiceAipUd) {
         this.aroVerIndiceAipUd = aroVerIndiceAipUd;
+    }
+
+    @Column(name = "AA_KEY_UNITA_DOC")
+    public BigDecimal getAaKeyUnitaDoc() {
+        return this.aaKeyUnitaDoc;
+    }
+
+    public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+    }
+
+    @Column(name = "ID_STRUT")
+    public BigDecimal getIdStrut() {
+        return this.idStrut;
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        this.idStrut = idStrut;
     }
 }

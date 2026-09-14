@@ -138,6 +138,12 @@
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.FLAG_DATI_SPEC_PRESENTI_DOC%>" colSpan="1"/>
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.CD_VERSIONE_XSD_DOC%>" colSpan="1"/>
                     <sl:newLine />
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.NM_TIPO_STRUT_DOC%>" colSpan="2"/>
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.FLAG_DATI_SPEC_PRESENTI_COMP%>" colSpan="1"/>
+                    <sl:newLine />
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.NM_TIPO_COMP_DOC%>" colSpan="2"/>
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.CD_VERSIONE_XSD_COMP%>" colSpan="1"/>
+                    <sl:newLine />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec.NM_SUB_STRUT%>" colSpan="2"/>
                 </slf:section>
                 <sl:newLine skipLine="true"/>

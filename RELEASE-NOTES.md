@@ -1,20 +1,19 @@
-## 10.21.0 (14-08-2026)
+## 10.22.0 (14-09-2026)
 
-### Bugfix: 2
-- [#40865](https://parermine.regione.emilia-romagna.it/issues/40865) Correzione gestione file archive con intruduzione librerie Java-native
-- [#40851](https://parermine.regione.emilia-romagna.it/issues/40851) Correzione del conteggio dei versamenti UD annullati
+### Bugfix: 6
+- [#41119](https://parermine.regione.emilia-romagna.it/issues/41119) Correzione errore di recupero del file nell'accedere al Dettaglio UD
+- [#41014](https://parermine.regione.emilia-romagna.it/issues/41014) Correzione errore importazione parametri di configurazione
+- [#37175](https://parermine.regione.emilia-romagna.it/issues/37175) Modifica criterio di raggruppamento standard e fiscale
+- [#34048](https://parermine.regione.emilia-romagna.it/issues/34048) Correzione del messaggio contenuto nella risposta al servizio di recupero AIP da una UD che ne è sprovvista
+- [#33321](https://parermine.regione.emilia-romagna.it/issues/33321) Correzione dell'errore 666 a seguito del recupero di una UD in cui non è presente l'utente versatore
+- [#33320](https://parermine.regione.emilia-romagna.it/issues/33320) Risoluzione "Errore critico sulla funzionalità" in accesso al dettaglio UD
 
-### Novità: 13
-- [#41050](https://parermine.regione.emilia-romagna.it/issues/41050) Ottimizzazione processo di recupero oggetti ZIP vs UNZIP 
-- [#41005](https://parermine.regione.emilia-romagna.it/issues/41005) Introduzione dell'autenticazione con token nel servizio di recupero stato conservazione fascicolo
-- [#40943](https://parermine.regione.emilia-romagna.it/issues/40943) Sviluppo fascicoli - Possibilità di ricercare per soggetto
-- [#40910](https://parermine.regione.emilia-romagna.it/issues/40910) ottimizzazione performnce per annullamento UD con collegamenti
-- [#40874](https://parermine.regione.emilia-romagna.it/issues/40874) Gestione degli URN degli Indici AIP delle UD annullate
-- [#40777](https://parermine.regione.emilia-romagna.it/issues/40777) Ottimizzazione gestione recupero oggetti S3 di grandi dimensioni
-- [#40674](https://parermine.regione.emilia-romagna.it/issues/40674) Ottimizzazione job restituzione archivio 
-- [#40654](https://parermine.regione.emilia-romagna.it/issues/40654) Importa parametri: introduzione selezione tipi documento da importare
-- [#40380](https://parermine.regione.emilia-romagna.it/issues/40380) Miglioramenti alla cancellazione a seguito di restituzione archivio
-- [#37227](https://parermine.regione.emilia-romagna.it/issues/37227) Adeguamento job di «calcolo contenuto SACER» a seguito di cancellazione UD
-- [#32370](https://parermine.regione.emilia-romagna.it/issues/32370) Eliminazione della cartella root FTP al termine del processo di restituzione
-- [#31348](https://parermine.regione.emilia-romagna.it/issues/31348) Centralizzazione della gestione dei messaggi di errore applicativi
-- [#31347](https://parermine.regione.emilia-romagna.it/issues/31347) Introduzione pagina gestione errori
+### Novità: 8
+- [#41013](https://parermine.regione.emilia-romagna.it/issues/41013) Introduzione di un controllo sugli AIP generati
+- [#40959](https://parermine.regione.emilia-romagna.it/issues/40959) Aggiunta gestione (lettura/scrittura) delle nuove chiavi di partizionamento id_strut e/o aa_key_unita_doc
+- [#40904](https://parermine.regione.emilia-romagna.it/issues/40904) Ricerca per dati specifici del componente
+- [#40370](https://parermine.regione.emilia-romagna.it/issues/40370) Eliminazione funzionalità di visualizzazione delle UD annullate
+- [#37232](https://parermine.regione.emilia-romagna.it/issues/37232) Aggiornamento elenco indice AIP a seguito di scarto
+- [#34464](https://parermine.regione.emilia-romagna.it/issues/34464) Migliorie alla gestione di richieste di restituzione con aip in errore
+- [#33324](https://parermine.regione.emilia-romagna.it/issues/33324) Modifica al controllo delle abilitazioni nella funzione di recupero rapporto di versamento
+- [#32536](https://parermine.regione.emilia-romagna.it/issues/32536) Nascondere la visualizzazione della password nelle pagine dei servizi in LAB

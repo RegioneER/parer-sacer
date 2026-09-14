@@ -140,6 +140,8 @@ public class ConsumerCodaVerificatiMdb implements MessageListener {
         compObjectStorage.setAroCompDoc(compDoc);
         compObjectStorage.setCdKeyFile(migrazFile.getCdKeyFile());
         compObjectStorage.setNmBucket(migrazFile.getNmBucket());
+        compObjectStorage.setIdStrut(compDoc.getIdStrut());
+        compObjectStorage.setAaKeyUnitaDoc(compDoc.getAaKeyUnitaDoc());
         compObjectStorage.setNmTenant(migrazFile.getNmTenant());
         compObjectStorage.setDecBackend(backend);
         ccHelper.insertEntity(compObjectStorage, true);
@@ -152,6 +154,8 @@ public class ConsumerCodaVerificatiMdb implements MessageListener {
         compHashCalc.setCdEncodingHashFile(cdEncodingHashFile);
         compHashCalc.setDsAlgoHashFile(dsAlgoHashFile);
         compHashCalc.setDsHashFile(dsHashFile);
+        compHashCalc.setIdStrut(compDoc.getIdStrut());
+        compHashCalc.setAaKeyUnitaDoc(compDoc.getAaKeyUnitaDoc());
         ccHelper.insertEntity(compHashCalc, true);
     }
 

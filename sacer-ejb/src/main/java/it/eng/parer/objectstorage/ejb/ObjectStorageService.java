@@ -1833,4 +1833,33 @@ public class ObjectStorageService {
         }
     }
 
+    /**
+     * Crea il solo link DB (ARO_VER_INDICE_AIP_UD_OBJECT_STORAGE) verso un indice AIP già presente
+     * su O.S. (rilevato tramite {@link #headObjectIndiceAipUd}), senza rieseguire la put
+     * dell'oggetto. Da invocare quando l'oggetto risulta già presente su O.S., per completare
+     * comunque l'operazione con la creazione del record DB mancante: altrimenti l'indice rimarrebbe
+     * privo del link e quindi non più recuperabile in lettura (v. MAC#41119). Bucket e chiave sono
+     * ricostruiti con la stessa logica usata in {@link #headObjectIndiceAipUd}.
+     *
+     * @param nomeBackend    nome del backend configurato
+     * @param idVerIndiceAip id della versione dell'indice aip
+     * @param idSubStrut     id sotto struttura
+     * @param aaKeyUnitaDoc  anno chiave unità documentaria
+     */
+    public void linkIndiceAipUdEsistente(String nomeBackend, long idVerIndiceAip,
+            BigDecimal idSubStrut, BigDecimal aaKeyUnitaDoc) {
+        try {
+            ObjectStorageBackend config = objectStorageHelper
+                    .getObjectStorageConfiguration(nomeBackend, READ_INDICI_AIP);
+            String key = objectStorageHelper.generateKeyIndiceAipObjectStorage(idVerIndiceAip)
+                    + ".xml";
+            objectStorageHelper.saveObjectStorageLinkIndiceAipUdEsistente(config.getBucket(), key,
+                    nomeBackend, idVerIndiceAip, idSubStrut, aaKeyUnitaDoc);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+    // End MAC#40183
+
 }

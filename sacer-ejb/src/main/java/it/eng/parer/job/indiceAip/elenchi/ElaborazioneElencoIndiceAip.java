@@ -206,55 +206,75 @@ public class ElaborazioneElencoIndiceAip {
             String hash = new HashCalculator()
                     .calculateHashSHAX(elencoIndiciAipString, TipiHash.SHA_256).toHexBinary();
 
-            ElvFileElencoVer fileElencoVers = new ElvFileElencoVer();
-            fileElencoVers.setTiFileElencoVers(ElencoEnums.FileTypeEnum.ELENCO_INDICI_AIP.name());
-            fileElencoVers
-                    .setBlFileElencoVers(elencoIndiciAipString.getBytes(StandardCharsets.UTF_8));
-            fileElencoVers.setIdStrut(BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()));
-            XMLGregorianCalendar cal = elencoIndiciAip.getDescrizioneElencoIndiciAIP()
-                    .getDataCreazione();
-            fileElencoVers.setDtCreazioneFile(
-                    cal != null ? XmlDateUtility.xmlGregorianCalendarToDate(cal) : null);
-            fileElencoVers.setDsHashFile(hash);
-            fileElencoVers.setDsAlgoHashFile(TipiHash.SHA_256.descrivi());
-            fileElencoVers.setCdEncodingHashFile(TipiEncBinari.HEX_BINARY.descrivi());
-            fileElencoVers.setCdVerXsdFile(Costanti.VERSIONE_ELENCO_INDICE_AIP);
-
-            if (elenco.getElvFileElencoVers() == null) {
-                elenco.setElvFileElencoVers(new ArrayList<>());
+            ElvFileElencoVer fileElencoVers = null;
+            if (CollectionUtils.isNotEmpty(elenco.getElvFileElencoVers())) {
+                for (ElvFileElencoVer fileElencoEsistente : elenco.getElvFileElencoVers()) {
+                    if (ElencoEnums.FileTypeEnum.ELENCO_INDICI_AIP.name()
+                            .equals(fileElencoEsistente.getTiFileElencoVers())) {
+                        fileElencoVers = fileElencoEsistente;
+                        break;
+                    }
+                }
             }
-            elenco.addElvFileElencoVer(fileElencoVers);
 
-            // EVO#16486
-            /* Calcolo e persisto lo urn dell'indice dell'elenco indici AIP firmato */
-            CSVersatore versatore = new CSVersatore();
-            versatore.setAmbiente(
-                    elenco.getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
-            versatore.setEnte(elenco.getOrgStrut().getOrgEnte().getNmEnte());
-            versatore.setStruttura(elenco.getOrgStrut().getNmStrut());
-            // sistema (new URN)
-            final String sistema = configurationHelper
-                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
-            versatore.setSistemaConservazione(sistema);
-            // calcolo parte urn ORIGINALE
-            String tmpUrn = MessaggiWSFormat.formattaUrnPartVersatore(versatore);
-            // calcolo parte urn NORMALIZZATO
-            String tmpUrnNorm = MessaggiWSFormat.formattaUrnPartVersatore(versatore, true,
-                    Costanti.UrnFormatter.VERS_FMT_STRING);
-            // salvo ORIGINALE
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-            urnHelper.salvaUrnElvFileElencoVers(fileElencoVers,
-                    MessaggiWSFormat.formattaUrnElencoIndiciAIPNonFirmati(tmpUrn,
-                            sdf.format(elenco.getDtCreazioneElenco()),
-                            Long.toString(elenco.getIdElencoVers())),
-                    ElvUrnFileElencoVers.TiUrnFileElenco.ORIGINALE);
-            // salvo NORMALIZZATO
-            urnHelper.salvaUrnElvFileElencoVers(fileElencoVers,
-                    MessaggiWSFormat.formattaUrnElencoIndiciAIPNonFirmati(tmpUrnNorm,
-                            sdf.format(elenco.getDtCreazioneElenco()),
-                            Long.toString(elenco.getIdElencoVers())),
-                    ElvUrnFileElencoVers.TiUrnFileElenco.NORMALIZZATO);
-            // end EVO#16486
+            if (fileElencoVers == null) {
+                fileElencoVers = new ElvFileElencoVer();
+                fileElencoVers
+                        .setTiFileElencoVers(ElencoEnums.FileTypeEnum.ELENCO_INDICI_AIP.name());
+                fileElencoVers
+                        .setBlFileElencoVers(
+                                elencoIndiciAipString.getBytes(StandardCharsets.UTF_8));
+                fileElencoVers.setIdStrut(BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()));
+                XMLGregorianCalendar cal = elencoIndiciAip.getDescrizioneElencoIndiciAIP()
+                        .getDataCreazione();
+                fileElencoVers.setDtCreazioneFile(
+                        cal != null ? XmlDateUtility.xmlGregorianCalendarToDate(cal) : null);
+                fileElencoVers.setDsHashFile(hash);
+                fileElencoVers.setDsAlgoHashFile(TipiHash.SHA_256.descrivi());
+                fileElencoVers.setCdEncodingHashFile(TipiEncBinari.HEX_BINARY.descrivi());
+                fileElencoVers.setCdVerXsdFile(Costanti.VERSIONE_ELENCO_INDICE_AIP);
+
+                if (elenco.getElvFileElencoVers() == null) {
+                    elenco.setElvFileElencoVers(new ArrayList<>());
+                }
+                elenco.addElvFileElencoVer(fileElencoVers);
+
+                // EVO#16486
+                /* Calcolo e persisto lo urn dell'indice dell'elenco indici AIP firmato */
+                CSVersatore versatore = new CSVersatore();
+                versatore.setAmbiente(
+                        elenco.getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
+                versatore.setEnte(elenco.getOrgStrut().getOrgEnte().getNmEnte());
+                versatore.setStruttura(elenco.getOrgStrut().getNmStrut());
+                // sistema (new URN)
+                final String sistema = configurationHelper.getValoreParamApplicByApplic(
+                        CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
+                versatore.setSistemaConservazione(sistema);
+                // calcolo parte urn ORIGINALE
+                String tmpUrn = MessaggiWSFormat.formattaUrnPartVersatore(versatore);
+                // calcolo parte urn NORMALIZZATO
+                String tmpUrnNorm = MessaggiWSFormat.formattaUrnPartVersatore(versatore, true,
+                        Costanti.UrnFormatter.VERS_FMT_STRING);
+                // salvo ORIGINALE
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                urnHelper.salvaUrnElvFileElencoVers(fileElencoVers,
+                        MessaggiWSFormat.formattaUrnElencoIndiciAIPNonFirmati(tmpUrn,
+                                sdf.format(elenco.getDtCreazioneElenco()),
+                                Long.toString(elenco.getIdElencoVers())),
+                        ElvUrnFileElencoVers.TiUrnFileElenco.ORIGINALE);
+                // salvo NORMALIZZATO
+                urnHelper.salvaUrnElvFileElencoVers(fileElencoVers,
+                        MessaggiWSFormat.formattaUrnElencoIndiciAIPNonFirmati(tmpUrnNorm,
+                                sdf.format(elenco.getDtCreazioneElenco()),
+                                Long.toString(elenco.getIdElencoVers())),
+                        ElvUrnFileElencoVers.TiUrnFileElenco.NORMALIZZATO);
+                // end EVO#16486
+            } else {
+                log.warn(
+                        "Creazione elenco indici AIP: file {} già presente per elenco {} - salto creazione duplicata",
+                        ElencoEnums.FileTypeEnum.ELENCO_INDICI_AIP.name(),
+                        elenco.getIdElencoVers());
+            }
 
             elenco.setTiStatoElenco(ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO.name());
             elencoDaElab

@@ -14,6 +14,7 @@
 package it.eng.parer.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,10 @@ public class AroContrFirmaComp implements Serializable {
 
     private FirCrl firCrl;
     private List<AroUsoCertifCaContrComp> aroUsoCertifCaContrComps = new ArrayList<>();
+
+    private BigDecimal aaKeyUnitaDoc;
+
+    private BigDecimal idStrut;
 
     public AroContrFirmaComp() {
         // hibernate
@@ -130,6 +135,24 @@ public class AroContrFirmaComp implements Serializable {
     public void setAroUsoCertifCaContrComps(
             List<AroUsoCertifCaContrComp> aroUsoCertifCaContrComps) {
         this.aroUsoCertifCaContrComps = aroUsoCertifCaContrComps;
+    }
+
+    @Column(name = "AA_KEY_UNITA_DOC")
+    public BigDecimal getAaKeyUnitaDoc() {
+        return this.aaKeyUnitaDoc;
+    }
+
+    public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+    }
+
+    @Column(name = "ID_STRUT")
+    public BigDecimal getIdStrut() {
+        return this.idStrut;
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        this.idStrut = idStrut;
     }
 
 }

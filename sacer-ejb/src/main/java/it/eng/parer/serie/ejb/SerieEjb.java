@@ -837,6 +837,7 @@ public class SerieEjb {
         appart.setInfoUdSerie(result.getInfoUdSerie());
         appart.setDsKeyOrdUdSerie(result.getDsKeyOrdUdSerie());
         appart.setPgUdSerie(result.getPgUdSerie());
+        appart.setIdStrut(BigDecimal.valueOf(ud.getOrgStrut().getIdStrut()));
 
         contenuto.addAroUdAppartVerSery(appart);
     }
@@ -5185,6 +5186,7 @@ public class SerieEjb {
             aroUdAppartVerSerie.setDtUdSerie(oldAroUdAppartVerSerie.getDtUdSerie());
             aroUdAppartVerSerie.setInfoUdSerie(oldAroUdAppartVerSerie.getInfoUdSerie());
             aroUdAppartVerSerie.setPgUdSerie(oldAroUdAppartVerSerie.getPgUdSerie());
+            aroUdAppartVerSerie.setIdStrut(oldAroUdAppartVerSerie.getIdStrut());
 
             contenutoSerie.addAroUdAppartVerSery(aroUdAppartVerSerie);
         }

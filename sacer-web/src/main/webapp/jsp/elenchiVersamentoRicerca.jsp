@@ -16,6 +16,8 @@
  --%>
 
 <%@ page import="it.eng.parer.slite.gen.form.ElenchiVersamentoForm" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <%@ include file="../include.jsp"%>
 <sl:html>
     <sl:head title="<%=ElenchiVersamentoForm.ElenchiVersamentoList.DESCRIPTION%>"/>
@@ -25,8 +27,13 @@
         <sl:content>
             <slf:messageBox />
             <sl:newLine skipLine="true"/>
-
             <sl:contentTitle title="Ricerca elenchi di versamento unità documentarie"/>
+            
+            <!-- se si proviene dagli errori aip allora fa comparire il tasti indietro -->
+            <c:if test="${not empty sessionScope.idsElencoVers}">
+                <slf:fieldBarDetailTag  name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.NAME%>" hideBackButton="false" />
+                <sl:newLine skipLine="true"/>
+            </c:if>
 
             <slf:fieldSet  borderHidden="false">
                 <!-- piazzo i campi del filtro di ricerca -->

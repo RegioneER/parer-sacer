@@ -14,6 +14,7 @@
 package it.eng.parer.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -52,6 +53,10 @@ public class AroContrVerifFirmaDtVer implements Serializable {
     private String tiEsitoContrVerif;
 
     private AroVerifFirmaDtVer aroVerifFirmaDtVer;
+
+    private BigDecimal aaKeyUnitaDoc;
+
+    private BigDecimal idStrut;
 
     public AroContrVerifFirmaDtVer() {/* Hibernate */
     }
@@ -116,5 +121,23 @@ public class AroContrVerifFirmaDtVer implements Serializable {
 
     public void setAroVerifFirmaDtVer(AroVerifFirmaDtVer aroVerifFirmaDtVer) {
         this.aroVerifFirmaDtVer = aroVerifFirmaDtVer;
+    }
+
+    @Column(name = "AA_KEY_UNITA_DOC")
+    public BigDecimal getAaKeyUnitaDoc() {
+        return this.aaKeyUnitaDoc;
+    }
+
+    public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+    }
+
+    @Column(name = "ID_STRUT")
+    public BigDecimal getIdStrut() {
+        return this.idStrut;
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        this.idStrut = idStrut;
     }
 }

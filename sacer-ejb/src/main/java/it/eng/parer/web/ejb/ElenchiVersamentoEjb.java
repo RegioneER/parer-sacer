@@ -386,6 +386,45 @@ public class ElenchiVersamentoEjb {
         return elenchiVersTableBean;
     }
 
+    /**
+     * Recupera il tablebean degli elenchi di versamento corrispondenti agli ID_ELENCO_VERS passati
+     * in input, utilizzato ad esempio per eseguire una ricerca secca a partire da un elenco di id
+     * (es. dal dettaglio della richiesta di restituzione archivio).
+     *
+     * @param idUserIam        l'id utente IAM
+     * @param idElencoVersList la lista degli ID_ELENCO_VERS da ricercare
+     *
+     * @return il tablebean degli elenchi di versamento trovati
+     *
+     * @throws EMFError errore generico
+     */
+    public ElvVRicElencoVersTableBean getElvVRicElencoVersTableBeanByIds(long idUserIam,
+            List<BigDecimal> idElencoVersList) throws EMFError {
+        List<ElvVRicElencoVers> listaElenchiVersamento = evWebHelper
+                .retrieveElvVRicElencoVersListByIds(idUserIam, idElencoVersList);
+        ElvVRicElencoVersTableBean elenchiVersTableBean = new ElvVRicElencoVersTableBean();
+        try {
+            if (listaElenchiVersamento != null && !listaElenchiVersamento.isEmpty()) {
+                for (ElvVRicElencoVers elencoVers : listaElenchiVersamento) {
+                    ElvVRicElencoVersRowBean elenchiVersRowBean = (ElvVRicElencoVersRowBean) Transform
+                            .entity2RowBean(elencoVers);
+                    elenchiVersRowBean.setString("amb_ente_strut",
+                            elenchiVersRowBean.getNmAmbiente() + " / "
+                                    + elenchiVersRowBean.getNmEnte() + " / "
+                                    + elenchiVersRowBean.getNmStrut());
+                    elenchiVersRowBean.setBigDecimal("num_comp", elenchiVersRowBean
+                            .getNiCompAggElenco().add(elenchiVersRowBean.getNiCompVersElenco()));
+                    elenchiVersRowBean.setBigDecimal("dimensione_byte", elenchiVersRowBean
+                            .getNiSizeVersElenco().add(elenchiVersRowBean.getNiSizeAggElenco()));
+                    elenchiVersTableBean.add(elenchiVersRowBean);
+                }
+            }
+        } catch (Exception e) {
+            throw new EMFError("Errore nel recupero della lista degli elenchi di versamento", e);
+        }
+        return elenchiVersTableBean;
+    }
+
     public ElvVRicElencoVersByStatoTableBean getElvVRicElencoVersByStatoTableBean(long idUserIam,
             FiltriElenchiVersamento filtri) throws EMFError {
         List<ElvVRicElencoVersByStato> listaElenchiVersamento = evWebHelper

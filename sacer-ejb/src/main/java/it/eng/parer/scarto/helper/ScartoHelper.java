@@ -30,11 +30,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.AroErrRichScartoVers;
+import it.eng.parer.entity.AroDoc;
 import it.eng.parer.entity.AroItemPropScartoVers;
+import it.eng.parer.entity.AroItemRichScartoVers;
 import it.eng.parer.entity.AroPropScartoVers;
 import it.eng.parer.entity.AroRichScartoVers;
 import it.eng.parer.entity.AroStatoPropScartoVers;
+import it.eng.parer.entity.AroUnitaDoc;
+import it.eng.parer.entity.AroUpdUnitaDoc;
 import it.eng.parer.entity.DecTipoDoc;
+import it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.scarto.dto.FiltriRicercaUdScartoDto;
 import it.eng.parer.scarto.dto.RicercaRichScartoVersBean;
@@ -42,6 +47,7 @@ import it.eng.parer.viewEntity.AroVLisItemRichScarto;
 import it.eng.parer.viewEntity.AroVLisStatoRichScarto;
 import it.eng.parer.viewEntity.AroVRicPropScartoVers;
 import it.eng.parer.viewEntity.AroVRicRichScarto;
+import it.eng.parer.viewEntity.ElvVLisElencoUdScarto;
 import it.eng.parer.ws.utils.CostantiDB;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -428,6 +434,166 @@ public class ScartoHelper extends GenericHelper {
                         + "WHERE itemRichScartoVers.aroRichScartoVers.idRichScartoVers = :idRichScartoVers AND itemRichScartoVers.tiStatoItemScarto = 'DA_SCARTARE'");
         q.setParameter("idRichScartoVers", idRichScartoVers);
         q.setParameter("tiStatoItemScarto", tiStatoItemScarto);
+        q.executeUpdate();
+    }
+
+    public List<AroItemRichScartoVers> getItem(long idRichScartoVers,
+            String... tiStatoUdElencoVers) {
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT itemRichScartoVers FROM AroItemRichScartoVers itemRichScartoVers "
+                        + "JOIN FETCH itemRichScartoVers.aroUnitaDoc unitaDoc "
+                        + "JOIN itemRichScartoVers.aroRichScartoVers richScartoVers "
+                        + "WHERE richScartoVers.idRichScartoVers = :idRichScartoVers "
+                        + "AND itemRichScartoVers.tiItemRichScartoVers = 'UNI_DOC' "
+                        + "AND itemRichScartoVers.tiStatoItemScarto = 'DA_SCARTARE' ");
+        if (tiStatoUdElencoVers != null && tiStatoUdElencoVers.length > 0) {
+            if (tiStatoUdElencoVers.length > 1) {
+                queryStr.append("AND unitaDoc.tiStatoUdElencoVers IN (:tiStatoUdElencoVers) ");
+            } else {
+                queryStr.append("AND unitaDoc.tiStatoUdElencoVers = :tiStatoUdElencoVers ");
+            }
+        }
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idRichScartoVers", idRichScartoVers);
+        if (tiStatoUdElencoVers != null && tiStatoUdElencoVers.length > 0) {
+            List<String> statiList = Arrays.asList(tiStatoUdElencoVers);
+            if (statiList.size() > 1) {
+                query.setParameter("tiStatoUdElencoVers", statiList);
+            } else {
+                query.setParameter("tiStatoUdElencoVers", statiList.get(0));
+            }
+        }
+        return query.getResultList();
+    }
+
+    public List<AroDoc> getDocAggiunti(long idRichScartoVers, String... tiStatoDocElencoVers) {
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT doc FROM AroItemRichScartoVers itemRichScartoVers "
+                        + "JOIN itemRichScartoVers.aroUnitaDoc unitaDoc "
+                        + "JOIN unitaDoc.aroDocs doc "
+                        + "JOIN itemRichScartoVers.aroRichScartoVers richScartoVers "
+                        + "WHERE richScartoVers.idRichScartoVers = :idRichScartoVers "
+                        + "AND itemRichScartoVers.tiItemRichScartoVers = 'UNI_DOC' "
+                        + "AND itemRichScartoVers.tiStatoItemScarto = 'DA_SCARTARE' "
+                        + "AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' ");
+        if (tiStatoDocElencoVers != null && tiStatoDocElencoVers.length > 0) {
+            if (tiStatoDocElencoVers.length > 1) {
+                queryStr.append("AND doc.tiStatoDocElencoVers IN (:tiStatoDocElencoVers) ");
+            } else {
+                queryStr.append("AND doc.tiStatoDocElencoVers = :tiStatoDocElencoVers ");
+            }
+        }
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idRichScartoVers", idRichScartoVers);
+        if (tiStatoDocElencoVers != null && tiStatoDocElencoVers.length > 0) {
+            List<String> statiList = Arrays.asList(tiStatoDocElencoVers);
+            if (statiList.size() > 1) {
+                query.setParameter("tiStatoDocElencoVers", statiList);
+            } else {
+                query.setParameter("tiStatoDocElencoVers", statiList.get(0));
+            }
+        }
+        return query.getResultList();
+    }
+
+    public List<AroUpdUnitaDoc> getUpdItem(long idRichScartoVers,
+            AroUpdUDTiStatoUpdElencoVers... tiStatoUpdElencoVers) {
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT updUnitaDocs FROM AroItemRichScartoVers itemRichScartoVers "
+                        + "JOIN itemRichScartoVers.aroUnitaDoc unitaDoc "
+                        + "JOIN unitaDoc.aroUpdUnitaDocs updUnitaDocs "
+                        + "JOIN itemRichScartoVers.aroRichScartoVers richScartoVers "
+                        + "WHERE richScartoVers.idRichScartoVers = :idRichScartoVers "
+                        + "AND itemRichScartoVers.tiItemRichScartoVers = 'UNI_DOC' "
+                        + "AND itemRichScartoVers.tiStatoItemScarto = 'DA_SCARTARE' ");
+        if (tiStatoUpdElencoVers != null && tiStatoUpdElencoVers.length > 0) {
+            if (tiStatoUpdElencoVers.length > 1) {
+                queryStr.append(
+                        "AND updUnitaDocs.tiStatoUpdElencoVers IN (:tiStatoUpdElencoVers) ");
+            } else {
+                queryStr.append("AND updUnitaDocs.tiStatoUpdElencoVers = :tiStatoUpdElencoVers ");
+            }
+        }
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idRichScartoVers", idRichScartoVers);
+        if (tiStatoUpdElencoVers != null && tiStatoUpdElencoVers.length > 0) {
+            List<AroUpdUDTiStatoUpdElencoVers> statiList = Arrays.asList(tiStatoUpdElencoVers);
+            if (statiList.size() > 1) {
+                query.setParameter("tiStatoUpdElencoVers", statiList);
+            } else {
+                query.setParameter("tiStatoUpdElencoVers", statiList.get(0));
+            }
+        }
+        return query.getResultList();
+    }
+
+    /**
+     * Ricava gli elenchi di versamento che contengono UD da scartare (analogamente a
+     * retrieveElvVLisElencoUdAnnuls per l'annullamento). Gli stati UD coperti sono allineati alla
+     * vista ELV_V_LIS_ELENCO_UD_ANNUL, con l'aggiunta di IN_ELENCO_VALIDATO.
+     *
+     * @param idRichScartoVers l'id della richiesta di scarto
+     *
+     * @return lista elementi di tipo ElvVLisElencoUdScarto
+     */
+    public List<ElvVLisElencoUdScarto> getElenchiConUdDaScartare(long idRichScartoVers) {
+        Query query = getEntityManager().createQuery(
+                "SELECT elv FROM ElvVLisElencoUdScarto elv "
+                        + "WHERE elv.elvVLisElencoUdScartoId.idRichScartoVers = :idRichScartoVers");
+        query.setParameter("idRichScartoVers", bigDecimalFromLong(idRichScartoVers));
+        return query.getResultList();
+    }
+
+    public List<AroUnitaDoc> getUnitaDocDaRielaborareInElencoChiusoValidato(long idRichScartoVers,
+            long idElencoVers) {
+        Query query = getEntityManager().createQuery(
+                "SELECT DISTINCT item.aroUnitaDoc FROM AroItemRichScartoVers item "
+                        + "WHERE item.aroRichScartoVers.idRichScartoVers = :idRichScartoVers "
+                        + "AND item.tiItemRichScartoVers = 'UNI_DOC' "
+                        + "AND item.tiStatoItemScarto = 'DA_SCARTARE' "
+                        + "AND ("
+                        + "(item.aroUnitaDoc.elvElencoVer.idElencoVers = :idElencoVers "
+                        + "AND item.aroUnitaDoc.tiStatoUdElencoVers IN ('IN_ELENCO_CHIUSO', 'IN_ELENCO_VALIDATO')) "
+                        + "OR EXISTS ("
+                        + "SELECT 1 FROM AroDoc doc "
+                        + "WHERE doc.aroUnitaDoc.idUnitaDoc = item.aroUnitaDoc.idUnitaDoc "
+                        + "AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' "
+                        + "AND doc.elvElencoVer.idElencoVers = :idElencoVers "
+                        + "AND doc.tiStatoDocElencoVers IN ('IN_ELENCO_CHIUSO', 'IN_ELENCO_VALIDATO')"
+                        + ") "
+                        + "OR EXISTS ("
+                        + "SELECT 1 FROM AroUpdUnitaDoc upd "
+                        + "WHERE upd.aroUnitaDoc.idUnitaDoc = item.aroUnitaDoc.idUnitaDoc "
+                        + "AND upd.elvElencoVer.idElencoVers = :idElencoVers "
+                        + "AND upd.tiStatoUpdElencoVers IN ('IN_ELENCO_CHIUSO', 'IN_ELENCO_VALIDATO')"
+                        + ")"
+                        + ")");
+        query.setParameter("idRichScartoVers", idRichScartoVers);
+        query.setParameter("idElencoVers", idElencoVers);
+        return query.getResultList();
+    }
+
+    public void deleteElvUdVersDaElabElenco(long idUnitaDoc) {
+        Query q = getEntityManager()
+                .createQuery("DELETE FROM ElvUdVersDaElabElenco udVersDaElabElenco "
+                        + "WHERE udVersDaElabElenco.aroUnitaDoc.idUnitaDoc = :idUnitaDoc ");
+        q.setParameter("idUnitaDoc", idUnitaDoc);
+        q.executeUpdate();
+    }
+
+    public void deleteElvUpdUdDaElabElenco(long idUpdUnitaDoc) {
+        Query q = getEntityManager()
+                .createQuery("DELETE FROM ElvUpdUdDaElabElenco updUdDaElabElenco "
+                        + "WHERE updUdDaElabElenco.aroUpdUnitaDoc.idUpdUnitaDoc = :idUpdUnitaDoc ");
+        q.setParameter("idUpdUnitaDoc", idUpdUnitaDoc);
+        q.executeUpdate();
+    }
+
+    public void deleteElvDocAggDaElabElenco(long idDoc) {
+        Query q = getEntityManager()
+                .createQuery("DELETE FROM ElvDocAggDaElabElenco docAggDaElabElenco "
+                        + "WHERE docAggDaElabElenco.aroDoc.idDoc = :idDoc ");
+        q.setParameter("idDoc", idDoc);
         q.executeUpdate();
     }
 

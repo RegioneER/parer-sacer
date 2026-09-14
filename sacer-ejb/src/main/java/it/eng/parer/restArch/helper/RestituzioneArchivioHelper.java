@@ -364,6 +364,36 @@ public class RestituzioneArchivioHelper extends GenericHelper {
     }
 
     /**
+     * Recupera l'elenco degli ID_ELENCO_VERS distinti degli elenchi di versamento contenenti le
+     * unit\u00E0 documentarie i cui aip, per l'anno indicato, sono in stato di errore all'interno
+     * della richiesta di restituzione archivio <code>idRichRestArch</code>. La navigazione avviene
+     * tra le tabelle ARO_AIP_RESTITUZIONE_ARCHIVIO, ARO_INDICE_AIP_UD e ARO_UNITA_DOC.
+     *
+     * @param idRichRestArch l'id della richiesta
+     * @param idStrut        l'id della struttura
+     * @param anno           l'anno relativo alla riga selezionata (aa_key_unita_doc)
+     *
+     * @return la lista degli ID_ELENCO_VERS
+     */
+    public List<Long> retrieveIdElencoVersErroreByAnno(BigDecimal idRichRestArch,
+            BigDecimal idStrut, BigDecimal anno) {
+        Query query = getEntityManager().createQuery(
+                "SELECT DISTINCT errItemRestArch.aroIndiceAipUd.aroUnitaDoc.elvElencoVer.idElencoVers "
+                        + "FROM AroAipRestituzioneArchivio errItemRestArch "
+                        + "WHERE errItemRestArch.aroRichiestaRa.idRichiestaRa = :idRichRestArch "
+                        + "AND errItemRestArch.aroIndiceAipUd.aroUnitaDoc.orgStrut.idStrut = :idStrut "
+                        + "AND errItemRestArch.aroIndiceAipUd.aroUnitaDoc.aaKeyUnitaDoc = :anno "
+                        + "AND errItemRestArch.tiStato = :tiErrItemRestArch "
+                        + "AND errItemRestArch.aroIndiceAipUd.aroUnitaDoc.elvElencoVer IS NOT NULL");
+        query.setParameter("idRichRestArch", longFromBigDecimal(idRichRestArch));
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        query.setParameter("anno", anno);
+        query.setParameter("tiErrItemRestArch", TiStatoAroAipRa.ERRORE);
+
+        return query.getResultList();
+    }
+
+    /**
      * Ricavo la struttura che ha creato la richiesta, ovvero quella che ha definito il primo stato
      *
      * @param idRichRestArch l'id della richiesta

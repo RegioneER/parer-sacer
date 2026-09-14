@@ -20,6 +20,7 @@ import it.eng.parer.entity.AroBustaCrittog;
 import it.eng.parer.entity.AroCompDoc;
 import it.eng.parer.entity.AroMarcaComp;
 import it.eng.parer.entity.FirCertifCa;
+import it.eng.parer.entity.OrgStrut;
 import it.eng.spagoLite.db.base.JEEBaseRowInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
@@ -61,6 +62,14 @@ public class AroMarcaCompRowBean extends BaseRow implements JEEBaseRowInterface 
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
         setObject("id_comp_doc", idCompDoc);
+    }
+
+    public BigDecimal getIdStrut() {
+        return getBigDecimal("id_strut");
+    }
+
+    public void setIdStrut(BigDecimal idStrut) {
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getPgMarca() {
@@ -185,6 +194,10 @@ public class AroMarcaCompRowBean extends BaseRow implements JEEBaseRowInterface 
             this.setIdCompDoc(new BigDecimal(entity.getAroCompDoc().getIdCompDoc()));
         }
 
+        if (entity.getIdStrut() != null) {
+            this.setIdStrut(entity.getIdStrut());
+        }
+
         this.setPgMarca(entity.getPgMarca());
         this.setTiEsitoContrConforme(entity.getTiEsitoContrConforme());
         this.setDsMsgEsitoContrConforme(entity.getDsMsgEsitoContrConforme());
@@ -225,6 +238,7 @@ public class AroMarcaCompRowBean extends BaseRow implements JEEBaseRowInterface 
             }
             entity.getAroCompDoc().setIdCompDoc(this.getIdCompDoc().longValue());
         }
+        entity.setIdStrut(this.getIdStrut());
         entity.setPgMarca(this.getPgMarca());
         entity.setTiEsitoContrConforme(this.getTiEsitoContrConforme());
         entity.setDsMsgEsitoContrConforme(this.getDsMsgEsitoContrConforme());

@@ -90,6 +90,8 @@ public class AroDoc implements Serializable {
     private List<AroVersIniDoc> aroVersIniDocs = new ArrayList<>();
     private List<AroUpdDocUnitaDoc> aroUpdDocUnitaDocs = new ArrayList<>();
 
+    private BigDecimal aaKeyUnitaDoc;
+
     public AroDoc() {
         // hibernate
     }
@@ -465,6 +467,15 @@ public class AroDoc implements Serializable {
 
     public void setAroXmlDocObjectStorage(AroXmlDocObjectStorage aroXmlDocObjectStorage) {
         this.aroXmlDocObjectStorage = aroXmlDocObjectStorage;
+    }
+
+    @Column(name = "AA_KEY_UNITA_DOC")
+    public BigDecimal getAaKeyUnitaDoc() {
+        return this.aaKeyUnitaDoc;
+    }
+
+    public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
 }

@@ -437,6 +437,8 @@ public class ElaborazioneCodaDaMigrareEjb {
                 aroCompHashCalc.setAroCompDoc(aroCompDoc);
                 aroCompHashCalc.setDsAlgoHashFile(aroCompDoc.getDsAlgoHashFileCalc());
                 aroCompHashCalc.setDsHashFile(hashFileCalc);
+                aroCompHashCalc.setIdStrut(aroCompDoc.getIdStrut());
+                aroCompHashCalc.setAaKeyUnitaDoc(aroCompDoc.getAaKeyUnitaDoc());
                 aroCompHashCalc.setCdEncodingHashFile(aroCompDoc.getCdEncodingHashFileCalc());
                 verificaMigrazioneSubPartizioneHelper.getEntityManager().persist(aroCompHashCalc);
             }

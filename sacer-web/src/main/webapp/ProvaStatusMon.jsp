@@ -197,7 +197,7 @@
 
                 <label>
                     <span>password</span>
-                    <input type="text" size="100" name="password" class="input-text"></input>
+                    <input type="password" size="100" name="password" id="password" class="input-text"></input>
                 </label>
 
                 <input class="green"  type="submit" value="Invio"></input>

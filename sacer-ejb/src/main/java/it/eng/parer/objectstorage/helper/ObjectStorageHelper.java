@@ -1160,6 +1160,7 @@ public class ObjectStorageHelper {
             osLink.setAroVerIndiceAipUd(aroVerIndiceAip);
 
             osLink.setIdSubStrut(idSubStrut);
+            osLink.setIdStrut(aroVerIndiceAip.getIdStrut());
             osLink.setAaKeyUnitaDoc(aaKeyUnitaDoc);
 
             osLink.setCdKeyFile(object.getKey());
@@ -1173,6 +1174,50 @@ public class ObjectStorageHelper {
             throw ObjectStorageException.builder().message(LOG_MESSAGE_NO_SAVED).cause(e).build();
         }
     }
+
+    // MAC#41119
+    /**
+     * Crea il solo link DB (ARO_VER_INDICE_AIP_UD_OBJECT_STORAGE) verso un indice AIP già presente
+     * su O.S., dati bucket e chiave già noti (calcolati dal chiamante, es.
+     * {@code ObjectStorageService#linkIndiceAipUdEsistente}), senza rieseguire la put dell'oggetto
+     * (v. MAC#40183).
+     *
+     * @param bucket         bucket su cui l'oggetto è già presente
+     * @param key            chiave dell'oggetto su O.S.
+     * @param nmBackend      nome del backend (di tipo OS) su cui l'oggetto è già presente
+     * @param idVerIndiceAip id versione indice aip
+     * @param idSubStrut     id sotto struttura
+     * @param aaKeyUnitaDoc  anno chiave unità documentaria
+     *
+     * @throws ObjectStorageException in caso di errore
+     */
+    public void saveObjectStorageLinkIndiceAipUdEsistente(String bucket, String key,
+            String nmBackend, long idVerIndiceAip, BigDecimal idSubStrut, BigDecimal aaKeyUnitaDoc)
+            throws ObjectStorageException {
+        try {
+            DecBackend decBackend = backendHelper.getBackendEntity(nmBackend);
+            AroVerIndiceAipUd aroVerIndiceAip = entityManager.find(AroVerIndiceAipUd.class,
+                    idVerIndiceAip);
+
+            AroVerIndiceAipUdObjectStorage osLink = new AroVerIndiceAipUdObjectStorage();
+            osLink.setAroVerIndiceAipUd(aroVerIndiceAip);
+
+            osLink.setIdSubStrut(idSubStrut);
+            osLink.setIdStrut(aroVerIndiceAip.getIdStrut());
+            osLink.setAaKeyUnitaDoc(aaKeyUnitaDoc);
+
+            osLink.setCdKeyFile(key);
+            osLink.setNmBucket(bucket);
+            osLink.setNmTenant(getDefaultTenant());
+
+            osLink.setDecBackend(decBackend);
+            entityManager.persist(osLink);
+
+        } catch (Exception e) {
+            throw ObjectStorageException.builder().message(LOG_MESSAGE_NO_SAVED).cause(e).build();
+        }
+    }
+    // End MAC#41119
 
     /**
      * Genera la chiave dell'indice aip da salvare sull'object storage.

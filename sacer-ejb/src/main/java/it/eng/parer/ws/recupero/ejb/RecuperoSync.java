@@ -294,7 +294,7 @@ public class RecuperoSync {
                         .contaXMLIndiceAIP(recupero.getParametriRecupero().getIdUnitaDoc());
                 if (rc.getrLong() == 0) {
                     rispostaWs.setSeverity(SeverityEnum.ERROR);
-                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.UD_005_003,
+                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.UD_005_006,
                             recupero.getParametriRecupero().getDescUnitaDoc());
                     return;
                 }
@@ -412,7 +412,7 @@ public class RecuperoSync {
                         .contaXMLIndiceAIP(recupero.getParametriRecupero().getIdUnitaDoc());
                 if (rc.getrLong() == 0) {
                     rispostaWs.setSeverity(SeverityEnum.ERROR);
-                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.UD_005_003,
+                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.UD_005_006,
                             recupero.getParametriRecupero().getDescUnitaDoc());
                     return;
                 }
@@ -549,7 +549,7 @@ public class RecuperoSync {
                         .contaXMLIndiceAIP(recupero.getParametriRecupero().getIdUnitaDoc());
                 if (rc.getrLong() == 0) {
                     rispostaWs.setSeverity(SeverityEnum.ERROR);
-                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.UD_005_003,
+                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.UD_005_006,
                             recupero.getParametriRecupero().getDescUnitaDoc());
                     return esito;
                 }
