@@ -141,9 +141,8 @@ public class ControlloCampioneAipHelper {
                 validaXsd(indiceAipBytes, xsdBytes);
             } catch (SAXException e) {
                 return EsitoControlloAip.ko(CdErroreControlloAip.INDICE_AIP_NON_VALIDABILE,
-                        "Il file " + NOME_FILE_INDICE_AIP
-                                + " non e' valido rispetto allo XSD " + NOME_FILE_XSD_INDICE_AIP
-                                + ": " + e.getMessage());
+                        "Il file " + NOME_FILE_INDICE_AIP + " non e' valido rispetto allo XSD "
+                                + NOME_FILE_XSD_INDICE_AIP + ": " + e.getMessage());
             }
 
             // 4) tutti i file referenziati dall'indice AIP (tag Path e attributo xmlSchema dei tag
@@ -249,8 +248,8 @@ public class ControlloCampioneAipHelper {
             dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
             dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             DocumentBuilder builder = dbFactory.newDocumentBuilder();
-            Document document = builder
-                    .parse(new ByteArrayInputStream(xmlBytes), StandardCharsets.UTF_8.name());
+            Document document = builder.parse(new ByteArrayInputStream(xmlBytes),
+                    StandardCharsets.UTF_8.name());
 
             XPath xPath = XPathFactory.newInstance().newXPath();
 

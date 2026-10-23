@@ -185,9 +185,9 @@
         </style>
     </head>
     <body>
-        <h1>Recupero Unit� Documentaria Multimedia</h1>
-        <h2>Viene chiamata la servlet/ws <b>RecUniDocMultiMedia</b></h2>
-        <form action="RecUniDocMultiMedia" method="post"  enctype="multipart/form-data" >
+        <h1>Recupero Prove di Conservazione Unit� Documentaria Multimedia</h1>
+        <h2>Viene chiamata la servlet/ws <b>RecPCUniDocMultiMedia</b></h2>
+        <form action='<c:url value="/RecPCUniDocMultiMedia" />' method="post"  enctype="multipart/form-data"  autocomplete="off">
             <div class="box">
                 <label>
                     <span>VERSIONE</span>
@@ -196,12 +196,12 @@
 
                 <label>
                     <span>LOGINNAME</span>
-                    <input type="text" size="100" name="LOGINNAME" class="input-text"></input>
+                    <input type="text" size="100" name="LOGINNAME" class="input-text" autocomplete="username"></input>
                 </label>
 
                 <label>
                     <span>PASSWORD</span>
-                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text"></input>
+                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text" autocomplete="current-password"></input>
                 </label>
                 <label>
                     <span>XMLINDICE</span>

@@ -838,7 +838,7 @@ public class VolumiAction extends VolumiAbstractAction {
             UnitaDocumentarieForm form = new UnitaDocumentarieForm();
             getSession().setAttribute("addUdToVolume", true);
             redirectToAction(Application.Actions.UNITA_DOCUMENTARIE,
-                    "?operation=unitaDocumentarieRicercaAvanzata&back=true", form);
+                    "?operation=unitaDocumentarieRicercaAvanzataNuova&back=true", form);
         } else {
             getMessageBox().addError(
                     "Volume scaduto - Impossibile aggiungere nuove unità documentarie al volume");

@@ -571,11 +571,10 @@ public class CalcoloMonitoraggioHelper {
             queryStr.append(whereWord).append("u.cdErr = :cdErr ");
             whereWord = "AND ";
         } else if (sottoClasseErrore != null) {
-            queryStr.append(whereWord).append("EXISTS ("
-                    + "SELECT decErr.idErrSacer FROM DecErrSacer decErr "
-                    + "JOIN decErr.decErrSacerDett dett "
-                    + "WHERE decErr.cdErr = u.cdErr "
-                    + "AND dett.cdSottoclasse = :sottoClasseErrore) ");
+            queryStr.append(whereWord)
+                    .append("EXISTS (" + "SELECT decErr.idErrSacer FROM DecErrSacer decErr "
+                            + "JOIN decErr.decErrSacerDett dett " + "WHERE decErr.cdErr = u.cdErr "
+                            + "AND dett.cdSottoclasse = :sottoClasseErrore) ");
             whereWord = "AND ";
         } else if (classeErrore != null) {
             queryStr.append(whereWord).append("u.cdErr LIKE :cdErr ");

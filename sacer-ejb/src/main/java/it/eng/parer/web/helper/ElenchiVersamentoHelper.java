@@ -201,8 +201,8 @@ public class ElenchiVersamentoHelper extends GenericHelper {
         if (idElencoVersList == null || idElencoVersList.isEmpty()) {
             return new ArrayList<>();
         }
-        Query query = getEntityManager().createQuery(
-                "SELECT u FROM ElvVRicElencoVers u WHERE u.idUserIam = :idUserIam "
+        Query query = getEntityManager()
+                .createQuery("SELECT u FROM ElvVRicElencoVers u WHERE u.idUserIam = :idUserIam "
                         + "AND u.idElencoVers IN (:idElencoVersList)");
         query.setParameter("idUserIam", bigDecimalFromLong(idUserIam));
         query.setParameter("idElencoVersList", idElencoVersList);

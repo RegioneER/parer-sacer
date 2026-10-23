@@ -1630,59 +1630,53 @@ public class DataMartHelper extends GenericHelper {
         // data elaborata dal JOB CalcoloContenutoSACER.
         // Se una delle due è successiva al MAX(DT_RIF_CONTA), la cancellazione fisica
         // non può avvenire: il JOB non troverebbe più l'UD in ARO e perderebbe il conteggio.
-        String sql = "SELECT ud.CD_REGISTRO_KEY_UNITA_DOC, " +
-                "       ud.AA_KEY_UNITA_DOC, " +
-                "       ud.CD_KEY_UNITA_DOC, " +
-                "       GREATEST( " +
-                "           TRUNC(MAX(doc.DT_CREAZIONE)), " +
-                "           COALESCE(TRUNC(MAX(stato.DT_REG_STATO_RICH_ANNUL_VERS)), " +
-                "                    TRUNC(MAX(doc.DT_CREAZIONE))) " +
-                "       )                                                            AS ultima_data_rilevante, "
-                +
-                "       (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m)   AS ultimo_job_dt "
-                +
-                "FROM DM_UD_DEL dm " +
-                "JOIN ARO_UNITA_DOC ud ON dm.ID_UNITA_DOC = ud.ID_UNITA_DOC " +
-                "JOIN ARO_DOC       doc ON doc.ID_UNITA_DOC = ud.ID_UNITA_DOC " +
-                "LEFT JOIN ARO_ITEM_RICH_ANNUL_VERS item " +
-                "       ON item.ID_UNITA_DOC            = ud.ID_UNITA_DOC " +
-                "      AND item.TI_ITEM_RICH_ANNUL_VERS  = 'UNI_DOC' " +
-                "      AND item.TI_STATO_ITEM            = 'ANNULLATO' " +
-                "LEFT JOIN ARO_RICH_ANNUL_VERS rich " +
-                "       ON rich.ID_RICH_ANNUL_VERS = item.ID_RICH_ANNUL_VERS " +
-                "LEFT JOIN ARO_STATO_RICH_ANNUL_VERS stato " +
-                "       ON stato.ID_STATO_RICH_ANNUL_VERS = rich.ID_STATO_RICH_ANNUL_VERS_COR " +
-                "      AND stato.TI_STATO_RICH_ANNUL_VERS = 'EVASA' " +
-                "LEFT JOIN ARO_ITEM_RICH_SCARTO_VERS itemScarto " +
-                "       ON itemScarto.ID_UNITA_DOC = ud.ID_UNITA_DOC " +
-                "      AND itemScarto.TI_STATO_ITEM_SCARTO = 'SCARTATO' " +
-                "LEFT JOIN ARO_RICH_SCARTO_VERS richScarto " +
-                "       ON richScarto.ID_RICH_SCARTO_VERS = itemScarto.ID_RICH_SCARTO_VERS " +
-                "LEFT JOIN ARO_STATO_RICH_SCARTO_VERS statoScarto " +
-                "       ON statoScarto.ID_STATO_RICH_SCARTO_VERS = richScarto.ID_STATO_RICH_SCARTO_VERS_COR "
-                +
-                "      AND statoScarto.TI_STATO_RICH_SCARTO_VERS = 'EVASA' " +
-                "LEFT JOIN DM_UD_DEL_RICHIESTE dmRichRa " +
-                "       ON dmRichRa.ID_UD_DEL_RICHIESTA = dm.ID_UD_DEL_RICHIESTA " +
-                "      AND dmRichRa.TI_MOT_CANCELLAZIONE = 'R' " +
-                "LEFT JOIN ARO_RICHIESTA_RA richRa " +
-                "       ON richRa.ID_RICHIESTA_RA = dmRichRa.ID_RICHIESTA " +
-                "      AND richRa.TI_STATO IN ('RESTITUITO', 'VERIFICATO') " +
-                "WHERE dm.ID_UD_DEL_RICHIESTA    = ? " +
-                "  AND dm.TI_STATO_UD_CANCELLATE = 'CANCELLABILE' " +
-                "  AND ( " +
-                "        (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) IS NULL " +
-                "        OR TRUNC(doc.DT_CREAZIONE) > " +
-                "           (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) " +
-                "        OR TRUNC(stato.DT_REG_STATO_RICH_ANNUL_VERS) > " +
-                "           (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) " +
-                "        OR TRUNC(statoScarto.DT_REG_STATO_RICH_SCARTO_VERS) > " +
-                "           (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) " +
-                "        OR TRUNC(richRa.TS_FINE) > " +
-                "           (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) " +
-                "      ) " +
-                "GROUP BY ud.CD_REGISTRO_KEY_UNITA_DOC, ud.AA_KEY_UNITA_DOC, ud.CD_KEY_UNITA_DOC " +
-                "ORDER BY ultima_data_rilevante DESC, ud.CD_REGISTRO_KEY_UNITA_DOC";
+        String sql = "SELECT ud.CD_REGISTRO_KEY_UNITA_DOC, " + "       ud.AA_KEY_UNITA_DOC, "
+                + "       ud.CD_KEY_UNITA_DOC, " + "       GREATEST( "
+                + "           TRUNC(MAX(doc.DT_CREAZIONE)), "
+                + "           COALESCE(TRUNC(MAX(stato.DT_REG_STATO_RICH_ANNUL_VERS)), "
+                + "                    TRUNC(MAX(doc.DT_CREAZIONE))) "
+                + "       )                                                            AS ultima_data_rilevante, "
+                + "       (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m)   AS ultimo_job_dt "
+                + "FROM DM_UD_DEL dm "
+                + "JOIN ARO_UNITA_DOC ud ON dm.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "JOIN ARO_DOC       doc ON doc.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "LEFT JOIN ARO_ITEM_RICH_ANNUL_VERS item "
+                + "       ON item.ID_UNITA_DOC            = ud.ID_UNITA_DOC "
+                + "      AND item.TI_ITEM_RICH_ANNUL_VERS  = 'UNI_DOC' "
+                + "      AND item.TI_STATO_ITEM            = 'ANNULLATO' "
+                + "LEFT JOIN ARO_RICH_ANNUL_VERS rich "
+                + "       ON rich.ID_RICH_ANNUL_VERS = item.ID_RICH_ANNUL_VERS "
+                + "LEFT JOIN ARO_STATO_RICH_ANNUL_VERS stato "
+                + "       ON stato.ID_STATO_RICH_ANNUL_VERS = rich.ID_STATO_RICH_ANNUL_VERS_COR "
+                + "      AND stato.TI_STATO_RICH_ANNUL_VERS = 'EVASA' "
+                + "LEFT JOIN ARO_ITEM_RICH_SCARTO_VERS itemScarto "
+                + "       ON itemScarto.ID_UNITA_DOC = ud.ID_UNITA_DOC "
+                + "      AND itemScarto.TI_STATO_ITEM_SCARTO = 'SCARTATO' "
+                + "LEFT JOIN ARO_RICH_SCARTO_VERS richScarto "
+                + "       ON richScarto.ID_RICH_SCARTO_VERS = itemScarto.ID_RICH_SCARTO_VERS "
+                + "LEFT JOIN ARO_STATO_RICH_SCARTO_VERS statoScarto "
+                + "       ON statoScarto.ID_STATO_RICH_SCARTO_VERS = richScarto.ID_STATO_RICH_SCARTO_VERS_COR "
+                + "      AND statoScarto.TI_STATO_RICH_SCARTO_VERS = 'EVASA' "
+                + "LEFT JOIN DM_UD_DEL_RICHIESTE dmRichRa "
+                + "       ON dmRichRa.ID_UD_DEL_RICHIESTA = dm.ID_UD_DEL_RICHIESTA "
+                + "      AND dmRichRa.TI_MOT_CANCELLAZIONE = 'R' "
+                + "LEFT JOIN ARO_RICHIESTA_RA richRa "
+                + "       ON richRa.ID_RICHIESTA_RA = dmRichRa.ID_RICHIESTA "
+                + "      AND richRa.TI_STATO IN ('RESTITUITO', 'VERIFICATO') "
+                + "WHERE dm.ID_UD_DEL_RICHIESTA    = ? "
+                + "  AND dm.TI_STATO_UD_CANCELLATE = 'CANCELLABILE' " + "  AND ( "
+                + "        (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) IS NULL "
+                + "        OR TRUNC(doc.DT_CREAZIONE) > "
+                + "           (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) "
+                + "        OR TRUNC(stato.DT_REG_STATO_RICH_ANNUL_VERS) > "
+                + "           (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) "
+                + "        OR TRUNC(statoScarto.DT_REG_STATO_RICH_SCARTO_VERS) > "
+                + "           (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) "
+                + "        OR TRUNC(richRa.TS_FINE) > "
+                + "           (SELECT MAX(m.DT_RIF_CONTA) FROM MON_CONTA_UD_DOC_COMP m) "
+                + "      ) "
+                + "GROUP BY ud.CD_REGISTRO_KEY_UNITA_DOC, ud.AA_KEY_UNITA_DOC, ud.CD_KEY_UNITA_DOC "
+                + "ORDER BY ultima_data_rilevante DESC, ud.CD_REGISTRO_KEY_UNITA_DOC";
 
         Query q = getEntityManager().createNativeQuery(sql);
         q.setParameter(1, idUdDelRichiesta);

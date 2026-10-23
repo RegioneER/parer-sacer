@@ -57,9 +57,8 @@
                 <c:choose>
                     <c:when test="${sessionScope['###_FORM_CONTAINER']['dettaglioGestioneErrore'].status eq 'view'}">
                         <div class="slLabel wlbl">Casistica:</div>
-                        <div class="slText w60 ge-quill-preview">
-                            <c:out value="${sessionScope['###_FORM_CONTAINER']['dettaglioGestioneErrore']['casistica'].value}" escapeXml="false"/>
-                        </div>
+                        <div class="slText w60 ge-quill-preview" data-richtext-preview="casistica"></div>
+                        <textarea class="ge-quill-raw-source" data-richtext-source="casistica" style="display:none" aria-hidden="true"><c:out value="${sessionScope['###_FORM_CONTAINER']['dettaglioGestioneErrore']['casistica'].value}"/></textarea>
                     </c:when>
                     <c:otherwise>
                         <slf:lblField name="<%=AmministrazioneForm.DettaglioGestioneErrore.CASISTICA%>" colSpan= "2"/>
@@ -69,9 +68,8 @@
                 <c:choose>
                     <c:when test="${sessionScope['###_FORM_CONTAINER']['dettaglioGestioneErrore'].status eq 'view'}">
                         <div class="slLabel wlbl">Soluzione suggerita:</div>
-                        <div class="slText w60 ge-quill-preview">
-                            <c:out value="${sessionScope['###_FORM_CONTAINER']['dettaglioGestioneErrore']['soluzione_sugg'].value}" escapeXml="false"/>
-                        </div>
+                        <div class="slText w60 ge-quill-preview" data-richtext-preview="soluzione_sugg"></div>
+                        <textarea class="ge-quill-raw-source" data-richtext-source="soluzione_sugg" style="display:none" aria-hidden="true"><c:out value="${sessionScope['###_FORM_CONTAINER']['dettaglioGestioneErrore']['soluzione_sugg'].value}"/></textarea>
                     </c:when>
                     <c:otherwise>
                         <slf:lblField name="<%=AmministrazioneForm.DettaglioGestioneErrore.SOLUZIONE_SUGG%>" colSpan= "2"/>

@@ -24,7 +24,7 @@
 <html lang="it" xml:lang="it">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-        <title>Recupero Sincrono stato conservazione</title>
+        <title>Monitoraggio dello stato dell'applicazione</title>
         <style>
             h1 {
                 font: 25px verdana,verdana, arial;
@@ -185,29 +185,21 @@
         </style>
     </head>
     <body>
-        <h1>Recupero Sincrono stato conservazione</h1>
-        <h2>Viene chiamata la servlet/ws <b>RecDIPStatoConservazioneSync</b></h2>
-        <form action="RecDIPStatoConservazioneSync" method="post"  enctype="multipart/form-data" >
+        <h1>Recupero dello status dell'applicazione</h1>
+        <h2>Viene chiamata la servlet/ws <b>StatusMonitor</b></h2>
+        <form action='<c:url value="/StatusMonitor" />' method="post"  autocomplete="off">
             <div class="box">
+
                 <label>
-                    <span>VERSIONE</span>
-                    <input type="text" size="10" name="VERSIONE" class="input-text" value="1.2"></input>
+                    <span>username</span>
+                    <input type="text" size="100" name="username" class="input-text" autocomplete="username"></input>
                 </label>
 
                 <label>
-                    <span>LOGINNAME</span>
-                    <input type="text" size="100" name="LOGINNAME" class="input-text"></input>
+                    <span>password</span>
+                    <input type="password" size="100" name="password" id="password" class="input-text" autocomplete="current-password"></input>
                 </label>
 
-                <label>
-                    <span>PASSWORD</span>
-                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text"></input>
-                </label>
-
-                <label>
-                    <span>XMLSIP</span>
-                    <TEXTAREA NAME="XMLSIP" ROWS=30, COLS=100 class="input-text"></TEXTAREA>
-                </label>
                 <input class="green"  type="submit" value="Invio"></input>
             </div>
         </form>

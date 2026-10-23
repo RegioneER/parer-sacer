@@ -24,7 +24,7 @@
 <html lang="it" xml:lang="it">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-        <title>Recupero Sincrono unit� documentaria</title>
+        <title>Versamento Sincrono</title>
         <style>
             h1 {
                 font: 25px verdana,verdana, arial;
@@ -185,28 +185,61 @@
         </style>
     </head>
     <body>
-        <h1>Recupero Sincrono prove di conservazione</h1>
-        <h2>Viene chiamata la servlet/ws <b>RecDIPProveConservSync</b></h2>
-        <form action="RecDIPProveConservSync" method="post"  enctype="multipart/form-data" >
+        <h1>Versamento Test SecureFile</h1>
+        <h2>Viene chiamata la servlet/ws <b>TestPersistSecFileSync</b></h2>
+        <form action='<c:url value="/TestPersistSecFileSync" />' method="post"  enctype="multipart/form-data" >
             <div class="box">
                 <label>
-                    <span>VERSIONE</span>
-                    <input type="text" size="10" name="VERSIONE" class="input-text" value="1.2"></input>
+                    <span>Esegui un rollback</span>
+                    <input type="checkbox" id="DOROLLBACK" class="input-text" checked name="DOROLLBACK"/>
                 </label>
-
                 <label>
-                    <span>LOGINNAME</span>
-                    <input type="text" size="100" name="LOGINNAME" class="input-text"></input>
+                    <span>Tipo di tabella</span>
+                    <SELECT NAME=TIPOTABELLA >
+                        <OPTION>TABELLA_SECUREFILE</OPTION>
+                        <OPTION>TABELLA_BLOB</OPTION>
+                    </SELECT>
                 </label>
-
+				<input class="green"  type="submit" value="Invio"></input>
                 <label>
-                    <span>PASSWORD</span>
-                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text"></input>
+                    <span>ID1</span>
+                    <input type="file" id="ID1"  name="ID1" class="input-text" size="80"></input>
                 </label>
-
                 <label>
-                    <span>XMLSIP</span>
-                    <TEXTAREA NAME="XMLSIP" ROWS=30, COLS=100 class="input-text"></TEXTAREA>
+                    <span>ID2</span>
+                    <input type="file" id="ID2"  name="ID2" class="input-text" size="80"></input>
+                </label>
+                <label>
+                    <span>ID3</span>
+                    <input type="file" id="ID3"  name="ID3" class="input-text" size="80"></input>
+                </label>
+                <label>
+                    <span>ID4</span>
+                    <input type="file" id="ID4"  name="ID4" class="input-text" size="80"></input>
+                </label>
+                <label>
+                    <span>ID5</span>
+                    <input type="file" id="ID5"  name="ID5" class="input-text" size="80"></input>
+                </label>
+                <label>
+                    <span>ID6</span>
+                    <input type="file" id="ID6"  name="ID6" class="input-text" size="80"></input>
+                </label>
+                <label>
+                    <span>ID7</span>
+                    <input type="file" id="ID7"  name="ID7" class="input-text" size="80"></input>
+                </label>
+                <label>
+                    <span>ID8</span>
+                    <input type="file" id="ID8"  name="ID8" class="input-text" size="80"></input>
+                </label>
+                <label>
+                    <span>ID9</span>
+                    <input type="file" id="ID9"  name="ID9" class="input-text" size="80"></input>
+                </label>
+                <label>
+                    <span>ID10</span>
+                    <input type="file" id="ID10"  name="ID10" class="input-text" size="80"></input>
                 </label>
                 <input class="green"  type="submit" value="Invio"></input>
             </div>

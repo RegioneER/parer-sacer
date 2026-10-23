@@ -72,6 +72,7 @@ import it.eng.parer.entity.VrsSessioneVers;
 import it.eng.parer.entity.VrsUrnXmlSessioneVers;
 import it.eng.parer.entity.VrsXmlDatiSessioneVers;
 import it.eng.parer.entity.constraint.AroCompUrnCalc.TiUrn;
+import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
 import it.eng.parer.viewEntity.AroVDtVersMaxByUnitaDoc;
@@ -1801,6 +1802,42 @@ public class ControlliRecupero {
             log.error("Eccezione nella verifica esistenza / aggiornamento URN normalizzato ", e);
         }
         return rispostaControlli;
+    }
+
+    public void verificaUrnUd(long idUnitaDoc) throws ParerInternalError {
+        RispostaControlli rispostaControlli = leggiUnitaDoc(idUnitaDoc);
+        if (!rispostaControlli.isrBoolean()) {
+            throw new ParerInternalError(rispostaControlli.getDsErr());
+        }
+
+        AroUnitaDoc unitaDoc = (AroUnitaDoc) rispostaControlli.getrObject();
+        if (unitaDoc == null || unitaDoc.getDecRegistroUnitaDoc() == null
+                || unitaDoc.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc() == null
+                || unitaDoc.getOrgStrut() == null || unitaDoc.getOrgStrut().getOrgEnte() == null
+                || unitaDoc.getOrgStrut().getOrgEnte().getOrgAmbiente() == null) {
+            throw new ParerInternalError(
+                    "Dati insufficienti per la verifica URN della unità documentaria "
+                            + idUnitaDoc);
+        }
+
+        CSVersatore versatore = new CSVersatore();
+        versatore.setAmbiente(unitaDoc.getOrgStrut().getOrgEnte().getOrgAmbiente()
+                .getNmAmbiente());
+        versatore.setEnte(unitaDoc.getOrgStrut().getOrgEnte().getNmEnte());
+        versatore.setStruttura(unitaDoc.getOrgStrut().getNmStrut());
+
+        CSChiave chiave = new CSChiave();
+        chiave.setTipoRegistro(unitaDoc.getCdRegistroKeyUnitaDoc());
+        chiave.setAnno(unitaDoc.getAaKeyUnitaDoc().longValue());
+        chiave.setNumero(unitaDoc.getCdKeyUnitaDoc());
+
+        String cdKeyNormalized = StringUtils.trimToNull(unitaDoc.getCdKeyUnitaDocNormaliz());
+        RispostaControlli verifica = me.calcCdKeyNormAndUrnPreg(versatore, chiave,
+                unitaDoc.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc().longValue(),
+                idUnitaDoc, cdKeyNormalized);
+        if (!verifica.isrBoolean()) {
+            throw new ParerInternalError(verifica.getDsErr());
+        }
     }
 
     private RispostaControlli getDtMaxVersMaxByUd(long idUnitaDoc) {

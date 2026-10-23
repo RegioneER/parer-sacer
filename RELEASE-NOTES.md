@@ -1,19 +1,12 @@
-## 10.22.0 (14-09-2026)
+## 10.23.0 (23-10-2026)
 
-### Bugfix: 6
-- [#41119](https://parermine.regione.emilia-romagna.it/issues/41119) Correzione errore di recupero del file nell'accedere al Dettaglio UD
-- [#41014](https://parermine.regione.emilia-romagna.it/issues/41014) Correzione errore importazione parametri di configurazione
-- [#37175](https://parermine.regione.emilia-romagna.it/issues/37175) Modifica criterio di raggruppamento standard e fiscale
-- [#34048](https://parermine.regione.emilia-romagna.it/issues/34048) Correzione del messaggio contenuto nella risposta al servizio di recupero AIP da una UD che ne è sprovvista
-- [#33321](https://parermine.regione.emilia-romagna.it/issues/33321) Correzione dell'errore 666 a seguito del recupero di una UD in cui non è presente l'utente versatore
-- [#33320](https://parermine.regione.emilia-romagna.it/issues/33320) Risoluzione "Errore critico sulla funzionalità" in accesso al dettaglio UD
+### Bugfix: 1
+- [#41170](https://parermine.regione.emilia-romagna.it/issues/41170) Mancanza login per accedere ai tool di lab
 
-### Novità: 8
-- [#41013](https://parermine.regione.emilia-romagna.it/issues/41013) Introduzione di un controllo sugli AIP generati
-- [#40959](https://parermine.regione.emilia-romagna.it/issues/40959) Aggiunta gestione (lettura/scrittura) delle nuove chiavi di partizionamento id_strut e/o aa_key_unita_doc
-- [#40904](https://parermine.regione.emilia-romagna.it/issues/40904) Ricerca per dati specifici del componente
-- [#40370](https://parermine.regione.emilia-romagna.it/issues/40370) Eliminazione funzionalità di visualizzazione delle UD annullate
-- [#37232](https://parermine.regione.emilia-romagna.it/issues/37232) Aggiornamento elenco indice AIP a seguito di scarto
-- [#34464](https://parermine.regione.emilia-romagna.it/issues/34464) Migliorie alla gestione di richieste di restituzione con aip in errore
-- [#33324](https://parermine.regione.emilia-romagna.it/issues/33324) Modifica al controllo delle abilitazioni nella funzione di recupero rapporto di versamento
-- [#32536](https://parermine.regione.emilia-romagna.it/issues/32536) Nascondere la visualizzazione della password nelle pagine dei servizi in LAB
+### Novità: 6
+- [#41290](https://parermine.regione.emilia-romagna.it/issues/41290) Gestione file vettoriali (shapefile) con estensione doppia
+- [#41220](https://parermine.regione.emilia-romagna.it/issues/41220) Patch di sicurezza (aggiornamenti Settembre 2026)
+- [#41095](https://parermine.regione.emilia-romagna.it/issues/41095) Rimozione gestione tabella dati specifici originaria
+- [#41027](https://parermine.regione.emilia-romagna.it/issues/41027) Importa parametri: modifica agli elementi caricati nel menù tipi documento 
+- [#41009](https://parermine.regione.emilia-romagna.it/issues/41009) Gestione del calcolo dell'urn nei casi non coperti
+- [#34884](https://parermine.regione.emilia-romagna.it/issues/34884) Aggiungere il filtro Numero contiene alla ricerca sui Collegamenti nella Ricerca avanzata delle UD

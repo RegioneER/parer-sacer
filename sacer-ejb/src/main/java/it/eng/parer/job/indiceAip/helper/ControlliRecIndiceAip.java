@@ -684,8 +684,8 @@ public class ControlliRecIndiceAip {
             }
 
             String queryStr = String.format(
-                    "select uxsd.decXsdDatiSpec.cdVersioneXsd, datd.nmAttribDatiSpec ,avad.dlValore "
-                            + "from AroValoreAttribDatiSpec avad "
+                    "select uxsd.decXsdDatiSpec.cdVersioneXsd, datd.nmAttribDatiSpec ,avad.dlValoreOri "
+                            + "from AroValoreAttribDatiSpecRicDs avad "
                             + "join avad.decAttribDatiSpec datd "
                             + "join avad.aroUsoXsdDatiSpec uxsd "
                             + "join datd.decXsdAttribDatiSpecs dxads " + "where "

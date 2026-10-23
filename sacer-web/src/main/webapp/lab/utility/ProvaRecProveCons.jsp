@@ -24,7 +24,7 @@
 <html lang="it" xml:lang="it">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-        <title>Recupero Sincrono unit� documentaria</title>
+        <title>Recupero Sincrono unit&agrave; documentaria</title>
         <style>
             h1 {
                 font: 25px verdana,verdana, arial;
@@ -185,9 +185,9 @@
         </style>
     </head>
     <body>
-        <h1>Recupero Sincrono unit� documentaria con conversione PDF</h1>
-        <h2>Viene chiamata la servlet/ws <b>RecDIPComponenteTrasformatoSync</b></h2>
-        <form action="RecDIPComponenteTrasformatoSync" method="post"  enctype="multipart/form-data" >
+        <h1>Recupero Sincrono prove di conservazione</h1>
+        <h2>Viene chiamata la servlet/ws <b>RecDIPProveConservSync</b></h2>
+        <form action='<c:url value="/RecDIPProveConservSync" />' method="post"  enctype="multipart/form-data"  autocomplete="off">
             <div class="box">
                 <label>
                     <span>VERSIONE</span>
@@ -196,12 +196,12 @@
 
                 <label>
                     <span>LOGINNAME</span>
-                    <input type="text" size="100" name="LOGINNAME" class="input-text"></input>
+                    <input type="text" size="100" name="LOGINNAME" class="input-text" autocomplete="username"></input>
                 </label>
 
                 <label>
                     <span>PASSWORD</span>
-                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text"></input>
+                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text" autocomplete="current-password"></input>
                 </label>
 
                 <label>

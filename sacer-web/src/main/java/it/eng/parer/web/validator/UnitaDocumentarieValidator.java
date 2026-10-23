@@ -10,7 +10,6 @@
  * have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.web.validator;
 
 import it.eng.parer.web.dto.DefinitoDaBean;
@@ -175,7 +174,6 @@ public class UnitaDocumentarieValidator extends TypeValidator {
             String numeroContiene) {
 
         // --- 1. Validazioni preliminari di mutua esclusività ---
-
         // REGOLA CHIAVE: L'utente non può compilare sia il campo singolo che i campi di range.
         if (anno != null && (annoDa != null || annoA != null)) {
             getMessageBox().addError(
@@ -184,12 +182,15 @@ public class UnitaDocumentarieValidator extends TypeValidator {
         }
 
         int numeroFiltersCount = 0;
-        if (numero != null)
+        if (numero != null) {
             numeroFiltersCount++;
-        if (numeroDa != null || numeroA != null)
+        }
+        if (numeroDa != null || numeroA != null) {
             numeroFiltersCount++;
-        if (numeroContiene != null)
+        }
+        if (numeroContiene != null) {
             numeroFiltersCount++;
+        }
 
         if (numeroFiltersCount > 1) {
             getMessageBox().addError(
@@ -198,7 +199,6 @@ public class UnitaDocumentarieValidator extends TypeValidator {
         }
 
         // --- 2. Analisi del tipo di ricerca inserita dall'utente ---
-
         boolean isRangeSearch = (annoDa != null || annoA != null || numeroDa != null
                 || numeroA != null);
         boolean isSingleSearch = (anno != null || numero != null || numeroContiene != null);
@@ -352,7 +352,7 @@ public class UnitaDocumentarieValidator extends TypeValidator {
 
     public void controllaFiltriCollegamenti(String collegamento, String collegamentoRisolto,
             String descrCollegamento, BigDecimal registro, BigDecimal anno, String numero,
-            String isOggettoCollegamento, String descrCollegamentoOggetto) {
+            String isOggettoCollegamento, String descrCollegamentoOggetto, String numeroContiene) {
 
         // Controllo sul filtro "Collegamento risolto"
         if ((collegamento == null && collegamentoRisolto != null) || (collegamento != null
@@ -390,6 +390,10 @@ public class UnitaDocumentarieValidator extends TypeValidator {
         if ((collegamento == null && numero != null) || collegamento != null
                 && !collegamento.equals("1") && numero != null && !numero.equals("")) {
             getMessageBox().addError("Campo Numero non valorizzabile!</br>");
+        }
+        if (numero != null && numeroContiene != null) {
+            getMessageBox().addError(
+                    "I filtri 'Numero UD' e 'Numero UD Contiene' nei collegamenti sono mutuamente esclusivi.");
         }
     }
 }

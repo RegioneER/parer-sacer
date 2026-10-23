@@ -41,6 +41,7 @@
             $('#Cd_registro_key_unita_doc_link').hide();
             $('#Aa_key_unita_doc_link').hide();
             $('#Cd_key_unita_doc_link').hide();            
+            $('#Cd_key_unita_doc_contiene_link').hide();            
             gestisciRifTemp();
             initChangeEvents();
         });
@@ -53,11 +54,13 @@
                     $('#Cd_registro_key_unita_doc_link').show();
                     $('#Aa_key_unita_doc_link').show();
                     $('#Cd_key_unita_doc_link').show();
+                    $('#Cd_key_unita_doc_contiene_link').show();
                 } else {
                     $('#Ds_link_unita_doc').hide();
                     $('#Cd_registro_key_unita_doc_link').hide();
                     $('#Aa_key_unita_doc_link').hide();
                     $('#Cd_key_unita_doc_link').hide();
+                    $('#Cd_key_unita_doc_contiene_link').hide();
                 }
             });
 
@@ -71,6 +74,7 @@
                 $('#Cd_registro_key_unita_doc_link').show();
                 $('#Aa_key_unita_doc_link').show();
                 $('#Cd_key_unita_doc_link').show();
+                $('#Cd_key_unita_doc_contiene_link').show();
             }
             
 
@@ -222,7 +226,6 @@
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.TI_STATO_UD_ELENCO_VERS%>" colSpan="2"/>
                     <sl:newLine />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.NM_SISTEMA_MIGRAZ%>" colSpan="2"/>
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FLAG_DATI_SPEC_PRESENTI_SM%>" colSpan="1"/>
                     <sl:newLine />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.NM_SUB_STRUT%>" colSpan="2"/>
                 </slf:section>
@@ -250,6 +253,7 @@
                     <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie.AA_KEY_UNITA_DOC_LINK%>"  />
                     <sl:newLine />
                     <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie.CD_KEY_UNITA_DOC_LINK%>"  />
+                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie.CD_KEY_UNITA_DOC_CONTIENE_LINK%>"  />
                     <sl:newLine skipLine="true"/>
                     <slf:lblField colSpan="2" controlWidth="w100" name="<%=UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie.DS_LINK_UNITA_DOC%>" />
                     <slf:lblField colSpan="2" controlWidth="w100" name="<%=UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie.DS_LINK_UNITA_DOC_OGGETTO%>" />

@@ -62,7 +62,7 @@ public class DecAttribDatiSpec implements Serializable {
 
     private String tiAttribDatiSpec;
 
-    private List<AroValoreAttribDatiSpec> aroValoreAttribDatiSpecs = new ArrayList<>();
+    private List<AroValoreAttribDatiSpecRicDs> aroValoreAttribDatiSpecRicDs = new ArrayList<>();
 
     private DecTipoCompDoc decTipoCompDoc;
 
@@ -158,13 +158,13 @@ public class DecAttribDatiSpec implements Serializable {
 
     @OneToMany(mappedBy = "decAttribDatiSpec")
     @XmlTransient
-    public List<AroValoreAttribDatiSpec> getAroValoreAttribDatiSpecs() {
-        return this.aroValoreAttribDatiSpecs;
+    public List<AroValoreAttribDatiSpecRicDs> getAroValoreAttribDatiSpecRicDs() {
+        return this.aroValoreAttribDatiSpecRicDs;
     }
 
-    public void setAroValoreAttribDatiSpecs(
-            List<AroValoreAttribDatiSpec> aroValoreAttribDatiSpecs) {
-        this.aroValoreAttribDatiSpecs = aroValoreAttribDatiSpecs;
+    public void setAroValoreAttribDatiSpecRicDs(
+            List<AroValoreAttribDatiSpecRicDs> aroValoreAttribDatiSpecRicDs) {
+        this.aroValoreAttribDatiSpecRicDs = aroValoreAttribDatiSpecRicDs;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

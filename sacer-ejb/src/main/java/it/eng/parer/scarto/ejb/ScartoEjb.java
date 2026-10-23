@@ -1039,8 +1039,7 @@ public class ScartoEjb {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Long saveRichScartoVers(long idUserIam, String cdRichScartoVers, String dsRichScartoVers,
             String ntRichScartoVers, byte[] fileByteArray, BigDecimal idStrut,
-            String tiRichScartoVers)
-            throws ParerUserError {
+            String tiRichScartoVers) throws ParerUserError {
         logger.info("Eseguo il salvataggio della richiesta di scarto");
         Date now = Calendar.getInstance().getTime();
         Long idRich = null;
@@ -1607,8 +1606,8 @@ public class ScartoEjb {
                     statoRichScartoVers.getIamUser().getIdUserIam(), dtString);
         }
 
-        List<ElvVLisElencoUdScarto> elenchiConUdDaScartare = helper.getElenchiConUdDaScartare(
-                idRichScartoVers);
+        List<ElvVLisElencoUdScarto> elenchiConUdDaScartare = helper
+                .getElenchiConUdDaScartare(idRichScartoVers);
         for (ElvVLisElencoUdScarto elencoItem : elenchiConUdDaScartare) {
             ElvElencoVer elenco = helper.findById(ElvElencoVer.class,
                     elencoItem.getElvVLisElencoUdScartoId().getIdElencoVers().longValue());
@@ -1616,8 +1615,8 @@ public class ScartoEjb {
             String notaScarto = "Nell'elenco sono presenti unità documentarie o documenti aggiunti di cui è stato effettuato lo scarto";
             if (StringUtils.isBlank(notaElenco) || !notaElenco.contains(notaScarto)) {
                 elenco.setNtElencoChiuso(
-                        ((StringUtils.isNotBlank(notaElenco) ? notaElenco + " " : "")
-                                + notaScarto).trim());
+                        ((StringUtils.isNotBlank(notaElenco) ? notaElenco + " " : "") + notaScarto)
+                                .trim());
             }
         }
 

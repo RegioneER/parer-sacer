@@ -25,6 +25,7 @@ import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEj
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
 import it.eng.parer.async.ejb.CalcoloMonitoraggioAsync;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
+import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.jboss.timer.service.JbossTimerEjb;
 import it.eng.parer.job.utils.JobConstants;
@@ -53,6 +54,7 @@ import it.eng.parer.web.util.ActionEnums.SezioneMonitoraggio;
 import it.eng.parer.web.validator.MonitoraggioValidator;
 import it.eng.parer.web.validator.TypeValidator;
 import it.eng.parer.web.validator.UnitaDocumentarieValidator;
+import it.eng.parer.ws.recupero.ejb.ControlliRecupero;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.xml.versReqStato.ChiaveType;
@@ -166,6 +168,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     private SottoStruttureEjb subStrutEjb;
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
     private ConfigurationHelper configurationHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/ControlliRecupero")
+    private ControlliRecupero controlliRecupero;
     @EJB(mappedName = "java:app/Parer-ejb/MonitoraggioSinteticoEjb")
     private MonitoraggioSinteticoEjb monitSintEjb;
 
@@ -7569,6 +7573,17 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
         MonVLisSesRecupRowBean row = (MonVLisSesRecupRowBean) getForm().getMonitSessioniRecupList()
                 .getTable().getCurrentRow();
+
+        try {
+            controlliRecupero.verificaUrnUd(row.getIdUnitaDoc().longValue());
+        } catch (ParerInternalError e) {
+            log.error("Eccezione nella verifica URN del file sessione recupero ", e);
+            getMessageBox().addError(
+                    "Eccezione nella verifica URN del file sessione recupero: "
+                            + e.getDescription());
+            forwardToPublisher(getLastPublisher());
+            return;
+        }
 
         Recupero recupero = new Recupero();
         recupero.setVersione("Web");

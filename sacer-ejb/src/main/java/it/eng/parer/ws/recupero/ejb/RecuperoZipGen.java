@@ -1,3 +1,4 @@
+
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
@@ -1432,10 +1433,39 @@ public class RecuperoZipGen {
             if (invokeUnsignedDocService) {
                 // MEV#39147 - Modifica delle modalità di calcolo dell'estensione nel recupero di
                 // file sbustati
-                archiveEntryFinalName = archiveEntryFinalName
-                        + FilenameUtils.EXTENSION_SEPARATOR_STR
-                        + tmpCmp.getNomeFormatoComponenteSbustato();
+                // MEV#41290 - Gestione file vettoriali (shapefile) con estensione doppia
+                int indiceUltimoPunto = archiveEntryFinalName.lastIndexOf('.');
+                if (indiceUltimoPunto != -1) {
+                    String estensioneOriginale = archiveEntryFinalName
+                            .substring(indiceUltimoPunto + 1);
+                    // se le estensioni finali sono uguali non appiccica niente...
+                    if (estensioneOriginale
+                            .equalsIgnoreCase(tmpCmp.getNomeFormatoComponenteSbustato())) {
+                        // Lascia l'estensione originale!
+                    } else {
+                        // altrimenti verifica che l'estensione calcolata non sia in mezzo ad altre
+                        // (es.: pippo.pdf.p7m.PDF lo deve far diventare pippo.pdf.p7m.pdf)
+                        int indiciPrimaPosizioneEstensione = archiveEntryFinalName.indexOf(
+                                "." + tmpCmp.getNomeFormatoComponenteSbustato().toLowerCase());
+                        // Se l'estensione calcolata (in minuscolo) è presente nel mezzo del file
+                        // (es.:pippo.pdf.p7m)
+                        // allora aggiunge l'estensione calcolata in minuscolo altrimenti non
+                        // aggiunge nulla.
+                        if (indiciPrimaPosizioneEstensione == indiceUltimoPunto) {
+                            // non fa nulla
+                        } else {
+                            archiveEntryFinalName = archiveEntryFinalName
+                                    + FilenameUtils.EXTENSION_SEPARATOR_STR
+                                    + tmpCmp.getNomeFormatoComponenteSbustato().toLowerCase();
+                        }
+                    }
+                } else {
+                    archiveEntryFinalName = archiveEntryFinalName
+                            + FilenameUtils.EXTENSION_SEPARATOR_STR
+                            + tmpCmp.getNomeFormatoComponenteSbustato();
+                }
             }
+
             // create zip entry
             addZipEntry(zipOutputStream, archiveEntryFinalName, entryGiaInserite,
                     entryName.checkEntry);

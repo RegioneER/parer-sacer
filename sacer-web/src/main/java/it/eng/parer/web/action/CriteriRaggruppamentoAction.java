@@ -1067,8 +1067,8 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
             }
             BigDecimal idCriterioRaggr = getForm().getCriterioRaggrList().getTable().getCurrentRow()
                     .getBigDecimal("id_criterio_raggr");
-            DecCriterioRaggrRowBean criterioAttuale = crHelper.getDecCriterioRaggrById(
-                    idCriterioRaggr);
+            DecCriterioRaggrRowBean criterioAttuale = crHelper
+                    .getDecCriterioRaggrById(idCriterioRaggr);
             standardOld = criterioAttuale.getFlCriterioRaggrStandard();
             fiscaleOld = criterioAttuale.getFlCriterioRaggrFisc();
         }
@@ -1188,8 +1188,8 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
                 String criterioStandardNow = isCriterioRaggrStandard(filtri, dateCreazioneValidate)
                         ? "1"
                         : "0";
-                if (status == CRITERIO_EDIT && "1".equals(standardOld)
-                        && "1".equals(fiscaleOld) && "0".equals(criterioStandardNow)) {
+                if (status == CRITERIO_EDIT && "1".equals(standardOld) && "1".equals(fiscaleOld)
+                        && "0".equals(criterioStandardNow)) {
                     getMessageBox().addError(
                             "Impossibile eseguire il salvataggio: un criterio fiscale con flag standard attivo non puo' perdere il flag standard");
                     forwardToPublisher(Application.Publisher.CRITERIO_RAGGR_DETAIL);
@@ -1237,8 +1237,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
     public void eseguiPrimoStepSalvataggioCriterioRaggruppamento(
             CriteriRaggruppamentoForm.CreaCriterioRaggr filtri, Date[] dateCreazioneValidate,
             String nome, Timestamp dataDa, Timestamp dataA, int status, String standardOld,
-            String fiscaleOld)
-            throws EMFError {
+            String fiscaleOld) throws EMFError {
         // Controllo se il criterio è STANDARD
         String criterioStandardNow = isCriterioRaggrStandard(filtri, dateCreazioneValidate) ? "1"
                 : "0";
@@ -1693,8 +1692,8 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
                             "Impossibile eseguire il salvataggio: un criterio fiscale con flag standard attivo non puo' perdere il flag standard");
                 } else {
                     eseguiSalvataggioCriterioRaggruppamento((CreaCriterioRaggr) sa[0],
-                            (Date[]) sa[1], (String) sa[2], (Timestamp) sa[3],
-                            (Timestamp) sa[4], ((BigDecimal) sa[5]).intValue(), (String) sa[7]);
+                            (Date[]) sa[1], (String) sa[2], (Timestamp) sa[3], (Timestamp) sa[4],
+                            ((BigDecimal) sa[5]).intValue(), (String) sa[7]);
                 }
             }
         }

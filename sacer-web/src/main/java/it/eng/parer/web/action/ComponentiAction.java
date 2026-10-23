@@ -41,6 +41,7 @@ import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEj
 import it.eng.parer.amministrazioneStrutture.gestioneTipoRappresentazione.ejb.TipoRappresentazioneEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.ejb.TipoStrutturaDocEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
+import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.firma.xml.VFTipoControlloType;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.ComponentiAbstractAction;
@@ -84,6 +85,7 @@ import it.eng.parer.ws.dto.IRispostaWS.SeverityEnum;
 import it.eng.parer.ws.recupero.dto.ParametriRecupero;
 import it.eng.parer.ws.recupero.dto.RecuperoExt;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
+import it.eng.parer.ws.recupero.ejb.ControlliRecupero;
 import it.eng.parer.ws.recuperoDip.ejb.RecuperoDip;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.versamento.dto.ComponenteVers;
@@ -125,6 +127,8 @@ public class ComponentiAction extends ComponentiAbstractAction {
     private SottoStruttureEjb subStrutEjb;
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
     private ConfigurationHelper configurationHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/ControlliRecupero")
+    private ControlliRecupero controlliRecupero;
 
     private BigDecimal getIdStrut() {
         return getUser().getIdOrganizzazioneFoglia();
@@ -949,6 +953,15 @@ public class ComponentiAction extends ComponentiAbstractAction {
     private void scaricaComp(CostantiDB.TipiEntitaRecupero tipoEntitaRecupero) throws EMFError {
         BigDecimal idUnitaDoc = getForm().getComponentiDetail().getId_unita_doc().parse();
         BigDecimal idComp = (BigDecimal) getSession().getAttribute("idComp");
+        try {
+            controlliRecupero.verificaUrnUd(idUnitaDoc.longValue());
+        } catch (ParerInternalError e) {
+            log.error("Eccezione nella verifica URN del componente ", e);
+            getMessageBox().addError(
+                    "Eccezione nella verifica URN del componente: " + e.getDescription());
+            forwardToPublisher(getLastPublisher());
+            return;
+        }
         String tipoSaveFile = udHelper
                 .getTipoSaveFile(getForm().getComponentiDetail().getId_tipo_unita_doc().parse());
         CostantiDB.TipoSalvataggioFile tipoSalvataggioFile = CostantiDB.TipoSalvataggioFile

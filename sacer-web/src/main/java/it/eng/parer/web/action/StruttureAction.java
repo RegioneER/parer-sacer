@@ -5980,8 +5980,9 @@ public class StruttureAction extends StruttureAbstractAction {
                 .setDecodeMap(getTipiUdDaXmlDecodeMap(uuid));
         getForm().getImportaParametri().getNm_tipo_unita_doc().clear();
         // Setto i valori di tipologie unità documentarie ricavati dall'xml
-        getForm().getImportaParametri().getNm_tipo_doc()
-                .setDecodeMap(getTipiDocDaXmlDecodeMap(uuid));
+        // getForm().getImportaParametri().getNm_tipo_doc()
+        // .setDecodeMap(getTipiDocDaXmlDecodeMap(uuid));
+        getForm().getImportaParametri().getNm_tipo_doc().setDecodeMap(new DecodeMap());
         getForm().getImportaParametri().getNm_tipo_doc().clear();
         // Setto i valori di tipi fascicolo ricavati dall'xml
         getForm().getImportaParametri().getNm_tipo_fascicolo()
@@ -6099,6 +6100,13 @@ public class StruttureAction extends StruttureAbstractAction {
             getForm().getImportaParametri().getNm_tipo_strut_unita_doc()
                     .setDecodeMap(new DecodeMap());
         }
+        getForm().getImportaParametri().getNm_tipo_doc()
+                .setDecodeMap(getTipiDocDaXmlDecodeMap(uuid, nmTipoUnitaDocList));
+        return getForm().getImportaParametri().asJSON();
+    }
+
+    @Override
+    public JSONObject triggerImportaParametriNm_tipo_strut_unita_docOnTrigger() throws EMFError {
         return getForm().getImportaParametri().asJSON();
     }
 
@@ -6114,6 +6122,14 @@ public class StruttureAction extends StruttureAbstractAction {
     private DecodeMap getTipiDocDaXmlDecodeMap(UUID uuid) {
         DecodeMap mappaTipiDoc = new DecodeMap();
         DecTipoDocTableBean decTipoDocTableBean = struttureEjb.getTipiDocDaXmlImportato(uuid);
+        mappaTipiDoc.populatedMap(decTipoDocTableBean, "nm_tipo_doc", "nm_tipo_doc");
+        return mappaTipiDoc;
+    }
+
+    private DecodeMap getTipiDocDaXmlDecodeMap(UUID uuid, List<String> nmTipoUnitaDocList) {
+        DecodeMap mappaTipiDoc = new DecodeMap();
+        DecTipoDocTableBean decTipoDocTableBean = struttureEjb.getTipiDocDaXmlImportato(uuid,
+                nmTipoUnitaDocList);
         mappaTipiDoc.populatedMap(decTipoDocTableBean, "nm_tipo_doc", "nm_tipo_doc");
         return mappaTipiDoc;
     }

@@ -140,7 +140,8 @@ public class AnnulVersAction extends AnnulVersAbstractAction {
                             .getId_rich_annul_vers().setValue(idRichAnnulVers.toPlainString());
 
                     redirectToAction(Application.Actions.UNITA_DOCUMENTARIE,
-                            "?operation=unitaDocumentarieRicercaAvanzata", unitaDocumentarieForm);
+                            "?operation=unitaDocumentarieRicercaAvanzataNuova",
+                            unitaDocumentarieForm);
                 } else if (tiRichAnnulVers.equals("FASCICOLI")) {
                     // Inizializzo la form per andare alla ricerca fascicoli inserendo i valori
                     // trovati

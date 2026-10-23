@@ -2574,6 +2574,48 @@ public class StruttureEjb {
     }
 
     /**
+     * Data una struttura importata da XML, restituisce tutti i Tipi Documento associati ad essa
+     * nell'XML stesso
+     *
+     * @param uuid               l'oggetto contenente la struttura importata da XML
+     * @param nmTipoUnitaDocList Lista dei tipi ud della struttura importata da XML
+     *
+     * @return il table bean rappresentante i Tipi Documento trovati
+     */
+    public DecTipoDocTableBean getTipiDocDaXmlImportato(UUID uuid,
+            List<String> nmTipoUnitaDocList) {
+        OrgStrut strut = strutCache.getOrgStrut(uuid);
+        ArrayList<DecTipoDoc> decTipoDocList = new ArrayList<>();
+        DecTipoDocTableBean decTipoDocTableBean = new DecTipoDocTableBean();
+        List<DecTipoUnitaDoc> ud = strut.getDecTipoUnitaDocs();
+        for (String nomeUd : nmTipoUnitaDocList) {
+            for (DecTipoUnitaDoc decTipoUnitaDoc : ud) {
+                if (decTipoUnitaDoc.getNmTipoUnitaDoc().equals(nomeUd)) {
+                    List<DecTipoStrutUnitaDoc> stru = decTipoUnitaDoc.getDecTipoStrutUnitaDocs();
+                    for (DecTipoStrutUnitaDoc decTipoStrutUnitaDoc : stru) {
+                        List<DecTipoDocAmmesso> amme = decTipoStrutUnitaDoc.getDecTipoDocAmmessos();
+                        for (DecTipoDocAmmesso decTipoDocAmmesso : amme) {
+                            DecTipoDoc d = decTipoDocAmmesso.getDecTipoDoc();
+                            decTipoDocList.add(d);
+                        }
+                    }
+                }
+            }
+        }
+
+        try {
+            if (!decTipoDocList.isEmpty()) {
+                decTipoDocTableBean = (DecTipoDocTableBean) Transform
+                        .entities2TableBean(decTipoDocList);
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return decTipoDocTableBean;
+    }
+
+    /**
      * Data una struttura importata da XML e uno dei suoi Tipi Unit\u00E0 Documentaria selezionato
      * tra quelli presenti, restituisce tutti i Tipi Struttura Unit\u00E0 Documentaria associati al
      * tipo ud dell'XML stesso
@@ -3566,10 +3608,8 @@ public class StruttureEjb {
 
                     // Controlla se esiste già un registro per la struttura in questione
                     DecRegistroUnitaDoc registroUnitaDoc = registroHelper
-                            .getDecRegistroUnitaDocByName(
-                                    tipoStrutUdRegExp.getDecRegistroUnitaDoc()
-                                            .getCdRegistroUnitaDoc(),
-                                    idStrutCorrente);
+                            .getDecRegistroUnitaDocByName(tipoStrutUdRegExp.getDecRegistroUnitaDoc()
+                                    .getCdRegistroUnitaDoc(), idStrutCorrente);
 
                     // Se il sistema versante NON è presente nella struttura: il record è importato.
                     if (registroUnitaDoc == null) {

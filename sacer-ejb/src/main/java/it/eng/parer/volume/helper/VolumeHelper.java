@@ -1306,12 +1306,11 @@ public class VolumeHelper {
                                 .append(indiceidattribds)
                                 .append(" AND ric.nm_sistema_migraz = :nmsistemamigrazin")
                                 .append(indiceidattribds)
-                                .append(" AND ud_mig.aa_key_unita_doc BETWEEN ")
-                                .append(annoRangeDa).append(" AND ").append(annoRangeA)
+                                .append(" AND ud_mig.aa_key_unita_doc BETWEEN ").append(annoRangeDa)
+                                .append(" AND ").append(annoRangeA)
                                 .append(" AND ud_mig.id_strut_unita_doc = ").append(idStrut)
                                 .append(" AND ric.ti_entita_sacer = 'UNI_DOC'")
-                                .append(" AND ric.dl_valore ").append(operatore)
-                                .append(filtro);
+                                .append(" AND ric.dl_valore ").append(operatore).append(filtro);
                         mappone.add(datiSpecQueryParams);
                         indiceidattribds++;
                     }
@@ -1369,12 +1368,11 @@ public class VolumeHelper {
                                 .append(indiceidattribds)
                                 .append(" AND ric.nm_sistema_migraz = :nmsistemamigrazin")
                                 .append(indiceidattribds)
-                                .append(" AND ud_mig.aa_key_unita_doc BETWEEN ")
-                                .append(annoRangeDa).append(" AND ").append(annoRangeA)
+                                .append(" AND ud_mig.aa_key_unita_doc BETWEEN ").append(annoRangeDa)
+                                .append(" AND ").append(annoRangeA)
                                 .append(" AND ud_mig.id_strut_unita_doc = ").append(idStrut)
                                 .append(" AND ric.ti_entita_sacer = 'DOC'")
-                                .append(" AND ric.dl_valore ").append(operatore)
-                                .append(filtro);
+                                .append(" AND ric.dl_valore ").append(operatore).append(filtro);
                         mappone.add(datiSpecQueryParams);
                         indiceidattribds++;
                     }

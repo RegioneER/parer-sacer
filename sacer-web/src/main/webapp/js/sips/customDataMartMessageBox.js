@@ -4,6 +4,26 @@
  */
 var activePollingIntervalId = null; 
 
+/**
+ * Effettua l'HTML-encoding di un valore prima di interpolarlo in un template HTML costruito come
+ * stringa (sia in contesto testo che in contesto attributo, es. value="...", title="..."). I dati
+ * qui gestiti (nomi Ente/Struttura, stati, conteggi) provengono da una risposta JSON di polling e,
+ * pur non essendo un input utente diretto su questa pagina, possono contenere caratteri speciali
+ * (es. nomi Ente/Struttura configurati altrove) che andrebbero altrimenti interpretati come markup
+ * quando la riga HTML viene assegnata a .html().
+ */
+function escapeHtml(value) {
+    if (value === undefined || value === null) {
+        return '';
+    }
+    return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+}
+
 $(document).ready(function () {
     CMessagesAlertBox();
     applicaEvidenziazioneAlCaricamento();
@@ -217,23 +237,28 @@ $(document).ready(function () {
         // Itera sulla LISTA
         for (const rigaDati of conteggi) {
             // Accedi ai campi per nome
-            const nmEnteStrut = rigaDati.nmEnte + " - " + rigaDati.nmStrut;
-            const statoUD = rigaDati.tiStatoUdCancellate;
-            const conteggio = rigaDati.conteggio;
-            const conteggioAnnullate = (rigaDati.niUdStatoAnnullate !== undefined) ? rigaDati.niUdStatoAnnullate : 0;
+            const nmEnteStrut = escapeHtml(rigaDati.nmEnte + " - " + rigaDati.nmStrut);
+            const statoUD = escapeHtml(rigaDati.tiStatoUdCancellate);
+            const conteggio = escapeHtml(rigaDati.conteggio);
+            const conteggioAnnullate = escapeHtml(
+                    (rigaDati.niUdStatoAnnullate !== undefined) ? rigaDati.niUdStatoAnnullate : 0);
+            const idUdDelRichiesta = escapeHtml(rigaDati.idUdDelRichiesta);
+            const idRichiesta = escapeHtml(rigaDati.idRichiesta);
+            const idStrut = escapeHtml(rigaDati.idStrut);
+            const tiMotCancellazione = escapeHtml(rigaDati.tiMotCancellazione);
 
             const classeCss = isPari ? "rigaPari rigaCorrente" : "rigaDispari rigaCorrente";
 
             // Costruisci la riga HTML con le 3 colonne visibili corrette
             righeHtml += `<tr>
-                            <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.idUdDelRichiesta}" name="Id_ud_del_richiesta"></td>
-                            <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.idRichiesta}" name="Id_richiesta"></td>
+                            <td class="${classeCss} displayNone"><input type="hidden" value="${idUdDelRichiesta}" name="Id_ud_del_richiesta"></td>
+                            <td class="${classeCss} displayNone"><input type="hidden" value="${idRichiesta}" name="Id_richiesta"></td>
                             <td title="${nmEnteStrut}" class="${classeCss}">${nmEnteStrut}</td>
                             <td title="${statoUD}" class="${classeCss}">${statoUD}</td>
                             <td title="${conteggio}" class="${classeCss}">${conteggio}</td>
                             <td title="${conteggioAnnullate}" class="${classeCss}">${conteggioAnnullate}</td>
-                            <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.idStrut}" name="Id_strut"></td>
-                            <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.tiMotCancellazione}" name="Ti_mot_cancellazione"></td>
+                            <td class="${classeCss} displayNone"><input type="hidden" value="${idStrut}" name="Id_strut"></td>
+                            <td class="${classeCss} displayNone"><input type="hidden" value="${tiMotCancellazione}" name="Ti_mot_cancellazione"></td>
                           </tr>`;
             isPari = !isPari;
         }
@@ -302,23 +327,28 @@ $(document).ready(function () {
     // Itera sulla LISTA
     for (const rigaDati of conteggi) {
         // Accedi ai campi per nome
-        const nmEnteStrut = rigaDati.nmEnte + " - " + rigaDati.nmStrut;
-        const statoUD = rigaDati.tiStatoUdCancellate;
-        const conteggio = rigaDati.conteggio;
-        const conteggioAnnullate = (rigaDati.niUdStatoAnnullate !== undefined) ? rigaDati.niUdStatoAnnullate : 0;
+        const nmEnteStrut = escapeHtml(rigaDati.nmEnte + " - " + rigaDati.nmStrut);
+        const statoUD = escapeHtml(rigaDati.tiStatoUdCancellate);
+        const conteggio = escapeHtml(rigaDati.conteggio);
+        const conteggioAnnullate = escapeHtml(
+                (rigaDati.niUdStatoAnnullate !== undefined) ? rigaDati.niUdStatoAnnullate : 0);
+        const idUdDelRichiesta = escapeHtml(rigaDati.idUdDelRichiesta);
+        const idRichiesta = escapeHtml(rigaDati.idRichiesta);
+        const idStrut = escapeHtml(rigaDati.idStrut);
+        const tiMotCancellazione = escapeHtml(rigaDati.tiMotCancellazione);
 
         const classeCss = isPari ? "rigaPari rigaCorrente" : "rigaDispari rigaCorrente";
 
         // Costruisci la riga HTML con le 3 colonne visibili corrette
         righeHtml += `<tr>
-                        <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.idUdDelRichiesta}" name="Id_ud_del_richiesta"></td>
-                        <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.idRichiesta}" name="Id_richiesta"></td>
+                        <td class="${classeCss} displayNone"><input type="hidden" value="${idUdDelRichiesta}" name="Id_ud_del_richiesta"></td>
+                        <td class="${classeCss} displayNone"><input type="hidden" value="${idRichiesta}" name="Id_richiesta"></td>
                         <td title="${nmEnteStrut}" class="${classeCss}">${nmEnteStrut}</td>
                         <td title="${statoUD}" class="${classeCss}">${statoUD}</td>
                         <td title="${conteggio}" class="${classeCss}">${conteggio}</td>
                         <td title="${conteggioAnnullate}" class="${classeCss}">${conteggioAnnullate}</td>
-                        <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.idStrut}" name="Id_strut"></td>
-                        <td class="${classeCss} displayNone"><input type="hidden" value="${rigaDati.tiMotCancellazione}" name="Ti_mot_cancellazione"></td>
+                        <td class="${classeCss} displayNone"><input type="hidden" value="${idStrut}" name="Id_strut"></td>
+                        <td class="${classeCss} displayNone"><input type="hidden" value="${tiMotCancellazione}" name="Ti_mot_cancellazione"></td>
                       </tr>`;
         isPari = !isPari;
     }

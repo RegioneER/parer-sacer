@@ -1200,29 +1200,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return udTableBean;
     }
 
-    public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicAvanzataViewBeanNoLimit(
-            FiltriUnitaDocumentarieAvanzata filtri, List<BigDecimal> idTipoUnitaDocList,
-            Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList,
-            List<DecCriterioDatiSpecBean> listaDatiSpecOnLine,
-            UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie filtriCollegamenti,
-            UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie filtriFirmatari,
-            UnitaDocumentarieForm.FiltriComponentiUnitaDocumentarie filtriComponenti,
-            UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie filtriFascicoli,
-            Date[] dateAcquisizioneValidate, Date[] dateUnitaDocValidate,
-            Date[] dateCreazioneCompValidate, Long idUserIam, BigDecimal idStruttura,
-            boolean addButton) throws EMFError {
-        final Date dateMetaDa = getDateOrNull(dateUnitaDocValidate, 0);
-        final Date dateMetaA = getDateOrNull(dateUnitaDocValidate, 1);
-        return getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter(idTipoUnitaDocList,
-                cdRegistroUnitaDocSet, idTipoDocList, listaDatiSpecOnLine, dateAcquisizioneValidate,
-                dateCreazioneCompValidate, idUserIam, idStruttura, addButton,
-                new FiltriUnitaDocumentarieAvanzataPlain(filtri, dateMetaDa, dateMetaA),
-                new FiltriCollegamentiUnitaDocumentariePlain(filtriCollegamenti),
-                new FiltriFirmatariUnitaDocumentariePlain(filtriFirmatari),
-                new FiltriComponentiUnitaDocumentariePlain(filtriComponenti),
-                new FiltriFascicoliUnitaDocumentariePlain(filtriFascicoli), false);
-    }
-
     public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicDatiSpecViewBeanNoLimit(
             FiltriUnitaDocumentarieDatiSpec filtri, List<BigDecimal> idTipoUnitaDocList,
             Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList,
@@ -1237,1131 +1214,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
     private Date getDateOrNull(Date[] dateUnitaDocValidate, int i) {
         return dateUnitaDocValidate != null ? dateUnitaDocValidate[i] : null;
-    }
-
-    /**
-     * @param filtri                    filtri di ricerca
-     * @param idTipoUnitaDocList        tipi di unita documentarie
-     * @param cdRegistroUnitaDocSet     codici registro
-     * @param idTipoDocList             tipi di documenti
-     * @param listaDatiSpecOnLine       dati spec online
-     * @param filtriCollegamenti        filtri di ricerca collegamenti
-     * @param filtriFirmatari           filtri di ricerca firmatatio
-     * @param filtriComponenti          filtri di ricerca componenti
-     * @param filtriFascicoli           filtri di ricerca fascicoli
-     * @param dateAcquisizioneValidate  date di acquisizione
-     * @param dateUnitaDocValidate      date delle unità documentarie
-     * @param dateCreazioneCompValidate date di creazione
-     * @param idUserIam                 id utente che effettua la ricerca
-     * @param idStruttura               id della struttura
-     * @param addButton                 true, aggiunge il bottone per la UI
-     *
-     * @return AroVRicUnitaDocTableBean table bean per la UI
-     *
-     * @throws EMFError errore generico
-     */
-    // Metodo che restituisce un viewbean con i record trovati in base
-    // ai filtri di ricerca passati in ingresso
-    public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicAvanzataViewBean(
-            FiltriUnitaDocumentarieAvanzata filtri, List<BigDecimal> idTipoUnitaDocList,
-            Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList,
-            List<DecCriterioDatiSpecBean> listaDatiSpecOnLine,
-            UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie filtriCollegamenti,
-            UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie filtriFirmatari,
-            UnitaDocumentarieForm.FiltriComponentiUnitaDocumentarie filtriComponenti,
-            UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie filtriFascicoli,
-            Date[] dateAcquisizioneValidate, Date[] dateUnitaDocValidate,
-            Date[] dateCreazioneCompValidate, Long idUserIam, BigDecimal idStruttura,
-            boolean addButton) throws EMFError {
-        final Date dateMetaDa = getDateOrNull(dateUnitaDocValidate, 0);
-        final Date dateMetaA = getDateOrNull(dateUnitaDocValidate, 1);
-        return getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter(idTipoUnitaDocList,
-                cdRegistroUnitaDocSet, idTipoDocList, listaDatiSpecOnLine, dateAcquisizioneValidate,
-                dateCreazioneCompValidate, idUserIam, idStruttura, addButton,
-                new FiltriUnitaDocumentarieAvanzataPlain(filtri, dateMetaDa, dateMetaA),
-                new FiltriCollegamentiUnitaDocumentariePlain(filtriCollegamenti),
-                new FiltriFirmatariUnitaDocumentariePlain(filtriFirmatari),
-                new FiltriComponentiUnitaDocumentariePlain(filtriComponenti),
-                new FiltriFascicoliUnitaDocumentariePlain(filtriFascicoli), true);
-    }
-
-    // Metodo che restituisce un viewbean con i record trovati in base
-    // ai filtri di ricerca passati in ingresso
-    public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter(
-            List<BigDecimal> idTipoUnitaDocList, Set<String> cdRegistroUnitaDocSet,
-            List<BigDecimal> idTipoDocList, List<DecCriterioDatiSpecBean> listaDatiSpecOnLine,
-            Date[] dateAcquisizioneValidate, Date[] dateCreazioneCompValidate, Long idUserIam,
-            BigDecimal idStruttura, boolean addButton, FiltriUnitaDocumentarieAvanzataPlain filtri,
-            FiltriCollegamentiUnitaDocumentariePlain filtriCollegamenti,
-            FiltriFirmatariUnitaDocumentariePlain filtriFirmatari,
-            FiltriComponentiUnitaDocumentariePlain filtriComponenti,
-            FiltriFascicoliUnitaDocumentariePlain filtriFascicoli, boolean lazy) {
-        String whereWord = "WHERE ";
-        StringBuilder queryStr = new StringBuilder(
-                "SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicUnitaDoc "
-                        + "(u.id.idUnitaDoc, u.aaKeyUnitaDoc, u.cdKeyUnitaDoc, u.cdRegistroKeyUnitaDoc,"
-                        + " u.dtCreazione, u.dtRegUnitaDoc, u.flUnitaDocFirmato, u.tiEsitoVerifFirme,"
-                        + " u.dsMsgEsitoVerifFirme, u.nmTipoUnitaDoc, u.flForzaAccettazione,"
-                        + " u.flForzaConservazione, u.dsKeyOrd,"
-                        + " u.niAlleg, u.niAnnessi, u.niAnnot, u.nmTipoDocPrinc, u.dsListaStatiElencoVers, u.tiStatoConservazione)"
-                        + " FROM AroVRicUnitaDoc u ");
-
-        // GESTIONE FILTRI COMPONENTI
-        // Da eseguire prima di tutto per la costruzione dei join
-        boolean joinFormato = false;
-        boolean joinAppart = false;
-        boolean joinFirma = false;
-        boolean joinCertif = false;
-        StringBuilder whereCompClause = new StringBuilder();
-        if (filtriComponenti.getNmTipoStrutDoc() != null) {
-            whereCompClause
-                    .append(" AND strutDoc.decTipoStrutDoc.idTipoStrutDoc = :tipoStrutDocIn ");
-        }
-        if (filtriComponenti.getNmTipoCompDoc() != null) {
-            whereCompClause.append(" AND comp.decTipoCompDoc.idTipoCompDoc = :tipoCompDocIn ");
-        }
-        if (filtriComponenti.getDsNomeCompVers() != null) {
-            whereCompClause.append(" AND UPPER(comp.dsNomeCompVers) LIKE :nomeCompVersIn ");
-        }
-        if (filtriComponenti.getDlUrnCompVers() != null) {
-            whereCompClause.append(" AND UPPER(comp.dlUrnCompVers) LIKE :urnCompVersIn ");
-        }
-        if (filtriComponenti.getDsHashFileVers() != null) {
-            whereCompClause.append(" AND comp.dsHashFileVers = :hashFileVersIn ");
-        }
-        if (filtriComponenti.getNmMimetypeFile() != null) {
-            joinFormato = true;
-            whereCompClause.append(" AND UPPER(fileStandard.nmMimetypeFile) LIKE :mimeTypeIn ");
-        }
-        if (filtriComponenti.getNmFormatoFileVers() != null) {
-            whereCompClause
-                    .append(" AND comp.decFormatoFileDoc.idFormatoFileDoc = :formatoFileDocIn ");
-        }
-
-        // Inserimento nella query del filtro file size
-        BigDecimal fileSizeDa = filtriComponenti.getNiSizeFileDa();
-        BigDecimal fileSizeA = filtriComponenti.getNiSizeFileA();
-        if (fileSizeDa == null && fileSizeA != null) {
-            fileSizeDa = BigDecimal.ZERO;
-        }
-        if (fileSizeDa != null && fileSizeA != null) {
-            whereCompClause
-                    .append(" AND comp.niSizeFileCalc between :filesizedain AND :filesizeain ");
-        }
-        if (filtriComponenti.getDsFormatoRapprCalc() != null) {
-            whereCompClause.append(" AND comp.dsFormatoRapprCalc = :formatoRapprCalcIn ");
-        }
-        if (filtriComponenti.getDsFormatoRapprEstesoCalc() != null) {
-            whereCompClause
-                    .append(" AND comp.dsFormatoRapprEstesoCalc = :formatoRapprCalcEstesoIn ");
-        }
-
-        if (filtriComponenti.getFlCompFirmato() != null) {
-            if (filtriComponenti.getFlCompFirmato().equals("1")) {
-                whereCompClause.append(" AND comp.flCompFirmato = :compFirmatoIn ");
-            } else {
-                whereCompClause.append(
-                        " AND NOT EXISTS (SELECT comp2 FROM AroCompDoc comp2 JOIN comp2.aroStrutDoc strutDoc2 WHERE strutDoc2.aroDoc.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc AND comp2.flCompFirmato = :compFirmatoIn ) ");
-            }
-        }
-
-        if (filtriComponenti.getFlRifTempVers() != null) {
-            if (filtriComponenti.getFlRifTempVers().equals("1")) {
-                whereCompClause.append(" AND comp.tmRifTempVers IS NOT NULL ");
-            } else {
-                whereCompClause.append(
-                        " AND NOT EXISTS (SELECT comp3 FROM AroCompDoc comp3 JOIN comp3.aroStrutDoc strutDoc3 WHERE strutDoc3.aroDoc.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc AND comp3.tmRifTempVers IS NOT NULL ) ");
-            }
-        }
-        if (filtriComponenti.getDsRifTempVers() != null) {
-            whereCompClause.append(" AND UPPER(comp.dsRifTempVers) LIKE :dsRifTempVers ");
-        }
-
-        if (filtriComponenti.getTiEsitoContrConforme() != null) {
-            joinFirma = true;
-            whereCompClause.append(" AND firma.tiEsitoContrConforme = :esitoContrConformeIn ");
-        }
-
-        Date dataValDa = null;
-        Date dataValA = null;
-        // Inserimento nella query del filtro DATA SCADENZA DA - A
-        if (filtriComponenti.getDtScadFirmaCompDa() != null) {
-            dataValDa = new Date(filtriComponenti.getDtScadFirmaCompDa().getTime());
-            if (filtriComponenti.getDtScadFirmaCompA() != null) {
-                dataValA = new Date(filtriComponenti.getDtScadFirmaCompA().getTime());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(dataValA);
-                calendar.add(Calendar.DATE, 1);
-                dataValA = calendar.getTime();
-            } else {
-                dataValA = new Date();
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(dataValA);
-                calendar.add(Calendar.DATE, 1);
-                dataValA = calendar.getTime();
-            }
-        }
-
-        if ((dataValDa != null) && (dataValA != null)) {
-            joinFirma = true;
-            joinCertif = true;
-            whereCompClause.append(
-                    " AND certif.dtFinValCertifFirmatario between :datavalda AND :datavala ");
-        }
-
-        if (filtriComponenti.getTiEsitoContrFormatoFile() != null) {
-            whereCompClause.append(" AND comp.tiEsitoContrFormatoFile = :esitoContrFormatoFileIn ");
-        }
-        if (filtriComponenti.getTiEsitoVerifFirma() != null) {
-            whereCompClause.append(" AND firma.tiEsitoVerifFirma = :esitoVerifFirmeIn ");
-            joinFirma = true;
-        }
-        if (filtriComponenti.getTiEsitoVerifFirmeChiuse() != null) {
-            whereCompClause
-                    .append(" AND appartComp.tiEsitoVerifFirmeChius = :esitoVerifFirmeChiusIn ");
-            joinAppart = true;
-        }
-        if (filtriComponenti.getDsHashFileCalc() != null) {
-            whereCompClause.append(" AND comp.dsHashFileCalc = :hashFileCalcIn ");
-        }
-        if (filtriComponenti.getDsAlgoHashFileCalc() != null) {
-            whereCompClause.append(" AND comp.dsAlgoHashFileCalc = :algoHashFileCalcIn ");
-        }
-        if (filtriComponenti.getCdEncodingHashFileCalc() != null) {
-            whereCompClause.append(" AND comp.cdEncodingHashFileCalc = :encodingHashFileCalcIn ");
-        }
-        if (filtriComponenti.getDsUrnCompCalc() != null) {
-            whereCompClause.append(" AND UPPER(comp.dsUrnCompCalc) LIKE :urnCompCalcIn ");
-        }
-
-        Date dataCompDa = (getDateOrNull(dateCreazioneCompValidate, 0));
-        Date dataCompA = (getDateOrNull(dateCreazioneCompValidate, 1));
-
-        if ((dataCompDa != null) && (dataCompA != null)) {
-            whereCompClause.append(
-                    " AND strutDoc.aroDoc.dtCreazione between :dataCompDaIn AND :dataCompAIn ");
-        }
-        //
-        if (filtriComponenti.getFlForzaAccettazioneComp() != null) {
-            whereCompClause.append(" AND strutDoc.aroDoc.flForzaAccettazione = :flForzaAccIn ");
-        }
-
-        if (filtriComponenti.getFlForzaConservazioneComp() != null) {
-            whereCompClause.append(" AND strutDoc.aroDoc.flForzaConservazione = :flForzaConsIn ");
-        }
-
-        if (filtriComponenti.getTiSupportoComp() != null) {
-            whereCompClause.append(" AND comp.tiSupportoComp = :tiSupportoCompIn ");
-        }
-
-        // TODO condizione duplicata, la togliamo?
-        if (filtriComponenti.getNmTipoRapprComp() != null) {
-            whereCompClause
-                    .append(" AND comp.decTipoRapprComp.idTipoRapprComp = :idTipoRapprCompIn ");
-        }
-
-        if (filtriComponenti.getDsIdCompVers() != null) {
-            whereCompClause.append(" AND UPPER(comp.dsIdCompVers) LIKE :idCompDocIn ");
-        }
-
-        // Se il filtro "Cd firmatario" è valorizzato
-        if (StringUtils.isNotBlank(filtriFirmatari.getCdFirmatario())) {
-            whereCompClause.append(" AND UPPER(firma.cdFirmatario) LIKE :cdFirmatario ");
-            joinFirma = true;
-        }
-        // Se il filtro "Cognome firmatario" è valorizzato
-        if (StringUtils.isNotBlank(filtriFirmatari.getNmCognomeFirmatario())) {
-            whereCompClause
-                    .append(" AND UPPER(firma.nmCognomeFirmatario) LIKE :nmCognomeFirmatario ");
-            joinFirma = true;
-        }
-        // Se il filtro "Nome firmatario" è valorizzato
-        if (StringUtils.isNotBlank(filtriFirmatari.getNmFirmatario())) {
-            whereCompClause.append(" AND UPPER(firma.nmFirmatario) LIKE :nmFirmatario ");
-            joinFirma = true;
-        }
-
-        if (StringUtils.isNotBlank(whereCompClause.toString())) {
-            queryStr.append(appendJoin(joinFormato, joinFirma, joinCertif, joinAppart));
-            queryStr.append(whereCompClause.toString());
-            whereWord = " AND ";
-        }
-
-        // FINE GESTIONE FILTRI COMPONENTI
-        // Inserimento nella query del filtro Tipo Unità Doc versione multiselect
-        if (!idTipoUnitaDocList.isEmpty()) {
-            queryStr.append(whereWord).append(" (u.idTipoUnitaDoc IN (:listtipoud)) ");
-            whereWord = " AND ";
-        }
-
-        // Inserimento nella query del filtro CD_VERSIONE_XSD_UD
-        String cdVersioneXsdUd = filtri.getCdVersioneXsdUd();
-        if (cdVersioneXsdUd != null) {
-            queryStr.append(whereWord).append(" u.cdVersioneXsdUd = :cdVersioneXsdUd ");
-            whereWord = "AND ";
-        }
-
-        // Inserimento nella query del filtro Registro
-        if (!cdRegistroUnitaDocSet.isEmpty()) {
-            queryStr.append(whereWord).append(" u.cdRegistroKeyUnitaDoc IN (:setregistro) ");
-            whereWord = "AND ";
-        }
-
-        // Inserimento nella query del filtro Tipo Documento
-        if (!idTipoDocList.isEmpty()) {
-            queryStr.append(whereWord).append(" u.idTipoDoc IN (:listtipodoc) ");
-            whereWord = "AND ";
-        }
-
-        // Inserimento nella query del filtro CD_VERSIONE_XSD_DOC
-        String cdVersioneXsdDoc = filtri.getCdVersioneXsdDoc();
-        if (cdVersioneXsdDoc != null) {
-            queryStr.append(whereWord).append(" u.cdVersioneXsdDoc = :cdVersioneXsdDoc ");
-            whereWord = "AND ";
-        }
-
-        BigDecimal anno = filtri.getAaKeyUnitaDoc();
-        String codice = filtri.getCdKeyUnitaDoc();
-
-        if (anno != null) {
-            queryStr.append(whereWord).append(" u.aaKeyUnitaDoc = :annoin ");
-            whereWord = " AND ";
-        }
-
-        if (codice != null) {
-            queryStr.append(whereWord).append(" u.cdKeyUnitaDoc = :codicein ");
-            whereWord = " AND ";
-        }
-
-        String cdKeyDocVers = filtri.getCdKeyDocVers();
-        if (cdKeyDocVers != null) {
-            queryStr.append(whereWord).append(" UPPER(u.cdKeyDocVers) LIKE :cdKeyDocVers ");
-            whereWord = "AND ";
-        }
-
-        BigDecimal annoRangeDa = filtri.getAaKeyUnitaDocDa();
-        BigDecimal annoRangeA = filtri.getAaKeyUnitaDocA();
-        String codiceRangeDa = filtri.getCdKeyUnitaDocDa();
-        String codiceRangeA = filtri.getCdKeyUnitaDocA();
-
-        if (annoRangeDa != null && annoRangeA != null) {
-            queryStr.append(whereWord)
-                    .append(" (u.aaKeyUnitaDoc BETWEEN :annoin_da AND :annoin_a) ");
-            whereWord = " AND ";
-        }
-
-        if (codiceRangeDa != null && codiceRangeA != null) {
-            codiceRangeDa = StringPadding.padString(codiceRangeDa, "0", 12,
-                    StringPadding.PADDING_LEFT);
-            codiceRangeA = StringPadding.padString(codiceRangeA, "0", 12,
-                    StringPadding.PADDING_LEFT);
-            queryStr.append(whereWord).append(
-                    " LPAD( u.cdKeyUnitaDoc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
-            whereWord = " AND ";
-        }
-
-        String codiceNumContiene = filtri.getCdKeyUnitaDocContiene();
-
-        if (codiceNumContiene != null) {
-            String escape = "";
-            if (codiceNumContiene.contains("_")) {
-                escape = "ESCAPE '\\' ";
-            }
-            queryStr.append(whereWord)
-                    .append(" UPPER(u.cdKeyUnitaDoc) LIKE :codicein_contiene " + escape);
-            whereWord = " AND ";
-            codiceNumContiene = codiceNumContiene.toUpperCase();
-        }
-
-        // Inserimento nella query del filtro PRESENZA FIRME
-        String presenza = filtri.getFlUnitaDocFirmato();
-        if (presenza != null) {
-            queryStr.append(whereWord).append(" u.flUnitaDocFirmato = :presenzain ");
-            whereWord = " AND ";
-        }
-
-        // Inserimento nella query del filtro ESITO FIRME VERS in versione multiselect
-        List<String> esitoveriffirmeList = filtri.getTiEsitoVerifFirme();
-        if (!esitoveriffirmeList.isEmpty()) {
-            queryStr.append(whereWord).append(" (u.tiEsitoVerifFirme IN (:listaesitoveriffirme)) ");
-            whereWord = " AND ";
-        }
-
-        Date dataDa = (getDateOrNull(dateAcquisizioneValidate, 0));
-        Date dataA = (getDateOrNull(dateAcquisizioneValidate, 1));
-
-        if ((dataDa != null) && (dataA != null)) {
-            queryStr.append(whereWord).append(" (u.dtCreazione between :datada AND :dataa) ");
-            whereWord = " AND ";
-        }
-        // Inserimento nella query del filtro ESISTE PROFILO NORMATIVO
-        String profiloNorm = filtri.getProfiloNorm();
-        if (profiloNorm != null) {
-            queryStr.append(whereWord).append(" u.flEsisteProfiloNormativo = :profiloNorm ");
-            whereWord = "AND ";
-        }
-        // Inserimento nella query del filtro FORZA ACCETTAZIONE
-        String forzaAcc = filtri.getFlForzaAccettazione();
-        if (forzaAcc != null) {
-            queryStr.append(whereWord).append(" u.flForzaAccettazione = :forzaaccin ");
-            whereWord = " AND ";
-        }
-
-        // Inserimento nella query del filtro FORZA CONSERVAZIONE
-        String forzaConserva = filtri.getFlForzaConservazione();
-        if (forzaConserva != null) {
-            queryStr.append(whereWord).append(" u.flForzaConservazione = :forzaconservain ");
-            whereWord = " AND ";
-        }
-        // Inserimento nella query del filtro FORZA COLLEGAMENTO
-        String forzaColleg = filtri.getFlForzaCollegamento();
-        if (forzaColleg != null) {
-            queryStr.append(whereWord).append(" u.flForzaCollegamento = :forzacollegin ");
-            whereWord = "AND ";
-        }
-
-        // // Inserimento nella query del filtro FORZA HASH
-        // String forzaHash = filtri.getForzaHash();
-        // if (forzaHash != null) {
-        // queryStr.append(whereWord).append("u.flForzaHash = :forzahashin ");
-        // whereWord = "AND ";
-        // }
-        // // Inserimento nella query del filtro FORZA FORMATO NUMERO
-        // String forzaFmtNumero = filtri.getForzaFmtNumero();
-        // if (forzaFmtNumero != null) {
-        // queryStr.append(whereWord).append("u.flForzaFmtNumero = :forzafmtnumeroin ");
-        // whereWord = "AND ";
-        // }
-        // // Inserimento nella query del filtro FORZA FORMATO FILE
-        // String forzaFmtFile = filtri.getForzaFmtFile();
-        // if (forzaFmtFile != null) {
-        // queryStr.append(whereWord).append("u.flForzaFmtFile = :forzafmtfilein ");
-        // whereWord = "AND ";
-        // }
-        // Inserimento nella query del filtro CD_VERSIONE_WS
-        String cdVersioneWs = filtri.getCdVersioneWs();
-        if (cdVersioneWs != null) {
-            queryStr.append(whereWord).append(" u.cdVersioneWs = :cdVersioneWs ");
-            whereWord = "AND ";
-        }
-
-        String unitaDocAnnul = filtri.getFlUnitaDocAnnul();
-        if (unitaDocAnnul != null) {
-            queryStr.append(whereWord).append(" u.flUnitaDocAnnul = :unitaDocAnnul ");
-            whereWord = "AND ";
-        }
-        String docAggiunti = filtri.getFlDocAggiunti();
-        if (docAggiunti != null) {
-            queryStr.append(whereWord).append(" u.flDocAggiunti = :docAggiunti ");
-            whereWord = "AND ";
-        }
-
-        // Inserimento nella query del filtro FL_AGG_META
-        String flAggMeta = filtri.getFlAggMeta();
-        if (flAggMeta != null) {
-            queryStr.append(whereWord).append(" u.flAggMeta = :flAggMeta ");
-            whereWord = "AND ";
-        }
-
-        // Inserimento nella query del filtro FL_HASH_VERS
-        String flHashVers = filtri.getFlHashVers();
-        if (flHashVers != null) {
-            queryStr.append(whereWord).append(" u.flHashVers = :flHashVers ");
-            whereWord = "AND ";
-        }
-
-        // Inserimento nella query del filtro STATO CONSERVAZIONE
-        String tiStatoConservazione = filtri.getTiStatoConservazione();
-        if (tiStatoConservazione != null) {
-            queryStr.append(whereWord).append(" u.tiStatoConservazione = :tiStatoConservazione ");
-            whereWord = "AND ";
-        }
-
-        // Inserimento nella query del filtro TI_STATO_UD_ELENCO_VERS
-        String tiStatoUdElencoVers = filtri.getTiStatoUdElencoVers();
-        if (tiStatoUdElencoVers != null) {
-            queryStr.append(whereWord).append(
-                    " (u.tiStatoUdElencoVers = :tiStatoUdElencoVers OR u.tiStatoDocElencoVers = :tiStatoUdElencoVers) ");
-            whereWord = "AND ";
-        }
-
-        // Inserimento nella query del filtro NM_SISTEMA_MIGRAZ in versione multiselect
-        List<String> sisMigrazList = filtri.getNmSistemaMigraz();
-        if (!sisMigrazList.isEmpty()) {
-            queryStr.append(whereWord).append(" (u.nmSistemaMigraz IN (:listasismigraz)) ");
-            whereWord = " AND ";
-        }
-
-        if ((filtri.getDataMetaDa() != null) && (filtri.getDataMetaA() != null)) {
-            queryStr.append(whereWord)
-                    .append(" (u.dtRegUnitaDoc between :datametada AND :datametaa) ");
-            whereWord = " AND ";
-        }
-
-        // Inserimento nella query del filtro TI_DOC ("Elemento")
-        String tiDoc = filtri.getTiDoc();
-        if (tiDoc != null) {
-            queryStr.append(whereWord).append(" u.tiDoc = :tiDoc ");
-            whereWord = "AND ";
-        }
-
-        // Inserimento nella query del filtro metadati Oggetto
-        String oggettoMeta = filtri.getDlOggettoUnitaDoc();
-        if (oggettoMeta != null) {
-            queryStr.append(whereWord)
-                    .append(" UPPER(u.dlOggettoUnitaDoc) LIKE :dloggettounitadocin ");
-            whereWord = " AND ";
-        }
-
-        // Inserimento nella query del filtro metadati Autore documento
-        String autoreDocMeta = filtri.getDsAutoreDoc();
-        if (autoreDocMeta != null) {
-            queryStr.append(whereWord).append(" UPPER(u.dsAutoreDoc) LIKE :dldocmetain ");
-            whereWord = " AND ";
-        }
-
-        // Inserimento nella query del filtro metadati Descrizione documento
-        String descrizioneDocMeta = filtri.getDlDoc();
-        if (descrizioneDocMeta != null) {
-            queryStr.append(whereWord).append(" UPPER(u.dlDoc) LIKE :dsautoredocin ");
-            whereWord = " AND ";
-        }
-
-        // Inserimento nella query del filtro Tipo Conservazione
-        String tipoConservazione = filtri.getTiConservazione();
-        if (tipoConservazione != null) {
-            queryStr.append(whereWord).append(" u.tiConservazione = :ticonservazionein ");
-            whereWord = " AND ";
-        }
-
-        queryStr.append(whereWord).append(" u.idStrutUnitaDoc = :idstrutin ");
-        whereWord = " AND ";
-
-        // UTILIZZO DEI DATI SPECIFICI
-        ReturnParams params = volumeHelper.buildQueryForDatiSpec(listaDatiSpecOnLine);
-        queryStr.append(params.getQuery());
-        List<DatiSpecQueryParams> mappone = params.getMappone();
-
-        String valoreClassif = null;
-        BigDecimal aaFascicolo = null;
-        String cdKeyFascicolo = null;
-        BigDecimal aaFascRangeDa = null;
-        BigDecimal aaFascRangeA = null;
-        String cdFascRangeDa = null;
-        String cdFascRangeA = null;
-        BigDecimal tipoFascIn = null;
-        Date dtApeFascRangeDa = null;
-        Date dtApeFascRangeA = null;
-        Date dtChiuFascRangeDa = null;
-        Date dtChiuFascRangeA = null;
-        String oggettoFasc = null;
-
-        if (filtriFascicoli.isFiltriImpostati()) {
-            queryStr.append(whereWord).append(
-                    " exists (select 1 from AroVLisFasc fasc_ud where fasc_ud.id.idUnitaDoc = u.idUnitaDoc ");
-
-            // Se il filtro "Indice cassificazione" è valorizzato
-            valoreClassif = filtriFascicoli.getCdCompositoVoceTitol();
-            if (valoreClassif != null) {
-                queryStr.append(whereWord)
-                        .append(" UPPER(fasc_ud.cdCompositoVoceTitol) LIKE :valoreclassif ");
-                whereWord = " AND ";
-            }
-
-            aaFascicolo = filtriFascicoli.getAaFascicolo();
-            if (aaFascicolo != null) {
-                queryStr.append(whereWord).append(" fasc_ud.aaFascicolo = :aafasc ");
-                whereWord = " AND ";
-            }
-
-            cdKeyFascicolo = filtriFascicoli.getCdKeyFascicolo();
-            if (cdKeyFascicolo != null) {
-                queryStr.append(whereWord).append(" fasc_ud.cdKeyFascicolo = :cdfasc ");
-                whereWord = " AND ";
-            }
-
-            aaFascRangeDa = filtriFascicoli.getAaFascicoloDa();
-            aaFascRangeA = filtriFascicoli.getAaFascicoloA();
-            if (aaFascRangeDa != null && aaFascRangeA != null) {
-                queryStr.append(whereWord)
-                        .append(" (fasc_ud.aaFascicolo BETWEEN :aafasc_da AND :aafasc_a) ");
-                whereWord = " AND ";
-            }
-
-            cdFascRangeDa = filtriFascicoli.getCdKeyFascicoloDa();
-            cdFascRangeA = filtriFascicoli.getCdKeyFascicoloA();
-            if (cdFascRangeDa != null && cdFascRangeA != null) {
-                cdFascRangeDa = StringPadding.padString(cdFascRangeDa, "0", 12,
-                        StringPadding.PADDING_LEFT);
-                cdFascRangeA = StringPadding.padString(cdFascRangeA, "0", 12,
-                        StringPadding.PADDING_LEFT);
-                queryStr.append(whereWord).append(
-                        " LPAD( fasc_ud.cdKeyFascicolo, 12, '0') BETWEEN :cdfasc_da AND :cdfasc_a ");
-                whereWord = " AND ";
-            }
-
-            tipoFascIn = filtriFascicoli.getNmTipoFascicolo();
-            if (tipoFascIn != null) {
-                queryStr.append(whereWord).append(" fasc_ud.idTipoFascicolo = :tipofascin ");
-                whereWord = " AND ";
-            }
-
-            dtApeFascRangeDa = filtriFascicoli.getDtApeFascicoloDa();
-            dtApeFascRangeA = filtriFascicoli.getDtApeFascicoloA();
-            if (dtApeFascRangeDa != null || dtApeFascRangeA != null) {
-                if (dtApeFascRangeDa == null) {
-                    // solo estremo "a" presente → "da" = 01/01/2011
-                    Calendar cal = Calendar.getInstance();
-                    cal.set(2011, Calendar.JANUARY, 1, 0, 0, 0);
-                    cal.set(Calendar.MILLISECOND, 0);
-                    dtApeFascRangeDa = cal.getTime();
-                }
-                if (dtApeFascRangeA == null) {
-                    // solo estremo "da" presente → "a" = oggi
-                    dtApeFascRangeA = new Date();
-                }
-                queryStr.append(whereWord).append(
-                        " (fasc_ud.dtApeFascicolo BETWEEN :dtapefasc_da AND :dtapefasc_a) ");
-                whereWord = " AND ";
-            }
-
-            dtChiuFascRangeDa = filtriFascicoli.getDtChiuFascicoloDa();
-            dtChiuFascRangeA = filtriFascicoli.getDtChiuFascicoloA();
-            if (dtChiuFascRangeDa != null || dtChiuFascRangeA != null) {
-                if (dtChiuFascRangeDa == null) {
-                    // solo estremo "a" presente → "da" = 01/01/2011
-                    Calendar cal = Calendar.getInstance();
-                    cal.set(2011, Calendar.JANUARY, 1, 0, 0, 0);
-                    cal.set(Calendar.MILLISECOND, 0);
-                    dtChiuFascRangeDa = cal.getTime();
-                }
-                if (dtChiuFascRangeA == null) {
-                    // solo estremo "da" presente → "a" = oggi
-                    dtChiuFascRangeA = new Date();
-                }
-                queryStr.append(whereWord).append(
-                        " (fasc_ud.dtChiuFascicolo BETWEEN :dtchiufasc_da AND :dtchiufasc_a) ");
-                whereWord = " AND ";
-            }
-
-            oggettoFasc = filtriFascicoli.getDsOggettoFascicolo();
-            if (oggettoFasc != null) {
-                queryStr.append(whereWord)
-                        .append(" UPPER(fasc_ud.dsOggettoFascicolo) LIKE :dsoggfasc ");
-                whereWord = " AND ";
-            }
-
-            queryStr.append(") ");
-        }
-
-        String valoreColl = null;
-        String valoreColl2 = null;
-        String valorereg = null;
-        BigDecimal valoreanno = null;
-        String valorenumero = null;
-
-        // FILTRI SU COLLEGAMENTI
-        // Se il filtro "Con collegamento" vale "Sì"
-        if (filtriCollegamenti.getConCollegamento() != null
-                && filtriCollegamenti.getConCollegamento().equals("1")) {
-            queryStr.append(whereWord).append(
-                    " exists (select 1 from AroLinkUnitaDoc link where link.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc ");
-
-            // Se il filtro "Collegamento risolto" vale "Sì"
-            if (filtriCollegamenti.getCollegamentoRisolto() != null
-                    && filtriCollegamenti.getCollegamentoRisolto().equals("1")) {
-                queryStr.append(whereWord).append(" link.aroUnitaDocLink is not null ");
-            }
-            // Se il filtro "Collegamento risolto" vale "No"
-            if (filtriCollegamenti.getCollegamentoRisolto() != null
-                    && filtriCollegamenti.getCollegamentoRisolto().equals("0")) {
-                queryStr.append(whereWord).append(" link.aroUnitaDocLink is null ");
-            }
-            // Se il filtro "Descr. collegamento" è valorizzato
-            valoreColl = filtriCollegamenti.getDsLinkUnitaDoc();
-            if (valoreColl != null) {
-                queryStr.append(whereWord).append(" UPPER(link.dsLinkUnitaDoc) LIKE :valorecoll ");
-            }
-            // Se il filtro "Registro" è valorizzato
-            valorereg = filtriCollegamenti.getCdRegistroKeyUnitaDocLink();
-            if (valorereg != null && !valorereg.equals("")) {
-                queryStr.append(whereWord).append(" link.cdRegistroKeyUnitaDocLink = :valorereg ");
-            }
-            // Se il filtro "Anno" è valorizzato
-            valoreanno = filtriCollegamenti.getAaKeyUnitaDocLink();
-            if (valoreanno != null) {
-                queryStr.append(whereWord).append(" link.aaKeyUnitaDocLink = :valoreanno ");
-            }
-            // Se il filtro "Numero" è valorizzato
-            valorenumero = filtriCollegamenti.getCdKeyUnitaDocLink();
-            if (valorenumero != null) {
-                queryStr.append(whereWord).append(" link.cdKeyUnitaDocLink = :valorenumero ");
-            }
-            queryStr.append(") ");
-        }
-        // Se il filtro "Con collegamento" vale "No"
-        if (filtriCollegamenti.getConCollegamento() != null
-                && filtriCollegamenti.getConCollegamento().equals("0")) {
-            queryStr.append(whereWord).append(
-                    " not exists (select 1 from AroLinkUnitaDoc link1 where link1.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc ");
-            queryStr.append(") ");
-        }
-        // Se il filtro "E' oggetto di collegamento" vale "Sì"
-        if (filtriCollegamenti.getIsOggettoCollegamento() != null
-                && filtriCollegamenti.getIsOggettoCollegamento().equals("1")) {
-            queryStr.append(whereWord).append(
-                    " exists (select 1 from AroLinkUnitaDoc link2 where link2.aroUnitaDocLink.idUnitaDoc = u.idUnitaDoc ");
-
-            // Se il filtro "Descr. collegamento oggetto" è valorizzato
-            valoreColl2 = filtriCollegamenti.getDsLinkUnitaDocOggetto();
-            if (valoreColl2 != null) {
-                queryStr.append(whereWord)
-                        .append(" UPPER(link2.dsLinkUnitaDoc) LIKE :valorecoll2 ");
-            }
-            queryStr.append(") ");
-        }
-        // Se il filtro "Con collegamento" vale "No"
-        if (filtriCollegamenti.getIsOggettoCollegamento() != null
-                && filtriCollegamenti.getIsOggettoCollegamento().equals("0")) {
-            queryStr.append(whereWord).append(
-                    " not exists (select 1 from AroLinkUnitaDoc link3 where link3.aroUnitaDocLink.idUnitaDoc = u.idUnitaDoc ");
-            queryStr.append(") ");
-        }
-
-        if (filtri.getDsClassif() != null || filtri.getCdFascic() != null
-                || filtri.getDsOggettoFascic() != null || filtri.getCdSottofascic() != null
-                || filtri.getDsOggettoSottofascic() != null) {
-            queryStr.append(whereWord).append(
-                    " (exists (select 1 from AroUnitaDoc ud where ud.idUnitaDoc = u.idUnitaDoc ");
-            if (filtri.getDsClassif() != null) {
-                queryStr.append(" and UPPER(ud.dsClassifPrinc) like :classif ");
-            }
-            if (filtri.getCdFascic() != null) {
-                queryStr.append(" and UPPER(ud.cdFascicPrinc) like :fascic ");
-            }
-            if (filtri.getDsOggettoFascic() != null) {
-                queryStr.append(" and UPPER(ud.dsOggettoFascicPrinc) like :oggFascic ");
-            }
-            if (filtri.getCdSottofascic() != null) {
-                queryStr.append(" and UPPER(ud.cdSottofascicPrinc) like :sottoFascic ");
-            }
-            if (filtri.getDsOggettoSottofascic() != null) {
-                queryStr.append(" and UPPER(ud.dsOggettoSottofascicPrinc) like :oggSottoFascic ");
-            }
-
-            queryStr.append(
-                    ") or exists (select 1 from AroArchivSec arch_sec where arch_sec.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc ");
-            if (filtri.getDsClassif() != null) {
-                queryStr.append(" and UPPER(arch_sec.dsClassif) like :classif ");
-            }
-            if (filtri.getCdFascic() != null) {
-                queryStr.append(" and UPPER(arch_sec.cdFascic) like :fascic ");
-            }
-            if (filtri.getDsOggettoFascic() != null) {
-                queryStr.append(" and UPPER(arch_sec.dsOggettoFascic) like :oggFascic ");
-            }
-            if (filtri.getCdSottofascic() != null) {
-                queryStr.append(" and UPPER(arch_sec.cdSottofascic) like :sottoFascic ");
-            }
-            if (filtri.getDsOggettoSottofascic() != null) {
-                queryStr.append(" and UPPER(arch_sec.dsOggettoSottofascic) like :oggSottoFascic ");
-            }
-            queryStr.append(")) ");
-            whereWord = " AND ";
-        }
-
-        List<BigDecimal> subStruts = filtri.getNmSubStrut();
-        if (!subStruts.isEmpty()) {
-            queryStr.append(whereWord).append(" u.idSubStrut IN (:subStruts) ");
-        }
-        // ordina per dsKeyDoc crescente
-        queryStr.append(" ORDER BY u.dsKeyOrd");
-
-        // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
-        Query query = getEntityManager().createQuery(queryStr.toString());
-        // non avendo passato alla query i parametri di ricerca, devo passarli ora
-
-        if (filtriComponenti.getNmTipoStrutDoc() != null) {
-            query.setParameter("tipoStrutDocIn", filtriComponenti.getNmTipoStrutDoc().longValue());
-        }
-
-        if (!idTipoUnitaDocList.isEmpty()) {
-            query.setParameter("listtipoud", idTipoUnitaDocList);
-        }
-
-        if (cdVersioneXsdUd != null) {
-            query.setParameter("cdVersioneXsdUd", cdVersioneXsdUd);
-        }
-
-        if (cdVersioneXsdDoc != null) {
-            query.setParameter("cdVersioneXsdDoc", cdVersioneXsdDoc);
-        }
-
-        if (!cdRegistroUnitaDocSet.isEmpty()) {
-            query.setParameter("setregistro", cdRegistroUnitaDocSet);
-        }
-
-        if (anno != null) {
-            query.setParameter("annoin", anno);
-        }
-
-        if (codice != null) {
-            query.setParameter("codicein", codice);
-        }
-
-        if (cdKeyDocVers != null) {
-            query.setParameter("cdKeyDocVers", "%" + cdKeyDocVers.toUpperCase() + "%");
-        }
-
-        if (annoRangeDa != null && annoRangeA != null) {
-            query.setParameter("annoin_da", annoRangeDa);
-            query.setParameter("annoin_a", annoRangeA);
-        }
-
-        if (codiceRangeDa != null && codiceRangeA != null) {
-            query.setParameter("codicein_da", codiceRangeDa);
-            query.setParameter("codicein_a", codiceRangeA);
-        }
-
-        if (codiceNumContiene != null) {
-            query.setParameter("codicein_contiene", "%" + codiceNumContiene + "%");
-        }
-
-        if (presenza != null) {
-            query.setParameter("presenzain", presenza);
-        }
-
-        if (!esitoveriffirmeList.isEmpty()) {
-            query.setParameter("listaesitoveriffirme", esitoveriffirmeList);
-        }
-
-        if (dataDa != null && dataA != null) {
-            query.setParameter("datada", dataDa, TemporalType.TIMESTAMP);
-            query.setParameter("dataa", dataA, TemporalType.TIMESTAMP);
-        }
-        if (profiloNorm != null) {
-            query.setParameter("profiloNorm", profiloNorm);
-        }
-        if (forzaAcc != null) {
-            query.setParameter("forzaaccin", forzaAcc);
-        }
-
-        if (forzaConserva != null) {
-            query.setParameter("forzaconservain", forzaConserva);
-        }
-
-        if (forzaColleg != null) {
-            query.setParameter("forzacollegin", forzaColleg);
-        }
-
-        // if (forzaHash != null) {
-        // query.setParameter("forzahashin", forzaHash);
-        // }
-        //
-        // if (forzaFmtNumero != null) {
-        // query.setParameter("forzafmtnumeroin", forzaFmtNumero);
-        // }
-        //
-        // if (forzaFmtFile != null) {
-        // query.setParameter("forzafmtfilein", forzaFmtFile);
-        // }
-        if (cdVersioneWs != null) {
-            query.setParameter("cdVersioneWs", cdVersioneWs);
-        }
-
-        if (unitaDocAnnul != null) {
-            query.setParameter("unitaDocAnnul", unitaDocAnnul);
-        }
-
-        if (docAggiunti != null) {
-            query.setParameter("docAggiunti", docAggiunti);
-        }
-
-        if (flAggMeta != null) {
-            query.setParameter("flAggMeta", flAggMeta);
-        }
-
-        if (flHashVers != null) {
-            query.setParameter("flHashVers", flHashVers);
-        }
-
-        if (tiStatoConservazione != null) {
-            query.setParameter("tiStatoConservazione", tiStatoConservazione);
-        }
-
-        if (tiStatoUdElencoVers != null) {
-            query.setParameter("tiStatoUdElencoVers", tiStatoUdElencoVers);
-        }
-
-        if (!idTipoDocList.isEmpty()) {
-            query.setParameter("listtipodoc", idTipoDocList);
-        }
-
-        if (cdVersioneXsdUd != null) {
-            query.setParameter("cdVersioneXsdUd", cdVersioneXsdUd);
-        }
-
-        if (!sisMigrazList.isEmpty()) {
-            query.setParameter("listasismigraz", sisMigrazList);
-        }
-
-        if (filtri.getDataMetaDa() != null && filtri.getDataMetaA() != null) {
-            query.setParameter("datametada", filtri.getDataMetaDa(), TemporalType.DATE);
-            query.setParameter("datametaa", filtri.getDataMetaA(), TemporalType.DATE);
-        }
-
-        if (tiDoc != null) {
-            query.setParameter("tiDoc", tiDoc);
-        }
-
-        if (oggettoMeta != null) {
-            query.setParameter("dloggettounitadocin", "%" + oggettoMeta.toUpperCase() + "%");
-        }
-
-        if (autoreDocMeta != null) {
-            query.setParameter("dldocmetain", "%" + autoreDocMeta.toUpperCase() + "%");
-        }
-
-        if (descrizioneDocMeta != null) {
-            query.setParameter("dsautoredocin", "%" + descrizioneDocMeta.toUpperCase() + "%");
-        }
-
-        if (idStruttura != null) {
-            query.setParameter("idstrutin", idStruttura);
-        }
-
-        if (tipoConservazione != null) {
-            query.setParameter("ticonservazionein", tipoConservazione);
-        }
-
-        int contaIdAttrib = 0;
-        for (int i = 0; i < mappone.size(); i++) {
-            DatiSpecQueryParams dsqp = mappone.get(i);
-
-            if (!dsqp.getTiOper().equals(CostantiDB.TipoOperatoreDatiSpec.E_UNO_FRA.name())) {
-                if (StringUtils.isNotBlank(dsqp.getDlValore())) {
-                    query.setParameter("valorein" + i, dsqp.getDlValore().toUpperCase());
-                }
-            } else {
-                String[] inParams = dsqp.getDlValore().toUpperCase().trim()
-                        .replaceAll("\\s*,\\s*", ",").split(",");
-                query.setParameter("valorein" + i, Arrays.asList(inParams));
-            }
-            for (int j = 0; j < dsqp.getIdAttribDatiSpec().size(); j++) {
-                query.setParameter("idattribdatispecin" + contaIdAttrib,
-                        dsqp.getIdAttribDatiSpec().get(j));
-                if (dsqp.getNmSistemaMigraz().get(j) != null) {
-                    query.setParameter("nmsistemamigrazin" + contaIdAttrib,
-                            dsqp.getNmSistemaMigraz().get(j));
-                }
-                contaIdAttrib++;
-            }
-        }
-
-        if (valoreClassif != null) {
-            query.setParameter("valoreclassif", "%" + valoreClassif.toUpperCase() + "%");
-        }
-
-        if (aaFascicolo != null) {
-            query.setParameter("aafasc", aaFascicolo);
-        }
-
-        if (cdKeyFascicolo != null) {
-            query.setParameter("cdfasc", cdKeyFascicolo);
-        }
-
-        if (aaFascRangeDa != null && aaFascRangeA != null) {
-            query.setParameter("aafasc_da", aaFascRangeDa);
-            query.setParameter("aafasc_a", aaFascRangeA);
-        }
-
-        if (cdFascRangeDa != null && cdFascRangeA != null) {
-            query.setParameter("cdfasc_da", cdFascRangeDa);
-            query.setParameter("cdfasc_a", cdFascRangeA);
-        }
-
-        if (tipoFascIn != null) {
-            query.setParameter("tipofascin", tipoFascIn);
-        }
-
-        if (dtApeFascRangeDa != null && dtApeFascRangeA != null) {
-            query.setParameter("dtapefasc_da", dtApeFascRangeDa);
-            query.setParameter("dtapefasc_a", dtApeFascRangeA);
-        }
-
-        if (dtChiuFascRangeDa != null && dtChiuFascRangeA != null) {
-            query.setParameter("dtchiufasc_da", dtChiuFascRangeDa);
-            query.setParameter("dtchiufasc_a", dtChiuFascRangeA);
-        }
-
-        if (oggettoFasc != null) {
-            query.setParameter("dsoggfasc", "%" + oggettoFasc.toUpperCase() + "%");
-        }
-
-        if (valoreColl != null) {
-            query.setParameter("valorecoll", "%" + valoreColl.toUpperCase() + "%");
-        }
-        if (valoreColl2 != null) {
-            query.setParameter("valorecoll2", "%" + valoreColl2.toUpperCase() + "%");
-        }
-
-        if (valorereg != null && !valorereg.equals("")) {
-            query.setParameter("valorereg", valorereg);
-        }
-        if (valoreanno != null) {
-            query.setParameter("valoreanno", valoreanno);
-        }
-        if (valorenumero != null) {
-            query.setParameter("valorenumero", valorenumero);
-        }
-
-        if (filtri.getDsClassif() != null) {
-            query.setParameter("classif", "%" + filtri.getDsClassif().toUpperCase() + "%");
-        }
-        if (filtri.getCdFascic() != null) {
-            query.setParameter("fascic", "%" + filtri.getCdFascic().toUpperCase() + "%");
-        }
-        if (filtri.getDsOggettoFascic() != null) {
-            query.setParameter("oggFascic", "%" + filtri.getDsOggettoFascic().toUpperCase() + "%");
-        }
-        if (filtri.getCdSottofascic() != null) {
-            query.setParameter("sottoFascic", "%" + filtri.getCdSottofascic().toUpperCase() + "%");
-        }
-        if (filtri.getDsOggettoSottofascic() != null) {
-            query.setParameter("oggSottoFascic",
-                    "%" + filtri.getDsOggettoSottofascic().toUpperCase() + "%");
-        }
-
-        // Parametri Filtri Componente
-        if (filtriComponenti.getNmTipoStrutDoc() != null) {
-            query.setParameter("tipoStrutDocIn", filtriComponenti.getNmTipoStrutDoc().longValue());
-        }
-        if (filtriComponenti.getNmTipoCompDoc() != null) {
-            query.setParameter("tipoCompDocIn", filtriComponenti.getNmTipoCompDoc().longValue());
-        }
-        if (filtriComponenti.getDsNomeCompVers() != null) {
-            query.setParameter("nomeCompVersIn",
-                    "%" + filtriComponenti.getDsNomeCompVers().toUpperCase() + "%");
-        }
-        if (filtriComponenti.getDlUrnCompVers() != null) {
-            query.setParameter("urnCompVersIn",
-                    "%" + filtriComponenti.getDlUrnCompVers().toUpperCase() + "%");
-        }
-        if (filtriComponenti.getDsHashFileVers() != null) {
-            query.setParameter("hashFileVersIn", filtriComponenti.getDsHashFileVers());
-        }
-        if (filtriComponenti.getNmMimetypeFile() != null) {
-            query.setParameter("mimeTypeIn",
-                    "%" + filtriComponenti.getNmMimetypeFile().toUpperCase() + "%");
-        }
-        if (filtriComponenti.getNmFormatoFileVers() != null) {
-            query.setParameter("formatoFileDocIn",
-                    filtriComponenti.getNmFormatoFileVers().longValue());
-        }
-        if (fileSizeDa != null && fileSizeA != null) {
-            query.setParameter("filesizedain", fileSizeDa);
-            query.setParameter("filesizeain", fileSizeA);
-        }
-        if (filtriComponenti.getDsFormatoRapprCalc() != null) {
-            query.setParameter("formatoRapprCalcIn", filtriComponenti.getDsFormatoRapprCalc());
-        }
-        if (filtriComponenti.getDsFormatoRapprEstesoCalc() != null) {
-            query.setParameter("formatoRapprCalcEstesoIn",
-                    filtriComponenti.getDsFormatoRapprEstesoCalc());
-        }
-        if (filtriComponenti.getFlCompFirmato() != null) {
-            // Gli devo sempre passare 1
-            query.setParameter("compFirmatoIn", "1");
-        }
-        if (filtriComponenti.getTiEsitoContrConforme() != null) {
-            query.setParameter("esitoContrConformeIn", filtriComponenti.getTiEsitoContrConforme());
-        }
-        if (filtriComponenti.getDsRifTempVers() != null) {
-            query.setParameter("dsRifTempVers",
-                    "%" + filtriComponenti.getDsRifTempVers().toUpperCase() + "%");
-        }
-
-        if ((dataValDa != null) && (dataValA != null)) {
-            query.setParameter("datavalda", dataValDa);
-            query.setParameter("datavala", dataValA);
-        }
-
-        if (filtriComponenti.getTiEsitoContrFormatoFile() != null) {
-            query.setParameter("esitoContrFormatoFileIn",
-                    filtriComponenti.getTiEsitoContrFormatoFile());
-        }
-        if (filtriComponenti.getTiEsitoVerifFirma() != null) {
-            query.setParameter("esitoVerifFirmeIn", filtriComponenti.getTiEsitoVerifFirma());
-        }
-        if (filtriComponenti.getTiEsitoVerifFirmeChiuse() != null) {
-            query.setParameter("esitoVerifFirmeChiusIn",
-                    filtriComponenti.getTiEsitoVerifFirmeChiuse());
-        }
-        if (filtriComponenti.getDsHashFileCalc() != null) {
-            query.setParameter("hashFileCalcIn", filtriComponenti.getDsHashFileCalc());
-        }
-        if (filtriComponenti.getDsAlgoHashFileCalc() != null) {
-            query.setParameter("algoHashFileCalcIn", filtriComponenti.getDsAlgoHashFileCalc());
-        }
-        if (filtriComponenti.getCdEncodingHashFileCalc() != null) {
-            query.setParameter("encodingHashFileCalcIn",
-                    filtriComponenti.getCdEncodingHashFileCalc());
-        }
-        if (filtriComponenti.getDsUrnCompCalc() != null) {
-            query.setParameter("urnCompCalcIn",
-                    "%" + filtriComponenti.getDsUrnCompCalc().toUpperCase() + "%");
-        }
-
-        if ((dataCompDa != null) && (dataCompA != null)) {
-            query.setParameter("dataCompDaIn", dataCompDa);
-            query.setParameter("dataCompAIn", dataCompA);
-        }
-
-        if (filtriComponenti.getFlForzaAccettazioneComp() != null) {
-            query.setParameter("flForzaAccIn", filtriComponenti.getFlForzaAccettazioneComp());
-        }
-
-        if (filtriComponenti.getFlForzaConservazioneComp() != null) {
-            query.setParameter("flForzaConsIn", filtriComponenti.getFlForzaConservazioneComp());
-        }
-
-        if (filtriComponenti.getTiSupportoComp() != null) {
-            query.setParameter("tiSupportoCompIn", filtriComponenti.getTiSupportoComp());
-        }
-
-        if (filtriComponenti.getNmTipoRapprComp() != null) {
-            query.setParameter("idTipoRapprCompIn",
-                    filtriComponenti.getNmTipoRapprComp().longValue());
-        }
-
-        if (filtriComponenti.getDsIdCompVers() != null) {
-            query.setParameter("idCompDocIn",
-                    "%" + filtriComponenti.getDsIdCompVers().toUpperCase() + "%");
-        }
-
-        if (filtriFirmatari.getCdFirmatario() != null) {
-            query.setParameter("cdFirmatario",
-                    "%" + filtriFirmatari.getCdFirmatario().toUpperCase() + "%");
-        }
-        if (filtriFirmatari.getNmCognomeFirmatario() != null) {
-            query.setParameter("nmCognomeFirmatario",
-                    "%" + filtriFirmatari.getNmCognomeFirmatario().toUpperCase() + "%");
-        }
-        if (filtriFirmatari.getNmFirmatario() != null) {
-            query.setParameter("nmFirmatario",
-                    "%" + filtriFirmatari.getNmFirmatario().toUpperCase() + "%");
-        }
-
-        if (!subStruts.isEmpty()) {
-            query.setParameter("subStruts", subStruts);
-        }
-
-        if (lazy) {
-            return lazyListHelper.getTableBean(query,
-                    getAroVRicUnitaDocTableBeanFromResultListFunction(addButton), "u.idUnitaDoc");
-        } else {
-            return getAroVRicUnitaDocTableBeanFromResultList(query.getResultList(), addButton);
-        }
     }
 
     /*
@@ -2394,7 +1246,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     public AroVRicUnitaDocTableBean getAroVRicAdvUnitaDocRicAvanzataViewBean(
             FiltriUnitaDocumentarieAvanzata filtri, List<BigDecimal> idTipoUnitaDocList,
             Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList,
-            List<DecCriterioDatiSpecBean> listaDatiSpecOnLine,
             UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie filtriCollegamenti,
             UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie filtriFirmatari,
             UnitaDocumentarieForm.FiltriComponentiUnitaDocumentarie filtriComponenti,
@@ -2405,7 +1256,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         final Date dateMetaDa = getDateOrNull(dateUnitaDocValidate, 0);
         final Date dateMetaA = getDateOrNull(dateUnitaDocValidate, 1);
         return getAroVRicAdvUnitaDocRicAvanzataViewBeanPlainFilter(idTipoUnitaDocList,
-                cdRegistroUnitaDocSet, idTipoDocList, listaDatiSpecOnLine, dateAcquisizioneValidate,
+                cdRegistroUnitaDocSet, idTipoDocList, dateAcquisizioneValidate,
                 dateCreazioneCompValidate, idStruttura, addButton,
                 new FiltriUnitaDocumentarieAvanzataPlain(filtri, dateMetaDa, dateMetaA),
                 new FiltriCollegamentiUnitaDocumentariePlain(filtriCollegamenti),
@@ -2416,9 +1267,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     // ai filtri di ricerca passati in ingresso
     public AroVRicUnitaDocTableBean getAroVRicAdvUnitaDocRicAvanzataViewBeanPlainFilter(
             List<BigDecimal> idTipoUnitaDocList, Set<String> cdRegistroUnitaDocSet,
-            List<BigDecimal> idTipoDocList, List<DecCriterioDatiSpecBean> listaDatiSpecOnLine,
-            Date[] dateAcquisizioneValidate, Date[] dateCreazioneCompValidate,
-            BigDecimal idStruttura, boolean addButton, FiltriUnitaDocumentarieAvanzataPlain filtri,
+            List<BigDecimal> idTipoDocList, Date[] dateAcquisizioneValidate,
+            Date[] dateCreazioneCompValidate, BigDecimal idStruttura, boolean addButton,
+            FiltriUnitaDocumentarieAvanzataPlain filtri,
             FiltriCollegamentiUnitaDocumentariePlain filtriCollegamenti,
             FiltriFascicoliUnitaDocumentariePlain filtriFascicoli, boolean lazy) {
         String whereWord = "WHERE ";
@@ -2732,6 +1583,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         String valoreColl = null;
         String valoreColl2 = null;
         String valorereg = null;
+        String valoreNumeroContieneLink = null;
         BigDecimal valoreanno = null;
         String valorenumero = null;
 
@@ -2776,6 +1628,23 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             valorenumero = filtriCollegamenti.getCdKeyUnitaDocLink();
             if (valorenumero != null) {
                 queryStr.append(whereWord).append(" link.cd_Key_Unita_Doc_Link = :valorenumero ");
+            }
+            // MEV#34884 - Aggiungere il filtro Numero contiene alla ricerca sui Collegamenti nella
+            // Ricerca avanzata delle UD
+            // Se il filtro "Numero contiene" è valorizzato
+            valoreNumeroContieneLink = filtriCollegamenti.getCdKeyUnitaDocContieneLink();
+            if (valoreNumeroContieneLink != null) {
+
+                String escape = "";
+                if (valoreNumeroContieneLink.contains("_")) {
+                    escape = "ESCAPE '\\' ";
+                }
+                queryStr.append(whereWord).append(
+                        " UPPER(link.cd_Key_Unita_Doc_Link) LIKE :valoreNumeroContieneLink ")
+                        .append(escape);
+                whereWord = " AND ";
+                valoreNumeroContieneLink = valoreNumeroContieneLink.toUpperCase();
+
             }
             queryStr.append(") ");
         }
@@ -3036,6 +1905,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         if (valorenumero != null) {
             query.setParameter("valorenumero", valorenumero);
         }
+        if (valoreNumeroContieneLink != null) {
+            query.setParameter("valoreNumeroContieneLink", "%" + valoreNumeroContieneLink + "%");
+        }
 
         if (filtri.getDsClassif() != null) {
             query.setParameter("classif", "%" + filtri.getDsClassif().toUpperCase() + "%");
@@ -3107,7 +1979,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     public AroVRicUnitaDocTableBean getAroVRicAdvUnitaDocRicAvanzataViewBeanNoLimit(
             FiltriUnitaDocumentarieAvanzata filtri, List<BigDecimal> idTipoUnitaDocList,
             Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList,
-            List<DecCriterioDatiSpecBean> listaDatiSpecOnLine,
             UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie filtriCollegamenti,
             UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie filtriFirmatari,
             UnitaDocumentarieForm.FiltriComponentiUnitaDocumentarie filtriComponenti,
@@ -3118,7 +1989,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         final Date dateMetaDa = getDateOrNull(dateUnitaDocValidate, 0);
         final Date dateMetaA = getDateOrNull(dateUnitaDocValidate, 1);
         return getAroVRicAdvUnitaDocRicAvanzataViewBeanPlainFilter(idTipoUnitaDocList,
-                cdRegistroUnitaDocSet, idTipoDocList, listaDatiSpecOnLine, dateAcquisizioneValidate,
+                cdRegistroUnitaDocSet, idTipoDocList, dateAcquisizioneValidate,
                 dateCreazioneCompValidate, idStruttura, addButton,
                 new FiltriUnitaDocumentarieAvanzataPlain(filtri, dateMetaDa, dateMetaA),
                 new FiltriCollegamentiUnitaDocumentariePlain(filtriCollegamenti),
@@ -3165,10 +2036,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         String cdVersioneXsdComp = filtri.getCdVersioneXsdComp();
         if (idTipoStrutDoc != null || (idTipoCompDocList != null && !idTipoCompDocList.isEmpty())
                 || cdVersioneXsdComp != null) {
-            queryWhereConditions.append(whereWord)
-                    .append(" EXISTS (SELECT 1 FROM sacer.aro_doc doc"
-                            + " JOIN sacer.aro_strut_doc strut_doc"
-                            + " ON strut_doc.id_doc = doc.id_doc");
+            queryWhereConditions.append(whereWord).append(" EXISTS (SELECT 1 FROM sacer.aro_doc doc"
+                    + " JOIN sacer.aro_strut_doc strut_doc" + " ON strut_doc.id_doc = doc.id_doc");
             if ((idTipoCompDocList != null && !idTipoCompDocList.isEmpty())
                     || cdVersioneXsdComp != null) {
                 queryWhereConditions.append(" JOIN sacer.aro_comp_doc comp"
@@ -3182,8 +2051,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             }
             queryWhereConditions.append(" WHERE doc.id_unita_doc = ud.id_unita_doc");
             if (idTipoStrutDoc != null) {
-                queryWhereConditions.append(
-                        " AND strut_doc.id_tipo_strut_doc = :idTipoStrutDoc");
+                queryWhereConditions.append(" AND strut_doc.id_tipo_strut_doc = :idTipoStrutDoc");
             }
             if (idTipoCompDocList != null && !idTipoCompDocList.isEmpty()) {
                 queryWhereConditions.append(" AND comp.id_tipo_comp_doc IN (:idTipoCompDocList)");
@@ -6163,8 +5031,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
     static class FiltriUnitaDocumentarieAvanzataPlain {
 
-        private String cdVersioneXsdUd;
-        private String cdVersioneXsdDoc;
         private BigDecimal aaKeyUnitaDoc;
         private String cdKeyUnitaDoc;
         private String cdKeyDocVers;
@@ -6204,7 +5070,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         private String cdKeyUnitaDocContiene;
         private String profiloNorm;
         private BigDecimal idSistemaVersante;
-        private String filtriDatiSpec;
 
         FiltriUnitaDocumentarieAvanzataPlain() {
         }
@@ -6213,8 +5078,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                 Date dataMetaDa, Date dataMetaA) throws EMFError {
             this.dataMetaDa = dataMetaDa;
             this.dataMetaA = dataMetaA;
-            this.cdVersioneXsdUd = filtri.getCd_versione_xsd_ud().parse();
-            this.cdVersioneXsdDoc = filtri.getCd_versione_xsd_doc().parse();
             this.aaKeyUnitaDoc = filtri.getAa_key_unita_doc().parse();
             this.cdKeyUnitaDoc = filtri.getCd_key_unita_doc().parse();
             this.cdKeyUnitaDocContiene = filtri.getCd_key_unita_doc_contiene().parse();
@@ -6251,7 +5114,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             // this.forzaFmtFile = filtri.getFl_forza_fmt_file().parse();
             this.cdVersioneWs = filtri.getCd_versione_ws().parse();
             this.flAggMeta = filtri.getFl_agg_meta().parse();
-            this.filtriDatiSpec = filtri.getFiltri_dati_spec().parse();
             this.idSistemaVersante = filtri.getId_sistema_versante().parse();
         }
 
@@ -6261,22 +5123,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
         public BigDecimal getIdSistemaVersante() {
             return idSistemaVersante;
-        }
-
-        public String getCdVersioneXsdUd() {
-            return cdVersioneXsdUd;
-        }
-
-        void setCdVersioneXsdUd(String cdVersioneXsdUd) {
-            this.cdVersioneXsdUd = cdVersioneXsdUd;
-        }
-
-        public String getCdVersioneXsdDoc() {
-            return cdVersioneXsdDoc;
-        }
-
-        void setCdVersioneXsdDoc(String cdVersioneXsdDoc) {
-            this.cdVersioneXsdDoc = cdVersioneXsdDoc;
         }
 
         public BigDecimal getAaKeyUnitaDoc() {
@@ -6580,14 +5426,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         public void setFlAggMeta(String flAggMeta) {
             this.flAggMeta = flAggMeta;
         }
-
-        public String getFiltriDatiSpec() {
-            return filtriDatiSpec;
-        }
-
-        public void setFiltriDAtiSpec(String filtriDatiSpec) {
-            this.filtriDatiSpec = filtriDatiSpec;
-        }
     }
 
     static class FiltriUnitaDocumentarieDatiSpecPlain {
@@ -6741,6 +5579,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         private String cdRegistroKeyUnitaDocLink;
         private BigDecimal aaKeyUnitaDocLink;
         private String cdKeyUnitaDocLink;
+        private String cdKeyUnitaDocContieneLink;
         private String isOggettoCollegamento;
         private String dsLinkUnitaDocOggetto;
 
@@ -6760,6 +5599,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             cdKeyUnitaDocLink = filtriCollegamenti.getCd_key_unita_doc_link().parse();
             isOggettoCollegamento = filtriCollegamenti.getIs_oggetto_collegamento().parse();
             dsLinkUnitaDocOggetto = filtriCollegamenti.getDs_link_unita_doc_oggetto().parse();
+            cdKeyUnitaDocContieneLink = filtriCollegamenti.getCd_key_unita_doc_contiene_link()
+                    .parse();
         }
 
         public String getConCollegamento() {
@@ -6808,6 +5649,14 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
         void setCdKeyUnitaDocLink(String cdKeyUnitaDocLink) {
             this.cdKeyUnitaDocLink = cdKeyUnitaDocLink;
+        }
+
+        public String getCdKeyUnitaDocContieneLink() {
+            return cdKeyUnitaDocContieneLink;
+        }
+
+        void setCdKeyUnitaDocContieneLink(String cdKeyUnitaDocContieneLink) {
+            this.cdKeyUnitaDocContieneLink = cdKeyUnitaDocContieneLink;
         }
 
         public String getIsOggettoCollegamento() {

@@ -171,14 +171,16 @@ public class TestMarcatura extends HttpServlet {
                     }
                     os.flush();
                 } // Chiusura automatica stream
-
+                // Corretto il problema del 404 nel test mimetype
             } else if (contTika != null) {
                 String detectMimeType = ejbFormati
                         .detectMimeType(Files.readAllBytes(contTika.toPath()));
                 request.setAttribute("mimeType", detectMimeType);
-                request.getRequestDispatcher("JobMarche.jsp").forward(request, response);
+                request.getRequestDispatcher("/lab/utility/JobMarche.jsp").forward(request,
+                        response);
             } else {
-                request.getRequestDispatcher("JobMarche.jsp").forward(request, response);
+                request.getRequestDispatcher("/lab/utility/JobMarche.jsp").forward(request,
+                        response);
             }
 
         } catch (ServletException ex) { // Catturo eccezione lanciata nei vari try

@@ -203,7 +203,7 @@
         </div>
 
         <form name="uploadForm" method="POST" action='<c:url value="/RecStatoConservFascicoloSync" />' 
-              enctype="multipart/form-data" onsubmit="return validaForm();">
+              enctype="multipart/form-data" onsubmit="return validaForm();" autocomplete="off">
 
             <fieldset>
                 <legend>Credenziali di accesso</legend>
@@ -216,13 +216,13 @@
                 <label>
                     <span>Username:</span>
                     <input type="text" name="LOGINNAME" id="LOGINNAME" class="input-text" size="40" 
-                           placeholder="Inserire username" />
+                           placeholder="Inserire username" autocomplete="username" />
                 </label>
 
                 <label>
                     <span>Password:</span>
                     <input type="password" name="PASSWORD" id="PASSWORD" class="input-text" size="40" 
-                           placeholder="Inserire password" />
+                           placeholder="Inserire password" autocomplete="current-password" />
                 </label>
                 
                 <!-- Textarea nascosta che verrà effettivamente inviata, posizionata subito dopo PASSWORD -->
@@ -290,7 +290,7 @@
             </fieldset>
 
             <input type="submit" value="Invia Richiesta" class="button" />
-            <input type="button" value="Torna al Lab" onclick="location.href='lab.jsp';" 
+            <input type="button" value="Torna al Lab" onclick="location.href='../lab.jsp';" 
                    class="button" style="background: #999; border-color: #666;" />
         </form>
 

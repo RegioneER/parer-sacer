@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.BindingProvider;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,9 +82,13 @@ public class RecStatoOggettoSrvlt extends HttpServlet {
         String password = configurationHelper
                 .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_RECUP_OGGETTO_PING);
 
-        String ambiente = request.getParameter("AMBIENTE");
-        String versatore = request.getParameter("VERSATORE");
-        String cdKeyOggetto = request.getParameter("CD_KEY_OGGETTO");
+        // Sanitizzazione dei parametri in ingresso per prevenire attacchi di tipo XSS: i valori
+        // vengono riflessi nella pagina HTML di risposta, pertanto vengono prima ripuliti da
+        // caratteri di controllo/null byte (es. %00) e poi HTML-encoded prima di essere usati per
+        // la chiamata al Web Service e stampati in output.
+        String ambiente = sanitizeInput(request.getParameter("AMBIENTE"));
+        String versatore = sanitizeInput(request.getParameter("VERSATORE"));
+        String cdKeyOggetto = sanitizeInput(request.getParameter("CD_KEY_OGGETTO"));
 
         try { // Call Web Service Operation
             log.debug(className + "." + methodName
@@ -100,13 +105,16 @@ public class RecStatoOggettoSrvlt extends HttpServlet {
             // RISPOSTA
             RecuperoStatoOggettoRisposta risp = client.getStatoOggetto(ambiente, versatore,
                     cdKeyOggetto);
-            String err = risp.getCdErr() != null ? risp.getCdErr() : " ";
-            String dlErr = risp.getDlErr() != null ? risp.getDlErr() : " ";
-            String statoOggetto = risp.getStatoOggetto() != null ? risp.getStatoOggetto()
-                    : "Impossibile recuperare l'informazione";
-            String descrizioneStatoOggetto = risp.getDescrizioneStatoOggetto() != null
-                    ? risp.getDescrizioneStatoOggetto()
-                    : "Impossibile recuperare l'informazione";
+            String err = StringEscapeUtils
+                    .escapeHtml4(risp.getCdErr() != null ? risp.getCdErr() : " ");
+            String dlErr = StringEscapeUtils
+                    .escapeHtml4(risp.getDlErr() != null ? risp.getDlErr() : " ");
+            String statoOggetto = StringEscapeUtils
+                    .escapeHtml4(risp.getStatoOggetto() != null ? risp.getStatoOggetto()
+                            : "Impossibile recuperare l'informazione");
+            String descrizioneStatoOggetto = StringEscapeUtils.escapeHtml4(
+                    risp.getDescrizioneStatoOggetto() != null ? risp.getDescrizioneStatoOggetto()
+                            : "Impossibile recuperare l'informazione");
 
             log.debug(className + "." + methodName
                     + ": preparo la risposta del Web Service Recupero Stato Oggetto di PING nella pagina JSP");
@@ -123,9 +131,10 @@ public class RecStatoOggettoSrvlt extends HttpServlet {
                 out.println("<h4>Esito: " + risp.getCdEsito() + "</h4>");
                 out.println("<h4>Codice errore: " + err + "</h4>");
                 out.println("<h4>Descrizione errore: " + dlErr + "</h4 >");
-                out.println("<h4>Ambiente: " + ambiente + "</h4>");
-                out.println("<h4>Versatore: " + versatore + "</h4>");
-                out.println("<h4>Codice oggetto: " + cdKeyOggetto + "</h4>");
+                out.println("<h4>Ambiente: " + StringEscapeUtils.escapeHtml4(ambiente) + "</h4>");
+                out.println("<h4>Versatore: " + StringEscapeUtils.escapeHtml4(versatore) + "</h4>");
+                out.println("<h4>Codice oggetto: " + StringEscapeUtils.escapeHtml4(cdKeyOggetto)
+                        + "</h4>");
                 out.println("<h4>Stato oggetto: " + statoOggetto + "</h4>");
                 out.println(
                         "<h4>Descrizione stato oggetto: " + descrizioneStatoOggetto + "</h4><br>");
@@ -145,16 +154,36 @@ public class RecStatoOggettoSrvlt extends HttpServlet {
                         + "</h1>");
                 out.println("<h4>Esito: NEGATIVO </h4>");
                 out.println("<h4>Codice errore: </h4>");
-                out.println("<h4>Descrizione errore: " + e.getMessage() + "</h4 >");
-                out.println("<h4>Ambiente: " + ambiente + "</h4>");
-                out.println("<h4>Versatore: " + versatore + "</h4>");
-                out.println("<h4>Codice oggetto: " + cdKeyOggetto + "</h4>");
+                out.println("<h4>Descrizione errore: "
+                        + StringEscapeUtils.escapeHtml4(e.getMessage()) + "</h4 >");
+                out.println("<h4>Ambiente: " + StringEscapeUtils.escapeHtml4(ambiente) + "</h4>");
+                out.println("<h4>Versatore: " + StringEscapeUtils.escapeHtml4(versatore) + "</h4>");
+                out.println("<h4>Codice oggetto: " + StringEscapeUtils.escapeHtml4(cdKeyOggetto)
+                        + "</h4>");
                 out.println("<h4>Stato oggetto: </h4>");
                 out.println("<h4>Descrizione stato oggetto: </h4><br>");
                 out.println("</body>");
                 out.println("</html>");
             }
         }
+    }
+
+    /**
+     * Rimuove dal parametro in ingresso i caratteri di controllo (compreso il byte nullo
+     * <code>%00</code>/<code>0x00</code>) che potrebbero essere sfruttati per troncare/alterare la
+     * stringa a valle (es. bypass di filtri, log/HTML injection). Non effettua HTML-encoding: la
+     * codifica per l'output va applicata separatamente in fase di stampa.
+     *
+     * @param value valore del parametro HTTP da ripulire
+     *
+     * @return il valore ripulito dai caratteri di controllo, oppure <code>null</code> se il valore
+     *         in ingresso era <code>null</code>
+     */
+    private static String sanitizeInput(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replaceAll("[\\x00-\\x1F\\x7F]", "");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the

@@ -375,14 +375,14 @@ public class ControlliWS {
         rispostaControlli.setrBoolean(false);
 
         try {
-            Query countDocumentiQuery = entityManager.createQuery(
-                    "select count(doc) from AroDoc doc "
+            Query countDocumentiQuery = entityManager
+                    .createQuery("select count(doc) from AroDoc doc "
                             + "where doc.aroUnitaDoc.idUnitaDoc = :idUnitaDocIn");
             countDocumentiQuery.setParameter("idUnitaDocIn", idUnitaDoc);
             Long numeroDocumenti = (Long) countDocumentiQuery.getSingleResult();
 
-            Query countDocumentiAbilitatiQuery = entityManager.createQuery(
-                    "select count(doc) from AroDoc doc, IamAbilTipoDato abil "
+            Query countDocumentiAbilitatiQuery = entityManager
+                    .createQuery("select count(doc) from AroDoc doc, IamAbilTipoDato abil "
                             + "where doc.aroUnitaDoc.idUnitaDoc = :idUnitaDocIn "
                             + "and abil.iamAbilOrganiz.iamUser.idUserIam = :idUserIamIn "
                             + "and abil.iamAbilOrganiz.idOrganizApplic = :idOrganizApplicIn "

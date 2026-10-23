@@ -24,7 +24,7 @@
 <html lang="it" xml:lang="it">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-        <title>Recupero Sincrono stato conservazione</title>
+        <title>Versamento Aggiornamento Metadati - Unit&agrave; Documentaria</title>
         <style>
             h1 {
                 font: 25px verdana,verdana, arial;
@@ -185,25 +185,27 @@
         </style>
     </head>
     <body>
-        <h1>Recupero stato oggetto di PING</h1>
-        <h2>Viene chiamata la servlet/ws <b>RecStatoOggettoPing</b></h2>
-        <form action="RecStatoOggettoPing" method="post" >
+        <h1>Versamento Aggiornamento Metadati - Unit&agrave; Documentaria</h1>
+        <h2>Viene chiamata la servlet/ws <b>AggiornamentoUnitaDocumentariaSync</b></h2>
+        <%-- Nota: questo servizio � esposto da sacerws, non da sacer --%>
+        <form action="/sacerws/AggiornamentoUnitaDocumentariaSync" method="post"  enctype="multipart/form-data" autocomplete="off">
             <div class="box">
                 <label>
-                    <span>AMBIENTE</span>
-                    <input type="text" size="20" name="AMBIENTE" class="input-text" ></input>
+                    <span>VERSIONE</span>
+                    <input type="text" size="10" name="VERSIONE" class="input-text" value="1.5"></input>
                 </label>
-
                 <label>
-                    <span>VERSATORE</span>
-                    <input type="text" size="20" name="VERSATORE" class="input-text"></input>
+                    <span>LOGINNAME</span>
+                    <input type="text" size="100" name="LOGINNAME" class="input-text" autocomplete="username"></input>
                 </label>
-
                 <label>
-                    <span>CD KEY OGGETTO</span>
-                    <input type="text" size="50" name="CD_KEY_OGGETTO" class="input-text"></input>
+                    <span>PASSWORD</span>
+                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text" autocomplete="current-password"></input>
                 </label>
-
+                <label>
+                    <span>XMLSIP</span>
+                    <TEXTAREA NAME="XMLSIP" ROWS=30, COLS=100 class="input-text"></TEXTAREA>
+                </label>
                 <input class="green"  type="submit" value="Invio"></input>
             </div>
         </form>

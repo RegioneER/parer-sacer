@@ -59,7 +59,7 @@ public class AroUsoXsdDatiSpec implements Serializable {
 
     private DecXsdDatiSpec decXsdDatiSpec;
 
-    private List<AroValoreAttribDatiSpec> aroValoreAttribDatiSpecs = new ArrayList<>();
+    private List<AroValoreAttribDatiSpecRicDs> aroValoreAttribDatiSpecRicDs = new ArrayList<>();
 
     private BigDecimal aaKeyUnitaDoc;
 
@@ -149,13 +149,13 @@ public class AroUsoXsdDatiSpec implements Serializable {
 
     @OneToMany(mappedBy = "aroUsoXsdDatiSpec", cascade = {
             CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-    public List<AroValoreAttribDatiSpec> getAroValoreAttribDatiSpecs() {
-        return this.aroValoreAttribDatiSpecs;
+    public List<AroValoreAttribDatiSpecRicDs> getAroValoreAttribDatiSpecRicDs() {
+        return this.aroValoreAttribDatiSpecRicDs;
     }
 
-    public void setAroValoreAttribDatiSpecs(
-            List<AroValoreAttribDatiSpec> aroValoreAttribDatiSpecs) {
-        this.aroValoreAttribDatiSpecs = aroValoreAttribDatiSpecs;
+    public void setAroValoreAttribDatiSpecRicDs(
+            List<AroValoreAttribDatiSpecRicDs> aroValoreAttribDatiSpecRicDs) {
+        this.aroValoreAttribDatiSpecRicDs = aroValoreAttribDatiSpecRicDs;
     }
 
     @Column(name = "AA_KEY_UNITA_DOC")

@@ -707,7 +707,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                                 .setValues(getStringValues(regSerie));
 
                         redirectToAction(Application.Actions.UNITA_DOCUMENTARIE,
-                                "?operation=unitaDocumentarieRicercaAvanzata",
+                                "?operation=unitaDocumentarieRicercaAvanzataNuova",
                                 unitaDocumentarieForm);
                     }
                 } catch (ParerUserError ex) {

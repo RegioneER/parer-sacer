@@ -221,9 +221,8 @@ public class ElaborazioneElencoIndiceAip {
                 fileElencoVers = new ElvFileElencoVer();
                 fileElencoVers
                         .setTiFileElencoVers(ElencoEnums.FileTypeEnum.ELENCO_INDICI_AIP.name());
-                fileElencoVers
-                        .setBlFileElencoVers(
-                                elencoIndiciAipString.getBytes(StandardCharsets.UTF_8));
+                fileElencoVers.setBlFileElencoVers(
+                        elencoIndiciAipString.getBytes(StandardCharsets.UTF_8));
                 fileElencoVers.setIdStrut(BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()));
                 XMLGregorianCalendar cal = elencoIndiciAip.getDescrizioneElencoIndiciAIP()
                         .getDataCreazione();

@@ -24,7 +24,7 @@
 <html lang="it" xml:lang="it">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-        <title>Versamento Sincrono Fascicolo</title>
+        <title>Recupero Sincrono unit&agrave; documentaria</title>
         <style>
             h1 {
                 font: 25px verdana,verdana, arial;
@@ -185,22 +185,25 @@
         </style>
     </head>
     <body>
-        <h1>Versamento Sincrono Fascicolo</h1>
-        <h2>Viene chiamata la servlet/ws <b>VersamentoFascicoloSync</b></h2>
-        <form action="VersamentoFascicoloSync" method="post"  enctype="multipart/form-data" >
+        <h1>Recupero Sincrono unit� documentaria</h1>
+        <h2>Viene chiamata la servlet/ws <b>RecDIPUnitaDocumentariaSync</b></h2>
+        <form action='<c:url value="/RecDIPUnitaDocumentariaSync" />' method="post"  enctype="multipart/form-data" autocomplete="off">
             <div class="box">
                 <label>
                     <span>VERSIONE</span>
-                    <input type="text" size="10" name="VERSIONE" class="input-text" value="3.0"></input>
+                    <input type="text" size="10" name="VERSIONE" class="input-text" value="1.2"></input>
                 </label>
+
                 <label>
                     <span>LOGINNAME</span>
-                    <input type="text" size="100" name="LOGINNAME" class="input-text"></input>
+                    <input type="text" size="100" name="LOGINNAME" class="input-text" autocomplete="username"></input>
                 </label>
+
                 <label>
                     <span>PASSWORD</span>
-                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text"></input>
+                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text" autocomplete="current-password"></input>
                 </label>
+
                 <label>
                     <span>XMLSIP</span>
                     <TEXTAREA NAME="XMLSIP" ROWS=30, COLS=100 class="input-text"></TEXTAREA>

@@ -334,62 +334,58 @@
             </div>
 
             <div id="util" class="tab">
-                <a href="JobMarche.jsp">Test marcatura e mimetype formato</a>
+                <a href="utility/JobMarche.jsp">Test marcatura e mimetype formato</a>
                 <br/>
-                <a href="VerificaFirme">Lancia la verifica firme...</a>
+                <a href='<c:url value="/VerificaFirme" />'>Lancia la verifica firme...</a>
                 <br/>
-                <a href="GestioneCRL.jsp">Gestione CRL</a>
+                <a href="utility/GestioneCRL.jsp">Gestione CRL</a>
                 <br/>
             </div>
 
             <div id="vers" class="tab">
-                <a href="ProvaUp.jsp">Lancia la pagina di versamento sincrono (max 15 file)...</a>
+                <a href="utility/ProvaUp.jsp">Lancia la pagina di versamento sincrono (max 15 file)...</a>
                 <br/>
-                <a href="ProvaAggAll.jsp">Lancia la pagina di aggiunta documenti (1 documento, max 15 file)...</a>
+                <a href="utility/ProvaAggAll.jsp">Lancia la pagina di aggiunta documenti (1 documento, max 15 file)...</a>
                 <br/>
-                <a href="ProvaUpMultiMedia.jsp">Lancia la pagina di versamento multimedia...</a>
+                <a href="utility/ProvaUpMultiMedia.jsp">Lancia la pagina di versamento multimedia...</a>
                 <br/>
-                <a href="ProvaUpFascicolo.jsp">Lancia la pagina di versamento fascicolo...</a>
+                <a href="utility/ProvaUpFascicolo.jsp">Lancia la pagina di versamento fascicolo...</a>
                 <br/>
-                <a href="ProvaAggMetadati.jsp">Lancia la pagina di versamento aggiornamento metadati Unit&agrave; documentaria...</a>
+                <a href="utility/ProvaAggMetadati.jsp">Lancia la pagina di versamento aggiornamento metadati Unit&agrave; documentaria...</a>
             </div>
 
             <div id="rec" class="tab">
-                <a href="ProvaRecStatoC.jsp">Lancia la pagina di recupero stato conservazione...</a>
+                <a href="utility/ProvaRecStatoC.jsp">Lancia la pagina di recupero stato conservazione...</a>
                 <br/>
-                <a href="ProvaRecUnitaDoc.jsp">Lancia la pagina di recupero unità documentaria...</a>
+                <a href="utility/ProvaRecUnitaDoc.jsp">Lancia la pagina di recupero unità documentaria...</a>
                 <br/>
-                <a href="ProvaRecAIPUnitaDoc.jsp">Lancia la pagina di recupero AIP unità documentaria...</a>
+                <a href="utility/ProvaRecAIPUnitaDoc.jsp">Lancia la pagina di recupero AIP unità documentaria...</a>
                 <br/>
-                <a href="ProvaRecProveCons.jsp">Lancia la pagina di recupero prove conservazione...</a>
+                <a href="utility/ProvaRecProveCons.jsp">Lancia la pagina di recupero prove conservazione...</a>
                 <br/>
-                <a href="ProvaRecRapportiVers.jsp">Lancia la pagina di recupero rapporti di versamento...</a>
+                <a href="utility/ProvaRecRapportiVers.jsp">Lancia la pagina di recupero rapporti di versamento...</a>
                 <br/>
-                <a href="ProvaRecUDMultiMedia.jsp">Lancia la pagina di Recupero Unità Documentaria Multimedia...</a>
+                <a href="utility/ProvaRecUDMultiMedia.jsp">Lancia la pagina di Recupero Unità Documentaria Multimedia...</a>
                 <br/>
-                <a href="ProvaRecPCUDMultiMedia.jsp">Lancia la pagina di Recupero Prove Conservazione Multimedia...</a>
+                <a href="utility/ProvaRecPCUDMultiMedia.jsp">Lancia la pagina di Recupero Prove Conservazione Multimedia...</a>
                 <br/>
-                <a href="ProvaRecUDConvPdf.jsp">Lancia la pagina di Recupero Sincrono componente con conversione PDF...</a>
+                <a href="utility/ProvaRecUDConvPdf.jsp">Lancia la pagina di Recupero Sincrono componente con conversione PDF...</a>
                 <br/>
-                <a href="ProvaRecDipEsibizione.jsp">Lancia la pagina di Recupero Sincrono DIP per Esibizione...</a>
+                <a href="utility/ProvaRecDipEsibizione.jsp">Lancia la pagina di Recupero Sincrono DIP per Esibizione...</a>
                 <br/>
-                <a href="ProvaRecStatoOggetto.jsp">Lancia la pagina di Recupero Stato Oggetto di PING...</a>
+                <a href="utility/ProvaRecStatoOggetto.jsp">Lancia la pagina di Recupero Stato Oggetto di PING...</a>
                 <br/>
-                <a href="ProvaRecAIPFascicolo.jsp">Lancia la pagina di recupero AIP del fascicolo...</a>
+                <a href="utility/ProvaRecAIPFascicolo.jsp">Lancia la pagina di recupero AIP del fascicolo...</a>
                 <br/>
-                <a href="ProvaRecStatoCFascicolo.jsp">Lancia la pagina di recupero stato conservazione del fascicolo...</a>
+                <a href="utility/ProvaRecStatoCFascicolo.jsp">Lancia la pagina di recupero stato conservazione del fascicolo...</a>
             </div>
 
             <div id="others" class="tab">
-                <a href="ProvaStatusMon.jsp">Lancia il recupero dello status dell'applicazione..</a>
+                <a href="utility/ProvaStatusMon.jsp">Lancia il recupero dello status dell'applicazione..</a>
                 <br/>
-                <a href="ProvaSecFile.jsp">Lancia prova secure file...</a>
+                <a href="utility/ProvaSecFile.jsp">Lancia prova secure file...</a>
                 <br/>
-                <a href="InvalidaCache.jsp">Lancia la pagina di invalidazione della cache (solo amministratori)...</a>
-                <br/>
-                <a href="PuliziaDB.jsp">Pulisci DB per test creazione volumi</a>
-                <br/>
-                <a href="ProvaInvioRichiestaAnnullamentoVersamenti.jsp">Lancia la pagina di invio richiesta annullamento versamenti...</a>
+                <a href="utility/ProvaInvioRichiestaAnnullamentoVersamenti.jsp">Lancia la pagina di invio richiesta annullamento versamenti...</a>
             </div>
 
         </div>

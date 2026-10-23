@@ -1275,8 +1275,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                             }
                         }
                         /* Eseguo subito la ricerca secca sugli id ricevuti in input */
-                        getForm().getElenchiVersamentoList().setTable(evEjb
-                                .getElvVRicElencoVersTableBeanByIds(getUser().getIdUtente(),
+                        getForm().getElenchiVersamentoList().setTable(
+                                evEjb.getElvVRicElencoVersTableBeanByIds(getUser().getIdUtente(),
                                         idElencoVersList));
                         getForm().getElenchiVersamentoList().getTable().setPageSize(10);
                         getForm().getElenchiVersamentoList().getTable().first();

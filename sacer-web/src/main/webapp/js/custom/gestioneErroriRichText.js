@@ -27,13 +27,34 @@
         });
     }
 
+    // Whitelist coerente con i pulsanti disponibili nella toolbar Quill configurata in
+    // buildEditor: bold/italic/underline/strike, liste, blockquote, link.
+    var DOMPURIFY_CONFIG = {
+        ALLOWED_TAGS: ["p", "br", "b", "strong", "i", "em", "u", "s", "strike", "ul", "ol", "li",
+            "blockquote", "a", "span"],
+        ALLOWED_ATTR: ["href", "target", "rel", "class"],
+        ALLOW_DATA_ATTR: false
+    };
+
+    /**
+     * Sanitizza un frammento HTML con DOMPurify prima che venga assegnato a innerHTML (via
+     * jQuery .html()/.append() o direttamente su quill.root.innerHTML). Usa una whitelist di
+     * tag/attributi (nessun tag script/iframe/svg, nessun attributo on*, nessun protocollo
+     * pericoloso su href) per prevenire XSS anche in presenza di markup malformato o payload che
+     * bypassano i controlli basati su semplici espressioni regolari.
+     */
     function normalizeHtml(html) {
         if (!html) {
             return "";
         }
 
-        return html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
-                .replace(/ on\w+=(['"]).*?\1/gi, "");
+        if (window.DOMPurify && typeof window.DOMPurify.sanitize === "function") {
+            return window.DOMPurify.sanitize(html, DOMPURIFY_CONFIG);
+        }
+
+        // Fallback prudenziale nel caso DOMPurify non sia disponibile (es. errore di
+        // caricamento): niente HTML, solo testo plain per evitare comunque l'XSS.
+        return $("<div/>").text($("<div/>").html(html).text()).html();
     }
 
     function plainTextToHtml(value) {
@@ -95,7 +116,30 @@
         });
     }
 
+    /**
+     * Le pagine in sola visualizzazione (status 'view') non hanno una textarea editabile: il
+     * contenuto HTML-encoded viene emesso dalla JSP dentro una <textarea> nascosta (contesto
+     * innocuo lato server, non interpretato come markup) e qui viene letto, sanitizzato con
+     * DOMPurify e iniettato nel div di anteprima. In questo modo il markup non viene mai reso
+     * "vivo" dal browser prima di essere ripulito.
+     */
+    function initReadOnlyPreviews() {
+        $("textarea.ge-quill-raw-source[data-richtext-source]").each(function () {
+            var source = $(this);
+            var key = source.data("richtextSource");
+            var preview = $("[data-richtext-preview='" + key + "']");
+            if (preview.length === 0) {
+                return;
+            }
+
+            ensureQuillStyles();
+            preview.html(normalizeHtml(source.val()));
+        });
+    }
+
     function initGestioneErroriRichText() {
+        initReadOnlyPreviews();
+
         var textAreas = findRichTextFields();
         if (textAreas.length === 0) {
             return;

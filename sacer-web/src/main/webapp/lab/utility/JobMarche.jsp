@@ -27,7 +27,7 @@
     </head>
     <body>
         <h1>Test marcatura temporale</h1>
-        <form title="Verifica file firmati" action="TestMarcatura" method="post"  enctype="multipart/form-data" >   
+        <form title="Verifica file firmati" action='<c:url value="/TestMarcatura" />' method="post"  enctype="multipart/form-data" >   
 
             File da marcare <input type="file" id="contDaMarcare"  name="contDaMarcare"/>    
             <br/><br/>
@@ -59,7 +59,7 @@
 
         </c:if>
         <h1>Test mimetype formato</h1>
-        <form title="Test formato" action="TestMarcatura" method="post"  enctype="multipart/form-data" >   
+        <form title="Test formato" action='<c:url value="/TestMarcatura" />' method="post"  enctype="multipart/form-data" >   
 
             File da testare <input type="file" id="contFormato"  name="contFormato"/>    
             <br/><br/>

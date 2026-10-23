@@ -150,30 +150,11 @@ public class UnitaDocumentarieHelperTest {
         assertTrue(true);
     }
 
-    @Test
-    void getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter_queryIsOk() {
-
-        List<BigDecimal> idTipoUnitaDocList = aListOfBigDecimal(2);
-        Set<String> cdRegistroUnitaDocSet = aSetOfString(2);
-        List<BigDecimal> idTipoDocList = aListOfBigDecimal(2);
-        List<DecCriterioDatiSpecBean> listaDatiSpecOnLine = Collections.emptyList();
-        Date[] dateAcquisizioneValidate = aDateArray(2);
-        Date[] dateCreazioneCompValidate = aDateArray(2);
-        Long idUserIam = aLong();
-        BigDecimal idStruttura = aBigDecimal();
-        UnitaDocumentarieHelper.FiltriCollegamentiUnitaDocumentariePlain filtriCollegamenti = aFiltriCollegamentiUnitaDocumentariePlain();
-        UnitaDocumentarieHelper.FiltriUnitaDocumentarieAvanzataPlain filtri = aFiltriUnitaDocumentarieAvanzataPlain();
-        UnitaDocumentarieHelper.FiltriComponentiUnitaDocumentariePlain filtriComponenti = aFiltriComponentiUnitaDocumentariePlain();
-        UnitaDocumentarieHelper.FiltriFirmatariUnitaDocumentariePlain filtriFirmatari = aFiltriFirmatariUnitaDocumentariePlain();
-        UnitaDocumentarieHelper.FiltriFascicoliUnitaDocumentariePlain filtriFascicoli = aFiltriFascicoliUnitaDocumentariePlain();
-        boolean addButton = true;
-
-        helper.getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter(idTipoUnitaDocList,
-                cdRegistroUnitaDocSet, idTipoDocList, listaDatiSpecOnLine, dateAcquisizioneValidate,
-                dateCreazioneCompValidate, idUserIam, idStruttura, addButton, filtri,
-                filtriCollegamenti, filtriFirmatari, filtriComponenti, filtriFascicoli, false);
-        assertTrue(true);
-    }
+    // @Test - DISABLED: Il metodo getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter è stato rimosso
+    // dal helper
+    // void getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter_queryIsOk() {
+    // assertTrue(true);
+    // }
 
     private UnitaDocumentarieHelper.FiltriFascicoliUnitaDocumentariePlain aFiltriFascicoliUnitaDocumentariePlain() {
         UnitaDocumentarieHelper.FiltriFascicoliUnitaDocumentariePlain filtriFascicoli = new UnitaDocumentarieHelper.FiltriFascicoliUnitaDocumentariePlain();
@@ -247,8 +228,7 @@ public class UnitaDocumentarieHelperTest {
         filtri.setCdKeyUnitaDocA(aString());
         filtri.setCdKeyUnitaDocDa(aString());
         filtri.setCdSottofascic(aString());
-        filtri.setCdVersioneXsdDoc(aString());
-        filtri.setCdVersioneXsdUd(aString());
+        // REMOVED: setCdVersioneXsdDoc e setCdVersioneXsdUd - metodi non disponibili
         filtri.setDataMetaA(tomorrowTs());
         filtri.setDataMetaDa(todayTs());
         filtri.setDlDoc(aString());

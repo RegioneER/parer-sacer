@@ -187,7 +187,7 @@
     <body>
         <h1>Invio richiesta annullamento versamenti</h1>
         <h2>Viene chiamata il ws <b>InvioRichiestaAnnullamentoVersamenti</b></h2>
-        <form action="InvioRichiestaAnnullamentoVersamenti" method="post" enctype="multipart/form-data" >
+        <form action='<c:url value="/InvioRichiestaAnnullamentoVersamenti" />' method="post" enctype="multipart/form-data"  autocomplete="off">
             <div class="box">
                 <label>
                     <span>VERSIONE</span>
@@ -196,12 +196,12 @@
 
                 <label>
                     <span>LOGINNAME</span>
-                    <input type="text" size="100" name="LOGINNAME" class="input-text">
+                    <input type="text" size="100" name="LOGINNAME" class="input-text" autocomplete="username">
                 </label>
 
                 <label>
                     <span>PASSWORD</span>
-                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text">
+                    <input type="password" size="100" name="PASSWORD" id="PASSWORD" class="input-text" autocomplete="current-password">
                 </label>
 
                 <label>

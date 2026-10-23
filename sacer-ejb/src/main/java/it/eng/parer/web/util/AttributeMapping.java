@@ -49,7 +49,7 @@ public class AttributeMapping {
         list.add("aroUsoXsdDatiSpecs");
         // list.add("aroUnitaDocAnnuls");
         list.add("aroUnitaDocs");
-        list.add("aroValoreAttribDatiSpecs");
+        list.add("aroValoreAttribDatiSpecRicDs");
         list.add("decCampoInpUds");
         list.add("decCampoOutSelUds");
         list.add("decErrAaRegistroUnitaDocs");

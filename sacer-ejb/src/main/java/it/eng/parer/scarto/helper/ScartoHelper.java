@@ -537,37 +537,31 @@ public class ScartoHelper extends GenericHelper {
      * @return lista elementi di tipo ElvVLisElencoUdScarto
      */
     public List<ElvVLisElencoUdScarto> getElenchiConUdDaScartare(long idRichScartoVers) {
-        Query query = getEntityManager().createQuery(
-                "SELECT elv FROM ElvVLisElencoUdScarto elv "
-                        + "WHERE elv.elvVLisElencoUdScartoId.idRichScartoVers = :idRichScartoVers");
+        Query query = getEntityManager().createQuery("SELECT elv FROM ElvVLisElencoUdScarto elv "
+                + "WHERE elv.elvVLisElencoUdScartoId.idRichScartoVers = :idRichScartoVers");
         query.setParameter("idRichScartoVers", bigDecimalFromLong(idRichScartoVers));
         return query.getResultList();
     }
 
     public List<AroUnitaDoc> getUnitaDocDaRielaborareInElencoChiusoValidato(long idRichScartoVers,
             long idElencoVers) {
-        Query query = getEntityManager().createQuery(
-                "SELECT DISTINCT item.aroUnitaDoc FROM AroItemRichScartoVers item "
+        Query query = getEntityManager()
+                .createQuery("SELECT DISTINCT item.aroUnitaDoc FROM AroItemRichScartoVers item "
                         + "WHERE item.aroRichScartoVers.idRichScartoVers = :idRichScartoVers "
                         + "AND item.tiItemRichScartoVers = 'UNI_DOC' "
-                        + "AND item.tiStatoItemScarto = 'DA_SCARTARE' "
-                        + "AND ("
+                        + "AND item.tiStatoItemScarto = 'DA_SCARTARE' " + "AND ("
                         + "(item.aroUnitaDoc.elvElencoVer.idElencoVers = :idElencoVers "
                         + "AND item.aroUnitaDoc.tiStatoUdElencoVers IN ('IN_ELENCO_CHIUSO', 'IN_ELENCO_VALIDATO')) "
-                        + "OR EXISTS ("
-                        + "SELECT 1 FROM AroDoc doc "
+                        + "OR EXISTS (" + "SELECT 1 FROM AroDoc doc "
                         + "WHERE doc.aroUnitaDoc.idUnitaDoc = item.aroUnitaDoc.idUnitaDoc "
                         + "AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' "
                         + "AND doc.elvElencoVer.idElencoVers = :idElencoVers "
                         + "AND doc.tiStatoDocElencoVers IN ('IN_ELENCO_CHIUSO', 'IN_ELENCO_VALIDATO')"
-                        + ") "
-                        + "OR EXISTS ("
-                        + "SELECT 1 FROM AroUpdUnitaDoc upd "
+                        + ") " + "OR EXISTS (" + "SELECT 1 FROM AroUpdUnitaDoc upd "
                         + "WHERE upd.aroUnitaDoc.idUnitaDoc = item.aroUnitaDoc.idUnitaDoc "
                         + "AND upd.elvElencoVer.idElencoVers = :idElencoVers "
                         + "AND upd.tiStatoUpdElencoVers IN ('IN_ELENCO_CHIUSO', 'IN_ELENCO_VALIDATO')"
-                        + ")"
-                        + ")");
+                        + ")" + ")");
         query.setParameter("idRichScartoVers", idRichScartoVers);
         query.setParameter("idElencoVers", idElencoVers);
         return query.getResultList();

@@ -81,9 +81,7 @@
     <!-- Filtri di ricerca Unità Documentarie Avanzata -->
     <Fields Description="Filtri unità documentaria ricerca avanzata" Name="FiltriUnitaDocumentarieAvanzata">
         <CheckBox Name="fl_collegamenti_altre_ud" Description="Collegamento con altre UD" Type="STRING" defaultValue="0" Readonly="false" />
-        <MultiSelect Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Trigger="true" Type="INTEGER"/>
-        <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_ud" Readonly="true" Type="STRING"/>
-        <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_ud" Type="STRING"/>
+        <MultiSelect Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Type="INTEGER"/>
         <MultiSelect Description="Registro" Name="cd_registro_key_unita_doc" Type="INTEGER"/>
         <Input Description="Anno" MaxLength="4" Name="aa_key_unita_doc" Type="INTEGER"/>
         <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
@@ -118,16 +116,12 @@
         <ComboBox Description="Elemento" Name="ti_doc" Type="STRING"/>
         <ComboBox Description="Documenti aggiunti" Name="fl_doc_aggiunti" Type="STRING"/>
         <ComboBox Description="Aggiornamento metadati" Name="fl_agg_meta" Type="STRING"/>
-        <MultiSelect Description="Sistemi di migrazione" Name="nm_sistema_migraz" Trigger="true" Type="STRING"/>
-        <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_sm" Readonly="true" Type="STRING"/>
+        <MultiSelect Description="Sistemi di migrazione" Name="nm_sistema_migraz" Type="STRING"/>
         <ComboBox Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
         <ComboBox Description="Stato generazione Indice AIP" Name="ti_stato_ud_elenco_vers" Type="STRING"/>
-        <MultiSelect Description="Tipo documento" Name="nm_tipo_doc" Trigger="true" Type="INTEGER"/>
-        <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_doc" Readonly="true" Type="STRING"/>
-        <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_doc" Type="STRING"/>
+        <MultiSelect Description="Tipo documento" Name="nm_tipo_doc" Type="INTEGER"/>
         <Input Description="Volume / elenco corrente" Name="vol_curr" Readonly="true" Type="STRING"/>
         <Input Description="Stato volume / elenco" Name="stato_vol" Readonly="true" Type="STRING"/>
-        <TextArea Cols="5" Description="Filtri valorizzati sui dati specifici" MaxLength="100000" Name="filtri_dati_spec" Readonly="true" Rows="5" Type="STRING"/>
         <Input Description="Classifica" Name="ds_classif" Type="STRING"/>
         <Input Description="Fascicolo" Name="cd_fascic" Type="STRING"/>
         <Input Description="Oggetto fascicolo" Name="ds_oggetto_fascic" Type="STRING"/>
@@ -166,6 +160,7 @@
         <ComboBox Description="Registro" Name="cd_registro_key_unita_doc_link" Type="INTEGER"/>
         <Input Description="Anno" MaxLength="4" Name="aa_key_unita_doc_link" Type="INTEGER"/>
         <Input Description="Numero" Name="cd_key_unita_doc_link" Type="STRING"/>
+        <Input Description="Numero contiene" Name="cd_key_unita_doc_contiene_link" Type="STRING"/>
         <ComboBox Description="E' oggetto di collegamento" Name="is_oggetto_collegamento" Trigger="true" Type="STRING"/>
         <Input Description="Descrizione collegamento oggetto" Name="ds_link_unita_doc_oggetto" Type="STRING"/>
     </Fields>

@@ -956,11 +956,10 @@ public class MonitoraggioHelper implements Serializable {
             queryStr.append(whereWord).append("u.cdErr = :cdErr ");
             whereWord = "AND ";
         } else if (sottoClasseErrore != null) {
-            queryStr.append(whereWord).append("EXISTS ("
-                    + "SELECT decErr.idErrSacer FROM DecErrSacer decErr "
-                    + "JOIN decErr.decErrSacerDett dett "
-                    + "WHERE decErr.cdErr = u.cdErr "
-                    + "AND dett.cdSottoclasse = :sottoClasseErrore) ");
+            queryStr.append(whereWord)
+                    .append("EXISTS (" + "SELECT decErr.idErrSacer FROM DecErrSacer decErr "
+                            + "JOIN decErr.decErrSacerDett dett " + "WHERE decErr.cdErr = u.cdErr "
+                            + "AND dett.cdSottoclasse = :sottoClasseErrore) ");
             whereWord = "AND ";
         } else if (classeErrore != null) {
             queryStr.append(whereWord).append("u.cdErr LIKE :cdErr ");
@@ -5452,8 +5451,7 @@ public class MonitoraggioHelper implements Serializable {
                 queryStr.append("err.cdErr = :codErr");
             } else if (StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
                 queryStr.append("EXISTS (SELECT decErr.idErrSacer FROM DecErrSacer decErr "
-                        + "JOIN decErr.decErrSacerDett dett "
-                        + "WHERE decErr.cdErr = err.cdErr "
+                        + "JOIN decErr.decErrSacerDett dett " + "WHERE decErr.cdErr = err.cdErr "
                         + "AND dett.cdSottoclasse = :sottoClasseErrore)");
             } else if (StringUtils.isNotBlank(filtri.getClasseErrore())) {
                 queryStr.append("err.cdErr like :codErr");
@@ -5693,8 +5691,7 @@ public class MonitoraggioHelper implements Serializable {
             if (StringUtils.isNotBlank(filtri.getCodiceErrore())) {
                 queryStr.append("vrserrsess1_.cd_Err = :codErr");
             } else if (StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
-                queryStr.append("EXISTS ("
-                        + "SELECT 1 FROM DEC_ERR_SACER decerrsacer_ "
+                queryStr.append("EXISTS (" + "SELECT 1 FROM DEC_ERR_SACER decerrsacer_ "
                         + "JOIN DEC_ERR_SACER_DETT decerrdett_ "
                         + "ON decerrdett_.ID_ERR_SACER = decerrsacer_.ID_ERR_SACER "
                         + "WHERE decerrsacer_.CD_ERR = vrserrsess1_.cd_Err "
@@ -5923,8 +5920,7 @@ public class MonitoraggioHelper implements Serializable {
                 queryStr.append("err.cdErr = :codErr");
             } else if (StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
                 queryStr.append("EXISTS (SELECT decErr.idErrSacer FROM DecErrSacer decErr "
-                        + "JOIN decErr.decErrSacerDett dett "
-                        + "WHERE decErr.cdErr = err.cdErr "
+                        + "JOIN decErr.decErrSacerDett dett " + "WHERE decErr.cdErr = err.cdErr "
                         + "AND dett.cdSottoclasse = :sottoClasseErrore)");
             } else if (StringUtils.isNotBlank(filtri.getClasseErrore())) {
                 queryStr.append("err.cdErr like :codErr");

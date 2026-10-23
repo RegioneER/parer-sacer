@@ -31,7 +31,7 @@
     </head>
     <body>
         <h1>Gestione CRL</h1>
-        <form title="Gestione CRL" action="GestioneCRL" method="post" enctype="multipart/form-data">   
+        <form title="Gestione CRL" action='<c:url value="/GestioneCRL" />' method="post" enctype="multipart/form-data">   
 
             <fieldset>
                 <legend>Ottieni CRL dal file del firmatario</legend>

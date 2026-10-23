@@ -613,8 +613,8 @@ public class RestituzioneArchivioEjb {
      *
      * @return la lista degli ID_ELENCO_VERS
      */
-    public List<Long> getIdElencoVersErroreByAnno(BigDecimal idRichRestArch,
-            BigDecimal idStrut, BigDecimal anno) {
+    public List<Long> getIdElencoVersErroreByAnno(BigDecimal idRichRestArch, BigDecimal idStrut,
+            BigDecimal anno) {
         return helper.retrieveIdElencoVersErroreByAnno(idRichRestArch, idStrut, anno);
     }
 

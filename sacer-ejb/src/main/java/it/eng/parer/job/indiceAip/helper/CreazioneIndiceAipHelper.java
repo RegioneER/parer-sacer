@@ -956,11 +956,9 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
                         // MEV_37232: escludi UD scartate analogamente alle ANNULLATE,
                         // per coerenza sia in prima creazione (CHIUSO/VALIDATO) che in
                         // eventuali future rigenerazioni
-                        + "AND NOT EXISTS ("
-                        + "SELECT 1 FROM AroItemRichScartoVers item "
+                        + "AND NOT EXISTS (" + "SELECT 1 FROM AroItemRichScartoVers item "
                         + "WHERE item.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc "
-                        + "AND item.tiStatoItemScarto = 'SCARTATO'"
-                        + ") "
+                        + "AND item.tiStatoItemScarto = 'SCARTATO'" + ") "
                         + "ORDER BY ud.dsKeyOrd, verIndiceAipUd.pgVerIndiceAip");
         query.setParameter("idElencoVers", idElencoVers);
         return query.getResultList();

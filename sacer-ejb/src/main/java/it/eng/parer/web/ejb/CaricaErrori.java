@@ -134,8 +134,9 @@ public class CaricaErrori {
                     if (codiceClasse != null && !codiceClasse.isEmpty() && codiceSottoclasse != null
                             && !codiceSottoclasse.isEmpty()) {
                         codiciPerClasseSottoClasseMap
-                                .computeIfAbsent(buildClasseSottoclasseKey(codiceClasse,
-                                        codiceSottoclasse), key -> new TreeMap<>())
+                                .computeIfAbsent(
+                                        buildClasseSottoclasseKey(codiceClasse, codiceSottoclasse),
+                                        key -> new TreeMap<>())
                                 .put(codiceErrore, codiceErrore + " - " + descrizioneErrore);
                     }
                 }
